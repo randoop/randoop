@@ -1,0 +1,255 @@
+START DFRESULT
+classname=java2.util2.ArrayList,methodname=indexOf,line=214,id=4,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : long:1 : 
+var2 =  method : java2.util2.ArrayList.contains(java.lang.Object) : var0 var1 
+VARS 1
+var1 null
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.ArrayList,methodname=indexOf,line=214,id=4,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : int:100 : 
+var2 =  method : java2.util2.ArrayList.indexOf(java.lang.Object) : var0 var1 
+VARS 1
+var1 null
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.ArrayList,methodname=indexOf,line=214,id=4,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:100 : 
+var2 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var1 
+var3 =  cons : java2.util2.ArrayList.<init>() : 
+var4 =  prim : short:100 : 
+var5 =  method : java2.util2.ArrayList.add(java.lang.Object) : var3 var4 
+var6 =  method : java2.util2.ArrayList.addAll(java2.util2.Collection) : var0 var3 
+var7 =  cons : java2.util2.ArrayList.<init>() : 
+var8 =  method : java2.util2.AbstractCollection.removeAll(java2.util2.Collection) : var0 var7 
+VARS 2
+var1 null
+var4 null
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.AbstractCollection,methodname=remove,line=245,id=9,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:100 : 
+var2 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var1 
+var3 =  cons : java2.util2.ArrayList.<init>() : 
+var4 =  prim : short:100 : 
+var5 =  method : java2.util2.ArrayList.add(java.lang.Object) : var3 var4 
+var6 =  method : java2.util2.ArrayList.addAll(java2.util2.Collection) : var0 var3 
+var7 =  prim : int:-1 : 
+var8 =  method : java2.util2.AbstractCollection.remove(java.lang.Object) : var0 var7 
+VARS 1
+var7 null
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:100 : 
+var2 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var1 
+var3 =  cons : java2.util2.ArrayList.<init>() : 
+var4 =  prim : short:100 : 
+var5 =  method : java2.util2.ArrayList.add(java.lang.Object) : var3 var4 
+var6 =  method : java2.util2.ArrayList.addAll(java2.util2.Collection) : var0 var3 
+var7 =  prim : int:-1 : 
+var8 =  method : java2.util2.AbstractCollection.remove(java.lang.Object) : var0 var7 
+VARS 3
+var1 0
+var4 0
+var7 0
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.ArrayList,methodname=lastIndexOf,line=235,id=9,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:100 : 
+var2 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var1 
+var3 =  cons : java2.util2.ArrayList.<init>() : 
+var4 =  prim : byte:1 : 
+var5 =  array : java.lang.Object[1] : var4 
+var6 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var3 var5 
+var7 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var5 
+var8 =  method : java2.util2.ArrayList.isEmpty() : var0 
+var9 =  cons : java2.util2.ArrayList.<init>() : 
+var10 =  prim : short:100 : 
+var11 =  method : java2.util2.ArrayList.add(java.lang.Object) : var9 var10 
+var12 =  cons : java2.util2.ArrayList.<init>() : 
+var13 =  prim : byte:1 : 
+var14 =  array : java.lang.Object[1] : var13 
+var15 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var12 var14 
+var16 =  method : java2.util2.ArrayList.add(java.lang.Object) : var9 var14 
+var17 =  method : java2.util2.ArrayList.isEmpty() : var9 
+var18 =  method : java2.util2.AbstractList.listIterator() : var9 
+var19 =  cons : java2.util2.ArrayList.<init>() : 
+var20 =  prim : short:100 : 
+var21 =  method : java2.util2.ArrayList.add(java.lang.Object) : var19 var20 
+var22 =  cons : java2.util2.ArrayList.<init>() : 
+var23 =  prim : byte:1 : 
+var24 =  array : java.lang.Object[1] : var23 
+var25 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var22 var24 
+var26 =  method : java2.util2.ArrayList.add(java.lang.Object) : var19 var24 
+var27 =  method : java2.util2.ArrayList.isEmpty() : var19 
+var28 =  method : java2.util2.ArrayList.trimToSize() : var19 
+var29 =  method : java2.util2.AbstractCollection.containsAll(java2.util2.Collection) : var9 var19 
+var30 =  method : java2.util2.ArrayList.lastIndexOf(java.lang.Object) : var0 var29 
+VARS 1
+var29 null
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.AbstractCollection,methodname=contains,line=94,id=0,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:100 : 
+var2 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var1 
+var3 =  cons : java2.util2.ArrayList.<init>() : 
+var4 =  prim : byte:1 : 
+var5 =  array : java.lang.Object[1] : var4 
+var6 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var3 var5 
+var7 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var5 
+var8 =  method : java2.util2.ArrayList.isEmpty() : var0 
+var9 =  cons : java2.util2.ArrayList.<init>() : 
+var10 =  prim : short:100 : 
+var11 =  method : java2.util2.ArrayList.add(java.lang.Object) : var9 var10 
+var12 =  cons : java2.util2.ArrayList.<init>() : 
+var13 =  prim : byte:1 : 
+var14 =  array : java.lang.Object[1] : var13 
+var15 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var12 var14 
+var16 =  method : java2.util2.ArrayList.add(java.lang.Object) : var9 var14 
+var17 =  method : java2.util2.ArrayList.isEmpty() : var9 
+var18 =  method : java2.util2.AbstractList.listIterator() : var9 
+var19 =  cons : java2.util2.ArrayList.<init>() : 
+var20 =  prim : short:100 : 
+var21 =  method : java2.util2.ArrayList.add(java.lang.Object) : var19 var20 
+var22 =  cons : java2.util2.ArrayList.<init>() : 
+var23 =  prim : byte:1 : 
+var24 =  array : java.lang.Object[1] : var23 
+var25 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var22 var24 
+var26 =  method : java2.util2.ArrayList.add(java.lang.Object) : var19 var24 
+var27 =  method : java2.util2.ArrayList.isEmpty() : var19 
+var28 =  method : java2.util2.ArrayList.trimToSize() : var19 
+var29 =  method : java2.util2.AbstractCollection.containsAll(java2.util2.Collection) : var9 var19 
+var30 =  method : java2.util2.ArrayList.lastIndexOf(java.lang.Object) : var0 var29 
+var31 =  method : java2.util2.AbstractList.listIterator() : var0 
+var32 =  cons : java2.util2.ArrayList.<init>() : 
+var33 =  prim : short:100 : 
+var34 =  method : java2.util2.ArrayList.add(java.lang.Object) : var32 var33 
+var35 =  cons : java2.util2.ArrayList.<init>() : 
+var36 =  prim : byte:1 : 
+var37 =  array : java.lang.Object[1] : var36 
+var38 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var35 var37 
+var39 =  method : java2.util2.ArrayList.add(java.lang.Object) : var32 var37 
+var40 =  method : java2.util2.ArrayList.isEmpty() : var32 
+var41 =  method : java2.util2.AbstractList.listIterator() : var32 
+var42 =  method : java2.util2.ArrayList.trimToSize() : var32 
+var43 =  method : java2.util2.AbstractCollection.removeAll(java2.util2.Collection) : var0 var32 
+var44 =  method : java2.util2.ArrayList.toArray() : var32 
+var45 =  method : java2.util2.ArrayList.size() : var32 
+var46 =  cons : java2.util2.ArrayList.<init>() : 
+var47 =  prim : short:100 : 
+var48 =  method : java2.util2.ArrayList.add(java.lang.Object) : var46 var47 
+var49 =  cons : java2.util2.ArrayList.<init>() : 
+var50 =  prim : byte:1 : 
+var51 =  array : java.lang.Object[1] : var50 
+var52 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var49 var51 
+var53 =  method : java2.util2.ArrayList.add(java.lang.Object) : var46 var51 
+var54 =  method : java2.util2.ArrayList.isEmpty() : var46 
+var55 =  method : java2.util2.AbstractList.listIterator() : var46 
+var56 =  cons : java2.util2.ArrayList.<init>() : 
+var57 =  prim : short:100 : 
+var58 =  method : java2.util2.ArrayList.add(java.lang.Object) : var56 var57 
+var59 =  cons : java2.util2.ArrayList.<init>() : 
+var60 =  prim : byte:1 : 
+var61 =  array : java.lang.Object[1] : var60 
+var62 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var59 var61 
+var63 =  method : java2.util2.ArrayList.add(java.lang.Object) : var56 var61 
+var64 =  method : java2.util2.ArrayList.toArray() : var56 
+var65 =  method : java2.util2.AbstractCollection.remove(java.lang.Object) : var46 var56 
+var66 =  method : java2.util2.AbstractList.listIterator() : var56 
+var67 =  prim : int:0 : 
+var68 =  prim : int:0 : 
+var69 =  method : java2.util2.AbstractList.subList(int,int) : var56 var67 var68 
+var70 =  method : java2.util2.AbstractCollection.removeAll(java2.util2.Collection) : var32 var69 
+VARS 0
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.AbstractCollection,methodname=contains,line=99,id=3,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:100 : 
+var2 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var1 
+var3 =  cons : java2.util2.ArrayList.<init>() : 
+var4 =  prim : byte:1 : 
+var5 =  array : java.lang.Object[1] : var4 
+var6 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var3 var5 
+var7 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var5 
+var8 =  method : java2.util2.ArrayList.isEmpty() : var0 
+var9 =  cons : java2.util2.ArrayList.<init>() : 
+var10 =  prim : short:100 : 
+var11 =  method : java2.util2.ArrayList.add(java.lang.Object) : var9 var10 
+var12 =  cons : java2.util2.ArrayList.<init>() : 
+var13 =  prim : byte:1 : 
+var14 =  array : java.lang.Object[1] : var13 
+var15 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var12 var14 
+var16 =  method : java2.util2.ArrayList.add(java.lang.Object) : var9 var14 
+var17 =  method : java2.util2.ArrayList.isEmpty() : var9 
+var18 =  method : java2.util2.AbstractList.listIterator() : var9 
+var19 =  cons : java2.util2.ArrayList.<init>() : 
+var20 =  prim : short:100 : 
+var21 =  method : java2.util2.ArrayList.add(java.lang.Object) : var19 var20 
+var22 =  cons : java2.util2.ArrayList.<init>() : 
+var23 =  prim : byte:1 : 
+var24 =  array : java.lang.Object[1] : var23 
+var25 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var22 var24 
+var26 =  method : java2.util2.ArrayList.add(java.lang.Object) : var19 var24 
+var27 =  method : java2.util2.ArrayList.isEmpty() : var19 
+var28 =  method : java2.util2.ArrayList.trimToSize() : var19 
+var29 =  method : java2.util2.AbstractCollection.containsAll(java2.util2.Collection) : var9 var19 
+var30 =  method : java2.util2.ArrayList.lastIndexOf(java.lang.Object) : var0 var29 
+var31 =  method : java2.util2.AbstractList.listIterator() : var0 
+var32 =  cons : java2.util2.ArrayList.<init>() : 
+var33 =  prim : short:100 : 
+var34 =  method : java2.util2.ArrayList.add(java.lang.Object) : var32 var33 
+var35 =  cons : java2.util2.ArrayList.<init>() : 
+var36 =  prim : byte:1 : 
+var37 =  array : java.lang.Object[1] : var36 
+var38 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var35 var37 
+var39 =  method : java2.util2.ArrayList.add(java.lang.Object) : var32 var37 
+var40 =  method : java2.util2.ArrayList.isEmpty() : var32 
+var41 =  method : java2.util2.AbstractList.listIterator() : var32 
+var42 =  method : java2.util2.ArrayList.trimToSize() : var32 
+var43 =  method : java2.util2.AbstractCollection.removeAll(java2.util2.Collection) : var0 var32 
+var44 =  method : java2.util2.ArrayList.toArray() : var32 
+var45 =  method : java2.util2.ArrayList.size() : var32 
+var46 =  cons : java2.util2.ArrayList.<init>() : 
+var47 =  prim : short:100 : 
+var48 =  method : java2.util2.ArrayList.add(java.lang.Object) : var46 var47 
+var49 =  cons : java2.util2.ArrayList.<init>() : 
+var50 =  prim : byte:1 : 
+var51 =  array : java.lang.Object[1] : var50 
+var52 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var49 var51 
+var53 =  method : java2.util2.ArrayList.add(java.lang.Object) : var46 var51 
+var54 =  method : java2.util2.ArrayList.isEmpty() : var46 
+var55 =  method : java2.util2.AbstractList.listIterator() : var46 
+var56 =  cons : java2.util2.ArrayList.<init>() : 
+var57 =  prim : short:100 : 
+var58 =  method : java2.util2.ArrayList.add(java.lang.Object) : var56 var57 
+var59 =  cons : java2.util2.ArrayList.<init>() : 
+var60 =  prim : byte:1 : 
+var61 =  array : java.lang.Object[1] : var60 
+var62 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var59 var61 
+var63 =  method : java2.util2.ArrayList.add(java.lang.Object) : var56 var61 
+var64 =  method : java2.util2.ArrayList.toArray() : var56 
+var65 =  method : java2.util2.AbstractCollection.remove(java.lang.Object) : var46 var56 
+var66 =  method : java2.util2.AbstractList.listIterator() : var56 
+var67 =  prim : int:0 : 
+var68 =  prim : int:0 : 
+var69 =  method : java2.util2.AbstractList.subList(int,int) : var56 var67 var68 
+var70 =  method : java2.util2.AbstractCollection.removeAll(java2.util2.Collection) : var32 var69 
+VARS 0
+END DFRESULT
+

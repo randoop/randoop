@@ -1,0 +1,64 @@
+<project name="money_demo" default="code.compile" basedir=".">
+     <description>
+         money build file
+     </description>
+
+     <property name="src" location="src/main/java"/>
+     <property name="test.src" location="src/test/java"/>
+     <property name="app.build" location="build/app"/>
+     <property name="test.build" location="build/test"/>
+     <property name="test.result" location="build/testresult"/>
+     <property name="junit.jar" location="lib/junit-3.8.2.jar"/>
+
+
+     <property name ="clover.jar" location="../lib/clover.jar"/>
+     <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
+
+     <path id="build.classpath">
+       <pathelement path="${junit.jar}"/>
+       <pathelement path="${app.build}"/>
+       <pathelement path="${clover.jar}"/>
+     </path>
+
+     <path id="testbuild.classpath">  
+       <path refid="build.classpath"/>
+       <pathelement path="${test.build}"/>
+     </path>
+
+
+     <target name="code.compile" description="Creates ${app.build} directory and compiles sources from ${src} to ${app.build}">
+            <mkdir dir="${app.build}"/>
+            <javac srcdir="${src}" destdir="${app.build}" classpathref="build.classpath" source="1.4"/>
+     </target>
+
+     <target name="test.compile"  depends="code.compile" description="Creates ${test.build} directory and compiles sources from ${test.src} to ${test.build}">
+	        <mkdir dir="${test.build}"/>
+	        <javac srcdir="${test.src}"
+		       destdir="${test.build}"
+		       classpathref="testbuild.classpath" source="1.4"/>
+     </target>
+
+     <target name="test.run" depends="test.compile" description="Runs the tests">
+        <mkdir dir="${test.result}"/>
+        <junit fork="yes" printsummary="true">
+            <classpath refid="testbuild.classpath"/>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${test.result}">
+                <fileset dir="${test.src}" includes="**/*Test.java"/>
+            </batchtest>
+        </junit>
+     </target>
+
+     <target name="with.clover">
+        <clover-setup/>
+     </target>
+
+     <target name="clover.report" depends="test.run" description="Generates a Clover report">
+       <clover-html-report outdir="clover_html" title="Clover Demo"/>
+     </target>
+
+     <target name="clean" >
+        <delete dir="build"/>
+        <clover-clean/>
+     </target>
+</project>
