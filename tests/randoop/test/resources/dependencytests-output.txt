@@ -1,0 +1,49 @@
+START SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+END SEQUENCE
+
+START SEQUENCE
+var1 = prim : long:1 : 
+END SEQUENCE
+
+START SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+END SEQUENCE
+
+START SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var3 = method : java.util.ArrayList.size() : var0
+var4 = cons : java.util.ArrayList.<init>(int) : var3
+var7 = prim : long:1 : 
+var5 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var6 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+END SEQUENCE
+
+START SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var3 = method : java.util.ArrayList.size() : var0
+var4 = cons : java.util.ArrayList.<init>(int) : var3
+var7 = prim : long:1 : 
+var5 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+END SEQUENCE
+
+START SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var3 = method : java.util.ArrayList.size() : var0
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+END SEQUENCE
+
+START SEQUENCE
+var0 = cons : java.util.ArrayList.<init>() : 
+var1 = prim : long:1 : 
+var3 = method : java.util.ArrayList.size() : var0
+var4 = cons : java.util.ArrayList.<init>(int) : var3
+var7 = prim : long:1 : 
+var5 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var6 = method : java.util.ArrayList.add(java.lang.Object) : var4 var7
+var2 = method : java.util.ArrayList.contains(java.lang.Object) : var0 var1 
+var8 = method : java.util.ArrayList.add(java.lang.Object) : var4 var2
+END SEQUENCE
