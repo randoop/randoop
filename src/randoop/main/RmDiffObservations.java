@@ -14,35 +14,35 @@ import randoop.util.ReflectionExecutor;
 import utilpag.Option;
 import utilpag.Options;
 
-public class CleanObservations extends CommandHandler {
+public class RmDiffObservations extends CommandHandler {
 
-  private static final String command = "cleanobs";
+  private static final String command = "rm-diff-obs";
   private static final String pitch
-    = "Creates clean observations for a serialized sequence";
-  private static final String commandGrammar = "cleanobs OPTIONS";
+    = "Removes any non-determinstic observations from a serialized sequence";
+  private static final String commandGrammar = "rm-diff-obs OPTIONS";
   private static final String where = null;
   private static final String summary
-    = "Recreates observations for the sequence, thus ensuring that they"
-    + " are created with the correct global state";
+    = "Recreates observations for the sequence, and removes any that "
+    + "don't match";
   private static final String input
     = "Serialized file containing List<ExecutableSequence>";
   private static final String output
-    = "Serialized file with List<ExecutableSequence> with clean observations";
+    = "Serialized file with List<ExecutableSequence> with deterministic obs";
   private static final String example
-    = "java randoop.main.Main cleanobs in-seq-file out-seq-file";
+    = "java randoop.main.Main rm-diff-obs in-seq-file out-seq-file";
   private static final List<String> notes;
   static {
     notes = new ArrayList<String>();
-    notes.add("This command is needed because discarded sequences in the ");
-    notes.add("initial run of Randoop may have changed the global state in a ");
-    notes.add("way that might change the values of the observations");
+    notes.add("This command is needed because observations may cover ");
+    notes.add("values that are not repeateable, such as values that depend");
+    notes.add("on the current date/time");
   }
 
-  private static Options options = new Options (CleanObservations.class,
+  private static Options options = new Options (RmDiffObservations.class,
                                                 GenInputsAbstract.class,
                                                 ReflectionExecutor.class);
 
-  public CleanObservations() {
+  public RmDiffObservations() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output,
         example, options);
   }
@@ -56,7 +56,7 @@ public class CleanObservations extends CommandHandler {
     } catch (Exception e) {
       throw new Error ("error parsing command-line arguments", e);
     }
-    assert nonargs.length == 2 : "should be two arguments to cleanobs "
+    assert nonargs.length == 2 : "should be two arguments to rm-diff-obs "
       + Arrays.toString(nonargs);
 
     String input_file = nonargs[0];

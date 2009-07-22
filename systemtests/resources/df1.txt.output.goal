@@ -14,7 +14,6 @@ var2 =  prim : java.lang.Object:null :
 var3 =  method : java2.util2.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2 
 var4 =  prim : char:20 : 
 var5 =  method : java2.util2.HashMap.containsValue(java.lang.Object) : var0 var4 
-VARS 1
-var4 0 null
+VARS 0
 END DFRESULT
 
