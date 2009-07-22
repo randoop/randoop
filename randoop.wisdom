@@ -1,4 +1,13 @@
 %
+% General Info
+%
+The randoop svn repository is at:  $pag/projects/randoop/REPOS.
+checkout with 
+  svn checkout file:/afs/csail/group/pag/projects/randoop/REPOS randoop
+A HTTP server has not yet been setup (since no one outside of CSAIL needs
+access)
+
+%
 % Randoop command line options
 %
 To remove certain constructors/methods use --omitfilter.  It specifies
