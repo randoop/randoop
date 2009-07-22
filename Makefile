@@ -82,6 +82,7 @@ bin: $(RANDOOP_FILES)
 	mkdir -p bin/randoop/test/resources
 	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
 	cp src/randoop/version.txt bin/randoop/
+	touch bin
 
 # Run all tests.
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen  results
