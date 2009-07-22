@@ -73,12 +73,12 @@ clean:
 	-rm -r bin
 
 # Build Randoop.
-build: bin
+build: bin randoop_agent.jar
 
 bin: $(RANDOOP_FILES)
 	mkdir -p bin
-	@echo javac -classpath $(CLASSPATH) -nowarn -g -d bin ...
-	@javac -classpath $(CLASSPATH) -nowarn -g -d bin $?
+	@echo javac -nowarn -g -d bin ...
+	@javac -nowarn -g -d bin $(RANDOOP_FILES)
 	mkdir -p bin/randoop/test/resources
 	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
 	cp src/randoop/version.txt bin/randoop/
@@ -88,6 +88,13 @@ tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bd
 
 # Runs pure Randoop-related tests.
 randoop-tests: unit randoop1 randoop2 randoop-contracts
+
+# build pre-agent instrumentation jar
+AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
+randoop_agent.jar : $(AGENT_JAVA_FILES) src/randoop/instrument/manifest.txt
+	javac -g -d bin $(AGENT_JAVA_FILES)
+	jar cfm randoop_agent.jar src/randoop/instrument/manifest.txt \
+	  bin/randoop/instrument/Premain.class
 
 jdoc javadoc:
 	mkdir -p jdoc
@@ -250,7 +257,7 @@ arraylist: randoop-df df
 
 # Compiles and coverage-instruments the java_collections subject program.
 prepare:
-	cd systemtests && make prepare-java_collections
+	cd systemtests && make prepare-jc
 
 prepare-ds:
 	cd systemtests && make prepare-simple_ds
@@ -270,7 +277,7 @@ df-ds: $(DYNCOMP) bin
 # Its output is the input to target df.
 randoop-df: bin
 	-rm frontier*
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --usethreads=false \
 	   --use-object-cache \
@@ -283,7 +290,7 @@ randoop-df: bin
 	   --output-covmap=covmap.gz \
 	   --output-cov-witnesses \
 	   --output-branches=systemtests/resources/arraylist.branches_covered.txt
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	   randoop.main.ComputeFrontierBranches \
 	   --input-map=covmap.gz \
 	   --experiment=test \
@@ -308,7 +315,7 @@ df: $(DYNCOMP) bin
 dferr%: $(DYNCOMP) bin
 	-rm -r df-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
-	   randoop.main.DataFlow \
+	   randoop.main.DataFlow --debug_df \
 	   --scratchdir=df-scratch \
 	   --overwrite \
 	   systemtests/resources/$@.txt
@@ -349,7 +356,7 @@ df2:
 #
 # Its input is the output of target df2.
 bdgen: bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	   randoop.main.GenBranchDir \
 	   --many-branches \
 	   --input-df-results=systemtests/resources/df2-output.txt.goal \
@@ -365,7 +372,7 @@ bdgen: bin
 # should successfully generate sequences that cover frontier
 # branches.
 bdgen2: bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	   randoop.main.GenBranchDir \
 	   --many-branches \
 	   --input-df-results=systemtests/resources/bdgen2-input.txt \
@@ -386,7 +393,7 @@ bdgen2: bin
 covtest: bin
 	-rm -r covtest-scratch
 	-rm covtest-scratch/cov/TestClass.java
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	  cov.Instrument \
 	  --destination=covtest-scratch \
 	  --files=systemtests/resources/cov/classlist.txt
@@ -482,11 +489,11 @@ zip:
 # 	rm jrandoop/src/randoop/main/GenInputsNaive.java
 # 	rm jrandoop/src/randoop/main/Run*.java
 # 	rm jrandoop/src/randoop/main/Universal*.java
-	rm jrandoop/src/cov/Instrument.java
-	rm jrandoop/src/cov/TestClass.java
-	rm jrandoop/src/cov/FilesUtil.java
-	rm jrandoop/src/cov/CountCoverage.java
-	rm jrandoop/src/cov/ASTUtil.java
+#	rm jrandoop/src/cov/Instrument.java
+#	rm jrandoop/src/cov/TestClass.java
+#	rm jrandoop/src/cov/FilesUtil.java
+#	rm jrandoop/src/cov/CountCoverage.java
+#	rm jrandoop/src/cov/ASTUtil.java
 # Copy test sources.
 	cp -R tests jrandoop/tests
 	find ./jrandoop/tests -name "CVS" | xargs rm -r
@@ -497,6 +504,9 @@ zip:
 	cp lib/jakarta-oro-2.0.8.jar jrandoop/lib
 	cp lib/jakarta-oro-license.txt jrandoop/lib
 	cp lib/junit-4.3.1.jar jrandoop/lib
+	cp lib/jfreechart-1.0.10.jar jrandoop/lib
+	cp lib/jcommon-1.0.13.jar jrandoop/lib
+	cp lib/*eclipse* jrandoop/lib
 # Copy license.
 	cp license.txt jrandoop/
 # Copy README file
@@ -507,7 +517,8 @@ zip:
 # Make sure everything works.
 	cd jrandoop && \
 	  find src/ tests/ -name "*.java" \
-	  | xargs javac -cp lib/bcel.jar:lib/jakarta-oro-2.0.8.jar:lib/junit-4.3.1.jar
+	  | xargs javac -cp 'lib/*'
+
 # Make randoop.jar.
 	mkdir jrandoop/tmp
 	cp -r jrandoop/src/* jrandoop/tmp
@@ -517,9 +528,14 @@ zip:
 	cd jrandoop/tmp && jar cf randoop.jar *
 	mv jrandoop/tmp/randoop.jar jrandoop/
 	rm -r jrandoop/tmp
+
+# Copy in the instrumentation agent jar file
+	cp randoop_agent.jar jrandoop
+
 # Zip everything up.
 	rm -f randoop.zip
 	zip -r jrandoop jrandoop
+	-rm -r jrandoop
 
 # Creates autogenerated php file with Randoop commands documentation.
 command-help:
@@ -528,3 +544,7 @@ command-help:
 	mv randoop_commands_list.php doc/
 
 .FORCE:
+
+showvars:
+	@echo CLASSPATH = $(CLASSPATH)
+	jwhich SingleMemberAnnotation
