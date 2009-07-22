@@ -83,6 +83,7 @@ public class ExperimentBase {
       }
     }
 
+    // Why??
     if (!this.classDirAbs.startsWith("src"))
       throw new RuntimeException("Property CLASS_DIR must start with \"src\"");
 

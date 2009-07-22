@@ -354,8 +354,10 @@ public class Options {
 
     // Split the args string on whitespace boundaries accounting for quoted
     // strings.
-    args = args.trim();
     List<String> arg_list = new ArrayList<String>();
+    if (args == null)
+      args = "";
+    args = args.trim();
     String arg = "";
     char active_quote = 0;
     for (int ii = 0; ii < args.length(); ii++) {
@@ -699,6 +701,76 @@ public String toString() {
     // Return the result
     return new String[] {short_name, type_name, description};
   }
+
+  /**
+   * Parses a command line and sets the options accordingly.  If an error
+   * occurs, prints the usage and terminates the program.  The program is
+   * terminated rather than throwing an error to create cleaner output.
+   * This method splits the argument string into command line arguments,
+   * respecting single and double quotes, then calls parse_or_usage(String[]).
+   * @return all non-option arguments
+   * @see #parse_or_usage(String[])
+   */
+  public String[] parse_or_usage (String args) {
+
+    String non_options[] = null;
+
+    try {
+      non_options = parse (args);
+    } catch (ArgException ae) {
+      String message = ae.getMessage();
+      if (message != null)
+        System.out.println (message);
+      print_usage ();
+      System.exit (-1);
+      // throw new Error ("usage error: ", ae);
+    }
+    return (non_options);
+  }
+
+
+  /**
+   * Parses a command line and sets the options accordingly.  If an error
+   * occurs, prints the usage and terminates the program.  The program is
+   * terminated rather than throwing an error to create cleaner output.
+   * @return all non-option arguments
+   * @see #parse(String[])
+   */
+  public String[] parse_or_usage (String[] args) {
+
+    String non_options[] = null;
+
+    try {
+      non_options = parse (args);
+    } catch (ArgException ae) {
+      String message = ae.getMessage();
+      if (message != null)
+        System.out.println (message);
+      print_usage ();
+      System.exit (-1);
+      // throw new Error ("usage error: ", ae);
+    }
+    return (non_options);
+  }
+
+  /**
+   * Prints usage information.
+   */
+  public void print_usage (PrintStream ps) {
+    ps.printf ("Usage: %s%n", usage_synopsis);
+    for (String use : usage()) {
+      ps.printf ("  %s%n", use);
+    }
+  }
+
+  /**
+   * Prints, to standard output, usage information.
+   */
+  public void print_usage () {
+    print_usage (System.out);
+  }
+
+
 
   /**
    * Test  class with some defined arguments

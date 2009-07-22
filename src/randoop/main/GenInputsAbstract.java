@@ -33,8 +33,34 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Works only with naive offline. ")
   public static Integer filter_short_dep = null;
 
+  @Option("specifies initialization routine (class.method)")
+  public static String init_routine = null;
+
+  @Option("specifies regex of classes that must be in any regression tests")
+  public static Pattern test_classes = null;
+
+  @Option("File containing observer functions")
+  public static File observers = null;
+
   @Option("Install the given runtime visitor.")
   public static List<String> visitor = new ArrayList<String>();
+
+  @Option("Capture all output to stdout and stderr")
+  public static boolean capture_output = false;
+
+  @Option("Run each test twice and compare the observations")
+  public static boolean compare_observations = false;
+
+  @Option("Create clean observations for a serialized sequence")
+  public static File clean_observations = null;
+
+  @Option("Specify agent command for recursive JVM calls")
+  public static String agent = null;
+
+  // We do this rather than using java -D so that we can easily pass these
+  // to other JVMs
+  @Option("-D Specify system properties to be set (similar to java -Dx=y)")
+  public static List<String> system_props = new ArrayList<String>();
 
   @Invisible
   @Option("Output sequences that do not complete execution.")

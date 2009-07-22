@@ -11,6 +11,7 @@ import java.util.Map;
 
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
+import randoop.main.GenInputsAbstract;
 
 /**
  * Outputs a collection of sequences as Java files, using the JUnit framework, with one method per sequence.
@@ -19,11 +20,11 @@ public class JunitFileWriter {
 
   // The class of the main JUnit suite, and the prefix of the subsuite names.
   private String junitDriverClassName;
-  
+
    // The package name of the main JUnit suite
   private String packageName;
-  
-  // The directory where the JUnit files should be written to. 
+
+  // The directory where the JUnit files should be written to.
   private String dirName;
 
   public static boolean includeParseableString = false;
@@ -47,7 +48,7 @@ public class JunitFileWriter {
       System.out.println("No sequences given to createJunitFiles. No Junit class created.");
       return new ArrayList<File>();
     }
-    
+
     // Create the output directory.
     File dir = getDir();
     if (!dir.exists()) {
@@ -56,11 +57,11 @@ public class JunitFileWriter {
         throw new Error("Unable to create directory: " + dir.getAbsolutePath());
       }
     }
-    
+
     List<File> ret = new ArrayList<File>();
     List<List<ExecutableSequence>> subSuites = CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (sequences), testsPerFile);
     for (int i = 0 ; i < subSuites.size() ; i++) {
-      ret.add(writeSubSuite(subSuites.get(i), i, junitTestsClassName));            
+      ret.add(writeSubSuite(subSuites.get(i), i, junitTestsClassName));
     }
     createdSequencesAndClasses.put(junitTestsClassName, subSuites);
     return ret;
@@ -68,7 +69,7 @@ public class JunitFileWriter {
 
   /** Creates Junit tests for the faults.
    * Output is a set of .java files.
-   * 
+   *
    * the default junit class name is the driver class name + index
    */
   public List<File> createJunitTestFiles(List<ExecutableSequence> sequences) {
@@ -137,10 +138,17 @@ public class JunitFileWriter {
     return indented.toString();
   }
 
-  
+
+  /**
+   * Writes out the main routine of the junit regression tests (the one
+   * that calls each of the individual tests).  If an init routine was
+   * specified, executes that before the individual tests
+   */
   private void writeMain(PrintStream out, String className) {
     out.println("  // Runs all the tests in this file.");
     out.println("  public static void main(String[] args) {");
+    if (GenInputsAbstract.init_routine != null)
+      out.println ("    " + GenInputsAbstract.init_routine + "();");
     out.println("    junit.textui.TestRunner.run(" + className + ".class);");
     out.println("  }");
   }
@@ -160,12 +168,12 @@ public class JunitFileWriter {
   }
   /** Creates Junit tests for the faults.
    * Output is a set of .java files.
-   * 
-   * @param allClasses List of all classes of interest (this is a workaround for emma missing problem: 
+   *
+   * @param allClasses List of all classes of interest (this is a workaround for emma missing problem:
    * we want to compute coverage over all classes, not just those that happened to have been touched during execution.
    * Otherwise, a bad suite can report good coverage.
-   * The trick is to insert code that will load all those classes; 
-   */    
+   * The trick is to insert code that will load all those classes;
+   */
   public File writeDriverFile(List<Class<?>> allClasses, String driverClassName) {
     File file = new File(getDir(), driverClassName + ".java");
     PrintStream out = createTextOutputStream(file);
@@ -177,6 +185,9 @@ public class JunitFileWriter {
       out.println("public class " + driverClassName + " extends TestCase {");
       out.println("");
       out.println("  public static void main(String[] args) {");
+      if (GenInputsAbstract.init_routine != null)
+        out.println ("    " + GenInputsAbstract.init_routine + "();");
+
       out.println("    TestRunner runner = new TestRunner();");
       out.println("    TestResult result = runner.doRun(suite(), false);");
       out.println("    if (! result.wasSuccessful()) {");
@@ -224,7 +235,7 @@ public class JunitFileWriter {
     }
     return dir;
   }
-  
+
   private PrintStream createTextOutputStream(File file) {
     try {
       return new PrintStream(file);

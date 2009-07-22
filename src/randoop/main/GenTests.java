@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,6 +47,7 @@ import randoop.SequenceCollection;
 import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
 import randoop.ToStringReturnsNormally;
+import randoop.Variable;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -57,6 +59,7 @@ import utilpag.Invisible;
 import utilpag.Option;
 import utilpag.Options;
 import utilpag.Options.ArgException;
+import utilpag.UtilMDE;
 import cov.Branch;
 import cov.Coverage;
 
@@ -127,13 +130,60 @@ public class GenTests extends GenInputsAbstract {
         throw new ArgException("Unrecognized arguments: "
             + Arrays.toString(nonargs));
     } catch (ArgException ae) {
-      System.out
-      .println("ERROR while parsing command-line arguments (will exit): "
-          + ae.getMessage());
-      System.exit(-1);
+      usage ("while parsing command-line arguments: %s",
+             ae.getMessage());
     }
 
     Randomness.reset(randomseed);
+
+    java.security.Policy policy = java.security.Policy.getPolicy();
+    System.out.printf ("policy = %s%n", policy);
+
+    if (false) {
+      Class<?> cd = java.util.Date.class;
+      for (Constructor con : cd.getConstructors())
+        System.out.printf ("date constructor = %s%n", con.toString());
+    }
+
+    // If some properties were specified, set them
+    for (String prop : GenInputsAbstract.system_props) {
+      String[] pa = prop.split ("=", 2);
+      if (pa.length != 2)
+        usage ("invalid property definition: %s%n", prop);
+      System.setProperty (pa[0], pa[1]);
+    }
+
+    // If an initializer method was specified, execute it
+    if (GenInputsAbstract.init_routine != null) {
+      String full_name = GenInputsAbstract.init_routine;
+      int lastdot = full_name.lastIndexOf(".");
+      if (lastdot == -1)
+        usage ("invalid init routine: %s\n", full_name);
+      String classname = full_name.substring (0, lastdot);
+      String methodname = full_name.substring (lastdot+1);
+      methodname = methodname.replaceFirst ("[()]*$", "");
+      System.out.printf ("%s - %s\n", classname, methodname);
+      Class<?> iclass = null;
+      try {
+        iclass = Class.forName (classname);
+      } catch (Exception e) {
+        usage ("Can't load init class %s: %s", classname, e.getMessage());
+      }
+      Method imethod = null;
+      try {
+        imethod = iclass.getDeclaredMethod (methodname);
+      } catch (Exception e) {
+        usage ("Can't find init method %s: %s", methodname, e);
+      }
+      if (!Modifier.isStatic (imethod.getModifiers()))
+        usage ("init method %s.%s must be static", classname, methodname);
+      try {
+        imethod.invoke (null);
+      } catch (Exception e) {
+        usage (e, "problem executing init method %s.%s: %s",
+               classname, methodname, e);
+      }
+    }
 
     // Find classes to test.
     if (classlist == null && methodlist == null && testclass.size() == 0) {
@@ -258,6 +308,8 @@ public class GenTests extends GenInputsAbstract {
           components);
     }
 
+    System.out.printf ("Explorer = %s\n", explorer);
+
     // Determine what visitors to install.
     // NOTE that order matters! Regression capture visitor
     // should come after contract-violating visitor.
@@ -377,6 +429,29 @@ public class GenTests extends GenInputsAbstract {
       sequences.add(p);
     }
 
+    // If specified, remove any sequences that don't include the target class
+    // System.out.printf ("test_classes regex = %s%n",
+    //                   GenInputsAbstract.test_classes);
+    if (GenInputsAbstract.test_classes != null) {
+      List<ExecutableSequence> tc_seqs = new ArrayList<ExecutableSequence>();
+      for (ExecutableSequence es : sequences) {
+        boolean keep = false;
+        for (Variable v : es.sequence.getAllVariables()) {
+          if (GenInputsAbstract.test_classes.matcher (v.getType().getName())
+              .matches()) {
+            keep = true;
+            break;
+          }
+        }
+        if (keep)
+          tc_seqs.add (es);
+      }
+      sequences = tc_seqs;
+      System.out.printf ("%n%d sequences include %s%n", sequences.size(),
+                         GenInputsAbstract.test_classes);
+    }
+
+    // Write out junit tests
     JunitFileWriter jfw = new JunitFileWriter(junit_output_dir, junit_package_name, junit_classname, testsperfile);
     List<File> files = jfw.createJunitFiles(sequences);
     System.out.println();
@@ -384,6 +459,86 @@ public class GenTests extends GenInputsAbstract {
       System.out.println("Created file: " + f.getAbsolutePath());
     }
 
+    // Check the sequences to see if any observations mismatch
+    if (GenInputsAbstract.compare_observations) {
+      String outfile = "/tmp/seqs.gz";
+      write_sequences (sequences, outfile);
+      generate_clean_observations (outfile);
+    }
+
+
     return true;
   }
+
+  /** Write out a serialized file of sequences **/
+  public void write_sequences (List<ExecutableSequence> seqs, String outfile) {
+    try {
+      FileOutputStream fileos = new FileOutputStream(outfile);
+      ObjectOutputStream objectos
+        = new ObjectOutputStream(new GZIPOutputStream(fileos));
+      System.out.printf (" Saving %d sequences to %s%n", seqs.size(), outfile);
+      objectos.writeObject(seqs);
+      objectos.close();
+      fileos.close();
+    } catch (Exception e) {
+      throw new Error(e);
+    }
+    System.out.printf ("Finished saving sequences%n");
+  }
+
+  /**
+   * Run Randoop again and generate observations for the sequence.
+   * This ensures that the observations match the state that will be
+   * in the final tests (because the global state used to create the
+   * observations will match that of the final tests)
+   */
+  public void generate_clean_observations (String outfile) {
+
+    List<String> cmd = new ArrayList<String>();
+    cmd.add ("java");
+    cmd.add ("-ea");
+
+    // Add a javaagent option if specified
+    if (GenInputsAbstract.agent != null)
+      cmd.add (GenInputsAbstract.agent);
+
+    // Define any properties
+    for (String prop : GenInputsAbstract.system_props) {
+      cmd.add (String.format ("-D%s", prop));
+    }
+
+    cmd.add ("randoop.main.Main");
+    cmd.add ("cleanobs");
+
+    // Add applicable arguments from this call
+    if (GenInputsAbstract.observers != null) {
+      cmd.add ("--observers=" + GenInputsAbstract.observers.toString());
+    }
+    cmd.add (String.format("--usethreads=%b", ReflectionExecutor.usethreads));
+
+    cmd.add (outfile);
+    cmd.add (outfile);
+    String[] cmd_array = new String[cmd.size()];
+    System.out.printf ("Executing command %s%n", cmd);
+    UtilMDE.run_cmd (cmd.toArray (cmd_array));
+    System.out.printf ("Completed command%n");
+  }
+
+  /** Print out usage error and stack trace and then exit **/
+  void usage (Throwable t, String format, Object... args) {
+
+    System.out.print ("ERROR: ");
+    System.out.printf (format, args);
+    System.out.println();
+    for (String use_str : options.usage())
+      System.out.println (use_str);
+    if (t != null)
+      t.printStackTrace();
+    System.exit(-1);
+  }
+
+  void usage (String format, Object ... args) {
+    usage (null, format, args);
+  }
+
 }

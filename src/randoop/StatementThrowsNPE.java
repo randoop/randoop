@@ -9,19 +9,24 @@ import java.io.Serializable;
 public class StatementThrowsNPE implements ContractViolation, Serializable {
 
  private static final long serialVersionUID = 1L;
- 
+
  private static final StatementThrowsNPE theInstance = new StatementThrowsNPE();
-  
+
   public String toString() {
     return "// throws null pointer exception";
   }
-  
+
   private StatementThrowsNPE() {
     // Empty body.
   }
-  
+
   public static StatementThrowsNPE getInstance() {
     return theInstance;
+  }
+
+  /** The 'value' of this exception is always NPE **/
+  public String get_value() {
+    return "NPE";
   }
 
   /**

@@ -10,8 +10,8 @@ import java.io.Serializable;
 public class StatementThrowsException implements Observation, Serializable {
 
   private static final long serialVersionUID = 1L;
-  
-  private final Class<? extends Throwable> exceptionClass; 
+
+  private final Class<? extends Throwable> exceptionClass;
 
   public StatementThrowsException(Throwable exception) {
     if (exception == null)
@@ -19,12 +19,22 @@ public class StatementThrowsException implements Observation, Serializable {
     this.exceptionClass = exception.getClass();
   }
 
+  public StatementThrowsException (Class exception_class) {
+    this.exceptionClass = exception_class;
+  }
+
   private Object writeReplace() throws ObjectStreamException {
+    System.out.printf ("writeReplace %s in StatementThrowsException%n", this);
     return new SerializableExceptionObservation(exceptionClass);
   }
 
   public String toString() {
     return "// throws exception of type " + exceptionClass.getName() + Globals.lineSep;
+  }
+
+  /** Returns the class of the exception thrown**/
+  public String get_value() {
+    return exceptionClass.getName();
   }
 
   /**

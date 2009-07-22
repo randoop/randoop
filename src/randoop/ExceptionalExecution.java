@@ -3,7 +3,7 @@ package randoop;
 /**
  * Means that the execution of a statement threw an exception.
  */
-public class ExceptionalExecution implements ExecutionOutcome {
+public class ExceptionalExecution extends  ExecutionOutcome {
 
   private final Throwable exception;
   private final long executionTime;

@@ -29,6 +29,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,6 +46,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import randoop.util.StreamRedirectThread;
 
 // The class name "UtilMDE" is very close to the package name "utilMDE".
 /** Utility functions that do not belong elsewhere in the utilMDE package. */
@@ -1514,9 +1517,9 @@ public final class UtilMDE {
    * (for instance, octal/hex escape sequences are not turned into
    * their respective characters). This is the inverse operation of
    * escapeNonJava(). Previously known as unquote().
-   * 
+   *
    * [ Also added support for decoding unicode characters in orig ]
-   * 
+   *
    **/
   public static String unescapeNonJava(String orig) {
     StringBuffer sb = new StringBuffer();
@@ -1696,7 +1699,7 @@ public final class UtilMDE {
       return s.substring(0, length);
     }
   }
-  
+
 
   // Returns a string of the specified length, truncated if necessary,
   // and padded with spaces to the left if necessary.
@@ -1965,6 +1968,94 @@ public final class UtilMDE {
   public static String unqualified_name (Class<?> cls) {
 
     return (unqualified_name (cls.getName()));
+  }
+
+  /**
+   * Runs the specified command and waits for it to finish.  Throws an
+   * Error if the command fails for any reason or returns a non-zero
+   * status.  The parameters are the same as for Runtime.exec() except
+   * that cmd is tokenized with support for quote characters.
+   *
+   * Any output is written to standard out.  No input is provided.
+   */
+  public static void run_cmd (String[] cmd_args, String[] env_arr, File dir) {
+
+    int result = 0;
+    try {
+      Process p = java.lang.Runtime.getRuntime().exec (cmd_args, env_arr, dir);
+      StreamRedirectThread err_thread
+      = new StreamRedirectThread ("stderr", p.getErrorStream(), System.out);
+      StreamRedirectThread out_thread
+      = new StreamRedirectThread ("stdout", p.getInputStream(), System.out);
+      err_thread.start();
+      out_thread.start();
+      result = p.waitFor();
+      err_thread.join();
+      out_thread.join();
+    } catch (Exception e) {
+      throw new Error (String.format ("error running cmd '%s'",
+                                      Arrays.toString(cmd_args)), e);
+    }
+    if (result != 0)
+      throw new Error (String.format ("cmd '%s' returned status %d",
+                                      Arrays.toString(cmd_args), result));
+  }
+
+  /**
+   * Runs the specified command and waits for it to finish.  Throws an
+   * Error if the command fails for any reason.  Returns the status
+   * of the command.
+   *
+   * Any output is written to standard out.  No input is provided.
+   */
+  public static void run_cmd (String[] cmd) {
+    run_cmd (cmd, null, null);
+  }
+
+  /**
+   * Runs the specified command and waits for it to finish.  Throws an
+   * Error if the command fails for any reason or returns a non-zero
+   * status.  The parameters are the same as for Runtime.exec() except
+   * that cmd is tokenized with support for quote characters.
+   *
+   * Any output is written to standard out.  No input is provided.
+   */
+  public static void run_cmd (String cmd, String[] env_arr, File dir) {
+
+    if (false) {
+      for (int ii = 0; ii < 10; ii++) {
+        System.out.printf ("character '%c' has int %d%n",
+                           cmd.charAt (ii), (int)(cmd.charAt (ii)));
+      }
+    }
+
+    // Translate the input string into arguments with support for quotes
+    List<String> args = new ArrayList<String>();
+    StrTok stok = new StrTok(cmd);
+    // stok.stok.wordChars ('-', '-');
+    stok.quoteChar ('\'');
+    stok.quoteChar ('"');
+    for (String tok = stok.nextToken(); tok != null; tok = stok.nextToken()) {
+      if (tok.startsWith ("'") || tok.startsWith ("\"")) {
+        args.add (tok.substring (1, tok.length()-1));
+      } else {
+        args.add (tok);
+      }
+    }
+
+    String[] arg_array = new String[args.size()];
+    run_cmd (args.toArray(arg_array), env_arr, dir);
+  }
+
+  /**
+   * Runs the specified command and waits for it to finish.  Throws an
+   * Error if the command fails for any reason.  Returns the status
+   * of the command.
+   *
+   * Any output is written to standard out.  No input is provided.
+   */
+  public static void run_cmd (String cmd) {
+    run_cmd (cmd, null, null);
   }
 
 }

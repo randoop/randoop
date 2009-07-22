@@ -143,7 +143,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
 
   public boolean canUse(Constructor<?> c) {
 
-    if (matchesOmitMethodPattern(c.getName())) {
+    if (matchesOmitMethodPattern(c.toString())) {
       System.out.println("Will not use: " + c.toString());
       return false;
     }
@@ -158,6 +158,8 @@ public class DefaultReflectionFilter implements ReflectionFilter {
   }
 
   private boolean matchesOmitMethodPattern(String name) {
+    // System.out.printf ("Comparing '%s' against pattern '%s' = %b%n", name,
+    //                   omitmethods, omitmethods.matcher(name).find());
     return omitmethods != null && omitmethods.matcher(name).find();
   }
 

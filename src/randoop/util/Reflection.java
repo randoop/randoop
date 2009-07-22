@@ -38,7 +38,7 @@ public final class Reflection {
    */
   public static enum Match { EXACT_TYPE, COMPATIBLE_TYPE }
 
-  static Map<String, Member> cached_deserializeMethodOrCtor = 
+  static Map<String, Member> cached_deserializeMethodOrCtor =
     new LinkedHashMap<String, Member>();
 
   private Reflection(){
@@ -49,10 +49,10 @@ public final class Reflection {
    * Returns the set of classes that appear, recursively, in the interface of
    * the given class, to a given depth. For example, if class C1 declares
    * only method foo(C2)/C3,  and class C2 declares method bar(C4)/C5, then:
-   * 
+   *
    * We say that C1, C2 and C3 are related to C1 at depth >= 0.
    * We say that C4 and C5 are related to C1 at depth >= 1.
-   * 
+   *
    * We say that a class C2 appears in the interface of C iff:
    * (1) C2 is C
    * (2) C2 is a return value of some method in C.getMethods()
@@ -171,7 +171,7 @@ public final class Reflection {
        throw new Error("when calling Class.forName(String) method on `"
            + classname + "'"
            + (classname.equals(classname) ? "" : " (specified to Randoop as `" +classname+ "')")
-           + " the following exception occurred: " + e);
+                       + " the following exception occurred: ", e);
      }
    }
 
@@ -309,7 +309,7 @@ public final class Reflection {
     * Checks whether the inputs can be used as arguments for the specified parameter types.
     * This method considers "null" as always being a valid argument.
     * errMsgContext is uninterpreted - just printed in error messages
-    * Returns null if inputs are OK wrt paramTypes. Returns error message otherwise. 
+    * Returns null if inputs are OK wrt paramTypes. Returns error message otherwise.
     */
    public static String checkArgumentTypes(Object[] inputs, Class<?>[] paramTypes, Object errMsgContext){
      if (inputs.length != paramTypes.length)
@@ -320,7 +320,7 @@ public final class Reflection {
        Class<?> pType = paramTypes[i];
        if (! canBePassedAsArgument(input, pType))
          return "Invalid type of argument at pos " + i + " for:" + errMsgContext + " expected:" + pType + " was:"
-         + (input == null ? "n/a(input was null)" : input.getClass());                
+         + (input == null ? "n/a(input was null)" : input.getClass());
      }
      return null;
    }
@@ -332,10 +332,10 @@ public final class Reflection {
      if (parameterType == null || parameterType.equals(Void.TYPE))
        throw new IllegalStateException("Illegal type of parameter " + parameterType);
      if (inputObject == null){
-       return true;                
+       return true;
      } else if (! Reflection.canBeUsedAs(inputObject.getClass(), parameterType)) {
        return false;
-     } else 
+     } else
        return true;
    }
 
@@ -344,7 +344,7 @@ public final class Reflection {
     */
    public static List<Class<?>> loadClassesFromStream(InputStream in) {
      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-     return loadClassesFromReader(reader);   
+     return loadClassesFromReader(reader);
    }
 
    /** Blank lines and lines starting with "#" are ignored.
@@ -403,7 +403,7 @@ public final class Reflection {
     */
    public static List<Member> loadMethodsAndCtorsFromStream(InputStream in) {
      BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-     return loadMethodsAndCtorsFromReader(reader);   
+     return loadMethodsAndCtorsFromReader(reader);
    }
 
    /** Blank lines and lines starting with "#" are ignored.
@@ -485,8 +485,8 @@ public final class Reflection {
    }
 
    /**
-    * 
-    * @param classListing 
+    *
+    * @param classListing
     * @param filter can be null.
     * @return
     */
@@ -521,7 +521,7 @@ public final class Reflection {
    /**
     * To deserialize a list serialized with this method, use the
     * method deserializeClassList.
-    * @throws IOException 
+    * @throws IOException
     */
    public static ArrayList<String> getNamesForClasses(ArrayList<Class<?>> cl) {
      if (cl == null) throw new IllegalArgumentException("cl should not be null.");
@@ -553,7 +553,7 @@ public final class Reflection {
    public static String getSignature(Constructor<?> c) {
      StringBuilder sb = new StringBuilder();
      sb.append(c.getName() + ".<init>(");
-     Class<?>[] params = c.getParameterTypes(); 
+     Class<?>[] params = c.getParameterTypes();
      for (int j = 0; j < params.length; j++) {
        sb.append(params[j].getName());
        if (j < (params.length - 1))
@@ -635,7 +635,7 @@ public final class Reflection {
    }
 
    public static String throwPointToString(StackTraceElement throwPoint) {
-     if (throwPoint == null) 
+     if (throwPoint == null)
        throw new IllegalArgumentException("throwPoint cannot be null.");
      StringBuilder b = new StringBuilder();
      b.append(throwPoint.getClassName());
@@ -655,7 +655,7 @@ public final class Reflection {
      return new StackTraceElement(split[0], split[1], split[2], Integer.parseInt(split[3]));
    }
 
-   
+
    /**
     * Returns a name that can be used in Java source for the given class.
     */
@@ -679,4 +679,3 @@ public final class Reflection {
      return retval;
    }
 }
-

@@ -11,6 +11,12 @@ import utilpag.UtilMDE;
  */
 public class ProgressDisplay extends Thread {
 
+  /**
+   * Lock so that unfortunate interleaving of this printing can be
+   * avoided
+   */
+  public static Object print_synchro = new Object();
+
   private static int progresswidth = 170;
 
   private static int exit_if_no_new_sequences_after_mseconds = 10000;
@@ -154,8 +160,11 @@ public class ProgressDisplay extends Thread {
     if (progressIntervalMillis == -1)
       return;
     String status = message;
-    System.out.print((this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + status);
-    System.out.flush();
+    synchronized (print_synchro) {
+      System.out.print((this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r"
+                        : Globals.lineSep) + status);
+      System.out.flush();
+    }
     // System.out.println (status);
 
 //  if (Log.loggingOn) {

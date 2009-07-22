@@ -28,6 +28,7 @@ public class Main {
     invisibleHandlers.add(new GenHTMLDoc());
     invisibleHandlers.add(new CovUtils());
     invisibleHandlers.add(new ExecuteSequence());
+    invisibleHandlers.add(new CleanObservations());
   }
 
   // The main method simply calls nonStaticMain.
