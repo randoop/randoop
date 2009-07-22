@@ -25,7 +25,7 @@ public class ExpressionEqFalse implements ContractViolation {
 
     // The runtime value of the expression.
     public Object value;
-    
+
     public String toString() {
       StringBuilder b = new StringBuilder();
       b.append("ContractViolation:eq-false-");
@@ -51,6 +51,10 @@ public class ExpressionEqFalse implements ContractViolation {
       this.value = value;
     }
 
+    /** Return the value of the expression as a string **/
+    public String get_value() {
+      return value.toString();
+    }
 
     private Object writeReplace() throws ObjectStreamException {
       throw new RuntimeException("Not implemented.");
@@ -97,5 +101,5 @@ public class ExpressionEqFalse implements ContractViolation {
       return vars.toString();
     }
 
- 
+
 }

@@ -5,8 +5,24 @@ package randoop;
  * the value created by the statement, or the exception thrown. See implementors
  * for the possible outcomes.
  */
-public interface ExecutionOutcome {
+public abstract class ExecutionOutcome {
+
+  String output = null;
+
+  public ExecutionOutcome() {
+  }
 
   /** How long the associated statement took to execute. */
-  public long getExecutionTime();
+  public abstract long getExecutionTime();
+
+  /** Set the output of the statement **/
+  public void set_output (String output) {
+    this.output = output;
+  }
+
+  /** Retrieve the output of the statement **/
+  public String get_output () {
+    return output;
+  }
+
 }

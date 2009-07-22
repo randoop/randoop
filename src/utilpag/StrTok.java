@@ -1,8 +1,7 @@
 package utilpag;
 
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
+import java.util.*;
+import java.io.*;
 
 /**
  * Provides a somewhat simpler interface for tokenizing strings than
@@ -16,13 +15,13 @@ import java.io.StringReader;
  * from words and numbers).
  *
  * Other differences are: <ul>
- *  <Li> Automatic setup for tokenizing strings
+ *  <li> Automatic setup for tokenizing strings
  *  <li> Underscores are included in identifiers (words)
  *  <li> I/O errors (which should be impossible when tokenizing strings) are
  *       converted to RuntimeExceptions so that every call doesn't have to
  *       be included in a try block
  *  <li> Convenience functions isWord(), isQString(), and need()
- *  <li> String tokens are interned for easier comparisons.
+ *  <li> Returned string tokens are interned for easier comparisons.
  * </ul>
  */
 public class StrTok {
@@ -38,19 +37,30 @@ public class StrTok {
 
     reader = new StringReader (s);
     stok = new StreamTokenizer (reader);
-    stok.wordChars ('_', '_');
+    // stok.wordChars ('_', '_');
+    stok.wordChars ('-', '-');
+
   }
 
   /**
-   * Default Class<?> for error handling.  Throws a RuntimeException when an
+   * Creates a tokenizer for the specified string with the specified
+   * error handler
+   */
+  public StrTok (String s, Error e) {
+    this(s);
+    set_error_handler (e);
+  }
+
+  /**
+   * Default Class for error handling.  Throws a RuntimeException when an
    * error occurs.
    *
-   * @see StrTok#set_error_handler(StrTok.Error)
+   * @see #set_error_handler(Error)
    */
   public static class Error {
 
     /**
-     * Called when an unexpected token is found (see {@link #need(String)})
+     * Called when an unexpected token is found (see {@link #need(String)}).
      */
     public void tok_error (String s) {
       throw new RuntimeException ("StrTok error: " + s);
@@ -62,7 +72,7 @@ public class StrTok {
    * returns an empty string.  Delimiters are returned as one character
    * strings.  Quoted strings and words are returned as strings.
    */
-  public String nextToken() {
+  public /*@Nullable*/ /*@Interned*/ String nextToken() {
 
     // Get the next token.  Turn IO exceptions into runtime exceptions
     // so that callers don't have to catch them.
@@ -70,17 +80,24 @@ public class StrTok {
     try {
       ttype = stok.nextToken();
     } catch (Exception e) {
-      throw new RuntimeException ("StreamTokenizer exception: " + e);
+      throw new RuntimeException ("StreamTokenizer exception: ", e);
     }
 
     return (token());
   }
 
   /**
+   * Causes the next call to nextToken() to return the current token
+   */
+  public void pushBack() {
+    stok.pushBack();
+  }
+
+  /**
    * Returns the current token.
    * @see #nextToken()
    */
-  public String token() {
+  public /*@Nullable*/ /*@Interned*/ String token() {
 
     int ttype = stok.ttype;
 
@@ -167,7 +184,21 @@ public class StrTok {
     if (tok.equals(t))
       return;
 
-    err.tok_error (Fmt.spf ("Token %s found where %s expected", t, tok));
+    err.tok_error (String.format ("Token %s found where %s expected", t, tok));
   }
+
+  /**
+   * Reads the next token and checks to make sure that it is a word (id).
+   * If it is not a word, calls the error handling routine.  If it is,
+   * returns the string of the word
+   */
+  public String need_word() {
+    String t = nextToken();
+    if (!isWord()) {
+      err.tok_error (String.format ("'%s' found where identifier expected", t));
+    }
+    return t;
+  }
+
 
 }

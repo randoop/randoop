@@ -48,6 +48,7 @@ public final class RMethod implements StatementKind, Serializable {
   private boolean isStaticComputed = false;
   private boolean isStaticCached = false;
 
+  /** Version that doesn't include a Method **/
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableRMethod(method);
   }
@@ -316,4 +317,6 @@ public final class RMethod implements StatementKind, Serializable {
   public static StatementKind parse(String s) {
     return RMethod.getRMethod(Reflection.getMethodForSignature(s));
   }
+
+
 }

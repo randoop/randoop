@@ -13,8 +13,9 @@ public class SerializableExceptionObservation implements Serializable {
     this.exceptionClass = exceptionClass.getName();
   }
 
-  private Object writeReplace() throws ObjectStreamException {
-    return Reflection.classForName(exceptionClass);
+  private Object readResolve() throws ObjectStreamException {
+    Class<?> c = Reflection.classForName(exceptionClass);
+    return new StatementThrowsException (c);
   }
 
 }

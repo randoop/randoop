@@ -10,4 +10,7 @@ public interface Observation {
   String toCodeStringPreStatement();
 
   String toCodeStringPostStatement();
+
+  /** Returns the fixed value that is tested for in the observation **/
+  String get_value();
 }

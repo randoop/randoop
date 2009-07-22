@@ -31,6 +31,9 @@ public abstract class AbstractGenerator {
   @Invisible
   @Option("When branch coverage fails to increase for the given number of seconds (>0), stop generation.")
   public static int stop_when_plateau = -1;
+  @Option ("Dump each seqeunce to the log file")
+  public static boolean dump_sequences = false;
+
   private final Timer timer = new Timer();
   protected final long timeMillis;
   protected final int maxSequences;
@@ -91,8 +94,9 @@ public abstract class AbstractGenerator {
   public abstract long numSequences();
 
   /**
-   * Creates and executes new sequences in a loop, using the sequences in s. New sequences
-   * are themselves added to s. Stops when timer says it's testtime to stop.
+   * Creates and executes new sequences in a loop, using the sequences
+   * in s. New sequences are themselves added to s. Stops when timer
+   * says it's testtime to stop.
    */
   public void explore() {
 
@@ -107,6 +111,8 @@ public abstract class AbstractGenerator {
         Coverage.clearCoverage(covClasses);
 
         ExecutableSequence eSeq = step();
+        if (dump_sequences)
+          System.out.printf ("seq before run: %s%n", eSeq);
 
         Set<Branch> cov = new LinkedHashSet<Branch>();
         for (CoverageAtom ca : Coverage.getCoveredAtoms(covClasses)) {
@@ -139,6 +145,12 @@ public abstract class AbstractGenerator {
         }
 
         stats.updateStatistics(eSeq, cov, fa);
+
+        if (dump_sequences) {
+          System.out.printf ("Sequence after execution:%n%s%n",
+                             eSeq.toString());
+          System.out.printf ("allSequences.size() = %d%n", numSequences());
+        }
 
         if (Log.isLoggingOn()) {
           Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());

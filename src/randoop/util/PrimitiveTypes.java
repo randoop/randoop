@@ -10,7 +10,7 @@ public final class PrimitiveTypes {
     //no instances
   }
 
-  private static final Map<String, Class<?>> typeNameToBoxed= new LinkedHashMap<String, Class<?>>(); 
+  private static final Map<String, Class<?>> typeNameToBoxed= new LinkedHashMap<String, Class<?>>();
   static {
     typeNameToBoxed.put("int",     Integer.class);
     typeNameToBoxed.put("boolean", Boolean.class);
@@ -23,7 +23,7 @@ public final class PrimitiveTypes {
     typeNameToBoxed.put(String.class.getName(), String.class);
   }
 
-  private static final Map<Class<?>, Class<?>> boxedToPrimitiveAndString= new LinkedHashMap<Class<?>, Class<?>>(); 
+  private static final Map<Class<?>, Class<?>> boxedToPrimitiveAndString= new LinkedHashMap<Class<?>, Class<?>>();
   static {
     boxedToPrimitiveAndString.put(Integer.class,   int.class);
     boxedToPrimitiveAndString.put(Boolean.class,   boolean.class);
@@ -36,7 +36,7 @@ public final class PrimitiveTypes {
     boxedToPrimitiveAndString.put(String.class, String.class);
   }
 
-  private static final Map<Class<?>, Class<?>> primitiveAndStringToBoxed 
+  private static final Map<Class<?>, Class<?>> primitiveAndStringToBoxed
   = new LinkedHashMap<Class<?>, Class<?>>(8);
 
   static {
@@ -51,7 +51,7 @@ public final class PrimitiveTypes {
     primitiveAndStringToBoxed.put(String.class, String.class); // TODO remove this hack!
   }
 
-  protected static final Map<String, Class<?>> typeNameToPrimitiveOrString= new LinkedHashMap<String, Class<?>>(); 
+  protected static final Map<String, Class<?>> typeNameToPrimitiveOrString= new LinkedHashMap<String, Class<?>>();
   static {
     typeNameToPrimitiveOrString.put("void", void.class);
     typeNameToPrimitiveOrString.put("int",     int.class);
@@ -102,9 +102,9 @@ public final class PrimitiveTypes {
 
   public static Map<Class<?>,Boolean> isPrimitiveCached =
     new LinkedHashMap<Class<?>, Boolean>();
-  
+
   /**
-   * Same as c.isPrimitive() but faster if this test is done very 
+   * Same as c.isPrimitive() but faster if this test is done very
    * frequently (as it is in Randoop).
    */
   public static boolean isPrimitive(Class<?> c) {
@@ -116,9 +116,9 @@ public final class PrimitiveTypes {
       isPrimitiveCached.put(c, b);
     }
     return b;
-    
+
   }
-  
+
   public static boolean isBoxedOrPrimitiveOrStringType(Class<?> c) {
     if (isPrimitive(c))
       return true;
@@ -137,12 +137,12 @@ public final class PrimitiveTypes {
   /**
    * Given a primitive, boxed primitive, or String, returns a String that can
    * be uesd in Java source to represent it.
-   * 
+   *
    * @param the value to create a String representation for.
    * The value's type must be a primitive type, a String, or null.
    */
   public static String toCodeString(Object value) {
-    
+
     if (value == null) {
       return "null";
     }
@@ -155,7 +155,7 @@ public final class PrimitiveTypes {
       if (value.equals(' '))
         return "' '";
       return "\'" + StringEscapeUtils.escapeJava(value.toString()) + "\'";
-      
+
     } else if (double.class.equals(valueClass)) {
       Double d = (Double) value;
       String rep = null;
@@ -173,7 +173,7 @@ public final class PrimitiveTypes {
       if (rep.charAt(0) == '-')
         rep = "(" + rep + ")";
       return rep;
-      
+
     } else if (float.class.equals(valueClass)) {
       Float d = (Float) value;
       String rep = null;
@@ -191,27 +191,27 @@ public final class PrimitiveTypes {
       if (rep.charAt(0) == '-')
         rep = "(" + rep + ")";
       return rep;
-      
+
     } else if (boolean.class.equals(valueClass)) {
-      
+
       // true and false are explicit enough; don't need cast.
       return value.toString();
-      
+
     } else if (long.class.equals(valueClass)) {
-      
+
       String rep =value.toString() + "L";
       if (rep.charAt(0) == '-')
         rep = "(" + rep + ")";
       return rep;
-      
+
     } else if (byte.class.equals(valueClass)) {
-      
+
       String rep =  value.toString();
       if (rep.charAt(0) == '-')
         rep = "(" + rep + ")";
       rep = "(byte)" + rep;
       return rep;
-      
+
     } else if (short.class.equals(valueClass)) {
 
       String rep =  value.toString();
@@ -221,8 +221,8 @@ public final class PrimitiveTypes {
       return rep;
 
     } else {
-      assert int.class.equals(valueClass);
-      
+      assert int.class.equals(valueClass) : valueClass;
+
       // We don't need to cast an int.
       String rep =  value.toString();
       if (rep.charAt(0) == '-')

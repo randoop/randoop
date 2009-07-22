@@ -16,7 +16,7 @@ package randoop;
  * an ExecutionVisitor and you invoke getRuntimeVariable()), you'll get the state
  * in whatever state it is at that point in the execution.
  */
-public class NormalExecution implements ExecutionOutcome {
+public class NormalExecution extends ExecutionOutcome {
 
   private final Object result;
   private final long executionTime;

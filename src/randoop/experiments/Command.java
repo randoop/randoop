@@ -18,13 +18,16 @@ import randoop.Globals;
  * executes its argument and pipes both stdout and stderr to System.out. Each
  * line in the piped output from stdout is prefixed with "OUT>" and the output
  * from stderr is prefixed with "ERR>"
- * 
+ *
  * <p>
  * Credit: Producer code modified (and augmented) from Michael Daconta's "Java
  * Traps" column ("When Runtime.exec() won't"), found at
  * http://www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html
  */
 public class Command {
+
+  /** If true, commands will be printed, but not executed **/
+  public static boolean no_execute = false;
 
   public static void runCommand(String[] command, String prompt,
       boolean verbose, String nonVerboseMessage, boolean gobbleChars) {
@@ -72,7 +75,7 @@ public class Command {
    * Helper class for Command. A StreamGobbler thread is Responsible for
    * redirecting an InputStream, prefixing its redirected output with a
    * user-specified String (see construtors for more details).
-   * 
+   *
    */
   public static class StreamGobbler extends Thread {
     InputStream is;
@@ -153,7 +156,7 @@ public class Command {
   /**
    * Runs cmd, redirecting stdout and stderr to `out' and prefixing the output
    * from stout with "OUT>" and the output from stderr with "ERR>".
-   * 
+   *
    * Returns whatever exit number is returned by the subprocess invoking the
    * command.
    */
@@ -247,6 +250,15 @@ public class Command {
 
     if (killAfterMillisPassed < 0) {
       throw new IllegalArgumentException("killAfterMillis must be >= 0.");
+    }
+
+    // If no_execute is set, just print the commands rather than executing them
+    if (no_execute) {
+      System.out.printf ("Not executing command: ");
+      for (String c : cmd)
+        System.out.printf ("%s ", c);
+      System.out.printf ("%n");
+      return 0;
     }
 
     DestroyableProcessThread thread = new DestroyableProcessThread(cmd, out, err, prompt, gobbleChars, workingDir);

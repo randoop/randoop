@@ -6,10 +6,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.io.*;
 
 import randoop.Sequence.RelativeNegativeIndex;
 import randoop.util.ArrayListSimpleList;
+import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
+import randoop.main.GenInputsAbstract;
 
 /**
  * An ExecutableSequence adds two functionalities to a Sequence:
@@ -85,18 +88,23 @@ public class ExecutableSequence implements Serializable {
   // Transient because it can contain arbitrary objects that may not be
   // serializable.
   protected transient /*final*/ Execution executionResults;
-  
+
   // How long it took to generate this sequence in nanoseconds,
   // excluding execution time.
   // Must be directly set by the generator that creates this object
   // (no code in this class sets its value).
   public long gentime = -1;
-  
+
   // How long it took to execute this sequence in nanoseconds,
   // excluding generation time.
   // Must be directly set by the generator that creates this object.
   // (no code in this class sets its value).
   public long exectime = -1;
+
+  /** Output buffer used to capture the output from the executed sequence**/
+  private static ByteArrayOutputStream output_buffer
+    = new ByteArrayOutputStream (1024);
+  private static PrintStream ps_output_buffer = new PrintStream (output_buffer);
 
   // Re-initialize executionResults list.
   private void readObject(ObjectInputStream s) throws IOException,
@@ -174,6 +182,7 @@ public class ExecutableSequence implements Serializable {
       if (executionResults.size() > i)
         b.append(executionResults.get(i).toString());
       for (Observation d : getObservations(i)) {
+        b.append (Globals.lineSep);
         b.append(d.toString());
       }
       b.append(Globals.lineSep);
@@ -253,8 +262,18 @@ public class ExecutableSequence implements Serializable {
       if (visitor != null)
         visitor.visitAfter(this, i);
 
-      if (executionResults.get(i) instanceof ExceptionalExecution)
+      if (executionResults.get(i) instanceof ExceptionalExecution) {
+        // Debug print generated exceptions
+        if (false) {
+          ExceptionalExecution ee
+            = (ExceptionalExecution) executionResults.get(i);
+          Throwable t = ee.getException();
+          System.out.printf ("Exception %s from stateent %s%n", t,
+                             sequence.getStatementKind(i));
+          t.printStackTrace();
+        }
         break;
+      }
 
       if (hasObservation(i, ContractViolation.class))
         break;
@@ -299,9 +318,28 @@ public class ExecutableSequence implements Serializable {
   protected static void executeStatement(Sequence s, List<ExecutionOutcome> outcome,
       int index, Object[] inputVariables) {
     StatementKind statement = s.getStatementKind(index);
-    ExecutionOutcome r = statement.execute(inputVariables, Globals.blackHole);
-    assert r != null;
-    outcome.set(index, r);
+
+    // Capture any output  Syncronize with ProgressDisplay so that
+    // we don't capture its output as well.
+    synchronized (ProgressDisplay.print_synchro) {
+      PrintStream orig_out = System.out;
+      PrintStream orig_err = System.err;
+      if (GenInputsAbstract.capture_output) {
+        System.out.flush();
+        System.err.flush();
+        System.setOut (ps_output_buffer);
+        System.setErr (ps_output_buffer);
+      }
+      ExecutionOutcome r = statement.execute(inputVariables, Globals.blackHole);
+      assert r != null;
+      if (GenInputsAbstract.capture_output) {
+        System.setOut (orig_out);
+        System.setErr (orig_err);
+        r.set_output (output_buffer.toString());
+        output_buffer.reset();
+      }
+      outcome.set(index, r);
+    }
   }
 
   /**
@@ -325,7 +363,7 @@ public class ExecutableSequence implements Serializable {
     }
     return ret;
   }
-  
+
   /**
    * @return the number of elements in the sequence that were executed before
    * an execution result of type randoop.NotExecuted.
@@ -579,13 +617,55 @@ public class ExecutableSequence implements Serializable {
     return true;
   }
 
+  /**
+   * Compares the results of the observations of two sequences
+   */
+  public void compare_observations (ExecutableSequence es) {
+
+    int cnt = 0;
+
+    for (int ii = 0; ii < observations.size(); ii++) {
+      List<Observation> obs1 = observations.get(ii);
+      List<Observation> obs2 = es.observations.get(ii);
+      // System.out.printf ("observations 1/%d = %s%n", ii, obs1);
+      // System.out.printf ("observations 2/%d = %s%n", ii, obs2);
+      if (obs1.size() != obs2.size()) {
+        System.out.printf ("obs size mismatch %d - %d\n", obs1.size(),
+                           obs2.size());
+        System.out.printf ("Sequence1: %n%s%n", this);
+        System.out.printf ("Sequence2: %n%s%n", es);
+        System.out.printf ("obs1: %s%n", obs1);
+        System.out.printf ("obs2: %s%n", obs2);
+        assert false;
+      }
+      for (int jj = 0; jj < obs1.size(); jj++) {
+        Observation ob1 = obs1.get(jj);
+        Observation ob2 = obs2.get(jj);
+        if (!ob1.get_value().equals (ob2.get_value())) {
+          cnt++;
+          System.out.printf ("observation mismatch in sequence%n%s%n", es);
+          System.out.printf ("Line %d, obs %d%n", ii, jj);
+          System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
+          assert false;
+        }
+      }
+    }
+
+    if (cnt > 0) {
+      Throwable t = new Throwable();
+      t.printStackTrace();
+      System.out.printf ("%n%d modified observations%n", cnt);
+    }
+
+  }
+
   public String toDotString() {
     StringBuilder b = new StringBuilder();
 
     b.append("digraph G {\n");
-    
+
     for (int i = 0 ; i < sequence.size() ; i++) {
-      b.append("s" + i + " [color=" + getColor(i) + ",style=filled];\n"); 
+      b.append("s" + i + " [color=" + getColor(i) + ",style=filled];\n");
     }
 
     for (int i = 0; i < sequence.size() ; i++) {
@@ -596,7 +676,7 @@ public class ExecutableSequence implements Serializable {
       }
       if (inputs.isEmpty()) {
         continue;
-      } 
+      }
       for (Variable input : inputs) {
         if (sequence.getStatementKind(input.getDeclIndex())
             instanceof PrimitiveOrStringOrNullDecl) {
