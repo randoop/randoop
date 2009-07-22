@@ -1,0 +1,25 @@
+%
+% Randoop command line options
+%
+To remove certain constructors/methods use --omitfilter.  It specifies
+a pattern that must match java.reflection.Method.toString() of the
+constructor/method.  The implementation is in 
+randoop.util.DefaultReflectionFilter
+
+To create an object for randoop using particular code, create a helper
+class that constructs it the way you want and then add that class to
+the list of classes to explore.
+
+Most command line options are specified in GenInputsAbstract.java
+
+%
+% Where things are implemented
+%
+output capture is implemented in ExecutableSequence.executeStatement.
+This is accomplished by changing stdout and stderr to a memory
+based printsteam and recording the results.
+
+comparing observations to see if they return consistent results is
+implementedin ExecutableSequence.compare_observations()
+
+
