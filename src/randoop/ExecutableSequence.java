@@ -618,9 +618,11 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-   * Compares the results of the observations of two sequences
+   * Compares the results of the observations of two sequences.  Returns the
+   * number of different observations.  Prints any differences to stdout if
+   * print_diffs is true.
    */
-  public void compare_observations (ExecutableSequence es) {
+  public int compare_observations (ExecutableSequence es, boolean print_diffs){
 
     int cnt = 0;
 
@@ -643,19 +645,16 @@ public class ExecutableSequence implements Serializable {
         Observation ob2 = obs2.get(jj);
         if (!ob1.get_value().equals (ob2.get_value())) {
           cnt++;
-          System.out.printf ("observation mismatch in sequence%n%s%n", es);
-          System.out.printf ("Line %d, obs %d%n", ii, jj);
-          System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
-          assert false;
+          if (print_diffs) {
+            System.out.printf ("observation mismatch in sequence%n%s%n", es);
+            System.out.printf ("Line %d, obs %d%n", ii, jj);
+            System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
+          }
         }
       }
     }
 
-    if (cnt > 0) {
-      Throwable t = new Throwable();
-      t.printStackTrace();
-      System.out.printf ("%n%d modified observations%n", cnt);
-    }
+    return cnt;
 
   }
 

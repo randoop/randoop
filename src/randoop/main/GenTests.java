@@ -451,6 +451,29 @@ public class GenTests extends GenInputsAbstract {
                          GenInputsAbstract.test_classes);
     }
 
+
+    // Generate observations from the exact sequences to be run in the
+    // tests.  These observations may differ from the original observations
+    // because of changes to the global state.
+    File tmpfile = null;
+    if (GenInputsAbstract.compare_observations) {
+      try {
+        tmpfile = File.createTempFile ("seqs", "gz");
+      } catch (Exception e) {
+        throw new Error ("can't create temp file", e);
+      }
+      write_sequences (sequences, tmpfile.getPath());
+      generate_clean_observations (tmpfile.getPath());
+    }
+
+    // Run the tests a second time, looking for any different observations
+    // This removes any observations whose values are not deterministic
+    // (such as values dependent on the current date/time)
+    if (GenInputsAbstract.compare_observations) {
+      remove_diff_observations (tmpfile.getPath());
+      sequences = read_sequences (tmpfile.getPath());
+    }
+
     // Write out junit tests
     JunitFileWriter jfw = new JunitFileWriter(junit_output_dir, junit_package_name, junit_classname, testsperfile);
     List<File> files = jfw.createJunitFiles(sequences);
@@ -459,19 +482,31 @@ public class GenTests extends GenInputsAbstract {
       System.out.println("Created file: " + f.getAbsolutePath());
     }
 
-    // Check the sequences to see if any observations mismatch
-    if (GenInputsAbstract.compare_observations) {
-      String outfile = "/tmp/seqs.gz";
-      write_sequences (sequences, outfile);
-      generate_clean_observations (outfile);
-    }
-
-
     return true;
   }
 
+  /** Read a list of sequences from a serialized file **/
+  public static List<ExecutableSequence> read_sequences (String filename) {
+
+    // Read the list of sequences from the serialized file
+    List<ExecutableSequence> seqs = null;
+    try {
+      FileInputStream fileis = new FileInputStream(filename);
+      ObjectInputStream objectis
+        = new ObjectInputStream(new GZIPInputStream(fileis));
+      seqs = (List<ExecutableSequence>) objectis.readObject();
+      objectis.close();
+      fileis.close();
+    } catch (Exception e) {
+        throw new Error(e);
+    }
+
+    return seqs;
+  }
+
   /** Write out a serialized file of sequences **/
-  public void write_sequences (List<ExecutableSequence> seqs, String outfile) {
+  public static void write_sequences (List<ExecutableSequence> seqs,
+                                      String outfile) {
     try {
       FileOutputStream fileos = new FileOutputStream(outfile);
       ObjectOutputStream objectos
@@ -518,6 +553,47 @@ public class GenTests extends GenInputsAbstract {
 
     cmd.add (outfile);
     cmd.add (outfile);
+    String[] cmd_array = new String[cmd.size()];
+    System.out.printf ("Executing command %s%n", cmd);
+    UtilMDE.run_cmd (cmd.toArray (cmd_array));
+    System.out.printf ("Completed command%n");
+  }
+
+  /**
+   * Runs Randoop again and generates new observations for the list of
+   * sequences stored in seq_file.  Any observations that do not match
+   * are presumed to be non-deteministic and are removed.  The resulting
+   * sequence is written back into seq_file.
+   *
+   * This is run in a new JVM so that the initial global state for the
+   * second run matches the initial global state for the first run.
+   */
+  public void remove_diff_observations (String seq_file) {
+
+    List<String> cmd = new ArrayList<String>();
+    cmd.add ("java");
+    cmd.add ("-ea");
+
+    // Add a javaagent option if specified
+    if (GenInputsAbstract.agent != null)
+      cmd.add (GenInputsAbstract.agent);
+
+    // Define any properties
+    for (String prop : GenInputsAbstract.system_props) {
+      cmd.add (String.format ("-D%s", prop));
+    }
+
+    cmd.add ("randoop.main.Main");
+    cmd.add ("rm-diff-obs");
+
+    // Add applicable arguments from this call
+    if (GenInputsAbstract.observers != null) {
+      cmd.add ("--observers=" + GenInputsAbstract.observers.toString());
+    }
+    cmd.add (String.format("--usethreads=%b", ReflectionExecutor.usethreads));
+
+    cmd.add (seq_file);
+    cmd.add (seq_file);
     String[] cmd_array = new String[cmd.size()];
     System.out.printf ("Executing command %s%n", cmd);
     UtilMDE.run_cmd (cmd.toArray (cmd_array));

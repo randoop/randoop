@@ -54,6 +54,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Create clean observations for a serialized sequence")
   public static File clean_observations = null;
 
+  @Option("Print any observations that are different in the clean run")
+  public static boolean print_diff_obs = true;
+
   @Option("Specify agent command for recursive JVM calls")
   public static String agent = null;
 

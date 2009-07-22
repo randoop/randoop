@@ -96,7 +96,7 @@ public class ExpressionEqValue implements Observation, Serializable {
       } else {
         // First add a message
         b.append ("\"'\" + " + var + " + \"' != '\" + "
-                  + PrimitiveTypes.toCodeString(value) + "+ \"'\", ");
+                 + PrimitiveTypes.toCodeString(value) + "+ \"'\", ");
         b.append(var);
         b.append(".equals(");
         b.append(PrimitiveTypes.toCodeString(value));
