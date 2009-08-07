@@ -50,6 +50,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
     super(statements, coverageClasses, timeMillis, maxSequences, seeds);
 
+    System.out.printf ("list of statements for ForwardGenerator = %s%n",
+                       statements);
+
     if (seeds == null)
       this.components = new SequenceCollection(SeedSequences.defaultSeeds());
     else
@@ -74,7 +77,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   public ExecutableSequence step() {
-    
+
     long startTime = System.nanoTime();
 
     SequenceGeneratorStats.steps++;
@@ -95,22 +98,22 @@ public class ForwardGenerator extends AbstractGenerator {
       this.components.add(eSeq.sequence);
       return null;
     }
-        
+
     // If Randoop detects possible hang, outputs last
     // sequence under execution.
     SequenceGeneratorStats.currSeq = eSeq.sequence;
-    
+
     long endTime = System.nanoTime();
     long gentime = endTime - startTime;
     startTime = endTime; // reset start time.
 
     eSeq.execute(executionVisitor);
-    
+
     endTime = System.nanoTime();
 
     eSeq.exectime = endTime - startTime;
     startTime = endTime; // reset start time.
-    
+
     processSequence(eSeq);
 
     if (eSeq.sequence.hasActiveFlags()) {
@@ -120,7 +123,7 @@ public class ForwardGenerator extends AbstractGenerator {
     endTime = System.nanoTime();
     gentime += endTime - startTime;
     eSeq.gentime = gentime;
-    
+
     return eSeq;
 
   }

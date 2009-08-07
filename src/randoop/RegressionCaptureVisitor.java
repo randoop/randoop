@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import randoop.util.PrimitiveTypes;
 import randoop.main.GenInputsAbstract;
 import randoop.util.Files;
-
+import randoop.util.Reflection;
 
 /**
  * An execution visitor that records regression observations on the values
@@ -71,9 +71,12 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
       for (String line : lines) {
         if (line.startsWith ("//"))
           continue;
+        if (line.trim().length() == 0)
+          continue;
         int lastdot = line.lastIndexOf(".");
         if (lastdot == -1)
-          throw new RuntimeException ("invalid observer: "+ line);
+          throw new RuntimeException (String.format ("invalid observer '%s'",
+                                                     line));
         String classname = line.substring (0, lastdot);
         String methodname = line.substring (lastdot+1);
         methodname = methodname.replaceFirst ("[()]*$", "");
@@ -86,11 +89,16 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         }
         Method obs_method = null;
         try {
-          obs_method = obs_class.getDeclaredMethod (methodname);
+          obs_method = Reflection.super_get_declared_method (obs_class,
+                                                             methodname);
         } catch (Exception e) {
           throw new RuntimeException ("Can't find observer method "
                                       + methodname, e);
         }
+        if (!PrimitiveTypes.isPrimitiveOrStringType(obs_method.getReturnType()))
+          throw new RuntimeException
+            (String.format ("Observer method %s does not return a primitive "
+                            + "or string", obs_method));
         List<Method> methods = observer_map.get (obs_class);
         if (methods == null) {
           methods = new ArrayList<Method>();

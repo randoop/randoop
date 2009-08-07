@@ -23,7 +23,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
   }
 
   public boolean canUse(Class<?> c) {
-    return Modifier.isPublic(c.getModifiers());
+    return Reflection.isVisible (c);
   }
 
   public boolean canUse(Method m) {
@@ -66,10 +66,8 @@ public class DefaultReflectionFilter implements ReflectionFilter {
       return false;
     }
 
-    if (!Modifier.isPublic(m.getModifiers()))
+    if (!Reflection.isVisible (m.getModifiers()))
       return false;
-//  if (Modifier.isPrivate(m.getModifiers()) || Modifier.isProtected(m.getModifiers()))
-//  return false;
 
     //TODO we could enable some methods from Object, like getClass
     if (m.getDeclaringClass().equals(java.lang.Object.class))
@@ -152,9 +150,8 @@ public class DefaultReflectionFilter implements ReflectionFilter {
 
     if (Modifier.isAbstract(c.getDeclaringClass().getModifiers()))
       return false;
-    if (Modifier.isPublic(c.getModifiers()))
-      return true;
-    return false;
+
+    return Reflection.isVisible (c.getModifiers());
   }
 
   private boolean matchesOmitMethodPattern(String name) {

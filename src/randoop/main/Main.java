@@ -29,6 +29,7 @@ public class Main {
     invisibleHandlers.add(new CovUtils());
     invisibleHandlers.add(new ExecuteSequence());
     invisibleHandlers.add(new CleanObservations());
+    invisibleHandlers.add(new RmDiffObservations());
   }
 
   // The main method simply calls nonStaticMain.

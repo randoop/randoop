@@ -26,6 +26,7 @@ import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.StatementKind;
 import randoop.StatementKinds;
+import randoop.main.GenInputsAbstract;
 import utilpag.Pair;
 import utilpag.UtilMDE;
 
@@ -366,7 +367,8 @@ public final class Reflection {
      List<Class<?>> result = new ArrayList<Class<?>>(lines.size());
      for (String line : lines) {
        String trimmed = line.trim();
-       if (trimmed.equals("") || trimmed.startsWith("#"))
+       if (trimmed.equals("") || trimmed.startsWith("#")
+           || trimmed.startsWith ("//"))
          continue;
        result.add(classForName(trimmed));
      }
@@ -463,11 +465,11 @@ public final class Reflection {
          cached = false;
        } else {
          int mods = c.getModifiers();
-         boolean classPublic = Modifier.isPublic(mods);
+         boolean classVisible = isVisible (mods);
          if (c.isMemberClass())
-           cached = classPublic && isVisible(c.getDeclaringClass());
+           cached = classVisible && isVisible(c.getDeclaringClass());
          else
-           cached = classPublic;
+           cached = classVisible;
        }
        cached_isVisible.put(c, cached);
      }
@@ -494,15 +496,19 @@ public final class Reflection {
      if (filter == null) filter = new DefaultReflectionFilter(null);
      Set<StatementKind> statements = new LinkedHashSet<StatementKind>();
      for (Class<?> c : classListing) {
+       // System.out.printf ("Considering class %s, filter = %s%n", c, filter);
        if (filter.canUse(c)) {
          if (Log.isLoggingOn()) Log.logLine("Will add members for class " + c.getName());
-         for (Method m : getMethodsOrdered(c)) {
+         // System.out.printf ("using class %s%n", c);
+         for (Method m : getDeclaredMethodsOrdered(c)) {
+           // System.out.printf ("Considering method %s%n", m);
            if (filter.canUse(m)) {
              RMethod mc =  RMethod.getRMethod(m);
              statements.add(mc);
            }
          }
-         for (Constructor<?> co : getConstructorsOrdered(c)) {
+         for (Constructor<?> co : getDeclaredConstructorsOrdered(c)) {
+           // System.out.printf ("Considering constructor %s%n", co);
            if (filter.canUse(co)) {
              RConstructor mc = RConstructor.getRConstructor(co);
              statements.add(mc);
@@ -678,4 +684,54 @@ public final class Reflection {
 
      return retval;
    }
+
+  /**
+   * Looks for the specified method name in the specified class and all of its
+   * superclasses
+   */
+  public static Method super_get_declared_method (Class<?> c,
+              String methodname, Class... parameter_types) throws Exception {
+
+    // Try and find the method in the base class
+    Exception exception = null;
+    Method method = null;
+    try {
+      method = c.getDeclaredMethod (methodname, parameter_types);
+    } catch (Exception e) {
+      exception = e;
+    }
+    if (method != null)
+      return method;
+
+
+    // Otherwise, look for the method in all superclasses for the method
+    while (c.getSuperclass() != null) {
+      c = c.getSuperclass();
+      try {
+        method = c.getDeclaredMethod (methodname, parameter_types);
+      } catch (Exception e) {
+      }
+      if (method != null)
+        return method;
+    }
+
+    // couldn't find the method anywhere
+    throw exception;
+  }
+
+  /**
+   * Returns true if the the specified modifier is visible to Randoop.
+   * If the command line argument public_only is true, only public
+   * classes/methods are considered visible.  If public_only is false
+   * then any class/method that is not private is considered visible
+   */
+  public static boolean isVisible (int modifiers) {
+    // System.out.printf ("isVisible public_only=%b, modifiers = %s%n",
+    //             GenInputsAbstract.public_only, Modifier.toString(modifiers));
+    if (GenInputsAbstract.public_only) {
+      return Modifier.isPublic (modifiers);
+    } else {
+      return !Modifier.isPrivate (modifiers);
+    }
+  }
 }

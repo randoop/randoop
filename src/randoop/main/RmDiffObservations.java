@@ -62,18 +62,29 @@ public class RmDiffObservations extends CommandHandler {
     String input_file = nonargs[0];
     String output_file = nonargs[1];
 
+    // If an initializer routine was specified, execute it
+    GenTests.execute_init_routine();
+
     // Read the list of sequences from the serialized file
     List<ExecutableSequence> seqs = GenTests.read_sequences(input_file);
 
+    System.out.printf ("%d total observations in original sequence%n",
+                       ExecutableSequence.observations_count (seqs));
+
     // Generate observations and compare them to the first runs
+    int diffs = 0;
     RegressionCaptureVisitor rcv = new RegressionCaptureVisitor();
     List<ExecutableSequence> clean_seq = new ArrayList<ExecutableSequence>();
     for (ExecutableSequence es : seqs) {
       ExecutableSequence es2 = new ExecutableSequence (es.sequence);
       es2.execute (rcv);
       clean_seq.add (es2);
-      es.compare_observations (es2, GenInputsAbstract.print_diff_obs);
+      diffs += es.compare_observations (es2, true,
+                                        GenInputsAbstract.print_diff_obs);
     }
+    System.out.printf ("Removed %d inconsistent observations%n", diffs);
+    System.out.printf ("%d total observations in final sequence%n",
+                       ExecutableSequence.observations_count (clean_seq));
 
     // Write out the new observations
     GenTests.write_sequences (clean_seq, output_file);
