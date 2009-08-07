@@ -238,6 +238,8 @@ public class ExecutableSequence implements Serializable {
    */
   public void execute(ExecutionVisitor visitor) {
 
+    // System.out.printf ("Executing sequence %s%n", this);
+
     executionResults.theList.clear();
     observations.clear();
     for (int i = 0 ; i < sequence.size() ; i++) {
@@ -619,16 +621,21 @@ public class ExecutableSequence implements Serializable {
 
   /**
    * Compares the results of the observations of two sequences.  Returns the
-   * number of different observations.  Prints any differences to stdout if
-   * print_diffs is true.
+   * number of different observations.  If remove_diffs is true any
+   * differing observations are removed from both sequences.
+   * Prints any differences to stdout if print_diffs is true.
    */
-  public int compare_observations (ExecutableSequence es, boolean print_diffs){
+  public int compare_observations (ExecutableSequence es, boolean remove_diffs,
+                                   boolean print_diffs){
 
     int cnt = 0;
 
     for (int ii = 0; ii < observations.size(); ii++) {
+      // System.out.printf ("Sequence1: %n%s%n", this);
+      // System.out.printf ("Sequence2: %n%s%n", es);
       List<Observation> obs1 = observations.get(ii);
       List<Observation> obs2 = es.observations.get(ii);
+      List<Integer> diff_obs = new ArrayList<Integer>();
       // System.out.printf ("observations 1/%d = %s%n", ii, obs1);
       // System.out.printf ("observations 2/%d = %s%n", ii, obs2);
       if (obs1.size() != obs2.size()) {
@@ -644,6 +651,7 @@ public class ExecutableSequence implements Serializable {
         Observation ob1 = obs1.get(jj);
         Observation ob2 = obs2.get(jj);
         if (!ob1.get_value().equals (ob2.get_value())) {
+          diff_obs.add (0, jj);
           cnt++;
           if (print_diffs) {
             System.out.printf ("observation mismatch in sequence%n%s%n", es);
@@ -651,6 +659,17 @@ public class ExecutableSequence implements Serializable {
             System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
           }
         }
+      }
+
+      // Remove any observations that don't match
+      if (remove_diffs && (diff_obs.size() > 0)) {
+        System.out.printf ("obs1 size before = %d%n", obs1.size());
+        for (int obs : diff_obs) {
+          System.out.printf ("Removing obs %d from sequence%n", obs);
+          obs1.remove (obs);
+          obs2.remove (obs);
+        }
+        System.out.printf ("obs1 size after = %d%n", obs1.size());
       }
     }
 
@@ -705,5 +724,22 @@ public class ExecutableSequence implements Serializable {
       }
     }
   }
+
+  /**
+   * Return the total number of observations in a list of sequences
+   */
+  public static int observations_count (List<ExecutableSequence> seqs) {
+
+    int cnt = 0;
+
+    for (ExecutableSequence es : seqs) {
+      for (List<Observation> obs : es.observations) {
+        cnt += obs.size();
+      }
+    }
+
+    return cnt;
+  }
+
 
 }

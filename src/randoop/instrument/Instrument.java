@@ -47,7 +47,7 @@ public class Instrument implements ClassFileTransformer {
   public static SimpleLog debug_instrument_inst = new SimpleLog (false);
 
   /** Debug information on method maping **/
-  public static SimpleLog debug_map = new SimpleLog (true);
+  public static SimpleLog debug_map = new SimpleLog (false);
 
   /** Class that defines a method (by its name and argument types) **/
   static class MethodDef {

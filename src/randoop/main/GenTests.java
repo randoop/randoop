@@ -60,6 +60,7 @@ import utilpag.Option;
 import utilpag.Options;
 import utilpag.Options.ArgException;
 import utilpag.UtilMDE;
+import utilpag.SimpleLog;
 import cov.Branch;
 import cov.Coverage;
 
@@ -100,6 +101,8 @@ public class GenTests extends GenInputsAbstract {
   @Invisible
   @Option("Signals that this is a run in the context of a system test. (Slower)")
   public static boolean system_test_run = false;
+
+  public static SimpleLog progress = new SimpleLog (true);
 
   private static Options options = new Options(
       Globals.class,
@@ -154,36 +157,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // If an initializer method was specified, execute it
-    if (GenInputsAbstract.init_routine != null) {
-      String full_name = GenInputsAbstract.init_routine;
-      int lastdot = full_name.lastIndexOf(".");
-      if (lastdot == -1)
-        usage ("invalid init routine: %s\n", full_name);
-      String classname = full_name.substring (0, lastdot);
-      String methodname = full_name.substring (lastdot+1);
-      methodname = methodname.replaceFirst ("[()]*$", "");
-      System.out.printf ("%s - %s\n", classname, methodname);
-      Class<?> iclass = null;
-      try {
-        iclass = Class.forName (classname);
-      } catch (Exception e) {
-        usage ("Can't load init class %s: %s", classname, e.getMessage());
-      }
-      Method imethod = null;
-      try {
-        imethod = iclass.getDeclaredMethod (methodname);
-      } catch (Exception e) {
-        usage ("Can't find init method %s: %s", methodname, e);
-      }
-      if (!Modifier.isStatic (imethod.getModifiers()))
-        usage ("init method %s.%s must be static", classname, methodname);
-      try {
-        imethod.invoke (null);
-      } catch (Exception e) {
-        usage (e, "problem executing init method %s.%s: %s",
-               classname, methodname, e);
-      }
-    }
+    execute_init_routine();
 
     // Find classes to test.
     if (classlist == null && methodlist == null && testclass.size() == 0) {
@@ -193,6 +167,13 @@ public class GenTests extends GenInputsAbstract {
     }
     List<Class<?>> classes = findClassesFromArgs(options);
 
+    // Make sure each of the classes is visible.  Should really make sure
+    // there is at least one visible constructor/factory as well.
+    for (Class<?> c : classes) {
+      if (!Reflection.isVisible (c)) {
+        throw new Error ("Specified class " + c + " is not visible");
+      }
+    }
     List<StatementKind> model =
       Reflection.getStatements(classes, new DefaultReflectionFilter(omitmethods));
 
@@ -242,7 +223,7 @@ public class GenTests extends GenInputsAbstract {
       }
       for (Class<?> cls : covClasses) {
         assert Coverage.isInstrumented(cls) : cls.toString();
-        System.out.println("Will track branch coverage for " + cls);
+        // System.out.println("Will track branch coverage for " + cls);
       }
     }
 
@@ -485,6 +466,44 @@ public class GenTests extends GenInputsAbstract {
     return true;
   }
 
+  /**
+   * Execute the init routine (if user specified one)
+   */
+  public static void execute_init_routine () {
+
+    if (GenInputsAbstract.init_routine == null)
+      return;
+
+    String full_name = GenInputsAbstract.init_routine;
+    int lastdot = full_name.lastIndexOf(".");
+    if (lastdot == -1)
+      usage ("invalid init routine: %s\n", full_name);
+    String classname = full_name.substring (0, lastdot);
+    String methodname = full_name.substring (lastdot+1);
+    methodname = methodname.replaceFirst ("[()]*$", "");
+    System.out.printf ("%s - %s\n", classname, methodname);
+    Class<?> iclass = null;
+    try {
+      iclass = Class.forName (classname);
+    } catch (Exception e) {
+      usage ("Can't load init class %s: %s", classname, e.getMessage());
+    }
+    Method imethod = null;
+    try {
+      imethod = iclass.getDeclaredMethod (methodname);
+    } catch (Exception e) {
+      usage ("Can't find init method %s: %s", methodname, e);
+    }
+    if (!Modifier.isStatic (imethod.getModifiers()))
+      usage ("init method %s.%s must be static", classname, methodname);
+    try {
+      imethod.invoke (null);
+    } catch (Exception e) {
+      usage (e, "problem executing init method %s.%s: %s",
+             classname, methodname, e);
+    }
+  }
+
   /** Read a list of sequences from a serialized file **/
   public static List<ExecutableSequence> read_sequences (String filename) {
 
@@ -550,6 +569,10 @@ public class GenTests extends GenInputsAbstract {
       cmd.add ("--observers=" + GenInputsAbstract.observers.toString());
     }
     cmd.add (String.format("--usethreads=%b", ReflectionExecutor.usethreads));
+    if (GenInputsAbstract.init_routine != null)
+      cmd.add ("--init_routine=" + GenInputsAbstract.init_routine);
+    cmd.add (String.format("--capture_output=%b",
+                           GenInputsAbstract.capture_output));
 
     cmd.add (outfile);
     cmd.add (outfile);
@@ -591,17 +614,22 @@ public class GenTests extends GenInputsAbstract {
       cmd.add ("--observers=" + GenInputsAbstract.observers.toString());
     }
     cmd.add (String.format("--usethreads=%b", ReflectionExecutor.usethreads));
+    if (GenInputsAbstract.init_routine != null)
+      cmd.add ("--init_routine=" + GenInputsAbstract.init_routine);
+    cmd.add (String.format("--capture_output=%b",
+                           GenInputsAbstract.capture_output));
 
     cmd.add (seq_file);
     cmd.add (seq_file);
     String[] cmd_array = new String[cmd.size()];
-    System.out.printf ("Executing command %s%n", cmd);
+    progress.log ("Removing non-deterministic observations: executing "
+                  + " command %s%n", cmd);
     UtilMDE.run_cmd (cmd.toArray (cmd_array));
-    System.out.printf ("Completed command%n");
+    progress.log ("Completed removal of non-deterministic observations");
   }
 
   /** Print out usage error and stack trace and then exit **/
-  void usage (Throwable t, String format, Object... args) {
+  static void usage (Throwable t, String format, Object... args) {
 
     System.out.print ("ERROR: ");
     System.out.printf (format, args);
@@ -613,7 +641,7 @@ public class GenTests extends GenInputsAbstract {
     System.exit(-1);
   }
 
-  void usage (String format, Object ... args) {
+  static void usage (String format, Object ... args) {
     usage (null, format, args);
   }
 

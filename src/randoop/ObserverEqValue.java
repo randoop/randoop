@@ -28,17 +28,13 @@ public class ObserverEqValue implements Observation, Serializable {
   public Object value;
 
   public String toString() {
-    StringBuilder b = new StringBuilder();
-    b.append("<ObserverEqValue ");
-    b.append(observer);
-    b.append(" " + var.toString() + " ");
-    b.append(", value=" + (value==null? "null" : value.toString()));
-    return b.toString();
+    return String.format ("<ObserverEqValue %s %s, value = '%s'", observer,
+                          var, value);
   }
 
   /** Returns the value of this observation as a string **/
   public String get_value() {
-    return this.value.toString();
+    return String.format ("%s", this.value);
   }
 
   /**
@@ -64,6 +60,10 @@ public class ObserverEqValue implements Observation, Serializable {
                                   + obj + " [" + obj.getClass() + "]",
                                   e);
     }
+    assert (this.value == null)
+      || PrimitiveTypes.isBoxedPrimitiveTypeOrString (this.value.getClass())
+      : "obs value/class = " + this.value +"/" + this.value.getClass()
+      + " observer = " + observer;
   }
 
   /**

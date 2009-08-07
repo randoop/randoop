@@ -24,7 +24,7 @@ public class StatementThrowsException implements Observation, Serializable {
   }
 
   private Object writeReplace() throws ObjectStreamException {
-    System.out.printf ("writeReplace %s in StatementThrowsException%n", this);
+    // System.out.printf ("writeReplace %s in StatementThrowsException%n", this);
     return new SerializableExceptionObservation(exceptionClass);
   }
 

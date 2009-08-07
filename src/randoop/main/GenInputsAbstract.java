@@ -42,6 +42,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File containing observer functions")
   public static File observers = null;
 
+  @Option("Use only public classes/methods")
+  public static boolean public_only = true;
+
   @Option("Install the given runtime visitor.")
   public static List<String> visitor = new ArrayList<String>();
 

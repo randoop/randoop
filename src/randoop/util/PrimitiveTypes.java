@@ -147,6 +147,7 @@ public final class PrimitiveTypes {
       return "null";
     }
     Class<?> valueClass = primitiveType(value.getClass());
+    assert valueClass != null : value + " "  + value.getClass();
 
     if (String.class.equals(valueClass)) {
       return "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";

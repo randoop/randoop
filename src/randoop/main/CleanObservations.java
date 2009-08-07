@@ -62,6 +62,9 @@ public class CleanObservations extends CommandHandler {
     String input_file = nonargs[0];
     String output_file = nonargs[1];
 
+    // If an initializer routine was specified, execute it
+    GenTests.execute_init_routine();
+
     // Read the list of sequences from the serialized file
     List<ExecutableSequence> seqs = GenTests.read_sequences(input_file);
 
@@ -72,7 +75,7 @@ public class CleanObservations extends CommandHandler {
       ExecutableSequence es2 = new ExecutableSequence (es.sequence);
       es2.execute (rcv);
       clean_seq.add (es2);
-      es.compare_observations (es2, GenInputsAbstract.print_diff_obs);
+      es.compare_observations (es2, false, GenInputsAbstract.print_diff_obs);
     }
 
     // Write out the new observations
