@@ -32,5 +32,5 @@ This file contains instructions for building Randoop at CSAIL.
 
 4. Run the tests.
 
-   run the "tests" target in the Makefile.
+   Run the "tests" target in the Makefile.
 
