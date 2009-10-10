@@ -1,7 +1,7 @@
 
 This file contains instructions for building Randoop at CSAIL.
 
-1. Get and compile Daikon via cvs.
+1. Get and compile Daikon via CVS.
 
    See http://groups.csail.mit.edu/pag/daikon/mit/.
 
