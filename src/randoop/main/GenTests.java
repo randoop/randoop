@@ -157,7 +157,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // If an initializer method was specified, execute it
-    execute_init_routine();
+    execute_init_routine(1);
 
     // Find classes to test.
     if (classlist == null && methodlist == null && testclass.size() == 0) {
@@ -443,6 +443,7 @@ public class GenTests extends GenInputsAbstract {
       } catch (Exception e) {
         throw new Error ("can't create temp file", e);
       }
+      write_junit_tests ("./before_clean", sequences);
       write_sequences (sequences, tmpfile.getPath());
       generate_clean_observations (tmpfile.getPath());
     }
@@ -451,25 +452,37 @@ public class GenTests extends GenInputsAbstract {
     // This removes any observations whose values are not deterministic
     // (such as values dependent on the current date/time)
     if (GenInputsAbstract.compare_observations) {
+      write_junit_tests ("./before_cmp", sequences);
       remove_diff_observations (tmpfile.getPath());
       sequences = read_sequences (tmpfile.getPath());
     }
 
     // Write out junit tests
-    JunitFileWriter jfw = new JunitFileWriter(junit_output_dir, junit_package_name, junit_classname, testsperfile);
-    List<File> files = jfw.createJunitFiles(sequences);
-    System.out.println();
-    for (File f : files) {
-      System.out.println("Created file: " + f.getAbsolutePath());
-    }
+    write_junit_tests (junit_output_dir, sequences);
 
     return true;
   }
 
   /**
+   * Writes the sequences as junit files to the specified directory
+   **/
+  public static void write_junit_tests (String output_dir,
+                                        List<ExecutableSequence> seq) {
+
+    JunitFileWriter jfw
+      = new JunitFileWriter(output_dir, junit_package_name,
+                            junit_classname, testsperfile);
+    List<File> files = jfw.createJunitFiles(seq);
+    System.out.println();
+    for (File f : files) {
+      System.out.println("Created file: " + f.getAbsolutePath());
+    }
+  }
+
+  /**
    * Execute the init routine (if user specified one)
    */
-  public static void execute_init_routine () {
+  public static void execute_init_routine (int phase) {
 
     if (GenInputsAbstract.init_routine == null)
       return;
@@ -490,14 +503,14 @@ public class GenTests extends GenInputsAbstract {
     }
     Method imethod = null;
     try {
-      imethod = iclass.getDeclaredMethod (methodname);
+      imethod = iclass.getDeclaredMethod (methodname, int.class);
     } catch (Exception e) {
       usage ("Can't find init method %s: %s", methodname, e);
     }
     if (!Modifier.isStatic (imethod.getModifiers()))
       usage ("init method %s.%s must be static", classname, methodname);
     try {
-      imethod.invoke (null);
+      imethod.invoke (null, phase);
     } catch (Exception e) {
       usage (e, "problem executing init method %s.%s: %s",
              classname, methodname, e);
@@ -605,6 +618,9 @@ public class GenTests extends GenInputsAbstract {
     for (String prop : GenInputsAbstract.system_props) {
       cmd.add (String.format ("-D%s", prop));
     }
+
+    // Add memory size
+    cmd.add (String.format ("-Xmx%dM", GenInputsAbstract.mem_megabytes));
 
     cmd.add ("randoop.main.Main");
     cmd.add ("rm-diff-obs");

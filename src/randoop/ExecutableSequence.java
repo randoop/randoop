@@ -229,6 +229,13 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
+   * Executes sequence, stopping on exceptions
+   */
+  public void execute (ExecutionVisitor visitor) {
+    execute (visitor, true);
+  }
+
+  /**
    * Execute this sequence, invoking the given visitor as the execution
    * unfolds. After invoking this method, the client can query the outcome
    * of executing each statement via the method getResult(i)
@@ -236,7 +243,7 @@ public class ExecutableSequence implements Serializable {
    * @param visitor can be null, in which case no visitor will be invoked
    *        during execution.
    */
-  public void execute(ExecutionVisitor visitor) {
+  public void execute(ExecutionVisitor visitor, boolean stop_on_exception) {
 
     // System.out.printf ("Executing sequence %s%n", this);
 
@@ -261,8 +268,12 @@ public class ExecutableSequence implements Serializable {
 
       executeStatement(sequence, executionResults.theList, i, inputVariables);
 
-      if (visitor != null)
+      if (visitor != null) {
         visitor.visitAfter(this, i);
+        // System.out.printf ("%d observations for sequence %d/%d%n",
+        //                    this.observations.get(i).size(), i,
+        //                    this.observations.size());
+      }
 
       if (executionResults.get(i) instanceof ExceptionalExecution) {
         // Debug print generated exceptions
@@ -274,7 +285,8 @@ public class ExecutableSequence implements Serializable {
                              sequence.getStatementKind(i));
           t.printStackTrace();
         }
-        break;
+        if (stop_on_exception)
+          break;
       }
 
       if (hasObservation(i, ContractViolation.class))
@@ -396,6 +408,21 @@ public class ExecutableSequence implements Serializable {
         return false;
     }
     return true;
+  }
+
+  /**
+   * Returns true if there was an exception on any statement other than
+   * the last statement.  Exceptions within a sequence are unexpected, because
+   * Randoop only builds on sequences that don't throw exceptions.  They
+   * can happen in some cases, though, when changes to the global state
+   * cause an existing sequence to throw an exception early
+   */
+  public boolean hasUnexpectedException() {
+    for (int i = 0 ; i < (this.sequence.size()-1) ; i++) {
+      if (!isNormalExecution(i))
+        return true;
+    }
+    return false;
   }
 
   public List<Observation> getObservations(int i, Class<? extends Observation> clazz) {
@@ -639,13 +666,20 @@ public class ExecutableSequence implements Serializable {
       // System.out.printf ("observations 1/%d = %s%n", ii, obs1);
       // System.out.printf ("observations 2/%d = %s%n", ii, obs2);
       if (obs1.size() != obs2.size()) {
-        System.out.printf ("obs size mismatch %d - %d\n", obs1.size(),
-                           obs2.size());
-        System.out.printf ("Sequence1: %n%s%n", this);
-        System.out.printf ("Sequence2: %n%s%n", es);
-        System.out.printf ("obs1: %s%n", obs1);
-        System.out.printf ("obs2: %s%n", obs2);
-        assert false;
+        if ((ii < (observations.size()-1))
+            && (obs1.size() == 0) && (obs2.size() == 1)) {
+          System.out.printf ("keeping mismatched observation %s%n", obs2);
+        } else { // number of observations must match
+          System.out.printf ("obs %d size mismatch %d - %d\n", ii, obs1.size(),
+                             obs2.size());
+          System.out.printf ("Sequence1: %n%s%n", this);
+          System.out.printf ("Sequence2: %n%s%n", es);
+          System.out.printf ("Sequence1: %n%s%n", toCodeString());
+          System.out.printf ("Sequence2: %n%s%n", es.toCodeString());
+          System.out.printf ("obs1: %s%n", obs1);
+          System.out.printf ("obs2: %s%n", obs2);
+          assert false;
+        }
       }
       for (int jj = 0; jj < obs1.size(); jj++) {
         Observation ob1 = obs1.get(jj);
@@ -654,11 +688,21 @@ public class ExecutableSequence implements Serializable {
           diff_obs.add (0, jj);
           cnt++;
           if (print_diffs) {
-            System.out.printf ("observation mismatch in sequence%n%s%n", es);
+            System.out.printf ("observation mismatch in seq [%b]%n%s%n",
+                               remove_diffs, es);
             System.out.printf ("Line %d, obs %d%n", ii, jj);
             System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
           }
+        } else { // they match
+          if (ob1.get_value().contains ("EquipmentHolder@")) {
+            System.out.printf ("observation match in seq [%b]%n%s%n",
+                               remove_diffs, es);
+            System.out.printf ("Line %d, obs %d%n", ii, jj);
+            System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
+            assert false;
+          }
         }
+
       }
 
       // Remove any observations that don't match

@@ -174,13 +174,17 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
         } else if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(o.getClass())) {
 
-          // If value is a String that contains ";@" we guess it might come
-          // from a call of Object.toString() and don't print it either.
-          // This may happen if some method internally calls Object.toString().
+          // If value is a String that contains "<classname>@<hex>" we
+          // guess it might come from a call of Object.toString() and
+          // don't print it either.  This may happen if some method
+          // internally calls Object.toString().  This used to check for
+          // ;@, but that doesn't seem to be correct.
           if (o instanceof String) {
             String str = (String)o;
-            if (str.indexOf(";@") != -1)
+            if (str.matches (".*[a-zA-Z]{2,}[a-zA-Z0-9.]*@[0-9a-h]{4,}.*")) {
+              // System.out.printf ("ignoring Object.toString obs %s%n", str);
               continue;
+            }
           }
 
           // If the value is returned from a Date that we created,
@@ -222,14 +226,16 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
       } else if (s.getResult(i) instanceof ExceptionalExecution) {
 
-        ExceptionalExecution e = (ExceptionalExecution)s.getResult(idx);
-        s.addObservation(idx, new StatementThrowsException(e.getException()));
+        ExceptionalExecution e = (ExceptionalExecution)s.getResult(i);
+        s.addObservation(i, new StatementThrowsException(e.getException()));
 
-        for (int j = i + 1 ; j < s.sequence.size() ; j++) {
-          assert s.getResult(j) instanceof NotExecuted
-            : "i=" + i + ",sequence=" + s.sequence.toString();
+        if (false) {
+          for (int j = i + 1 ; j < s.sequence.size() ; j++) {
+            assert s.getResult(j) instanceof NotExecuted
+              : "i=" + i + ",sequence=" + s.sequence.toString();
+          }
+          return true;
         }
-        return true;
 
       } else {
         assert s.getResult(i) instanceof NotExecuted;

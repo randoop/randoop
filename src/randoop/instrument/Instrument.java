@@ -35,6 +35,7 @@ public class Instrument implements ClassFileTransformer {
 
   boolean debug = false;
   boolean log_on = false;
+  boolean debug_class = false;
 
   /** current Constant Pool * */
   static ConstantPoolGen pgen = null;
@@ -47,7 +48,8 @@ public class Instrument implements ClassFileTransformer {
   public static SimpleLog debug_instrument_inst = new SimpleLog (false);
 
   /** Debug information on method maping **/
-  public static SimpleLog debug_map = new SimpleLog (false);
+  public static SimpleLog debug_map = new SimpleLog ("method_mapping.txt",
+                                                     true);
 
   /** Class that defines a method (by its name and argument types) **/
   static class MethodDef {
@@ -91,24 +93,36 @@ public class Instrument implements ClassFileTransformer {
   }
 
   /**
+   * Class that defines the replacement call for a particular method map
+   */
+  private static class MethodInfo {
+    String method_class;
+    int cnt;
+    MethodInfo (String method_class) {
+      this.method_class = method_class;
+      this.cnt = 0;
+    }
+  }
+
+  /**
    * Class that keeps track of all of the method maps for a particular
    * class regular expression
    */
   private static class MethodMapInfo {
     Pattern class_regex;
-    Map<MethodDef,String> map;
+    Map<MethodDef,MethodInfo> map;
 
-    MethodMapInfo (Pattern class_regex, Map<MethodDef,String> map) {
+    MethodMapInfo (Pattern class_regex, Map<MethodDef,MethodInfo> map) {
       this.class_regex = class_regex;
       this.map = map;
     }
   }
 
   /** List of all classname regexs and their corresponding method maps **/
-  List<MethodMapInfo> map_list = new ArrayList<MethodMapInfo>();
+  public static List<MethodMapInfo> map_list = new ArrayList<MethodMapInfo>();
 
   /** Map from original method call to replacement method for current class**/
-  Map<MethodDef,String> method_map = null;
+  Map<MethodDef,MethodInfo> method_map = null;
 
   public Instrument () {
   }
@@ -162,8 +176,14 @@ public class Instrument implements ClassFileTransformer {
 
     // Look for match with specified regular expressions for class
     method_map = null;
+    debug_class = false;
     for (MethodMapInfo mmi : map_list) {
       if (mmi.class_regex.matcher(className).matches()) {
+        if (false && className.startsWith ("test"))
+          debug_class = true;
+        if (debug_class)
+          System.out.printf ("Classname %s matches re %s%n", className,
+                             mmi.class_regex);
         method_map = mmi.map;
         break;
       }
@@ -331,9 +351,10 @@ public class Instrument implements ClassFileTransformer {
       String mname = is.getMethodName (pgen);
       Type[] args = is.getArgumentTypes (pgen);
       MethodDef orig = new MethodDef (cname + "." + mname, args);
-      String call = method_map.get (orig);
+      MethodInfo call = method_map.get (orig);
       if (call != null) {
-        String classname = call;
+        call.cnt++;
+        String classname = call.method_class;
         String methodname = mname;
         debug_map.log ("%s.%s: Replacing method %s.%s (%s) with %s.%s%n",
                        mg.getClassName(), mg.getName(), cname, mname,
@@ -350,17 +371,19 @@ public class Instrument implements ClassFileTransformer {
       String cname = iv.getClassName (pgen);
       String mname = iv.getMethodName (pgen);
       Type[] args = iv.getArgumentTypes (pgen);
-      Type instance_type = iv.getType (pgen);
+      Type instance_type = iv.getReferenceType (pgen);
       Type[] new_args = BCELUtil.insert_type (instance_type, args);
-      MethodDef orig = new MethodDef (cname + "." + mname, new_args);
-      String call = method_map.get (orig);
+      MethodDef orig = new MethodDef (cname + "." + mname, args);
+      if (debug_class)
+        System.out.printf ("looking for %s in map %s%n", orig, method_map);
+      MethodInfo call = method_map.get (orig);
       if (call != null) {
-        int pos = call.lastIndexOf ('.');
-        String classname = call.substring (0, pos);
-        String methodname = call.substring (pos+1);
-        System.out.printf ("Replacing method %s.%s (%s) with %s.%s%n",
-                           cname, mname, ArraysMDE.toString (args), classname,
-                           methodname);
+        call.cnt++;
+        String classname = call.method_class;
+        String methodname = mname;
+        debug_map.log ("Replacing method %s.%s (%s) with %s.%s%n",
+                       cname, mname, ArraysMDE.toString (args), classname,
+                       methodname);
         il.append (ifact.createInvoke (classname, methodname,
                   iv.getReturnType(pgen), new_args, Constants.INVOKESTATIC));
       }
@@ -547,7 +570,7 @@ public class Instrument implements ClassFileTransformer {
     LineNumberReader lr = new LineNumberReader (new FileReader (map_file));
     MapFileError mfe = new MapFileError (lr, map_file);
     Pattern current_regex = null;
-    Map<MethodDef,String> map = new LinkedHashMap<MethodDef,String>();
+    Map<MethodDef,MethodInfo> map = new LinkedHashMap<MethodDef,MethodInfo>();
     for (String line = lr.readLine(); line != null; line = lr.readLine()) {
       line = line.replaceFirst ("//.*$", "");
       if (line.trim().length() == 0)
@@ -560,12 +583,12 @@ public class Instrument implements ClassFileTransformer {
         st.stok.wordChars ('.', '.');
         MethodDef md = parse_method (st);
         String new_method = st.need_word();
-        map.put (md, new_method);
+        map.put (md, new MethodInfo(new_method));
       } else {
         if (current_regex != null) {
           MethodMapInfo mmi = new MethodMapInfo (current_regex, map);
           map_list.add (mmi);
-          map = new LinkedHashMap<MethodDef,String>();
+          map = new LinkedHashMap<MethodDef,MethodInfo>();
         }
         current_regex = Pattern.compile (line);
       }
@@ -575,14 +598,39 @@ public class Instrument implements ClassFileTransformer {
       map_list.add (mmi);
     }
 
+    dump_map_list();
+
+  }
+
+  /** Dumps out the map list to the debug_map logger **/
+  public static void dump_map_list () {
     if (debug_map.enabled()) {
       for (MethodMapInfo mmi : map_list) {
         debug_map.log ("Class re '%s': %n", mmi.class_regex);
         for (MethodDef md : mmi.map.keySet()) {
-          debug_map.log ("  %s - %s%n", md, mmi.map.get (md));
+          MethodInfo mi = mmi.map.get(md);
+          debug_map.log ("  %s - %s [%d replacements]%n", md, mi.method_class,
+                           mi.cnt);
         }
       }
     }
   }
+
+  /**
+   * Adds a shutdown hook that prints out the results of the method maps
+   */
+  public void add_map_file_shutdown_hook() {
+
+    // Add a shutdown hook to printout some debug information
+    Runtime.getRuntime().addShutdownHook (new Thread() {
+        public void run() {
+          for (MethodMapInfo mmi: map_list) {
+            dump_map_list();
+          }
+        }
+      });
+
+  }
+
 
 }
