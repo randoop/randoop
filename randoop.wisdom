@@ -7,6 +7,10 @@ checkout with
 A HTTP server has not yet been setup (since no one outside of CSAIL needs
 access)
 
+A basic test of randoop seems to be run with:
+  make unit
+    
+
 %
 % Randoop command line options
 %
@@ -30,5 +34,10 @@ based printsteam and recording the results.
 
 comparing observations to see if they return consistent results is
 implementedin ExecutableSequence.compare_observations()
+
+GenTests is the main for Randoop as it is normally used.  There are
+other mains for other purposes.
+
+ForwardGenerator is the generator for Randoops normal operation.
 
 

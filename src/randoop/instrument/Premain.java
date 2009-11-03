@@ -72,10 +72,12 @@ public class Premain {
     if (map_calls != null) {
       Instrument instrument = (Instrument) transformer;
       instrument.read_map_file (map_calls);
+      instrument.add_map_file_shutdown_hook();
     }
 
     // Instrument transformer = new Instrument();
     inst.addTransformer ((ClassFileTransformer) transformer);
+
   }
 
   /**

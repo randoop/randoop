@@ -58,10 +58,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static File clean_observations = null;
 
   @Option("Print any observations that are different in the clean run")
-  public static boolean print_diff_obs = true;
+  public static boolean print_diff_obs = false;
 
   @Option("Specify agent command for recursive JVM calls")
   public static String agent = null;
+
+  @Option("specify the memory size (in megabytes) for recursive JVM calls")
+  public static int mem_megabytes = 1000;
 
   // We do this rather than using java -D so that we can easily pass these
   // to other JVMs

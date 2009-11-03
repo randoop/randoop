@@ -63,17 +63,25 @@ public class CleanObservations extends CommandHandler {
     String output_file = nonargs[1];
 
     // If an initializer routine was specified, execute it
-    GenTests.execute_init_routine();
+    GenTests.execute_init_routine(2);
 
     // Read the list of sequences from the serialized file
     List<ExecutableSequence> seqs = GenTests.read_sequences(input_file);
 
-    // Generate observations and compare them to the first runs
+    // Generate observations and compare them to the first runs.  Under
+    // some circumstances, a sequence may encounter an unexpected exception.
+    // This can happen if the global state is different in this run than it
+    // was when the sequence was being created.  If this happens the entire
+    // test is removed.
     RegressionCaptureVisitor rcv = new RegressionCaptureVisitor();
     List<ExecutableSequence> clean_seq = new ArrayList<ExecutableSequence>();
     for (ExecutableSequence es : seqs) {
       ExecutableSequence es2 = new ExecutableSequence (es.sequence);
       es2.execute (rcv);
+      if (es2.hasNonExecutedStatements()) {
+        System.out.printf ("Removed sequence, non-executed statements%n");
+        continue;
+      }
       clean_seq.add (es2);
       es.compare_observations (es2, false, GenInputsAbstract.print_diff_obs);
     }

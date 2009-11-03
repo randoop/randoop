@@ -62,8 +62,17 @@ public class RmDiffObservations extends CommandHandler {
     String input_file = nonargs[0];
     String output_file = nonargs[1];
 
+    // Allocate some memory of various sizes to to help make sure that
+    // addresses (such as those returned from Object.toString() won't
+    // coincidentally be the same
+    List<int[]> space = new ArrayList<int[]>();
+    for (int jj = 0; jj < 100; jj++) {
+      for (int ii = 0 ; ii < 500; ii++)
+        space.add (new int[ii]);
+    }
+
     // If an initializer routine was specified, execute it
-    GenTests.execute_init_routine();
+    GenTests.execute_init_routine(3);
 
     // Read the list of sequences from the serialized file
     List<ExecutableSequence> seqs = GenTests.read_sequences(input_file);
@@ -75,9 +84,15 @@ public class RmDiffObservations extends CommandHandler {
     int diffs = 0;
     RegressionCaptureVisitor rcv = new RegressionCaptureVisitor();
     List<ExecutableSequence> clean_seq = new ArrayList<ExecutableSequence>();
+    int test_no = 1;
     for (ExecutableSequence es : seqs) {
       ExecutableSequence es2 = new ExecutableSequence (es.sequence);
-      es2.execute (rcv);
+      System.out.printf ("Executing test %d%n", test_no++);
+      es2.execute (rcv, false);
+      if (false && es2.hasNonExecutedStatements()) {
+        System.out.printf ("Removed sequence, non-executed statements%n");
+        continue;
+      }
       clean_seq.add (es2);
       diffs += es.compare_observations (es2, true,
                                         GenInputsAbstract.print_diff_obs);
