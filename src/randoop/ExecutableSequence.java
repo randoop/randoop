@@ -707,13 +707,13 @@ public class ExecutableSequence implements Serializable {
 
       // Remove any observations that don't match
       if (remove_diffs && (diff_obs.size() > 0)) {
-        System.out.printf ("obs1 size before = %d%n", obs1.size());
+        // System.out.printf ("obs1 size before = %d%n", obs1.size());
         for (int obs : diff_obs) {
-          System.out.printf ("Removing obs %d from sequence%n", obs);
+          // System.out.printf ("Removing obs %d from sequence%n", obs);
           obs1.remove (obs);
           obs2.remove (obs);
         }
-        System.out.printf ("obs1 size after = %d%n", obs1.size());
+        // System.out.printf ("obs1 size after = %d%n", obs1.size());
       }
     }
 
