@@ -87,7 +87,7 @@ public class RmDiffObservations extends CommandHandler {
     int test_no = 1;
     for (ExecutableSequence es : seqs) {
       ExecutableSequence es2 = new ExecutableSequence (es.sequence);
-      System.out.printf ("Executing test %d%n", test_no++);
+      // System.out.printf ("Executing test %d%n", test_no++);
       es2.execute (rcv, false);
       if (false && es2.hasNonExecutedStatements()) {
         System.out.printf ("Removed sequence, non-executed statements%n");
