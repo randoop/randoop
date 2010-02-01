@@ -1,0 +1,16 @@
+syntax: glob
+*.class
+*~
+Makefile.user
+bin/randoop/version.txt
+randoop.zip
+randoop_agent.jar
+bin/randoop/test/resources/dependencytests-output.txt
+bin/randoop/test/resources/dependencytests.txt
+bin/randoop/test/resources/java.util.classlist.java1.6.txt
+bin/randoop/test/resources/java.util.classlist.txt
+bin/randoop/test/resources/sequence_tests_script.txt
+bin/randoop/test/resources/universal_driver.txt
+syntax: regexp
+# Not a glob because it starts with # which looks like a comment.
+(^|/)\#.*\#$

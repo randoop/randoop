@@ -498,7 +498,7 @@ zip:
 #	rm jrandoop/src/cov/ASTUtil.java
 # Copy test sources.
 	cp -R tests jrandoop/tests
-	find ./jrandoop/tests -name ".svn" | xargs rm -r
+	find ./jrandoop/tests -name ".svn" | xargs rm -rf
 	rm jrandoop/tests/randoop/test/Naive*.java
 # Copy required libraries.
 	mkdir jrandoop/lib
