@@ -179,4 +179,12 @@ public abstract class AbstractGenerator {
 
     }
 
+  /**
+   * Returns the set of sequences that are used as inputs in other sequences
+   * (and can thus be thought of as subsumed by another sequence).  This should
+   * only be called for subclasses that support this.
+   */
+  public Set<Sequence> subsumed_sequences() {
+    throw new Error ("subsumed_sequences not supported for " + this.getClass());
+  }
 }

@@ -24,6 +24,9 @@ public class ForwardGenerator extends AbstractGenerator {
   public final Set<Sequence> allSequences;
   public final SequenceCollection components;
 
+  /** Sequences that are used in other sequences (and are thus redundant) **/
+  public Set<Sequence> subsumed_sequences = new LinkedHashSet<Sequence>();
+
   public final CovWitnessHelperVisitor covWitnessHelperVisitor;
 
   // For testing purposes only. If Globals.randooptestrun==false then the array
@@ -177,6 +180,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     stats.statStatementSelected(statement);
 
+    // jhp: add flags here
     InputsAndSuccessFlag  sequences = selectInputs(statement, components);
 
     if (!sequences.success) {
@@ -247,6 +251,12 @@ public class ForwardGenerator extends AbstractGenerator {
     stats.statStatementNotDiscarded(statement);
 
     stats.checkStatsConsistent();
+
+    // Keep track of any input sequences that are used in this sequence
+    // Tests that contain only these sequences are probably redundant
+    for (Sequence is : sequences.sequences) {
+      subsumed_sequences.add (is);
+    }
 
     return new ExecutableSequence(newSequence);
   }
@@ -407,5 +417,13 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     return new InputsAndSuccessFlag (true, sequences, variables);
+  }
+
+  /**
+   * Returns the set of sequences that are used as inputs in other sequences
+   * (and can thus be thought of as subsumed by another sequence).  
+   */
+  public Set<Sequence> subsumed_sequences() {
+    return subsumed_sequences;
   }
 }

@@ -432,6 +432,20 @@ public class GenTests extends GenInputsAbstract {
                          GenInputsAbstract.test_classes);
     }
 
+    // If specified remove any sequences that are used as inputs in other
+    // tests.  These sequences are redundant.
+    if (GenInputsAbstract.remove_subsequences) {
+      List<ExecutableSequence> unique_seqs 
+        = new ArrayList<ExecutableSequence>();
+      Set<Sequence> subsumed_seqs = explorer.subsumed_sequences();
+      for (ExecutableSequence es : sequences) {
+        if (!subsumed_seqs.contains (es.sequence))
+          unique_seqs.add (es);
+      }
+      System.out.printf ("%d subsumed tests removed%n", 
+                         sequences.size() - unique_seqs.size());
+      sequences = unique_seqs;
+    }
 
     // Generate observations from the exact sequences to be run in the
     // tests.  These observations may differ from the original observations
@@ -458,6 +472,12 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // Write out junit tests
+    if (GenInputsAbstract.outputlimit < sequences.size()) {
+      List<ExecutableSequence> seqs = new ArrayList<ExecutableSequence>();
+      for (int ii = 0; ii < GenInputsAbstract.outputlimit; ii++)
+        seqs.add (sequences.get (ii));
+      sequences = seqs;
+    }
     write_junit_tests (junit_output_dir, sequences);
 
     return true;
@@ -469,6 +489,7 @@ public class GenTests extends GenInputsAbstract {
   public static void write_junit_tests (String output_dir,
                                         List<ExecutableSequence> seq) {
 
+    System.out.printf ("Writing %d junit tests%n", seq.size());
     JunitFileWriter jfw
       = new JunitFileWriter(output_dir, junit_package_name,
                             junit_classname, testsperfile);

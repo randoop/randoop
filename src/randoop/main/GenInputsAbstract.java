@@ -51,6 +51,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Capture all output to stdout and stderr")
   public static boolean capture_output = false;
 
+  @Option("Remove tests that are subsumed in other tests")
+  public static boolean remove_subsequences = false;
+
   @Option("Run each test twice and compare the observations")
   public static boolean compare_observations = false;
 
@@ -175,6 +178,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
       "Note that the number of tests output may be smaller than then number of inputs " +
   "created, because redundant and illegal inputs may be discarded.")
   public static int inputlimit = 100000000;
+
+  @Option ("Maximum number of tests to ouput.  Allows a more exact number than inputlimit")
+  public static int outputlimit = 100000000;
 
   @Option("Used to determine when to stop test generation. Generation stops when " +
   "either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached.")
