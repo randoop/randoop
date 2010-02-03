@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns="jelly:ant">
+
+    <fileScanner var="scanner">
+        <fileset dir="src/test/org/apache/commons/jelly/xml" includes="**/*.xml"/>
+    </fileScanner>
+    
+    <j:forEach var="file" items="${scanner.iterator()}">
+        <j:set var="fileFullName" value="${file.name}"/>
+        <j:set var="fileName" value="${fileFullName.substring(0, fileFullName.length() - 4)}"/>
+        About to process file ${file} and generate file name ${fileName}.html
+
+        <j:file name="target/${fileName}.html">
+            <x:transform xml="${file}" xslt="transformExample.xsl">
+                <x:param name="filename" value="${file.canonicalPath}"/>
+            </x:transform>
+        </j:file>
+    </j:forEach>
+
+</j:jelly>
+
+

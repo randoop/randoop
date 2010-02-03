@@ -1,0 +1,98 @@
+<catalog name="foo">
+
+  <!-- Define command and chain aliases -->
+  <define    name="adding-command"
+        className="org.apache.commons.chain.impl.AddingCommand"/>
+  <define    name="delegating-command"
+        className="org.apache.commons.chain.impl.DelegatingCommand"/>
+  <define    name="delegating-filter"
+        className="org.apache.commons.chain.impl.DelegatingFilter"/>
+  <define    name="exception-command"
+        className="org.apache.commons.chain.impl.ExceptionCommand"/>
+  <define    name="exception-filter"
+        className="org.apache.commons.chain.impl.ExceptionFilter"/>
+  <define    name="non-delegating-command"
+        className="org.apache.commons.chain.impl.NonDelegatingCommand"/>
+  <define    name="non-delegating-filter"
+        className="org.apache.commons.chain.impl.NonDelegatingFilter"/>
+  <define    name="test-chain"
+        className="org.apache.commons.chain.config.TestChain"/>
+  <define    name="test-command"
+        className="org.apache.commons.chain.config.TestCommand"/>
+
+  <!-- Single command "chains" from CatalogBaseTestCase -->
+  <adding-command
+             name="AddingCommand"/>
+  <delegating-command
+             name="DelegatingCommand"/>
+  <delegating-filter
+             name="DelegatingFilter"/>
+  <exception-command
+             name="ExceptionCommand"/>
+  <exception-filter
+             name="ExceptionFilter"/>
+  <non-delegating-command
+             name="NonDelegatingCommand"/>
+  <non-delegating-filter
+             name="NonDelegatingFilter"/>
+  <test-chain
+             name="ChainBase"/>
+
+  <!-- Configurable command with settable properties -->
+  <test-command
+             name="Configurable"
+              foo="Foo Value"
+              bar="Bar Value"/>
+
+  <!-- Chains with nested commands -->
+  <test-chain                       name="Execute2a">
+    <delegating-command               id="1"/>
+    <delegating-command               id="2"/>
+    <non-delegating-command           id="3"/>
+  </test-chain>
+  <test-chain                       name="Execute2b">
+    <delegating-command               id="1"/>
+    <delegating-command               id="2"/>
+    <delegating-command               id="3"/>
+  </test-chain>
+  <test-chain                       name="Execute2c">
+    <delegating-command               id="1"/>
+    <delegating-command               id="2"/>
+    <exception-command                id="3"/>
+  </test-chain>
+  <test-chain                       name="Execute2d">
+    <delegating-command               id="1"/>
+    <exception-command                id="2"/>
+    <non-delegating-command           id="3"/>
+  </test-chain>
+  <test-chain                       name="Execute4a">
+    <delegating-filter                id="1"
+                                     id2="a"/>
+    <delegating-command               id="2"/>
+    <non-delegating-filter            id="3"
+                                     id2="c"/>
+  </test-chain>
+  <test-chain                       name="Execute4b">
+    <delegating-command               id="1"/>
+    <delegating-filter                id="2"
+                                     id2="b"/>
+    <delegating-command               id="3"/>
+  </test-chain>
+  <test-chain                       name="Execute4c">
+    <delegating-filter                id="1"
+                                     id2="a"/>
+    <delegating-filter                id="2"
+                                     id2="b"/>
+    <exception-filter                 id="3"
+                                     id2="c"/>
+  </test-chain>
+  <test-chain                       name="Execute4d">
+    <delegating-filter                id="1"
+                                     id2="a"/>
+    <exception-filter                 id="2"
+                                     id2="b"/>
+    <non-delegating-filter            id="3"
+                                     id3="c"/>
+  </test-chain>
+
+</catalog>
