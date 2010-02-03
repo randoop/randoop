@@ -1,0 +1,947 @@
+<!--
+
+ Copyright 2001-2004 The Apache Software Foundation.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+
+<project name="Logging" default="compile" basedir=".">
+
+
+<!--
+        "Logging" component of the Jakarta Commons Subproject
+        $Id: build.xml,v 1.48 2004/11/10 22:59:04 rdonkin Exp $
+-->
+
+
+<!-- ========== Initialize Properties ===================================== -->
+
+
+  <property file="build.properties"/>                <!-- Component local   -->
+  <property file="../build.properties"/>             <!-- Commons local     -->
+  <property file="${user.home}/build.properties"/>   <!-- User local        -->
+
+
+<!-- ========== External Dependencies ===================================== -->
+
+
+  <!-- The directories corresponding to your necessary dependencies -->
+  <property name="junit.home"              value="/usr/local/junit3.5"/>
+  <property name="jakarta.home"            value="../.."/>
+
+
+<!-- ========== Derived Values ============================================ -->
+
+
+  <!-- The locations of necessary jar files -->
+  <property name="junit.jar"               value="${junit.home}/junit.jar"/>
+  <property name="log4j.jar"               value="${jakarta.home}/jakarta-log4j/dist/lib/log4j.jar"/>
+  <property name="logkit.jar"              value="${jakarta.home}/jakarta-avalon-logkit/build/log/logkit"/>
+  <property name="avalon-framework.jar"    value="../../Avalon-4.1.4/avalon-framework-4.1.4.jar"/>
+
+
+<!-- ========== Component Declarations ==================================== -->
+
+
+  <!-- The name of this component -->
+  <property name="component.name"          value="logging"/>
+
+  <!-- The primary package name of this component -->
+  <property name="component.package"       value="org.apache.commons.logging"/>
+
+  <!-- The title of this component -->
+  <property name="component.title"         value="Logging Wrapper Library"/>
+
+  <!-- The current version number of this component -->
+  <property name="component.version"       value="1.0.5-dev"/>
+
+  <!-- The base directory for compilation targets -->
+  <property name="build.home"              value="${basedir}/target"/>
+
+  <!-- The base directory for component configuration files -->
+  <property name="conf.home"               value="src/conf"/>
+
+  <!-- The base directory for distribution targets -->
+  <property name="dist.home"               value="dist"/>
+
+  <!-- The base directory for component sources -->
+  <property name="source.home"             value="src/java"/>
+
+  <!-- The base directory for unit test sources -->
+  <property name="test.home"               value="src/test"/>
+
+
+  <!-- Optional build -->
+  <property name="optional.home"               value="optional"/>
+  <property name="optional.dist.home"           value="${optional.home}/dist"/>
+
+  
+<!-- ========== Compiler Defaults ========================================= -->
+
+
+  <!-- Should Java compilations set the 'debug' compiler option? -->
+  <property name="compile.debug"           value="true"/>
+
+  <!-- Should Java compilations set the 'deprecation' compiler option? -->
+  <property name="compile.deprecation"     value="false"/>
+
+  <!-- Should Java compilations set the 'optimize' compiler option? -->
+  <property name="compile.optimize"        value="false"/>
+
+  <!-- Construct compile classpath -->
+  <path id="compile.classpath">
+    <pathelement location="${build.home}/classes"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${log4j.jar}"/>
+    <pathelement location="${logkit.jar}"/>
+    <pathelement location="${avalon-framework.jar}"/>
+  </path>
+
+
+<!-- ========== Test Execution Defaults =================================== -->
+
+
+  <!-- Construct unit test classpath (generic tests) -->
+  <path id="test.classpath">
+    <pathelement location="${build.home}/classes"/>
+    <pathelement location="${build.home}/tests"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${log4j.jar}"/>
+    <pathelement location="${logkit.jar}"/>
+    <pathelement location="${avalon-framework.jar}"/>
+    <pathelement location="${conf.home}"/>
+  </path>
+
+  <!-- Construct unit test classpath (JDK 1.4 tests) -->
+  <path id="test.classpath.jdk14">
+    <pathelement location="${build.home}/classes"/>
+    <pathelement location="${build.home}/tests"/>
+    <pathelement location="${junit.jar}"/>
+  </path>
+
+  <!-- Construct unit test classpath (Log4J tests) -->
+  <path id="test.classpath.log4j">
+    <pathelement location="${build.home}/classes"/>
+    <pathelement location="${build.home}/tests"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${log4j.jar}"/>
+  </path>
+
+  <!-- Construct unit test classpath (Log4J tests) -->
+  <path id="test.classpath.log4j12">
+    <pathelement location="${build.home}/classes"/>
+    <pathelement location="${build.home}/tests"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${log4j12.jar}"/>
+  </path>
+
+  <!-- Construct unit test classpath (Minimal Wrapper) -->
+  <path id="test.classpath.wrap">
+    <pathelement location="${build.home}/commons-logging-wrapper.jar"/>
+  </path>
+
+  <!-- Should all tests fail if one does? -->
+  <property name="test.failonerror"        value="true"/>
+
+  <!-- The test runner to execute -->
+  <property name="test.runner"             value="junit.textui.TestRunner"/>
+  <property name="test.entry" value="org.apache.commons.logging.TestAll"/>
+  <property name="test.wrapper"    value="org.apache.commons.logging.Wrapper"/>
+
+<!-- ========== Executable Targets ======================================== -->
+
+
+  <target name="init"
+   description="Initialize and evaluate conditionals">
+    <echo message="-------- ${component.title} ${component.version} --------"/>
+    <filter  token="name"                  value="${component.name}"/>
+    <filter  token="package"               value="${component.package}"/>
+    <filter  token="version"               value="${component.version}"/>
+  </target>  
+  
+  <target name="prepare" depends="init"
+   description="Prepare build directory">
+
+    <echo>
+    Log4j: ${log4j.jar}
+    LogKit: ${logkit.jar}
+    Avalon-Framework: ${avalon-framework.jar}
+    </echo>
+
+    <mkdir dir="${build.home}"/>
+    <mkdir dir="${build.home}/classes"/>
+    <mkdir dir="${build.home}/conf"/>
+    <mkdir dir="${build.home}/docs"/>
+    <mkdir dir="${build.home}/docs/api"/>
+    <mkdir dir="${build.home}/tests"/>
+  </target>
+
+
+  <target name="static" depends="prepare"
+   description="Copy static files to build directory">
+    <tstamp/>
+    <copy  todir="${build.home}/conf" filtering="on">
+      <fileset dir="${conf.home}" includes="*.MF"/>
+      <fileset dir="${conf.home}" includes="*.properties"/>
+    </copy>
+  </target>
+
+  <target name="compile" depends="static,compile-only"
+          description="Compile shareable components"/>
+
+  <target name='discovery' depends='init'>
+    <available property="jdk.1.4.present"
+               classname="java.util.logging.Logger"/>
+    <available classname="org.apache.log4j.Logger"
+               classpathref="compile.classpath"
+               property="log4j.present"/>
+    <available property="logkit.present"
+               classpathref="compile.classpath"
+               classname="org.apache.log.Logger"/>
+    <available property="avalon-framework.present"
+               classpathref="compile.classpath"
+               classname="org.apache.avalon.framework.logger.Logger"/>
+  </target>
+
+  <target name="log4j-warning" unless='log4j.present' depends='init,discovery'>
+    <echo>
+    *** WARNING ***
+    Log4j not found: Cannot Build Log4jLogger
+    </echo>
+  </target>
+  
+  <target name="logkit-warning" unless='logkit.present' depends='init,discovery'>
+    <echo>
+    *** WARNING ***
+    LogKit not found: Cannot Build LogKitLogger
+    </echo>
+  </target>
+  
+  <target name="avalon-framework-warning" unless='avalon-framework.present' depends='init,discovery'>
+    <echo>
+    *** WARNING ***
+    Avalon-Framework not found: Cannot Build AvalonLogger
+    </echo>
+  </target>
+  
+  <target name="jdk1.4-warning" unless='jdk.1.4.present' depends='init,discovery'>
+    <echo>
+    *** WARNING ***
+    JDK 1.4 not present: Cannot Build Jdk14Logger
+    </echo>
+  </target>
+  
+  <target name="log4j12-warning" unless='log4j12.jar' depends='init,discovery'>
+    <echo>
+    *** WARNING ***
+    Log4J 1.2.x Jar not found: Cannot execute 1.2.x tests
+    </echo>
+  </target>
+    
+  <target name='warning' depends='log4j-warning,logkit-warning,jdk1.4-warning,avalon-framework-warning'/>
+
+
+  <target name="compile-only" depends="init,discovery,warning" >
+
+    <echo  message="jdk.1.4.present=${jdk.1.4.present}"/>
+    <echo  message="log4j.present=${log4j.present}"/>
+    <echo  message="logkit.present=${logkit.present}"/>
+    <echo  message="avalon-framework.present=${avalon-framework.present}"/>
+
+    <javac srcdir="${source.home}"
+           destdir="${build.home}/classes"
+           debug="${compile.debug}"
+           deprecation="${compile.deprecation}"
+           optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+      <exclude name="org/apache/commons/logging/impl/Jdk13LumberjackLogger.java"
+               unless="jdk.1.4.present"/>
+      <exclude name="org/apache/commons/logging/impl/Jdk14Logger.java"
+               unless="jdk.1.4.present"/>
+      <exclude name="org/apache/commons/logging/impl/Log4J*.java"
+               unless="log4j.present"/>
+      <exclude name="org/apache/commons/logging/impl/Log4j*.java"
+               unless="log4j.present"/>
+      <exclude name="org/apache/commons/logging/impl/LogKitLogger.java"
+               unless="logkit.present"/>
+      <exclude name="org/apache/commons/logging/impl/AvalonLogger.java"
+               unless="avalon-framework.present"/>
+    </javac>
+    <copy  todir="${build.home}/classes" filtering="on">
+      <fileset dir="${source.home}" excludes="**/*.java"/>
+    </copy>
+    <mkdir      dir="${build.home}/classes/META-INF"/>
+    <copy      file="LICENSE.txt"
+              todir="${build.home}/classes/META-INF"/>
+    <copy      file="NOTICE.txt"
+              todir="${build.home}/classes/META-INF"/>
+
+    <jar jarfile="${build.home}/commons-${component.name}.jar"
+         basedir="${build.home}/classes"
+         manifest="${build.home}/conf/MANIFEST.MF">
+      <include name="org/apache/commons/logging/**" />
+      <include name="META-INF/LICENSE.txt"/>
+      <include name="META-INF/NOTICE.txt"/>
+    </jar>
+
+    <jar jarfile="${build.home}/commons-${component.name}-api.jar"
+         basedir="${build.home}/classes"
+         manifest="${build.home}/conf/MANIFEST.MF">
+      <include name="org/apache/commons/logging/*.class" />
+      <include name="org/apache/commons/logging/impl/LogFactoryImpl*.class" />
+      <include name="org/apache/commons/logging/impl/Jdk14*.class" />
+      <include name="org/apache/commons/logging/impl/SimpleLog*.class" />
+      <include name="org/apache/commons/logging/impl/NoOpLog*.class" />
+      <include name="META-INF/LICENSE.txt"/>
+      <include name="META-INF/NOTICE.txt"/>
+    </jar>
+  </target>
+
+  <target name='compile.jdk1.4.tests' if='jdk.1.4.present'>
+    <javac  srcdir="${test.home}"
+           destdir="${build.home}/tests"
+             debug="${compile.debug}"
+       deprecation="${compile.deprecation}"
+          optimize="${compile.optimize}">
+      <classpath refid="test.classpath"/>
+        <include name='**/jdk14/**'/>
+    </javac>
+  </target>
+
+  <target name='compile.log4j.tests' if='log4j.present'>
+    <javac  srcdir="${test.home}"
+           destdir="${build.home}/tests"
+             debug="${compile.debug}"
+       deprecation="${compile.deprecation}"
+          optimize="${compile.optimize}">
+      <classpath refid="test.classpath"/>
+        <include name='**/log4j/**'/>
+    </javac>
+  </target>
+
+
+  <target name='compile.avalon.tests' if='avalon-framework.present'>
+    <javac  srcdir="${test.home}"
+           destdir="${build.home}/tests"
+             debug="${compile.debug}"
+       deprecation="${compile.deprecation}"
+          optimize="${compile.optimize}">
+      <classpath refid="test.classpath"/>
+        <include name='**/avalon/**'/>
+    </javac>
+  </target>
+
+  <target name="compile.tests" depends="compile"
+   description="Compile unit test cases">
+    <javac  srcdir="${test.home}"
+           destdir="${build.home}/tests"
+             debug="${compile.debug}"
+       deprecation="${compile.deprecation}"
+          optimize="${compile.optimize}">
+      <classpath refid="test.classpath"/>
+      <exclude name='**/jdk14/**'/>
+      <exclude name='**/log4j/**'/>
+      <exclude name='**/avalon/**'/>
+    </javac>
+    <antcall target='compile.log4j.tests'/>
+    <antcall target='compile.jdk1.4.tests'/>
+    <antcall target='compile.avalon.tests'/>
+    <copy    todir="${build.home}/tests" filtering="on">
+      <fileset dir="${test.home}" excludes="**/*.java"/>
+    </copy>
+    <jar jarfile="${build.home}/commons-${component.name}-appender.jar"
+         basedir="${build.home}/tests"
+        manifest="${build.home}/conf/MANIFEST.MF">
+      <include name="org/apache/commons/logging/log4j/CustomConfig.properties"
+                 if="log4j.present"/>
+      <include name="org/apache/commons/logging/log4j/TestAppender.class"
+                 if="log4j.present"/>
+    </jar>
+    <jar jarfile="${build.home}/commons-${component.name}-tests.jar"
+         basedir="${build.home}/tests"
+        manifest="${build.home}/conf/MANIFEST.MF">
+      <exclude name="org/apache/commons/logging/Wrapper.class"/>
+      <exclude name="org/apache/commons/logging/jdk14/TestHandler.class"
+                 if="jdk.1.4.present"/>
+    </jar>
+    <jar jarfile="${build.home}/commons-${component.name}-wrapper.jar"
+         basedir="${build.home}/tests"
+        manifest="${build.home}/conf/MANIFEST.MF">
+      <include name="org/apache/commons/logging/Wrapper.class"/>
+      <include name="org/apache/commons/logging/jdk14/TestHandler.class"
+                 if="jdk.1.4.present"/>
+    </jar>
+
+  </target>
+
+
+  <target name="clean"
+   description="Clean build and distribution directories">
+    <delete    dir="${build.home}"/>
+    <delete    dir="${dist.home}"/>
+  </target>
+
+
+  <target name="all" depends="clean,compile"
+   description="Clean and compile all components"/>
+
+
+  <target name="javadoc" depends="compile"
+   description="Create component Javadoc documentation">
+    <mkdir      dir="${dist.home}"/>
+    <mkdir      dir="${dist.home}/docs"/>
+    <mkdir      dir="${dist.home}/docs/api"/>
+    <javadoc sourcepath="${source.home}"
+                destdir="${dist.home}/docs/api"
+               overview="${source.home}/overview.html"
+           packagenames="org.apache.commons.*"
+                 author="true"
+                private="true"
+                version="true"
+               doctitle="&lt;h1&gt;${component.title} (Version ${component.version})&lt;/h1&gt;"
+            windowtitle="${component.title} (Version ${component.version})"
+                 bottom='Copyright 2002-2004 The Apache Software Foundation.&lt;!--
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+ 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.--&gt;'>
+      <classpath refid="test.classpath"/>
+    </javadoc>
+  </target>
+
+
+  <target name="dist" depends="compile,javadoc"
+   description="Create binary distribution">
+    <mkdir      dir="${dist.home}"/>
+    <ant antfile='build.xml' target='dist' dir='${optional.home}'/>
+    <copy       todir="${dist.home}">
+        <fileset dir='${optional.dist.home}'>
+            <include name='*.jar'/>
+        </fileset>
+    </copy>
+    <copy       todir="${dist.home}/docs-optional">
+        <fileset dir='${optional.dist.home}/docs'/>
+    </copy>
+    <copy      file="LICENSE.txt"
+              todir="${dist.home}"/>
+    <copy      file="NOTICE.txt"
+              todir="${dist.home}"/>
+    <copy      file="RELEASE-NOTES.txt"
+              todir="${dist.home}"/>
+    <copy file="${build.home}/commons-${component.name}.jar"
+          tofile="${dist.home}/commons-${component.name}.jar" />
+    <copy file="${build.home}/commons-${component.name}-api.jar"
+          tofile="${dist.home}/commons-${component.name}-api.jar" />
+    <mkdir      dir="${dist.home}/src"/>
+    <copy     todir="${dist.home}/src" filtering="on">
+      <fileset  dir="${source.home}"/>
+    </copy>
+  </target>
+
+
+<!-- ========== Unit Test Targets ========================================= -->
+
+
+  <target name="test"
+       depends="test.alt-hashtable, log4j12-warning, compile.tests,test.jdk14,test.log4j,test.simple,test.avalon,test.log4j12"
+            if="test.entry"
+   description="Run all unit test cases">
+      <java    classname="${test.runner}" fork="yes"
+             failonerror="${test.failonerror}">
+        <arg       value="${test.entry}"/>
+        <classpath refid="test.classpath"/>
+      </java>
+  </target>
+
+
+  <target name="test.jdk14" depends="compile.tests" if="jdk.1.4.present"
+   description="Run unit tests specific to JDK 1.4 logging">
+
+    <echo message="Default Configuration (JDK 1.4 Auto-Recognized)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.jdk14.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.jdk14"/>
+    </java>
+
+    <echo message="Default Configuration (JDK 1.4 LogFactoryImpl Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <arg value="org.apache.commons.logging.jdk14.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.jdk14"/>
+    </java>
+
+    <echo message="Default Configuration (JDK 1.4 Jdk14Logger Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Jdk14Logger"/>
+      <arg value="org.apache.commons.logging.jdk14.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.jdk14"/>
+    </java>
+
+    <echo message="Custom Configuration (JDK 1.4 Auto-Recognized)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.jdk14"/>
+    </java>
+
+    <echo message="Custom Configuration (JDK 1.4 LogFactoryImpl Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <arg value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.jdk14"/>
+    </java>
+
+    <echo message="Custom Configuration (JDK 1.4 Jdk14Logger Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Jdk14Logger"/>
+      <arg value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.jdk14"/>
+    </java>
+    
+    <echo message="Basic Operations"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Jdk14Logger"/>
+      <arg value="org.apache.commons.logging.BasicOperationsTest"/>
+      <classpath refid="test.classpath.log4j"/>
+    </java>
+
+
+    <echo message="Hierarchy Configuration API (JDK 1.4 Auto-Recognized)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration API (JDK 1.4 LogFactoryImpl Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration API (JDK 1.4 Jdk14Logger Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Jdk14Logger"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (JDK 1.4 Auto-Recognized)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (JDK 1.4 LogFactoryImpl Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (JDK 1.4 Jdk14Logger Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.jdk14.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Jdk14Logger"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+  </target>
+
+
+  <target name="test.log4j" depends="compile.tests" if="log4j.present"
+   description="Run unit tests specific to Log4J logging">
+
+    <echo message="Default Configuration (Log4J Auto-Recognized)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.log4j.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.log4j"/>
+    </java>
+
+    <echo message="Default Configuration (Log4J LogFactoryImpl Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <arg value="org.apache.commons.logging.log4j.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.log4j"/>
+    </java>
+
+    <echo message="Default Configuration (Log4J Log4JLogger Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <arg value="org.apache.commons.logging.log4j.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.log4j"/>
+    </java>
+
+    <echo message="Custom Configuration (Log4J Auto-Recognized)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.log4j"/>
+    </java>
+
+    <echo message="Custom Configuration (Log4J LogFactoryImpl Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <arg value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.log4j"/>
+    </java>
+
+    <echo message="Custom Configuration (Log4J Log4JLogger Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <arg value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.log4j"/>
+    </java>
+    
+    <echo message="Basic Operations"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <arg value="org.apache.commons.logging.BasicOperationsTest"/>
+      <classpath refid="test.classpath.log4j"/>
+    </java>
+
+    <echo message="Hierarchy Configuration API (Log4J Auto-Recognized)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration API (Log4J LogFactoryImpl Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration API (Log4J Log4JLogger Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (Log4J Auto-Recognized)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (Log4J LogFactoryImpl Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (Log4J Log4JLogger Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+  </target>
+
+
+  <target name="test.simple" depends="compile.tests"
+   description="Run unit tests specific to SimpleLog logging">
+
+    <echo message="Default Configuration (SimpleLog Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.SimpleLog"/>
+      <arg value="org.apache.commons.logging.simple.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+
+    <echo message="Custom Configuration (SimpleLog Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.simple.DecoratedSimpleLog"/>
+      <sysproperty key="org.apache.commons.logging.simplelog.defaultlog"
+                 value="debug"/>
+      <arg value="org.apache.commons.logging.simple.CustomConfigTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+    
+    <echo message="Custom Configuration With DateTime (SimpleLog Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.simple.DecoratedSimpleLog"/>
+      <sysproperty key="org.apache.commons.logging.simplelog.defaultlog"
+                 value="debug"/>
+      <sysproperty key="org.apache.commons.logging.simplelog.dateTimeFormat"
+                 value="dd.mm.yyyy"/>
+      <sysproperty key="org.apache.commons.logging.simplelog.showdatetime"
+                 value="true"/>                 
+      <arg value="org.apache.commons.logging.simple.DateTimeCustomConfigTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+    
+    <echo message="Basic Operations"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.SimpleLog"/>
+      <arg value="org.apache.commons.logging.BasicOperationsTest"/>
+      <classpath refid="test.classpath"/>
+    </java>
+
+  </target>
+
+
+  <target name="test.avalon" depends="compile.tests" if="avalon-framework.present"
+   description="Run unit tests specific to Avalon (Framework) logging">
+
+    <echo message="Avalon Tests"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.avalon.AvalonLoggerTest"/>
+      <classpath refid="test.classpath"/>
+    </java>
+    
+  </target>
+
+
+  <target name="test.log4j12" depends="compile.tests" if="log4j12.jar"
+   description="Run unit tests specific to Log4J logging Version 1.2">
+
+    <echo message="Default Configuration (Log4J Auto-Recognized)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.log4j.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.log4j12"/>
+    </java>
+
+    <echo message="Default Configuration (Log4J LogFactoryImpl Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <arg value="org.apache.commons.logging.log4j.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.log4j12"/>
+    </java>
+
+    <echo message="Default Configuration (Log4J Log4JLogger Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <arg value="org.apache.commons.logging.log4j.DefaultConfigTestCase"/>
+      <classpath refid="test.classpath.log4j12"/>
+    </java>
+
+    <echo message="Custom Configuration (Log4J Auto-Recognized)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.log4j12"/>
+    </java>
+
+    <echo message="Custom Configuration (Log4J LogFactoryImpl Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <arg value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.log4j12"/>
+    </java>
+
+    <echo message="Custom Configuration (Log4J Log4JLogger Selected)"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <arg value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.log4j12"/>
+    </java>
+    
+    <echo message="Basic Operations"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <arg value="org.apache.commons.logging.BasicOperationsTest"/>
+      <classpath refid="test.classpath.log4j12"/>
+    </java>
+
+    <echo message="Hierarchy Configuration API (Log4J Auto-Recognized)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration API (Log4J LogFactoryImpl Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration API (Log4J Log4JLogger Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="API"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (Log4J Auto-Recognized)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j12.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (Log4J LogFactoryImpl Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j12.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory"
+                 value="org.apache.commons.logging.impl.LogFactoryImpl"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+    <echo message="Hierarchy Configuration FULL (Log4J Log4JLogger Selected)"/>
+    <java classname="${test.wrapper}" fork="yes" failonerror="${test.failonerror}">
+      <sysproperty key="wrapper.hierarchy" value="FULL"/>
+      <sysproperty key="wrapper.junit" value="${junit.jar}"/>
+      <sysproperty key="wrapper.log4j" value="${log4j12.jar}"/>
+      <sysproperty key="wrapper.target" value="${build.home}"/>
+      <sysproperty key="wrapper.testcase"
+                 value="org.apache.commons.logging.log4j.CustomConfigTestCase"/>
+      <sysproperty key="org.apache.commons.logging.Log"
+                 value="org.apache.commons.logging.impl.Log4JLogger"/>
+      <classpath refid="test.classpath.wrap"/>
+    </java>
+
+  </target>
+
+
+
+  <target name="test.alt-hashtable" depends="compile.tests"
+   description="Tests for hashtable substitution">
+
+    <echo message="Hashtable substitution Tests"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.AltHashtableTest"/>
+      <classpath refid="test.classpath"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory.HashtableImpl"
+                 value="org.apache.commons.logging.AltHashtable"/>
+    </java>
+    
+    <echo message="Bad property test"/>
+    <java classname="${test.runner}" fork="yes" failonerror="${test.failonerror}">
+      <arg value="org.apache.commons.logging.BadHashtablePropertyTest"/>
+      <classpath refid="test.classpath"/>
+      <sysproperty key="org.apache.commons.logging.LogFactory.HashtableImpl"
+                 value="org.apache.commons.logging.bad.BogusHashTable"/>
+    </java>
+    
+  </target>
+
+</project>
