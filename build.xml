@@ -1,0 +1,358 @@
+<project name="randoop" default="all" basedir=".">
+
+	<import file="ant-macros.xml"/>
+
+	<property environment="env" />
+	<property name="build.compiler" value="modern" />
+	<property name="destdir" value="bin" />
+
+	<!-- we compile test resources to a separate place - to avoid collisions with experiment classpath-->
+	<property name="testclassesdestdir" value="testclasses-bin" />
+	<property name="classpath" value="lib/junit-4.3.1.jar" />
+	<property name="systemtestsclasspath" value="systemtests;${classpath};${java.class.path};${destdir}" />
+	<property name="compileargs" value="-Xlint:unchecked -Xlint:deprecation -g" />
+	<property name="systemtestsdir" value="systemtests" />
+
+	<property name="scratch" value="/var/autofs/net/peanut/scratch/palulu/" />
+	<property name="inv" value="lib/daikon.jar" />
+	<property name="daikon_cp" value="${inv}" />
+	<property name="stackar_dtrace" value="lib/StackAr.dtrace.gz" />
+	<property name="lbc_classes" value="daikon.PptName|daikon.PptSlice2|daikon.PptSliceEquality|daikon.PptTopLevel|daikon.ProglangType|daikon.VarInfo|daikon.VarInfoName|daikon.inv.binary.twoScalar.LinearBinary|daikon.inv.binary.twoScalar.LinearBinaryCore" />
+	<property name="knownImpureMethods" value="experiments/resources/jdk.nonPure" />
+	<property name="knownPureMethods" value="experiments/resources/jdk.pure" />
+	<!-- this is needed for the 'if' task  -->
+	<target name="init">
+		<tstamp />
+	</target>
+
+	<!-- EMMA - code coverage tool emma.sourceforge.net -->
+	<!-- directory that contains emma.jar and emma_ant.jar: -->
+	<property name="emma.dir" value="${basedir}/lib" />
+	<path id="emma.lib">
+		<pathelement location="${emma.dir}/emma.jar" />
+		<pathelement location="${emma.dir}/emma_ant.jar" />
+	</path>
+
+	<!-- output directory used for EMMA coverage reports: -->
+	<property name="coverage.dir" value="${basedir}/coverage" />
+
+	<!-- run this target before running emmajava and you'll get coverage info -->
+	<target name="emma" description="turns on EMMA's on-the-fly instrumentation mode">
+		<property name="emma.enabled" value="true" />
+	</target>
+
+	<!-- Print out the classpath required to run randoop (useful for those that may want to run randoop from the command line) -->
+	<target name="print-classpath" depends=""><echo>${destdir};${classpath}</echo></target>
+
+	<target name="randoop-htmlparser" depends="">
+	<java fork="true" dir="." classname="randoop.main.GenErrorRevealingTests" failonerror="true"
+              classpath="temp-randoop;experiments/htmlparser/htmlparser.jar;${systemtestsclasspath}">
+	<arg line="--plans=10000 --time=30 --null-allowed=true --classlist=experiments/htmlparser/htmlparser.classes --log=temp.log" />
+	</java>
+	</target>
+
+	<target name="randoop-experiments" depends="">
+		<delete dir="temp-randoop" />
+		<mkdir dir="temp-randoop" />
+		<copydir dest="temp-randoop" src="systemtests/issta06">
+		</copydir>
+		<java fork="true" dir="temp-randoop" classname="randoop.experiments.JoeRun" failonerror="true" classpath="${destdir};${classpath}">
+			<arg line="javax_xml.experiment java.util.experiment commons_collections.experiment primitives.experiment chain.experiment  jelly.experiment logging.experiment -verbose -resultsfile:joe_experiment.tex" />
+		</java>
+		<exec os="Linux" executable="pdflatex" failonerror="true" dir="experiments">
+			<arg line="joe_table" />
+		</exec>
+	</target>
+
+	<target name="all" depends="
+		init, 
+		clean, 
+		build,
+		tests,
+		boundedstackrunregression, 
+		javautil-errors, 
+		javautil-run-regression, 
+		javautil-gentests-static,
+		universal-driver-test
+		" />
+
+        <target name="build" depends="init, clean, dirtybuild" />
+
+	<target name="dirtybuild" depends="init">
+		<mkdir dir="${destdir}" />
+		<mkdir dir="${testclassesdestdir}" />
+
+		<echo>compiling</echo>
+		<javac source="1.5" destdir="${destdir}" debug="on"
+		nowarn="true" classpath="${classpath}:${testclassesdestdir}"
+                       fork="true" memorymaximumsize="1024M">
+			<compilerarg line="${compileargs}" />
+			<src path="src" />
+			<src path="tests" />
+		</javac>
+
+		<echo>copy resource files to bin directory</echo>
+		<copy todir="${destdir}">
+			<fileset dir="src" includes="**/*.*" excludes="**/*.java" />
+			<fileset dir="tests" includes="**/*.*" excludes="**/*.java" />
+		</copy>
+	</target>
+
+	<target name="clean" depends="init">
+	</target>
+	
+	<target name="buildsystemtestsdir" depends="build, clean" description="--> build sources under systemtests dir">
+		<javac source="1.5" destdir="${systemtestsdir}" debug="on" nowarn="true" classpath="${classpath}" fork="true" memorymaximumsize="1024M">
+			<compilerarg line="${compileargs}" />
+			<src path="${systemtestsdir}" />
+		</javac>
+	</target>
+
+
+	<!-- System test for the universal driver creator. -->
+	<target name="universal-driver-test" depends="">
+		<!-- Create driver -->
+		<java fork="true"
+			dir="systemtests" 
+			classname="randoop.main.GenErrorRevealingTests"
+			failonerror="true"
+			classpath="${systemtestsclasspath}">
+			<arg line="universal-driver rand Driver --classlist=java.util.classlist.txt " />
+		</java>
+		<!-- Compile driver --> 
+		<javac  
+			fork="true" 
+			memorymaximumsize="1024M"
+			source="1.5"
+			srcdir="systemtests"
+			destdir="systemtests"
+			includes="Driver.java"
+			debug="on"
+			nowarn="true"
+			classpath="${systemtestsclasspath}">
+		</javac>
+		<!-- Run driver -->
+		<java fork="true"
+			dir="systemtests"
+			classname="Driver"
+			failonerror="true"
+			classpath="${systemtestsclasspath}">
+			<arg line="" />
+		</java>
+	</target>
+
+	<!-- Run this target to regression-test randoop. -->
+	<target name="boundedstackrunregression" depends="boundedstackgentests">
+		<echo>
+If the following java command fails, it means that your local
+collection of methods and constructors is different from
+the saved collection.
+		</echo>
+		<java fork="true" dir="systemtests" classname="randoop.main.utilities.CompareLists" failonerror="true" classpath="${systemtestsclasspath}">
+			<arg line="ubstack.statements ubstack.statements.saved" />
+		</java>
+
+		<echo>
+If the following java command fails, it means that your local version of
+randoop generates different plans from the goal 
+(you have modified randoop's generation process).
+		</echo>
+		<java fork="true" dir="systemtests" classname="randoop.main.utilities.CompareLists" failonerror="true" classpath="${systemtestsclasspath}">
+			<arg line="ubstack.txt.regression ubstack.txt.regression.saved" />
+		</java>
+	</target>
+
+	<!-- Run this target to update the regression file (if there were regression changes, but they're ok). -->
+	<target name="boundedstackupdateregression" depends="boundedstackgentests" description="regenerate goal">
+		<copy tofile="systemtests/ubstack.txt.regression.saved" file="systemtests/ubstack.txt.regression" />
+		<copy tofile="systemtests/ubstack.statements.saved" file="systemtests/ubstack.statements" />
+	</target>
+
+	<target name="boundedstackgentests" depends="buildsystemtestsdir">
+		<delete>
+			<fileset dir="${basedir}" id="id3">
+				<include name="systemtests/ubstack.txt.regression" />
+			</fileset>
+		</delete>
+		<java fork="true" dir="systemtests" classname="randoop.main.GenErrorRevealingTests" failonerror="true" classpath="${systemtestsclasspath}">
+			<arg line="--time=1000 --plans=1000 --classlist=ubstack.txt --serialized=ubstack.txt.regression --serializedstatements=ubstack.statements --log=joelog" />
+		</java>
+	</target>
+
+	<target name="jpf-containers-experiment" depends="">
+		<java fork="true" dir="." classname="randoop.main.utilities.Issta06ContainerExperiment" failonerror="true" classpath="${systemtestsclasspath}">
+			<arg line="randoop.test.issta2006.FibHeap" />
+		</java>
+	</target>
+
+	<target name="javautil-run-regression" depends="javautil-gentests">
+		<echo>
+If the following java command fails, it means that your local
+collection of methods and constructors is different from
+the saved collection.
+		</echo>
+		<java fork="true" dir="systemtests" classname="randoop.main.utilities.CompareLists" failonerror="true" classpath="${systemtestsclasspath}">
+			<arg line="javautil.statements javautil.statements.saved" />
+		</java>
+
+		<echo>
+	If the following java command fails, it means that your local version of
+	randoop generates different plans from the goal 
+	(you have modified randoop's generation process).
+			</echo>
+		<java fork="true" dir="systemtests" classname="randoop.main.utilities.CompareLists" failonerror="true" classpath="${systemtestsclasspath}">
+			<arg line="java.util.serialized java.util.serialized.saved java.util.serialized.saved-mac" />
+		</java>
+	</target>
+
+	<!-- Run this target to update the regression file (if there were regression changes, but they're ok). -->
+	<target name="javautil-update-regression" depends="javautil-gentests" description="regenerate goal">
+		<copy tofile="systemtests/java.util.serialized.saved" file="systemtests/java.util.serialized" />
+		<copy tofile="systemtests/javautil.statements.saved" file="systemtests/javautil.statements" />
+	</target>
+
+	<target name="javautil-gentests" depends="build,clean">
+		<delete>
+			<fileset dir="${basedir}">
+				<include name="systemtests/java.util.classlist.txt.regression" />
+			</fileset>
+		</delete>
+		<java fork="true" dir="systemtests" classname="randoop.main.GenErrorRevealingTests" failonerror="true" classpath="${systemtestsclasspath}">
+			<arg line="--log=javautillog --plans=1000 --senderr=java.util.stderr --classlist=java.util.classlist.txt --serialized=java.util.serialized --serializedstatements=javautil.statements" />
+		</java>
+	</target>
+
+	<target name="javautil-gentests-static" depends="clean,build">
+		<java fork="true" dir="systemtests" classname="randoop.main.GenErrorRevealingTests" failonerror="true" classpath="${systemtestsclasspath}">
+			<arg line="--plans=2000 --joetestrun --randomseed=7 --dontexecute --classlist=java.util.classlist.txt" />
+		</java>
+	</target>
+
+	<target name="javautil-errors" depends="">
+
+		<echo>Delete systemtests/java.util.scracth directory</echo>
+		<delete file="systemtests/java.util.scratch" failonerror="false" />
+
+		<copyfile src="systemtests/java.util.classlist.txt" dest="systemtests/java.util.scratch/java.util.classlist.txt" />
+
+		<mkdir dir="systemtests/java.util.scratch" />
+
+		<echo>Run Joe on java.util.</echo>
+		<java resultproperty="joesuccess" fork="true" dir="systemtests/java.util.scratch" classname="randoop.main.GenErrorRevealingTests" failonerror="false" classpath="${systemtestsclasspath}">
+			<arg line="--no-args-statement-heuristic=false --clear=1000 --usethreads=false --maxsize=100 --junitclass=JoeOnJavaUtil  --nochecks  --senderr=java.util.stderr --plans=5000 --classlist=java.util.classlist.txt --dont_write_over" />
+		</java>
+
+		<fail message="JOE FAILED. LOOK AT THE BOTTOM OF FILE systemtests/java.util.scratch/java.util.stderr FOR STACK TRACE.">
+			<condition>
+				<not>
+					<equals arg1="${joesuccess}" arg2="0" />
+				</not>
+			</condition>
+		</fail>
+
+		<echo>Compile generated tests</echo>
+		<javac source="1.5" 
+		       classpath="${systemtestsclasspath}" 
+           	       srcdir="systemtests/java.util.scratch" 
+		       destdir="systemtests/java.util.scratch" 
+           	       fork="true" 
+           	       memorymaximumsize="1024M"
+           	       />
+
+		<echo>Run tests</echo>
+		<java output="systemtests/java.util.scratch/junit.output.txt" fork="true" classpath="systemtests/java.util.scratch:${systemtestsclasspath}" classname="JoeOnJavaUtil" failonerror="false">
+		</java>
+
+<!-- 		<echo>Verify that tests were run and that all failed.</echo> -->
+<!-- 		<java fork="true" classpath="${systemtestsclasspath}" classname="randoop.experiments.Check_no_error_reports" failonerror="true"> -->
+<!-- 			<arg line="systemtests/java.util.scratch/junit.output.txt" /> -->
+<!-- 		</java> -->
+
+		<echo>Verify that Joe found bugs that it had previously found.</echo>
+		<java fork="true" classpath="${systemtestsclasspath}" classname="randoop.experiments.CheckThatJoeFindsJavaUtilBugs" failonerror="true">
+			<arg line="systemtests/java.util.scratch JoeOnJavaUtil" />
+		</java>
+
+	</target>
+
+	<!-- Hack from http://wiki.osuosl.org/display/howto/Running+JUnit+Tests+from+Ant+without+making+classpath+changes -->
+	<!-- to avoid touching classpath to run the tests -->
+	<target name="tests" depends="build" description="Runs JUnit Tests Via an Exec Task">
+
+		<!-- TODO this works only on Linux so we use os="Linux" for now-->
+		<exec os="Linux" executable="ant" failonerror="true">
+			<!-- add the packaged junit.jar to the classpath -->
+			<env key="CLASSPATH" path="${basedir}/lib/daikon.jar" />
+
+			<!-- task that runs the JUnit tests -->
+			<arg line="alltests" />
+		</exec>
+	</target>
+
+	<!-- this target is to be called only from the tests target-->
+	<target name="alltests">
+		<junit printsummary="true" fork="true" failureproperty="test.failure" errorproperty="test.failure" showoutput="true" maxmemory="1200m">
+
+			<classpath>
+				<pathelement path="${destdir}" />
+				<pathelement path="${classpath}" />
+				<pathelement path="${testclassesdestdir}" />
+			</classpath>
+			<jvmarg value="-ea" />
+			<formatter usefile="false" type="brief" />
+
+			<test name="alltests.AllTests" />
+		</junit>
+
+		<fail message="test failed" if="test.failure" />
+	</target>
+
+
+	<target name="export" depends="build">
+		<property name="jarfile" value="dist/randoop.jar" />
+		<mkdir dir="dist" />
+		<delete file="dist/randoop.jar" />
+		<jar jarfile="dist/randoop.jar">
+			<fileset dir="./bin">
+				<include name="**/*" />
+			</fileset>
+			<fileset dir="./src">
+				<include name="**/*" />
+			</fileset>
+			<zipfileset src="./lib/junit-4.3.1.jar" /> 
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Main-Class" value="randoop.main.Main" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="html" depends="export">
+		<echo>Creating auto-generated HTML files...</echo>
+		<java jvm="/afs/csail.mit.edu/group/pag/software/bin/java" fork="true" dir="doc" jar="dist/randoop.jar" failonerror="true">
+			<arg line="html-help"/>
+		</java>	
+	</target>
+
+	<target name="upload" depends="export,html">
+	
+		<echo>Ensuring that curent version is not already installed...</echo>
+		<loadfile property="version" srcFile="src/randoop/version.txt"/>
+		<fail message="Directory for version ${version} already exists!">
+			<condition>
+				<available file="/afs/csail.mit.edu/u/c/cpacheco/public_html/randoop/${version}" property="versionDirExists"/>
+			</condition>
+		</fail>
+		
+		<echo>Copying files to web directory...</echo>
+		<mkdir dir="/afs/csail.mit.edu/u/c/cpacheco/public_html/randoop/${version}"/>
+		<copy todir="/afs/csail.mit.edu/u/c/cpacheco/public_html/randoop/${version}/dist">
+			<fileset dir="dist"/>
+		</copy>
+		<copy todir="/afs/csail.mit.edu/u/c/cpacheco/public_html/randoop/${version}/doc">
+			<fileset dir="doc"/>
+		</copy>
+		
+	</target>
+
+</project>

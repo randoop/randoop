@@ -1,0 +1,43 @@
+%
+% General Info
+%
+The randoop svn repository is at:  $pag/projects/randoop/REPOS.
+checkout with 
+  svn checkout file:/afs/csail/group/pag/projects/randoop/REPOS randoop
+A HTTP server has not yet been setup (since no one outside of CSAIL needs
+access)
+
+A basic test of randoop seems to be run with:
+  make unit
+    
+
+%
+% Randoop command line options
+%
+To remove certain constructors/methods use --omitfilter.  It specifies
+a pattern that must match java.reflection.Method.toString() of the
+constructor/method.  The implementation is in 
+randoop.util.DefaultReflectionFilter
+
+To create an object for randoop using particular code, create a helper
+class that constructs it the way you want and then add that class to
+the list of classes to explore.
+
+Most command line options are specified in GenInputsAbstract.java
+
+%
+% Where things are implemented
+%
+output capture is implemented in ExecutableSequence.executeStatement.
+This is accomplished by changing stdout and stderr to a memory
+based printsteam and recording the results.
+
+comparing observations to see if they return consistent results is
+implementedin ExecutableSequence.compare_observations()
+
+GenTests is the main for Randoop as it is normally used.  There are
+other mains for other purposes.
+
+ForwardGenerator is the generator for Randoops normal operation.
+
+

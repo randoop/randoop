@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+ <!--
+   Copyright 2002-2004 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+  -->
+
+<document>
+
+ <properties>
+  <title>Commons Collections</title>
+  <author email="commons-dev@jakarta.apache.org">Commons Documentation Team</author>
+ </properties>
+
+ <body>
+
+<section name="Commons Collections">
+
+<p>
+The <a href="http://java.sun.com/products/j2se/1.4/docs/guide/collections/">Java Collections Framework</a>
+was a major addition in JDK 1.2.
+It added many powerful data structures that accelerate development of most significant Java applications.
+Since that time it has become the recognised standard for collection handling in Java.
+</p>
+<p>
+Commons-Collections seek to build upon the JDK classes by providing new interfaces, implementations and utilities.
+There are many features, including:
+<ul>
+<li>Bag interface for collections that have a number of copies of each object</li>
+<li>Buffer interface for collections that have a well defined removal order, like FIFOs</li>
+<li>BidiMap interface for maps that can be looked up from value to key as well and key to value</li>
+<li>MapIterator interface to provide simple and quick iteration over maps</li>
+<li>Type checking decorators to ensure that only instances of a certain type can be added</li>
+<li>Transforming decorators that alter each object as it is added to the collection</li>
+<li>Composite collections that make multiple collections look like one</li>
+<li>Ordered maps and sets that retain the order elements are added in, including an LRU based map</li>
+<li>Identity map that compares objects based on their identity (==) instead of the equals method</li>
+<li>Reference map that allows keys and/or values to be garbage collected under close control</li>
+<li>Many comparator implementations</li>
+<li>Many iterator implementations</li>
+<li>Adapter classes from array and enumerations to collections</li>
+<li>Utilities to test or create typical set-theory properties of collections such as union, intersection, and closure</li>
+</ul>
+</p>
+<p>
+Version 3.1 and patch version 2.1.1 have just been released.
+These provides a work around to a <a href="compatibility.html">version compatibility</a> issue between v2.1 and v3.0.
+</p>
+</section>
+
+
+<section name="Documentation">
+<p>
+A getting started<span> </span><a href="userguide.html">User's Guide</a> is available.
+</p>
+<p>
+The JavaDoc API documents are available online:
+</p>
+<ul>
+<li>The <a href="apidocs-COLLECTIONS_3_1/index.html">current release 3.1</a></li>
+<li>The <a href="apidocs-COLLECTIONS_2_1_1/index.html">previous version 2.1.1</a></li>
+<li>The <a href="apidocs/index.html">latest CVS</a></li>
+</ul>
+<p>
+The <a href="http://cvs.apache.org/viewcvs/jakarta-commons/collections/">CVS repository</a> can be browsed.
+</p>
+</section>
+
+
+<section name="Releases">
+<p>
+Version 3.1/2.1.1 - 
+ <a href="http://jakarta.apache.org/site/binindex.cgi#commons-collections">Binary</a> - 
+ <a href="http://jakarta.apache.org/site/sourceindex.cgi#commons-collections">Source</a>
+</p>
+<p>
+ For previous releases, see the <a href="http://archive.apache.org/dist/jakarta/commons/collections/">Apache Archive</a>
+</p>
+</section>
+
+<section name="Bugs">
+<p>
+Bugs may be reported via the Bugzilla Management system. The following links may prove useful:
+</p>
+<ul>
+ <li><a href="http://issues.apache.org/bugzilla/createaccount.cgi">Create a Bugzilla account</a></li>
+ <li><a href="http://issues.apache.org/bugzilla/enter_bug.cgi?product=Commons&amp;component=Collections&amp;version=3.0%20Final">Submit a bug report</a></li>
+ <li><a href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Commons&amp;component=Collections&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;newqueryname=&amp;order=Reuse+same+sort+as+last+time">All open Collections bugs</a></li>
+ <li><a href="http://issues.apache.org/bugzilla/buglist.cgi?bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED&amp;bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfieldfrom=&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Commons&amp;component=Collections&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;bug_file_loc=&amp;bug_file_loc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;newqueryname=&amp;order=Reuse+same+sort+as+last+time">All Collections bugs</a></li>
+</ul>
+</section>
+
+</body>
+</document>
+
+
+
+
+
+
