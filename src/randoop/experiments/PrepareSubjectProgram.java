@@ -41,6 +41,7 @@ public class PrepareSubjectProgram {
     System.out.println("========== Removing temporary files from previous run of this experiment.");
     List<String> rm = new ArrayList<String>();
     rm.add("rm");
+    rm.add("-f");
     rm.add(exp.targetClassListFile);
     ExperimentBase.printCommand(rm, true, true);
     Command.runCommandOKToFail(rm.toArray(new String[0]), "CLEAN", true, "", true);
