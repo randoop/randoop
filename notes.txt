@@ -1,3 +1,14 @@
+===========================================================================
+
+Carlos has some additional files squirreled away at:
+  ~cpacheco/mac/carlospacheco/Documents/workspace/jrandoop/
+  ~cpacheco/mac/carlospacheco/randoop2/jrandoop/
+They are slightly different, so you may need to look in both places.
+
+===========================================================================
+
+The below are notes from Carlos's original notes.txt file.
+
 first step is predf,  (make predf)
   runs randoop on java collections
   computes frontier branches
