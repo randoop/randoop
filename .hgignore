@@ -2,16 +2,28 @@ syntax: glob
 *.class
 *~
 Makefile.user
-bin/randoop/version.txt
-randoop.zip
-randoop_agent.jar
+TAGS
+bdgen2-log.txt
 bin/randoop/test/resources/dependencytests-output.txt
 bin/randoop/test/resources/dependencytests.txt
 bin/randoop/test/resources/java.util.classlist.java1.6.txt
 bin/randoop/test/resources/java.util.classlist.txt
 bin/randoop/test/resources/sequence_tests_script.txt
 bin/randoop/test/resources/universal_driver.txt
-TAGS
+bin/randoop/version.txt
+covmap.gz
+covtest-scratch
+df-scratch
+frontier[0-9]
+randoop-contracts-log.txt
+randoop-contracts-scratch
+randoop-log.txt
+randoop-scratch
+randoop.zip
+randoop_agent.jar
+test.dftargets.txt
+systemtests/jc-covinst
+
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.
 (^|/)\#.*\#$
