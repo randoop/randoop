@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml">
+
+<testcase>
+
+  <x:parse var="doc">
+
+    <a>
+      <b v="1"/>
+      <b v="2"/>
+      <b v="3"/>
+    </a>
+  </x:parse>
+
+  <j:set var="i" value="0"/>
+  <j:set var="i2" value="0"/>
+    
+  <x:forEach select="$doc/a/b" var="x">
+    <x:set var="i2" select="$i2 + number($x/@v)"/>
+  </x:forEach>
+    
+  <x:forEach select="$doc/a">
+      <x:forEach select="b">
+      <x:set var="i" select="$i + @v"/>
+    </x:forEach>
+  </x:forEach>
+  
+  <x:if select="$i2 != 6.0">          
+      <fail>The i2 should be 6! but the value is <x:expr select="$i2"/></fail>
+  </x:if>
+  
+  <x:if select="$i != 6.0">          
+      <fail>The i should be 6! but the value is <x:expr select="$i"/></fail>
+  </x:if>
+  
+</testcase>
+
+</j:jelly>
+
+

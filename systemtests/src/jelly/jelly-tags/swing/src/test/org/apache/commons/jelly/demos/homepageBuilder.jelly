@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly 
+    xmlns:j="jelly:core" 
+    xmlns="jelly:swing" >
+
+    <!-- create the generate page action -->
+
+    <action var="createPageAction" name="Build and preview your page!">
+        <j:set var="name" value="${nameField.text}"/>
+        <j:set var="background" value="${colorField.text}"/>
+        <j:set var="url" value="${pictureField.text}"/>
+        <j:set var="hobbies" value="${hobbyModel.toArray()}"/>
+        <j:set var="template" value="${templateField.getSelectedItem().toString()}"/>
+        
+        name = ${name}
+        background = ${background}
+        url = ${url}
+        hobbies = ${hobbies}
+        template = ${template}
+        
+        <j:file name="demopage.html" outputMode="html">
+            <j:include uri="${template}"/>
+        </j:file>
+
+        <frame var="showPageFrame" size="500,600" location="200,200" title="Your Homepage">
+            <scrollPane>
+                <editorPane page="${context.getResource('/demopage.html').toString()}" editable="false"/>
+            </scrollPane>
+        </frame>
+        ${showPageFrame.show()}
+    </action>
+
+
+    <!-- create the Frame -->
+    
+  <frame var="frame" title="Homepage Builder" location="100,100" size="800,400">
+        <panel>
+
+<!-- uncomment this when we've implemented emptyBorder
+    
+            <emptyBorder top="20" left="20" bottom="20" right="20" />            
+-->        
+            <borderLayout>                      
+                <borderAlign align="west">
+                  <vbox>
+                      <label text="Name:"/>
+                      <textField var="nameField" text="James Bond"/>
+            
+                      <label text="Favourite Color:"/>
+                      <textField var="colorField" text="#007007"/>
+                      
+                      <label text="Picture URL::"/>
+                      <textField var="pictureField" text="http://www.ianfleming.org/007news/images3/c2002_pierce1.jpg"/>
+                      
+                      <label text="Choose template::"/>
+                      <comboBox var="templateField"/>
+                      ${templateField.addItem('template1.jelly')}
+                      ${templateField.addItem('template2.jelly')}
+                      
+                      <label text="Add a Hobby:"/>
+                      <textField var="hobbyField"/>
+                      
+                      <button>
+                          <action name="Add >>>">
+                              ${hobbyModel.addElement(hobbyField.text)}
+                            </action>
+                      </button>
+                  </vbox>
+                </borderAlign>
+                
+                <borderAlign align="east">      
+                  <scrollPane>
+                      <j:useBean class="javax.swing.DefaultListModel" var="hobbyModel"/>
+                        <list model="${hobbyModel}"/>
+                        ${hobbyModel.addElement('Killing bad guys')}
+                        ${hobbyModel.addElement('Wrecking cars')}
+                        ${hobbyModel.addElement('Eating jelly')}
+                  </scrollPane>
+                </borderAlign>
+                
+                <borderAlign align="south">      
+                  <button action="${createPageAction}"/>
+                </borderAlign>
+            </borderLayout>
+        </panel>
+    </frame>
+
+    ${frame.show()}
+
+</j:jelly>

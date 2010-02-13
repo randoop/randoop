@@ -1,0 +1,12 @@
+build.properties
+demopage.html
+dist
+jcoverage.ser
+jms
+junit*.properties
+lib
+snapshot.bat
+target
+tmp
+*.log
+*.gz
