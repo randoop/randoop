@@ -40,7 +40,7 @@ public class JCrasherRun {
     System.out.println("========== Running jcrasher.");
     List<String> jcrasher = new ArrayList<String>();
     jcrasher.add("java");
-    jcrasher.add("-Xmx1700m");
+    jcrasher.add(Command.javaHeapSize);
     jcrasher.add("-classpath");
     jcrasher.add(this.base.classPath);
     jcrasher.add("edu.gatech.cc.jcrasher.JCrasher");
@@ -88,7 +88,7 @@ public class JCrasherRun {
     System.out.println("========== Compiling and running jcrasher-generated Junit tests.");
     List<String> compileJunit = new ArrayList<String>();
     compileJunit.add("javac");
-    compileJunit.add("-J-Xmx1700m");
+    compileJunit.add("-J" + Command.javaHeapSize);
     compileJunit.add("-d");
     compileJunit.add(finalOutputDir);
     compileJunit.add("-classpath");

@@ -77,7 +77,7 @@ public class PreDF {
     List<String> randoop = new ArrayList<String>();
     randoop.add("java");
     randoop.add("-ea");
-    randoop.add("-Xmx1700m");
+    randoop.add(Command.javaHeapSize);
     randoop.add("-classpath");
     randoop.add(exp.covInstSourcesDir + ":" + exp.classPath);
     randoop.add("randoop.main.Main");
@@ -117,7 +117,7 @@ public class PreDF {
     List<String> report = new ArrayList<String>();
     report.add("java");
     report.add("-ea");
-    report.add("-Xmx1700m");
+    report.add(Command.javaHeapSize);
     report.add("-classpath");
     report.add(exp.covInstSourcesDir + ":" + exp.classPath);
     report.add("randoop.experiments.CreateCovReport");
@@ -142,7 +142,7 @@ public class PreDF {
     List<String> frontiers = new ArrayList<String>();
     frontiers.add("java");
     frontiers.add("-ea");
-    frontiers.add("-Xmx1700m");
+    frontiers.add(Command.javaHeapSize);
     frontiers.add("-classpath");
     frontiers.add(exp.covInstSourcesDir + ":" + exp.classPath);
     frontiers.add("randoop.main.ComputeFrontierBranches");
@@ -169,7 +169,7 @@ public class PreDF {
 //     List<String> combine = new ArrayList<String>();
 //     combine.add("java");
 //     combine.add("-ea");
-//     combine.add("-Xmx1700m");
+//     combine.add(Command.javaHeapSize);
 //     combine.add("-classpath");
 //     combine.add(exp.covInstSourcesDir + ":" + exp.classPath);
 //     combine.add("randoop.experiments.CombineCovMaps");
@@ -192,7 +192,7 @@ public class PreDF {
 //     List<String> df = new ArrayList<String>();
 //     df.add("java");
 //     df.add("-ea");
-//     df.add("-Xmx1700m");
+//     df.add(Command.javaHeapSize);
 //     df.add("-classpath");
 //     df.add(exp.classPath);
 //     df.add("randoop.main.DataFlow");
@@ -214,7 +214,7 @@ public class PreDF {
 //     List<String> branchdir = new ArrayList<String>();
 //     branchdir.add("java");
 //     branchdir.add("-ea");
-//     branchdir.add("-Xmx1700m");
+//     branchdir.add(Command.javaHeapSize);
 //     branchdir.add("-classpath");
 //     branchdir.add(exp.covInstSourcesDir + ":" + exp.classPath);
 //     branchdir.add("randoop.main.GenBranchDir");
@@ -255,7 +255,7 @@ public class PreDF {
 //     List<String> randoop = new ArrayList<String>();
 //     randoop.add("java");
 //     randoop.add("-ea");
-//     randoop.add("-Xmx1700m");
+//     randoop.add(Command.javaHeapSize);
 //     randoop.add("-classpath");
 //     randoop.add(exp.covInstSourcesDir + ":" + exp.classPath);
 //     randoop.add("randoop.main.Main");

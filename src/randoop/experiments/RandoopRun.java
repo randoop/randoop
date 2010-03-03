@@ -181,7 +181,7 @@ public class RandoopRun {
     System.out.println("========== Compiling and running randoop-generated Junit tests.");
     List<String> compileJunit = new ArrayList<String>();
     compileJunit.add("javac");
-    compileJunit.add("-J-Xmx1700m");
+    compileJunit.add("-J" + Command.javaHeapSize);
     compileJunit.add("-classpath");
     compileJunit.add(".:" + this.base.classPath);
     compileJunit.addAll(this.junitFiles);
@@ -191,7 +191,7 @@ public class RandoopRun {
 
     List<String> runJunit = new ArrayList<String>();
     runJunit.add("java");
-    compileJunit.add("-Xmx1700m");
+    compileJunit.add(Command.javaHeapSize);
     runJunit.add("-classpath");
     runJunit.add(".:" + this.base.classPath);
     if (runType == RunType.OFFLINE)
@@ -216,7 +216,7 @@ public class RandoopRun {
     System.out.println("========== Running randoop.");
     List<String> randoop = new ArrayList<String>();
     randoop.add("java");
-    randoop.add("-Xmx1700m");
+    randoop.add(Command.javaHeapSize);
     randoop.add("-classpath");
     randoop.add(this.base.classPath);
     randoop.add("randoop.main.Main");

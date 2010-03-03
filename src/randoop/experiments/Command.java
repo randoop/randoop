@@ -29,6 +29,9 @@ public class Command {
   /** If true, commands will be printed, but not executed **/
   public static boolean no_execute = false;
 
+  /** Argument to java command to set heap size */
+  public static String javaHeapSize = "-Xmx1650m";
+
   public static void runCommand(String[] command, String prompt,
       boolean verbose, String nonVerboseMessage, boolean gobbleChars) {
 

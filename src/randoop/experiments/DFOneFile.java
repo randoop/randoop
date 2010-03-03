@@ -49,7 +49,7 @@ public class DFOneFile {
     List<String> randoop = new ArrayList<String>();
     randoop.add("java");
     randoop.add("-ea");
-    randoop.add("-Xmx1700m");
+    randoop.add(Command.javaHeapSize);
     randoop.add("-classpath");
     randoop.add(exp.classPath);
     randoop.add("randoop.main.DataFlow");

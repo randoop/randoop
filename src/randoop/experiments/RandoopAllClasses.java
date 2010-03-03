@@ -96,7 +96,7 @@ public class RandoopAllClasses {
     List<String> randoop = new ArrayList<String>();
     randoop.add("java");
     randoop.add("-ea");
-    randoop.add("-Xmx1700m");
+    randoop.add(Command.javaHeapSize);
     randoop.add("-classpath");
     randoop.add(exp.covInstSourcesDir + ":" + exp.classPath);
     randoop.add("randoop.main.Main");
