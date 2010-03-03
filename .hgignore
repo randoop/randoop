@@ -23,6 +23,19 @@ randoop.zip
 randoop_agent.jar
 test.dftargets.txt
 systemtests/jc-covinst
+systemtests/jc.classlist.txt
+systemtests/jc.covinstclasslist.txt
+systemtests/log.txt
+systemtests/resources/Naive0.java
+systemtests/resources/TestClass0.java
+systemtests/resources/arraylist.branches_covered.txt
+systemtests/resources/arraylist.dfin.txt
+systemtests/resources/arraylist.dfout.txt
+systemtests/resources/bdgen2-output.txt
+systemtests/resources/cov/TestClass-instrumented
+systemtests/resources/df3-output.txt
+systemtests/sources.txt
+
 
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.
