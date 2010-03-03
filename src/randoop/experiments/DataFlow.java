@@ -56,7 +56,7 @@ public class DataFlow {
     List<String> df = new ArrayList<String>();
     df.add("java");
     df.add("-ea");
-    df.add("-Xmx1700m");
+    df.add(Command.javaHeapSize);
     df.add("-classpath");
     df.add(exp.classPath);
     df.add("randoop.main.DataFlow");

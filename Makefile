@@ -68,7 +68,7 @@ JAVAC_JAR ?= ${HOME}/research/types/jsr308-langtools/dist/lib/javac.jar
 RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
 
 temp:
-	java -Xmx1700m -classpath $(CLASSPATH) randoop.main.RunISSTA06Containers randoop.test.issta2006.BinomialHeap directed
+	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.RunISSTA06Containers randoop.test.issta2006.BinomialHeap directed
 
 all: clean build tests results
 
@@ -118,7 +118,7 @@ TAGS: $(RANDOOP_FILES)
 # The tests run correctly under Java 1.6. Using an earlier version of
 # Java may result in test failures.
 unit: bin
-	java -Xmx1700m -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
 	  junit.textui.TestRunner \
 	   randoop.test.AllRandoopTests
 
@@ -126,12 +126,12 @@ perf: perf1 perf2
 
 # -Xrunhprof:cpu=samples,depth=30
 perf1: bin
-	java -Xmx1700m -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
 	  junit.textui.TestRunner \
 	  randoop.test.RandoopPerformanceTest
 
 perf2: bin
-	java -Xmx1700m -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
 	  junit.textui.TestRunner \
 	  randoop.test.NaivePerformanceTest
 
@@ -215,7 +215,7 @@ randoop-jdk: randoop-jdk-gen randoop-jdk-comp randoop-jdk-run
 
 randoop-jdk-gen: bin
 	rm -rf randoop-jdk-scratch
-	java -ea -Xmx1700m -classpath \
+	java -ea ${XMXHEAP} -classpath \
 	   $(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
 	   randoop.main.Main gentests \
 	   --output-tests=all \

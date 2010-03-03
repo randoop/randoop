@@ -85,7 +85,7 @@ public class PrepareSubjectProgram {
     System.out.println("========== Compiling subject program: " + exp.experimentName);
     List<String> compile = new ArrayList<String>();
     compile.add("javac");
-    compile.add("-J-Xmx1700m");
+    compile.add("-J-Xmx1650m");
     compile.add("-classpath");
     compile.add(exp.classPath);
     compile.add("-g");
@@ -114,7 +114,7 @@ public class PrepareSubjectProgram {
     List<String> instrument = new ArrayList<String>();
     instrument.add("java");
     instrument.add("-ea");
-    instrument.add("-Xmx1700m");
+    instrument.add(Command.javaHeapSize);
     instrument.add("-classpath");
     instrument.add(exp.classPath);
     instrument.add("cov.Instrument");
@@ -149,7 +149,7 @@ public class PrepareSubjectProgram {
     System.out.println("========== Compiling coverage-instrumented .java files: " + exp.experimentName);
     List<String> compileInstr = new ArrayList<String>();
     compileInstr.add("javac");
-    compileInstr.add("-J-Xmx1700m");
+    compileInstr.add("-J" + Command.javaHeapSize);
     compileInstr.add("-classpath");
     compileInstr.add(exp.classPath);
     compileInstr.add("-g");

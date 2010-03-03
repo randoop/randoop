@@ -9,4 +9,4 @@ CP="$CP:$CLASSPATH"
 
 # -Xrunhprof:cpu=samples,depth=30
 
-java -ea -Xmx1700m -classpath "$CP" randoop.main.Main "$@"
+java -ea -Xmx1650m -classpath "$CP" randoop.main.Main "$@"

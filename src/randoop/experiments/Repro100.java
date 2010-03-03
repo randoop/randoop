@@ -58,7 +58,7 @@ public class Repro100 {
     System.out.println("========== Calling Randoop: " + exp.classDirAbs);
     List<String> randoop = new ArrayList<String>();
     randoop.add("javac");
-    randoop.add("-J-Xmx1700m");
+    randoop.add("-J" + Command.javaHeapSize);
     randoop.add("-classpath");
     randoop.add(exp.covInstSourcesDir + ":" + exp.classPath);
     randoop.add("randoop100/" + ttss + ".java");
@@ -77,7 +77,7 @@ public class Repro100 {
     System.out.println("========== Calling Randoop: " + exp.classDirAbs);
     randoop = new ArrayList<String>();
     randoop.add("java");
-    randoop.add("-Xmx1700m");
+    randoop.add(Command.javaHeapSize);
     randoop.add("-classpath");
     randoop.add("randoop100:" + exp.covInstSourcesDir + ":" + exp.classPath);
     randoop.add(ttss);
