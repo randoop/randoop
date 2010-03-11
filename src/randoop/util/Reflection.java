@@ -114,6 +114,7 @@ public final class Reflection {
      }
      List<Method> ms = new ArrayList<Method>();
      ms.addAll(Arrays.asList(c.getMethods()));
+     // System.out.printf ("methods = %s%n", Arrays.toString(c.getMethods()));
      ms.addAll(Arrays.asList(c.getDeclaredMethods()));
      Method[] ret = ms.toArray(new Method[0]);
      Arrays.sort(ret, SORT_MEMBERS_BY_NAME);
@@ -500,7 +501,7 @@ public final class Reflection {
        if (filter.canUse(c)) {
          if (Log.isLoggingOn()) Log.logLine("Will add members for class " + c.getName());
          // System.out.printf ("using class %s%n", c);
-         for (Method m : getDeclaredMethodsOrdered(c)) {
+         for (Method m : getMethodsOrdered(c)) {
            // System.out.printf ("Considering method %s%n", m);
            if (filter.canUse(m)) {
              RMethod mc =  RMethod.getRMethod(m);
