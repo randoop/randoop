@@ -58,6 +58,9 @@ default:
 	@echo "update-goals   update test goal files."
 	@echo "zip            Create a distribution zip file (randoop.zip)"
 
+JAVAC ?= javac
+JAVAC_JAR ?= ${HOME}/research/types/jsr308-langtools/dist/lib/javac.jar
+
 ############################################################
 # Targets for compiling and doing basic tests on Randoop.
 
@@ -65,21 +68,21 @@ default:
 RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
 
 temp:
-	java -Xmx1700m -classpath $(CLASSPATH) randoop.main.RunISSTA06Containers randoop.test.issta2006.BinomialHeap directed
+	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.RunISSTA06Containers randoop.test.issta2006.BinomialHeap directed
 
 all: clean build tests results
 
 # Remove Randoop classes.
 clean:
-	-rm -r bin
+	rm -rf bin
 
 # Build Randoop.
 build: bin randoop_agent.jar
 
 bin: $(RANDOOP_FILES)
 	mkdir -p bin
-	@echo javac -nowarn -g -d bin ...
-	@javac -nowarn -g -d bin $(RANDOOP_FILES)
+	@echo ${JAVAC} -nowarn -g -d bin ...
+	@${JAVAC} -nowarn -g -d bin -classpath $(CLASSPATH) $(RANDOOP_FILES)
 	mkdir -p bin/randoop/test/resources
 	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
 	cp src/randoop/version.txt bin/randoop/
@@ -94,7 +97,7 @@ randoop-tests: unit randoop1 randoop2 randoop-contracts
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
 randoop_agent.jar : $(AGENT_JAVA_FILES) src/randoop/instrument/manifest.txt
-	javac -g -d bin $(AGENT_JAVA_FILES)
+	${JAVAC} -g -d bin -cp src:$(CLASSPATH) $(AGENT_JAVA_FILES)
 	jar cfm randoop_agent.jar src/randoop/instrument/manifest.txt \
 	  bin/randoop/instrument/Premain.class
 
@@ -103,8 +106,11 @@ jdoc javadoc:
 	find src/randoop -name "*.java" \
 		| xargs javadoc -d jdoc -quiet -noqualifier all
 
-tags: $(RANDOOP_FILES)
+.PHONY: tags
+tags: TAGS
+TAGS: $(RANDOOP_FILES)
 	find src/ tests/ -name "*.java" | xargs etags
+
 
 ############################################################
 # Targets to test Randoop.
@@ -112,7 +118,7 @@ tags: $(RANDOOP_FILES)
 # The tests run correctly under Java 1.6. Using an earlier version of
 # Java may result in test failures.
 unit: bin
-	java -Xmx1700m -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
 	  junit.textui.TestRunner \
 	   randoop.test.AllRandoopTests
 
@@ -120,18 +126,18 @@ perf: perf1 perf2
 
 # -Xrunhprof:cpu=samples,depth=30
 perf1: bin
-	java -Xmx1700m -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
 	  junit.textui.TestRunner \
 	  randoop.test.RandoopPerformanceTest
 
 perf2: bin
-	java -Xmx1700m -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
 	  junit.textui.TestRunner \
 	  randoop.test.NaivePerformanceTest
 
 # Runs Randoop on Collections and TreeSet.
 randoop1: bin
-	-rm -r randoop-scratch
+	rm -rf randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --use-object-cache \
@@ -145,7 +151,7 @@ randoop1: bin
 	   --junit-output-dir=randoop-scratch \
 	   --log=randoop-log.txt
 	cd randoop-scratch && \
-	  javac  -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	  ${JAVAC}  -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
 	cd randoop-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
@@ -154,7 +160,7 @@ randoop1: bin
 
 # Runs Randoop on Collections and TreeSet.
 randoop2: bin
-	-rm -r randoop-scratch
+	rm -rf randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --dontexecute \
@@ -176,7 +182,7 @@ randoop2: bin
 
 # Runs Randoop on Collections and TreeSet.
 randoop3: bin
-	-rm -r randoop-scratch
+	rm -rf randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
@@ -188,8 +194,8 @@ randoop3: bin
 	cp randoop-scratch/foo/bar/Naive2_0.java systemtests/resources/Naive2_0.java
 
 randoop-contracts: bin
-	cd systemtests/resources/randoop && javac examples/Buggy.java
-	-rm -r randoop-contracts-scratch
+	cd systemtests/resources/randoop && ${JAVAC} examples/Buggy.java
+	rm -rf randoop-contracts-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --output-tests=fail \
@@ -199,7 +205,7 @@ randoop-contracts: bin
 	   --junit-output-dir=randoop-contracts-scratch \
 	   --log=randoop-contracts-log.txt
 	cd randoop-contracts-scratch && \
-	  javac -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
+	  ${JAVAC} -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
 # We expect this to fail, so add a "-" so the target doesn't fail.
 	cd randoop-contracts-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
@@ -208,8 +214,8 @@ randoop-contracts: bin
 randoop-jdk: randoop-jdk-gen randoop-jdk-comp randoop-jdk-run
 
 randoop-jdk-gen: bin
-	-rm -r randoop-jdk-scratch
-	java -ea -Xmx1700m -classpath \
+	rm -rf randoop-jdk-scratch
+	java -ea ${XMXHEAP} -classpath \
 	   $(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
 	   randoop.main.Main gentests \
 	   --output-tests=all \
@@ -232,7 +238,7 @@ randoop-jdk-gen: bin
 
 randoop-jdk-comp:
 	cd randoop-jdk-scratch && \
-	  javac -cp .:$(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
+	  ${JAVAC} -cp .:$(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
 	  *.java
 
 randoop-jdk-run:
@@ -248,7 +254,7 @@ DYNCOMP			= $(INV)/java/dcomp_premain.jar
 DYNCOMP_JAVA	= $(INV)/java/daikon/dcomp/*.java
 dc : $(DYNCOMP)
 $(DYNCOMP) : $(DYNCOMP_JAVA)
-	make -C $$inv/java dcomp_premain.jar
+	make -C $(INV)/java dcomp_premain.jar
 
 ############################################################
 # Targets for testing Randoop/Dyncomp's dataflow analysis.
@@ -265,7 +271,7 @@ prepare-ds:
 	cd systemtests && make prepare-simple_ds
 
 df-ds: $(DYNCOMP) bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/simple_ds:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/simple_ds:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
 	   --scratchdir=df-scratch \
 	   --overwrite \
@@ -278,7 +284,7 @@ df-ds: $(DYNCOMP) bin
 #
 # Its output is the input to target df.
 randoop-df: bin
-	-rm frontier*
+	rm -f frontier*
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --usethreads=false \
@@ -299,14 +305,14 @@ randoop-df: bin
 	   --seqs-per-method=1 \
 	   --print-coderep-comments=true
 	gunzip frontier*.gz
-	cat frontier1 frontier2 frontier3 frontier4 frontier5 frontier6 \
+	cat frontier[123456] \
 	  > systemtests/resources/arraylist.dfin.txt
 
 # Runs dataflow on the results of Randoop on arraylist.
 #
 # Its input is the output of target randoop.
 df: $(DYNCOMP) bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
 	   --scratchdir=df-scratch \
 	   --overwrite \
@@ -315,8 +321,8 @@ df: $(DYNCOMP) bin
 
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
-	-rm -r df-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	rm -rf df-scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow --debug_df \
 	   --scratchdir=df-scratch \
 	   --overwrite \
@@ -331,8 +337,8 @@ execerr:
 #
 # Its input was manually generated.
 df1: $(DYNCOMP) bin
-	-rm systemtests/resources/df1.txt.output
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	rm -f systemtests/resources/df1.txt.output
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
 	   --scratchdir=df-scratch \
 	   --overwrite \
@@ -345,7 +351,7 @@ df1: $(DYNCOMP) bin
 #
 # Its output is used as input by target bdgen.
 df2:
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
 	   --scratchdir=df-scratch \
 	   --overwrite \
@@ -393,18 +399,17 @@ bdgen2: bin
 # Runs the instrumenter on a test file, and diffs the result
 # with a goal file.
 covtest: bin
-	-rm -r covtest-scratch
-	-rm covtest-scratch/cov/TestClass.java
+	rm -rf covtest-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	  cov.Instrument \
 	  --destination=covtest-scratch \
 	  --files=systemtests/resources/cov/classlist.txt
-	cd covtest-scratch && javac cov/*.java
+	cd covtest-scratch && ${JAVAC} cov/*.java
 	cp covtest-scratch/cov/TestClass.java \
 	   systemtests/resources/cov/TestClass-instrumented
 
 df3: $(DYNCOMP) bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
 	   --scratchdir=df-scratch \
 	   --overwrite \
@@ -435,8 +440,8 @@ update-goals:
 
 # Removes any previously-generated diff or auto-generated files.
 clean-tests:
-	-rm $(diff_files)
-	-rm $(goal_files_bases)
+	rm -f $(diff_files)
+	rm -f $(goal_files_bases)
 
 # Calls Make recursively to make the necessary .diff files.
 diffs:
@@ -519,7 +524,7 @@ zip:
 # Make sure everything works.
 	cd jrandoop && \
 	  find src/ tests/ -name "*.java" \
-	  | xargs javac -cp 'lib/*'
+	  | xargs ${JAVAC} -cp 'lib/*'
 
 # Make randoop.jar.
 	mkdir jrandoop/tmp

@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# this is a sample rc file for jython
+# modifiy it and place it as .jythonrc in your home directory
+#
+export CLASSPATH="/home/kredel/java/lib/junit.jar:/home/kredel/java/lib/log4j.jar:/home/kredel/java/lib/tnj.jar:."
+export BASE_OPTIONS="-Xms300M -Xmx600M -XX:+AggressiveHeap -XX:+UseParallelGC -verbose:gc"

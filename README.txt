@@ -1,9 +1,10 @@
 
 This file contains instructions for building Randoop at CSAIL.
 
-1. Get and compile Daikon via CVS.
+1. Get and compile Daikon.
 
-   See http://groups.csail.mit.edu/pag/daikon/mit/.
+   See http://groups.csail.mit.edu/pag/daikon/
+   or http://groups.csail.mit.edu/pag/daikon/mit/.
 
    If you're working in an environment different from the PAG group's
    environment, you may need to set up some environment variables in
@@ -21,16 +22,13 @@ This file contains instructions for building Randoop at CSAIL.
    directory containing this file). You may do this in a startup
    script like Daikon above. For example:
 
-     export RANDOOP_HOME=/Users/carlospacheco/jrandoop
+     export RANDOOP_HOME=$HOME/randoop
 
 3. Build Randoop.
 
-   It should build of the box in Eclipse.
-
-   If you prefer to use Make, run the "build" target in
-   $RANDOOP_HOME/Makefile.
+   Run "make build", or it should build of the box in Eclipse.
 
 4. Run the tests.
 
-   Run the "tests" target in the Makefile.
+   Run "make tests".
 
