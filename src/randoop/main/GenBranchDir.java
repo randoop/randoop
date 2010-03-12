@@ -241,9 +241,16 @@ public class GenBranchDir {
       for (DFResultsOneSeq r : dfOut.results) assert frontier.equals(r.frontierBranch);
     }
 
+    // System.out.printf ("covered = %s%n", coveredByRandoop);
+    // System.out.printf ("uncovered = %s%n", uncoveredByRandoop);
     for (DFResultsOneSeq r : dfOut.results) {
+      // System.out.printf ("r = %s%n", 
+      //                    ((Branch)r.frontierBranch).getOppositeBranch());
       if (!coveredByRandoop.contains(((Branch)r.frontierBranch).getOppositeBranch())) {
-        assert uncoveredByRandoop.contains(((Branch)r.frontierBranch).getOppositeBranch());
+        assert uncoveredByRandoop.contains
+          (((Branch)r.frontierBranch).getOppositeBranch()) :
+          uncoveredByRandoop + " " + coveredByRandoop + " " 
+            + ((Branch)r.frontierBranch).getOppositeBranch();
         processOneSequence(r);
       } else {
         System.out.println("FRONTIER BRANCH COVERED IN A DIFFERENT RUN OF RANDOOP.");
