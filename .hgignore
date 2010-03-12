@@ -1,27 +1,19 @@
 syntax: glob
 *.class
+*.diff
 *~
 Makefile.user
-TAGS
-bdgen2-log.txt
+bin/randoop/version.txt
+randoop.zip
+randoop_agent.jar
 bin/randoop/test/resources/dependencytests-output.txt
 bin/randoop/test/resources/dependencytests.txt
 bin/randoop/test/resources/java.util.classlist.java1.6.txt
 bin/randoop/test/resources/java.util.classlist.txt
 bin/randoop/test/resources/sequence_tests_script.txt
 bin/randoop/test/resources/universal_driver.txt
-bin/randoop/version.txt
-covmap.gz
-covtest-scratch
-df-scratch
-frontier[0-9]
-randoop-contracts-log.txt
-randoop-contracts-scratch
-randoop-log.txt
-randoop-scratch
-randoop.zip
-randoop_agent.jar
-test.dftargets.txt
+TAGS
+
 systemtests/jc-covinst
 systemtests/jc.classlist.txt
 systemtests/jc.covinstclasslist.txt
@@ -31,11 +23,28 @@ systemtests/resources/TestClass0.java
 systemtests/resources/arraylist.branches_covered.txt
 systemtests/resources/arraylist.dfin.txt
 systemtests/resources/arraylist.dfout.txt
+systemtests/resources/bdgen-branches.txt
+systemtests/resources/bdgen-failures.txt
+systemtests/resources/bdgen-output.txt
+systemtests/resources/bdgen2-branches.txt
+systemtests/resources/bdgen2-failures.txt
 systemtests/resources/bdgen2-output.txt
 systemtests/resources/cov/TestClass-instrumented
+systemtests/resources/df1.txt.output
 systemtests/resources/df3-output.txt
 systemtests/sources.txt
 
+bdgen-log.txt
+bdgen2-log.txt
+covmap.gz
+covtest-scratch/
+df-scratch/
+frontier[0-9]
+randoop-contracts-log.txt
+randoop-contracts-scratch/
+randoop-log.txt
+randoop-scratch/
+test.dftargets.txt
 
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.
