@@ -31,6 +31,7 @@ systemtests/resources/bdgen2-failures.txt
 systemtests/resources/bdgen2-output.txt
 systemtests/resources/cov/TestClass-instrumented
 systemtests/resources/df1.txt.output
+systemtests/resources/df2-output.txt
 systemtests/resources/df3-output.txt
 systemtests/sources.txt
 
