@@ -7,7 +7,7 @@
 
 package java2.util2;
 import java.io.*;
-import java.util.concurrent.atomic.AtomicLong;
+import sun.misc.AtomicLong;
 
 /**
  * An instance of this class is used to generate a stream of 
@@ -79,7 +79,7 @@ class Random implements java.io.Serializable {
      * @see     java2.util2.Random#setSeed(long)
      */
     public Random(long seed) {
-        this.seed = new AtomicLong(0L);
+        this.seed = AtomicLong.newAtomicLong(0L);
         setSeed(seed);
     }
 
@@ -108,8 +108,8 @@ class Random implements java.io.Serializable {
      */
     synchronized public void setSeed(long seed) {
         seed = (seed ^ multiplier) & mask;
-        this.seed.set(seed);
-        haveNextNextGaussian = false;
+        while(!this.seed.attemptSet(seed));
+    	haveNextNextGaussian = false;
     }
 
     /**
@@ -139,9 +139,9 @@ class Random implements java.io.Serializable {
     protected int next(int bits) {
         long oldseed, nextseed;
         do {
-            oldseed = seed.get();
-            nextseed = (oldseed * multiplier + addend) & mask;
-        } while (!seed.compareAndSet(oldseed, nextseed));
+          oldseed = seed.get();
+          nextseed = (oldseed * multiplier + addend) & mask;
+        } while (!seed.attemptUpdate(oldseed, nextseed));
         return (int)(nextseed >>> (48 - bits));
     }
 
@@ -477,7 +477,7 @@ class Random implements java.io.Serializable {
         if (seedVal < 0)
           throw new java.io.StreamCorruptedException(
                               "Random: invalid seed");
-        seed = new AtomicLong(seedVal);
+        seed = AtomicLong.newAtomicLong(seedVal);
         nextNextGaussian = fields.get("nextNextGaussian", 0.0);
         haveNextNextGaussian = fields.get("haveNextNextGaussian", false);
     }
