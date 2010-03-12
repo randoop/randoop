@@ -325,25 +325,25 @@ public class DataFlow {
    */
   private static String getDriverCode() {
     StringBuilder b = new StringBuilder();
-    b.append("package seqs;");
-    b.append("");
-    b.append("/**");
-    b.append(" * Driver for generated test sequences.");
-    b.append(" */");
-    b.append("class Driver {");
-    b.append("");
-    b.append("  public static void main (String args[]) {");
-    b.append("");
-    b.append("    try {");
-    b.append("      Seqs.seq();");
-    b.append("    } catch (Exception e) {");
-    b.append("      System.out.println(\"Exception in seq: \"+e);");
-    b.append("      daikon.dcomp.DCRuntime.exit_exception = e;");
-    b.append("      System.out.flush();");
-    b.append("      System.exit (255);");
-    b.append("    }");
-    b.append("  }");
-    b.append("}");
+    b.append("package seqs;\n");
+    b.append("\n");
+    b.append("/**\n");
+    b.append(" * Driver for generated test sequences.\n");
+    b.append(" */\n");
+    b.append("class Driver {\n");
+    b.append("\n");
+    b.append("  public static void main (String args[]) {\n");
+    b.append("\n");
+    b.append("    try {\n");
+    b.append("      Seqs.seq();\n");
+    b.append("    } catch (Exception e) {\n");
+    b.append("      System.out.println(\"Exception in seq: \"+e);\n");
+    b.append("      daikon.dcomp.DCRuntime.exit_exception = e;\n");
+    b.append("      System.out.flush();\n");
+    b.append("      System.exit (255);\n");
+    b.append("    }\n");
+    b.append("  }\n");
+    b.append("}\n");
     return b.toString();
   }
 

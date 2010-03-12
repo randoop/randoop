@@ -58,7 +58,7 @@ public class BranchDir {
     List<String> branchdir = new ArrayList<String>();
     branchdir.add("java");
     branchdir.add("-ea");
-    branchdir.add("-Xmx1700m");
+    branchdir.add(Command.javaHeapSize);
     branchdir.add("-classpath");
     branchdir.add(exp.covInstSourcesDir + ":" + exp.classPath);
     branchdir.add("randoop.main.GenBranchDir");

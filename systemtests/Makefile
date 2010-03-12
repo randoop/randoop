@@ -140,12 +140,12 @@ parstats-%:
 
 # e.g. omjc/omjc1111.stats
 %.stats:
-	java -Xmx1700m -ea -cp $(CLASSPATH) \
+	java ${XMXHEAP} -ea -cp $(CLASSPATH) \
 	  randoop.experiments.StatsWriter --writefailures $(*F)
 
 # Combine stats. Ex target: comb-omcc
 comb-%:
-	java -Xmx1700m -ea -cp $(CLASSPATH) \
+	java ${XMXHEAP} -ea -cp $(CLASSPATH) \
 	   randoop.experiments.CombinedStats 200000000 $*
 
 # omcc fccc fdcc
@@ -279,7 +279,7 @@ cute:
 
 
 jcuteds:
-	java -ea -Xmx1700m -cp src/java_collections:$(CLASSPATH) \
+	java -ea ${XMXHEAP} -cp src/java_collections:$(CLASSPATH) \
 	  randoop.experiments.JCuteDataStructuresExp \
 	  experiments/jcute/arraylist.methods \
 	  experiments/jcute/arraylist.coveragemethods \
