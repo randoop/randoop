@@ -41,6 +41,8 @@
 # 6. Finally, change ~/public_html/randoop/index.php to
 #    point to the new version dir ~/public_html/randoop/VERSION
 
+RANDOOP_HOME ?= $(shell pwd)
+
 # Sets common variables.
 include common.mk
 
@@ -82,7 +84,7 @@ build: bin randoop_agent.jar
 bin: $(RANDOOP_FILES)
 	mkdir -p bin
 	@echo ${JAVAC} -nowarn -g -d bin ...
-	@${JAVAC} -nowarn -g -d bin -classpath $(CLASSPATH) $(RANDOOP_FILES)
+	@${JAVAC} -nowarn -g -d bin $(RANDOOP_FILES)
 	mkdir -p bin/randoop/test/resources
 	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
 	cp src/randoop/version.txt bin/randoop/
@@ -118,7 +120,7 @@ TAGS: $(RANDOOP_FILES)
 # The tests run correctly under Java 1.6. Using an earlier version of
 # Java may result in test failures.
 unit: bin
-	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	   randoop.test.AllRandoopTests
 
@@ -126,12 +128,12 @@ perf: perf1 perf2
 
 # -Xrunhprof:cpu=samples,depth=30
 perf1: bin
-	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	  randoop.test.RandoopPerformanceTest
 
 perf2: bin
-	java ${XMXHEAP} -ea -classpath $(CLASSPATH) \
+	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	  randoop.test.NaivePerformanceTest
 
@@ -554,4 +556,4 @@ command-help:
 
 showvars:
 	@echo CLASSPATH = $(CLASSPATH)
-	jwhich SingleMemberAnnotation
+	jwhich randoop.experiments.PrepareSubjectProgram
