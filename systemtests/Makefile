@@ -14,6 +14,8 @@
 #
 # RANDOOP followed by data flow analysis.
 
+RANDOOP_HOME ?= $(shell cd ..; pwd)
+
 include ../common.mk
 
 # Clean up the mess that accumulates when running experiments.
