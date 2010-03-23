@@ -2,9 +2,9 @@ classname=java2.util2.Collections,methodname=null,line=2394,id=107,direction=fal
 classname=java2.util2.Collections,methodname=null,line=2409,id=108,direction=false
 classname=java2.util2.Collections,methodname=shuffle,line=428,id=21,direction=true
 classname=java2.util2.Collections,methodname=shuffle,line=429,id=22,direction=true
-classname=java2.util2.Random,methodname=nextInt,line=250,id=3,direction=false
-classname=java2.util2.Random,methodname=nextInt,line=253,id=4,direction=false
-classname=java2.util2.Random,methodname=nextInt,line=253,id=4,direction=true
+classname=java2.util2.Random,methodname=nextInt,line=250,id=2,direction=false
+classname=java2.util2.Random,methodname=nextInt,line=253,id=3,direction=false
+classname=java2.util2.Random,methodname=nextInt,line=253,id=3,direction=true
 classname=java2.util2.Stack,methodname=peek,line=78,id=0,direction=true
 classname=java2.util2.Vector,methodname=<init>,line=109,id=0,direction=false
 classname=java2.util2.Vector,methodname=setSize,line=242,id=4,direction=false
