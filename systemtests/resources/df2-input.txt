@@ -8,7 +8,7 @@
 
 START RECORD
 BRANCH 
-classname=java2.util2.Random,methodname=nextInt,line=253,id=4,direction=false
+classname=java2.util2.Random,methodname=nextInt,line=253,id=3,direction=false
 SEQUENCE
 var0 =  prim : int:100 : 
 var1 =  prim : java.lang.Object:null : 

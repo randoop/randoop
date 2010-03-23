@@ -273,9 +273,9 @@ classname=java2.util2.LinkedList,methodname=remove,line=220,id=6,direction=true
 classname=java2.util2.LinkedList,methodname=remove,line=578,id=32,direction=false
 classname=java2.util2.LinkedList,methodname=toArray,line=624,id=34,direction=false
 classname=java2.util2.LinkedList,methodname=toArray,line=624,id=34,direction=true
-classname=java2.util2.Random,methodname=nextInt,line=250,id=3,direction=false
-classname=java2.util2.Random,methodname=nextInt,line=253,id=4,direction=false
-classname=java2.util2.Random,methodname=nextInt,line=253,id=4,direction=true
+classname=java2.util2.Random,methodname=nextInt,line=250,id=2,direction=false
+classname=java2.util2.Random,methodname=nextInt,line=253,id=3,direction=false
+classname=java2.util2.Random,methodname=nextInt,line=253,id=3,direction=true
 classname=java2.util2.Stack,methodname=peek,line=78,id=0,direction=true
 classname=java2.util2.TreeMap,methodname=buildFromSorted,line=1574,id=101,direction=false
 classname=java2.util2.TreeMap,methodname=buildFromSorted,line=1579,id=102,direction=false
