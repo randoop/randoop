@@ -248,15 +248,9 @@ randoop-jdk-run:
 	  java -cp .:$(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
 	  RandoopOnJDK
 
-############################################################
-# Targets for compiling DataFlow.
 
-# Build dyncomp
-DYNCOMP			= $(INV)/java/dcomp_premain.jar
-DYNCOMP_JAVA	= $(INV)/java/daikon/dcomp/*.java
-dc : $(DYNCOMP)
-$(DYNCOMP) : $(DYNCOMP_JAVA)
-	make -C $(INV)/java dcomp_premain.jar
+# Dataflow library
+DYNCOMP			= $(RANDOOP_HOME)/lib/dcomp_premain.jar
 
 ############################################################
 # Targets for testing Randoop/Dyncomp's dataflow analysis.
