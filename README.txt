@@ -20,15 +20,17 @@ This file contains instructions for building Randoop at CSAIL.
 
 2. Set RANDOOP_HOME to the point to Randoop's home directory (the
    directory containing this file). You may do this in a startup
-   script like Daikon above. For example:
+   script, as you did with Daikon above. For example:
 
      export RANDOOP_HOME=$HOME/randoop
 
-3. Build Randoop.
+3. Build Randoop.  At the command line, type
 
-   Run "make build", or it should build of the box in Eclipse.
+     make build
 
-4. Run the tests.
+   or it should build out of the box in Eclipse.
 
-   Run "make tests".
+4. Run the tests.  At the command line, type
+
+     make tests
 
