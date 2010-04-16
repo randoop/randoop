@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!--
+<!DOCTYPE rss PUBLIC
+ "-//Netscape Communications//DTD RSS 0.91//EN"
+ "http://my.netscape.com/publish/formats/rss-0.91.dtd">
+-->
+
+<rss version="0.91">
+
+  <channel>
+
+    <title>MozillaZine</title>
+    <link>http://www.mozillazine.org</link>
+    <description>Your source for Mozilla news, advocacy,
+      interviews, builds, and more!</description>
+    <language>en-US</language>
+    <rating>(PICS-1.1 "http://www.rsac.org/ratingsv01.html"
+      2 gen true comment "RSACi North America Server"
+      for "http://www.rsac.org" on "1996.04.16T08:15-0500"
+      r (n 0 s 0 v 0 l 0))</rating>
+
+    <image>
+      <title>MozillaZine</title>
+      <url>http://www.mozillazine.org/image/mynetscape88.gif</url>
+      <link>http://www.mozillazine.org</link>
+      <width>88</width>
+      <height>31</height>
+      <description>Articles, discussions, builds, and more...</description>
+    </image>
+
+    <item>
+      <title>Java2 in Navigator 5?</title>
+      <link>http://www.mozillazine.org/talkback.html?article=607</link>
+      <description>Will Java2 be an integrated part of Navigator 5?
+      Read more about it in this discussion...</description>
+    </item>
+
+    <item>
+      <title>Communicator 4.61 Out</title>
+      <link>http://www.mozillazine.org/talkback.html?article=606</link>
+      <description>The latest version of Communicator is now
+      available.  It includes security enhancements
+      and various bug fixes.</description>
+    </item>
+
+    <item>
+      <title>Mozilla Dispenses with Old,
+      Proprietary DOM</title>
+      <link>http://www.mozillazine.org/talkback.html?article=604</link>
+    </item>
+
+    <item>
+      <title>The Animation Contest is Now Closed</title>
+      <link>http://www.mozillazine.org/talkback.html?article=603</link>
+    </item>
+
+    <textinput>
+      <title>Send</title>
+      <description>Comments about MozillaZine?</description>
+      <name>responseText</name>
+      <link>http://www.mozillazine.org/cgi-bin/sampleonly.cgi</link>
+    </textinput>
+
+    <skipDays>
+      <day>Tuesday</day>
+    </skipDays>
+  </channel>
+
+</rss>

@@ -1,0 +1,40 @@
+This file contains the PGP keys of various developers.
+Please don't use them for email unless you have to. Their main
+purpose is code signing.
+
+Users: pgp < KEYS
+Developers: 
+	pgp -kxa <your name> and append it to this file.
+	(pgpk -ll <your name> && pgpk -xa <your name>) >> this file.
+        (gpg --list-sigs <your name>
+             && gpg --armor --export <your name>) >> this file.
+    Use gpg --armour --detach-sign --default-key=YOURNAME FILE
+
+pub  1024D/6883C846 2004-08-03 Dion Gillard <dion@apache.org>
+sig 3       6883C846 2004-08-03   Dion Gillard <dion@apache.org>
+sub  1024g/32E95995 2004-08-03
+sig         6883C846 2004-08-03   Dion Gillard <dion@apache.org>
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.2.4 (Cygwin)
+
+mQGiBEEPHzkRBACqqH+A9BFBQ3/NSOfj0Ds/8QXqG7D66lVxrvazWRpjh25Ov7Z0
+36t4JN2gk/vMl8UCC+vpysUwofWJLzDOWIpYuA5ogTZRny315DbnTsHsdbkkOQ9y
+ESkhcQZifAMC2lrLTMilqy53YKd+RabLoj7WEaFXj59u3+Bx8Xf9iNOPYwCgzM++
+pE3aFZMFi+SLzHFtJk55/VkD/AxIbLKouwjCuYflQSovPgmHJhP2pnVJMa1UgXv9
+PYnpjrBBfkxDVUxEu74xZN7Ap/wssYrE5K7NMGv+PT3cutobOXVPpg3/zecm48Xb
+Y7b+Cvsk1PtsmntT2VGpLXnKUhGy6Ewrzi/Wuix4Z/zalwIyvb231wXsQc67gGQo
+DQQoA/9nbqYlVBbde4/ELRuxMOVXghkw17guzSZXs+0je0oOnHTACG5x4RIwh0CV
+sy0gn6D6BSV/ECMRw7R96QrdQnqOExjBUdenoIkmTD/phWKoqangifRtRflQ86gm
+V60zORF7h40gOs1+Pygo8TmkarQ+j5fgNf/0Heo8aNsh+0REerQeRGlvbiBHaWxs
+YXJkIDxkaW9uQGFwYWNoZS5vcmc+iF4EExECAB4FAkEPHzkCGwMGCwkIBwMCAxUC
+AwMWAgECHgECF4AACgkQqAM/2WiDyEbUAgCgu5e9P9oDJEbO9r7lw5Sqa9HBw70A
+nRuIZtgEKTQ4Z1Tpb10eI6k/IXx8uQENBEEPHz4QBADuu3MH0oB2sGRGhXEDa3EZ
+BdHljp4aFTSZK6MAMAliy7eRTSJcORbHr2x6Q0wFNBd6r+TSntWG5NWrhwcxCmQR
+H3hlbZsD7SY1OqClht/XSv/tiRDQ+oAVTVLqThE3bkcUYeoVHzgfqT86i1NmGcny
+IJj5r8yBA1sVDyp42ADiYwADBQP+Nq8InUWlienKgexPDFAuXXPr9lg6iUMRpEqe
+bpqSDhpeDTvkmvq1xaUT9Yt+FDX7db/1d1i3fJTIX7dydo/2Vw70f7UODNvWMtQT
+veaEXchXiH3y62w8nY3ZogMGjKH5DDXqev2SelDSvGcXEWsGZxPvuwh0cGuahyCi
+gYpWKa6ISQQYEQIACQUCQQ8fPgIbDAAKCRCoAz/ZaIPIRltTAJ4hZeSWTyds0CJd
+EN9z66UpdcZa+wCgyTaygSUChtQxApENteggXBYXm+4=
+=ShJX
+-----END PGP PUBLIC KEY BLOCK-----

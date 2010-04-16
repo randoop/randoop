@@ -1,0 +1,10 @@
+build.properties
+dist
+target
+logging.ipr
+bin
+maven.log
+velocity.log
+.project
+.classpath
+.repositoryIndex

@@ -1,0 +1,64 @@
+/* Layout & Spacing */
+body { background:#f1f1f1 top repeat; text-align:center; margin:0; padding:0; }
+.banner{ margin:0; padding:0; border:0px; }
+.header, .footer{ width:698px; margin:0 auto 0 auto;}
+.header{ text-align:left; }
+.footer{ text-align:right; padding-right:2px; }
+.container{ padding:0 10px 0 10px; text-align:left; width:678px; margin:0 auto 0 auto; background-color:#fff; }
+.rightNav{ float:right; width:160px; padding:10px 0 0 0; margin:0;}
+.main{ background:#fff; margin:0 167px 0 0; padding:0 10px 0 5px; }
+/* General Fonts */
+body, blockquote, .callOutBox{ font-family: Arial, Helvetica, sans-serif; }
+/* .main{ font-family:Verdana, Arial, Helvetica, sans-serif; } */
+blockquote.code{ font-family:'Courier New', Courier, mono }
+/* General Sizes */
+.main{ font-size:.72em; }
+.shortcuts{ font-size:.75em; }
+.news{ font-size:.75em; }
+.header{ font-size:.65em; }
+.footer{ font-size:.6em; }
+.subscribe{ font-size:.7em; }
+/* General Colour & Decoration */
+a:link, a:visited, a:hover { color:#036; text-decoration:none; }
+a:hover{ text-decoration:underline; }
+img{ border:0; padding:0; margin:0; }
+.main{ color:#555; }
+.rightNav{ color:#666; }
+.footer{ color:#666; }
+.header{ color:#999; }
+/* Borders */
+.container{ border:1px solid #ccc;  }
+.main{ /* border-right:2px solid #eee; */ }
+/* Specific Text Attributes */
+h1{ margin:0; padding:0; }
+.sectionLinks{ color:#777; float:right; text-align:right; padding:30px 2px 0 0;  font-family:Arial, Helvetica, sans-serif; }
+.sectionLinks a:link, .sectionLinks a:visited{ color:#666; }
+.sectionLinks a:hover{ color:#036; text-decoration:underline; }
+.main a{ text-decoration:underline }
+.main p{ margin:5px 0 10px 0; padding:0; }
+.main h2{ font-size:1.3em; margin:10px 0 5px 0; padding:0; }
+.main h3{ font-size:1.1em; margin:15px 0 5px 0; padding:0; }
+.main h4{ font-size:1.0em; margin:15px 0 5px 0; padding:0; }
+.main ul{ margin:2px 10px 10px 30px; padding:0px; vertical-align:middle; list-style-type:square; list-style-position:outside; }
+.main li{ margin:0px; padding-top:5px; }
+.main ul.secondLevel li{ padding-left:20px; }
+.main blockquote{ padding:0; margin:5px 30px 10px 30px; }
+.callOutBox{ padding:0 5px 0 10px; margin:5px; width:200px; float:right; border:#eee 1px solid; }
+.callOutBox h3{ margin-top:5px; }
+.shortcuts, .shortcuts .menulist, .shortcuts .menulist .submenu{ margin:0; padding:0; }
+.shortcuts .menulist{ background-color:#efefe5; border:1px solid #efefef; }
+.shortcuts .menulist a, .shortcuts .menulist .submenu a{ color:#666; font-weight:bold; display:block; margin:0; padding:2px 10px 2px 10px }
+.shortcuts .menulist .submenu a{ padding-left:20px; font-weight:normal; }
+.shortcuts .menulist a:hover, .shortcuts .menulist .submenu a:hover{ color:#000; text-decoration:none; }
+.shortcuts h3, .news h3{ font-size:1.1em; margin:0 0 5px 0; border-bottom:1px solid #eee; }
+.subscribe{ padding:5px; margin:10px 0 5px 0; border:#eee 1px solid; }
+.subscribe p{ margin:0; padding:0; overflow:hidden; }
+.subscribe input{ font-size:1em; color:#999; }
+.news{ margin:15px 0 0 0; padding:0; }
+.news p{ margin:5px 0 5px 0 }
+.news h4{ text-align:right; margin:10px 2px 2px 0; padding:0; font-size:.95em; font-weight:normal; }
+.egLink{ font-size:.9em; }
+.egLink img{vertical-align:super; padding-left:1px}
+/* Misc Bollocks */
+.lightbox{ margin:0; padding:5px; border:1px solid #efefef; background-color:#f1f1f1;}
+.darkbox{ margin:0; padding:5px; background-color:#efefe5; border:1px solid #efefef; }
