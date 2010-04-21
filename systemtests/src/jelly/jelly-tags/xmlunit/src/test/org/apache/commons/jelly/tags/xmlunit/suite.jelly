@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<test:suite 
+    xmlns:j="jelly:core" 
+    xmlns:x="jelly:xml" 
+    xmlns:test="jelly:junit" 
+    xmlns:xu="jelly:xmlunit">
+
+    <test:case name="illegalArgument">
+
+        <j:catch var="ex">
+            <j:new var="illegalDoc" className="java.util.ArrayList"/>
+            <xu:assertDocumentsEqual actual="${illegalDoc}">
+                <xu:expected/>
+            </xu:assertDocumentsEqual>
+        </j:catch>
+
+        <test:assert test="${ex != null}">An exception should have been thrown</test:assert>
+        The exception was ${ex.message}
+
+    </test:case>
+
+    <test:case name="emptyDocuments">
+
+        <xu:assertDocumentsEqual>
+            <xu:actual/>
+            <xu:expected/>
+        </xu:assertDocumentsEqual>
+
+    </test:case>
+
+    <test:case name="sameDocument">
+
+        <x:parse var="doc">
+            <testDoc/>
+        </x:parse>
+
+        <xu:assertDocumentsEqual actual="${doc}" expected="${doc}"/>
+
+        <xu:assertDocumentsEqual expected="${doc}">
+            <xu:actual>
+                <testDoc/>
+            </xu:actual>
+        </xu:assertDocumentsEqual>
+
+    </test:case>
+
+    <test:case name="differentDocuments">
+
+        <j:catch var="ex">
+            <x:parse var="doc1">
+                <testDoc1/>
+            </x:parse>
+            <x:parse var="doc2">
+                <testDoc2/>
+            </x:parse>
+            <xu:assertDocumentsEqual actual="${doc1}" expected="${doc2}"/>
+        </j:catch>
+
+        <test:assert test="${ex != null}">An exception should have been thrown</test:assert>
+        The exception was ${ex.message}
+
+    </test:case>
+
+    <test:case name="ignoreWhitespace">
+
+        <xu:assertDocumentsEqual trim="false" ignoreWhitespace="true">
+            <xu:actual>
+                <apa> </apa>
+            </xu:actual>
+            <xu:expected>
+                <apa/>
+            </xu:expected>
+        </xu:assertDocumentsEqual>
+
+        <j:catch var="ex">
+            <xu:assertDocumentsEqual trim="false">
+                <xu:actual>
+                    <apa> </apa>
+                </xu:actual>
+                <xu:expected>
+                    <apa/>
+                </xu:expected>
+            </xu:assertDocumentsEqual>
+        </j:catch>
+
+        <test:assert test="${ex != null}">An exception should have been thrown</test:assert>
+        The exception was ${ex.message}
+
+    </test:case>
+
+</test:suite>

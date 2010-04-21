@@ -1,0 +1,839 @@
+######################################################################
+
+START TEST 1
+
+SEQUENCE \
+var0 = prim int 3;
+
+CODE \
+int var0 = (int)3;
+
+EXECUTE \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>
+
+CONTRACTS \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>
+
+REGRESSION \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>
+
+END TEST
+
+######################################################################
+
+START TEST 1.5
+
+SEQUENCE \
+var0 = prim java.lang.String "3"; \
+var1 = method java.lang.Integer.parseInt(java.lang.String) var0;
+
+CODE \
+java.lang.String var0 = "3"; \
+int var1 = java.lang.Integer.parseInt((java.lang.String)var0);
+
+EXECUTE \
+java.lang.String var0 = "3"; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+int var1 = java.lang.Integer.parseInt((java.lang.String)var0); \
+// <StatementExecutionResult object=3, exception=<undefined>>;
+
+CONTRACTS \
+java.lang.String var0 = "3"; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+int var1 = java.lang.Integer.parseInt((java.lang.String)var0); \
+// <StatementExecutionResult object=3, exception=<undefined>>;
+
+REGRESSION \
+java.lang.String var0 = "3"; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+int var1 = java.lang.Integer.parseInt((java.lang.String)var0); \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+assertEquals((int)3, (int)(java.lang.Integer)var1);
+
+END TEST
+
+######################################################################
+
+START TEST 2
+
+SEQUENCE \
+var0 = prim java.lang.String "foobar";
+
+CODE \
+java.lang.String var0 = "foobar";
+
+EXECUTE \
+java.lang.String var0 = "foobar"; \
+// <StatementExecutionResult object=foobar, exception=<undefined>>
+
+CONTRACTS \
+java.lang.String var0 = "foobar"; \
+// <StatementExecutionResult object=foobar, exception=<undefined>>
+
+REGRESSION \
+java.lang.String var0 = "foobar"; \
+// <StatementExecutionResult object=foobar, exception=<undefined>>
+
+END TEST
+
+######################################################################
+
+START TEST 3
+
+SEQUENCE \
+var0 = prim int 3; \
+var1 = cons java.util.ArrayList.<init>(int) var0; 
+
+PURITY \
+java.util.AbstractCollection.toString() RC\n \
+java.util.ArrayList.isEmpty() RC
+
+CODE \
+int var0 = (int)3; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0);
+
+CONTRACTS \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0); \
+// <StatementExecutionResult object=[], exception=<undefined>>
+
+REGRESSION \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0); \
+// <StatementExecutionResult object=[], exception=<undefined>>; \
+assertEquals("[]", var1.toString()); \
+assertEquals(true, var1.isEmpty());
+
+END TEST
+
+######################################################################
+
+START TEST 3.5
+
+SEQUENCE \
+var0 = prim int 3; \
+var1 = cons java.lang.Integer.<init>(int) var0; \
+var2 = cons java.util.ArrayList.<init>(int) var1; 
+
+PURITY \
+java.util.AbstractCollection.toString() RC\n \
+java.util.ArrayList.isEmpty() RC
+
+CODE \
+int var0 = (int)3; \
+java.lang.Integer var1 = new java.lang.Integer((int)var0); \
+java.util.ArrayList var2 = new java.util.ArrayList((int)var1);
+
+CONTRACTS \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.lang.Integer var1 = new java.lang.Integer((int)var0); \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.util.ArrayList var2 = new java.util.ArrayList((int)var1); \
+// <StatementExecutionResult object=[], exception=<undefined>>;
+
+REGRESSION \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.lang.Integer var1 = new java.lang.Integer((int)var0); \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.util.ArrayList var2 = new java.util.ArrayList((int)var1); \
+// <StatementExecutionResult object=[], exception=<undefined>>; \
+assertEquals((int)3, (int)(java.lang.Integer)var1); \
+assertEquals("[]", var2.toString()); \
+assertEquals(true, var2.isEmpty());
+
+END TEST
+
+######################################################################
+
+START TEST 4
+
+SEQUENCE \
+var0 = prim int 3; \
+var1 = cons java.util.ArrayList.<init>(int) var0; \
+var2 = method java.util.ArrayList.add(java.lang.Object) var1 var0; 
+
+PURITY \
+java.util.AbstractCollection.toString() RC\n \
+java.util.ArrayList.isEmpty() RC
+
+CODE \
+int var0 = (int)3; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0); \
+boolean var2 = var1.add((java.lang.Object)var0)
+
+CONTRACTS \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0); \
+// <StatementExecutionResult object=[3], exception=<undefined>>; \
+boolean var2 = var1.add((java.lang.Object)var0); \
+// <StatementExecutionResult object=true, exception=<undefined>>
+
+REGRESSION \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0); \
+// <StatementExecutionResult object=[3], exception=<undefined>>; \
+boolean var2 = var1.add((java.lang.Object)var0); \
+// <StatementExecutionResult object=true, exception=<undefined>>; \
+assertEquals("[3]", var1.toString()); \
+assertEquals(false, var1.isEmpty()); \
+assertEquals(true, (boolean)(java.lang.Boolean)var2);
+
+END TEST
+
+######################################################################
+
+START TEST 5
+
+SEQUENCE \
+var0 = prim int 3; \
+var1 = cons java.util.ArrayList.<init>(int) var0; \
+var2 = method java.util.ArrayList.add(java.lang.Object) var1 var0; \
+var3 = method java.util.ArrayList.add(java.lang.Object) var1 var0; 
+
+PURITY \
+java.util.AbstractCollection.toString() RC\n \
+java.util.ArrayList.isEmpty() RC
+
+CODE \
+int var0 = (int)3; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0); \
+boolean var2 = var1.add((java.lang.Object)var0); \
+boolean var3 = var1.add((java.lang.Object)var0);
+
+CONTRACTS \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0); \
+// <StatementExecutionResult object=[3, 3], exception=<undefined>>; \
+boolean var2 = var1.add((java.lang.Object)var0); \
+// <StatementExecutionResult object=true, exception=<undefined>>; \
+boolean var3 = var1.add((java.lang.Object)var0); \
+// <StatementExecutionResult object=true, exception=<undefined>>;
+
+REGRESSION \
+int var0 = (int)3; \
+// <StatementExecutionResult object=3, exception=<undefined>>; \
+java.util.ArrayList var1 = new java.util.ArrayList((int)var0); \
+// <StatementExecutionResult object=[3, 3], exception=<undefined>>; \
+boolean var2 = var1.add((java.lang.Object)var0); \
+// <StatementExecutionResult object=true, exception=<undefined>>; \
+boolean var3 = var1.add((java.lang.Object)var0); \
+// <StatementExecutionResult object=true, exception=<undefined>>; \
+assertEquals("[3, 3]", var1.toString()); \
+assertEquals(false, var1.isEmpty()); \
+assertEquals(true, (boolean)(java.lang.Boolean)var2); \
+assertEquals(true, (boolean)(java.lang.Boolean)var3);
+
+END TEST
+
+######################################################################
+
+START TEST 6
+
+SEQUENCE \
+var0 = prim long 100; \
+var1 = method java.lang.Long.byteValue() var0;
+
+CODE \
+long var0 = (long)100L; \
+byte var1 = ((java.lang.Long)var0).byteValue();
+
+CONTRACTS \
+long var0 = (long)100L; \
+// <StatementExecutionResult object=100, exception=<undefined>>; \
+byte var1 = ((java.lang.Long)var0).byteValue(); \
+// <StatementExecutionResult object=100, exception=<undefined>>
+
+REGRESSION \
+long var0 = (long)100L; \
+// <StatementExecutionResult object=100, exception=<undefined>>; \
+byte var1 = ((java.lang.Long)var0).byteValue(); \
+// <StatementExecutionResult object=100, exception=<undefined>>; \
+assertEquals((byte)100, (byte)(java.lang.Byte)var1);
+
+END TEST
+
+######################################################################
+
+START TEST 7
+
+SEQUENCE \
+var0 = prim long -100; \
+var1 = method java.lang.Long.byteValue() var0;
+
+CODE \
+long var0 = (long)(-100L); \
+byte var1 = ((java.lang.Long)var0).byteValue();
+
+CONTRACTS \
+long var0 = (long)(-100L); \
+// <StatementExecutionResult object=-100, exception=<undefined>>; \
+byte var1 = ((java.lang.Long)var0).byteValue(); \
+// <StatementExecutionResult object=-100, exception=<undefined>>
+
+REGRESSION \
+long var0 = (long)(-100L); \
+// <StatementExecutionResult object=-100, exception=<undefined>>; \
+byte var1 = ((java.lang.Long)var0).byteValue(); \
+// <StatementExecutionResult object=-100, exception=<undefined>>; \
+assertEquals((byte)(-100), (byte)(java.lang.Byte)var1);
+
+END TEST
+
+######################################################################
+
+START TEST 8
+
+SEQUENCE \
+var0 = prim int -1; \
+var1 = cons java.util.ArrayList.<init>(); \
+var2 = method java.util.ArrayList.get(int) var1 var0;
+
+PURITY \
+java.util.AbstractCollection.toString() RC\n \
+java.util.ArrayList.isEmpty() RC
+
+CODE \
+int var0 = (int)(-1); \
+java.util.ArrayList var1 = new java.util.ArrayList(); \
+java.lang.Object var2 = var1.get((int)var0);
+
+CONTRACTS \
+int var0 = (int)(-1); \
+// <StatementExecutionResult object=-1, exception=<undefined>>; \
+java.util.ArrayList var1 = new java.util.ArrayList(); \
+// <StatementExecutionResult object=[], exception=<undefined>>; \
+java.lang.Object var2 = var1.get((int)var0); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.ArrayIndexOutOfBoundsException: -1>; \
+// throws forbidden exception of type java.lang.ArrayIndexOutOfBoundsException
+
+REGRESSION \
+int var0 = (int)(-1); \
+// <StatementExecutionResult object=-1, exception=<undefined>>; \
+java.util.ArrayList var1 = new java.util.ArrayList(); \
+// <StatementExecutionResult object=[], exception=<undefined>>; \
+java.lang.Object var2 = var1.get((int)var0); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.ArrayIndexOutOfBoundsException: -1>; \
+assertEquals("[]", var1.toString()); \
+assertEquals(true, var1.isEmpty()); \
+// throws allowed exception of type java.lang.ArrayIndexOutOfBoundsException
+
+END TEST
+
+######################################################################
+
+START TEST 9
+
+SEQUENCE \
+var0 = prim int 0; \
+var1 = cons ps1.RatNum.<init>(int) var0; \
+var2 = cons ps1.RatTermVec.<init>(); \
+var3 = method ps1.RatTermVec.copy() var2; \
+var4 = method ps1.RatTermVec.copy() var3; \
+var5 = cons ps1.RatTerm.<init>(ps1.RatNum,int) var1 var0; \
+var6 = method ps1.RatTermVec.addElement(ps1.RatTerm) var4 var5; \
+var7 = method ps1.RatTermVec.addElement(ps1.RatTerm) var4 var5;
+
+PURITY \
+ps1.RatTermVec.size() RC\n \
+ps1.RatTerm.toString() RC \
+
+CODE \
+int var0 = (int)0; \
+ps1.RatNum var1 = new ps1.RatNum((int)var0); \
+ps1.RatTermVec var2 = new ps1.RatTermVec(); \
+ps1.RatTermVec var3 = var2.copy(); \
+ps1.RatTermVec var4 = var3.copy(); \
+ps1.RatTerm var5 = new ps1.RatTerm((ps1.RatNum)var1, (int)var0); \
+var4.addElement((ps1.RatTerm)var5); \
+var4.addElement((ps1.RatTerm)var5); \
+
+CONTRACTS \
+int var0 = (int)0; \
+// <StatementExecutionResult object=0, exception=<undefined>>; \
+ps1.RatNum var1 = new ps1.RatNum((int)var0); \
+// <StatementExecutionResult object=RatNum<numer:0 denom:1>, exception=<undefined>>; \
+ps1.RatTermVec var2 = new ps1.RatTermVec(); \
+// <StatementExecutionResult object=RatTermVec<underlying_terms:[]>, exception=<undefined>>; \
+ps1.RatTermVec var3 = var2.copy(); \
+// <StatementExecutionResult object=RatTermVec<underlying_terms:[]>, exception=<undefined>>; \
+ps1.RatTermVec var4 = var3.copy(); \
+// <StatementExecutionResult object=RatTermVec<underlying_terms:[Term<coeff:0 expt:0>, Term<coeff:0 expt:0>]>, exception=<undefined>>; \
+ps1.RatTerm var5 = new ps1.RatTerm((ps1.RatNum)var1, (int)var0); \
+// <StatementExecutionResult object=Term<coeff:0 expt:0>, exception=<undefined>>; \
+var4.addElement((ps1.RatTerm)var5); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var4.addElement((ps1.RatTerm)var5); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>
+
+REGRESSION \
+int var0 = (int)0; \
+// <StatementExecutionResult object=0, exception=<undefined>>; \
+ps1.RatNum var1 = new ps1.RatNum((int)var0); \
+// <StatementExecutionResult object=RatNum<numer:0 denom:1>, exception=<undefined>>; \
+ps1.RatTermVec var2 = new ps1.RatTermVec(); \
+// <StatementExecutionResult object=RatTermVec<underlying_terms:[]>, exception=<undefined>>; \
+ps1.RatTermVec var3 = var2.copy(); \
+// <StatementExecutionResult object=RatTermVec<underlying_terms:[]>, exception=<undefined>>; \
+ps1.RatTermVec var4 = var3.copy(); \
+// <StatementExecutionResult object=RatTermVec<underlying_terms:[Term<coeff:0 expt:0>, Term<coeff:0 expt:0>]>, exception=<undefined>>; \
+ps1.RatTerm var5 = new ps1.RatTerm((ps1.RatNum)var1, (int)var0); \
+// <StatementExecutionResult object=Term<coeff:0 expt:0>, exception=<undefined>>; \
+var4.addElement((ps1.RatTerm)var5); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var4.addElement((ps1.RatTerm)var5); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+assertEquals((int)0, var2.size()); \
+assertEquals((int)0, var3.size()); \
+assertEquals((int)2, var4.size()); \
+assertEquals("Term<coeff:0 expt:0>", var5.toString());
+
+
+END TEST
+
+######################################################################
+
+START TEST 10
+
+SEQUENCE \
+var0 = cons misc.NonFaultyClass.<init>();
+
+CODE \
+misc.NonFaultyClass var0 = new misc.NonFaultyClass();
+
+EXECUTE \
+misc.NonFaultyClass var0 = new misc.NonFaultyClass(); \
+// <StatementExecutionResult object=, exception=<undefined>>;
+
+CONTRACTS \
+misc.NonFaultyClass var0 = new misc.NonFaultyClass(); \
+// <StatementExecutionResult object=, exception=<undefined>>;
+
+REGRESSION \
+misc.NonFaultyClass var0 = new misc.NonFaultyClass(); \
+// <StatementExecutionResult object=, exception=<undefined>>;
+
+END TEST
+
+######################################################################
+
+START TEST 11
+
+SEQUENCE \
+var0 = cons misc.BlowsUp.<init>();
+
+CODE \
+misc.BlowsUp var0 = new misc.BlowsUp();
+
+EXECUTE \
+misc.BlowsUp var0 = new misc.BlowsUp(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>;
+
+CONTRACTS \
+misc.BlowsUp var0 = new misc.BlowsUp(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+// [var0] EqualsNotReflexive; \
+// [var0] exception when calling hashCode; \
+// [var0] exception when calling toString;
+
+REGRESSION \
+misc.BlowsUp var0 = new misc.BlowsUp(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>;
+
+END TEST
+
+######################################################################
+
+START TEST 12
+
+SEQUENCE \
+var0 = cons misc.EqualsOnSameReturnsFalse.<init>();
+
+CODE \
+misc.EqualsOnSameReturnsFalse var0 = new misc.EqualsOnSameReturnsFalse();
+
+EXECUTE \
+misc.EqualsOnSameReturnsFalse var0 = new misc.EqualsOnSameReturnsFalse(); \
+// <StatementExecutionResult object=EqualsOnSameReturnsFalse, exception=<undefined>>;
+
+CONTRACTS \
+misc.EqualsOnSameReturnsFalse var0 = new misc.EqualsOnSameReturnsFalse(); \
+// <StatementExecutionResult object=EqualsOnSameReturnsFalse, exception=<undefined>>; \
+// [var0] EqualsNotReflexive; \
+
+REGRESSION \
+misc.EqualsOnSameReturnsFalse var0 = new misc.EqualsOnSameReturnsFalse(); \
+// <StatementExecutionResult object=EqualsOnSameReturnsFalse, exception=<undefined>>;
+
+END TEST
+
+######################################################################
+
+START TEST 13
+
+SEQUENCE \
+var0 = cons misc.ThrowsNPE.<init>(); \
+var1 = method misc.ThrowsNPE.throwNPE() var0;
+
+CODE \
+misc.ThrowsNPE var0 = new misc.ThrowsNPE(); \
+var0.throwNPE();
+
+EXECUTE \
+misc.ThrowsNPE var0 = new misc.ThrowsNPE(); \
+// <StatementExecutionResult object=ThrowsNPE, exception=<undefined>>; \
+var0.throwNPE(); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.NullPointerException>;
+
+CONTRACTS \
+misc.ThrowsNPE var0 = new misc.ThrowsNPE(); \
+// <StatementExecutionResult object=ThrowsNPE, exception=<undefined>>; \
+var0.throwNPE(); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.NullPointerException>; \
+// throws forbidden exception of type java.lang.NullPointerException;
+
+REGRESSION \
+misc.ThrowsNPE var0 = new misc.ThrowsNPE(); \
+// <StatementExecutionResult object=ThrowsNPE, exception=<undefined>>; \
+var0.throwNPE(); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.NullPointerException>; \
+// throws allowed exception of type java.lang.NullPointerException;
+
+END TEST
+
+######################################################################
+
+START TEST 14
+
+SEQUENCE \
+var0 = cons misc.ThrowsRuntimeException.<init>(); \
+var1 = method misc.ThrowsRuntimeException.throwRuntimeException() var0;
+
+CODE \
+misc.ThrowsRuntimeException var0 = new misc.ThrowsRuntimeException(); \
+var0.throwRuntimeException();
+
+EXECUTE \
+misc.ThrowsRuntimeException var0 = new misc.ThrowsRuntimeException(); \
+// <StatementExecutionResult object=ThrowsRuntimeException, exception=<undefined>>; \
+var0.throwRuntimeException(); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.RuntimeException>;
+
+CONTRACTS \
+misc.ThrowsRuntimeException var0 = new misc.ThrowsRuntimeException(); \
+// <StatementExecutionResult object=ThrowsRuntimeException, exception=<undefined>>; \
+var0.throwRuntimeException(); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.RuntimeException>;
+
+REGRESSION \
+misc.ThrowsRuntimeException var0 = new misc.ThrowsRuntimeException(); \
+// <StatementExecutionResult object=ThrowsRuntimeException, exception=<undefined>>; \
+var0.throwRuntimeException(); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.RuntimeException>; \
+// throws allowed exception of type java.lang.RuntimeException;
+
+END TEST
+
+######################################################################
+
+START TEST 15
+
+SEQUENCE \
+var0 = cons randoop.test.UBStack.<init>();
+
+CONTRACTS \
+randoop.test.UBStack var0 = new randoop.test.UBStack(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+// [var0] EqualsNotReflexive; \
+// [var0] exception when calling hashCode; \
+// [var0] exception when calling toString; \
+
+END TEST
+
+######################################################################
+
+START TEST 16
+
+SEQUENCE \
+var0 = cons randoop.test.UBStack.<init>(); \
+var1 = method randoop.test.UBStack.pop() var0; \
+var2 = prim int 0; \
+var3 = method randoop.test.UBStack.push(int) var0 var2;
+
+CONTRACTS \
+randoop.test.UBStack var0 = new randoop.test.UBStack(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+int var2 = (int)0; \
+// <StatementExecutionResult object=0, exception=<undefined>>; \
+var0.push((int)var2); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.ArrayIndexOutOfBoundsException: -1>; \
+// throws forbidden exception of type java.lang.ArrayIndexOutOfBoundsException
+
+END TEST
+
+######################################################################
+
+START TEST 17
+
+SEQUENCE \
+var0 = cons randoop.test.UBStack2.<init>(); \
+var1 = prim randoop.test.UBStack2 null; \
+var2 = method randoop.test.UBStack2.pop() var0; \
+var3 = method randoop.test.UBStack2.pop() var0; \
+var4 = method randoop.test.UBStack2.pop() var0; \
+var5 = method randoop.test.UBStack2.equals(java.lang.Object) var0 var1;
+
+CONTRACTS \
+randoop.test.UBStack2 var0 = new randoop.test.UBStack2(); \
+// <StatementExecutionResult object=stack, exception=<undefined>>; \
+randoop.test.UBStack2 var1 = null; \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+boolean var5 = var0.equals((java.lang.Object)var1); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.NullPointerException>; \
+// throws forbidden exception of type java.lang.NullPointerException;
+
+LINEREMOVER \
+randoop.test.UBStack2 var0 = new randoop.test.UBStack2(); \
+// <StatementExecutionResult object=stack, exception=<undefined>>; \
+randoop.test.UBStack2 var1 = null; \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+//DummyStatement; \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+//DummyStatement; \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+//DummyStatement; \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+boolean var5 = var0.equals((java.lang.Object)var1); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.NullPointerException>; \
+// throws forbidden exception of type java.lang.NullPointerException;
+
+END TEST
+
+######################################################################
+
+START TEST 18
+
+SEQUENCE \
+var0 = cons randoop.test.UBStack2.<init>(); \
+var1 = prim randoop.test.UBStack2 null; \
+var2 = method randoop.test.UBStack2.equals(java.lang.Object) var0 var1;
+
+CONTRACTS \
+randoop.test.UBStack2 var0 = new randoop.test.UBStack2(); \
+// <StatementExecutionResult object=stack, exception=<undefined>>; \
+randoop.test.UBStack2 var1 = null; \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+boolean var2 = var0.equals((java.lang.Object)var1); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.NullPointerException>; \
+// throws forbidden exception of type java.lang.NullPointerException;
+
+LINEREMOVER \
+randoop.test.UBStack2 var0 = new randoop.test.UBStack2(); \
+// <StatementExecutionResult object=stack, exception=<undefined>>; \
+randoop.test.UBStack2 var1 = null; \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+boolean var2 = var0.equals((java.lang.Object)var1); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.NullPointerException>; \
+// throws forbidden exception of type java.lang.NullPointerException;
+
+END TEST
+
+######################################################################
+
+START TEST 19
+
+SEQUENCE \
+var0 = cons randoop.test.UBStack.<init>(); \
+var1 = method randoop.test.UBStack.pop() var0; \
+var2 = prim int 0; \
+var3 = method randoop.test.UBStack.push(int) var0 var2;
+
+CONTRACTS \
+randoop.test.UBStack var0 = new randoop.test.UBStack(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+int var2 = (int)0; \
+// <StatementExecutionResult object=0, exception=<undefined>>; \
+var0.push((int)var2); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.ArrayIndexOutOfBoundsException: -1>; \
+// throws forbidden exception of type java.lang.ArrayIndexOutOfBoundsException
+
+LINEREMOVER \
+randoop.test.UBStack var0 = new randoop.test.UBStack(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+int var2 = (int)0; \
+// <StatementExecutionResult object=0, exception=<undefined>>; \
+var0.push((int)var2); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.ArrayIndexOutOfBoundsException: -1>; \
+// throws forbidden exception of type java.lang.ArrayIndexOutOfBoundsException
+
+END TEST
+
+######################################################################
+
+START TEST 20
+
+SEQUENCE \
+var0 = cons randoop.test.UBStack.<init>(); \
+var1 = method randoop.test.UBStack.pop() var0; \
+var2 = method randoop.test.UBStack.pop() var0; \
+var3 = prim int 0; \
+var4 = method randoop.test.UBStack.push(int) var0 var3;
+
+CONTRACTS \
+randoop.test.UBStack var0 = new randoop.test.UBStack(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+int var3 = (int)0; \
+// <StatementExecutionResult object=0, exception=<undefined>>; \
+var0.push((int)var3); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.ArrayIndexOutOfBoundsException: -2>; \
+// throws forbidden exception of type java.lang.ArrayIndexOutOfBoundsException
+
+LINEREMOVER \
+randoop.test.UBStack var0 = new randoop.test.UBStack(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+var0.pop(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+//DummyStatement; \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+int var3 = (int)0; \
+// <StatementExecutionResult object=0, exception=<undefined>>; \
+var0.push((int)var3); \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.ArrayIndexOutOfBoundsException: -1>; \
+// throws forbidden exception of type java.lang.ArrayIndexOutOfBoundsException
+
+END TEST
+
+######################################################################
+
+START TEST 21
+
+SEQUENCE \
+var0 = cons randoop.test.UBStack.<init>();
+
+CONTRACTS \
+randoop.test.UBStack var0 = new randoop.test.UBStack(); \
+// <StatementExecutionResult object=<undefined>, exception=<undefined>>; \
+// [var0] EqualsNotReflexive; \
+// [var0] exception when calling hashCode; \
+// [var0] exception when calling toString; \
+
+RUN_EXPLORER \
+5
+
+EXPLORER_BASE_CLASSES \
+resources/java.util.classlist.txt \
+
+REPLACER \
+blah
+
+END TEST
+
+######################################################################
+# Test that non-static inner class constructors print out correctly.
+
+START TEST 22
+
+SEQUENCE \
+var0 = cons randoop.test.inner.Outer.<init>(); \
+var1 = cons randoop.test.inner.Outer$Inner.<init>(randoop.test.inner.Outer) var0;
+
+CODE \
+randoop.test.inner.Outer var0 = new randoop.test.inner.Outer(); \
+randoop.test.inner.Outer.Inner var1 = var0.new Inner(); 
+
+END TEST
+
+######################################################################
+# Test that non-static inner class constructors print out correctly.
+
+START TEST 23
+
+SEQUENCE \
+var0 = cons randoop.test.inner.Outer.<init>(); \
+var1 = cons randoop.test.inner.Outer$Inner2.<init>(randoop.test.inner.Outer,randoop.test.inner.Outer) var0 var0;
+
+CODE \
+randoop.test.inner.Outer var0 = new randoop.test.inner.Outer(); \
+randoop.test.inner.Outer.Inner2 var1 = var0.new Inner2((randoop.test.inner.Outer)var0); 
+
+END TEST
+
+######################################################################
+
+#START TEST 24
+#
+#SEQUENCE \
+#var0 = cons java.util.PriorityQueue.<init>() ; \
+#var1 = cons java.util.TreeSet.<init>(java.util.Collection) var0 ; \
+#var2 = cons java.util.PriorityQueue.<init>() ; \
+#var3 = method java.util.PriorityQueue.size() var2 ; \
+#var4 = cons java.util.LinkedHashSet.<init>(int) var3 ; \
+#var5 = prim float 100.0 ; \
+#var6 = method java.util.HashSet.contains(java.lang.Object) var4 var5 ; \
+#var7 = method java.util.TreeSet.add(java.lang.Object) var1 var4 ; \
+#var8 = method java.util.TreeSet.iterator() var1 ; \
+#var9 = method java.util.TreeSet.iterator() var1 ; \
+#var10 = cons java.util.LinkedList.<init>() ; \
+#var11 = method java.util.AbstractList.listIterator() var10 ; \
+#var12 = prim byte -1 ; \
+#var13 = prim short 0 ; \
+#var14 = method java.util.Collections.replaceAll(java.util.List,java.lang.Object,java.lang.Object) var10 var12 var13 ; \
+#var15 = method java.util.LinkedList.toArray() var10 ; \
+#var16 = method java.util.LinkedList.poll() var10 ; \
+#var17 = method java.util.Collections.reverse(java.util.List) var10 ; \
+#var18 = method java.util.LinkedList.toArray() var10 ; \
+#var19 = method java.util.AbstractSet.removeAll(java.util.Collection) var1 var10 ; \
+#var20 = method java.util.TimeZone.getAvailableIDs() ; \
+#var21 = method java.util.Arrays.asList(java.lang.Object[]) var20 ; \
+#var22 = method java.util.Collections.addAll(java.util.Collection,java.lang.Object[]) var1 var20 ;
+#
+#END TEST
+
+######################################################################
+
+START TEST 25
+
+SEQUENCE \
+var0 = cons randoop.test.vmerrors.VMErrors.<init>(); \
+var1 = method randoop.test.vmerrors.VMErrors.throwStackOverflow() var0 ; 
+
+CODE \
+randoop.test.vmerrors.VMErrors var0 = new randoop.test.vmerrors.VMErrors(); \
+var0.throwStackOverflow() ; 
+
+CONTRACTS \
+randoop.test.vmerrors.VMErrors var0 = new randoop.test.vmerrors.VMErrors(); \
+// <StatementExecutionResult object=VMErrors instance, exception=<undefined>> ; \
+var0.throwStackOverflow() ; \
+// <StatementExecutionResult object=<undefined>, exception=java.lang.StackOverflowError>; \
+// throws forbidden exception of type java.lang.StackOverflowError
+
+END TEST
+
+######################################################################
+

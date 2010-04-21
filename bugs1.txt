@@ -1,0 +1,961 @@
+cpacheco@radish:~/temp-eclipse/jrandoop$ java -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=binjoe/test/resources/java.util.classlist.txt  --maxsize=20 --randomseed=4 2>trash.txt
+TIME=100,SEQS=1000000
+ERROR while reading list of classes to test: File was not found
+binjoe/test/resources/java.util.classlist.txt
+binjoe/test/resources/java.util.classlist.txt (No such file or
+directory)
+
+cpacheco@radish:~/temp-eclipse/jrandoop$ java -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=20 --randomseed=4 2>trash.txt
+TIME=100,SEQS=1000000
+ERROR while reading list of classes to test: when calling
+Class.forName(String) method on
+`java.util.Collections$SingletonMap$ImmutableEntry' the following
+exception occurred: java.lang.ClassNotFoundException:
+java.util.Collections$SingletonMap$ImmutableEntry
+
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=20 --randomseed=4 2>trash.txt
+TIME=100,SEQS=1000000
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumMap.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public volatile java.lang.Object java.util.EnumMap.put(java.lang.Object,java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumSet.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public final int java.lang.Enum.compareTo(java.lang.Enum)
+  reason: We're skipping compareTo method in enums
+Will not use: public final int java.lang.Enum.hashCode()
+  reason: hashCode
+Will not use: public volatile int java.lang.Enum.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.IdentityHashMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.Scanner.next()
+  reason: it's a bridge method
+Will not use: public synchronized int java.util.SimpleTimeZone.hashCode()
+  reason: hashCode
+Will not use: public int java.util.UUID.hashCode()
+  reason: hashCode
+Will not use: public static java.util.UUID java.util.UUID.randomUUID()
+  reason: We're skipping this to get reproducibility when running java.util tests.
+Will not use: public volatile int java.util.UUID.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.PropertyPermission.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public static int java.util.Arrays.deepHashCode(java.lang.Object[])
+  reason: deepHashCode
+Will not use: public static int java.util.Arrays.hashCode(boolean[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(byte[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(char[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(double[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(float[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(int[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(java.lang.Object[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(long[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(short[])
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.BitSet.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map$Entry.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.List.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+.
+...............randoop.contract.unary.EqualsNotReflexive
+.............randoop.contract.unary.EqualsNotReflexive
+....randoop.contract.unary.EqualsNotReflexive
+.............................randoop.contract.unary.EqualsNotReflexive
+......randoop.contract.unary.EqualsNotReflexive
+...cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=20 --randomseed=4 2>trash.txt
+TIME=100,SEQS=1000000
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumMap.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public volatile java.lang.Object java.util.EnumMap.put(java.lang.Object,java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumSet.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public final int java.lang.Enum.compareTo(java.lang.Enum)
+  reason: We're skipping compareTo method in enums
+Will not use: public final int java.lang.Enum.hashCode()
+  reason: hashCode
+Will not use: public volatile int java.lang.Enum.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.IdentityHashMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.Scanner.next()
+  reason: it's a bridge method
+Will not use: public synchronized int java.util.SimpleTimeZone.hashCode()
+  reason: hashCode
+Will not use: public int java.util.UUID.hashCode()
+  reason: hashCode
+Will not use: public static java.util.UUID java.util.UUID.randomUUID()
+  reason: We're skipping this to get reproducibility when running java.util tests.
+Will not use: public volatile int java.util.UUID.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.PropertyPermission.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public static int java.util.Arrays.deepHashCode(java.lang.Object[])
+  reason: deepHashCode
+Will not use: public static int java.util.Arrays.hashCode(boolean[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(byte[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(char[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(double[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(float[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(int[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(java.lang.Object[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(long[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(short[])
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.BitSet.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map$Entry.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.List.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+.
+...............randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedRandomAccessList)
+.............randoop.contract.unary.EqualsNotReflexive(java.util.Collections$UnmodifiableSet)
+....randoop.contract.unary.EqualsNotReflexive(java.util.Collections$UnmodifiableSet)
+.............................randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedRandomAccessList)
+......randoop.contract.unary.EqualsNotReflexive(java.util.Collections$UnmodifiableSortedMap)
+.............
+...randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedSet)
+randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedSet)
+..............................................randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedRandomAccessList)
+..............randoop.contract.unary.EqualsNotReflexive(java.util.Collections$UnmodifiableSortedSet)
+.................
+...............randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedRandomAccessList)
+...randoop.contract.unary.EqualsNotReflexive(java.util.Collections$UnmodifiableSortedSet)
+.......randoop.contract.unary.EqualsNotReflexive(java.util.Collections$UnmodifiableSortedSet)
+.......................................................
+..............randoop.contract.unary.EqualsNotReflexive(java.util.Collections$UnmodifiableSet)
+..randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedSortedSet)
+........................randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedSet)
+.............randoop.contract.unary.EqualsNotReflexive(java.util.Collections$UnmodifiableSet)
+.................cpacheco@radish:~/temp-eclipse/jrandoop$ 
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=30 --randomseed=6 2>trash.txt
+TIME=100,SEQS=1000000
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumMap.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public volatile java.lang.Object java.util.EnumMap.put(java.lang.Object,java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumSet.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public final int java.lang.Enum.compareTo(java.lang.Enum)
+  reason: We're skipping compareTo method in enums
+Will not use: public final int java.lang.Enum.hashCode()
+  reason: hashCode
+Will not use: public volatile int java.lang.Enum.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.IdentityHashMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.Scanner.next()
+  reason: it's a bridge method
+Will not use: public synchronized int java.util.SimpleTimeZone.hashCode()
+  reason: hashCode
+Will not use: public int java.util.UUID.hashCode()
+  reason: hashCode
+Will not use: public static java.util.UUID java.util.UUID.randomUUID()
+  reason: We're skipping this to get reproducibility when running java.util tests.
+Will not use: public volatile int java.util.UUID.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.PropertyPermission.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public static int java.util.Arrays.deepHashCode(java.lang.Object[])
+  reason: deepHashCode
+Will not use: public static int java.util.Arrays.hashCode(boolean[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(byte[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(char[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(double[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(float[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(int[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(java.lang.Object[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(long[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(short[])
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.BitSet.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map$Entry.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.List.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+.
+...randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedMap)
+.......randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedSortedSet)
+.....randoop.contract.unary.EqualsNotReflexive(java.util.Collections$SynchronizedRandomAccessList)
+.cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=30 --randomseed=6 2>trash.txt
+TIME=100,SEQS=1000000
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumMap.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public volatile java.lang.Object java.util.EnumMap.put(java.lang.Object,java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumSet.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public final int java.lang.Enum.compareTo(java.lang.Enum)
+  reason: We're skipping compareTo method in enums
+Will not use: public final int java.lang.Enum.hashCode()
+  reason: hashCode
+Will not use: public volatile int java.lang.Enum.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.IdentityHashMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.Scanner.next()
+  reason: it's a bridge method
+Will not use: public synchronized int java.util.SimpleTimeZone.hashCode()
+  reason: hashCode
+Will not use: public int java.util.UUID.hashCode()
+  reason: hashCode
+Will not use: public static java.util.UUID java.util.UUID.randomUUID()
+  reason: We're skipping this to get reproducibility when running java.util tests.
+Will not use: public volatile int java.util.UUID.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.PropertyPermission.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public static int java.util.Arrays.deepHashCode(java.lang.Object[])
+  reason: deepHashCode
+Will not use: public static int java.util.Arrays.hashCode(boolean[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(byte[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(char[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(double[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(float[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(int[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(java.lang.Object[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(long[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(short[])
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.BitSet.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map$Entry.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.List.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+.
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+.........................................
+cpacheco@radish:~/temp-eclipse/jrandoop$ cpacheco@radish:~/temp-eclipse/jrandoop$ 
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=30 --randomseed=6 2>trash.txt
+TIME=100,SEQS=1000000
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumMap.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public volatile java.lang.Object java.util.EnumMap.put(java.lang.Object,java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumSet.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public final int java.lang.Enum.compareTo(java.lang.Enum)
+  reason: We're skipping compareTo method in enums
+Will not use: public final int java.lang.Enum.hashCode()
+  reason: hashCode
+Will not use: public volatile int java.lang.Enum.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.IdentityHashMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.Scanner.next()
+  reason: it's a bridge method
+Will not use: public synchronized int java.util.SimpleTimeZone.hashCode()
+  reason: hashCode
+Will not use: public int java.util.UUID.hashCode()
+  reason: hashCode
+Will not use: public static java.util.UUID java.util.UUID.randomUUID()
+  reason: We're skipping this to get reproducibility when running java.util tests.
+Will not use: public volatile int java.util.UUID.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.PropertyPermission.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public static int java.util.Arrays.deepHashCode(java.lang.Object[])
+  reason: deepHashCode
+Will not use: public static int java.util.Arrays.hashCode(boolean[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(byte[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(char[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(double[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(float[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(int[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(java.lang.Object[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(long[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(short[])
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.BitSet.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map$Entry.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.List.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+.
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+.................................................................cpacheco@radish:~/temp-eclipse/jrandoop$ 
+cpacheco@radish:~/temp-eclipse/jrandoop$ 
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=30 --randomseed=8 2>trash.txt
+TIME=100,SEQS=1000000
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumMap.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public volatile java.lang.Object java.util.EnumMap.put(java.lang.Object,java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumSet.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public final int java.lang.Enum.compareTo(java.lang.Enum)
+  reason: We're skipping compareTo method in enums
+Will not use: public final int java.lang.Enum.hashCode()
+  reason: hashCode
+Will not use: public volatile int java.lang.Enum.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.IdentityHashMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.Scanner.next()
+  reason: it's a bridge method
+Will not use: public synchronized int java.util.SimpleTimeZone.hashCode()
+  reason: hashCode
+Will not use: public int java.util.UUID.hashCode()
+  reason: hashCode
+Will not use: public static java.util.UUID java.util.UUID.randomUUID()
+  reason: We're skipping this to get reproducibility when running java.util tests.
+Will not use: public volatile int java.util.UUID.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.PropertyPermission.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public static int java.util.Arrays.deepHashCode(java.lang.Object[])
+  reason: deepHashCode
+Will not use: public static int java.util.Arrays.hashCode(boolean[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(byte[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(char[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(double[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(float[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(int[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(java.lang.Object[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(long[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(short[])
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.BitSet.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map$Entry.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.List.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+.
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+..........................................................randoop.contract.binary.EqualsHashcodeContractViolated(java.util.Collections$CopiesList)
+......................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+..........................cpacheco@radish:~/temp-eclipse/jrandoop$ 
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=30 --randomseed=8 2>trash.txt
+TIME=100,SEQS=1000000
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumMap.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public volatile java.lang.Object java.util.EnumMap.put(java.lang.Object,java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumSet.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public final int java.lang.Enum.compareTo(java.lang.Enum)
+  reason: We're skipping compareTo method in enums
+Will not use: public final int java.lang.Enum.hashCode()
+  reason: hashCode
+Will not use: public volatile int java.lang.Enum.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.IdentityHashMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.Scanner.next()
+  reason: it's a bridge method
+Will not use: public synchronized int java.util.SimpleTimeZone.hashCode()
+  reason: hashCode
+Will not use: public int java.util.UUID.hashCode()
+  reason: hashCode
+Will not use: public static java.util.UUID java.util.UUID.randomUUID()
+  reason: We're skipping this to get reproducibility when running java.util tests.
+Will not use: public volatile int java.util.UUID.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.PropertyPermission.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public static int java.util.Arrays.deepHashCode(java.lang.Object[])
+  reason: deepHashCode
+Will not use: public static int java.util.Arrays.hashCode(boolean[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(byte[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(char[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(double[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(float[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(int[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(java.lang.Object[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(long[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(short[])
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.BitSet.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map$Entry.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.List.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+.
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+............................................cpacheco@radish:~/temp-eclipse/jrandoop$ 
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 -classpath lib/junit-4.3.1.jar:bin randoop.main.Main gen-inputs-naive --classlist=bin/joe/test/resources/java.util.classlist.txt  --maxsize=30 --randomseed=8 2>trash.txt
+TIME=100,SEQS=1000000
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumMap.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public volatile java.lang.Object java.util.EnumMap.put(java.lang.Object,java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.EnumSet.clone() throws java.lang.CloneNotSupportedException
+  reason: it's a bridge method
+Will not use: public final int java.lang.Enum.compareTo(java.lang.Enum)
+  reason: We're skipping compareTo method in enums
+Will not use: public final int java.lang.Enum.hashCode()
+  reason: hashCode
+Will not use: public volatile int java.lang.Enum.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.IdentityHashMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public volatile java.lang.Object java.util.Scanner.next()
+  reason: it's a bridge method
+Will not use: public synchronized int java.util.SimpleTimeZone.hashCode()
+  reason: hashCode
+Will not use: public int java.util.UUID.hashCode()
+  reason: hashCode
+Will not use: public static java.util.UUID java.util.UUID.randomUUID()
+  reason: We're skipping this to get reproducibility when running java.util tests.
+Will not use: public volatile int java.util.UUID.compareTo(java.lang.Object)
+  reason: it's a bridge method
+Will not use: public int java.util.PropertyPermission.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public static int java.util.Arrays.deepHashCode(java.lang.Object[])
+  reason: deepHashCode
+Will not use: public static int java.util.Arrays.hashCode(boolean[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(byte[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(char[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(double[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(float[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(int[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(java.lang.Object[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(long[])
+  reason: hashCode
+Will not use: public static int java.util.Arrays.hashCode(short[])
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public int java.util.BitSet.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractSet.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Set.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map$Entry.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractMap.hashCode()
+  reason: hashCode
+Will not use: public synchronized int java.util.Vector.hashCode()
+  reason: hashCode
+Will not use: public int java.util.AbstractList.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.List.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Collection.hashCode()
+  reason: hashCode
+Will not use: public abstract int java.util.Map.hashCode()
+  reason: hashCode
+.
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+................................................................................
+.........................................................randoop.contract.binary.EqualsHashcodeContractViolated(java.util.Collections$CopiesList)
+***
+java.util.TimeZone var0 = java.util.TimeZone.getDefault();
+java.util.Random var1 = new java.util.Random();
+double var2 = var1.nextDouble();
+java.util.EventObject var3 = new java.util.EventObject((java.lang.Object)var1);
+java.lang.Object var4 = var0.clone();
+java.util.TooManyListenersException var5 = new java.util.TooManyListenersException();
+java.util.EmptyStackException var6 = new java.util.EmptyStackException();
+java.lang.String[] var7 = java.util.TimeZone.getAvailableIDs();
+int var8 = var1.nextInt();
+java.util.Arrays.sort((java.lang.Object[])var7);
+java.util.Observable var10 = new java.util.Observable();
+java.util.List var11 = java.util.Collections.nCopies((int)var8, (java.lang.Object)var7);
+
+***
+.......................
+................................................................................
+................................................................................
+............................................................cpacheco@radish:~/temp-eclipse/jrandoop$ 
+cpacheco@radish:~/temp-eclipse/jrandoop$ javac Temp.java
+cpacheco@radish:~/temp-eclipse/jrandoop$ javac-1.5 Temp.java
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 Temp
+cpacheco@radish:~/temp-eclipse/jrandoop$ javac-1.5 Temp.java
+Temp.java:18: cannot find symbol
+symbol  : variable hashCode
+location: interface java.util.List
+System.out.println(var11.hashCode);
+                        ^
+1 error
+cpacheco@radish:~/temp-eclipse/jrandoop$ javac-1.5 Temp.java
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 Temp
+true
+
+-1115749631
+cpacheco@radish:~/temp-eclipse/jrandoop$ cpacheco@radish:~/temp-eclipse/jrandoop$ 
+cpacheco@radish:~/temp-eclipse/jrandoop$ javac-1.5 Temp.java
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 Temp
+Exception in thread "main" java.lang.IllegalArgumentException: List length = -267801021
+	at java.util.Collections$CopiesList.<init>(Collections.java:3250)
+	at java.util.Collections.nCopies(Collections.java:3233)
+	at Temp.main(Temp.java:16)
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 Temp
+Exception in thread "main" java.lang.IllegalArgumentException: List length = -520457134
+	at java.util.Collections$CopiesList.<init>(Collections.java:3250)
+	at java.util.Collections.nCopies(Collections.java:3233)
+	at Temp.main(Temp.java:16)
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 Temp
+true
+-866358783
+-866358783
+cpacheco@radish:~/temp-eclipse/jrandoop$                         ^
+bash: ^: command not found
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 Temp
+Exception in thread "main" java.lang.IllegalArgumentException: List length = -189518074
+	at java.util.Collections$CopiesList.<init>(Collections.java:3250)
+	at java.util.Collections.nCopies(Collections.java:3233)
+	at Temp.main(Temp.java:16)
+cpacheco@radish:~/temp-eclipse/jrandoop$ java-1.5 Temp
+true
+353058049
+353058049
+cpacheco@radish:~/temp-eclipse/jrandoop$ 

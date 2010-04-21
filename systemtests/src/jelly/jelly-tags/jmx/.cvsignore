@@ -1,0 +1,4 @@
+target
+maven.log
+velocity.log
+jcoverage.ser

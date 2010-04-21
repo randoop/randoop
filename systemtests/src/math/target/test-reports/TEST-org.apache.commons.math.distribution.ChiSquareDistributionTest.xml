@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" name="org.apache.commons.math.distribution.ChiSquareDistributionTest" tests="6" time="0.231">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) 2 Runtime Environment, Standard Edition"></property>
+    <property name="sun.boot.library.path" value="/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/i386"></property>
+    <property name="java.vm.version" value="1.5.0_03-b07"></property>
+    <property name="ant.library.dir" value="/afs/csail.mit.edu/system/common/ant/apache-ant-1.6.5/lib"></property>
+    <property name="ant.version" value="Apache Ant version 1.6.5 compiled on June 2 2005"></property>
+    <property name="ant.java.version" value="1.5"></property>
+    <property name="java.vm.vendor" value="Sun Microsystems Inc."></property>
+    <property name="java.vendor.url" value="http://java.sun.com/"></property>
+    <property name="path.separator" value=":"></property>
+    <property name="java.vm.name" value="Java HotSpot(TM) Client VM"></property>
+    <property name="file.encoding.pkg" value="sun.io"></property>
+    <property name="user.country" value="US"></property>
+    <property name="sun.os.patch.level" value="unknown"></property>
+    <property name="libdir" value="target/lib"></property>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"></property>
+    <property name="user.dir" value="/afs/csail.mit.edu/u/c/cpacheco/jakarta-commons/jakarta-commons/math"></property>
+    <property name="final.name" value="commons-math-1.1-dev"></property>
+    <property name="java.runtime.version" value="1.5.0_03-b07"></property>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"></property>
+    <property name="basedir" value="."></property>
+    <property name="java.endorsed.dirs" value="/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/endorsed"></property>
+    <property name="os.arch" value="i386"></property>
+    <property name="java.io.tmpdir" value="/tmp"></property>
+    <property name="line.separator" value="
+"></property>
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."></property>
+    <property name="classesdir" value="target/classes"></property>
+    <property name="os.name" value="Linux"></property>
+    <property name="ant.home" value="/afs/csail.mit.edu/system/common/ant/apache-ant-1.6.5"></property>
+    <property name="testclassesdir" value="target/test-classes"></property>
+    <property name="ant.project.name" value="commons-math"></property>
+    <property name="sun.jnu.encoding" value="ISO-8859-1"></property>
+    <property name="java.library.path" value="/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/i386/client:/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/i386:/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/../lib/i386:/usr/X11R6/lib:/usr/local/lib:/usr/lib:/lib"></property>
+    <property name="testreportdir" value="target/test-reports"></property>
+    <property name="java.specification.name" value="Java Platform API Specification"></property>
+    <property name="java.class.version" value="49.0"></property>
+    <property name="sun.management.compiler" value="HotSpot Client Compiler"></property>
+    <property name="os.version" value="2.4.28-1-csail-i686"></property>
+    <property name="distdir" value="dist"></property>
+    <property name="ant.file" value="/afs/csail.mit.edu/u/c/cpacheco/jakarta-commons/jakarta-commons/math/build.xml"></property>
+    <property name="user.home" value="/afs/csail.mit.edu/u/c/cpacheco"></property>
+    <property name="user.timezone" value=""></property>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"></property>
+    <property name="java.specification.version" value="1.5"></property>
+    <property name="file.encoding" value="ISO-8859-1"></property>
+    <property name="javadocdir" value="dist/docs/api"></property>
+    <property name="Junit.present" value="true"></property>
+    <property name="java.class.path" value="/afs/csail.mit.edu/u/c/cpacheco/jakarta-commons/jakarta-commons/math/target/lib/commons-discovery-0.2.jar:/afs/csail.mit.edu/u/c/cpacheco/jakarta-commons/jakarta-commons/math/target/lib/commons-logging-1.0.3.jar:/afs/csail.mit.edu/u/c/cpacheco/jakarta-commons/jakarta-commons/math/target/test-classes:/afs/csail.mit.edu/u/c/cpacheco/jakarta-commons/jakarta-commons/math/target/classes:/afs/csail.mit.edu/u/c/cpacheco/jakarta-commons/jakarta-commons/math:/afs/csail.mit.edu/u/c/cpacheco/research/invariants/java:/afs/csail/group/pag/software/pkg/jdk/jre/lib/rt.jar:/afs/csail/group/pag/software/pkg/jdk/lib/tools.jar:/afs/csail.mit.edu/u/c/cpacheco/research/invariants/java/lib/bcel.jar:/afs/csail.mit.edu/u/c/cpacheco/research/invariants/java/lib/java-getopt.jar:/afs/csail.mit.edu/u/c/cpacheco/research/invariants/java/lib/junit.jar:/afs/csail.mit.edu/system/common/ant/apache-ant-1.6.5/lib/ant-launcher.jar:/afs/csail.mit.edu/system/common/ant/apache-ant-1.6.5/lib/ant.jar:/afs/csail.mit.edu/system/common/ant/apache-ant-1.6.5/lib/ant-junit.jar"></property>
+    <property name="user.name" value="cpacheco"></property>
+    <property name="java.vm.specification.version" value="1.0"></property>
+    <property name="java.home" value="/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre"></property>
+    <property name="sun.arch.data.model" value="32"></property>
+    <property name="java.specification.vendor" value="Sun Microsystems Inc."></property>
+    <property name="user.language" value="en"></property>
+    <property name="java.vm.info" value="mixed mode, sharing"></property>
+    <property name="java.version" value="1.5.0_03"></property>
+    <property name="java.ext.dirs" value="/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/ext"></property>
+    <property name="sun.boot.class.path" value="/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/rt.jar:/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/i18n.jar:/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/sunrsasign.jar:/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/jsse.jar:/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/jce.jar:/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/lib/charsets.jar:/afs/csail.mit.edu/system/@sys/java/j2sdk-5.0/jre/classes"></property>
+    <property name="java.vendor" value="Sun Microsystems Inc."></property>
+    <property name="file.separator" value="/"></property>
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"></property>
+    <property name="sun.cpu.endian" value="little"></property>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"></property>
+    <property name="defaulttargetdir" value="target"></property>
+    <property name="ant.file.commons-math" value="/afs/csail.mit.edu/u/c/cpacheco/jakarta-commons/jakarta-commons/math/build.xml"></property>
+    <property name="sun.cpu.isalist" value=""></property>
+  </properties>
+  <testcase classname="org.apache.commons.math.distribution.ChiSquareDistributionTest" name="testSmallDf" time="0.14"></testcase>
+  <testcase classname="org.apache.commons.math.distribution.ChiSquareDistributionTest" name="testDfAccessors" time="0.0040"></testcase>
+  <testcase classname="org.apache.commons.math.distribution.ChiSquareDistributionTest" name="testCumulativeProbabilities" time="0.0060"></testcase>
+  <testcase classname="org.apache.commons.math.distribution.ChiSquareDistributionTest" name="testInverseCumulativeProbabilities" time="0.017"></testcase>
+  <testcase classname="org.apache.commons.math.distribution.ChiSquareDistributionTest" name="testConsistency" time="0.0070"></testcase>
+  <testcase classname="org.apache.commons.math.distribution.ChiSquareDistributionTest" name="testIllegalArguments" time="0.0040"></testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

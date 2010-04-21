@@ -1,0 +1,11 @@
+
+* Forward vs. backward
+
+Forward advantages:
+  + Can execute as sequence is built - avoid bad paths.
+
+Backward advantages:
+  + More directed.
+  + More fair towards all methods.
+
+* Trees vs. dags

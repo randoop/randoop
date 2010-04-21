@@ -1,0 +1,30 @@
+===========================================================================
+
+Carlos has some additional files squirreled away at:
+  ~cpacheco/mac/carlospacheco/Documents/workspace/jrandoop/
+  ~cpacheco/mac/carlospacheco/randoop2/jrandoop/
+They are slightly different, so you may need to look in both places.
+
+===========================================================================
+
+The below are notes from Carlos's original notes.txt file.
+
+first step is predf,  (make predf)
+  runs randoop on java collections
+  computes frontier branches
+  creates input files for dataflow (each input file represents a frontier branch
+    and all of the seqs that reach it)
+  Stops when it sticks at the same branch coverage for N seconds
+  The input files are in th form frontierNNN.gz
+
+So files that begin with .df (eg, .df-jc-frontier9.gz) are timestamp
+files.  But they are not dependent on the matching frontier files.
+Use rm .df*.gz to get rid of them.
+
+Need to add -DRANDOOP_MACHINES=$(machines) to each use
+of randoop.experiments.MultiMachineRunner
+
+make parallel-df runs all of the tests.  If you don't pass in machines
+it will run only on the local machine.
+
+To run just one, use 'make .df-jc-frontierNNN.gz'
