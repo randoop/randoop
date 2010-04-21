@@ -165,13 +165,25 @@ public class GenTests extends GenInputsAbstract {
       System.out.println("Use the --classlist, --testclass, or --methodlist options.");
       System.exit(1);
     }
-    List<Class<?>> classes = findClassesFromArgs(options);
+    List<Class<?>> allClasses = findClassesFromArgs(options);
+
+    // Remove private (non-.isVisible) classes and abstract classes
+    // and interfaces.
+    List<Class<?>> classes = new ArrayList<Class<?>>(allClasses.size());
+    for (Class<?> c : allClasses) {
+      if ((!Reflection.isVisible (c))
+          && (!Reflection.isAbstract (c))) {
+        classes.add(c);
+      } else {
+        System.out.println("Ignoring " + c + " specified on command line.");
+      }
+    }
 
     // Make sure each of the classes is visible.  Should really make sure
-    // there is at least one visible constructor/factory as well.
+    // there is at least one visible constructor/factory in each class as well.
     for (Class<?> c : classes) {
       if (!Reflection.isVisible (c)) {
-        throw new Error ("Specified class " + c + " is not visible");
+        throw new Error ("Specified " + c + " is not visible");
       }
     }
     List<StatementKind> model =

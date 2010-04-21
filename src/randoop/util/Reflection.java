@@ -478,6 +478,29 @@ public final class Reflection {
      return cached;
    }
 
+   private static Map<Class<?>, Boolean> cached_isAbstract =
+     new LinkedHashMap<Class<?>, Boolean>();
+
+   public static boolean isAbstract(Class<?> c){
+
+     Boolean cached = cached_isAbstract.get(c);
+     if (cached == null) {
+       if (c.isAnonymousClass()) {
+         cached = false;
+       } else {
+         int mods = c.getModifiers();
+         boolean classAbstract = isAbstract (mods);
+         if (c.isMemberClass())
+           cached = classAbstract && isAbstract(c.getDeclaringClass());
+         else
+           cached = classAbstract;
+       }
+       cached_isAbstract.put(c, cached);
+     }
+     assert cached != null;
+     return cached;
+   }
+
    public static void saveClassesToFile(List<Class<?>> classes, String file) throws IOException {
      FileWriter fw = new FileWriter(file);
      for(Class<?> s:classes) {
@@ -735,4 +758,21 @@ public final class Reflection {
       return !Modifier.isPrivate (modifiers);
     }
   }
+
+  /**
+   * Returns true if the the specified modifier is abstract to Randoop.
+   * If the command line argument public_only is true, only public
+   * classes/methods are considered abstract.  If public_only is false
+   * then any class/method that is not private is considered abstract
+   */
+  public static boolean isAbstract (int modifiers) {
+    // System.out.printf ("isAbstract public_only=%b, modifiers = %s%n",
+    //             GenInputsAbstract.public_only, Modifier.toString(modifiers));
+    if (GenInputsAbstract.public_only) {
+      return Modifier.isPublic (modifiers);
+    } else {
+      return !Modifier.isPrivate (modifiers);
+    }
+  }
+
 }
