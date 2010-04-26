@@ -175,7 +175,7 @@ public class GenTests extends GenInputsAbstract {
           && (!Reflection.isAbstract (c))) {
         classes.add(c);
       } else {
-        System.out.println("Ignoring " + c + " specified on command line.");
+        System.out.println("Ignoring " + c + " specified on command line:  has no constructor.");
       }
     }
 
