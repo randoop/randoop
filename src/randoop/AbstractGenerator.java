@@ -55,6 +55,7 @@ public abstract class AbstractGenerator {
    */
   public AbstractGenerator(List<StatementKind> statements,
       List<Class<?>> covClasses, long timeMillis, int maxSequences, SequenceCollection seeds) {
+    assert statements != null;
 
     this.timeMillis = timeMillis;
 
