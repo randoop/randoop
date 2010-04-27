@@ -171,7 +171,7 @@ public class GenTests extends GenInputsAbstract {
     // and interfaces.
     List<Class<?>> classes = new ArrayList<Class<?>>(allClasses.size());
     for (Class<?> c : allClasses) {
-      if ((!Reflection.isVisible (c))
+      if ((Reflection.isVisible (c))
           && (!Reflection.isAbstract (c))) {
         classes.add(c);
       } else {
