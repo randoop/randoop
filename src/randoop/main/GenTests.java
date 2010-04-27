@@ -171,11 +171,12 @@ public class GenTests extends GenInputsAbstract {
     // and interfaces.
     List<Class<?>> classes = new ArrayList<Class<?>>(allClasses.size());
     for (Class<?> c : allClasses) {
-      if ((Reflection.isVisible (c))
-          && (!Reflection.isAbstract (c))) {
-        classes.add(c);
+      if (Reflection.isAbstract (c)) {
+        System.out.println("Ignoring abstract " + c + " specified on command line.");
+      } else if (! Reflection.isVisible (c)) {
+        System.out.println("Ignoring non-visible " + c + " specified on command line.");
       } else {
-        System.out.println("Ignoring " + c + " specified on command line:  has no constructor.");
+        classes.add(c);
       }
     }
 
