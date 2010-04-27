@@ -57,6 +57,7 @@ default:
 	@echo "clean          remove build-related auto-generated files."
 	@echo "clean-tests    remove test-related auto-generated files."
 	@echo "results        display results of tests."
+	@echo "tests          run tests."
 	@echo "update-goals   update test goal files."
 	@echo "zip            Create a distribution zip file (randoop.zip)"
 
