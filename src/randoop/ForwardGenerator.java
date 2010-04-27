@@ -174,6 +174,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
     StatementKind statement = null;
 
+    if (this.statements.isEmpty())
+      return null;
+
     // Select a StatementInfo
     statement = Randomness.randomMember(this.statements);
     if (Log.isLoggingOn()) Log.logLine("Selected statement: " + statement.toString());
@@ -217,6 +220,8 @@ public class ForwardGenerator extends AbstractGenerator {
     // Heuristic: if parameterless statement, subsequence inputs
     // will all be redundant, so just remove it from list of
     // statements.
+    // Note that this can make the list of statements empty, violating its
+    // rep invariant.
     if (GenInputsAbstract.no_args_statement_heuristic && statement.getInputTypes().size() == 0) {
       statements.remove(statement);
     }
