@@ -9,10 +9,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import utilpag.Assert;
-import utilpag.Option;
-import utilpag.Options;
-import utilpag.Options.ArgException;
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
 
 
 /**
@@ -142,14 +141,14 @@ public class MultiMachineRunner {
   }
 
   public synchronized void markTargetDone(String e) {
-    Assert.assertTrue(targetsInProgress.contains(e));
+    assert targetsInProgress.contains(e);
     targetsInProgress.remove(e);
     targetsFinished.add(e);
     checkIfDone();
   }
 
   public synchronized void markTargetEndedWithError(String e) {
-    Assert.assertTrue(targetsInProgress.contains(e));
+    assert targetsInProgress.contains(e);
     targetsInProgress.remove(e);
     targetsEndedWithError.add(e);
     checkIfDone();

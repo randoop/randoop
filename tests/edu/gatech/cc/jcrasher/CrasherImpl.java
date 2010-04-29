@@ -116,7 +116,7 @@ public class CrasherImpl implements Crasher {
 		 * TODO Refactor to keep the additional info as ClassWrapper fields
 		 * so we do no longer need these arrays. 
 		 */
-		Class<?>[] classes = classSet.toArray(new Class[classSet.size()]);
+		Class<?>[] classes = classSet.toArray(new Class<?>[classSet.size()]);
 		int[] planSpaceSizes = new int[classes.length];
 		int totalPlanSpaceSize = 0;
 		for (int i=0; i<classes.length; i++) {

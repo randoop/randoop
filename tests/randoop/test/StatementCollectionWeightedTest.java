@@ -1,7 +1,8 @@
 package randoop.test;
 
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
+import java.io.StringReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class StatementCollectionWeightedTest extends TestCase {
     weightedMethods.append("java.util.ArrayList.add(java.lang.Object)" + Util.newLine);
     weightedMethods.append("10");
 
-    InputStream stream = new StringBufferInputStream(weightedMethods.toString());
+    Reader r = new StringReader(weightedMethods.toString());
 
     fail();
     //statements.assignWeights(stream);

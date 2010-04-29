@@ -17,18 +17,17 @@ import randoop.util.Files;
 import randoop.util.Log;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
-import utilpag.Invisible;
-import utilpag.Option;
+import plume.Option;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
 
 public abstract class AbstractGenerator {
 
-  @Invisible
+  /* @Invisible*/
   @Option("Print detailed statistics after generation.")
   public static boolean print_stats = false;
-  @Invisible
+  /* @Invisible*/
   @Option("When branch coverage fails to increase for the given number of seconds (>0), stop generation.")
   public static int stop_when_plateau = -1;
   @Option ("Dump each seqeunce to the log file")

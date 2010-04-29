@@ -86,7 +86,7 @@ public class ConstructionRulesImpl extends AbstractConstructionRules {
 		/* Constructors: Queue params for search */
 		if (Modifier.isAbstract(cw.getWrappedClass().getModifiers()) == false) {
 
-			for (Constructor con: cw.getWrappedClass().getDeclaredConstructors()) {
+			for (Constructor<?> con: cw.getWrappedClass().getDeclaredConstructors()) {
 				for (Class<?> paramType: con.getParameterTypes()) {
 					getWrapper(paramType);	//Create wrapper for each param-type
 				}

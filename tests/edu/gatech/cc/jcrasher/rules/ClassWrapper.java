@@ -80,7 +80,7 @@ public interface ClassWrapper {
 	 * 
 	 * @return each public constuctor X(P*) or an empty list if abstract class.
 	 */
-	public List<Constructor> getConstrsVisGlobal();
+	public List<Constructor<?>> getConstrsVisGlobal();
 
 	/**
 	 * Get user-predefined standard representative plans like 0, 1, -1, null

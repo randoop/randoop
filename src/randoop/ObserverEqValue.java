@@ -18,6 +18,8 @@ import randoop.util.PrimitiveTypes;
  */
 public class ObserverEqValue implements Observation, Serializable {
 
+  private static final long serialVersionUID = 20100429; 
+
   /* The observer method */
   public Method observer;
 

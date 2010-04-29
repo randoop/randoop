@@ -6,7 +6,7 @@ import java.util.List;
 
 import randoop.Globals;
 import randoop.util.Util;
-import utilpag.Options;
+import plume.Options;
 
 
 /**
@@ -149,11 +149,12 @@ public abstract class CommandHandler {
       }
       out.println("</ul><p>");
     }
-    if (foptions != null) {
-      out.println("<b>Options</b>");
-      out.println("<p>");
-      foptions.toStringHTML(out);
-    }
+// Comment out temporarily.  Uses non-documented "toStringHTML" routine in Options.
+//     if (foptions != null) {
+//       out.println("<b>Options</b>");
+//       out.println("<p>");
+//       foptions.toStringHTML(out);
+//     }
     //out.println("</blockquote>");
   }
 

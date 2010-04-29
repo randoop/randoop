@@ -19,6 +19,8 @@ import randoop.util.Reflection;
  */
 public class ExpressionNotEqValue implements Observation, Serializable {
 
+  private static final long serialVersionUID = 20100429; 
+
   // The expression whose runtime value this observation records.
   // We store the class, not the expression itself, to ensure
   // that serialization always work (we can easily serialize a class name)
@@ -91,8 +93,10 @@ public class ExpressionNotEqValue implements Observation, Serializable {
                                                       ClassNotFoundException {
 
     is.defaultReadObject();
-    expression = (Class<? extends Expression>)
+    @SuppressWarnings("unchecked")
+    Class<? extends Expression> expression_tmp = (Class<? extends Expression>)
       Reflection.classForName ((String) is.readObject());
+    expression = expression_tmp;
   }
 
   public String toCodeStringPreStatement() {

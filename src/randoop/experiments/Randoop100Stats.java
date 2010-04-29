@@ -12,7 +12,7 @@ import java.util.Set;
 
 import randoop.util.CollectionsExt;
 
-import utilpag.UtilMDE;
+import plume.UtilMDE;
 
 public class Randoop100Stats implements StatsComputer {
 

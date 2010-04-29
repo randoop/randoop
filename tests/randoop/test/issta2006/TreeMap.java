@@ -15,8 +15,8 @@ public class TreeMap {
 
     private static long startTime = System.currentTimeMillis();
 
-    @NotPartOfState
-	private Comparator comparator = null;
+	// @NotPartOfState
+	// private Comparator comparator = null;
 
 	private transient Entry root = null;
 
@@ -36,7 +36,7 @@ public class TreeMap {
 
 	private native boolean checkAbstractState(int which);
 
-	public static Set tests = new HashSet();
+	public static Set<String> tests = new HashSet<String>();
 
         public static int counter = 0;
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,10 +34,10 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
 
 import randoop.util.Files;
-import utilpag.Option;
-import utilpag.Options;
-import utilpag.Pair;
-import utilpag.Options.ArgException;
+import plume.Option;
+import plume.Options;
+import plume.Pair;
+import plume.Options.ArgException;
 
 /**
  * The source code coverage instrumenter.
@@ -126,9 +126,9 @@ public class Instrument extends ASTVisitor {
       System.out.println("Instrumenting " + oneFile);
 
       ASTParser parser = ASTParser.newParser(AST.JLS3);
-      Hashtable h = new Hashtable();
-      h.put(JavaCore.COMPILER_SOURCE, "1.5");
-      parser.setCompilerOptions(h);
+      Map<String,String> compilerOptions = new HashMap<String,String>();
+      compilerOptions.put(JavaCore.COMPILER_SOURCE, "1.5");
+      parser.setCompilerOptions(compilerOptions);
       String fileContents = Files.getFileContents(oneFile);
       parser.setSource(fileContents.toCharArray());
       unit = (CompilationUnit) parser.createAST(null);
@@ -240,7 +240,7 @@ public class Instrument extends ASTVisitor {
     return true;
   }
 
-  private void postProcessClassOrEnumDeclaration(List bodyDeclarations) {
+  private void postProcessClassOrEnumDeclaration(List<BodyDeclaration> bodyDeclarations) {
     // If this is a top-level class, output instrumentation declarations.
     if (classDepth == 1) {
       assert allMethodIndices != null;

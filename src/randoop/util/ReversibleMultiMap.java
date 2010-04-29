@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import utilpag.Triple;
+import plume.Triple;
 
 public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   

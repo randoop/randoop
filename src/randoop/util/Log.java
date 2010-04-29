@@ -9,7 +9,7 @@ import java.util.List;
 import randoop.Globals;
 import randoop.Sequence;
 import randoop.StatementKind;
-import utilpag.Option;
+import plume.Option;
 
 public final class Log {
 

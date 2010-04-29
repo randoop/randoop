@@ -54,13 +54,13 @@ import randoop.util.Randomness;
 import randoop.util.RandoopSecurityManager;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
+import randoop.util.RunCmd;
 import randoop.util.SerializationHelper;
-import utilpag.Invisible;
-import utilpag.Option;
-import utilpag.Options;
-import utilpag.Options.ArgException;
-import utilpag.UtilMDE;
-import utilpag.SimpleLog;
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
+import plume.UtilMDE;
+import plume.SimpleLog;
 import cov.Branch;
 import cov.Coverage;
 
@@ -98,7 +98,7 @@ public class GenTests extends GenInputsAbstract {
 
   }
 
-  @Invisible
+  /* @Invisible*/
   @Option("Signals that this is a run in the context of a system test. (Slower)")
   public static boolean system_test_run = false;
 
@@ -144,7 +144,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (false) {
       Class<?> cd = java.util.Date.class;
-      for (Constructor con : cd.getConstructors())
+      for (Constructor<?> con : cd.getConstructors())
         System.out.printf ("date constructor = %s%n", con.toString());
     }
 
@@ -560,7 +560,10 @@ public class GenTests extends GenInputsAbstract {
       FileInputStream fileis = new FileInputStream(filename);
       ObjectInputStream objectis
         = new ObjectInputStream(new GZIPInputStream(fileis));
-      seqs = (List<ExecutableSequence>) objectis.readObject();
+      @SuppressWarnings("unchecked")
+      List<ExecutableSequence> seqs_tmp
+        = (List<ExecutableSequence>) objectis.readObject();
+      seqs = seqs_tmp;
       objectis.close();
       fileis.close();
     } catch (Exception e) {
@@ -625,7 +628,7 @@ public class GenTests extends GenInputsAbstract {
     cmd.add (outfile);
     String[] cmd_array = new String[cmd.size()];
     System.out.printf ("Executing command %s%n", cmd);
-    UtilMDE.run_cmd (cmd.toArray (cmd_array));
+    RunCmd.run_cmd (cmd.toArray (cmd_array));
     System.out.printf ("Completed command%n");
   }
 
@@ -674,7 +677,7 @@ public class GenTests extends GenInputsAbstract {
     String[] cmd_array = new String[cmd.size()];
     progress.log ("Removing non-deterministic observations: executing "
                   + " command %s%n", cmd);
-    UtilMDE.run_cmd (cmd.toArray (cmd_array));
+    RunCmd.run_cmd (cmd.toArray (cmd_array));
     progress.log ("Completed removal of non-deterministic observations");
   }
 

@@ -41,6 +41,11 @@
 # 6. Finally, change ~/public_html/randoop/index.php to
 #    point to the new version dir ~/public_html/randoop/VERSION
 
+
+# Put user-specific changes in your own Makefile.user.
+# Make will silently continue if that file does not exist.
+-include Makefile.user
+
 RANDOOP_HOME ?= $(shell pwd)
 
 # Sets common variables.
@@ -63,12 +68,16 @@ default:
 
 JAVAC ?= javac
 JAVAC_JAR ?= ${HOME}/research/types/jsr308-langtools/dist/lib/javac.jar
+# User may set JAVAC_EXTRA_ARGS
+JAVAC_COMMAND ?= ${JAVAC} ${JAVAC_EXTRA_ARGS}
 
 ############################################################
 # Targets for compiling and doing basic tests on Randoop.
 
 # All the source files.
 RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
+RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
+RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
 
 temp:
 	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.RunISSTA06Containers randoop.test.issta2006.BinomialHeap directed
@@ -84,8 +93,9 @@ build: bin randoop_agent.jar
 
 bin: $(RANDOOP_FILES)
 	mkdir -p bin
-	@echo ${JAVAC} -nowarn -g -d bin ...
-	@${JAVAC} -nowarn -g -d bin $(RANDOOP_FILES)
+	@echo ${JAVAC_COMMAND} -g -d bin ...
+	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
+	@${JAVAC_COMMAND} -nowarn -g -d bin $(RANDOOP_TESTS_FILES)
 	mkdir -p bin/randoop/test/resources
 	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
 	cp src/randoop/version.txt bin/randoop/
@@ -100,7 +110,7 @@ randoop-tests: unit randoop1 randoop2 randoop-contracts
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
 randoop_agent.jar : $(AGENT_JAVA_FILES) src/randoop/instrument/manifest.txt
-	${JAVAC} -g -d bin -cp src:$(CLASSPATH) $(AGENT_JAVA_FILES)
+	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(AGENT_JAVA_FILES)
 	jar cfm randoop_agent.jar src/randoop/instrument/manifest.txt \
 	  bin/randoop/instrument/Premain.class
 
@@ -154,7 +164,7 @@ randoop1: bin
 	   --junit-output-dir=randoop-scratch \
 	   --log=randoop-log.txt
 	cd randoop-scratch && \
-	  ${JAVAC}  -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
 	cd randoop-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
@@ -197,7 +207,7 @@ randoop3: bin
 	cp randoop-scratch/foo/bar/Naive2_0.java systemtests/resources/Naive2_0.java
 
 randoop-contracts: bin
-	cd systemtests/resources/randoop && ${JAVAC} examples/Buggy.java
+	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Buggy.java
 	rm -rf randoop-contracts-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
@@ -208,7 +218,7 @@ randoop-contracts: bin
 	   --junit-output-dir=randoop-contracts-scratch \
 	   --log=randoop-contracts-log.txt
 	cd randoop-contracts-scratch && \
-	  ${JAVAC} -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
 # We expect this to fail, so add a "-" so the target doesn't fail.
 	cd randoop-contracts-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
@@ -241,7 +251,7 @@ randoop-jdk-gen: bin
 
 randoop-jdk-comp:
 	cd randoop-jdk-scratch && \
-	  ${JAVAC} -cp .:$(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
 	  *.java
 
 randoop-jdk-run:
@@ -401,7 +411,7 @@ covtest: bin
 	  cov.Instrument \
 	  --destination=covtest-scratch \
 	  --files=systemtests/resources/cov/classlist.txt
-	cd covtest-scratch && ${JAVAC} cov/*.java
+	cd covtest-scratch && ${JAVAC_COMMAND} -Xlint cov/*.java
 	cp covtest-scratch/cov/TestClass.java \
 	   systemtests/resources/cov/TestClass-instrumented
 
@@ -505,6 +515,7 @@ zip:
 # Copy required libraries.
 	mkdir jrandoop/lib
 	cp lib/bcel.jar jrandoop/lib
+	cp lib/plume.jar jrandoop/lib
 	cp lib/jakarta-oro-2.0.8.jar jrandoop/lib
 	cp lib/jakarta-oro-license.txt jrandoop/lib
 	cp lib/junit-4.3.1.jar jrandoop/lib
@@ -521,7 +532,7 @@ zip:
 # Make sure everything works.
 	cd jrandoop && \
 	  find src/ tests/ -name "*.java" \
-	  | xargs ${JAVAC} -cp 'lib/*'
+	  | xargs ${JAVAC_COMMAND} -nowarn -cp 'lib/*'
 
 # Make randoop.jar.
 	mkdir jrandoop/tmp

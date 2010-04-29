@@ -134,9 +134,9 @@ public class BinomialHeap /*implements java.io.Serializable*/{
 
 	//private native boolean checkAbstractState(int which);
 
-	public static Set tests = new HashSet();
+	public static Set<String> tests = new HashSet<String>();
 
-	private static Set abs_states = new HashSet();
+	// private static Set abs_states = new HashSet();
 
         public static int counter = 0;
 

@@ -19,7 +19,7 @@ public class StatementThrowsException implements Observation, Serializable {
     this.exceptionClass = exception.getClass();
   }
 
-  public StatementThrowsException (Class exception_class) {
+  public StatementThrowsException (Class<? extends Throwable> exception_class) {
     this.exceptionClass = exception_class;
   }
 

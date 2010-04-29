@@ -10,9 +10,8 @@ import randoop.SequenceCollection;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.Util;
-import utilpag.Invisible;
-import utilpag.Option;
-import utilpag.Options;
+import plume.Option;
+import plume.Options;
 
 public abstract class GenInputsAbstract extends CommandHandler {
 
@@ -20,16 +19,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public final static String fail = "fail";
   public final static String pass = "pass";
 
-  @Invisible
+  /* @Invisible*/
   @Option("Has to do with experiments...")
   public static boolean size_equalizer = false;
 
 
-  @Invisible
+  /* @Invisible*/
   @Option("Write experiment results file.")
   public static FileWriter expfile = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Works only with naive offline. ")
   public static Integer filter_short_dep = null;
 
@@ -74,91 +73,91 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
   public static List<String> system_props = new ArrayList<String>();
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output sequences that do not complete execution.")
   public static boolean output_nonexec = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output only contract-violating sequences.")
   public static String output_tests = "all";
 
-  @Invisible
+  /* @Invisible*/
   @Option("Don't generate anything, just count the state space.")
   public static Integer calc_sequence_space = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Don't generate anything, just count the state space.")
   public static String output_sequence_space = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output coverage plot (percent cov. vs. secs.) to the given file.")
   public static String output_coverage_plot = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Use object cache.")
   public static boolean use_object_cache = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Aliasing factor.")
   public static Double alias_ratio = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Call checkRep methods when executing (for Randoop development).")
   public static boolean check_reps = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Use component-based generation.")
   public static boolean component_based = true;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output witness sequences for coverage branches.")
   public static boolean output_cov_witnesses = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Check java.lang.Object contracts, e.g. equals(Object) is reflexive, hashCode() throws no exceptions, etc.")
   public static boolean check_object_contracts = true;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Whenever an object is called for, use an integer.")
   public static boolean always_use_ints_as_objects = false;
 
 
-  @Invisible
+  /* @Invisible*/
   @Option("Create helper sequences.")
   public static boolean helpers = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Name of a file containing a serialized list of sequences.")
   public static List<String> componentfile_ser = new ArrayList<String>();
 
-  @Invisible
+  /* @Invisible*/
   @Option("Name of a file containing a textual list of sequences.")
   public static List<String> componentfile_txt = new ArrayList<String>();
 
   // Set in main method. Component sequences to help bdgen.
   public static SequenceCollection components;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Print to the given file source files annotated with coverage information.")
   public static String covreport = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output components (serialized, GZIPPED) to the given file. Suggestion: use a .gz suffix in file name.")
   public static String output_components = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output covered branches to the given text file.")
   public static String output_branches = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output branch->witness-sequences map.")
   public static String output_covmap = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output a SequenceGenerationStats object to the given file.")
   public static String output_stats = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("The name of a file containing the list of coverage-instrumented classes.")
   public static String coverage_instrumented_classes = null;
 
@@ -212,59 +211,59 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use null with the given frequency. [TODO explain]")
   public static Double null_ratio = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Display progress every <int> seconds.")
   public static int progressinterval = 1;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Do not display progress.")
   public static boolean noprogressdisplay = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Minimize testclasses cases.")
   public static boolean minimize = true;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Create a file containing experiment results.")
   public static String experiment = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Do not do online redundancy checks.")
   public static boolean noredundancychecks = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Create sequences but never execute them.")
   public static boolean dontexecute = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Clear the component set when it reaches <int> inputs.")
   public static int clear = Integer.MAX_VALUE;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Do not do online illegal.")
   public static boolean offline = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Do not exercise methods that match regular expresssion <string>")
   public static Pattern omitmethods = null;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Generate inputs but do not check any contracts")
   public static boolean dont_check_contracts = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("TODO document.")
   public static boolean weighted_inputs = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("TODO document.")
   public static boolean no_args_statement_heuristic = true;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Only generate inputs, do not test for errors.")
   public static boolean dontcheckcontracts;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Use heuristic that may randomly repeat a method call several times.")
   public static boolean repeat_heuristic = false;
 

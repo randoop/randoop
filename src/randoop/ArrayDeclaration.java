@@ -17,6 +17,8 @@ import randoop.util.Reflection;
  */
 public final class ArrayDeclaration implements StatementKind, Serializable {
 
+  private static final long serialVersionUID = 20100429; 
+
   /** ID for parsing purposes (see StatementKinds.parse method) */
   public static final String ID = "array";
 

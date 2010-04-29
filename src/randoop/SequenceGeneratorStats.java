@@ -14,25 +14,24 @@ import randoop.main.GenInputsAbstract;
 import randoop.util.CollectionsExt;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor.TimeoutExceeded;
-import utilpag.Invisible;
-import utilpag.Option;
-import utilpag.Pair;
-import utilpag.UtilMDE;
+import plume.Option;
+import plume.Pair;
+import plume.UtilMDE;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
 
 public class SequenceGeneratorStats {
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output sequence generation stats during generation.")
   public static boolean stats_generation = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Output coverage stats during generation.")
   public static boolean stats_coverage = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Outputs extra information for Randoop experiments.")
   public static boolean randoop_exp = false;
 
