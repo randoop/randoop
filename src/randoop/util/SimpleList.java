@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.util.List;
 
+
 public abstract class SimpleList<T> {
 
   public abstract int size();

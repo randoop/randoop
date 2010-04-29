@@ -39,10 +39,10 @@ import randoop.util.Files;
 import randoop.util.Reflection;
 import randoop.util.SimpleList;
 import randoop.util.Reflection.Match;
-import utilpag.Option;
-import utilpag.Options;
-import utilpag.Pair;
-import utilpag.Options.ArgException;
+import plume.Option;
+import plume.Options;
+import plume.Pair;
+import plume.Options.ArgException;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
@@ -794,6 +794,7 @@ public class GenBranchDir {
           try {
             FileInputStream fileos = new FileInputStream(onefile);
             ObjectInputStream objectos = new ObjectInputStream(new GZIPInputStream(fileos));
+            @SuppressWarnings("unchecked")
             Set<Sequence> seqset = (Set<Sequence>)objectos.readObject();
             System.out.println("Adding " + seqset.size() + " component sequences from file "
                                + onefile);

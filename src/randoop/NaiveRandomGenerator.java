@@ -25,7 +25,7 @@ import randoop.util.ReversibleMultiMap;
 import randoop.util.ReversibleSet;
 import randoop.util.SimpleList;
 import randoop.util.Util;
-import utilpag.Pair;
+import plume.Pair;
 
 public class NaiveRandomGenerator extends AbstractGenerator {
 
@@ -285,13 +285,13 @@ public class NaiveRandomGenerator extends AbstractGenerator {
 
     // update availableTypes
     if (Log.isLoggingOn()) Log.logLine("START UPDATING AVAILABLE TYPES.");
-    Log.logLine("TYPES WITH SEQS marks:\n\n" + ((ReversibleSet)availableTypes.typesWithsequences).map.marks);
-    Log.logLine("SUBTYPES WITH SEQS marks:\n\n" + ((ReversibleMultiMap)availableTypes.subTypesWithsequences).marks);
+    Log.logLine("TYPES WITH SEQS marks:\n\n" + ((ReversibleSet<Class<?>>)availableTypes.typesWithsequences).map.marks);
+    Log.logLine("SUBTYPES WITH SEQS marks:\n\n" + ((ReversibleMultiMap<Class<?>, Class<?>>)availableTypes.subTypesWithsequences).marks);
     ReversibleMultiMap.verbose_log = true;
     availableTypes.add(retType);
     ReversibleMultiMap.verbose_log = false;
-    Log.logLine("TYPES WITH SEQS marks:\n\n" + ((ReversibleSet)availableTypes.typesWithsequences).map.marks);
-    Log.logLine("SUBTYPES WITH SEQS marks:\n\n" + ((ReversibleMultiMap)availableTypes.subTypesWithsequences).marks);
+    Log.logLine("TYPES WITH SEQS marks:\n\n" + ((ReversibleSet<Class<?>>)availableTypes.typesWithsequences).map.marks);
+    Log.logLine("SUBTYPES WITH SEQS marks:\n\n" + ((ReversibleMultiMap<Class<?>, Class<?>>)availableTypes.subTypesWithsequences).marks);
     if (Log.isLoggingOn()) Log.logLine("END UPDATING AVAILABLE TYPES.");
 
     // update typesToVals
@@ -377,7 +377,7 @@ public class NaiveRandomGenerator extends AbstractGenerator {
   // Removes last statement, and also the last execution outcome and decoration list.
   private void removeLast() {
 
-    assert sequence.statements instanceof OneMoreElementList;
+    assert sequence.statements instanceof OneMoreElementList<?>;
     OneMoreElementList<Statement> statements = (OneMoreElementList<Statement>) sequence.statements;
 
     sequence = new Sequence(statements.list);

@@ -11,8 +11,8 @@ import randoop.RegressionCaptureVisitor;
 import randoop.Sequence;
 import randoop.util.Files;
 import randoop.util.ReflectionExecutor;
-import utilpag.Option;
-import utilpag.Options;
+import plume.Option;
+import plume.Options;
 
 public class CleanObservations extends CommandHandler {
 

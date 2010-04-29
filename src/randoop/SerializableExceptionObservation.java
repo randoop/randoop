@@ -7,6 +7,8 @@ import randoop.util.Reflection;
 
 public class SerializableExceptionObservation implements Serializable {
 
+  private static final long serialVersionUID = 20100429; 
+
   private String exceptionClass;
 
   public SerializableExceptionObservation(Class<? extends Throwable> exceptionClass) {
@@ -14,7 +16,8 @@ public class SerializableExceptionObservation implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException {
-    Class<?> c = Reflection.classForName(exceptionClass);
+    @SuppressWarnings("unchecked")
+    Class<? extends Throwable> c = (Class<? extends Throwable>) Reflection.classForName(exceptionClass);
     return new StatementThrowsException (c);
   }
 

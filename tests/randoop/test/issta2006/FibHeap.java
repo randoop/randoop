@@ -34,9 +34,9 @@ public class FibHeap {
     @NotPartOfState
 	private Vector<Node> cachedNodes = new Vector<Node>();
 
-	public static Set tests = new HashSet();
+	public static Set<String> tests = new HashSet<String>();
 
-	private static Set abs_states = new HashSet();
+	// private static Set abs_states = new HashSet();
 
 	public static int counter = 0;
 

@@ -31,9 +31,9 @@ public class BinTree {
 	private static void outputTestSequence(int number) {
 	}
 
-	public static Set tests = new HashSet();
+	public static Set<String> tests = new HashSet<String>();
 
-	private static Set abs_states = new HashSet();
+	// private static Set abs_states = new HashSet();
 
         public static int counter = 0;
 

@@ -10,7 +10,7 @@ import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
-import utilpag.UtilMDE;
+import plume.UtilMDE;
 
 /**
  * Represents a primitive value. This type of statement
@@ -20,6 +20,8 @@ import utilpag.UtilMDE;
  * This decl info is for primitives, strings and nulls (of any type)
  */
 public final class PrimitiveOrStringOrNullDecl implements StatementKind, Serializable {
+
+  private static final long serialVersionUID = 20100429; 
 
   /** ID for parsing purposes (see StatementKinds.parse method) */
   public static final String ID = "prim";

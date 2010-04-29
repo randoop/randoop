@@ -2,7 +2,7 @@ package randoop.main;
 
 import java.io.PrintStream;
 
-import utilpag.Options;
+import plume.Options;
 
 public class GenHTMLDoc extends CommandHandler {
 

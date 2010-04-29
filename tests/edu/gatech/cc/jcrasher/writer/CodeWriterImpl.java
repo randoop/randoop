@@ -272,7 +272,7 @@ public class CodeWriterImpl implements CodeWriter {
 	
 	/* @return <init> for constructor and simple name for methods. */
 	protected String getTestedMethName(Block block) {
-		if (block.getTestee() instanceof Constructor) {
+		if (block.getTestee() instanceof Constructor<?>) {
 			return "<init>";
 		}
 		else {

@@ -63,8 +63,8 @@ public class BH
 
     if (printResults) {
       int j = 0;
-      for (Enumeration e = root.bodies(); e.hasMoreElements(); ) {
-	Body b = (Body)e.nextElement();
+      for (Enumeration<Body> e = root.bodies(); e.hasMoreElements(); ) {
+	Body b = e.nextElement();
 	System.out.println("body " + j++ + " -- " + b.pos);
       }
     }

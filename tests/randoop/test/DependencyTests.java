@@ -11,7 +11,7 @@ import randoop.DependencyUtils;
 import randoop.RecordListReader;
 import randoop.RecordProcessor;
 import randoop.Sequence;
-import utilpag.Pair;
+import plume.Pair;
 
 public class DependencyTests extends TestCase {
 

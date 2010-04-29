@@ -8,6 +8,8 @@ package edu.gatech.cc.jcrasher.writer;
 import java.io.File;
 import java.net.URLDecoder;
 
+import java.io.UnsupportedEncodingException;
+
 import edu.gatech.cc.jcrasher.Constants;
 import edu.gatech.cc.jcrasher.JCrasher;
 
@@ -56,7 +58,12 @@ public class CreateFileUtil {
 		if (cl==null) {  //null --> bootstrap cl --> JDK class.
 			cl = ClassLoader.getSystemClassLoader();	//cl that has loaded JCrasher
 		}
-		String classLocation = URLDecoder.decode(cl.getResource(classLocRel).getPath()); 
+		String classLocation;
+		try {
+			classLocation = URLDecoder.decode(cl.getResource(classLocRel).getPath(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new Error(e);
+		}
 		
 		/* check whether class is in a jar file */
 		String extension = classLocation.substring(classLocation.indexOf('.')); 

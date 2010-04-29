@@ -129,7 +129,7 @@ public final class RMethod implements StatementKind, Serializable {
     if (typeParameters.length == 0)
       return "";
     StringBuilder b = new StringBuilder();
-    Class<?>[] params = new Class[typeParameters.length];
+    Class<?>[] params = new Class<?>[typeParameters.length];
     b.append("<");
     for (int i = 0; i < typeParameters.length; i++) {
       if (i > 0)
@@ -147,13 +147,13 @@ public final class RMethod implements StatementKind, Serializable {
   }
 
   private static Class<?> getErasure(Type t) {
-    if (t instanceof Class)
+    if (t instanceof Class<?>)
       return (Class<?>) t;
     if (t instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) t;
       return getErasure(pt.getRawType());
     }
-    if (t instanceof TypeVariable) {
+    if (t instanceof TypeVariable<?>) {
       TypeVariable<?> tv = (TypeVariable<?>) t;
       Type[] bounds = tv.getBounds();
       Type firstBound = bounds.length == 0 ? Object.class : bounds[0];

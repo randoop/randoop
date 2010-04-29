@@ -202,15 +202,15 @@ public class ClassWrapperImpl implements ClassWrapper {
 	 * @return each constuctor X(P*) according to pVisibility 
 	 *         or an empty list if abstract class.
 	 */
-	protected List<Constructor> getConstrs(Visibility visibility) {		
-		List<Constructor> res = new Vector<Constructor>();
+	protected List<Constructor<?>> getConstrs(Visibility visibility) {		
+		List<Constructor<?>> res = new Vector<Constructor<?>>();
 		
-		Constructor[] constructors = wrappedClass.getDeclaredConstructors();
+		Constructor<?>[] constructors = wrappedClass.getDeclaredConstructors();
 
 		/* Only for non-abstract classes */
 		if (Modifier.isAbstract(wrappedClass.getModifiers()) == false) {
 			
-			for (Constructor con: constructors) {  //Filter for visibility
+			for (Constructor<?> con: constructors) {  //Filter for visibility
 				
 				/* public-public */
 				if ((Visibility.GLOBAL.equals(visibility))
@@ -239,7 +239,7 @@ public class ClassWrapperImpl implements ClassWrapper {
 	 * 
 	 * @return each public constuctor X(P*) or an empty list if abstract class.
 	 */
-	public List<Constructor> getConstrsVisGlobal() {
+	public List<Constructor<?>> getConstrsVisGlobal() {
 		return getConstrs(Visibility.GLOBAL);		
 	}
 	
