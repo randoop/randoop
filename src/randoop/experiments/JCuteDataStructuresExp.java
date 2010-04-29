@@ -82,7 +82,7 @@ public class JCuteDataStructuresExp {
     if (m instanceof Method) {
       return RMethod.getRMethod((Method)m);
     } else {
-      assert m instanceof Constructor;
+      assert m instanceof Constructor<?>;
       return RConstructor.getRConstructor((Constructor<?>)m);
     }
   }

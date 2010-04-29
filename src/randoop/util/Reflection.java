@@ -27,8 +27,8 @@ import randoop.RMethod;
 import randoop.StatementKind;
 import randoop.StatementKinds;
 import randoop.main.GenInputsAbstract;
-import utilpag.Pair;
-import utilpag.UtilMDE;
+import plume.Pair;
+import plume.UtilMDE;
 
 /** Utility methods that operate on reflection objects (classes, methods, etc.). */
 public final class Reflection {
@@ -136,11 +136,11 @@ public final class Reflection {
    /**
     * Like Class.getConstructors(), but guarantees always same order.
     */
-   public static Constructor[] getConstructorsOrdered(Class<?> c) {
+   public static Constructor<?>[] getConstructorsOrdered(Class<?> c) {
      if (c == null) {
        throw new IllegalArgumentException("c cannot be null.");
      }
-     Constructor[] ret = c.getConstructors();
+     Constructor<?>[] ret = c.getConstructors();
      Arrays.sort(ret, SORT_MEMBERS_BY_NAME);
      return ret;
    }
@@ -148,11 +148,11 @@ public final class Reflection {
    /**
     * Like Class.getDeclaredConstructors(), but guarantees always same order.
     */
-   public static Constructor[] getDeclaredConstructorsOrdered(Class<?> c) {
+   public static Constructor<?>[] getDeclaredConstructorsOrdered(Class<?> c) {
      if (c == null) {
        throw new IllegalArgumentException("c cannot be null.");
      }
-     Constructor[] ret = c.getDeclaredConstructors();
+     Constructor<?>[] ret = c.getDeclaredConstructors();
      Arrays.sort(ret, SORT_MEMBERS_BY_NAME);
      return ret;
    }
@@ -695,7 +695,7 @@ public final class Reflection {
    * superclasses
    */
   public static Method super_get_declared_method (Class<?> c,
-              String methodname, Class... parameter_types) throws Exception {
+              String methodname, Class<?>... parameter_types) throws Exception {
 
     // Try and find the method in the base class
     Exception exception = null;

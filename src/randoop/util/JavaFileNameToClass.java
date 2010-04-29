@@ -14,7 +14,7 @@ public class JavaFileNameToClass {
         System.out.print(" ");
       }
       String arg = args[i];
-      utilpag.Assert.assertTrue(arg.endsWith(".java"));
+      assert arg.endsWith(".java");
       arg = arg.substring(0, arg.length() - 5);
       String[] splits = arg.split("/");
       for (int j = 0; j < splits.length; j++) {

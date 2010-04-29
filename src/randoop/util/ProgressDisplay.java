@@ -4,7 +4,7 @@ import java.util.Map;
 
 import randoop.Globals;
 import randoop.SequenceGeneratorStats;
-import utilpag.UtilMDE;
+import plume.UtilMDE;
 
 /**
  * Modified from Daikon.FileIOProgress.
@@ -31,7 +31,7 @@ public class ProgressDisplay extends Thread {
       Mode outputMode, int progressWidth) {
     this.stats = stats;
     this.outputMode = outputMode;
-    this.progresswidth = progressWidth;
+    ProgressDisplay.progresswidth = progressWidth;
     setDaemon(true);
   }
 
@@ -88,7 +88,7 @@ public class ProgressDisplay extends Thread {
     System.out.println("that leads to nonterminating behavior.");
     System.out.println("Last sequence generated:");
     System.out.println();
-    System.out.println(stats.currSeq);
+    System.out.println(SequenceGeneratorStats.currSeq);
     System.out.println();
     System.out.println("Will print all thread stack traces and exit with code 1.");
 

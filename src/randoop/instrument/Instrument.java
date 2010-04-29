@@ -16,11 +16,11 @@ import org.apache.bcel.verifier.VerificationResult;
 
 import sun.nio.cs.ext.ISCII91;
 
-import utilpag.SimpleLog;
-import utilpag.ArraysMDE;
-import utilpag.BCELUtil;
-import utilpag.StrTok;
-import utilpag.UtilMDE;
+import plume.SimpleLog;
+import plume.ArraysMDE;
+import plume.BCELUtil;
+import plume.StrTok;
+import plume.UtilMDE;
 
 /**
  * The Instrument class is responsible for modifying another class'

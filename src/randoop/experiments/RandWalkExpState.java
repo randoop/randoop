@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import randoop.util.Files;
-import utilpag.UtilMDE;
+// import plume.UtilMDE;
 
 /**
  * Represents the state of an experiment in the random walk vs. Randoop
@@ -67,10 +67,10 @@ public class RandWalkExpState {
   
   private void printOps() {
     System.out.print(exp + " Total operations: " 
-        + UtilMDE.lpad(new DecimalFormat("###,###,###,###,###").format(cs.getTotalOperations()), 15));
+        + plume.UtilMDE.lpad(new DecimalFormat("###,###,###,###,###").format(cs.getTotalOperations()), 15));
     System.out.print("  ");
     System.out.println(exp + " Total sequences:  " 
-        + UtilMDE.lpad(new DecimalFormat("###,###,###,###,###").format(cs.getTotalSequences()), 15));
+        + plume.UtilMDE.lpad(new DecimalFormat("###,###,###,###,###").format(cs.getTotalSequences()), 15));
   }
 
   public String nextTarget() {

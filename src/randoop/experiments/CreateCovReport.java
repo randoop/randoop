@@ -15,9 +15,9 @@ import java.util.zip.GZIPInputStream;
 
 import randoop.Sequence;
 import randoop.util.Reflection;
-import utilpag.Option;
-import utilpag.Options;
-import utilpag.Options.ArgException;
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;

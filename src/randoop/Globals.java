@@ -9,22 +9,21 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URL;
 
-import utilpag.Invisible;
-import utilpag.Option;
+import plume.Option;
 
 public class Globals {
 
   public static final String lineSep = System.getProperty("line.separator");
 
-  @Invisible
+  /* @Invisible*/
   @Option("Disable assertions and checkRep methods.")
   public static boolean nochecks = true;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Perform (expensive) checks that tests Randoop (for Randoop developers).")
   public static boolean randooptestrun = false;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Pipe stderr to the given file.")
   public static ErrorStreamAssigner senderr;
 

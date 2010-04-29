@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import randoop.util.Reflection;
-import utilpag.Triple;
+import plume.Triple;
 
 /**
  * Contains utility methods to access the coverage information in
@@ -225,7 +225,7 @@ public class Coverage {
    */
   public static Set<CoverageAtom> getBranches(Member m) {
     if (m == null) throw new IllegalArgumentException("m cannot be null.");
-    if (!((m instanceof Method) || (m instanceof Constructor)))
+    if (!((m instanceof Method) || (m instanceof Constructor<?>)))
       throw new IllegalArgumentException("m must be a method or constructor.");
     initCoverage(m.getDeclaringClass());
     return membersToAtoms.get(m);
@@ -251,7 +251,7 @@ public class Coverage {
     if (m instanceof Method) {
       Method method = (Method)m;
       annos = method.getDeclaredAnnotations();
-    } else if (m instanceof Constructor) {
+    } else if (m instanceof Constructor<?>) {
       Constructor<?> cons = (Constructor<?>)m;
       annos = cons.getDeclaredAnnotations();
     } else {

@@ -23,7 +23,7 @@ import randoop.util.ReversibleMultiMap;
 import randoop.util.ReversibleSet;
 import randoop.util.SimpleList;
 import randoop.util.Util;
-import utilpag.Pair;
+import plume.Pair;
 
 public class EnumGenCounter extends AbstractGenerator {
 
@@ -207,7 +207,7 @@ public class EnumGenCounter extends AbstractGenerator {
 
   // Removes last statement, and also the last execution outcome and decoration list.
   private void removeLast() {
-      assert sequence.statements instanceof OneMoreElementList;
+    assert sequence.statements instanceof OneMoreElementList<?>;
     OneMoreElementList<Statement> statements = (OneMoreElementList<Statement>) sequence.statements;
     sequence = new Sequence(statements.list);
   }

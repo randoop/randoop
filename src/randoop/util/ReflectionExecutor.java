@@ -2,8 +2,7 @@ package randoop.util;
 
 import java.io.PrintStream;
 
-import utilpag.Invisible;
-import utilpag.Option;
+import plume.Option;
 
 
 /**
@@ -20,11 +19,11 @@ public final class ReflectionExecutor {
   // Milliseconds after which an executing thread will be forcefully stopped.
   // Default is arbitrary; can be changed via setter method.
 
-  @Invisible
+  /* @Invisible*/
   @Option("Milliseconds after which a statement (e.g. method call) is stopped forcefully. Only meaningfull with --usethreads.")
   public static long timeout = 5000;
 
-  @Invisible
+  /* @Invisible*/
   @Option("Executing tested code in a separate thread (lets Randoop detect and kill nonterminating or long-running tests")
   public static boolean usethreads = true;
 

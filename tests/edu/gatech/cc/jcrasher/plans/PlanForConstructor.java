@@ -45,7 +45,7 @@ public class PlanForConstructor implements PlanForFunction {
 	/**
 	 * Which constructing function has generated this value?
 	 */
-	private Constructor conCons = null;
+	private Constructor<?> conCons = null;
 
 
 	/***********************************************************************
@@ -53,7 +53,7 @@ public class PlanForConstructor implements PlanForFunction {
 	 * - not an inner class
 	 */
 	public PlanForConstructor(
-		Constructor pConstructor, 
+		Constructor<?> pConstructor, 
   		Plan[] pConstrParams) {
 
   		assert pConstructor != null;
@@ -71,7 +71,7 @@ public class PlanForConstructor implements PlanForFunction {
 	 * never null enclosing type
 	 */
 	public PlanForConstructor(
-		Constructor pConstructor, 
+		Constructor<?> pConstructor, 
   		Plan[] pConstrParams,
   		Plan pEnclosing) {
   		

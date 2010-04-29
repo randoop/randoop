@@ -17,6 +17,8 @@ import randoop.util.PrimitiveTypes;
  */
 public class ExpressionEqValue implements Observation, Serializable {
 
+  private static final long serialVersionUID = 20100429; 
+
   // The expression whose runtime value this observation records.
   // We store the class, not the expression itself, to ensure
   // that serialization always work (we can easily serialize a class name)
