@@ -162,7 +162,7 @@ randoop2: bin
 	   --output-nonexec=true \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=randoop-scratch \
-	   --log=randoop-log.txt
+	   --log=systemtests/randoop-log.txt
 	cp randoop-scratch/foo/bar/Naive0.java systemtests/resources/Naive0.java
 
 # Runs Randoop on Collections and TreeSet.
