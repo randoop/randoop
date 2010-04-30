@@ -1,3 +1,16 @@
+# INSTRUCTIONS:
+#
+# This file contains developer-specific variables used to compile Randoop.
+# Substitute the appropriate values for your own environment
+
+# 1. The location of your JDK.
+#    We use this variable to determine the location of tools.jar, which
+#    we expect to find in $(JDK_LOC)/lib/tools.jar.
+
+JDK_LOC ?= /usr/lib/jvm/java-6-sun-1.6.0.12
+
+############################################################
+### YOU PROBABLY DON'T NEED TO MODIFY STUFF BELOW THIS LINE.                                                                                                                                       
 
 # Make will silently continue if file does not exist.
 -include ../Makefile.user
