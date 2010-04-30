@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<!--
+   Copyright 2003-2004 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<document>
+
+ <properties>
+  <title>Apache Jakarta Commons Primitives</title>
+  <author email="commons-dev@jakarta.apache.org">Commons Documentation Team</author>
+ </properties>
+
+ <body>
+
+<section name="The Primitives Component">
+<p>
+Apache Jakarta Commons Primitives provides a collection of types and utilities optimized
+for working with Java primitives (boolean, byte, char, double, float, int, long, short).
+Generally, the Commons-Primitives classes are smaller, faster and easier to work with than
+their purely Object based alternatives.
+</p>
+</section>
+
+<section name="Status">
+<p>
+The most recent stable release is version 1.0, released 5 November 2003.  
+<a href="http://jakarta.apache.org/site/binindex.cgi#commons-primitives">Binary</a> and
+<a href="http://jakarta.apache.org/site/sourceindex.cgi#commons-primitives">source</a> distributions are available.
+</p><p>
+Daily builds and tarballs are available from
+<a href="http://cvs.apache.org/builds/jakarta-commons/nightly/commons-primitives/">http://cvs.apache.org/builds/jakarta-commons/nightly/commons-primitives/</a>.
+</p>
+</section>
+
+<section name="Overview">
+<p>
+Currently Commons Primitives is primarily composed of implementations of the 
+java.util collections adapted for the primitive types.
+</p>
+<blockquote>
+<dl>
+<dt>org.apache.commons.collections.primitives</dt>
+<dd>
+<p>Contains interfaces, base classes and concrete implementations for primitive collections.</p>
+<dl>
+<dt>&lt;Type&gt;Collection</dt><dd>The java.util.Collection interface adapted for the primitive type &lt;Type&gt;</dd>
+<dt>&lt;Type&gt;Iterator</dt><dd>The java.util.Iterator interface adapted for the primitive type &lt;Type&gt;</dd>
+<dt>&lt;Type&gt;List</dt><dd>The java.util.List interface adapted for the primitive type &lt;Type&gt;</dd>
+<dt>&lt;Type&gt;ListIterator</dt><dd>The java.util.ListIterator interface adapted for the primitive type &lt;Type&gt;</dd>
+<dt>Abstract&lt;Type&gt;Collection</dt><dd>An abstract base for &lt;Type&gt;Collection implementations</dd>
+<dt>RandomAccess&lt;Type&gt;List</dt><dd>An abstract base for &lt;Type&gt;List implementations backed by random access data structures like arrays</dd>
+<dt>Array&lt;Type&gt;List</dt><dd>A &lt;Type&gt;List backed by an array</dd>
+<dt>&lt;Type&gt;Collections</dt><dd>Static utility methods for working with &lt;Type&gt;Collection instances</dd>
+</dl>  	
+</dd>
+
+<dt>org.apache.commons.collections.primitives.adapters</dt>
+<dd>
+<p>Contains adapters between the Object-based and primitive collections.</p>
+</dd>
+
+<dt>org.apache.commons.collections.primitives.adapters.io</dt>
+<dd>
+<p>Contains adapters that convert between I/O Streams/Readers and byte/char iterators.</p>
+</dd>
+
+<dt>org.apache.commons.collections.primitives.decorators</dt>
+<dd>
+<dl>
+<dt>Umodifiable&lt;Type&gt;List</dt><dd>Makes a &lt;Type&gt;List unmodifiable</dd>
+<dt>Umodifiable&lt;Type&gt;Iterator</dt><dd>Makes a &lt;Type&gt;Iterator unmodifiable</dd>
+<dt>Umodifiable&lt;Type&gt;ListIterator</dt><dd>Makes a &lt;Type&gt;ListIterator unmodifiable</dd>
+</dl>
+</dd>
+
+</dl>
+</blockquote>
+
+<p>
+For more information on Commons Primitives, you might like to visit the 
+<a href="faq.html">FAQ</a>,
+<a href="./apidocs/index.html">JavaDocs</a>, <a href="./project-info.html">project information</a>
+or <a href="./maven-reports.html">project reports</a>.
+</p>
+
+</section>
+
+</body>
+</document>
+
+
+
+
+
+

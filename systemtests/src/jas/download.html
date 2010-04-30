@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link rel="stylesheet" type="text/css" href="html.css" />
+    <title>JAS Download</title>
+  </head>
+  <body class="main">
+    <h1>Download, installation and unit tests</h1>
+
+
+<h2>Download jar-files</h2>
+
+<ul>
+<li><p>This is JAS version: <strong>jas-2.2</strong>, 
+    subversion revision: <strong>2228</strong> (export at 2008-11-18).
+    </p>
+</li>
+<li><p>The JAS classes jar-file 
+    <a href="jas-2.2.2228-bin.jar">jas-2.2.2228-bin.jar</a>
+    can be used the same way as any other Java archive during 
+    compilation and execution of your Java programms.
+    <br />
+    The source code is in 
+    <a href="jas-2.2.2228-src.jar">jas-2.2.2228-src.jar</a> 
+    current version for JDK 1.6.  
+    (right click on the link and chose "save link as")
+    <br />
+    The Javadoc API documentation is in 
+    <a href="jas-2.2.2228-doc.jar">jas-2.2.2228-doc.jar</a> 
+    for current version.
+    </p>
+</li>
+<li><p>Required libraries: 
+    <br />
+    <a href="../lib/log4j.jar">lib/log4j.jar</a> (from Apache Log4j),
+    <br />
+    <a href="../lib/junit.jar">lib/junit.jar</a> (from Junit),
+    <br />
+    In case you have the first two ones, just ensure they are in the 
+    correct location (e.g. <code>../lib/</code>).
+    </p>
+</li>
+<li><p>Optional libraries and files: 
+    <br />
+    <a href="jas-meditor.jar">jas-meditor.jar</a> 
+    <br />
+    This contains the interface for JAS as an meditor engine,
+    see <a href="http://jscl-meditor.sourceforge.net/" target="rela">jscl-meditor</a>.
+    <br />
+    Sample script to call meditor with the JAS engine 
+    <a href="meditor/meditor">meditor</a>. 
+    </p>
+</li>
+<li><p>For latest developments see <a href="jas-log.html">JAS Weblog</a> 
+    and the <a href="svn_change.log" target="top">Subversion change log</a>.
+    </p>
+</li>
+<!--li><p>Old versions of the JAS jar-file (do not use, only for history): 
+    <br />
+    <a href="../jas.j16/jas.jar">jas.jar</a> first version for JDK 1.6. 
+    <br />
+    <a href="../jas.j15/jas.jar">jas.jar</a> last version for JDK 1.5. 
+    <br />
+    <a href="../jas.j14/jas.jar">jas.jar</a> last version for JDK 1.4. 
+    <br />
+    For the old versions you also need the library
+    <a href="../lib/tnj.jar">lib/tnj.jar</a> 
+    (for Thread and Network Programming).
+    You most likely do not have it and you must download it.
+    </p>
+</li-->
+</ul>
+
+
+<h2>Installation</h2>
+
+<ul>
+<li><p>Add the JAS jar-file and the other required jar-files 
+     to the classpath. Start using it in your applications.
+    </p>
+</li>
+<li><p>If you want to develop with JAS, then extract the 
+     jar-file in a new directory
+     <code>jar -xvf jas-[version]-src.jar</code>
+    </p>
+</li>
+<li><p>Among the extracted files, there is an Ant build script
+    <code>build.xml</code>
+    and also a Gnu make file
+    <code>Makefile</code>.
+    <br />
+    To use Ant, you must edit the <code>build.xml</code> file and
+    adjust the <code>lib</code> property to point to the directory 
+    where you downloaded the jar files.
+    Also be sure to use the correct JDK version, e.g. via setting the     
+    <code>JAVA_HOME</code> environment variable.
+    <br />
+    To use the Gnu make file, you must edit the <code>Makefile</code>
+    and adjust the <code>JDK</code> and the <code>LIBPATH</code> variables.
+    </p>
+</li>
+<li><p>Most useful Ant targets:
+    <br />
+    <code>ant compile</code> changed Java files are compiled,
+    <br />
+    <code>ant recompile</code> all Java files are compiled,
+    <br />
+    <code>ant test</code> run all JUnit tests,
+    <br />
+    <code>ant clean</code> remove backup files,
+    <br />
+    <code>ant distclean</code> remove all class files,
+    <br />
+    <code>ant doc</code> create the Javadocs.
+    </p>
+</li>
+<li><p>Most useful make file targets:
+    <br />
+    <code>make "class"</code> run the <code>main()</code> method of the class,
+    <br />
+    e.g. <code>make edu.jas.poly.Examples</code> run 
+    the class <code>Examples</code>.
+    </p>
+</li>
+</ul>
+
+
+<h2>Unit tests with JUnit</h2>
+<ul>
+<li><p>Unit tests can be run with the "test" target for ant, e.g. 
+    <code>ant test</code>
+    </p>
+</li>
+<li><p>The output of the unit tests is collected in the directory 
+    <code>test</code> for inspection.
+    </p>
+</li>
+<li><p>The test units work mainly with generated random polynomials.
+    The parameters are choosen such that the resulting Groebner bases 
+    are not to hard to compute.
+    However some random polynomials may be to big and the running time
+    may occasionally be several minutes (but not hours).
+    <br />
+    On the other hand random polynomials may sometimes be zero or one.
+    If such input does not make sense the test will fail. I.e. some
+    tests will fail from time to time, but not for repeated execution 
+    of the test. So if a test fails rerun the test a few times.
+    </p>
+</li>
+</ul>
+
+
+<h2><a name="docu">Documentation</a></h2>
+
+<ul>
+<li><p>The JAS documentation is contained in the jar files 
+    <code>jas-[version]-src.jar</code> and <code>jas-[version]-doc.jar</code>. 
+    Extract the jar files and start exploring with any browser
+    from the <code>index.html</code> file in the main directory.
+    </p>
+</li>
+<li><p>The JAS javadoc API documents and the jython documents 
+    can also be browsed online:  
+    <a href="doc/api/index.html" target="api">API javadocs</a> and 
+    <a href="doc/jython/index.html" target="jython">epydoc of jas.py</a>.
+    </p>
+</li>
+<li><p><a href="README" target="main" >README</a> and licencing: 
+    <a href="COPYING.jas" target="gpl" >COPYING.jas</a> (GPL)
+    or 
+    <a href="COPYING.lgpl.jas" target="gpl" >COPYING.lgpl.jas</a> (LGPL)
+</p>
+</li>
+</ul>
+
+
+<h2><a name="eclipse">Usage</a> with the Eclipse IDE</h2>
+
+<p>The JAS source distribution can also be compiled and used from the 
+Eclipse integrated development environment.
+</p>
+
+<p>Instructions to install the JAS source:</p>
+<ol>
+<li>Download the JAS source jar and unpack to some directory 
+</li>
+<li>Download the Log4j and the Junit jar files
+</li>
+<li>Start eclipse
+</li>
+<li>Create a new project from "existing source"
+</li>
+<li>Specify the plain source directory <code>/src</code> from 1.
+</li>
+<li>Add the jars from 2. to the project libraries as "external JARs"
+</li>
+<li>Create a new project or use your default project
+</li>
+<li>In the project properties add as "required project" 
+    the JAS project from 4.
+</li>
+</ol>
+
+<p>Instructions to install the JAS binary:</p>
+<ol>
+<li>Download the JAS binary jar file
+</li>
+<li>Download the Log4j and the Junit jar files
+</li>
+<li>Start eclipse
+</li>
+<li>In your projects properties add the jar files 
+    from 1. and 2. to the project libraries as "external JARs"
+</li>
+</ol>
+
+
+<p>Create and edit a sample java programm which uses the JAS API. 
+   E.g. the following sample computes the first ten Legendre polynomials.
+</p>
+<pre>
+import java.util.List;
+import java.util.ArrayList;
+
+import edu.jas.arith.BigRational;
+import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.GenPolynomialRing;
+
+public class mytests {
+
+    public static void main(String[] args) {
+         BigRational fac = new BigRational();
+         String[] var = new String[]{ "x" };
+         GenPolynomialRing&lt;BigRational&gt; ring
+             = new GenPolynomialRing&lt;BigRational&gt;(fac,1,var);
+
+         int n = 10;
+         List&lt;GenPolynomial&lt;BigRational&gt;&gt; P 
+             = new ArrayList&lt;GenPolynomial&lt;BigRational&gt;&gt;(n);
+         GenPolynomial&lt;BigRational&gt; t, one, x, xc;
+         BigRational n21, nn;
+
+         one = ring.getONE();
+         x   = ring.univariate(0);
+
+         P.add( one );
+         P.add( x );
+         for ( int i = 2; i &lt; n; i++ ) {
+             n21 = new BigRational( 2*i-1 );
+             xc = x.multiply( n21 );
+             t = xc.multiply( P.get(i-1) );  // (2n-1) x P[n-1]
+             nn = new BigRational( i-1 );
+             xc = P.get(i-2).multiply( nn ); // (n-1) P[n-2]
+             t = t.subtract( xc );
+             nn = new BigRational(1,i);      
+             t = t.multiply( nn );           // 1/n t
+             P.add( t );
+         }
+         for ( int i = 0; i &lt; n; i++ ) {
+             System.out.println("P["+i+"] = " + P.get(i) );
+         }
+    }
+}
+</pre>
+
+
+<h2>Using the <a name="jython">Jython</a> interpreter</h2>
+
+<ul>
+<li><p>Set up your <code>.jythonrc</code> file, e.g. see the sample code in
+    <a href="sample.jythonrc" target="py">sample.jythonrc</a>.
+    </p>
+</li>
+<li><p>Be sure you have downloaded the above libraries 
+    log4j.jar, junit.jar, tnj.jar and jas.jar.
+    </p>
+</li>
+<li><p>The main file to interface to the JAS library is  
+    <a href="examples/jas.py" target="py">jas.py</a>.
+    It must be imported by other Python files.
+    HTML documents of the interface can be found 
+    <a href="doc/jython/index.html" target="jython">here</a>.
+    </p>
+</li>
+<li><p>If jython cannot find the JAS classes, try to put the jas.jar also 
+    into the CLASSPATH or unpack the jar into the directory you are 
+    starting jython (also to get the correct version of .py files).
+    </p>
+</li>
+<li><p>Start using JAS, e.g.
+    <code>jython examples/trinks.py</code>
+    <br />
+    The 
+    <a href="examples/trinks.py" target="py">examples/trinks.py</a>
+    contains an Groebner base example named after its proposer Mr. Trinks.
+    The file runs a sequential, a parallel and a distributed version
+    of the Groebner base algorithms.
+    </p>
+</li>
+<li><p>For further discussion of the JAS jython interface 
+    see 
+    <a href="guide.html" target="main">User guide</a>.
+    </p>
+</li>
+</ul>
+
+    <hr />
+<address><a name="contact" 
+            href="mailto:kredel@at@rz.uni-mannheim.de">Heinz Kredel</a>
+</address>
+<p>
+<!-- Created: Sat Mar 19 21:44:14 CET 2005 -->
+<!-- hhmts start -->
+Last modified: Mon Aug 11 23:21:07 CEST 2008
+<!-- hhmts end -->
+</p>
+<!--p align="right" >
+$Id: download.html 2059 2008-08-11 21:44:12Z kredel $
+</p-->
+  </body>
+</html>

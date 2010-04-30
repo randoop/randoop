@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly 
+    xmlns:j="jelly:core" 
+    xmlns="jelly:swing" 
+    xmlns:log="jelly:log">
+
+    <!-- default working directory to swing examples -->        
+    <j:if test="${empty working.dir}">
+        <j:set var="working.dir" value="src/test/org/apache/commons/jelly/swing"/>
+    </j:if>
+
+    <!-- action to choose a file -->
+    <action var="chooseFileAction" name="...">            
+        <fileChooser var="chooser" currentDirectory="${working.dir}"/>
+        
+        ${chooser.showDialog(frame, 'Choose Jelly file')}
+    
+        <j:set var="file" value="${chooser.selectedFile}"/>
+        <j:if test="${file != null}">
+            <j:set target="${scriptField}" property="text" value="${file.toURL().toString()}"/>
+        </j:if>
+    </action>
+
+
+    <!-- create the frame -->
+    <frame var="frame" size="400,150" location="200,200" title="Jelly Runner">
+        <panel>
+          <tableLayout>
+            <tr>
+                <td colfill="true">
+                        <panel>
+                            <borderLayout hgap="2" vgap="2">
+                                <borderAlign align="west">
+                                  <label text="Script to run:"/>
+                                </borderAlign>                            
+                                <borderAlign align="center">
+                                <textField var="scriptField"/>
+                                </borderAlign>                            
+                                <borderAlign align="east">
+                                <button action="${chooseFileAction}"/>
+                                </borderAlign>                            
+                            </borderLayout>
+                      </panel>
+                    </td>                    
+            </tr>
+            <tr>
+                <td align="center">
+                    <panel>
+                    <button>
+                      <action name="Run Script">
+                                    <log:info>about to run ${file}</log:info>    
+                                    <j:include uri="${scriptField.text}"/>
+                                </action>
+                    </button>
+                        </panel>                        
+                    </td>                    
+              </tr>
+        </tableLayout>
+    </panel>
+    </frame>
+
+    ${frame.setVisible(true)}
+
+</j:jelly>
+
+
+
