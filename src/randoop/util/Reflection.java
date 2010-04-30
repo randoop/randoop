@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.io.BufferedReader;
+import java.io.Reader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import randoop.RMethod;
 import randoop.StatementKind;
 import randoop.StatementKinds;
 import randoop.main.GenInputsAbstract;
+import plume.EntryReader;
 import plume.Pair;
 import plume.UtilMDE;
 
@@ -113,9 +115,15 @@ public final class Reflection {
        throw new IllegalArgumentException("c cannot be null.");
      }
      List<Method> ms = new ArrayList<Method>();
-     ms.addAll(Arrays.asList(c.getMethods()));
-     // System.out.printf ("methods = %s%n", Arrays.toString(c.getMethods()));
-     ms.addAll(Arrays.asList(c.getDeclaredMethods()));
+     try {
+       ms.addAll(Arrays.asList(c.getMethods()));
+       // System.out.printf ("methods = %s%n", Arrays.toString(c.getMethods()));
+       ms.addAll(Arrays.asList(c.getDeclaredMethods()));
+     } catch (Exception e) {
+       System.out.println("getMethodsOrdered(" + c + "): " + e.getMessage());
+     } catch (Error e) {
+       System.out.println("getMethodsOrdered(" + c + "): " + e.getMessage());
+     }
      Method[] ret = ms.toArray(new Method[0]);
      Arrays.sort(ret, SORT_MEMBERS_BY_NAME);
      return ret;
@@ -152,7 +160,13 @@ public final class Reflection {
      if (c == null) {
        throw new IllegalArgumentException("c cannot be null.");
      }
-     Constructor<?>[] ret = c.getDeclaredConstructors();
+     Constructor<?>[] ret;
+     try {
+       ret = c.getDeclaredConstructors();
+     } catch (Exception e) {
+       System.out.println("getDeclaredConstructorsOrdered(" + c + "): " + e.getMessage());
+       ret = new Constructor<?>[0];
+     }
      Arrays.sort(ret, SORT_MEMBERS_BY_NAME);
      return ret;
    }
@@ -162,19 +176,31 @@ public final class Reflection {
     * in the format output by the method java.lang.Class.toString().
     */
    public static Class<?> classForName(String classname) {
+     return classForName(classname, false);
+   }
+
+   /**
+    * Gets the class corresponding to the given string. Assumes the string is
+    * in the format output by the method java.lang.Class.toString().
+    */
+  public static Class<?> classForName(String classname, boolean noerr) {
 
      Class<?> c = PrimitiveTypes.typeNameToPrimitiveOrString.get(classname);
      if (c != null)
        return c;
 
      try {
-       return Class.forName(classname);
+       c = Class.forName(classname);
      } catch (Throwable e) {
-       throw new Error("when calling Class.forName(String) method on `"
-           + classname + "'"
-           + (classname.equals(classname) ? "" : " (specified to Randoop as `" +classname+ "')")
-                       + " the following exception occurred: ", e);
+       if (noerr) {
+         System.out.printf("classForName(%s) yielded exception: %s%n",
+                           classname, e.getMessage());
+         e.printStackTrace(System.out);
+       } else {
+         throw new Error(String.format("classForName(%s)", classname), e);
+       }
      }
+     return c;
    }
 
    private static Set<Class<?>> getInterfacesTransitive(Class<?> c1) {
@@ -341,48 +367,24 @@ public final class Reflection {
        return true;
    }
 
-   /** Blank lines and lines starting with "#" are ignored.
-    *  Other lines must contain string such that Class.forName(s) returns a class.
+   /**
+    * Returns a list of classes, given a list of class names.
     */
-   public static List<Class<?>> loadClassesFromStream(InputStream in) {
-     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-     return loadClassesFromReader(reader);
-   }
-
-   /** Blank lines and lines starting with "#" are ignored.
-    *  Other lines must contain string such that Class.forName(s) returns a class.
-    */
-   public static List<Class<?>> loadClassesFromReader(BufferedReader reader) {
-     try{
-       List<String> lines= Files.readWhole(reader);
-       return loadClassesFromLines(lines);
-     } catch (IOException e) {
-       throw new RuntimeException(e);
-     }
-   }
-
-   /** Blank lines and lines starting with "#" are ignored.
-    *  Other lines must contain string such that Class.forName(s) returns a class.
-    */
-   public static List<Class<?>> loadClassesFromLines(List<String> lines) {
-     List<Class<?>> result = new ArrayList<Class<?>>(lines.size());
-     for (String line : lines) {
-       String trimmed = line.trim();
-       if (trimmed.equals("") || trimmed.startsWith("#")
-           || trimmed.startsWith ("//"))
-         continue;
-       result.add(classForName(trimmed));
-     }
-     return result;
+   public static List<Class<?>> loadClassesFromList(List<String> classNames) {
+     return loadClassesFromList(classNames, false);
    }
 
    /**
     * Returns a list of classes, given a list of class names.
     */
-   public static List<Class<?>> loadClassesFromList(List<String> classNames) {
+  public static List<Class<?>> loadClassesFromList(List<String> classNames, boolean noerr) {
+
      List<Class<?>> result = new ArrayList<Class<?>>(classNames.size());
      for (String className : classNames) {
-       result.add(classForName(className));
+       Class<?> c = classForName(className, noerr);
+       if (c != null) {
+         result.add(c);
+       }
      }
      return result;
    }
@@ -390,11 +392,49 @@ public final class Reflection {
    /** Blank lines and lines starting with "#" are ignored.
     *  Other lines must contain string such that Class.forName(s) returns a class.
     */
-   public static List<Class<?>> loadClassesFromFile(File classListingFile) throws IOException {
+  public static List<Class<?>> loadClassesFromStream(InputStream in, String filename) {
+     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+     return loadClassesFromReader(reader, filename, false);
+   }
+
+   /** Blank lines and lines starting with "#" are ignored.
+    *  Other lines must contain string such that Class.forName(s) returns a class.
+    */
+  public static List<Class<?>> loadClassesFromReader(BufferedReader reader, String filename) {
+    return loadClassesFromReader(reader, filename, false);
+   }
+
+   /** Blank lines and lines starting with "#" are ignored.
+    *  Other lines must contain string such that Class.forName(s) returns a class.
+    */
+  public static List<Class<?>> loadClassesFromReader(BufferedReader reader, String filename, boolean noerr) {
+    List<Class<?>> result = new ArrayList<Class<?>>();
+    EntryReader er = new EntryReader(reader, filename, "^#.*", null);
+    for (String line : er) {
+      String trimmed = line.trim();
+      Class<?> c = classForName(trimmed, noerr);
+      if (c != null) {
+        result.add(c);
+      }
+    }
+    return result;
+  }
+
+   /** Blank lines and lines starting with "#" are ignored.
+    *  Other lines must contain string such that Class.forName(s) returns a class.
+    */
+  public static List<Class<?>> loadClassesFromFile(File classListingFile) throws IOException {
+    return loadClassesFromFile(classListingFile, false);
+  }
+
+   /** Blank lines and lines starting with "#" are ignored.
+    *  Other lines must contain string such that Class.forName(s) returns a class.
+    */
+  public static List<Class<?>> loadClassesFromFile(File classListingFile, boolean noerr) throws IOException {
      BufferedReader reader = null;
      try {
        reader = Files.getFileReader(classListingFile);
-       return loadClassesFromReader(reader);
+       return loadClassesFromReader(reader, classListingFile.getPath(), noerr);
      } finally {
        if (reader != null)
          reader.close();
