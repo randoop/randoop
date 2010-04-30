@@ -32,11 +32,13 @@ public class NaiveExplorerPerformanceTest extends TestCase {
   @SuppressWarnings("unchecked")
   public static void test1() {
     
+    String resourcename = "resources/java.util.classlist.java1.6.txt";
+
     InputStream classStream =
-      ForwardExplorerPerformanceTest.class.getResourceAsStream("resources/java.util.classlist.java1.6.txt");
+      ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
     List<StatementKind> m =
-      Reflection.getStatements(Reflection.loadClassesFromStream(classStream),null);
+      Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     Globals.nochecks = true;
