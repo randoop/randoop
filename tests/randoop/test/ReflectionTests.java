@@ -63,7 +63,7 @@ public class ReflectionTests extends TestCase{
 
     List<Class<?>> expected = Collections.emptyList();
 
-    assertEquals(expected, Reflection.loadClassesFromReader(br));     
+    assertEquals(expected, Reflection.loadClassesFromReader(br, "empty reader"));     
     r.close(); br.close();
   }
 
@@ -75,7 +75,7 @@ public class ReflectionTests extends TestCase{
 
     List<Class<String>> expected = Arrays.<Class<String>>asList(java.lang.String.class);
 
-    assertEquals(expected, Reflection.loadClassesFromReader(br));     
+    assertEquals(expected, Reflection.loadClassesFromReader(br, "reader with java.lang.String"));     
     r.close(); br.close();
   }
 
@@ -90,7 +90,7 @@ public class ReflectionTests extends TestCase{
 
     List<Class<?>> expected = Arrays.<Class<?>>asList(java.util.List.class, AbstractList.class, ArrayList.class, Object.class);
 
-    assertEquals(expected, Reflection.loadClassesFromReader(br));     
+    assertEquals(expected, Reflection.loadClassesFromReader(br, "reader with List, AbstractList, ArrayList, Object"));
     r.close(); br.close();
   }
 
