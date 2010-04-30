@@ -47,19 +47,19 @@ public class RunISSTA06Containers extends CommandHandler {
     randoop.util.Randomness.reset(System.currentTimeMillis());
 
     if (subject.equals(FibHeap.class)) {
-      int timelimit = 100000;
+      int timelimit = 120000;
       testFibHeap(timelimit, directed);
       System.out.println("TestsCovered:" + FibHeap.tests.size());
     } else if (subject.equals(BinTree.class)) {
-      int timelimit = 10000;
+      int timelimit = 120000;
       testBinTree(timelimit, directed);
       System.out.println("TestsCovered:" + BinTree.tests.size());
     } else if (subject.equals(randoop.test.issta2006.TreeMap.class)) {
-      int timelimit = 30000;
+      int timelimit = 120000;
       testTreeMap(timelimit, directed);
       System.out.println("TestsCovered:" + randoop.test.issta2006.TreeMap.tests.size());
     } else if (subject.equals(randoop.test.issta2006.BinomialHeap.class)) {
-      int timelimit = 20000;
+      int timelimit = 120000;
       testBinomialHeap(timelimit, directed);
       System.out.println("TestsCovered:" + randoop.test.issta2006.BinomialHeap.tests.size());
     } else throw new RuntimeException(subject.toString());

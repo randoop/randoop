@@ -24,12 +24,17 @@ public class Main {
     handlers.add(new GenTests());
     handlers.add(new Help());
 
+    // These are very ad-hoc commands that we don't want to 
+    // confuse the user of Randoop. Adding them to the invisible
+    // handlers list means that they're not printed out when
+    // the user uses the `help' command.
     invisibleHandlers = new ArrayList<CommandHandler>();
     invisibleHandlers.add(new GenHTMLDoc());
     invisibleHandlers.add(new CovUtils());
     invisibleHandlers.add(new ExecuteSequence());
     invisibleHandlers.add(new CleanObservations());
     invisibleHandlers.add(new RmDiffObservations());
+    invisibleHandlers.add(new RunISSTA06Containers());
   }
 
   // The main method simply calls nonStaticMain.

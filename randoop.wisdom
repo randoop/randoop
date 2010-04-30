@@ -1,15 +1,21 @@
 %
 % General Info
 %
-The randoop svn repository is at:  $pag/projects/randoop/REPOS.
-checkout with 
-  svn checkout file:/afs/csail/group/pag/projects/randoop/REPOS randoop
-A HTTP server has not yet been setup (since no one outside of CSAIL needs
-access)
+Randoop lives in google code: http://code.google.com/p/randoop/
 
-A basic test of randoop seems to be run with:
-  make unit
-    
+The wiki section of Randoop's web page contains a tutorial.
+
+%
+% Randoop compilation instructions
+%
+
+Randoop requires Java 5.0 or greater. To compile and run unit and system tests:
+1. Modify the file Makefile.user (under the same directory as this file) to reflect your environment.
+2. Run "make all".
+
+Other useful make commands are available. Run "make" (with no arguments) to see a list.
+
+Before committing, make sure you run `make clean' followed by `make all', to run all the tests.
 
 %
 % Randoop command line options

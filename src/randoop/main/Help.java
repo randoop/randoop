@@ -83,6 +83,6 @@ public class Help extends CommandHandler {
     out.println();
     out.println("Randoop  is a command-line tool that creates unit tests for Java.");
     out.println("It accepts one of the commands listed below. For the user manual,");
-    out.println("please visit http://people.csail.mit.edu/cpacheco/randoop/");
+    out.println("please visit http://http://code.google.com/p/randoop/");
   }
 }

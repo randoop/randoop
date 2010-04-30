@@ -1,23 +1,25 @@
 
-# This makefile contains targets to build and test Randoop and
-# DynComp.
+# This makefile contains targets to build and test Randoop
 #
 # ONE-LINE INSTRUCTIONS: before doing a commit, run target "all".
 #
 # Other notable test targets:
-#
-#   + clean-tests: removes autom-generated files.
-#
-#   + results : shows diffs between output and goal files.
-#
-#   + update-goals : replaces goal files with current files.
-#
-# Other notable build targets:
-#
-#   + build: builds randoop.
-#
-#   + dc : builds dataflow (requires daikon; see README.txt).
-#
+
+default:
+	@echo "================"
+	@echo "Randoop Makefile"
+	@echo "================"
+	@echo "Main targets:"
+	@echo ""
+	@echo "all            do everything (build and run test)."
+	@echo "build          compile Randoop."
+	@echo "clean          remove build-related auto-generated files."
+	@echo "clean-tests    remove test-related auto-generated files."
+	@echo "results        display results of tests."
+	@echo "tests          run tests."
+	@echo "update-goals   update test goal files."
+	@echo "zip            Create a distribution zip file (randoop.zip)"
+
 # UPDATING RANDOOP'S WEB PAGE
 # ===========================
 #
@@ -51,21 +53,6 @@ RANDOOP_HOME ?= $(shell pwd)
 # Sets common variables.
 include common.mk
 
-default:
-	@echo "================"
-	@echo "Randoop Makefile"
-	@echo "================"
-	@echo "Main targets:"
-	@echo ""
-	@echo "all            do everything (build and run test)."
-	@echo "build          compile Randoop."
-	@echo "clean          remove build-related auto-generated files."
-	@echo "clean-tests    remove test-related auto-generated files."
-	@echo "results        display results of tests."
-	@echo "tests          run tests."
-	@echo "update-goals   update test goal files."
-	@echo "zip            Create a distribution zip file (randoop.zip)"
-
 JAVAC ?= javac
 JAVAC_JAR ?= ${HOME}/research/types/jsr308-langtools/dist/lib/javac.jar
 # User may set JAVAC_EXTRA_ARGS
@@ -78,9 +65,6 @@ JAVAC_COMMAND ?= ${JAVAC} ${JAVAC_EXTRA_ARGS}
 RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
 RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
 RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
-
-temp:
-	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.RunISSTA06Containers randoop.test.issta2006.BinomialHeap directed
 
 all: clean build tests results
 
@@ -135,18 +119,6 @@ unit: bin
 	  junit.textui.TestRunner \
 	   randoop.test.AllRandoopTests
 
-perf: perf1 perf2
-
-# -Xrunhprof:cpu=samples,depth=30
-perf1: bin
-	java ${XMXHEAP} -ea \
-	  junit.textui.TestRunner \
-	  randoop.test.RandoopPerformanceTest
-
-perf2: bin
-	java ${XMXHEAP} -ea \
-	  junit.textui.TestRunner \
-	  randoop.test.NaivePerformanceTest
 
 # Runs Randoop on Collections and TreeSet.
 randoop1: bin
@@ -154,7 +126,7 @@ randoop1: bin
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --use-object-cache \
-   --output-tests=all \
+	   --output-tests=all \
 	   --check-object-contracts=false \
 	   --inputlimit=500 \
 	   --testclass=java2.util2.TreeSet \
@@ -162,7 +134,7 @@ randoop1: bin
 	   --junit-classname=TestClass \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=randoop-scratch \
-	   --log=randoop-log.txt
+	   --log=systemtests/randoop-log.txt
 	cd randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
@@ -216,7 +188,7 @@ randoop-contracts: bin
 	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
 	   --junit-classname=BuggyTest \
 	   --junit-output-dir=randoop-contracts-scratch \
-	   --log=randoop-contracts-log.txt
+	   --log=systemtests/randoop-contracts-log.txt
 	cd randoop-contracts-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
 # We expect this to fail, so add a "-" so the target doesn't fail.
@@ -224,47 +196,48 @@ randoop-contracts: bin
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopContractsTest
 
-randoop-jdk: randoop-jdk-gen randoop-jdk-comp randoop-jdk-run
+# Performance tests. Removed from Randoop tests because results highly dependent on machine that
+# tests are run, resulting in many false positives.
+perf: perf1 perf2
 
-randoop-jdk-gen: bin
-	rm -rf randoop-jdk-scratch
-	java -ea ${XMXHEAP} -classpath \
-	   $(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
-	   randoop.main.Main gentests \
-	   --output-tests=all \
-	   --inputlimit=10000 \
-	   --helpers=true \
-	   --coverage-instrumented-classes=systemtests/java_collections.covinstclasslist.txt \
-	   --classlist=systemtests/java_collections.classlist.txt \
-	   --omitmethods="nCopies|randomUUID|IllegalFormatCodePointException" \
-	   --junit-output-dir=randoop-jdk-scratch \
-	   --junit-classname=RandoopOnJDK \
-	   --forbid-null=true \
-	   --stats-coverage=true \
-	   --usethreads=false \
-	   --component-based=true \
-	   --offline=false \
-	   --use-object-cache \
-	   --alias-ratio=0.5 \
-	   --maxsize=50 \
-	   --randomseed=1
+# -Xrunhprof:cpu=samples,depth=30
+perf1: bin
+	java ${XMXHEAP} -ea \
+	  junit.textui.TestRunner \
+	  randoop.test.RandoopPerformanceTest
 
-randoop-jdk-comp:
-	cd randoop-jdk-scratch && \
-	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
-	  *.java
+perf2: bin
+	java ${XMXHEAP} -ea \
+	  junit.textui.TestRunner \
+	  randoop.test.NaivePerformanceTest
 
-randoop-jdk-run:
-	cd randoop-jdk-scratch && \
-	  java -cp .:$(RANDOOP_HOME)/systemtests/java_collections-covinst:$(CLASSPATH) \
-	  RandoopOnJDK
+# Targets to measure achieved coverage on container data structures.
+# Did not make into Randoop tests because results are highly dependent
+# on the machine that Randoop is run on.
+containers:
+	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.Main issta-containers randoop.test.issta2006.BinTree directed
+	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.Main issta-containers randoop.test.issta2006.BinomialHeap directed
+	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.Main issta-containers randoop.test.issta2006.FibHeap directed
+	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.Main issta-containers randoop.test.issta2006.TreeMap directed
 
+############################################################
+# Targets for testing Randoop/Dyncomp's dataflow analysis.
 
 # Dataflow library
 DYNCOMP			= $(RANDOOP_HOME)/lib/dcomp_premain.jar
 
-############################################################
-# Targets for testing Randoop/Dyncomp's dataflow analysis.
+# Test the coverage instrumenter.
+# Runs the instrumenter on a test file, and diffs the result
+# with a goal file.
+covtest: bin
+	rm -rf covtest-scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
+	  cov.Instrument \
+	  --destination=covtest-scratch \
+	  --files=systemtests/resources/cov/classlist.txt
+	cd covtest-scratch && ${JAVAC_COMMAND} -Xlint cov/*.java
+	cp covtest-scratch/cov/TestClass.java \
+	   systemtests/resources/cov/TestClass-instrumented
 
 # Runs Randoop and Dataflow analysis on arraylist.
 # Order matters: df1 should follow randoop, and bdgen should follow df2.
@@ -273,18 +246,6 @@ arraylist: randoop-df df
 # Compiles and coverage-instruments the java_collections subject program.
 prepare:
 	cd systemtests && make prepare-jc
-
-prepare-ds:
-	cd systemtests && make prepare-simple_ds
-
-df-ds: $(DYNCOMP) bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/simple_ds:${JAVAC_JAR}:$(CLASSPATH) \
-	   randoop.main.DataFlow \
-	   --scratchdir=df-scratch \
-	   --overwrite \
-	   --outputfile=temp.txt \
-	   systemtests/resources/simple_ds.dfin.txt
-
 
 # Runs Randoop on arraylist.
 # Compares the results with the goal results.
@@ -314,6 +275,8 @@ randoop-df: bin
 	gunzip frontier*.gz
 	cat frontier[123456] \
 	  > systemtests/resources/arraylist.dfin.txt
+# Cleanup scratch files
+	rm frontier[123456] test.dftargets.txt
 
 # Runs dataflow on the results of Randoop on arraylist.
 #
@@ -402,19 +365,6 @@ bdgen2: bin
 	grep -v "util2\.HashMap" systemtests/resources/bdgen2-branches.txt > tmp.txt
 	mv tmp.txt systemtests/resources/bdgen2-branches.txt
 
-# Test the coverage instrumenter.
-# Runs the instrumenter on a test file, and diffs the result
-# with a goal file.
-covtest: bin
-	rm -rf covtest-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
-	  cov.Instrument \
-	  --destination=covtest-scratch \
-	  --files=systemtests/resources/cov/classlist.txt
-	cd covtest-scratch && ${JAVAC_COMMAND} -Xlint cov/*.java
-	cp covtest-scratch/cov/TestClass.java \
-	   systemtests/resources/cov/TestClass-instrumented
-
 df3: $(DYNCOMP) bin
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
@@ -425,7 +375,6 @@ df3: $(DYNCOMP) bin
 
 ############################################################
 # Targets for creating and printing the results of test diffs.
-
 
 goal_files = $(shell find systemtests/resources -name "*.goal")
 

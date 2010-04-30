@@ -90,6 +90,8 @@ public class Randoop100Stats implements StatsComputer {
     return sum;
   }
 
+  // Unchecked warning in this method due to mixing varargs and generics.
+  @SuppressWarnings("unchecked")
   public static void main(String[] args) throws IOException {
 
     CombinedStats omjc_data = CombinedStats.readFromMFile("matlab/omjc_data.m");
