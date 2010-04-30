@@ -3,9 +3,7 @@
 -include ../Makefile.user
 -include Makefile.user
 
-CLASS_DIRS := $(RANDOOP_HOME)/bin \
-			  $(RANDOOP_HOME)/tests \
-			  $(RANDOOP_HOME)/systemtests/clover-ant-2.3.1/lib/clover.jar 
+CLASS_DIRS := $(RANDOOP_HOME)/bin $(RANDOOP_HOME)/tests
 
 # The shorter version of the classpath is much easier to read in the
 # command output than the full version.  But the * classpath operator
@@ -19,6 +17,6 @@ endif
 # Convert to a standard classpath
 empty:=
 space:= $(empty) $(empty)
-export CLASSPATH :=     $(subst $(space),:,$(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS))
+export CLASSPATH :=     $(subst $(space),:,$(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS)):$(JDK_LOC)/lib/tools.jar
 
 XMXHEAP := -Xmx1650m 

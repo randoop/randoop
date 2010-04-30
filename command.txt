@@ -1,9 +1,0 @@
-java-1.5  -Xmx1700m -classpath /afs/csail.mit.edu/u/c/cpacheco/temp-eclipse/jrandoop/bin:/afs/csail.mit.edu/u/c/cpacheco/temp-eclipse/jrandoop/lib/junit-4.3.1.jar  joe.main.GenErrorRevealingTests --dont_write_over --progressinterval=1 --minimize --log=bar.txt --classlist=temp.txt --time=120 --experiment=java.util.results.tex --junitclass=TestOnline_java_util --omitmethods="nCopies|randomUUID|IllegalFormatCodePointException"  --randomseed=2 2>trash.txt
-
-3/5/2008
-
-java -cp ~/daikon/daikon.jar:emma.jar:$CLASSPATH emma instr -ip ~/daikon/daikon.jar -d instr -ix +*VarInfo*
-
-java -cp instr:.:/Users/cpacheco/daikon/daikon.jar:emma.jar:$CLASSPATH  randoop.main.Main genfailures --classlist=daikon.txt --log=trash.txt --dontcheckcontracts=true --timelimit=100
-
-java -cp ~/daikon/daikon.jar:emma.jar:$CLASSPATH emma report -r html -in coverage.em,coverage.ec -sp /Users/cpacheco/daikon/java/

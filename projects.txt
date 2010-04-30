@@ -1,3 +1,7 @@
+ALSO SEE project ideas page in Randoop wiki:
+http://code.google.com/p/randoop/wiki/ProjectIdeas
+
+***
 
 Randoop for C/C++ programs
 

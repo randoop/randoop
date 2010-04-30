@@ -37,7 +37,6 @@ import java.io.Writer;
  * @author Phil Steitz
  * @author Pete Gieser
  * @since 2.0
- * @version $Id: StringEscapeUtils.java,v 1.2 2008-07-07 23:32:19 cpacheco Exp $
  */
 public class StringEscapeUtils {
 
