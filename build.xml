@@ -85,6 +85,7 @@
 		<echo>compiling</echo>
 		<javac source="1.5" destdir="${destdir}" debug="on"
 		nowarn="true" classpath="${classpath}:${testclassesdestdir}"
+		includeAntRuntime="false"
                        fork="true" memorymaximumsize="1024M">
 			<compilerarg line="${compileargs}" />
 			<src path="src" />
