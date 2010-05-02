@@ -77,7 +77,7 @@ build: bin randoop_agent.jar
 
 bin: $(RANDOOP_FILES)
 	mkdir -p bin
-	@echo ${JAVAC_COMMAND} -g -d bin ...
+	@echo ${JAVAC_COMMAND} -Xlint -g -d bin ...
 	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
 	@${JAVAC_COMMAND} -nowarn -g -d bin $(RANDOOP_TESTS_FILES)
 	mkdir -p bin/randoop/test/resources
