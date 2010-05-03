@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
@@ -34,7 +35,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
   private Object writeReplace() throws ObjectStreamException {
     return new SerializablePrimitiveOrStringOrNullDecl(type, value);
   }
-
+  
   /**
    * Constructs a PrimitiveOrStringOrNullDeclInfo of type t and value o
    */
@@ -228,42 +229,117 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
    * char:20                      represents: char x = ' ';
    * 
    */
-  public static PrimitiveOrStringOrNullDecl parse(String s) {
+  public static PrimitiveOrStringOrNullDecl parse(String s) throws StatementKindParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
+    int colonIdx = s.indexOf(':');
+    if (colonIdx == -1) {
+      String msg = "A primitive value declaration description must be of the form "
+        + "<type>:<value>" + " but the description \"" + s + "\" does not have this form.";
+      throw new StatementKindParseException(msg);
+    }
     // Extract type and value.
-    String typeString = s.substring(0, s.indexOf(':'));
-    String valString = s.substring(s.indexOf(':')+1);
-    Class<?> type = Reflection.classForName(typeString);
+    String typeString = s.substring(0, colonIdx);
+    String valString = s.substring(colonIdx+1);
+    
+    // Basic sanity check: no whitespace in type string.
+    if (typeString.matches(".*\\s+.*")) {
+      String msg = "A primitive value declaration description must be of the form "
+        + "<type>:<value>" + " but the <type> description \"" + s + "\" contains invalid whitespace characters.";
+      throw new StatementKindParseException(msg);
+    }
+    
+    Class<?> type = Reflection.classForName(typeString, true);
+    if (type == null) {
+      String msg = "A primitive value declaration description must be of the form "
+        + "<type>:<value>" + " but the <type> given (\"" + typeString + "\") was unrecognized.";
+      throw new StatementKindParseException(msg);
+    }
     Object value = null;
 
     if (type.equals(char.class)) {
-      value = (char)Integer.parseInt(valString, 16);
+      try {
+        value = (char)Integer.parseInt(valString, 16);
+      } catch (NumberFormatException e) {
+        String msg = "A primitive value declaration description must be of the form "
+          + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
+        throw new StatementKindParseException(msg);
+      }
     } else if (type.equals(byte.class)) {
-      value = Byte.valueOf(valString);
+      try {
+        value = Byte.valueOf(valString);
+      } catch (NumberFormatException e) {
+        String msg = "A primitive value declaration description must be of the form "
+          + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
+        throw new StatementKindParseException(msg);
+      }
     } else if (type.equals(short.class)) {
-      value = Short.valueOf(valString);
+      try {
+        value = Short.valueOf(valString);
+      } catch (NumberFormatException e) {
+        String msg = "A primitive value declaration description must be of the form "
+          + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
+        throw new StatementKindParseException(msg);
+      }
     } else if (type.equals(int.class)) {
-      value = Integer.valueOf(valString);
+      try {
+        value = Integer.valueOf(valString);
+      } catch (NumberFormatException e) {
+        String msg = "A primitive value declaration description must be of the form "
+          + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
+        throw new StatementKindParseException(msg);
+      }
     } else if (type.equals(long.class)) {
-      value = Long.valueOf(valString);
+      try {
+        value = Long.valueOf(valString);
+      } catch (NumberFormatException e) {
+        String msg = "A primitive value declaration description must be of the form "
+          + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
+        throw new StatementKindParseException(msg);
+      }
     } else if (type.equals(float.class)) {
-      value = Float.valueOf(valString);
+      try {
+        value = Float.valueOf(valString);
+      } catch (NumberFormatException e) {
+        String msg = "A primitive value declaration description must be of the form "
+          + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
+        throw new StatementKindParseException(msg);
+      }
     } else if (type.equals(double.class)) {
-      value = Double.valueOf(valString);
+      try {
+        value = Double.valueOf(valString);
+      } catch (NumberFormatException e) {
+        String msg = "A primitive value declaration description must be of the form "
+          + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
+        throw new StatementKindParseException(msg);
+      }
     } else if (type.equals(boolean.class)) {
-      value = Boolean.valueOf(valString);
+      if (valString.equals("true") || valString.equals("false")) {
+        value = Boolean.valueOf(valString);        
+      } else {
+        String msg = "A primitive value declaration description must be of the form "
+          + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
+        throw new StatementKindParseException(msg);
+      }
     } else if (type.equals(String.class)) {
       if (valString.equals("null")) {
         value = null;
       } else {
         value = valString;
-        assert valString.charAt(0) == '"';
-        assert valString.charAt(valString.length() - 1) == '"';
+        if (valString.charAt(0) != '"' || valString.charAt(valString.length() - 1) != '"') {
+          String msg = "A String value declaration description must be of the form "
+            + "java.lang.String:\"thestring\"" + " but the string given was not enclosed in quotation marks.";
+          throw new StatementKindParseException(msg);
+        }
         value = UtilMDE.unescapeNonJava(valString.substring(1, valString.length() - 1));
       }
     } else {
-      assert valString.equals("null");
-      value = null;
+      if (valString.equals("null")) {
+        value = null;
+      } else {
+        String msg = "A primitve value declaration description that is not a primitive value or a string must be of the form "
+          + "<type>:null but the string given (\"" + valString + "\") was not of this form.";
+        throw new StatementKindParseException(msg);
+      }
     }
 
     return new PrimitiveOrStringOrNullDecl(type, value);

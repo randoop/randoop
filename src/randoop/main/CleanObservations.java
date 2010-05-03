@@ -1,18 +1,13 @@
 package randoop.main;
 
-import java.io.IOException;
-import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import randoop.ExecutableSequence;
-import randoop.MultiVisitor;
-import randoop.RegressionCaptureVisitor;
-import randoop.Sequence;
-import randoop.util.Files;
-import randoop.util.ReflectionExecutor;
-import plume.Option;
 import plume.Options;
+import randoop.ExecutableSequence;
+import randoop.RegressionCaptureVisitor;
+import randoop.util.ReflectionExecutor;
 
 public class CleanObservations extends CommandHandler {
 

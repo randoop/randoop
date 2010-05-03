@@ -120,7 +120,12 @@ public class DFResultsOneSeq implements Serializable {
       throw new IllegalArgumentException("Invalid record: " + print(lines));
 
     // Lines 1--(varIndex-1) is the sequence.
-    Sequence sequence = Sequence.parse(lines.subList(1, varIndex));
+    Sequence sequence;
+    try {
+      sequence = Sequence.parse(lines.subList(1, varIndex));
+    } catch (SequenceParseException e) {
+      throw new Error(e);
+    }
 
     // Find out how many vars there are.
     Integer numVars = Integer.parseInt(lines.get(varIndex).substring("VARS".length()).trim());

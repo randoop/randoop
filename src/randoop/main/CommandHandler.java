@@ -71,91 +71,59 @@ public abstract class CommandHandler {
 
   public abstract boolean handle(String[] args) throws RandoopTextuiException;
 
-  public final void printHTMLMenuItem(PrintStream out) {
-    out.println("<li><tt><a href=\"#" + fcommand + "\">" + fcommand + "</a></tt>");
-    out.println("<br>" + fpitch);
-  }
-
   /**
-   * Prints out formatted text, putting the command name as an "<h4>" element.
+   * Prints out formatted text in (google code) Wiki format.
    */
   public final void printHTML(PrintStream out) {
 
-    out.println("<h2>");
-    out.println("<a name=\"" + fcommand + "\">");
-    out.println(fcommand);
-    out.println("</a></h2>");
+    out.println("=== " + fcommand + " ===");
 
-    //out.println("<blockquote>");
     if (!fcommandGrammar.trim().equals("")) {
-      out.println("<b>Usage: </b>");
-      out.println("<tt>");
-      for (String line : fcommandGrammar.split(System.getProperty("line.separator"))) {
-        out.println(line);
-        out.println("<br>");
-      }
-      out.println("</tt>");
-      out.println("<p>");
+      out.println("*Usage:*");
+      out.println();
+      out.println("{{{");
+      out.println("java randoop.main.Main " + fcommandGrammar);
+      out.println("}}}");
+      out.println();
     }
     if (!fwhere.trim().equals("")) {
-      out.println("<b>Where:</b> ");
-      for (String line : fwhere.split(System.getProperty("line.separator"))) {
-        out.println(line);
-        out.println("<br>");
-      }
-      out.println("<p>");
+      out.println("_Where_:");
+      out.println();
+      out.println(fwhere);
+      out.println();
     }
     if (!fsummary.trim().equals("")) {
-      out.println("<b>Summary.</b>");
-      for (String line : fsummary.split(System.getProperty("line.separator"))) {
-        out.println(line);
-        out.println("<br>");
-      }
-      out.println("<p>");
+      out.println("*Summary:*");
+      out.println();
+      out.println(fsummary);
+      out.println();
     }
     if (!finput.trim().equals("")) {
-      out.println("<b>Input: </b>");
-      for (String line : finput.split(System.getProperty("line.separator"))) {
-        out.println(line);
-        out.println("<br>");
-      }
-      out.println("<p>");
+      out.println("*Input:*");
+      out.println();
+      out.println(finput);
+      out.println();
     }
     if (!foutput.trim().equals("")) {
-      out.println("<b>Output: </b>");
-      for (String line : foutput.split(System.getProperty("line.separator"))) {
-        out.println(line);
-        out.println("<br>");
-      }
-      out.println("<p>");
+      out.println("*Output:*");
+      out.println();
+      out.println(foutput);
+      out.println();
     }
     if (!fexample.trim().equals("")) {
-      out.println("<b>Example use:</b>");
-      out.println("<br>");
-
-
-      out.println("<div class=\"code\"><pre>");
-      for (String line : fexample.split(System.getProperty("line.separator"))) {
-        out.println(line);
-      }
-      out.println("</pre></div>");
-      out.println("<p>");
+      out.println("*Example use:*");
+      out.println("{{{");
+      out.println(fexample);
+      out.println("}}}");
+      out.println();
     }
     if (fnotes != null && fnotes.size() > 0) {
-      out.println("<b>Notes.</b><ul>");
+      out.println("*Notes:*");
+      out.println();
       for (String note : fnotes) {
-        out.println("<li>");
-        out.println(note);
+        out.println("  * " + note);
       }
-      out.println("</ul><p>");
     }
-// Comment out temporarily.  Uses non-documented "toStringHTML" routine in Options.
-//     if (foptions != null) {
-//       out.println("<b>Options</b>");
-//       out.println("<p>");
-//       foptions.toStringHTML(out);
-//     }
-    //out.println("</blockquote>");
   }
 
   public final void usageMessage(PrintStream out) {

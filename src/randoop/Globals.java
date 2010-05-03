@@ -1,17 +1,14 @@
 package randoop;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.URL;
 
 import plume.Option;
 
 public class Globals {
+
+  public static final String RANDOOP_VERSION = "1.3";
 
   public static final String lineSep = System.getProperty("line.separator");
 
@@ -62,25 +59,11 @@ public class Globals {
   }
 
   public static String getRandoopVersion() {
-    InputStream s = randoop.Globals.class.getResourceAsStream("version.txt");
-    BufferedReader reader = new BufferedReader(new InputStreamReader(s));
-    String versionString;
-    try {
-      versionString = reader.readLine();
-      if (versionString == null)
-        throw new RuntimeException("version string cannot be null.");
-      versionString = versionString.trim();
-      if (versionString.trim().equals(""))
-        throw new RuntimeException("version string cannot be empty.");
-    } catch (IOException e) {
-      URL versionFile = randoop.Globals.class.getResource("version.txt");
-      String msg = String.format("IO error while reading version file %s : %s ", versionFile.getPath(), e.getMessage());
-      throw new RuntimeException(msg);
-    }
-    return versionString;
+      return RANDOOP_VERSION;
   }
 
   public static final int COLWIDTH = 70;
 
   public static final int INDENTWIDTH = 8;
+
 }

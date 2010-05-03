@@ -32,6 +32,7 @@ import randoop.RecordListReader;
 import randoop.RecordProcessor;
 import randoop.Sequence;
 import randoop.SequenceCollection;
+import randoop.SequenceParseException;
 import randoop.StatementKind;
 import randoop.Variable;
 import randoop.DFResultsOneSeq.VariableInfo;
@@ -326,7 +327,11 @@ public class GenBranchDir {
     // Parse the file using a RecordListReader.
     RecordProcessor processor = new RecordProcessor() {
       public void processRecord(List<String> record) {
-        sequences.add(Sequence.parse(record));
+        try {
+          sequences.add(Sequence.parse(record));
+        } catch (SequenceParseException e) {
+          throw new Error(e);
+        }
       }
     };
     RecordListReader reader = new RecordListReader("SEQUENCE", processor);

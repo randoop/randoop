@@ -78,7 +78,12 @@ public class StatementKindTests extends TestCase {
   private void checkParse(StatementKind st) {
     String stStr = st.toParseableString();
     System.out.println(stStr);
-    StatementKind st2 = StatementKinds.parse(StatementKinds.getId(st) + ":" + stStr);
+    StatementKind st2;
+    try {
+      st2 = StatementKinds.parse(StatementKinds.getId(st) + ":" + stStr);
+    } catch (StatementKindParseException e) {
+      throw new Error(e);
+    }
     assertNotNull(st2);
     assertTrue(st.toString() + "," + st2.toString(), st2.equals(st));
     assertTrue(st.toParseableString() + "," + st2.toParseableString(), st.toParseableString().equals(st2.toParseableString()));

@@ -14,6 +14,17 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+/**
+ * ASTUtil contains AST-related utility methods used by the instrumenter.
+ *
+ * The cov package implements a basic branch coverage instrumenter
+ * that we use for the branch-directed test generation research.
+ *
+ * This tool is prototype-quality, not for production use. In
+ * particular, it is missing a number of features including tracking
+ * coverage for switch statements, and lack of support for
+ * generics.
+ */
 public class ASTUtil {
 
   static List<BodyDeclaration> parseBodyDeclarations(String str, AST owner) {
