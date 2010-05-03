@@ -22,6 +22,10 @@ import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import plume.Option;
+import plume.Options;
+import plume.SimpleLog;
+import plume.Options.ArgException;
 import randoop.AbstractGenerator;
 import randoop.BugInRandoopException;
 import randoop.ContractCheckingVisitor;
@@ -34,7 +38,6 @@ import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
 import randoop.ForwardGenerator;
 import randoop.Globals;
-import randoop.HashCodeReturnsNormally;
 import randoop.JunitFileWriter;
 import randoop.NaiveRandomGenerator;
 import randoop.ObjectContract;
@@ -46,21 +49,14 @@ import randoop.Sequence;
 import randoop.SequenceCollection;
 import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
-import randoop.ToStringReturnsNormally;
 import randoop.Variable;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.Randomness;
-import randoop.util.RandoopSecurityManager;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.RunCmd;
 import randoop.util.SerializationHelper;
-import plume.Option;
-import plume.Options;
-import plume.Options.ArgException;
-import plume.UtilMDE;
-import plume.SimpleLog;
 import cov.Branch;
 import cov.Coverage;
 
@@ -141,12 +137,6 @@ public class GenTests extends GenInputsAbstract {
 
     java.security.Policy policy = java.security.Policy.getPolicy();
     System.out.printf ("policy = %s%n", policy);
-
-    if (false) {
-      Class<?> cd = java.util.Date.class;
-      for (Constructor<?> con : cd.getConstructors())
-        System.out.printf ("date constructor = %s%n", con.toString());
-    }
 
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {

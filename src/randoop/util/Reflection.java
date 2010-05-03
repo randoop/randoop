@@ -26,6 +26,7 @@ import randoop.Globals;
 import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.StatementKind;
+import randoop.StatementKindParseException;
 import randoop.StatementKinds;
 import randoop.main.GenInputsAbstract;
 import plume.EntryReader;
@@ -182,6 +183,10 @@ public final class Reflection {
    /**
     * Gets the class corresponding to the given string. Assumes the string is
     * in the format output by the method java.lang.Class.toString().
+    * 
+    * If noerr==true and Class.forName(classname) throws an exception, throws an Error.
+    * 
+    * If noerr==false and Class.forName(classname) throws an exception, returns null.
     */
   public static Class<?> classForName(String classname, boolean noerr) {
 
@@ -193,9 +198,10 @@ public final class Reflection {
        c = Class.forName(classname);
      } catch (Throwable e) {
        if (noerr) {
-         System.out.printf("classForName(%s) yielded exception: %s%n",
+         System.out.printf("WARNING: classForName(%s) yielded exception: %s%n",
                            classname, e.getMessage());
          e.printStackTrace(System.out);
+         return null;
        } else {
          throw new Error(String.format("classForName(%s)", classname), e);
        }
@@ -369,13 +375,9 @@ public final class Reflection {
 
    /**
     * Returns a list of classes, given a list of class names.
-    */
-   public static List<Class<?>> loadClassesFromList(List<String> classNames) {
-     return loadClassesFromList(classNames, false);
-   }
-
-   /**
-    * Returns a list of classes, given a list of class names.
+    * 
+    * if noerr=true, any classnames where Class.forName(classname) are ignored
+    * and not added to the list. Otherwise, an exception is thrown in this situation.
     */
   public static List<Class<?>> loadClassesFromList(List<String> classNames, boolean noerr) {
 
@@ -470,7 +472,12 @@ public final class Reflection {
        String trimmed = line.trim();
        if (trimmed.equals("") || trimmed.startsWith("#"))
          continue;
-       StatementKind stk = StatementKinds.parse(line);
+       StatementKind stk;
+      try {
+        stk = StatementKinds.parse(line);
+      } catch (StatementKindParseException e) {
+        throw new Error(e);
+      }
        if (stk instanceof RMethod) {
          result.add(((RMethod)stk).getMethod());
        } else {

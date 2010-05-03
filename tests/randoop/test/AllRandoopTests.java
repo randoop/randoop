@@ -14,6 +14,7 @@ public class AllRandoopTests extends TestCase {
     // on a fresh JVM.
     //suite.addTestSuite(ISSTA06ContainersTest.class);
 
+    suite.addTestSuite(SequenceTests.class);
     suite.addTestSuite(ClassComplexityCalculatorTests.class);
     suite.addTestSuite(ClassHierarchyTests.class);
     suite.addTestSuite(Test_AllPass.class);
@@ -21,15 +22,11 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(UtilTests.class);
     suite.addTestSuite(ListOfListsSelectorTest.class);
     suite.addTestSuite(SequenceTests.class);
-    //suite.addTestSuite(Minimizer3Test.class);
     suite.addTestSuite(ForwardExplorerTests.class);
     suite.addTestSuite(ForwardExplorerTests2.class);
-    //suite.addTestSuite(MinimizerTest.class);
     suite.addTestSuite(DefaultReflectionFilterTests.class);
-    //suite.addTestSuite(SequenceExplorerTest.class);
     suite.addTestSuite(ObservationTests.class);
     suite.addTestSuite(ObservationVectorTests.class);
-    //suite.addTestSuite(Minimizer2Test.class);
     suite.addTestSuite(HeapLinearizerTests.class);
     suite.addTestSuite(ListOfListsIteratorTests.class);
     suite.addTestSuite(RandomnessTest.class);

@@ -115,10 +115,6 @@ public class DataFlow {
         // Get the branch
         Branch br = test.getKey();
 
-        // Only process a particular branch
-        if (false && !br.toString().contains("609"))
-          continue;
-
         System.out.println("COVERED BRANCH (OPPOSITE UNCOVERED): "
             + br + " in " + br.getClassName() + "." + br.getMethodName());
 

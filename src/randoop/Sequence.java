@@ -31,10 +31,6 @@ import randoop.util.Reflection.Match;
  * statements, and does not contain any information about the runtime behavior
  * of the sequence. The class randoop.ExecutableSequence adds
  * functionality that executes the sequence.
- *
- * When writing/reading sequences out to file: you have two options: serialize
- * the sequences using java's serialization mechanism, or write them out as
- * parseable text. Serialization is faster, and text is human-readable.
  */
 public final class Sequence implements Serializable, WeightedElement {
 
@@ -849,8 +845,7 @@ public final class Sequence implements Serializable, WeightedElement {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       b.append("var" + i);
-      b.append(" = ");
-      b.append(" ");
+      b.append(" =  ");
       b.append(StatementKinds.getId(getStatementKind(i)));
       b.append(" : ");
       b.append(getStatementKind(i).toParseableString());
@@ -895,17 +890,18 @@ public final class Sequence implements Serializable, WeightedElement {
    * HashMap var0 = new HashMap(); double var1 = -1.0; String var2 = "hi!";
    * Object var3 = var0.put(var1, var2);
    *
-   * <p>
-   * For a dicussion of performance, see note in class-level documentation.
+   * When writing/reading sequences out to file: you have two options: serialize
+   * the sequences using java's serialization mechanism, or write them out as
+   * parseable text. Serialization is faster, and text is human-readable.
    */
-  public static Sequence parse(List<String> statements) {
+  public static Sequence parse(List<String> statements) throws SequenceParseException {
 
     Map<String, Integer> valueMap = new LinkedHashMap<String, Integer>();
     Sequence sequence = new Sequence();
     int statementCount = 0;
     try {
       for (String statement : statements) {
-        statementCount++;
+        
 
         // Remove surrounding whitespace.
         statement = statement.trim();
@@ -917,6 +913,23 @@ public final class Sequence implements Serializable, WeightedElement {
         // newVar           stKind                inVars
         int equalsInd = statement.indexOf('=');
         int colonInd = statement.lastIndexOf(':');
+        
+        if (equalsInd == -1) {
+        	String msg = "A statement must be of the form "
+        		+ "varname = <statementkind> : varname ... varname"
+        		+ " but the " + statementCount + "-th (1-based) is missing"
+        		+ " an \"=\" symbol.";
+        	throw new SequenceParseException(msg, statements, statementCount);
+        }
+
+        if (colonInd == -1) {
+        	String msg = "A statement must be of the form "
+        		+ "varname = <statementkind> : varname ... varname"
+        		+ " but the " + statementCount + "-th (1-based) is missing"
+        		+ " a \":\" symbol.";
+        	throw new SequenceParseException(msg, statements, statementCount);
+        }
+        
         String newVar = statement.substring(0, equalsInd).trim();
         String stKind = statement.substring(equalsInd + 1, colonInd).trim();
         String inVarsStr = statement.substring(colonInd + 1).trim();
@@ -925,11 +938,16 @@ public final class Sequence implements Serializable, WeightedElement {
           String msg = "(Statement "
             + statementCount + ") result variable name " + newVar +
             " was already declared in a previous statement.";
-          throw new IllegalArgumentException(msg);
+          throw new SequenceParseException(msg, statements, statementCount);
         }
 
         // Parse statement kind.
-        StatementKind st = StatementKinds.parse(stKind);
+        StatementKind st;
+        try {
+          st = StatementKinds.parse(stKind);
+        } catch (StatementKindParseException e) {
+          throw new SequenceParseException(e.getMessage(), statements, statementCount);
+        }
 
         // Find input variables from their names.
         String[] inVars = new String[0];
@@ -938,8 +956,10 @@ public final class Sequence implements Serializable, WeightedElement {
           inVars = inVarsStr.split("\\s");
         }
 
-        if (inVars.length != st.getInputTypes().size())
-          throw new IllegalArgumentException();
+        if (inVars.length != st.getInputTypes().size()) {
+          String msg = "Number of input variables given (" + inVarsStr + ") does not match expected (expected " + st.getInputTypes().size() + ")";
+          throw new SequenceParseException(msg, statements, statementCount);
+        }
 
         List<Variable> inputs = new ArrayList<Variable>();
         for (String inVar : inVars) {
@@ -955,12 +975,22 @@ public final class Sequence implements Serializable, WeightedElement {
 
         sequence = sequence.extend(st, inputs);
         valueMap.put(newVar, sequence.getLastVariable().getDeclIndex());
+        statementCount++;
       }
-
-    } catch (Exception e) {
-      System.out.println("Error while parsing the following list of strings as a sequence (statementCount="
-          + statementCount + ").");
-      System.out.println(statements);
+    } catch (RuntimeException e) {
+      // Saw some other exception that is not a parse error.
+      // Throw an error, giving information on the problem.
+      StringBuilder b = new StringBuilder();
+      b.append("Error while parsing the following list of strings as a sequence (error was at index " + statementCount + "):\n\n");
+      for (String s : statements) {
+        b.append(s + "\n");
+      }
+      b.append("\n\n");
+      b.append("Error: " + e.toString() + "\n");
+      b.append("Stack trace:\n");
+      for (StackTraceElement s : e.getStackTrace()) {
+        b.append(s.toString());
+      }
       throw new Error(e);
     }
     return sequence;
@@ -978,9 +1008,12 @@ public final class Sequence implements Serializable, WeightedElement {
    *
    *     st.equals(parse(st.toParseableCode()))
    *
-   * For a dicussion of performance, see note in class-level documentation.
+   * When writing/reading sequences out to file: you have two options: serialize
+   * the sequences using java's serialization mechanism, or write them out as
+   * parseable text. Serialization is faster, and text is human-readable.
+   * @throws SequenceParseException 
    */
-  public static Sequence parse(String string) {
+  public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
   }
 
@@ -998,7 +1031,11 @@ public final class Sequence implements Serializable, WeightedElement {
     // Parse the file using a RecordListReader.
     RecordProcessor processor = new RecordProcessor() {
       public void processRecord(List<String> record) {
-        collection.add(Sequence.parse(record));
+        try {
+          collection.add(Sequence.parse(record));
+        } catch (SequenceParseException e) {
+          throw new Error(e);
+        }
       }
     };
     RecordListReader reader = new RecordListReader("SEQUENCE", processor);

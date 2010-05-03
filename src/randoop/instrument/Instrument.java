@@ -23,7 +23,7 @@ import plume.StrTok;
 import plume.UtilMDE;
 
 /**
- * The Instrument class is responsible for modifying another class'
+ * The Instrument class is responsible for modifying another class's
  * bytecode.  It changes calls to specified functions into static
  * calls to user functions.  This allows a user of Randoop to capture
  * arbitrary calls and modify them as desired.  For example, all

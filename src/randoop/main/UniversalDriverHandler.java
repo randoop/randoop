@@ -39,8 +39,6 @@ public class UniversalDriverHandler extends CommandHandler {
       throw new RuntimeException(ae);
     }
 
-    String[] parse_and_usage = (non_options); // TODO should only parse, not usage/exit.
-
     String targetStr = args[0];
     String className = args[1];
     Target target = null;
@@ -79,7 +77,7 @@ public class UniversalDriverHandler extends CommandHandler {
       File classListingFile = new File(classlist);
       classes.addAll(Reflection.loadClassesFromFile(classListingFile));
     }
-    classes.addAll(Reflection.loadClassesFromList(test_class));
+    classes.addAll(Reflection.loadClassesFromList(test_class, GenInputsAbstract.silently_ignore_bad_class_names));
     assert classes.size() > 0;
     return classes;
   }

@@ -1,7 +1,5 @@
 package randoop.main;
 
-import java.io.IOException;
-
 import randoop.ExecutableSequence;
 import randoop.MultiVisitor;
 import randoop.RegressionCaptureVisitor;
@@ -25,7 +23,7 @@ public class ExecuteSequence extends CommandHandler {
     Sequence seq = null;
     try {
       seq = Sequence.parse(Files.readWhole(args[0]));
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new Error(e);
     }
     
