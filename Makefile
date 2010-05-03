@@ -20,30 +20,6 @@ default:
 	@echo "update-goals   update test goal files."
 	@echo "zip            Create a distribution zip file (randoop.zip)"
 
-# UPDATING RANDOOP'S WEB PAGE
-# ===========================
-#
-# 0. Update version number file src/randoop/version.txt.
-#
-# 1. Create dir ~/public_html/randoop/VERSION
-#    where VERSION is the new version number.
-#
-# 2. Run "make zip" and "make command-help"
-#
-# 3. Copy zip file to web page:
-#    cp randoop.zip ~/public_html/randoop/VERSION/randoop.zip
-#
-# 4. Copy web page files to web page:
-#    cp -r doc ~/public_html/randoop/1.2/
-#
-# 5. Make sure everything works:
-#    download it, run it
-#    open as eclipse project (this tests the .project file)
-#
-# 6. Finally, change ~/public_html/randoop/index.php to
-#    point to the new version dir ~/public_html/randoop/VERSION
-
-
 # Put user-specific changes in your own Makefile.user.
 # Make will silently continue if that file does not exist.
 -include Makefile.user
@@ -66,7 +42,7 @@ RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
 RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
 RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
 
-all: clean build tests results
+all: clean build tests results release-files
 
 # Remove Randoop classes.
 clean:
@@ -82,7 +58,6 @@ bin: $(RANDOOP_FILES)
 	@${JAVAC_COMMAND} -nowarn -g -d bin $(RANDOOP_TESTS_FILES)
 	mkdir -p bin/randoop/test/resources
 	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
-	cp src/randoop/version.txt bin/randoop/
 	touch bin
 
 # Run all tests.
@@ -122,7 +97,7 @@ unit: bin
 
 # Runs Randoop on Collections and TreeSet.
 randoop1: bin
-	rm -rf randoop-scratch
+	rm -rf systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --use-object-cache \
@@ -133,19 +108,21 @@ randoop1: bin
 	   --testclass=java2.util2.Collections \
 	   --junit-classname=TestClass \
 	   --junit-package-name=foo.bar \
-	   --junit-output-dir=randoop-scratch \
-	   --log=systemtests/randoop-log.txt
-	cd randoop-scratch && \
+	   --junit-output-dir=systemtests/randoop-scratch \
+	   --log=systemtests/randoop-log.txt \
+	   --nochecks=false \
+	   --randooptestrun=true
+	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
-	cd randoop-scratch && \
+	cd systemtests/randoop-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo.bar.TestClass
-	cp randoop-scratch/foo/bar/TestClass0.java systemtests/resources/TestClass0.java
+	cp systemtests/randoop-scratch/foo/bar/TestClass0.java systemtests/resources/TestClass0.java
 
 # Runs Randoop on Collections and TreeSet.
 randoop2: bin
-	rm -rf randoop-scratch
+	rm -rf systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --dontexecute \
@@ -161,13 +138,13 @@ randoop2: bin
 	   --junit-classname=Naive \
 	   --output-nonexec=true \
 	   --junit-package-name=foo.bar \
-	   --junit-output-dir=randoop-scratch \
+	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt
-	cp randoop-scratch/foo/bar/Naive0.java systemtests/resources/Naive0.java
+	cp systemtests/randoop-scratch/foo/bar/Naive0.java systemtests/resources/Naive0.java
 
 # Runs Randoop on Collections and TreeSet.
 randoop3: bin
-	rm -rf randoop-scratch
+	rm -rf systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
@@ -175,24 +152,24 @@ randoop3: bin
 	   --testclass=java2.util2.Collections \
 	   --junit-classname=Naive2_ \
 	   --junit-package-name=foo.bar \
-	   --junit-output-dir=randoop-scratch
-	cp randoop-scratch/foo/bar/Naive2_0.java systemtests/resources/Naive2_0.java
+	   --junit-output-dir=systemtests/randoop-scratch
+	cp systemtests/randoop-scratch/foo/bar/Naive2_0.java systemtests/resources/Naive2_0.java
 
 randoop-contracts: bin
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Buggy.java
-	rm -rf randoop-contracts-scratch
+	rm -rf systemtests/randoop-contracts-test-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --output-tests=fail \
 	   --timelimit=5 \
 	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
 	   --junit-classname=BuggyTest \
-	   --junit-output-dir=randoop-contracts-scratch \
+	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
 	   --log=systemtests/randoop-contracts-log.txt
-	cd randoop-contracts-scratch && \
+	cd systemtests/randoop-contracts-test-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
 # We expect this to fail, so add a "-" so the target doesn't fail.
-	cd randoop-contracts-scratch && \
+	cd systemtests/randoop-contracts-test-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopContractsTest
 
@@ -230,13 +207,13 @@ DYNCOMP			= $(RANDOOP_HOME)/lib/dcomp_premain.jar
 # Runs the instrumenter on a test file, and diffs the result
 # with a goal file.
 covtest: bin
-	rm -rf covtest-scratch
+	rm -rf systemtests/covtest-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	  cov.Instrument \
-	  --destination=covtest-scratch \
+	  --destination=systemtests/covtest-scratch \
 	  --files=systemtests/resources/cov/classlist.txt
-	cd covtest-scratch && ${JAVAC_COMMAND} -Xlint cov/*.java
-	cp covtest-scratch/cov/TestClass.java \
+	cd systemtests/covtest-scratch && ${JAVAC_COMMAND} -Xlint cov/*.java
+	cp systemtests/covtest-scratch/cov/TestClass.java \
 	   systemtests/resources/cov/TestClass-instrumented
 
 # Runs Randoop and Dataflow analysis on arraylist.
@@ -284,17 +261,17 @@ randoop-df: bin
 df: $(DYNCOMP) bin
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
-	   --scratchdir=df-scratch \
+	   --scratchdir=systemtests/df-scratch \
 	   --overwrite \
 	   --outputfile=systemtests/resources/arraylist.dfout.txt \
 	   systemtests/resources/arraylist.dfin.txt.goal
 
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
-	rm -rf df-scratch
+	rm -rf systemtests/df-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow --debug_df \
-	   --scratchdir=df-scratch \
+	   --scratchdir=systemtests/df-scratch \
 	   --overwrite \
 	   systemtests/resources/$@.txt
 
@@ -310,7 +287,7 @@ df1: $(DYNCOMP) bin
 	rm -f systemtests/resources/df1.txt.output
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
-	   --scratchdir=df-scratch \
+	   --scratchdir=systemtests/df-scratch \
 	   --overwrite \
 	   systemtests/resources/df1.txt
 
@@ -323,7 +300,7 @@ df1: $(DYNCOMP) bin
 df2:
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
-	   --scratchdir=df-scratch \
+	   --scratchdir=systemtests/df-scratch \
 	   --overwrite \
 	   --outputfile=systemtests/resources/df2-output.txt \
 	   systemtests/resources/df2-input.txt
@@ -344,7 +321,7 @@ bdgen: bin
 	   --output-failures=systemtests/resources/bdgen-failures.txt \
 	   --output-new-branches=systemtests/resources/bdgen-branches.txt \
 	   --output-new-branches-sorted \
-	   --logfile=bdgen-log.txt
+	   --logfile=systemtests/bdgen-log.txt
 
 # Runs bdgen on a collection of manually-generated cases, for which it
 # should successfully generate sequences that cover frontier
@@ -360,7 +337,7 @@ bdgen2: bin
 	   --output-failures=systemtests/resources/bdgen2-failures.txt \
 	   --output-new-branches=systemtests/resources/bdgen2-branches.txt \
 	   --output-new-branches-sorted \
-	   --logfile=bdgen2-log.txt
+	   --logfile=systemtests/bdgen2-log.txt
 # There is nondeterminism in HashMap. Don't consider branchs in regression tests.
 	grep -v "util2\.HashMap" systemtests/resources/bdgen2-branches.txt > tmp.txt
 	mv tmp.txt systemtests/resources/bdgen2-branches.txt
@@ -368,7 +345,7 @@ bdgen2: bin
 df3: $(DYNCOMP) bin
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 	   randoop.main.DataFlow \
-	   --scratchdir=df-scratch \
+	   --scratchdir=systemtests/df-scratch \
 	   --overwrite \
 	   --outputfile=systemtests/resources/df3-output.txt \
 	   systemtests/resources/df3.txt
@@ -434,81 +411,60 @@ summary:
 
 
 ############################################################
-# Targets for updating Randoop's web page.
+# Targets for updating Randoop's release.
 
 # Creates the zip file for other people to download.
-zip:
-	rm -rf jrandoop
-	mkdir jrandoop
-# Copy sources. Remove sources we don't want in the distribution.
-	cp -R src jrandoop/src
-	find ./jrandoop/src -name ".svn" | xargs rm -rf
-# 	rm -r jrandoop/src/randoop/experiments
-# 	rm jrandoop/src/randoop/Naive*.java
-# 	rm jrandoop/src/randoop/DataFlow*.java
-# 	rm jrandoop/src/randoop/DFResultsOneSeq.java
-# 	rm jrandoop/src/randoop/main/DataFlow.java
-# 	rm jrandoop/src/randoop/main/GenBranchDir.java
-# 	rm jrandoop/src/randoop/main/GenInputsNaive.java
-# 	rm jrandoop/src/randoop/main/Run*.java
-# 	rm jrandoop/src/randoop/main/Universal*.java
-#	rm jrandoop/src/cov/Instrument.java
-#	rm jrandoop/src/cov/TestClass.java
-#	rm jrandoop/src/cov/FilesUtil.java
-#	rm jrandoop/src/cov/CountCoverage.java
-#	rm jrandoop/src/cov/ASTUtil.java
-# Copy test sources.
-	cp -R tests jrandoop/tests
-	find ./jrandoop/tests -name ".svn" | xargs rm -rf
-	rm jrandoop/tests/randoop/test/Naive*.java
+release-files:
+	rm -rf randoop release
+	mkdir randoop
+	mkdir randoop/bin
+# Copy sources and required libraries.
+	cp -R src randoop/src
+	cp -R tests randoop/tests
+# Remove sources for experimental features from the distribution.
+# Primary reason for taking them out is to avoid filling the
+# distribution with unnecessary extra stuff/supporting jars.
+	rm randoop/src/randoop/main/DataFlow.java
+	rm randoop/src/randoop/main/ComputeFrontierBranches.java
+	rm randoop/src/randoop/main/GenBranchDir.java
+	rm randoop/src/randoop/main/Universal*.java
+	rm randoop/src/cov/Instrument.java
+	rm randoop/src/cov/TestClass.java
+	rm randoop/src/cov/FilesUtil.java
+	rm randoop/src/cov/CountCoverage.java
+	rm randoop/src/cov/ASTUtil.java
 # Copy required libraries.
-	mkdir jrandoop/lib
-	cp lib/bcel.jar jrandoop/lib
-	cp lib/plume.jar jrandoop/lib
-	cp lib/jakarta-oro-2.0.8.jar jrandoop/lib
-	cp lib/jakarta-oro-license.txt jrandoop/lib
-	cp lib/junit-4.3.1.jar jrandoop/lib
-	cp lib/jfreechart-1.0.10.jar jrandoop/lib
-	cp lib/jcommon-1.0.13.jar jrandoop/lib
-	cp lib/*eclipse* jrandoop/lib
+	mkdir randoop/lib
+	cp lib/plume.jar randoop/lib
+	cp lib/jakarta-oro-2.0.8.jar randoop/lib
+	cp lib/jakarta-oro-license.txt randoop/lib
 # Copy license.
-	cp license.txt jrandoop/
-# Copy README file
-	cp README.dist jrandoop/README
+	cp license.txt randoop/
 # Copy eclipse project files.
-	cp .project jrandoop/.project
-	cp .classpath-dist jrandoop/.classpath
+	cp .project randoop/.project
+	cp .classpath-dist randoop/.classpath
 # Make sure everything works.
-	cd jrandoop && \
-	  find src/ tests/ -name "*.java" \
-	  | xargs ${JAVAC_COMMAND} -nowarn -cp 'lib/*'
-
+	cd randoop && \
+	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
 # Make randoop.jar.
-	mkdir jrandoop/tmp
-	cp -r jrandoop/src/* jrandoop/tmp
-	cp -r jrandoop/tests/* jrandoop/tmp
-	cd jrandoop/tmp && jar xf ../lib/jakarta-oro-2.0.8.jar
-	cd jrandoop/tmp && jar xf ../lib/junit-4.3.1.jar
-	cd jrandoop/tmp && jar cf randoop.jar *
-	mv jrandoop/tmp/randoop.jar jrandoop/
-	rm -r jrandoop/tmp
-
-# Copy in the instrumentation agent jar file
-	cp randoop_agent.jar jrandoop
-
-# Zip everything up.
+	mkdir randoop/tmp
+	cp -r randoop/bin/* randoop/tmp
+	cd randoop/tmp && jar xf ../lib/plume.jar
+	cd randoop/tmp && jar xf ../lib/jakarta-oro-2.0.8.jar
+	cd randoop/tmp && jar cf randoop.jar *
+	mv randoop/tmp/randoop.jar randoop/
+	rm -r randoop/tmp
+# Sanity test jar: invoking randoop terminates normally.
+	java -cp randoop/randoop.jar randoop.main.Main 
+# Create release zip file.
 	rm -f randoop.zip
-	zip -r randoop jrandoop
-	rm -r jrandoop
+	zip -r randoop.zip randoop
+# Put zip and jar in "release" directory.
+	mkdir release
+	mv randoop/randoop.jar release
+	mv randoop.zip release
+# Remove scratch directory.
+	rm -r randoop
 
-# Creates autogenerated php file with Randoop commands documentation.
-command-help:
-	java -classpath $(CLASSPATH) randoop.main.Main html-help
-	mv randoop_commands.php doc/
-	mv randoop_commands_list.php doc/
 
 .FORCE:
-
-showvars:
-	@echo CLASSPATH = $(CLASSPATH)
-	jwhich randoop.experiments.PrepareSubjectProgram
