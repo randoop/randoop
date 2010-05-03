@@ -40,7 +40,17 @@ import plume.Pair;
 import plume.Options.ArgException;
 
 /**
- * The source code coverage instrumenter.
+ * The cov.Instrument program implements a basic branch coverage
+ * instrumenter that we use for the branch-directed test generation
+ * research.
+ *
+ * This tool is prototype-quality, not for production use. In
+ * particular, it is missing a number of features including tracking
+ * coverage for switch statements, and lack of support for
+ * generics.
+ *
+ * This class contains the main method for the source code coverage
+ * instrumenter.
  *
  * Usage:
  *
