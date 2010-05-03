@@ -1,9 +1,0 @@
-.classpath
-.project
-*.log
-bin
-build.properties
-eclipse
-target
-*.iml
-
