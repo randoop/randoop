@@ -35,7 +35,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
    *          <code>c</code>, <code>c.getArity() == 1</code>.
    *
    * @param checkAfterLast
-   *          If true, checks contracts only whe the last statement
+   *          If true, checks contracts only when the last statement
    *          is visited. If false, checks contracts after each
    *          statement is visited.
    */

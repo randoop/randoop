@@ -29,7 +29,6 @@ public class Main {
     // handlers list means that they're not printed out when
     // the user uses the `help' command.
     invisibleHandlers = new ArrayList<CommandHandler>();
-    invisibleHandlers.add(new GenHTMLDoc());
     invisibleHandlers.add(new CovUtils());
     invisibleHandlers.add(new ExecuteSequence());
     invisibleHandlers.add(new CleanObservations());

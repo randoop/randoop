@@ -24,6 +24,12 @@ public class MultiVisitor implements ExecutionVisitor {
   public final List<ExecutionVisitor> visitors =
     new ArrayList<ExecutionVisitor>();
 
+  public MultiVisitor() { }
+
+  public MultiVisitor(List<ExecutionVisitor> visitors) {
+    this.visitors.addAll(visitors);
+  }
+
   public boolean visitAfter(ExecutableSequence sequence, int i) {
     for (ExecutionVisitor visitor : visitors) {
       boolean ret = visitor.visitAfter(sequence, i);

@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import plume.Option;
+import plume.Options;
 import randoop.SequenceCollection;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.Util;
-import plume.Option;
-import plume.Options;
 
 public abstract class GenInputsAbstract extends CommandHandler {
 
@@ -270,6 +270,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Run Randoop but do not create JUnit tests (used in research experiments).")
   public static boolean dont_output_tests = false;
 
+  @Option("Silently ignore any class names specified by the user that cannot be found by Randoop at runtime.")
+  public static boolean silently_ignore_bad_class_names = false;
+
 
   public GenInputsAbstract(String command, String pitch,
       String commandGrammar, String where, String summary, List<String> notes, String input,
@@ -348,7 +351,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
         File classListingFile = new File(classlist);
         classes.addAll(Reflection.loadClassesFromFile(classListingFile, true));
       }
-      classes.addAll(Reflection.loadClassesFromList(testclass, true));
+      classes.addAll(Reflection.loadClassesFromList(testclass, silently_ignore_bad_class_names));
     } catch (Exception e) {
       String msg = Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
       System.out.println(msg);

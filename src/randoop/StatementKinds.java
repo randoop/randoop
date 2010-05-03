@@ -1,5 +1,9 @@
 package randoop;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class StatementKinds {
 
   /**
@@ -23,15 +27,26 @@ public class StatementKinds {
    * For more details on the exact form of DESCRIPTION, see the different
    * classes implementing StatmentKind.
    */
-  public static StatementKind parse(String str) {
+  public static StatementKind parse(String str) throws StatementKindParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
 
     // <id> : <description>
     int colonIdx = str.indexOf(':');
+    if (colonIdx == -1) {
+      String msg = "A statement description must be of the form " + "<id> : <description> but the statement \""
+          + str + "\" does not have a valid form (no colon).";
+      throw new StatementKindParseException(msg);
+    }
+    
     String id = str.substring(0, colonIdx).trim();
     String descr = str.substring(colonIdx + 1).trim();
+
+    Set<String> validIds = new LinkedHashSet<String>();
+
+    // If you add a statement kind, add its ID to this set.
+    validIds.addAll(Arrays.asList(PrimitiveOrStringOrNullDecl.ID, RMethod.ID, RConstructor.ID, ArrayDeclaration.ID, DummyStatement.ID));
 
     // Call appropriate parsing method.
     if (id.equals(PrimitiveOrStringOrNullDecl.ID)) {
@@ -45,7 +60,11 @@ public class StatementKinds {
     } else if (id.equals(DummyStatement.ID)) {
       return DummyStatement.parse(descr);
     } else {
-      throw new Error();
+      String msg = "A statement description must be of the form "
+        + "<id> <description>"
+        + " with <id> in " + validIds.toString()
+        + " but the statement \"" + str + "\" does not have a valid <id>.";
+      throw new StatementKindParseException(msg);
     }
   }
 

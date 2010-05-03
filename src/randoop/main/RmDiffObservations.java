@@ -1,18 +1,13 @@
 package randoop.main;
 
-import java.io.IOException;
-import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import randoop.ExecutableSequence;
-import randoop.MultiVisitor;
-import randoop.RegressionCaptureVisitor;
-import randoop.Sequence;
-import randoop.util.Files;
-import randoop.util.ReflectionExecutor;
-import plume.Option;
 import plume.Options;
+import randoop.ExecutableSequence;
+import randoop.RegressionCaptureVisitor;
+import randoop.util.ReflectionExecutor;
 
 public class RmDiffObservations extends CommandHandler {
 
@@ -84,15 +79,10 @@ public class RmDiffObservations extends CommandHandler {
     int diffs = 0;
     RegressionCaptureVisitor rcv = new RegressionCaptureVisitor();
     List<ExecutableSequence> clean_seq = new ArrayList<ExecutableSequence>();
-    int test_no = 1;
-    for (ExecutableSequence es : seqs) {
+        for (ExecutableSequence es : seqs) {
       ExecutableSequence es2 = new ExecutableSequence (es.sequence);
       // System.out.printf ("Executing test %d%n", test_no++);
       es2.execute (rcv, false);
-      if (false && es2.hasNonExecutedStatements()) {
-        System.out.printf ("Removed sequence, non-executed statements%n");
-        continue;
-      }
       clean_seq.add (es2);
       diffs += es.compare_observations (es2, true,
                                         GenInputsAbstract.print_diff_obs);

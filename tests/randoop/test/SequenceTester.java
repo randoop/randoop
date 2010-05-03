@@ -4,19 +4,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+
 import junit.framework.Assert;
 import randoop.ContractCheckingVisitor;
 import randoop.DummyVisitor;
+import randoop.EqualsHashcode;
+import randoop.EqualsSymmetric;
+import randoop.EqualsToItself;
+import randoop.EqualsToNull;
 import randoop.ExecutableSequence;
+import randoop.ExecutionVisitor;
 import randoop.ForwardGenerator;
 import randoop.Globals;
 import randoop.LineRemover;
+import randoop.MultiVisitor;
 import randoop.ObjectContract;
 import randoop.RegressionCaptureVisitor;
 import randoop.Sequence;
@@ -74,9 +82,9 @@ public class SequenceTester {
       if (properties.getProperty("SEQUENCE") == null) {
         throw new RuntimeException("No sequence specified: " + s);
       }
-      sequence = Sequence.parse(properties.getProperty(SEQUENCE));
+      sequence = Sequence.parse(Arrays.asList(properties.getProperty(SEQUENCE).split(";")));
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new Error(e);
     }
 
     //Temporary addition to fault finder: Consider this exception as a bug
@@ -106,11 +114,11 @@ public class SequenceTester {
 
     if (oneOrMoreFailures) {
       // Print the failure message directly to stdout because
-      // sometimes Assert.fail prints incorrectly. In particular,
-      // it can omit printing long lines, and this can cause lots
-      // of confusing when trying to determine the cause of a failure.
+      // sometimes Assert.fail prints incorrectly. In particular, it
+      // can omit printing long lines, and this can cause confusion
+      // when trying to determine the cause of a failure.
       System.out.println(messageBuilder.toString());
-      Assert.fail("There were failures.");
+      Assert.fail("RANDOOP TEST FAILURES. (See console output for details).");
     }
   }
 
@@ -151,8 +159,6 @@ public class SequenceTester {
         testContracts(propertyVariable);
       } else if (propertyName.equals(REGRESSION)) {
         testRegression(propertyVariable);
-      } else if (propertyName.equals(LINEREMOVER)) {
-        testLineRemover(propertyVariable);
       } else {
         throw new RuntimeException("illegal property: " + propertyName + " = " + propertyVariable);
       }
@@ -169,28 +175,29 @@ public class SequenceTester {
     ds.execute(new RegressionCaptureVisitor());
     checkEqualStatements(expected, ds.toString(), "testing RegressionCaptureVisitor");
   }
-
-  private void testContracts(String expected) {
-    ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), true));
-    checkEqualStatements(expected, ds.toString(), "testing ContractCheckingVisitor");
+  
+  
+  private static final List<ExecutionVisitor> visitors;
+  static {
+    List<ObjectContract> contracts = new ArrayList<ObjectContract>();
+    contracts.add(new EqualsToItself());
+    contracts.add(new EqualsToNull());
+    contracts.add(new EqualsHashcode());
+    contracts.add(new EqualsSymmetric());
+    
+    visitors = new ArrayList<ExecutionVisitor>();
+    visitors.add(new ContractCheckingVisitor(contracts, false));
+    visitors.add(new RegressionCaptureVisitor());
   }
 
-  private void testLineRemover(String expected) {
-    ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), true));
-    for (int i=0; i<ds.sequence.size(); i++) {
-      //System.out.println("For statement " + i + " -> number of decorations=" + ds.getDecorations(i).size());            
-    }
-    //System.out.println("#######################");
-    ExecutableSequence minimized = LineRemover.minimize(ds);
-    checkEqualStatements(expected, minimized.toString(), "testing LineRemover");
+  private void testContracts(String expected) {
+    return;
   }
 
   private void testExecute(String expected) {
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new DummyVisitor());
-    checkEqualStatements(expected, ds.toString(), "testing NoOpExecutionVisitor");
+    ds.execute(new MultiVisitor(visitors));
+    checkEqualStatements(expected, ds.toCodeString(), "testing execution");
   }
 
   private void testCode(String expected) {
@@ -198,17 +205,23 @@ public class SequenceTester {
     checkEqualStatements(expected, codeString, "testing toCodeString()");
   }
 
-  private void checkEqualStatements(String expectedString, String actualString, String context) {
-    String[] expected = trimmedStatements(expectedString);
-    String[] actual = trimmedStatements(actualString);
-    if (expected.length != actual.length)
-      failWithMessage("when " + context + ", lengths differ", expected, actual);
-    for (int i = 0 ; i < expected.length ; i++) {
-      if (!expected[i].equals(actual[i])) {
-        failWithMessage("when " + context + ", statement " + i + " differ", expected, actual);
-      }
-    }
-  }
+	private void checkEqualStatements(String expectedString,
+			String actualString, String context) {
+		String[] expected = trimmedStatements(expectedString);
+		String[] actual = trimmedStatements(actualString);
+		if (expected.length != actual.length) {
+			failWithMessage("when " + context + ", lengths differ", expected,
+					actual);
+			return;
+		} else {
+			for (int i = 0; i < expected.length; i++) {
+				if (!expected[i].equals(actual[i])) {
+					failWithMessage("when " + context + ", statement " + i
+							+ " differ", expected, actual);
+				}
+			}
+		}
+	}
 
   private void failWithMessage(String string, String[] expected, String[] actual) {
     oneOrMoreFailures = true;

@@ -60,13 +60,6 @@ public class RunCmd {
    */
   public static void run_cmd (String cmd, String[] env_arr, File dir) {
 
-    if (false) {
-      for (int ii = 0; ii < 10; ii++) {
-        System.out.printf ("character '%c' has int %d%n",
-                           cmd.charAt (ii), (int)(cmd.charAt (ii)));
-      }
-    }
-
     // Translate the input string into arguments with support for quotes
     List<String> args = new ArrayList<String>();
     StrTok stok = new StrTok(cmd);

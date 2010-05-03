@@ -14,6 +14,7 @@ bin/randoop/test/resources/sequence_tests_script.txt
 bin/randoop/test/resources/universal_driver.txt
 TAGS
 
+systemtests/randoop-contracts-test-scratch
 systemtests/jc-covinst
 systemtests/jc.classlist.txt
 systemtests/jc.covinstclasslist.txt
@@ -46,6 +47,8 @@ randoop-contracts-scratch/
 randoop-log.txt
 randoop-scratch/
 test.dftargets.txt
+
+release/
 
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.
