@@ -9,8 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Computes coverage for classes instrumented using
- * the coverage instrumenter.
+ *
+ * This class reads in a file with coverage data from a run, and
+ * computes coverage information for classes that were instrumented
+ * using the coverage instrumenter.
  * 
  * Reads a text file. Parses any lines that look like
  * 
@@ -18,12 +20,20 @@ import java.util.Set;
  *   
  *   Where
  *   
- *    MyClass<?> is the name of a class
+ *    MyClass is the name of a class
  *    c is the number of branches covered in MyClass
  *    t is the total number of branches in MyClass
  *    n is a unique id for a covered branch, e.g. "26T"
  *    
  * Outputs the percent branch coverage computed from the lines.
+ *
+ * The cov package implements a basic branch coverage instrumenter
+ * that we use for the branch-directed test generation research.
+ *
+ * This tool is prototype-quality, not for production use. In
+ * particular, it is missing a number of features including tracking
+ * coverage for switch statements, and lack of support for
+ * generics.
  */
 public class CountCoverage {
 
