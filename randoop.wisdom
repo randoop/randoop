@@ -6,9 +6,8 @@ Randoop lives in google code: http://code.google.com/p/randoop/
 The wiki section of Randoop's web page contains a tutorial.
 
 %
-% Randoop compilation instructions
+% How to compile and test Randoop
 %
-
 Randoop requires Java 5.0 or greater. To compile and run unit and system tests:
 1. Modify the file Makefile.user (under the same directory as this file) to reflect your environment.
 2. Run "make all".
@@ -16,6 +15,14 @@ Randoop requires Java 5.0 or greater. To compile and run unit and system tests:
 Other useful make commands are available. Run "make" (with no arguments) to see a list.
 
 Before committing, make sure you run `make clean' followed by `make all', to run all the tests.
+
+%
+% Making a new release
+%
+To make a new release of Randoop:
+1. Increase version number (variable RANDOOP_VERSION in src/randoop/Globals.java).
+2. Compile and test: run "make clean" followed by "make all".
+3. Upload the zip and jar files under release/ directory to google code.
 
 %
 % Randoop command line options
