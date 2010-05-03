@@ -22,8 +22,17 @@ import randoop.util.Reflection;
 import plume.Triple;
 
 /**
- * Contains utility methods to access the coverage information in
- * classes that were instrumented using the coverage instrumenter.
+ * This class contains utility methods to access the coverage
+ * information in classes that were instrumented using the coverage
+ * instrumenter.
+ *
+ * The cov package implements a basic branch coverage instrumenter
+ * that we use for the branch-directed test generation research.
+ *
+ * This tool is prototype-quality, not for production use. In
+ * particular, it is missing a number of features including tracking
+ * coverage for switch statements, and lack of support for
+ * generics.
  */
 public class Coverage {
 

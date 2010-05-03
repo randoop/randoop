@@ -4,6 +4,14 @@ import java.util.List;
 
 /**
  * A class used to test the coverage instrumenter.
+ *
+ * The cov package implements a basic branch coverage instrumenter
+ * that we use for the branch-directed test generation research.
+ *
+ * This tool is prototype-quality, not for production use. In
+ * particular, it is missing a number of features including tracking
+ * coverage for switch statements, and lack of support for
+ * generics.
  */
 //TODO: move to tests directory.
 //TODO: add inner, inner static, anon class.
