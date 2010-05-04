@@ -18,7 +18,7 @@ default:
 	@echo "results        display results of tests."
 	@echo "tests          run tests."
 	@echo "update-goals   update test goal files."
-	@echo "zip            Create a distribution zip file (randoop.zip)"
+	@echo "distribution-files  create distribution zip and jar files."
 
 # Put user-specific changes in your own Makefile.user.
 # Make will silently continue if that file does not exist.
@@ -42,7 +42,7 @@ RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
 RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
 RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
 
-all: clean build tests results release-files
+all: clean build tests results 
 
 # Remove Randoop classes.
 clean:
@@ -61,7 +61,7 @@ bin: $(RANDOOP_FILES)
 	touch bin
 
 # Run all tests.
-tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen  results
+tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files results
 
 # Runs pure Randoop-related tests.
 randoop-tests: unit randoop1 randoop2 randoop-contracts
@@ -411,11 +411,11 @@ summary:
 
 
 ############################################################
-# Targets for updating Randoop's release.
+# Targets for updating Randoop's distribution.
 
 # Creates the zip file for other people to download.
-release-files:
-	rm -rf randoop release
+distribution-files:
+	rm -rf randoop dist
 	mkdir randoop
 	mkdir randoop/bin
 # Copy sources and required libraries.
@@ -429,7 +429,6 @@ release-files:
 	rm randoop/src/randoop/main/GenBranchDir.java
 	rm randoop/src/randoop/main/Universal*.java
 	rm randoop/src/cov/Instrument.java
-	rm randoop/src/cov/TestClass.java
 	rm randoop/src/cov/FilesUtil.java
 	rm randoop/src/cov/CountCoverage.java
 	rm randoop/src/cov/ASTUtil.java
@@ -456,13 +455,13 @@ release-files:
 	rm -r randoop/tmp
 # Sanity test jar: invoking randoop terminates normally.
 	java -cp randoop/randoop.jar randoop.main.Main 
-# Create release zip file.
+# Create dist zip file.
 	rm -f randoop.zip
 	zip -r randoop.zip randoop
-# Put zip and jar in "release" directory.
-	mkdir release
-	mv randoop/randoop.jar release
-	mv randoop.zip release
+# Put zip and jar in "dist" directory.
+	mkdir dist
+	mv randoop/randoop.jar dist
+	mv randoop.zip dist
 # Remove scratch directory.
 	rm -r randoop
 

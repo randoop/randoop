@@ -49,6 +49,7 @@ randoop-scratch/
 test.dftargets.txt
 
 release/
+dist/
 
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.
