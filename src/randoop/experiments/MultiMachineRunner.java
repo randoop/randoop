@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import plume.Option;
@@ -15,6 +14,8 @@ import plume.Options.ArgException;
 
 
 /**
+ * MIT-specific! Will probably not work outside CSAIL.
+ * 
  * A program that issues a list of make targets, possibly across
  * multiple machines (via ssh).
  */
@@ -294,8 +295,7 @@ public class MultiMachineRunner {
                   PrintStream str = new PrintStream(out);
                   command.add("cat");
                   command.add(m.tmp.getAbsolutePath());
-                  int exitVariable =
-                    Command.exec(command.toArray(new String[0]), str, str,  "", false);
+                  Command.exec(command.toArray(new String[0]), str, str,  "", false);
                   System.out.println(out.toString());
                 } catch (Exception e) {
                   System.out.print("EXCEPTION " + e.getClass() +

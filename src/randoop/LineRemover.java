@@ -1,7 +1,9 @@
 package randoop;
 
-import java.util.List;
 
+
+// NOT WORKING. This used to be a utility class that tried to
+// reduce the size of a failing tests to aid debugging.
 public class LineRemover {
 
   //Statistics collected across all calls to minimize().
@@ -35,40 +37,8 @@ public class LineRemover {
   private static ExecutableSequence replaceRemovedWithDummies(ExecutableSequence seq) {
     times_minimize_was_called++;
     original_sequence_size_accum += seq.sequence.size();
-    for (int nextStatementToAttempt = seq.sequence.size() - 1; nextStatementToAttempt >= 0; nextStatementToAttempt--) {
 
-      if (seq.hasObservation(nextStatementToAttempt, ExpressionEqValue.class)) // XXX
-        continue;
-
-      //attempt to splice out current statement from the sequence
-      if (!seq.canRemoveStatement(nextStatementToAttempt))
-        continue;
-
-      StatementKind oldStmt = seq.sequence.getStatementKind(nextStatementToAttempt);
-      List<Variable> oldInputs = seq.sequence.getInputs(nextStatementToAttempt);
-
-      try {
-        execute(seq);
-      } catch (ReplayFailureException e) {
-        return null;
-      }
-      //create new sequence with the specified statement removed
-      if (true) throw new RuntimeException("TODO update");//seq.removeStatement(nextStatementToAttempt);
-
-      try {
-        execute(seq);
-      } catch (ReplayFailureException e) {
-        seq.replaceStatement(oldStmt, oldInputs, nextStatementToAttempt);
-        //NOTE: Reexecuting to get back old exception in decoration
-        try {
-          execute(seq);
-        } catch (ReplayFailureException e1) {
-          return null;
-        }
-      }
-    }
-    minimized_sequence_size_accum += seq.sequence.size();
-    return seq;
+    throw new RuntimeException("Not implemted.");
   }
   
   private static void execute(ExecutableSequence s) throws ReplayFailureException {

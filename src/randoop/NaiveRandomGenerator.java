@@ -398,45 +398,7 @@ public class NaiveRandomGenerator extends AbstractGenerator {
     inactiveStatements.mark();
   }
 
-    Set<StatementKind> errors = new LinkedHashSet<StatementKind>();
-
-  private ExecutableSequence executeWhole() {
-
-    if (Log.isLoggingOn()) Log.logLine("Will execute:\n" + sequence);
-
-    ExecutableSequence eseq = new ExecutableSequence(sequence);
-    eseq.execute(executionVisitor);
-
-    int firstNonExec = 0;
-    for (int i = 0 ; i < eseq.sequence.size() ; i++) {
-      if (eseq.getResult(i) instanceof NotExecuted) {
-        firstNonExec = i;
-        break;
-      }
-    }
-
-    if (firstNonExec > 40 ) {
-       System.out.println(">>>");
-       System.out.println(eseq.toDotString());
-    }
-
-    int failureIdx = eseq.getObservationIndex(ContractViolation.class);
-
-    if (failureIdx > 0) {
-      Sequence small = DependencyUtils.predecessorSequence(eseq.sequence, failureIdx);
-
-      ExecutableSequence esmall = new ExecutableSequence(small);
-      esmall.execute(executionVisitor);
-
-      if (esmall.hasObservation(ContractViolation.class)) {
-        System.out.println("@@@YES " + failureIdx + "," + small.size());
-      } else {
-        System.out.println("@@@NO");
-      }
-    }
-
-    return eseq;
-  }
+  Set<StatementKind> errors = new LinkedHashSet<StatementKind>();
 
   private boolean extendRandomly() {
 

@@ -7,15 +7,12 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import plume.Option;
 import plume.Options;
 import plume.Options.ArgException;
 
 public class Repro100 {
 
   private static ExperimentBase exp;
-
-  private static String expName;
 
   private static PrintStream err;
 

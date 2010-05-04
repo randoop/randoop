@@ -5,15 +5,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import randoop.util.Files;
 import plume.Option;
 import plume.Options;
 import plume.Options.ArgException;
 
 /**
+ * 
+ * MIT-specific! Will probably not work outside CSAIL.
+ * 
  * Calls Randoop, then determines frontier branches and creates input
  * files for DataFlow (one file per frontier branch).
  */
