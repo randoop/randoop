@@ -150,8 +150,37 @@ public class DataFlow {
         Map<String,String> env
         = new LinkedHashMap<String, String>(System.getenv());
         String cp = System.getProperty ("java.class.path");
+        String javaHome = System.getProperty("java.home");
+        if (javaHome == null) {
+          System.out.println("Error: java.home system property not found");
+          System.out.println("You may be able to fix this problem by setting the JAVA_HOME environment variable to an appropriate value");
+          System.out.println("Exiting with error.");
+          System.exit(1);
+        }
+        
+        // If last directory in java.home is "jre" then tools.jar is in ../lib/tools.jar.
+        // Otherwise it is in "lib/toosl.jar.
+        // See http://java.sun.com/j2se/1.5.0/docs/tooldocs/solaris/jdkfiles.html
+        File jdkHomeDir = new File(javaHome);
+        File libDir = null;
+        if (jdkHomeDir.getName().equals("jre")) {
+          libDir = new File(new File(javaHome).getParentFile(), "lib");
+        } else {
+          libDir = new File(new File(javaHome), "lib");
+        }
+        assert libDir != null;
+        File toolsJar = new File(libDir, "tools.jar");
+                
+        if (!toolsJar.exists()) {
+           System.out.println("Error: Expected to find required library tools.jar under JAVA_HOME/lib directory: ");
+           System.out.println("  JAVA_HOME (i.e. \"java.home\" system property) was \"" + javaHome + "\"."); 
+           System.out.println("Ensure JAVA_HOME is properly set.");
+           System.out.println("Exiting with error.");
+           System.exit(1);
+        }
+        
         // Add scratch dir path to classpath.
-        cp = scratchDir.getAbsolutePath() + ":" + cp;
+        cp = scratchDir.getAbsolutePath() + ":" + cp + ":" + toolsJar.getAbsolutePath();
         env.put ("CLASSPATH", cp);
         String[] env_array = new String[env.size()];
         int env_index = 0;
