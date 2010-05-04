@@ -13,8 +13,7 @@ import java.util.List;
  * coverage for switch statements, and lack of support for
  * generics.
  */
-//TODO: move to tests directory.
-//TODO: add inner, inner static, anon class.
+//TODO: test inner, inner static, anon class.
 public class TestClass {
 
   public class InnerStatic {

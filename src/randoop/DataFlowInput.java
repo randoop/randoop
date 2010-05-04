@@ -3,21 +3,15 @@ package randoop;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import plume.Pair;
 import plume.UtilMDE;
 import cov.Branch;
-import cov.Coverage;
-import cov.CoverageAtom;
 
 /**
  * A collection of frontier branches and sequences that reach them.
@@ -85,7 +79,6 @@ public class DataFlowInput implements Serializable {
   }
     
   
-  @SuppressWarnings("deprecation") // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
   private static Pair<Branch, Sequence> parseRecord(List<String> lines) {
     try {
       assert lines.get(0).equals("BRANCH");

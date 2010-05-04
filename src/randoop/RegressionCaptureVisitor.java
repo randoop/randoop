@@ -157,12 +157,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         }
 
         Object o = e.getRuntimeValue();
-        if (false && o != null)
-          System.out.printf ("var %s - %s, runtime object: %s - %s\n",
-                             s.sequence.getVariable(i),
-                             s.sequence.getVariable(i).getType(),
-                             o, o.getClass());
-
+    
         List<Variable> vars = new ArrayList<Variable>();
         vars.add(s.sequence.getVariable(i));
 
@@ -228,14 +223,6 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
         ExceptionalExecution e = (ExceptionalExecution)s.getResult(i);
         s.addObservation(i, new StatementThrowsException(e.getException()));
-
-        if (false) {
-          for (int j = i + 1 ; j < s.sequence.size() ; j++) {
-            assert s.getResult(j) instanceof NotExecuted
-              : "i=" + i + ",sequence=" + s.sequence.toString();
-          }
-          return true;
-        }
 
       } else {
         assert s.getResult(i) instanceof NotExecuted;

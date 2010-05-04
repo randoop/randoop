@@ -38,9 +38,7 @@ public class RandoopAllClasses {
 
   private static ExperimentBase exp;
 
-  private static String expName;
-
-  private static PrintStream err;
+    private static PrintStream err;
 
   public static void main(String[] args2) throws IOException {
 

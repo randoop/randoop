@@ -4,15 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import randoop.util.CollectionsExt;
-
 import plume.UtilMDE;
+import randoop.util.CollectionsExt;
 
 public class Randoop100Stats implements StatsComputer {
 
@@ -95,27 +93,27 @@ public class Randoop100Stats implements StatsComputer {
   public static void main(String[] args) throws IOException {
 
     CombinedStats omjc_data = CombinedStats.readFromMFile("matlab/omjc_data.m");
-    CombinedStats fcjc_data = CombinedStats.readFromMFile("matlab/fcjc_data.m");
+    //CombinedStats fcjc_data = CombinedStats.readFromMFile("matlab/fcjc_data.m");
     CombinedStats fdjc_data = CombinedStats.readFromMFile("matlab/fdjc_data.m");
 
     CombinedStats omcc_data = CombinedStats.readFromMFile("matlab/omcc_data.m");
-    CombinedStats fccc_data = CombinedStats.readFromMFile("matlab/fccc_data.m");
+    //CombinedStats fccc_data = CombinedStats.readFromMFile("matlab/fccc_data.m");
     CombinedStats fdcc_data = CombinedStats.readFromMFile("matlab/fdcc_data.m");
 
     CombinedStats ompr_data = CombinedStats.readFromMFile("matlab/ompr_data.m");
-    CombinedStats fcpr_data = CombinedStats.readFromMFile("matlab/fcpr_data.m");
+    //CombinedStats fcpr_data = CombinedStats.readFromMFile("matlab/fcpr_data.m");
     CombinedStats fdpr_data = CombinedStats.readFromMFile("matlab/fdpr_data.m");
 
     CombinedStats omma_data = CombinedStats.readFromMFile("matlab/omma_data.m");
-    CombinedStats fcma_data = CombinedStats.readFromMFile("matlab/fcma_data.m");
+    //CombinedStats fcma_data = CombinedStats.readFromMFile("matlab/fcma_data.m");
     CombinedStats fdma_data = CombinedStats.readFromMFile("matlab/fdma_data.m");
 
     CombinedStats omjf_data = CombinedStats.readFromMFile("matlab/omjf_data.m");
-    CombinedStats fcjf_data = CombinedStats.readFromMFile("matlab/fcjf_data.m");
+    //CombinedStats fcjf_data = CombinedStats.readFromMFile("matlab/fcjf_data.m");
     CombinedStats fdjf_data = CombinedStats.readFromMFile("matlab/fdjf_data.m");
 
     CombinedStats omtr_data = CombinedStats.readFromMFile("matlab/omtr_data.m");
-    CombinedStats fctr_data = CombinedStats.readFromMFile("matlab/fctr_data.m");
+    //CombinedStats fctr_data = CombinedStats.readFromMFile("matlab/fctr_data.m");
     CombinedStats fdtr_data = CombinedStats.readFromMFile("matlab/fdtr_data.m");
 
 

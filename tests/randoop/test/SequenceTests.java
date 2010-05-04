@@ -158,6 +158,10 @@ public class SequenceTests extends TestCase {
     for (int i = 0 ; i < actual.size() ; i++) {
       b.append(i + ": " + actual.get(i) + Util.newLine);
     }
+    // For debugging.
+    //     for (int i = 0 ; i < actual.size() ; i++)
+    //       System.out.println(actual.get(i));
+    //     System.out.println();
     return b.toString();
   }
 

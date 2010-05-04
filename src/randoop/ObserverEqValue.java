@@ -2,8 +2,6 @@ package randoop;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.lang.reflect.Method;
 
 import randoop.util.PrimitiveTypes;
