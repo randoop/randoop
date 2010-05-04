@@ -1,16 +1,3 @@
-# INSTRUCTIONS:
-#
-# This file contains developer-specific variables used to compile Randoop.
-# Substitute the appropriate values for your own environment
-
-# 1. The location of your JDK.
-#    We use this variable to determine the location of tools.jar, which
-#    we expect to find in $(JAVA_HOME)/lib/tools.jar.
-
-JAVA_HOME ?= /usr/lib/jvm/java-6-sun-1.6.0.12
-
-############################################################
-### YOU PROBABLY DON'T NEED TO MODIFY STUFF BELOW THIS LINE.                                                                                                                                       
 
 # Make will silently continue if file does not exist.
 -include ../Makefile.user
@@ -30,6 +17,6 @@ endif
 # Convert to a standard classpath
 empty:=
 space:= $(empty) $(empty)
-export CLASSPATH :=     $(subst $(space),:,$(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS)):$(JAVA_HOME)/lib/tools.jar
+export CLASSPATH :=     $(subst $(space),:,$(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS))
 
 XMXHEAP := -Xmx1650m 
