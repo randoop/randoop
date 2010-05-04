@@ -1,4 +1,11 @@
 
+This file contains information geared for Randoop developers.
+
+For a tutorial and more information on using Randoop, also see the
+Randoop wiki (http://code.google.com/p/randoop/w/).
+
+
+
 TABLE OF CONTENTS
 =================
 
