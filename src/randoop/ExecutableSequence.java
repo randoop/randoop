@@ -1,18 +1,18 @@
 package randoop;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.io.*;
 
 import randoop.Sequence.RelativeNegativeIndex;
-import randoop.util.ArrayListSimpleList;
+import randoop.main.GenInputsAbstract;
 import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
-import randoop.main.GenInputsAbstract;
 
 /**
  * An ExecutableSequence adds two functionalities to a Sequence:
@@ -276,15 +276,6 @@ public class ExecutableSequence implements Serializable {
       }
 
       if (executionResults.get(i) instanceof ExceptionalExecution) {
-        // Debug print generated exceptions
-        if (false) {
-          ExceptionalExecution ee
-            = (ExceptionalExecution) executionResults.get(i);
-          Throwable t = ee.getException();
-          System.out.printf ("Exception %s from stateent %s%n", t,
-                             sequence.getStatementKind(i));
-          t.printStackTrace();
-        }
         if (stop_on_exception)
           break;
       }

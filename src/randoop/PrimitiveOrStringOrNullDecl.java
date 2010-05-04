@@ -5,16 +5,15 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
+import plume.UtilMDE;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
-import plume.UtilMDE;
 
 /**
- * Represents a primitive value. This type of statement
+ * Represents a primitive value (including Strings). This type of statement
  * doesn't actually transform any state, but it works out
  * nicely to represent primitives as statements.
  *

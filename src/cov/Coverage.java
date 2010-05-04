@@ -370,7 +370,6 @@ public class Coverage {
 
 
 
-  @SuppressWarnings("unchecked")
   public static String getSourceFileName(Class<?> cls) {
     if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
     if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());

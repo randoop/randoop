@@ -46,14 +46,6 @@ public class NormalExecution extends ExecutionOutcome {
     return b.toString();
   }
 
-  private static String toStringSafe(Object o) {
-    try {
-      return o.toString();
-    } catch (Throwable e) {
-      return "<toString-threw-exception>";
-    }
-  }
-
   public long getExecutionTime() {
     return executionTime;
   }
