@@ -16,26 +16,32 @@ TABLE OF CONTENTS
 1.1 Prerequites
 ---------------
 
-Randoop requires Java 5.0 or greater. To run system tests, you must be
-in an Unix-like environment (Linux, Mac OS X, etc.).
+Randoop requires Java 5.0 or greater.
+
+To run system tests, you must be in an Unix-like environment (Linux,
+Mac OS X, etc.).
 
 1.2 Compiling Randoop
 ---------------------
 
-From a command prompt, type "make build" under Randoop's home
-directory (the directory containing this file). That's it!
+Under Unix:
 
-In Eclipse, Randoop compiles out of the box.
+- From a command prompt, type "make build" under Randoop's home
+  directory (the directory containing this file).
+- If you want to rebuild from scratch, type "make clean" first.
+- The generated classes are placed in bin/ directory.
+
+Under Eclipse:
+
+- If you are in Eclipse, Randoop compiles out of the box.
+- The generated classes are also placed in bin/ directory.
 
 1.3 Running unit and system tests
 ---------------------------------
 
 From a command prompt, type "make tests" under Randoop's home directory.
 
-Other useful testing commands:
-
-all            do everything (build and run test).
-clean          build from scratch (removes build-related auto-generated files).
+To do everything (build _and_ run all tests), type "make all".
 
 1.4 Making a new distribution
 -----------------------------
