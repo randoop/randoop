@@ -400,8 +400,8 @@ public class Instrument extends ASTVisitor {
 
     code.append("public static int[] " + Constants.trueBranches + " = new int[" + totBranches + "];");
     code.append("public static int[] " + Constants.falseBranches + " = new int[" + totBranches + "];");
-    code.append("public static java.util.Map " + Constants.methodIdToBranches +  " = new java.util.LinkedHashMap();");
-    code.append("public static java.util.Map " + Constants.methodLineSpansField + " = new java.util.LinkedHashMap();");
+    code.append("public static java.util.Map<String,int[]> " + Constants.methodIdToBranches +  " = new java.util.LinkedHashMap<String,int[]>();");
+    code.append("public static java.util.Map<String,int[]> " + Constants.methodLineSpansField + " = new java.util.LinkedHashMap<String,int[]>();");
     code.append("static {  ");
     for (Map.Entry<String,Set<Integer>> entry : methodIndices.entrySet()) {
       String methodSig = entry.getKey();
