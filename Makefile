@@ -460,7 +460,7 @@ distribution-files:
 	java -cp randoop/randoop.jar randoop.main.Main 
 # Create dist zip file.
 	rm -f randoop.zip
-	rm -rf `find -name '*~'`
+	rm -rf `find randoop -name '*~'`
 	zip -r randoop.zip randoop
 # Put zip and jar in "dist" directory.
 	mkdir dist
