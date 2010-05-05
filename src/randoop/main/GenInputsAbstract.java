@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import plume.Option;
 import plume.Options;
+import plume.Unpublicized;
 import randoop.SequenceCollection;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
@@ -19,148 +20,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public final static String fail = "fail";
   public final static String pass = "pass";
 
-  /* @Invisible*/
-  @Option("Has to do with experiments...")
-  public static boolean size_equalizer = false;
-
-
-  /* @Invisible*/
-  @Option("Write experiment results file.")
-  public static FileWriter expfile = null;
-
-  /* @Invisible*/
-  @Option("Works only with naive offline. ")
-  public static Integer filter_short_dep = null;
-
-  @Option("specifies initialization routine (class.method)")
-  public static String init_routine = null;
-
-  @Option("specifies regex of classes that must be in any regression tests")
-  public static Pattern test_classes = null;
-
-  @Option("File containing observer functions")
-  public static File observers = null;
-
-  @Option("Use only public classes/methods")
-  public static boolean public_only = true;
-
-  @Option("Install the given runtime visitor.")
-  public static List<String> visitor = new ArrayList<String>();
-
-  @Option("Capture all output to stdout and stderr")
-  public static boolean capture_output = false;
-
-  @Option("Remove tests that are subsumed in other tests")
-  public static boolean remove_subsequences = false;
-
-  @Option("Run each test twice and compare the observations")
-  public static boolean compare_observations = false;
-
-  @Option("Create clean observations for a serialized sequence")
-  public static File clean_observations = null;
-
-  @Option("Print any observations that are different in the clean run")
-  public static boolean print_diff_obs = false;
-
-  @Option("Specify agent command for recursive JVM calls")
-  public static String agent = null;
-
-  @Option("specify the memory size (in megabytes) for recursive JVM calls")
-  public static int mem_megabytes = 1000;
-
-  // We do this rather than using java -D so that we can easily pass these
-  // to other JVMs
-  @Option("-D Specify system properties to be set (similar to java -Dx=y)")
-  public static List<String> system_props = new ArrayList<String>();
-
-  /* @Invisible*/
-  @Option("Output sequences that do not complete execution.")
-  public static boolean output_nonexec = false;
-
-  /* @Invisible*/
-  @Option("Output only contract-violating sequences.")
-  public static String output_tests = "all";
-
-  /* @Invisible*/
-  @Option("Don't generate anything, just count the state space.")
-  public static Integer calc_sequence_space = null;
-
-  /* @Invisible*/
-  @Option("Don't generate anything, just count the state space.")
-  public static String output_sequence_space = null;
-
-  /* @Invisible*/
-  @Option("Output coverage plot (percent cov. vs. secs.) to the given file.")
-  public static String output_coverage_plot = null;
-
-  /* @Invisible*/
-  @Option("Use object cache.")
-  public static boolean use_object_cache = false;
-
-  /* @Invisible*/
-  @Option("Aliasing factor.")
-  public static Double alias_ratio = null;
-
-  /* @Invisible*/
-  @Option("Call checkRep methods when executing (for Randoop development).")
-  public static boolean check_reps = false;
-
-  /* @Invisible*/
-  @Option("Use component-based generation.")
-  public static boolean component_based = true;
-
-  /* @Invisible*/
-  @Option("Output witness sequences for coverage branches.")
-  public static boolean output_cov_witnesses = false;
-
-  /* @Invisible*/
-  @Option("Check java.lang.Object contracts, e.g. equals(Object) is reflexive, hashCode() throws no exceptions, etc.")
-  public static boolean check_object_contracts = true;
-
-  /* @Invisible*/
-  @Option("Whenever an object is called for, use an integer.")
-  public static boolean always_use_ints_as_objects = false;
-
-
-  /* @Invisible*/
-  @Option("Create helper sequences.")
-  public static boolean helpers = false;
-
-  /* @Invisible*/
-  @Option("Name of a file containing a serialized list of sequences.")
-  public static List<String> componentfile_ser = new ArrayList<String>();
-
-  /* @Invisible*/
-  @Option("Name of a file containing a textual list of sequences.")
-  public static List<String> componentfile_txt = new ArrayList<String>();
-
-  // Set in main method. Component sequences to help bdgen.
-  public static SequenceCollection components;
-
-  /* @Invisible*/
-  @Option("Print to the given file source files annotated with coverage information.")
-  public static String covreport = null;
-
-  /* @Invisible*/
-  @Option("Output components (serialized, GZIPPED) to the given file. Suggestion: use a .gz suffix in file name.")
-  public static String output_components = null;
-
-  /* @Invisible*/
-  @Option("Output covered branches to the given text file.")
-  public static String output_branches = null;
-
-  /* @Invisible*/
-  @Option("Output branch->witness-sequences map.")
-  public static String output_covmap = null;
-
-  /* @Invisible*/
-  @Option("Output a SequenceGenerationStats object to the given file.")
-  public static String output_stats = null;
-
-  /* @Invisible*/
-  @Option("The name of a file containing the list of coverage-instrumented classes.")
-  public static String coverage_instrumented_classes = null;
-
   @Option("Specify the fully-qualified name of a class under test.")
   public static List<String> testclass = new ArrayList<String>();
 
@@ -168,9 +27,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
       + "class is specified by its fully qualified name on a separate line.")
       public static String classlist = null;
 
-  @Option("Specify the name of a file that contains a list of methods under test. Each"
+  @Option("Specify the name of a file that contains a list of methods under test. Each "
       + "method is specified on a separate line.")
       public static String methodlist = null;
+  
+  @Option("Tells Randoop what kinds of tests to output. Use \"" + fail + "\" to output only test that fail, \"" + pass + "\" to output only tests that pass (regressions), and \"" + all + "\" to output both kinds.")
+  public static String output_tests = "all";
 
   @Option("Used to determine when to stop test generation. Generation stops when " +
       "either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached. " +
@@ -211,65 +73,207 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use null with the given frequency. [TODO explain]")
   public static Double null_ratio = null;
 
-  /* @Invisible*/
+  @Unpublicized
+  @Option("Has to do with experiments...")
+  public static boolean size_equalizer = false;
+  
+  @Unpublicized
+  @Option("Write experiment results file.")
+  public static FileWriter expfile = null;
+
+  @Unpublicized
+  @Option("Works only with naive offline. ")
+  public static Integer filter_short_dep = null;
+
+  @Option("specifies initialization routine (class.method)")
+  public static String init_routine = null;
+
+  @Unpublicized
+  @Option("specifies regex of classes that must be in any regression tests")
+  public static Pattern test_classes = null;
+
+  @Unpublicized
+  @Option("File containing observer functions")
+  public static File observers = null;
+
+  @Unpublicized  
+  @Option("Use only public classes/methods")
+  public static boolean public_only = true;
+
+  @Unpublicized  
+  @Option("Install the given runtime visitor.")
+  public static List<String> visitor = new ArrayList<String>();
+
+  @Unpublicized  
+  @Option("Capture all output to stdout and stderr")
+  public static boolean capture_output = false;
+
+  @Unpublicized  
+  @Option("Remove tests that are subsumed in other tests")
+  public static boolean remove_subsequences = true;
+
+  @Unpublicized  
+  @Option("Run each test twice and compare the observations")
+  public static boolean compare_observations = false;
+
+  @Unpublicized  
+  @Option("Create clean observations for a serialized sequence")
+  public static File clean_observations = null;
+
+  @Unpublicized  
+  @Option("Print any observations that are different in the clean run")
+  public static boolean print_diff_obs = false;
+
+  @Unpublicized  
+  @Option("Specify agent command for recursive JVM calls")
+  public static String agent = null;
+
+  @Unpublicized  
+  @Option("specify the memory size (in megabytes) for recursive JVM calls")
+  public static int mem_megabytes = 1000;
+
+  // We do this rather than using java -D so that we can easily pass these
+  // to other JVMs
+  @Unpublicized  
+  @Option("-D Specify system properties to be set (similar to java -Dx=y)")
+  public static List<String> system_props = new ArrayList<String>();
+
+  @Unpublicized
+  @Option("Output sequences that do not complete execution.")
+  public static boolean output_nonexec = false;
+
+  @Unpublicized
+  @Option("Output coverage plot (percent cov. vs. secs.) to the given file.")
+  public static String output_coverage_plot = null;
+
+  @Unpublicized
+  @Option("Use object cache.")
+  public static boolean use_object_cache = false;
+
+  @Unpublicized
+  @Option("Aliasing factor.")
+  public static Double alias_ratio = null;
+
+  @Unpublicized
+  @Option("Call checkRep methods when executing (for Randoop development).")
+  public static boolean check_reps = false;
+
+  @Unpublicized
+  @Option("Use component-based generation.")
+  public static boolean component_based = true;
+
+  @Unpublicized
+  @Option("Output witness sequences for coverage branches.")
+  public static boolean output_cov_witnesses = false;
+
+  @Unpublicized
+  @Option("Check java.lang.Object contracts, e.g. equals(Object) is reflexive, hashCode() throws no exceptions, etc.")
+  public static boolean check_object_contracts = true;
+
+  @Unpublicized
+  @Option("Whenever an object is called for, use an integer.")
+  public static boolean always_use_ints_as_objects = false;
+
+  @Unpublicized
+  @Option("Create helper sequences.")
+  public static boolean helpers = false;
+
+  @Unpublicized
+  @Option("Name of a file containing a serialized list of sequences.")
+  public static List<String> componentfile_ser = new ArrayList<String>();
+
+  @Unpublicized
+  @Option("Name of a file containing a textual list of sequences.")
+  public static List<String> componentfile_txt = new ArrayList<String>();
+
+  // Set in main method. Component sequences to help bdgen.
+  public static SequenceCollection components;
+
+  @Unpublicized
+  @Option("Print to the given file source files annotated with coverage information.")
+  public static String covreport = null;
+
+  @Unpublicized
+  @Option("Output components (serialized, GZIPPED) to the given file. Suggestion: use a .gz suffix in file name.")
+  public static String output_components = null;
+
+  @Unpublicized
+  @Option("Output covered branches to the given text file.")
+  public static String output_branches = null;
+
+  @Unpublicized
+  @Option("Output branch->witness-sequences map.")
+  public static String output_covmap = null;
+
+  @Unpublicized
+  @Option("Output a SequenceGenerationStats object to the given file.")
+  public static String output_stats = null;
+
+  @Unpublicized
+  @Option("The name of a file containing the list of coverage-instrumented classes.")
+  public static String coverage_instrumented_classes = null;
+ 
+  @Unpublicized
   @Option("Display progress every <int> seconds.")
   public static int progressinterval = 1;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Do not display progress.")
   public static boolean noprogressdisplay = false;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Minimize testclasses cases.")
   public static boolean minimize = true;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Create a file containing experiment results.")
   public static String experiment = null;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Do not do online redundancy checks.")
   public static boolean noredundancychecks = false;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Create sequences but never execute them.")
   public static boolean dontexecute = false;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Clear the component set when it reaches <int> inputs.")
   public static int clear = Integer.MAX_VALUE;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Do not do online illegal.")
   public static boolean offline = false;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Do not exercise methods that match regular expresssion <string>")
   public static Pattern omitmethods = null;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Generate inputs but do not check any contracts")
   public static boolean dont_check_contracts = false;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("TODO document.")
   public static boolean weighted_inputs = false;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("TODO document.")
   public static boolean no_args_statement_heuristic = true;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Only generate inputs, do not test for errors.")
   public static boolean dontcheckcontracts;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Use heuristic that may randomly repeat a method call several times.")
   public static boolean repeat_heuristic = false;
 
+  @Unpublicized
   @Option("Run Randoop but do not create JUnit tests (used in research experiments).")
   public static boolean dont_output_tests = false;
 
+  @Unpublicized
   @Option("Silently ignore any class names specified by the user that cannot be found by Randoop at runtime.")
   public static boolean silently_ignore_bad_class_names = false;
 
@@ -296,11 +300,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
       b.append(".");
       throw new RuntimeException(b.toString());
     }
-
-    if (calc_sequence_space != null) {
-
-    }
-
+    
     if (use_object_cache) {
       if (!component_based) {
         throw new RuntimeException("Options use-object-cache requires option component-based.");
