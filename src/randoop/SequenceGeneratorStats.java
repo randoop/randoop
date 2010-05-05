@@ -16,6 +16,7 @@ import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor.TimeoutExceeded;
 import plume.Option;
 import plume.Pair;
+import plume.Unpublicized;
 import plume.UtilMDE;
 import cov.Branch;
 import cov.Coverage;
@@ -23,15 +24,15 @@ import cov.CoverageAtom;
 
 public class SequenceGeneratorStats {
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Output sequence generation stats during generation.")
   public static boolean stats_generation = false;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Output coverage stats during generation.")
   public static boolean stats_coverage = false;
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Outputs extra information for Randoop experiments.")
   public static boolean randoop_exp = false;
 
@@ -350,6 +351,10 @@ public class SequenceGeneratorStats {
 
   public List<ExecutableSequence> outSeqs = new ArrayList<ExecutableSequence>();
 
+  // TODO: This method is doing two things: (1) maintaining the list
+  // of sequences generated that will ultimately be output to the user, and (2) updating
+  // statistics regarding the generation process. The first thing does not belong in this class/method,
+  // it just ended up here. This method/class should only keep track of statistics.
   public void updateStatistics(ExecutableSequence es, Set<Branch> coveredBranches, FailureAnalyzer fa) {
 
     boolean addedToOutSeqs = false;

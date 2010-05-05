@@ -129,6 +129,7 @@ randoop2: bin
 	   --output-tests=all \
 	   --check_reps=true \
 	   --component-based=false \
+	   --remove-subsequences=false \
 	   --check-object-contracts=false \
 	   --inputlimit=10000 \
 	   --testclass=java2.util2.TreeSet \

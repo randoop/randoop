@@ -50,6 +50,7 @@ test.dftargets.txt
 
 release/
 dist/
+temp.mk
 
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.
