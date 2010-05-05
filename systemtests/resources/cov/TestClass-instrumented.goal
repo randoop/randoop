@@ -11,8 +11,8 @@ public class TestClass {
 	public static final boolean simplecov_instrumented = true;
 	public static int[] trueBranches = new int[5];
 	public static int[] falseBranches = new int[5];
-	public static java.util.Map methodIdToBranches = new java.util.LinkedHashMap();
-	public static java.util.Map methodLineSpans = new java.util.LinkedHashMap();
+	public static java.util.Map<String, int[]> methodIdToBranches = new java.util.LinkedHashMap<String, int[]>();
+	public static java.util.Map<String, int[]> methodLineSpans = new java.util.LinkedHashMap<String, int[]>();
 
 
 	static {
@@ -90,8 +90,8 @@ class TestClass2  {
 	public static final boolean simplecov_instrumented = true;
 	public static int[] trueBranches = new int[1];
 	public static int[] falseBranches = new int[1];
-	public static java.util.Map methodIdToBranches = new java.util.LinkedHashMap();
-	public static java.util.Map methodLineSpans = new java.util.LinkedHashMap();
+	public static java.util.Map<String, int[]> methodIdToBranches = new java.util.LinkedHashMap<String, int[]>();
+	public static java.util.Map<String, int[]> methodLineSpans = new java.util.LinkedHashMap<String, int[]>();
 
 	static {
 		methodIdToBranches.put("0", new int[] { 0 });
