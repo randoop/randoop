@@ -443,8 +443,9 @@ distribution-files:
 	cp .project randoop/.project
 	cp .classpath-dist randoop/.classpath
 # Make sure everything works.
+# (Simpler and more elegant is "-cp 'lib/*'", but that doesn't seem to work for all javac implementations.)
 	cd randoop && \
-	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
+	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp `ls lib/*.jar | perl -p -e 's/\n/:/g'`
 # Make randoop.jar.
 	mkdir randoop/tmp
 	cp -r randoop/bin/* randoop/tmp
