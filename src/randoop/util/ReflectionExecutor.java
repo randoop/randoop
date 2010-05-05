@@ -16,16 +16,12 @@ import plume.Option;
  */
 public final class ReflectionExecutor {
 
-  // Milliseconds after which an executing thread will be forcefully stopped.
-  // Default is arbitrary; can be changed via setter method.
-
-  /* @Invisible*/
-  @Option("Milliseconds after which a statement (e.g. method call) is stopped forcefully. Only meaningfull with --usethreads.")
+  @Option("Use if Randoop is exhibiting nonterminating behavior: this is usually due to execution of code under test that results in an infinite loop. With this option, Randoop execute each test in a separate thread and kills tests that take too long to finish. Tests killed in this manner are not reported to the user. Downside is a BIG (order-of-magnitude) decrease in generation speed.")
+  public static boolean usethreads = true;
+  
+  @Option("See \"usethreads\" option. This option specificies the number of milliseconds after which a non-returning method call, and its associated test, are stopped forcefully. Only meaningfull with --usethreads.")
   public static long timeout = 5000;
 
-  /* @Invisible*/
-  @Option("Executing tested code in a separate thread (lets Randoop detect and kill nonterminating or long-running tests")
-  public static boolean usethreads = true;
 
   public static class TimeoutExceeded extends RuntimeException {
     private static final long serialVersionUID = -5314228165430676893L;
@@ -103,8 +99,11 @@ public final class ReflectionExecutor {
         if (Log.isLoggingOn()) {
           Log.log("Exceeded max wait: aborting test input.");
         }
-        runnerThread.stop();// We use this deprecated method because it's the only way to
+        
+        // We use this deprecated method because it's the only way to
         // stop a thread no matter what it's doing.
+        runnerThread.stop();
+        
         return new ReflectionExecutor.TimeoutExceeded();
       }
 

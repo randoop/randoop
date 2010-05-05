@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
+	<classpathentry kind="lib" path="lib/plume.jar"/>
 	<classpathentry kind="lib" path="lib/asm-2.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm-tree-2.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/bcel.jar"/>
@@ -21,11 +22,8 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.jdt.core_3.3.3.v_793_R33x.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.3.2.R33x_v20080105.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.text_3.3.0.v20070606-0010.jar"/>
-	<classpathentry kind="lib" path="lib/plume.jar"/>
 	<classpathentry kind="lib" path="lib/servlet.jar"/>
 	<classpathentry kind="lib" path="lib/swtgraphics2d.jar"/>
-	<classpathentry kind="lib" path="randoop_agent.jar"/>
-	<classpathentry kind="lib" path="release/randoop.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
