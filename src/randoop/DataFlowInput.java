@@ -11,6 +11,8 @@ import java.util.Set;
 
 import plume.Pair;
 import plume.UtilMDE;
+import randoop.util.RecordListReader;
+import randoop.util.RecordProcessor;
 import cov.Branch;
 
 /**

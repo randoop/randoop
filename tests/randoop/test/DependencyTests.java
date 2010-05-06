@@ -8,9 +8,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import randoop.DependencyUtils;
-import randoop.RecordListReader;
-import randoop.RecordProcessor;
 import randoop.Sequence;
+import randoop.util.RecordListReader;
+import randoop.util.RecordProcessor;
 import plume.Pair;
 
 public class DependencyTests extends TestCase {
