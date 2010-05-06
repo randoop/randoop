@@ -61,7 +61,7 @@ bin: $(RANDOOP_FILES)
 	touch bin
 
 # Run all tests.
-tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files results
+tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
 
 # Runs pure Randoop-related tests.
 randoop-tests: unit randoop1 randoop2 randoop-contracts
@@ -412,16 +412,31 @@ summary:
 
 
 ############################################################
+# Targets for updating Randoop's manual.
+# Keeping it simple: manual is all in index.html.
+
+# Checks out a copy of the plume libraries.
+# We only use the html-update package.
+utils/plume-lib:
+	mkdir -p utils
+	cd utils && hg clone https://plume-lib.googlecode.com/hg/ plume-lib
+
+manual: utils/plume-lib
+	utils/plume-lib/bin/html-update-toc doc/index.html
+
+############################################################
 # Targets for updating Randoop's distribution.
 
 # Creates the zip file for other people to download.
-distribution-files:
+distribution-files: manual
 	rm -rf randoop dist
 	mkdir randoop
 	mkdir randoop/bin
 # Copy sources and required libraries.
 	cp -R src randoop/src
 	cp -R tests randoop/tests
+# Copy sources and required libraries.
+	cp -R doc randoop/doc
 # Remove sources for experimental features from the distribution.
 # Primary reason for taking them out is to avoid filling the
 # distribution with unnecessary extra stuff/supporting jars.
