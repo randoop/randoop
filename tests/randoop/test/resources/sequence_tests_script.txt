@@ -1,0 +1,300 @@
+######################################################################
+
+START TEST
+
+TEST_ID
+1
+
+SEQUENCE
+var0 =  prim : int:3 :
+
+EXPECTED_CODE
+java.lang.Integer var0 = new java.lang.Integer(3);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+1.5
+
+SEQUENCE
+var0 =  prim : java.lang.String:"3" :
+var1 =  method : java.lang.Integer.parseInt(java.lang.String) : var0
+
+EXPECTED_CODE
+java.lang.String var0 = "3";
+int var1 = java.lang.Integer.parseInt(var0);
+// Regression assertion (captures the current behavior of the code)
+assertTrue(var1 == 3);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+2
+
+SEQUENCE
+var0 =  prim : java.lang.String:"foobar" :
+
+EXPECTED_CODE
+java.lang.String var0 = "foobar";
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+3
+
+SEQUENCE
+var0 =  prim : int:3 : 
+var1 =  cons : java.util.ArrayList.<init>(int) : var0
+
+EXPECTED_CODE
+java.lang.Integer var0 = new java.lang.Integer(3);
+java.util.ArrayList var1 = new java.util.ArrayList(var0);
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var1 == null);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+3.5
+
+SEQUENCE
+var0 =  prim : int:3 :
+var1 =  cons : java.lang.Integer.<init>(int) : var0
+var2 =  cons : java.util.ArrayList.<init>(int) : var1
+
+EXPECTED_CODE
+java.lang.Integer var0 = new java.lang.Integer(3);
+java.lang.Integer var1 = new java.lang.Integer(var0);
+java.util.ArrayList var2 = new java.util.ArrayList((int)var1);
+// Regression assertion (captures the current behavior of the code)
+assertTrue("'" + var1 + "' != '" + 3+ "'", var1.equals(3));
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var2 == null);
+
+END TEST
+
+
+######################################################################
+
+START TEST
+
+TEST_ID
+4
+
+SEQUENCE
+var0 =  prim : int:3 :
+var1 =  cons : java.util.ArrayList.<init>(int) : var0
+var2 =  method : java.util.ArrayList.add(java.lang.Object) : var1 var0
+
+EXPECTED_CODE
+java.lang.Integer var0 = new java.lang.Integer(3);
+java.util.ArrayList var1 = new java.util.ArrayList(var0);
+boolean var2 = var1.add((java.lang.Object)var0);
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var1 == null);
+// Regression assertion (captures the current behavior of the code)
+assertTrue(var2 == true);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+5
+
+SEQUENCE
+var0 =  prim : int:3 :
+var1 =  cons : java.util.ArrayList.<init>(int) : var0
+var2 =  method : java.util.ArrayList.add(java.lang.Object) : var1 var0
+var3 =  method : java.util.ArrayList.add(java.lang.Object) : var1 var0
+
+EXPECTED_CODE
+java.lang.Integer var0 = new java.lang.Integer(3);
+java.util.ArrayList var1 = new java.util.ArrayList(var0);
+boolean var2 = var1.add((java.lang.Object)var0);
+boolean var3 = var1.add((java.lang.Object)var0);
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var1 == null);
+// Regression assertion (captures the current behavior of the code)
+assertTrue(var2 == true);
+// Regression assertion (captures the current behavior of the code)
+assertTrue(var3 == true);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+6
+
+SEQUENCE
+var0 =  prim : long:100 :
+var1 =  method : java.lang.Long.byteValue() : var0
+
+EXPECTED_CODE
+java.lang.Long var0 = new java.lang.Long(100L);
+byte var1 = ((java.lang.Long)var0).byteValue();
+// Regression assertion (captures the current behavior of the code)
+assertTrue(var1 == (byte)100);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+7
+
+SEQUENCE
+var0 =  prim : long:-100 :
+var1 =  method : java.lang.Long.byteValue() : var0
+
+EXPECTED_CODE
+java.lang.Long var0 = new java.lang.Long((-100L));
+byte var1 = ((java.lang.Long)var0).byteValue();
+// Regression assertion (captures the current behavior of the code)
+assertTrue(var1 == (byte)(-100));
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+8
+
+SEQUENCE
+var0 =  prim : int:-1 :
+var1 =  cons : java.util.ArrayList.<init>() :
+var2 =  method : java.util.ArrayList.get(int) : var1 var0
+
+EXPECTED_CODE
+java.lang.Integer var0 = new java.lang.Integer((-1));
+java.util.ArrayList var1 = new java.util.ArrayList();
+// The following exception was thrown during execution.
+// This behavior will recorded for regression testing.
+try {
+java.lang.Object var2 = var1.get((int)var0);
+fail("Expected exception of type java.lang.ArrayIndexOutOfBoundsException");
+} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+// Expected exception.
+}
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var1 == null);
+
+END TEST
+
+
+######################################################################
+
+START TEST
+
+TEST_ID
+9
+
+SEQUENCE
+var0 =  prim : int:0 :
+var1 =  cons : ps1.RatNum.<init>(int) : var0
+var2 =  cons : ps1.RatTermVec.<init>() :
+var3 =  method : ps1.RatTermVec.copy() : var2
+var4 =  method : ps1.RatTermVec.copy() : var3
+var5 =  cons : ps1.RatTerm.<init>(ps1.RatNum,int) : var1 var0
+var6 =  method : ps1.RatTermVec.addElement(ps1.RatTerm) : var4 var5
+var7 =  method : ps1.RatTermVec.addElement(ps1.RatTerm) : var4 var5
+
+EXPECTED_CODE
+java.lang.Integer var0 = new java.lang.Integer(0);
+ps1.RatNum var1 = new ps1.RatNum(var0);
+ps1.RatTermVec var2 = new ps1.RatTermVec();
+ps1.RatTermVec var3 = var2.copy();
+ps1.RatTermVec var4 = var3.copy();
+ps1.RatTerm var5 = new ps1.RatTerm(var1, var0);
+var4.addElement(var5);
+var4.addElement(var5);
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var1 == null);
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var2 == null);
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var3 == null);
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var4 == null);
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var5 == null);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+10
+
+SEQUENCE
+var0 =  cons : misc.NonFaultyClass.<init>() :
+
+EXPECTED_CODE
+misc.NonFaultyClass var0 = new misc.NonFaultyClass();
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var0 == null);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+11
+
+SEQUENCE
+var0 =  cons : misc.BlowsUp.<init>() :
+
+EXPECTED_CODE
+misc.BlowsUp var0 = new misc.BlowsUp();
+// Regression assertion (captures the current behavior of the code)
+assertFalse(var0 == null);
+
+END TEST
+
+######################################################################
+
+START TEST
+
+TEST_ID
+12
+
+SEQUENCE
+var0 =  cons : misc.EqualsOnSameReturnsFalse.<init>() :
+
+EXPECTED_CODE
+misc.EqualsOnSameReturnsFalse var0 = new misc.EqualsOnSameReturnsFalse();
+// Checks the contract:  var0.equals(var0)
+assertTrue("Contract failed: var0.equals(var0)", var0.equals(var0));
+
+
+END TEST
+
