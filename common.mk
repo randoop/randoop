@@ -7,7 +7,7 @@ CLASS_DIRS := $(RANDOOP_HOME)/bin $(RANDOOP_HOME)/tests
 
 # The shorter version of the classpath is much easier to read in the
 # command output than the full version.  But the * classpath operator
-# doesn't work under some (not well understood) circumstances
+# doesn't work under some (not well understood) circumstances.
 ifdef CLASSPATH_SUPPORTS_STAR
   CLASS_DIRS := $(CLASS_DIRS):$(RANDOOP_HOME)/lib/*
 else
@@ -17,6 +17,6 @@ endif
 # Convert to a standard classpath
 empty:=
 space:= $(empty) $(empty)
-export CLASSPATH :=     $(subst $(space),:,$(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS))
+export CLASSPATH := $(subst $(space),:,$(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS))
 
 XMXHEAP := -Xmx1650m 
