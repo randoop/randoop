@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import plume.UtilMDE;
+import randoop.util.RecordListReader;
+import randoop.util.RecordProcessor;
 
 /**
  * The output created by DataFlow consists of a collection of results, one for

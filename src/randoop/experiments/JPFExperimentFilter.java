@@ -1,8 +1,11 @@
-package randoop.util;
+package randoop.experiments;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
+
+import randoop.util.DefaultReflectionFilter;
+import randoop.util.ReflectionFilter;
 
 public class JPFExperimentFilter implements ReflectionFilter {
 

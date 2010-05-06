@@ -67,6 +67,8 @@ To do everything (build _and_ run all tests), type "make all".
 [Please contribute to this section any information you find useful
 when developing Randoop].
 
+[We should eventually move this as a section in the manual]
+
 ----------------------------------------------------------------------
 Most command line options are specified in GenInputsAbstract.java
 
@@ -80,8 +82,15 @@ Comparing observations to see if they return consistent results is
 implementedin ExecutableSequence.compare_observations()
 
 ----------------------------------------------------------------------
-GenTests is the main for Randoop as it is normally used.  There are
-other mains for other purposes.
+GenTests is the main class for Randoop as it is normally used.
+There are other mains for other purposes.
+
+Method "handle" in src/randoop/main/GenTests.java is the main
+entrypoint for Randoop. This is not strictly true, as Randoop's true
+entrypoint is class randoop.main.Main. But GenTests is where all the
+action starts with test generation. The "handle" method is long and
+mostly deals with setting up things before the generation process, and
+doing things like outputting tests after generation. 
 
 ----------------------------------------------------------------------
 ForwardGenerator is the generator for Randoop's normal operation.

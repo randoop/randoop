@@ -15,6 +15,8 @@ import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
+import randoop.util.RecordListReader;
+import randoop.util.RecordProcessor;
 import randoop.util.Reflection;
 import randoop.util.SimpleList;
 import randoop.util.WeightedElement;

@@ -1,5 +1,5 @@
 /*
- * Borrowed for JOE; package changed and everything other than Java escaping removed.
+ * Package name changed and everything other than Java escaping removed.
  */
 /*
  * Copyright 2002-2004 The Apache Software Foundation.
