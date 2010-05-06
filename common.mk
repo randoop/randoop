@@ -20,3 +20,7 @@ space:= $(empty) $(empty)
 export CLASSPATH :=     $(subst $(space),:,$(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS))
 
 XMXHEAP := -Xmx1650m 
+
+# Path to plume-lib. Used when creating Randoop manual
+# (see Makefile, target "manual")
+export PATH := $(PATH):$(RANDOOP_HOME)/utils/plume-lib/bin
