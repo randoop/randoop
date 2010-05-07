@@ -8,11 +8,8 @@ import java.io.ObjectOutputStream;
 
 
 /**
- * A collection of static methods that randoop uses
- * to serialize and deserialize its data structures.
- * Mainly concerns (de)serialization of reflection
- * objects like methods, constructors and classes.
- *
+ * A collection of static methods to serialize an object to a file and
+ * visceversa.
  */
 public final class SerializationHelper {
 

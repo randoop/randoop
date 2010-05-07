@@ -25,11 +25,11 @@ import java.util.zip.GZIPOutputStream;
 import plume.Option;
 import plume.Options;
 import plume.SimpleLog;
+import plume.Unpublicized;
 import plume.Options.ArgException;
 import randoop.AbstractGenerator;
 import randoop.BugInRandoopException;
 import randoop.ContractCheckingVisitor;
-import randoop.EnumGenCounter;
 import randoop.EqualsHashcode;
 import randoop.EqualsSymmetric;
 import randoop.EqualsToItself;
@@ -94,7 +94,7 @@ public class GenTests extends GenInputsAbstract {
 
   }
 
-  /* @Invisible*/
+  @Unpublicized
   @Option("Signals that this is a run in the context of a system test. (Slower)")
   public static boolean system_test_run = false;
 
@@ -122,7 +122,7 @@ public class GenTests extends GenInputsAbstract {
 //     RandoopSecurityManager randoopSecurityManager = new RandoopSecurityManager(
 //       RandoopSecurityManager.Status.OFF);
 //     System.setSecurityManager(randoopSecurityManager);
-
+    
     try {
       String[] nonargs = options.parse(args);
       if (nonargs.length > 0)
@@ -260,20 +260,7 @@ public class GenTests extends GenInputsAbstract {
 
     AbstractGenerator explorer = null;
 
-    if (calc_sequence_space != null) {
-
-      // This explorer calls System.exit(0) by itself
-      // when it's done; the rest of the code after explore()
-      // will not be executed.
-      explorer = new EnumGenCounter(
-          model,
-          covClasses,
-          Long.MAX_VALUE,
-          Integer.MAX_VALUE,
-          components);
-      ((EnumGenCounter)explorer).LIMIT = calc_sequence_space;
-
-    } else if (component_based) {
+    if (component_based) {
       explorer = new ForwardGenerator(
         model,
         covClasses,

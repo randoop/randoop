@@ -10,7 +10,7 @@ import plume.Options;
 
 
 /**
- * A command is the first argument given to eclat.  A command handler
+ * A command is the first argument given to Randoop.  A command handler
  * handles one command. It also takes care of printing the command's
  * documentation.
  */
@@ -172,6 +172,7 @@ public abstract class CommandHandler {
       out.println();
       for (String use : foptions.usage()) {
         if (!use.trim().equals("")) {
+ 
           out.print(Util.hangingParagraph(use, Globals.COLWIDTH, Globals.INDENTWIDTH));
           out.println();
         }
