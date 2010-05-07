@@ -16,11 +16,11 @@ import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MultiVisitor;
 import randoop.ObjectContract;
-import randoop.RecordListReader;
-import randoop.RecordProcessor;
 import randoop.RegressionCaptureVisitor;
 import randoop.Sequence;
 import randoop.SequenceParseException;
+import randoop.util.RecordListReader;
+import randoop.util.RecordProcessor;
 import randoop.util.Util;
 
 public class SequenceTests extends TestCase {

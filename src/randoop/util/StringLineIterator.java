@@ -8,9 +8,6 @@ import java.util.Queue;
  * Given a string consisting of words separated by white space, lets the
  * user ask for the words as lines of text of a desired length, until there
  * are no more words.
- * 
- * Example: given the string `The patio in my house is very special',
- * TODO complete example.
  */
 public class StringLineIterator {
 

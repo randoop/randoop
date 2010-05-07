@@ -18,19 +18,18 @@ import randoop.util.Log;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
 import plume.Option;
+import plume.Unpublicized;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
 
 public abstract class AbstractGenerator {
 
-  /* @Invisible*/
-  @Option("Print detailed statistics after generation.")
+  @Unpublicized @Option("Print detailed statistics after generation.")
   public static boolean print_stats = false;
-  /* @Invisible*/
-  @Option("When branch coverage fails to increase for the given number of seconds (>0), stop generation.")
+  @Unpublicized @Option("When branch coverage fails to increase for the given number of seconds (>0), stop generation.")
   public static int stop_when_plateau = -1;
-  @Option ("Dump each seqeunce to the log file")
+  @Unpublicized @Option ("Dump each sequence to the log file")
   public static boolean dump_sequences = false;
 
   private final Timer timer = new Timer();
