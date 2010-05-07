@@ -85,7 +85,7 @@ public class PrepareSubjectProgram {
     System.out.println("========== Compiling subject program: " + exp.experimentName);
     List<String> compile = new ArrayList<String>();
     compile.add("javac");
-    compile.add("-J-Xmx1650m");
+    compile.add("-J-Xmx1000m");
     compile.add("-classpath");
     compile.add(exp.classPath);
     compile.add("-g");
