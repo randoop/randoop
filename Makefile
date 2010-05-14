@@ -34,6 +34,8 @@ JAVAC_JAR ?= ${HOME}/research/types/jsr308-langtools/dist/lib/javac.jar
 # User may set JAVAC_EXTRA_ARGS
 JAVAC_COMMAND ?= ${JAVAC} ${JAVAC_EXTRA_ARGS}
 
+export PATH
+
 ############################################################
 # Targets for compiling and doing basic tests on Randoop.
 

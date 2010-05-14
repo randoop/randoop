@@ -195,7 +195,7 @@ public class DataFlow {
         }
 
         // Compile the test sequence
-        String compile_cmd = "javac -g -target 5 seqs/Seqs.java seqs/Driver.java";
+        String compile_cmd = "javac -g seqs/Seqs.java seqs/Driver.java";
         System.out.printf ("Compiling: %s%n", compile_cmd);
         run_cmd (compile_cmd, env_array, scratchDir);
 
