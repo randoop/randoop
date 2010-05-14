@@ -204,8 +204,11 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         } else { // its a more complex type with a non-null value
 
           // Assert that the value is not null (just as interesting as is null)
-          s.addObservation(idx, new ExpressionNotEqValue(ValueExpression.class,
-                                                         vars, null));
+          // Exception: if the value comes directly from a constructor call, 
+          // not interesting so omit the observation in that case.
+          if (!(st instanceof RConstructor)) { 
+            s.addObservation(idx, new ExpressionNotEqValue(ValueExpression.class, vars, null));
+          }
 
           // Put out any observers that exist for this type
           Variable var0 = s.sequence.getVariable(i);

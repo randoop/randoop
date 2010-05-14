@@ -19,6 +19,7 @@ import randoop.ObjectContract;
 import randoop.RegressionCaptureVisitor;
 import randoop.Sequence;
 import randoop.SequenceParseException;
+import randoop.main.GenInputsAbstract;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Util;
@@ -58,9 +59,11 @@ public class SequenceTests extends TestCase {
     };
     
 
+    boolean long_format_old = GenInputsAbstract.long_format;
+    GenInputsAbstract.long_format = true;
     RecordListReader reader = new RecordListReader("TEST", processor);
     reader.parse(SequenceTests.class.getResource("resources/sequence_tests_script.txt").getFile());
-
+    GenInputsAbstract.long_format = long_format_old;
   }
   
 

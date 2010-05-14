@@ -60,6 +60,10 @@ public class DataFlow {
   public static boolean debug_df = false;
 
   public static void main(String[] args) throws RandoopTextuiException, ArgException, IOException {
+    
+    // Turn on long output format for sequences, which is required
+    // in order for the dataflow instrumentation tracking to work correctly.
+    GenInputsAbstract.long_format = true;
 
     // Parse options and ensure that a scratch directory was specified.
     Options options = new Options(DataFlow.class);
