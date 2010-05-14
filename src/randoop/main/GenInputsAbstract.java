@@ -72,6 +72,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   @Option("Use null with the given frequency. [TODO explain]")
   public static Double null_ratio = null;
+  
+  @Unpublicized @Option("Use long format for outputting JUnit tests. The long format" +
+  "emits exactly one line per statement, including primitive declarations, and" +
+  "uses boxed primitives. This option is used in the branch-directed generation project.")
+  public static boolean long_format = false; 
 
   @Unpublicized
   @Option("Has to do with experiments...")
@@ -167,7 +172,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean output_cov_witnesses = false;
 
   @Unpublicized
-  @Option("Check java.lang.Object contracts, e.g. equals(Object) is reflexive, hashCode() throws no exceptions, etc.")
+  @Option("Check default set of object contracts, e.g. equals(Object) is reflexive, equals(null) returns false, etc.")
   public static boolean check_object_contracts = true;
 
   @Unpublicized
@@ -260,10 +265,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("TODO document.")
   public static boolean no_args_statement_heuristic = true;
-
-  @Unpublicized
-  @Option("Only generate inputs, do not test for errors.")
-  public static boolean dontcheckcontracts;
 
   @Unpublicized
   @Option("Use heuristic that may randomly repeat a method call several times.")

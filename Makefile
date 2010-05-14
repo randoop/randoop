@@ -43,6 +43,7 @@ export PATH
 RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
 RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
 RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
+RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
 
 all: clean build tests results 
 
@@ -53,7 +54,7 @@ clean:
 # Build Randoop.
 build: bin randoop_agent.jar
 
-bin: $(RANDOOP_FILES)
+bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	mkdir -p bin
 	@echo ${JAVAC_COMMAND} -Xlint -g -d bin ...
 	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
@@ -142,7 +143,11 @@ randoop2: bin
 	   --output-nonexec=true \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
-	   --log=systemtests/randoop-log.txt
+	   --log=systemtests/randoop-log.txt \
+	   --long-format
+	cd systemtests/randoop-scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	  foo/bar/Naive*.java
 	cp systemtests/randoop-scratch/foo/bar/Naive0.java systemtests/resources/Naive0.java
 
 # Runs Randoop on Collections and TreeSet.

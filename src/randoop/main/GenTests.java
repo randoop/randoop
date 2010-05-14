@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -40,7 +41,9 @@ import randoop.ForwardGenerator;
 import randoop.Globals;
 import randoop.JunitFileWriter;
 import randoop.NaiveRandomGenerator;
+import randoop.NotPartOfState;
 import randoop.ObjectContract;
+import randoop.PrimitiveOrStringOrNullDecl;
 import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.RegressionCaptureVisitor;
@@ -49,9 +52,11 @@ import randoop.Sequence;
 import randoop.SequenceCollection;
 import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
+import randoop.TestValue;
 import randoop.Variable;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
+import randoop.util.PrimitiveTypes;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
@@ -256,8 +261,13 @@ public class GenTests extends GenInputsAbstract {
         components.addAll(seqset);
       }
     }
+    
+    // Add default seeds.
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
-
+    
+    // Add user-specified seeds.
+    components.addAll(SeedSequences.getSeedsFromAnnotatedFields(classes.toArray(new Class<?>[0])));
+  
     AbstractGenerator explorer = null;
 
     if (component_based) {
