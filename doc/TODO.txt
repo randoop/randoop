@@ -92,3 +92,10 @@ larger potential projects.
     Randoop does not output any tests
     Randoop runs out of memory
     Randoop does not generate any error-revealing tests
+    Randoop does not generate any tests!
+      Are you classes public?
+    Randoop does not generate any tests for my method M!
+      Is your method public?
+
+
+Add option for Randoop to check exceptions. (Maybe this can be advertised as "Crasher Mode"?
