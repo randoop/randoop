@@ -61,8 +61,6 @@ var1 =  cons : java.util.ArrayList.<init>(int) : var0
 EXPECTED_CODE
 java.lang.Integer var0 = new java.lang.Integer(3);
 java.util.ArrayList var1 = new java.util.ArrayList(var0);
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var1 == null);
 
 END TEST
 
@@ -84,8 +82,6 @@ java.lang.Integer var1 = new java.lang.Integer(var0);
 java.util.ArrayList var2 = new java.util.ArrayList((int)var1);
 // Regression assertion (captures the current behavior of the code)
 assertTrue("'" + var1 + "' != '" + 3+ "'", var1.equals(3));
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var2 == null);
 
 END TEST
 
@@ -106,8 +102,6 @@ EXPECTED_CODE
 java.lang.Integer var0 = new java.lang.Integer(3);
 java.util.ArrayList var1 = new java.util.ArrayList(var0);
 boolean var2 = var1.add((java.lang.Object)var0);
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var1 == null);
 // Regression assertion (captures the current behavior of the code)
 assertTrue(var2 == true);
 
@@ -131,8 +125,6 @@ java.lang.Integer var0 = new java.lang.Integer(3);
 java.util.ArrayList var1 = new java.util.ArrayList(var0);
 boolean var2 = var1.add((java.lang.Object)var0);
 boolean var3 = var1.add((java.lang.Object)var0);
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var1 == null);
 // Regression assertion (captures the current behavior of the code)
 assertTrue(var2 == true);
 // Regression assertion (captures the current behavior of the code)
@@ -201,8 +193,6 @@ fail("Expected exception of type java.lang.ArrayIndexOutOfBoundsException");
 } catch (java.lang.ArrayIndexOutOfBoundsException e) {
 // Expected exception.
 }
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var1 == null);
 
 END TEST
 
@@ -234,15 +224,9 @@ ps1.RatTerm var5 = new ps1.RatTerm(var1, var0);
 var4.addElement(var5);
 var4.addElement(var5);
 // Regression assertion (captures the current behavior of the code)
-assertFalse(var1 == null);
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var2 == null);
-// Regression assertion (captures the current behavior of the code)
 assertFalse(var3 == null);
 // Regression assertion (captures the current behavior of the code)
 assertFalse(var4 == null);
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var5 == null);
 
 END TEST
 
@@ -258,8 +242,6 @@ var0 =  cons : misc.NonFaultyClass.<init>() :
 
 EXPECTED_CODE
 misc.NonFaultyClass var0 = new misc.NonFaultyClass();
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var0 == null);
 
 END TEST
 
@@ -275,8 +257,6 @@ var0 =  cons : misc.BlowsUp.<init>() :
 
 EXPECTED_CODE
 misc.BlowsUp var0 = new misc.BlowsUp();
-// Regression assertion (captures the current behavior of the code)
-assertFalse(var0 == null);
 
 END TEST
 

@@ -10,7 +10,10 @@ import java.util.List;
 public class DataFlow {
 
   /**
-   * Runs dataflow on a given subject program.
+   * This is a script we use to run research experiments.
+   * 
+   * Runs randoop.main.DataFlow on a given subject program.
+   * 
    * This command must be run from $RANDOOP_HOME/systemtests.
    * The command is run as follows:
    * 

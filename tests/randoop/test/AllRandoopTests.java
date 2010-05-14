@@ -38,6 +38,7 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(CompareToContractTests.class);
     suite.addTestSuite(LineRemoverTests2.class);
     suite.addTestSuite(DependencyTests.class);
+    suite.addTestSuite(SeedSequencesTests.class);
 
     return suite;
   }
