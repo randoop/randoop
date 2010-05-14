@@ -9,7 +9,7 @@ import plume.Unpublicized;
 
 public class Globals {
 
-  public static final String RANDOOP_VERSION = "1.3";
+  public static final String RANDOOP_VERSION = "1.3.1";
 
   public static final String lineSep = System.getProperty("line.separator");
 
