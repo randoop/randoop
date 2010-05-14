@@ -4,7 +4,7 @@ package randoop;
  * An object contract is an expression that represents an expected behavior of
  * an object or a collection of objects. If the expression returns <code>true</code>,
  * the contract is said to succeed. If it returns a value other than <code>true</code>
- * it is said to fail. If th expression throws an exception during execution,
+ * it is said to fail. If the expression throws an exception during execution,
  * the result is undefined.
  * <p>
  * Randoop outputs sequences that lead to failing contracts as potentially

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import randoop.main.GenInputsAbstract;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
 import randoop.util.PrimitiveTypes;
@@ -105,21 +106,29 @@ public final class RMethod implements StatementKind, Serializable {
       if (i > startIndex)
         b.append(", ");
 
+      // CASTING.
       // We cast whenever the variable and input types are not identical.
       // We also cast if input type is a primitive, because Randoop uses
       // boxed primitives, and need to convert back to primitive.
-      if (PrimitiveTypes.isPrimitive(getInputTypes().get(i))) {
+      if (PrimitiveTypes.isPrimitive(getInputTypes().get(i)) && GenInputsAbstract.long_format) {
         b.append("(" + getInputTypes().get(i).getName() + ")");
       } else if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
         b.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
       }
 
-      b.append(inputVars.get(i).getName());
+      // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
+      // the value (e.g. "3") is inserted directly added as arguments to method calls.
+      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
+        b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+      } else {
+        b.append(inputVars.get(i).getName());
+      }
     }
 
     b.append(");" + Globals.lineSep);
   }
-
+  
   // XXX this is a pretty bogus workaround for a bug in javac (type inference
   // fails sometimes)
   // It is bogus because what we produce here may be different from correct

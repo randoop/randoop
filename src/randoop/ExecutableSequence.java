@@ -202,6 +202,15 @@ public class ExecutableSequence implements Serializable {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0 ; i < sequence.size() ; i++) {
+      
+      // If short format, don't print out primitive declarations
+      // because primitive values will be directly added to methods
+      // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
+      if (!GenInputsAbstract.long_format
+          && sequence.getStatementKind(i) instanceof PrimitiveOrStringOrNullDecl) {
+        continue;
+      }
+      
       StringBuilder oneStatement = new StringBuilder();
       sequence.printStatement(oneStatement, i);
 
@@ -225,7 +234,7 @@ public class ExecutableSequence implements Serializable {
       }
       b.append(oneStatement);
     }
-    return b.toString();
+    return b.toString();// + "/*" + sequence.toParseableString() + "*/";
   }
 
   /**

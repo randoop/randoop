@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import randoop.main.GenInputsAbstract;
 import randoop.util.ConstructorReflectionCode;
+import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
@@ -107,10 +109,19 @@ public final class RConstructor implements StatementKind, Serializable {
     for (int i = (isNonStaticMember ? 1 : 0) ; i < inputVars.size() ; i++) {
       if (i > (isNonStaticMember ? 1 : 0))
         b.append(", ");
+
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(getInputTypes().get(i)))
-        b.append("(" + getInputTypes().get(i).getCanonicalName()+ ")");
-      b.append(inputVars.get(i).getName());
+        b.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+      
+      // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
+      // the value (e.g. "3") is inserted directly added as arguments to method calls.
+      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
+        b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+      } else {
+        b.append(inputVars.get(i).getName());
+      }
     }
     b.append(");");
     b.append(Globals.lineSep);
