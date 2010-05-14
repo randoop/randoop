@@ -114,3 +114,29 @@ bin/ directory and the files under lib/ are part of the classpath.
 	java -ea randoop.main.Main help gentests
 
 ----------------------------------------------------------------------
+
+Places to look for when modifying the JUnit code that is output:
+
+Class randoop.JunitFileWriter figures out how many JUnit classes/files
+to write, how many tests to put in each, what to name them, etc.
+
+Methods
+  randoop.ExecutableSequence.toCodeString(),
+  randoop.ExecutableSequence.toCodeString(),
+  and the various implementationgs of randoop.StatementKind.appendCode(...)
+
+Are responsible for writing the code for a single unit test.
+
+----------------------------------------------------------------------
+
+Modifying the manual.
+
+To modify the Randoop manual, edit directly the HTML files:
+
+ index.html has the main "user" manual with instructions for using the tool
+ dev.html has the developer manual with instructions for hacking Randoop
+
+To create the table of contents, we use a utility called
+"html-update-toc" (should be under directory <tt>utils/plume-lib</tt>,
+assuming you have run <tt>make manual</tt> at least once). This
+utility uses [...]
