@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import randoop.main.GenInputsAbstract;
+import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 
 /**
@@ -125,10 +127,18 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
           + inputVars.size() + " capacity:" + length);
     String declaringClass = this.elementType.getCanonicalName();
     b.append(declaringClass + "[] " + newVar.getName() + " = new " + declaringClass + "[] { ");
-    for (int i = 0 ; i < inputVars.size() ; i++) {
+    for (int i = 0; i < inputVars.size(); i++) {
       if (i > 0)
         b.append(", ");
-      b.append(inputVars.get(i).getName());
+      
+      // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
+      // the value (e.g. "3") is inserted directly added as arguments to method calls.
+      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
+        b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+      } else {
+        b.append(inputVars.get(i).getName());
+      }
     }
     b.append("};");
     b.append(Globals.lineSep);

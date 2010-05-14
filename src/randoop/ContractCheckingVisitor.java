@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import randoop.main.GenInputsAbstract;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
@@ -69,13 +70,13 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
     }
 
      if (s.getResult(idx) instanceof ExceptionalExecution) {
-//       if (GenInputsAbstract.forbid_null) {
-//         ExceptionalExecution exec = (ExceptionalExecution)s.getResult(idx);
-//         if (exec.getException().getClass().equals(NullPointerException.class)) {
-//           StatementThrowsNPE obs = StatementThrowsNPE.getInstance();
-//          s.addObservation(idx, obs);
-//         }
-//       }
+       if (GenInputsAbstract.forbid_null) {
+         ExceptionalExecution exec = (ExceptionalExecution)s.getResult(idx);
+         if (exec.getException().getClass().equals(NullPointerException.class)) {
+           StatementThrowsNPE obs = StatementThrowsNPE.getInstance();
+          s.addObservation(idx, obs);
+         }
+       }
        return true;
      }
 
