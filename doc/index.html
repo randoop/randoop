@@ -308,21 +308,21 @@ addition to the above values, any primitive value returned at runtime
 from a method call under test may be later used as input to another
 method call.</p>
 
-<p>To specify additional seed values, use the <tt>@TestValue</tt>
-annotation as follows:</p>
+<p>To explicitly specify additional seed values, use
+the <tt>@TestValue</tt> annotation as follows:</p>
 
 <ol>
 
-  <li> Create a <b>public</b> class <i>C</i>. Import <tt>randoop.*</tt>.
+  <li> Create a <b>public</b> class <i>C</i>, and import <tt>randoop.*</tt>.
 
-  <li> Declare one more more static fields in <i>C</i> that hold the
+  <li> Declare one more more fields in <i>C</i> that hold the
        values you want to seed. Each field should:
 
     <ul>
       <li> include the <tt>@TestValue</tt> annotation,
-      <li> Be declared <b><tt>public</tt></b>, <b><tt>static</tt></b>,
-      <li> Be of type primitive, <tt>String</tt>, or an array of primitives of <tt>String</tt>s, and
-      <li> Be initialized to contain one or more seed values.
+      <li> be declared <b><tt>public</tt></b> and <b><tt>static</tt></b>,
+      <li> be of a primitive (or <tt>String</tt>) type, or an array of primitives or <tt>String</tt>s, and
+      <li> be initialized to contain one or more seed values.
     </ul>
 
   <li> Include the class you created in the list of classes given to Randoop to test.
