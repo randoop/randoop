@@ -9,8 +9,8 @@ import junit.framework.TestCase;
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsHashcode;
 import randoop.EqualsSymmetric;
-import randoop.EqualsToItself;
-import randoop.EqualsToNull;
+import randoop.EqualsReflexive;
+import randoop.EqualsToNullRetFalse;
 import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
@@ -49,7 +49,7 @@ public class SequenceTests extends TestCase {
    *    compared with the expected code from the "EXPECTED_CODE" field in the record.
    */
   public void test1() throws Exception {
-
+    
     RecordProcessor processor = new RecordProcessor() {
       public void processRecord(List<String> lines) {
         
@@ -58,7 +58,6 @@ public class SequenceTests extends TestCase {
       }
     };
     
-
     boolean long_format_old = GenInputsAbstract.long_format;
     GenInputsAbstract.long_format = true;
     RecordListReader reader = new RecordListReader("TEST", processor);
@@ -73,8 +72,8 @@ public class SequenceTests extends TestCase {
   private static final List<ExecutionVisitor> visitors;
   static {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
-    contracts.add(new EqualsToItself());
-    contracts.add(new EqualsToNull());
+    contracts.add(new EqualsReflexive());
+    contracts.add(new EqualsToNullRetFalse());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
     

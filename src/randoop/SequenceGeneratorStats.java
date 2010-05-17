@@ -51,22 +51,22 @@ public class SequenceGeneratorStats {
   private List<StatName> keys = new ArrayList<StatName>();
 
   public static final StatName STAT_BRANCHTOT = new StatName("TOTAL NUMBER OF BRANCHES IN METHOD",
-      "Brtot", "Total number of branches in method", true);
+      "Brtot", "Total number of branches in method", false);
 
   private static final StatName STAT_BRANCHCOV = new StatName("BRANCHES",
-      "Brcov", "Number of branches covered in method", true);
+      "Brcov", "Number of branches covered in method", false);
 
   private static final StatName STAT_SEQUENCE_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT =
     new StatName("STAT_SEQUENCE_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT", "ObjVio",
-        "Non-repetitive number of sequences where object contract violated after last statement.", true);
+        "Non-repetitive number of sequences where object contract violated after last statement.", false);
 
   private static final StatName STAT_SEQUENCE_RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT =
-    new StatName("STAT_SEQUENCE__RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT", "ObjVioR",
+    new StatName("STAT_SEQUENCE__RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT", "Failing inputs",
         "Number of sequences where object contract violated after last statement.", true);
 
   private static final StatName STAT_SEQUENCE_FORBIDDEN_EXCEPTION_LAST_STATEMENT =
     new StatName("STAT_SEQUENCE_FORBIDDEN_EXCEPTION_LAST_STATEMENT", "ExVio",
-        "Number of sequences where bad exception was thrown after last statement.", true);
+        "Number of sequences where bad exception was thrown after last statement.", false);
 
 
   private static final StatName STAT_SELECTED = new StatName("SELECTED",
@@ -97,7 +97,7 @@ public class SequenceGeneratorStats {
       stats_generation);
 
   public static final StatName STAT_NOT_DISCARDED = new StatName(
-      "DID NOT DISCARD", "NewInp",
+      "DID NOT DISCARD", "Inputs generated",
       "Created a new test input.",
       true /* always printable */);
 
@@ -291,7 +291,7 @@ public class SequenceGeneratorStats {
   /** Starts the progress-display thread. */
   public void startProgressDisplay() {
     if (!GenInputsAbstract.noprogressdisplay) {
-      printLegend();
+      //printLegend();
       progressDisplay = new ProgressDisplay(this,ProgressDisplay.Mode.MULTILINE, 200);
       progressDisplay.display();
       progressDisplay.start();
@@ -305,6 +305,7 @@ public class SequenceGeneratorStats {
 
   private void addStats() {
 
+    addKey(STAT_NOT_DISCARDED);
     addKey(STAT_SELECTED);
     addKey(STAT_BRANCHTOT);
     addKey(STAT_BRANCHCOV);
@@ -317,7 +318,6 @@ public class SequenceGeneratorStats {
     addKey(STAT_DISCARDED_SIZE);
     addKey(STAT_DISCARDED_REPEATED);
     if (stats_generation) addSeparator();
-    addKey(STAT_NOT_DISCARDED);
     addSeparator();
     addKey(STAT_SEQUENCE_STOPPED_EXEC_BEFORE_LAST_STATEMENT);
     addKey(STAT_SEQUENCE_EXECUTED_NORMALLY);

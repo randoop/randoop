@@ -18,6 +18,8 @@ default:
 	@echo "results        display results of tests."
 	@echo "tests          run tests."
 	@echo "update-goals   update test goal files."
+	@echo "manual         update the user manual."
+	@echo "jdoc           update the javadoc."
 	@echo "distribution-files  create distribution zip and jar files."
 
 # Put user-specific changes in your own Makefile.user.
@@ -64,10 +66,10 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	touch bin
 
 # Run all tests.
-tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
+tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual jdoc results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop1 randoop2 randoop-contracts
+randoop-tests: unit randoop1 randoop2 randoop-contracts randoop-checkrep
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -76,10 +78,10 @@ randoop_agent.jar : $(AGENT_JAVA_FILES) src/randoop/instrument/manifest.txt
 	jar cfm randoop_agent.jar src/randoop/instrument/manifest.txt \
 	  bin/randoop/instrument/Premain.class
 
-jdoc javadoc:
-	mkdir -p jdoc
+jdoc:
+	mkdir -p doc/javadoc
 	find src/randoop -name "*.java" \
-		| xargs javadoc -d jdoc -quiet -noqualifier all
+		| xargs javadoc -d doc/javadoc -quiet -noqualifier all -notimestamp
 
 .PHONY: tags
 tags: TAGS
@@ -101,6 +103,7 @@ unit: bin
 # Runs Randoop on Collections and TreeSet.
 randoop1: bin
 	rm -rf systemtests/randoop-scratch
+	mkdir systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --use-object-cache \
@@ -114,7 +117,8 @@ randoop1: bin
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
 	   --nochecks=false \
-	   --randooptestrun=true
+	   --randooptestrun=true \
+	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
@@ -180,6 +184,25 @@ randoop-contracts: bin
 	cd systemtests/randoop-contracts-test-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopContractsTest
+
+randoop-checkrep: bin
+	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/CheckRep*.java
+	rm -rf systemtests/randoop-contracts-test-scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	  randoop.main.Main gentests \
+	   --output-tests=fail \
+	   --timelimit=2 \
+	   --testclass=examples.CheckRep1 \
+	   --testclass=examples.CheckRep2 \
+	   --junit-classname=CheckRepTest \
+	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
+	   --log=systemtests/randoop-checkrep-contracts-log.txt
+	cd systemtests/randoop-contracts-test-scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) CheckRepTest.java
+# We expect this to fail, so add a "-" so the target doesn't fail.
+	cd systemtests/randoop-contracts-test-scratch && \
+	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	  randoop.main.RandoopCheckRepTest
 
 # Performance tests. Removed from Randoop tests because results highly dependent on machine that
 # tests are run, resulting in many false positives.
@@ -430,6 +453,7 @@ utils/plume-lib:
 
 manual: utils/plume-lib
 	utils/plume-lib/bin/html-update-toc doc/index.html
+	utils/plume-lib/bin/html-update-toc doc/dev.html
 
 ############################################################
 # Targets for updating Randoop's distribution.

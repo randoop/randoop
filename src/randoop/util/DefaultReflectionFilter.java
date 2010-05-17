@@ -6,9 +6,15 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import randoop.CheckRep;
+
 /**
  * Returns true for public members, with some exceptions (see
  * doNotUseSpecialCase method).
+ * 
+ * If a method has the @CheckRep annotation, returns false
+ * (the method will be used as a contract checker, not
+ *  as a method under test).
  */
 public class DefaultReflectionFilter implements ReflectionFilter {
 
@@ -76,6 +82,10 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     if (m.getDeclaringClass().equals(java.lang.Thread.class))
       return false;//handled here to avoid printing reasons
 
+    if (m.getAnnotation(CheckRep.class) != null) {
+      return false;
+    }
+    
     String reason = doNotUseSpecialCase(m);
     if (reason != null) {
       if (VERBOSE){

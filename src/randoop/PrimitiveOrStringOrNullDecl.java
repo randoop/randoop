@@ -65,7 +65,6 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
   /**
    * Indicates whether this PrimitiveOrStringOrNullDeclInfo is equal to o
    */
-  @Testable
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof PrimitiveOrStringOrNullDecl))

@@ -3,8 +3,6 @@ package randoop.test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import randoop.Testable;
-
 
 
 
@@ -68,64 +66,51 @@ public class Seeds {
     }
   }
 
-  @Testable
   public static Class<?> getA() {
     return A;
   }
 
-  @Testable
   public static Class<?> getB() {
     return B;
   }
 
-  @Testable
   public static Constructor<?> getACons1() {
     return ACons1;
   }
 
-  @Testable
   public static Constructor<?> getACons2() {
     return ACons2;
   }
 
-  @Testable
   public static Constructor<?> getBCons1() {
     return BCons1;
   }
 
-  @Testable
   public static Constructor<?> getBCons2() {
     return BCons2;
   }
 
-  @Testable
   public static Method getA1() {
     return a1;
   }
 
-  @Testable
   public static Method getA2() {
     return a2;
   }
 
-  @Testable
   public static Method getA3() {
     return a3;
   }
 
-  @Testable
   public static Method getB1() {
     return b1;
   }
 
-  @Testable
   public static Method getB2() {
     return b2;
   }
 
-  @Testable
   public static Method getB3() {
     return b3;
   }
-
 }

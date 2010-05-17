@@ -118,15 +118,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean remove_subsequences = true;
 
   @Unpublicized  
-  @Option("Run each test twice and compare the observations")
-  public static boolean compare_observations = false;
+  @Option("Run each test twice and compare the checks")
+  public static boolean compare_checks = false;
 
   @Unpublicized  
-  @Option("Create clean observations for a serialized sequence")
-  public static File clean_observations = null;
+  @Option("Create clean checks for a serialized sequence")
+  public static File clean_checks = null;
 
   @Unpublicized  
-  @Option("Print any observations that are different in the clean run")
+  @Option("Print any checks that are different in the clean run")
   public static boolean print_diff_obs = false;
 
   @Unpublicized  
@@ -201,6 +201,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Output components (serialized, GZIPPED) to the given file. Suggestion: use a .gz suffix in file name.")
   public static String output_components = null;
+
+  @Unpublicized
+  @Option("Output tests (sequences plus checkers) in serialized form to the given file. Suggestion: use a .gz suffix in file name.")
+  public static String output_tests_serialized = null;
 
   @Unpublicized
   @Option("Output covered branches to the given text file.")
@@ -285,6 +289,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
     super(command, pitch, commandGrammar, where, summary, notes, input, output,
         example, options);
 
+    if (observers != null) {
+      throw new RuntimeException("observers option not implemented.");
+    }
+    
     // Check consistency of arguments.
 
     if (!( output_tests.equals(all)

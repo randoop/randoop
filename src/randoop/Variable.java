@@ -39,7 +39,8 @@ public class Variable implements Comparable<Variable>, Serializable {
     Variable other = (Variable)o;
     // Two values are equal only if they are owned by the
     // same sequence, where "same" means the same reference.
-    return this.sequence == other.sequence && this.index == other.index;
+    //return this.sequence == other.sequence && this.index == other.index;
+    return this.index == other.index;
   }
 
   @Override

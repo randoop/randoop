@@ -147,7 +147,7 @@ public class ForwardGenerator extends AbstractGenerator {
       return;
     }
 
-    if (seq.hasObservation(ContractViolation.class)) {
+    if (seq.hasFailure()) {
       seq.sequence.clearAllActiveFlags();
       return;
     }

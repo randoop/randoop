@@ -1,11 +1,31 @@
 package randoop;
 
 /**
- * Checks that calling toString() on a method does not throw an exception.
+ * Checks that calling toString() on an object does not throw an exception.
  */
-public class ToStringReturnsNormally implements ObjectContract {
+public final class ToStringReturnsNormally implements ObjectContract {
 
-  public Object evaluate(Object... objects) {
+  private static final long serialVersionUID = 2793644666060415571L;
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null)
+      return false;
+    if (o == this)
+      return true;
+    if (!(o instanceof ToStringReturnsNormally)) {
+      return false;
+    }
+    return true; // no state to compare.
+  }
+
+  @Override
+  public int hashCode() {
+    int h = 51;
+    return h;  // no state to compare.
+  }
+  
+  public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
@@ -21,8 +41,22 @@ public class ToStringReturnsNormally implements ObjectContract {
     return "x0.toString() throws no Exception.";
   }
 
+  @Override
+  public boolean evalExceptionMeansFailure() {
+    return true;
+  }
+
+  @Override
   public String toCodeString() {
-    return "x0.toString()";
+    StringBuilder b = new StringBuilder();
+    b.append(Globals.lineSep);
+    b.append("// Checks the contract: ");
+    b.append(" " + toCommentString() + Globals.lineSep);
+    b.append("assertTrue(");
+    b.append("\"Contract failed: " + toCommentString() + "\", ");
+    b.append("x0.toString()");
+    b.append(");");
+    return b.toString();
   }
 
 }

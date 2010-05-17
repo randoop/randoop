@@ -10,7 +10,7 @@ public class StatName implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  public static final int MAX_LENGTH_SHORT_NAME = 10;
+  public static final int MAX_LENGTH_SHORT_NAME = 20;
 
   public final String longName;
   public final String shortName;
