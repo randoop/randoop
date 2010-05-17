@@ -1,0 +1,220 @@
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" />
+<link rel=stylesheet href="main.css" type="text/css" />
+<head><title>Randoop Developer's Manual</title></head>
+
+<h1>Randoop Developer's Manual</h1> <!-- omit from toc -->
+
+<!-- start toc.  do not edit; run html-update-toc instead -->
+<ul>
+  <li><a href="#tasks">Compiling, testing, releasing, etc.</a>
+    <ul>
+      <li><a href="#compiling">Compiling Randoop</a></li>
+      <li><a href="#running">Running unit and system tests</a></li>
+      <li><a href="#daytoday">Running Randoop: day to day play</a></li>
+      <li><a href="#modmanual">Modifying the manual</a></li>
+      <li><a href="#making_new_dist">Making a new distribution</a></li>
+    </ul></li>
+  <li><a href="#code">Randoop Internals</a>
+    <ul>
+      <li><a href="#sequence">Sequences</a>
+        <ul>
+          <li>
+            <ul>
+              <li><a href="#executing_sequence">Creating a sequence</a></li>
+              <li><a href="#executing_sequence">Executing a sequence</a></li>
+              <li><a href="#inout_sequence">Writing and reading a sequences</a></li>
+            </ul></li>
+        </ul></li>
+      <li><a href="#code">Main entry points</a></li>
+      <li><a href="#code">Test generator classes</a></li>
+    </ul></li>
+</ul>
+<!-- end toc -->
+
+<hr>
+
+<h1 id="tasks">Compiling, testing, releasing, etc.</h1>
+ 
+<p>Prerequites for compiling and testing:</p>
+
+<ul>
+  <li>Randoop requires Java 5.0 or greater.
+  <li>To run system tests, you must be in an Unix-like environment (Linux, Mac OS X, etc.).
+</ul>
+
+<h2 id="compiling">Compiling Randoop</h2>
+
+<p>Under Unix:</p>
+
+<ol>
+  <li>From a command prompt, type <tt>make build</tt> under Randoop's home
+    directory (the directory containing this file).
+  <li>If you want to rebuild from scratch, type <tt>make clean</tt> first.
+  <li> The generated classes are placed in bin/ directory.
+</ol>
+
+<p>Under Eclipse:</p>
+
+<ol>
+  <li>If you are in Eclipse, Randoop compiles out of the box.
+  <li>The generated classes are also placed in bin/ directory.
+</ol>
+
+<h2 id="running">Running unit and system tests</h2>
+
+<ul>
+  <li>From a command prompt, type <tt>make tests</tt> under Randoop's home directory.
+  <li>To do everything (build <i>and</i> run all tests), type <tt>make all</tt>.
+</ul>
+
+<h2 id="daytoday">Running Randoop: day to day play</h2>
+
+How to run Randoop?  The Makefile has targets for building and running
+unit/system tests. How to just run Randoop on some arbitrary classes
+for daily purposes? All you need to do to run Randoop is make sure the
+bin/ directory and the files under lib/ are part of the classpath.
+
+<ul>
+  <li>To avoid repeatedly setting up the classpath, some of us add the
+  bin/ directory and the files under lib/ to our (global) CLASSPATH
+  variable that we specify in a configuration file (e.g. .bashrc).
+
+  <li>Others create a temporary shell script or mini-Makefile for ad-hoc
+  use, for instance, a Make file such as:
+
+<pre class="code">
+  RANDOOP_HOME ?= <LOCATION OF RANDOOP PROJECT>
+  include $(RANDOOP_HOME)/common.mk
+  run:
+	java -ea randoop.main.Main help gentests
+</pre>
+
+</ul>
+
+<h2 id="modmanual">Modifying the manual</h2>
+
+To modify the Randoop manual, edit directly the HTML files:
+
+<ul>
+<li> <code>index.html</code> has the user manual.
+<li> <code>dev.html</code> has the developer manual with instructions
+for hacking Randoop
+</ul>
+
+Then, run under Randoop's home directory:
+
+<pre class="code">
+% make manual
+</pre>
+
+<h2 id="making_new_dist">Making a new distribution</h2>
+<p>
+<ol>
+  <li>Increase version number (modify variable <tt>RANDOOP_VERSION</tt> in <tt>src/randoop/Globals.java</tt>).
+  <li>Compile and test: run <tt>make clean</tt> followed by <tt>make all</tt>. Make sure all tests pass.
+  <li>Rename the zip and jar files created under the <code>dist/</code> directory to the appropriate version number.
+  <li>Upload the zip and jar files to google code.
+</ol>
+<p>
+
+<h1 id="code">Randoop Internals</h1>
+
+<h2 id="sequence">Sequences</h2>
+
+Randoop's main data structure is the <b><i>sequence</i></b>
+(class
+<a href="javadoc/randoop/Sequence.html">randoop.Sequence</a>).  A
+sequence describes the syntactic structure of a test input. In
+Randoop, all test inputs are sequences of operations that use the
+methods and constructors of the classes under test.
+
+<pre class="code">
+    LinkedList list = new LinkedList();
+    Object o = new Object();
+    list.addFirst(o);
+    TreeSet t = new TreeSet(list);
+    Set s = Collections.synchronizedSet(t);
+</pre>
+
+<p>
+
+</ul>
+
+
+<h4 id="executing_sequence">Creating a sequence</h4>
+
+<h4 id="executing_sequence">Executing a sequence</h4>
+<p>
+<ul>
+
+<li>A <a href="javadoc/randoop/Sequence.html">Sequence</a> only
+describes the structure of a test input. All aspects related to the
+execution of a sequence are handled by the related class
+<a href="javadoc/randoop/ExecutableSequence.html">ExecutableSequence</a>. This
+class is basically a wrapper around a <tt>Sequence</tt> that adds the
+ability to execute the sequence statements, and add
+<a href="javadoc/randoop/Observation.html">Observation</a>s about the
+execution. Observations capture things like whether a sequence
+violated a contract, whether a method returned <tt>null</tt> or not,
+etc.)
+<p>
+<li>Output capture is implemented in ExecutableSequence.executeStatement.
+This is accomplished by changing stdout and stderr to a memory
+based printsteam and recording the results.
+<p>
+Comparing observations to see if they return consistent results is
+implementedin ExecutableSequence.compare_observations()
+</ul>
+<p>
+<h4 id="inout_sequence">Writing and reading a sequences</h4>
+<p>
+<h5>Writing a sequence as a JUnit test.</h5>
+
+Places to look for when modifying the JUnit code that is output:
+<p>
+<li>Class <code>randoop.JunitFileWriter</code> figures out how many JUnit classes/files
+to write, how many tests to put in each, what to name them, etc.
+<li>Methods
+  <ul>
+  <li><tt>randoop.ExecutableSequence.toCodeString(),</tt>
+  <li><tt>randoop.ExecutableSequence.toCodeString(),</tt>
+  <li><tt>and the various implementationgs of randoop.StatementKind.appendCode(...)</tt>
+  </ul>
+  Are responsible for writing the code for a single unit test.
+</ul>
+<p>
+<h2 id="code">Main entry points</h2>
+
+<p>
+<ul>
+<li><a href="javadoc/randoop/main/GenTests.html">randoop.main.GenTests</a>
+is the main class for Randoop as it is normally used.  There are other
+mains for other purposes.
+<p>
+<li>Method <tt>handle</tt> is the
+main <a href="javadoc/randoop/main/GenTests.html">GenTests</a>
+entrypoint for Randoop. (This is not strictly true, as Randoop's true
+entrypoint is
+class <a href="javadoc/src/randoop/main/Main.java">randoop.main.Main</a>
+But <tt>GenTests</tt> is where all the action starts with test
+generation.) The <tt>handle</tt> method is long and mostly deals with
+setting up things before the generation process, and doing things like
+outputting tests after generation.
+<p>
+<li>Most command line options are specified
+in <a href="javadoc/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
+</ul>
+<p>
+
+<h2 id="code">Test generator classes</h2>
+
+<p>
+<ul>
+<li>ForwardGenerator is the generator for Randoop's normal operation.
+</ul>
+<p>
+
+</body>
+</html>
