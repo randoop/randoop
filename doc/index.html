@@ -24,6 +24,7 @@
         </ul></li>
       <li><a href="#cutomize">Customizing Randoop's behavior to your application</a>
         <ul>
+          <li><a href="#checkrep">Specifying representation invariant ("checkRep") methods</a></li>
           <li><a href="#primitives">Specifying additional primitive values</a></li>
         </ul></li>
     </ul>
@@ -127,7 +128,7 @@ without any arguments, you will get an informational
 screen: </p>
 
 <pre class="code">
-% java -classpath randoop.jar randoop.main.Main help
+% java -ea -classpath randoop.jar randoop.main.Main help
 
 Randoop for Java version 1.3.
 
@@ -161,6 +162,11 @@ help -- Displays a help message for a given command.</pre>
 
 <!-- By default, Randoop runs with the option <tt>usethreads</tt> set -->
 <!-- to <tt>true</tt>. This means -->
+
+<p>We recommend always giving the <tt>-ea</tt> (enable assertions)
+option to java when running Randoop: if something goes wrong and you
+send us an error report, we will be able better to help you diagnose
+the cause of the problem.</p>
 
 
 <h2 id="getting_help">Getting help</h2>
@@ -286,6 +292,47 @@ public void test10() throws Throwable {
 
 <h2 id="cutomize">Customizing Randoop's behavior to your application</h2>
 
+<h3 id="checkrep">Specifying representation invariant ("checkRep") methods</h3>
+
+A representation invariant method checks that a class's internal
+representation satisfies expected properties. For example, a rep
+invariant method for a sorted list data structure may check that the
+elements in the list are indeed sorted; a rep invariant method for a
+balanced binary tree may check that the tree is balanced, etc.
+
+<p>
+
+You can tell Randoop that some methods in your classes under test are
+rep invariant methods, and Randoop will call these methods on objects
+of the appropriate type, outputting violations of the rep invariant as
+failing unit tests. To tell Randoop that a method in a class under
+test is a rep invariant method, add the <code>@CheckRep</code>
+annotation to the method declaration (don't forget to <code>import
+randoop.*</code>.
+
+<p>
+
+A method annotated with <code>@CheckRep</code> must have one of two
+allowed signatures:
+
+<p>
+
+<ul>
+
+<li>A public instance method with no arguments and return
+type <b>boolean</b>. In this case, Randoop will interpret a return
+value of <code>true</code> as the rep invariant being satisfied, and a
+return value of <code>false</code> <i>or</i> an exception escaping the
+method as the rep invariant being violated.
+
+<p>
+
+<li>A public instance method with no arguments and return
+type <b>void</b>. In this case, Randoop will interpret a normal return
+(no exceptions) as the rep invariant being satisfied, and a an
+exception escaping the method as the rep invariant being violated.
+
+</ul>
 
 <h3 id="primitives">Specifying additional primitive values</h3>
 
