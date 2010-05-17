@@ -12,7 +12,7 @@ import randoop.util.Files;
 import randoop.util.Reflection;
 
 /**
- * An execution visitor that records regression observations on the values
+ * An execution visitor that records regression checks on the values
  * created by the sequence. It does this only after the last statement has been
  * executed.
  *
@@ -22,15 +22,15 @@ import randoop.util.Reflection;
  *
  * <li> Should follow a contract-checking visitor, if the latter is also
  * present in a MultiVisitor. If there is a contract-checking violationg
- * in the sequence, this visitor adds no observations.
+ * in the sequence, this visitor adds no checks.
  *
- * <li> We only create observations over variables whose type is primitive or
+ * <li> We only create checks over variables whose type is primitive or
  * String.
  *
- * <li> We do not create observations for the return values of Object.toString()
+ * <li> We do not create checks for the return values of Object.toString()
  * and Object.hashCode() as their values can vary from run to run.
  *
- * <li> We do not create observations for Strings that contain the string ";@"
+ * <li> We do not create checks for Strings that contain the string ";@"
  * as this is a good indication that at least part of the String came from a
  * call of Object.toString() (e.g. "[[Ljava.lang.Object;@5780d9]" is the string
  * representation of a list containing one Object).
@@ -43,7 +43,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     // Empty body.
   }
 
-  // We don't create regression observations for these methods.
+  // We don't create regression checks for these methods.
   private static final Method objectToString;
   private static final Method objectHashCode;
 
@@ -115,7 +115,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     if (idx < (s.sequence.size()-1))
       return true;
 
-    if (s.hasObservation(idx, ContractViolation.class)) {
+    if (s.hasFailure(idx)) {
       return true;
     }
 
@@ -123,7 +123,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
       return true;
     }
 
-    // Capture observations for each value created.
+    // Capture checks for each value created.
     // Recall there are as many values as statements in the sequence.
     for (int i = 0; i < s.sequence.size() ; i++) {
 
@@ -133,20 +133,20 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
         NormalExecution e = (NormalExecution)s.getResult(i);
         // If value is like x in "int x = 3" don't capture
-        // observations (nothing interesting).
+        // checks (nothing interesting).
         if (st instanceof PrimitiveOrStringOrNullDecl)
           continue;
 
 
         // If value's type is void (i.e. its statement is a
-        // void-return method call), don't capture observations
+        // void-return method call), don't capture checks
         // (nothing interesting).
         Class<?> tc = st.getOutputType();
         if (void.class.equals(tc))
           continue; // no return value.
 
         // If value is the result of Object.toString() or
-        // Object.hashCode(), don't capture observations (value is
+        // Object.hashCode(), don't capture checks (value is
         // likely to be non-deterministic across runs).
         if (st instanceof RMethod) {
           Method method = ((RMethod)st).getMethod();
@@ -158,14 +158,12 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
         Object o = e.getRuntimeValue();
     
-        List<Variable> vars = new ArrayList<Variable>();
-        vars.add(s.sequence.getVariable(i));
+        Variable var = s.sequence.getVariable(i);
 
         if (o == null) {
 
           // Add observer test for null
-          s.addObservation(idx,
-                         new ExpressionEqValue(ValueExpression.class, vars, o));
+          s.addCheck(idx,new ObjectCheck(new IsNull(), var), true);
 
         } else if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(o.getClass())) {
 
@@ -198,16 +196,21 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           }
 
           // Add observer test for the primitive
-          s.addObservation(idx,
-                         new ExpressionEqValue(ValueExpression.class, vars, o));
+          PrimValue.PrintMode printMode;
+          if (var.getType().isPrimitive()) {
+            printMode = PrimValue.PrintMode.EQUALSEQUALS;
+          } else {
+            printMode = PrimValue.PrintMode.EQUALSMETHOD;
+          }
+          s.addCheck(idx,new ObjectCheck(new PrimValue(o, printMode), var), true);
 
         } else { // its a more complex type with a non-null value
 
           // Assert that the value is not null (just as interesting as is null)
           // Exception: if the value comes directly from a constructor call, 
-          // not interesting so omit the observation in that case.
-          if (!(st instanceof RConstructor)) { 
-            s.addObservation(idx, new ExpressionNotEqValue(ValueExpression.class, vars, null));
+          // not interesting so omit the check in that case.
+          if (!(st instanceof RConstructor)) {
+            s.addCheck(idx, new ObjectCheck(new IsNotNull(), var), true);
           }
 
           // Put out any observers that exist for this type
@@ -215,9 +218,10 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           List<Method> observers = observer_map.get (var0.getType());
           if (observers != null) {
             for (Method m : observers) {
-              Observation observer = new ObserverEqValue (m, var0, o);
+              //Check observer = new ObserverEqValue (m, o);
               // System.out.printf ("Adding observer %s%n", observer);
-              s.addObservation (idx, observer);
+              //s.addCheck (idx, observer);
+              throw new RuntimeException("Not implemented");
             }
           }
         }
@@ -225,7 +229,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
       } else if (s.getResult(i) instanceof ExceptionalExecution) {
 
         ExceptionalExecution e = (ExceptionalExecution)s.getResult(i);
-        s.addObservation(i, new StatementThrowsException(e.getException()));
+        s.addCheck(i, new ExpectedExceptionChecker(e.getException()), true);
 
       } else {
         assert s.getResult(i) instanceof NotExecuted;

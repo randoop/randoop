@@ -8,14 +8,14 @@ package randoop;
 public class ReplayFailureException extends RuntimeException {
 
   private static final long serialVersionUID = -6685935677958691837L;
-  private final Observation decoration;
+  private final Check decoration;
 
-  public ReplayFailureException(String message, Observation d) {
+  public ReplayFailureException(String message, Check d) {
     super(message);
     this.decoration= d;
   }
 
-  public Observation getDecoration() {
+  public Check getDecoration() {
     return this.decoration;
   }
 }

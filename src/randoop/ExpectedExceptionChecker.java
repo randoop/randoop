@@ -4,28 +4,45 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 /**
- * An observation recording the exception that a particular
- * statement threw during execution.
+ * A checker that checks for an expected exception from a method call.
  */
-public class StatementThrowsException implements Observation, Serializable {
+public class ExpectedExceptionChecker implements Check, Serializable {
 
   private static final long serialVersionUID = 1L;
 
   private final Class<? extends Throwable> exceptionClass;
+  
+  @Override
+  public boolean equals(Object o) {
+    if (o == null) return false;
+    if (o == this) return true;
+    if (!(o instanceof ExpectedExceptionChecker)) {
+      return false;
+    }
+    ExpectedExceptionChecker other = (ExpectedExceptionChecker)o;
+    return this.exceptionClass.equals(other.exceptionClass);
+  }
+  
+  @Override
+  public int hashCode() {
+    int h = 7;
+    h = h * 31 + exceptionClass.hashCode();
+    return h;
+  }
 
-  public StatementThrowsException(Throwable exception) {
+  public ExpectedExceptionChecker(Throwable exception) {
     if (exception == null)
       throw new IllegalArgumentException("exception cannot be null.");
     this.exceptionClass = exception.getClass();
   }
 
-  public StatementThrowsException (Class<? extends Throwable> exception_class) {
+  public ExpectedExceptionChecker (Class<? extends Throwable> exception_class) {
     this.exceptionClass = exception_class;
   }
 
   private Object writeReplace() throws ObjectStreamException {
     // System.out.printf ("writeReplace %s in StatementThrowsException%n", this);
-    return new SerializableExceptionObservation(exceptionClass);
+    return new SerializableExpectedExceptionChecker(exceptionClass);
   }
 
   public String toString() {

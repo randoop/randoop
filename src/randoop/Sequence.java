@@ -24,11 +24,11 @@ import randoop.util.Reflection.Match;
 
 /**
  * Immutable.
- *
+ * <p>
  * A sequence of statements. Each element in the sequence represents a
  * particular Statement, like a method call "Foo f = m(i1...iN)" or a
  * declaration "int x = 0".
- *
+ * <p>
  * This class represents only the structure of a well-formed sequence of
  * statements, and does not contain any information about the runtime behavior
  * of the sequence. The class randoop.ExecutableSequence adds

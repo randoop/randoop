@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -30,20 +29,20 @@ import plume.Unpublicized;
 import plume.Options.ArgException;
 import randoop.AbstractGenerator;
 import randoop.BugInRandoopException;
+import randoop.CheckRep;
+import randoop.CheckRepContract;
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsHashcode;
 import randoop.EqualsSymmetric;
-import randoop.EqualsToItself;
-import randoop.EqualsToNull;
+import randoop.EqualsReflexive;
+import randoop.EqualsToNullRetFalse;
 import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
 import randoop.ForwardGenerator;
 import randoop.Globals;
 import randoop.JunitFileWriter;
 import randoop.NaiveRandomGenerator;
-import randoop.NotPartOfState;
 import randoop.ObjectContract;
-import randoop.PrimitiveOrStringOrNullDecl;
 import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.RegressionCaptureVisitor;
@@ -52,11 +51,9 @@ import randoop.Sequence;
 import randoop.SequenceCollection;
 import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
-import randoop.TestValue;
 import randoop.Variable;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
-import randoop.util.PrimitiveTypes;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
@@ -186,10 +183,11 @@ public class GenTests extends GenInputsAbstract {
       Reflection.getStatements(classes, new DefaultReflectionFilter(omitmethods));
 
     // Always add Object constructor (it's often useful).
+    RConstructor objectConstructor = null;
     try {
-      RConstructor cons = RConstructor.getRConstructor(Object.class.getConstructor());
-      if (!model.contains(cons))
-        model.add(cons);
+      objectConstructor = RConstructor.getRConstructor(Object.class.getConstructor());
+      if (!model.contains(objectConstructor))
+        model.add(objectConstructor);
     } catch (Exception e) {
       throw new BugInRandoopException(e); // Should never reach here!
     }
@@ -295,10 +293,18 @@ public class GenTests extends GenInputsAbstract {
     // NOTE that order matters! Regression capture visitor
     // should come after contract-violating visitor.
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
+    
+    
     if (check_object_contracts) {
       List<ObjectContract> contracts = new ArrayList<ObjectContract>();
-      contracts.add(new EqualsToItself());
-      contracts.add(new EqualsToNull());
+
+      // Add any @CheckRep-annotated methods and create visitors for them.
+      List<ObjectContract> checkRepContracts = getContractsFromAnnotations(classes.toArray(new Class<?>[0]));
+      contracts.addAll(checkRepContracts);
+      
+      // Now add all of Randoop's default contracts.
+      contracts.add(new EqualsReflexive());
+      contracts.add(new EqualsToNullRetFalse());
       contracts.add(new EqualsHashcode());
       contracts.add(new EqualsSymmetric());
       ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts,
@@ -409,6 +415,32 @@ public class GenTests extends GenInputsAbstract {
     for (ExecutableSequence p : explorer.stats.outSeqs) {
       sequences.add(p);
     }
+    
+    if (output_tests_serialized != null) {
+      // Output executable sequences.
+      System.out.println("Serializing tets...");
+      try {
+        FileOutputStream fileos = new FileOutputStream(output_tests_serialized);
+        ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
+        objectos.writeObject(sequences);
+        objectos.close();
+        fileos.close();
+        
+        FileInputStream fileis = new FileInputStream(output_tests_serialized);
+        ObjectInputStream objectis = new ObjectInputStream(new GZIPInputStream(fileis));
+        List<ExecutableSequence> seqsfromfile = (List<ExecutableSequence>) objectis.readObject();
+        assert seqsfromfile.size() == sequences.size();
+        for (int i = 0 ; i < seqsfromfile.size() ; i++) {
+          assert seqsfromfile.get(i).equals(sequences.get(i)) : seqsfromfile.get(i) + "@@@" + sequences.get(i);
+          ExecutableSequence eseq = seqsfromfile.get(i);
+          eseq.execute(null);
+          
+        }
+        fileis.close();
+      } catch (Exception e) {
+        throw new Error(e);
+      }
+    }
 
     // If specified, remove any sequences that don't include the target class
     // System.out.printf ("test_classes regex = %s%n",
@@ -434,24 +466,28 @@ public class GenTests extends GenInputsAbstract {
 
     // If specified remove any sequences that are used as inputs in other
     // tests.  These sequences are redundant.
+    //
+    // While we're at it, remove the useless sequence "new Object()".
+    Sequence newObj = new Sequence().extend(objectConstructor);
     if (GenInputsAbstract.remove_subsequences) {
       List<ExecutableSequence> unique_seqs 
         = new ArrayList<ExecutableSequence>();
       Set<Sequence> subsumed_seqs = explorer.subsumed_sequences();
       for (ExecutableSequence es : sequences) {
-        if (!subsumed_seqs.contains (es.sequence))
-          unique_seqs.add (es);
+        if (!subsumed_seqs.contains(es.sequence) && !es.sequence.equals(newObj)) {
+          unique_seqs.add(es);
+        }
       }
       System.out.printf ("%d subsumed tests removed%n", 
                          sequences.size() - unique_seqs.size());
       sequences = unique_seqs;
     }
 
-    // Generate observations from the exact sequences to be run in the
-    // tests.  These observations may differ from the original observations
+    // Generate checks from the exact sequences to be run in the
+    // tests.  These checks may differ from the original checks
     // because of changes to the global state.
     File tmpfile = null;
-    if (GenInputsAbstract.compare_observations) {
+    if (GenInputsAbstract.compare_checks) {
       try {
         tmpfile = File.createTempFile ("seqs", "gz");
       } catch (Exception e) {
@@ -459,15 +495,15 @@ public class GenTests extends GenInputsAbstract {
       }
       write_junit_tests ("./before_clean", sequences);
       write_sequences (sequences, tmpfile.getPath());
-      generate_clean_observations (tmpfile.getPath());
+      generate_clean_checks (tmpfile.getPath());
     }
 
-    // Run the tests a second time, looking for any different observations
-    // This removes any observations whose values are not deterministic
+    // Run the tests a second time, looking for any different checks
+    // This removes any checks whose values are not deterministic
     // (such as values dependent on the current date/time)
-    if (GenInputsAbstract.compare_observations) {
+    if (GenInputsAbstract.compare_checks) {
       write_junit_tests ("./before_cmp", sequences);
-      remove_diff_observations (tmpfile.getPath());
+      remove_diff_checks (tmpfile.getPath());
       sequences = read_sequences (tmpfile.getPath());
     }
 
@@ -578,12 +614,12 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Run Randoop again and generate observations for the sequence.
-   * This ensures that the observations match the state that will be
+   * Run Randoop again and generate checks for the sequence.
+   * This ensures that the checks match the state that will be
    * in the final tests (because the global state used to create the
-   * observations will match that of the final tests)
+   * checks will match that of the final tests)
    */
-  public void generate_clean_observations (String outfile) {
+  public void generate_clean_checks (String outfile) {
 
     List<String> cmd = new ArrayList<String>();
     cmd.add ("java");
@@ -611,7 +647,8 @@ public class GenTests extends GenInputsAbstract {
     cmd.add (String.format("--capture_output=%b",
                            GenInputsAbstract.capture_output));
 
-    cmd.add (outfile);
+    cmd.add (outfile);      List<ObjectContract> contracts = new ArrayList<ObjectContract>();
+
     cmd.add (outfile);
     String[] cmd_array = new String[cmd.size()];
     System.out.printf ("Executing command %s%n", cmd);
@@ -620,15 +657,15 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Runs Randoop again and generates new observations for the list of
-   * sequences stored in seq_file.  Any observations that do not match
+   * Runs Randoop again and generates new checks for the list of
+   * sequences stored in seq_file.  Any checks that do not match
    * are presumed to be non-deteministic and are removed.  The resulting
    * sequence is written back into seq_file.
    *
    * This is run in a new JVM so that the initial global state for the
    * second run matches the initial global state for the first run.
    */
-  public void remove_diff_observations (String seq_file) {
+  public void remove_diff_checks (String seq_file) {
 
     List<String> cmd = new ArrayList<String>();
     cmd.add ("java");
@@ -662,10 +699,10 @@ public class GenTests extends GenInputsAbstract {
     cmd.add (seq_file);
     cmd.add (seq_file);
     String[] cmd_array = new String[cmd.size()];
-    progress.log ("Removing non-deterministic observations: executing "
+    progress.log ("Removing non-deterministic checks: executing "
                   + " command %s%n", cmd);
     RunCmd.run_cmd (cmd.toArray (cmd_array));
-    progress.log ("Completed removal of non-deterministic observations");
+    progress.log ("Completed removal of non-deterministic checks");
   }
 
   /** Print out usage error and stack trace and then exit **/
@@ -684,5 +721,55 @@ public class GenTests extends GenInputsAbstract {
   static void usage (String format, Object ... args) {
     usage (null, format, args);
   }
+  
+  public static List<ObjectContract> getContractsFromAnnotations(Class<?>... classes) {
 
+    List<ObjectContract> contractsFound = new ArrayList<ObjectContract>();
+
+    for (Class<?> c : classes) {
+      for (Method m : c.getDeclaredMethods()) {
+        if (m.getAnnotation(CheckRep.class) != null) {
+          
+          // Check that method is an instance (not a static) method.
+          if (Modifier.isStatic(m.getModifiers())) {
+            String msg = "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method " + m.getName() + " in class "
+            + m.getDeclaringClass() + " to be an instance method, but it is declared static.";
+            throw new RuntimeException(msg);
+          }
+          
+          // Check that method is public.
+          if (!Modifier.isPublic(m.getModifiers())) {
+            String msg = "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method " + m.getName() + " in class "
+            + m.getDeclaringClass() + " to be declared public but it is not.";
+            throw new RuntimeException(msg);
+          }
+          
+          // Check that method takes no arguments.
+          if (m.getParameterTypes().length > 0) {
+            String msg = "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method " + m.getName() + " in class "
+            + m.getDeclaringClass() + " to declare no parameters but it does (method signature:" + m.toString() + ").";
+            throw new RuntimeException(msg);
+          }
+          
+          // Check that method's return type is void.
+          if (!(m.getReturnType().equals(boolean.class) || m.getReturnType().equals(void.class))) {
+            String msg = "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method " + m.getName() + " in class "
+            + m.getDeclaringClass() + " to have void or boolean return type but it does not (method signature:" + m.toString() + ").";
+            throw new RuntimeException(msg);
+          }
+          
+          printDetectedAnnotatedCheckRepMethod(m);
+          contractsFound.add(new CheckRepContract(m));
+        }  
+      }
+    }
+    return contractsFound;
+  }
+
+  private static void printDetectedAnnotatedCheckRepMethod(Method m) {
+    String msg = "ANNOTATION: Detected @CheckRep-annotated method \""
+      + m.toString() + "\". Will use it to check rep invariant of class "
+      + m.getDeclaringClass().getCanonicalName() + " during generation.";
+   System.out.println(msg);
+  }
 }

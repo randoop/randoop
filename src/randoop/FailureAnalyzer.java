@@ -12,11 +12,9 @@ public class FailureAnalyzer {
   public static class Failure {
     public final StatementKind st;
     public final Class<?> viocls;
-    public final int reachablesize;
-    public Failure(StatementKind st, Class<?> viocls, int reachablesize) {
+    public Failure(StatementKind st, Class<?> viocls) {
       this.st = st;
       this.viocls = viocls;
-      this.reachablesize = reachablesize;
     }
     public boolean equals(Object o) {
       if (o == null) return false;
@@ -24,62 +22,59 @@ public class FailureAnalyzer {
       Failure other = (Failure)o;
       if (!st.equals(other.st)) return false;
       if (!viocls.equals(other.viocls)) return false;
-      if (reachablesize != other.reachablesize) return false;
       return true;
     }
     public int hashCode() {
       int hash = 7;
       hash = hash*31 + st.hashCode();
       hash = hash*31 + viocls.hashCode();
-      hash = hash*31 + new Integer(reachablesize).hashCode();
       return hash;
     }
   }
 
   public FailureAnalyzer(ExecutableSequence es) {
-    int idx = es.getObservationIndex(ContractViolation.class);
+    int idx = es.getFailureIndex();
     
     if (idx < 0) {
       return;
     }
     
-    for (Observation obs : es.getObservations(idx, ContractViolation.class)) {
+    for (Check obs : es.getFailures(idx)) {
       Class<?> vioCls = obs.getClass();
       StatementKind st = null;
-      int numInf = -1;
-      
-      if (obs instanceof ExpressionEqFalse) {
-        ExpressionEqFalse ex = (ExpressionEqFalse)obs;
-        assert ex.objcontract.equals(EqualsToItself.class) || ex.objcontract.equals(EqualsToNull.class)
-          || ex.objcontract.equals(EqualsHashcode.class) || ex.objcontract.equals(EqualsSymmetric.class);
 
+      if (obs instanceof ObjectCheck && ((ObjectCheck)obs).contract instanceof ObjectContract) {
 
-        MSequence mseq = es.sequence.toModifiableSequence();
-        List<MVariable> vars = new ArrayList<MVariable>();
-        for (Variable v : ex.vars) {
-          vars.add(mseq.getVariable(v.index));
+        ObjectContract ex = ((ObjectCheck)obs).contract;
+        int equalsReceiver = ((ObjectCheck)obs).vars[0].index;
+
+        if (ex instanceof EqualsReflexive 
+            || ex instanceof EqualsToNullRetFalse
+            || ex instanceof EqualsHashcode
+            || ex instanceof EqualsSymmetric) {
+
+          ExecutionOutcome res = es.getResult(equalsReceiver);
+          assert res instanceof NormalExecution;
+          Object runtimeval = ((NormalExecution) res).getRuntimeValue();
+          assert runtimeval != null;
+
+          Class<?> cls = runtimeval.getClass();
+          // We record this as an error in the equals method.
+          try {
+            st = RMethod.getRMethod(cls.getMethod("equals", Object.class));
+          } catch (Exception e) {
+            throw new Error(e);
+          }
+
+          // We record this as the class of the specific objecvarst contract.
+          vioCls = ex.getClass();
+          
+        } else {
+          st = es.sequence.getStatementKind(idx);
         }
-        numInf = mseq.numInfluencingStatements(idx, vars);
-
-        int equalsReceiver = ex.vars.get(0).index;
-        ExecutionOutcome res = es.getResult(equalsReceiver);
-        assert res instanceof NormalExecution;
-        Object runtimeval = ((NormalExecution)res).getRuntimeValue();
-        assert runtimeval != null;
-
-        Class<?> cls = runtimeval.getClass();
-        // We record this as an error in the equals method.
-        try {
-          st = RMethod.getRMethod(cls.getMethod("equals", Object.class));
-        } catch (Exception e) {
-          throw new Error(e);
-        }
-
-        // We record this as the class of the specific objecvarst contract.
-        vioCls = ex.objcontract;
 
       } else {
-        assert obs instanceof StatementThrowsNPE;
+        assert obs instanceof ForbiddenExceptionChecker;
         st = es.sequence.getStatementKind(idx);
 
         MSequence mseq = es.sequence.toModifiableSequence();
@@ -87,12 +82,12 @@ public class FailureAnalyzer {
         for (Variable v : es.sequence.getInputs(idx)) {
           vars.add(mseq.getVariable(v.index));
         }
-        numInf = mseq.numInfluencingStatements(idx, vars);
       }
-      assert st != null;
-      assert numInf >= 0;
       
-      failures.add(new Failure(st, vioCls, numInf));
+      
+      assert st != null;
+      
+      failures.add(new Failure(st, vioCls));
     }
   }
 
