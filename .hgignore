@@ -43,6 +43,7 @@ covtest-scratch/
 df-scratch/
 frontier[0-9]
 randoop-contracts-log.txt
+randoop-checkrep-contracts-log.txt
 randoop-contracts-scratch/
 randoop-log.txt
 randoop-scratch/

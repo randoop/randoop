@@ -81,7 +81,7 @@ public class StatsForMethod implements Serializable {
       }
       if (!s.printable)
         continue;
-      b.append(UtilMDE.rpad(Long.toString(getCount(s)), 7));
+      b.append(UtilMDE.rpad(Long.toString(getCount(s)), 18));
     }
     return b.toString();
   }
@@ -109,7 +109,7 @@ public class StatsForMethod implements Serializable {
       }
       if (!n.printable)
         continue;
-      title.append(UtilMDE.rpad(n.shortName, 7));
+      title.append(UtilMDE.rpad(n.shortName, 18));
     }
     int length = title.length();
     addLine(titleWithLines, length);

@@ -2,10 +2,9 @@ package randoop;
 
 import java.util.List;
 
-// Not intended for serialization.
-@SuppressWarnings("serial")
 public class SequenceParseException extends Exception {
   
+  private static final long serialVersionUID = 1L;
   private final String message;
 
   public SequenceParseException(String msg, List<String> statements, int statementCount) {

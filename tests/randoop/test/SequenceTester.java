@@ -4,33 +4,26 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-
 import junit.framework.Assert;
 import randoop.ContractCheckingVisitor;
-import randoop.DummyVisitor;
 import randoop.EqualsHashcode;
+import randoop.EqualsReflexive;
 import randoop.EqualsSymmetric;
-import randoop.EqualsToItself;
-import randoop.EqualsToNull;
+import randoop.EqualsToNullRetFalse;
 import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
-import randoop.ForwardGenerator;
 import randoop.Globals;
-import randoop.LineRemover;
 import randoop.MultiVisitor;
 import randoop.ObjectContract;
 import randoop.RegressionCaptureVisitor;
 import randoop.Sequence;
-import randoop.StatementKind;
-import randoop.main.GenInputsAbstract;
-import randoop.util.Reflection;
 import randoop.util.Util;
 
 public class SequenceTester {
@@ -48,9 +41,6 @@ public class SequenceTester {
   private static String LINEREMOVER;
   private static List<String> legalProperties;
 
-  private int explorer_time_limit_secs = 5;
-
-  private ContractCheckingVisitor faultFinder;
   private boolean oneOrMoreFailures;
   private static StringBuilder messageBuilder = new StringBuilder();
 
@@ -87,8 +77,7 @@ public class SequenceTester {
       throw new Error(e);
     }
 
-    //Temporary addition to fault finder: Consider this exception as a bug
-    this.faultFinder = new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), true);
+    new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), true);
   }
 
   public static void test(InputStream stream) throws Exception {
@@ -180,8 +169,8 @@ public class SequenceTester {
   private static final List<ExecutionVisitor> visitors;
   static {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
-    contracts.add(new EqualsToItself());
-    contracts.add(new EqualsToNull());
+    contracts.add(new EqualsReflexive());
+    contracts.add(new EqualsToNullRetFalse());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
     

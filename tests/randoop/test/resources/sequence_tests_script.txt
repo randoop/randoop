@@ -257,6 +257,11 @@ var0 =  cons : misc.BlowsUp.<init>() :
 
 EXPECTED_CODE
 misc.BlowsUp var0 = new misc.BlowsUp();
+// Checks the contract:  var0.equals(var0)
+assertTrue("Contract failed: var0.equals(var0)", var0.equals(var0));
+// Checks the contract:  !var0.equals(null)
+assertTrue("Contract failed: !var0.equals(null)", !var0.equals(null));
+
 
 END TEST
 

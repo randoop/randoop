@@ -4,7 +4,7 @@ package randoop;
 /**
  * A visitor that is invoked as the execution of a sequence unfolds.
  * Typically such a visitor adds decorations to the sequence based
- * on observations of the runtime behavior.
+ * on checks of the runtime behavior.
  *
  * IMPORTANT: Implementing classes should have a zero-argument
  * constructor.

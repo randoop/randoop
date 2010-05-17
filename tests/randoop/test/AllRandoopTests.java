@@ -25,8 +25,6 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(ForwardExplorerTests.class);
     suite.addTestSuite(ForwardExplorerTests2.class);
     suite.addTestSuite(DefaultReflectionFilterTests.class);
-    suite.addTestSuite(ObservationTests.class);
-    suite.addTestSuite(ObservationVectorTests.class);
     suite.addTestSuite(HeapLinearizerTests.class);
     suite.addTestSuite(ListOfListsIteratorTests.class);
     suite.addTestSuite(RandomnessTest.class);

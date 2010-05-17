@@ -54,7 +54,7 @@ public class NaiveRandomGenerator extends AbstractGenerator {
 
   private List<ExecutionOutcome> exec;
 
-  private List<List<Observation>> obs;
+  private List<List<Check>> obs;
 
   private long gentime;
   private long exectime;
@@ -111,7 +111,7 @@ public class NaiveRandomGenerator extends AbstractGenerator {
 
     sequence = new Sequence();
     exec = new ArrayList<ExecutionOutcome>();
-    obs = new ArrayList<List<Observation>>();
+    obs = new ArrayList<List<Check>>();
 
     availableTypes = new SubTypeSet(true);
     typesToVals = new ReversibleMultiMap<Class<?>, Integer>();
@@ -239,19 +239,19 @@ public class NaiveRandomGenerator extends AbstractGenerator {
     if (exec.get(last) instanceof ExceptionalExecution) {
       ExecutableSequence ret = new ExecutableSequence(sequence,
           new Execution(sequence, new ArrayList<ExecutionOutcome>(exec)),
-          new ArrayList<List<Observation>>(obs));
+          new ArrayList<List<Check>>(obs));
       ret.exectime = exectime;
       ret.gentime = gentime;
       resetState();
       return ret;
     }
 
-    if (eseq.hasObservation(ContractViolation.class)) {
+    if (eseq.hasFailure()) {
       if (Log.isLoggingOn()) Log.logLine("@@@ CONTRACT VIOLATED");
 
       ExecutableSequence ret = new ExecutableSequence(sequence,
           new Execution(sequence, new ArrayList<ExecutionOutcome>(exec)),
-          new ArrayList<List<Observation>>(obs));
+          new ArrayList<List<Check>>(obs));
       ret.exectime = exectime;
       ret.gentime = gentime;
       resetState();
@@ -263,7 +263,7 @@ public class NaiveRandomGenerator extends AbstractGenerator {
     if (sequence.size() >= GenInputsAbstract.maxsize) {
       ExecutableSequence ret = new ExecutableSequence(sequence,
           new Execution(sequence, new ArrayList<ExecutionOutcome>(exec)),
-          new ArrayList<List<Observation>>(obs));
+          new ArrayList<List<Check>>(obs));
       ret.exectime = exectime;
       ret.gentime = gentime;
       resetState();
@@ -420,7 +420,7 @@ public class NaiveRandomGenerator extends AbstractGenerator {
         sequence = sequence.extend(news.getStatementKind(0), Collections.<Variable>emptyList());
         // Increase the size of exec, obs.
         exec.add(NotExecuted.create());
-        obs.add(new ArrayList<Observation>());
+        obs.add(new ArrayList<Check>());
 
         varsIndices.add(sequence.getLastVariable().index);
 
@@ -451,7 +451,7 @@ public class NaiveRandomGenerator extends AbstractGenerator {
     sequence = sequence.extend(st, inputs);
     // Increase the size of exec, obs.
     exec.add(NotExecuted.create());
-    obs.add(new ArrayList<Observation>());
+    obs.add(new ArrayList<Check>());
 
     return true;
 

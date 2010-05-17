@@ -6,58 +6,57 @@ import java.io.ObjectInputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import randoop.Sequence.RelativeNegativeIndex;
 import randoop.main.GenInputsAbstract;
 import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
 
 /**
  * An ExecutableSequence adds two functionalities to a Sequence:
- *
- * (1) The ability to execute the code that the sequence represents.
- * (2) Observations can be added to elements in the sequence.
- *
- * The two are related--keep reading.
- *
+ * <p>
+ * <ul>
+ * <li> The ability to execute the code that the sequence represents.
+ * <li> Checks can be added to elements in the sequence.
+ * </ul>
+ * <p>
  * Method execute(ExecutionVisitor v) executes the code that the sequence represents.
  * This method uses reflection to execute each element in the sequence (method call,
  * constructor call, primitive or array declaration, etc).
- *
+ * <p>
  * Before executing each statement (e.g. the i-th statement), execute(v)
  * calls v.visitBefore(this, i), and after executing each statement, it calls
  * v.visitAfter(this, i). The purpose of the visitor is to examine the unfolding
  * execution, and take some action depending on its intended purpose. For example,
- * it may decorate the sequence with observations about the
+ * it may decorate the sequence with checks about the
  * execution. Below are some examples.
- *
+ * <p>
  * <ul>
  * <li> A ToStringVisitor calls val.toString() on each value created during
- *      execution. and adds observations indicating the result of each call. For
+ *      execution. and adds checks indicating the result of each call. For
  *      example, consider executing the sequence
  *
+ * <pre>
  *      ArrayList var0 = new ArrayList();
  *      int var1 = 3;
  *      var0.add(var1)  ;
- *
+ * </pre>
  *      After executing the sequence with a ToStringVisitor, the sequence contains
- *      the following observations:
- *
- *      observations at index 0: var0.String()=="[]"
- *      observations at index 1: var0.String()=="[]", var1.toString()=="3"
- *      observations at index 2: var0.String()=="[3]", var1.toString()=="3"
- *
- * <li> A ContractCheckingVisitor v adds observations that represent contract violations.
+ *      the following checks:
+ *     <ul>
+ *     <li> checks at index 0: var0.String()=="[]"
+ *     <li> checks at index 1: var0.String()=="[]", var1.toString()=="3"
+ *     <li> checks at index 2: var0.String()=="[3]", var1.toString()=="3"
+ *     </ul>
+ * <li> A ContractCheckingVisitor v adds checks that represent contract violations.
  *      For example, when v.visitAfter(this, i) is invoked, this visitor checks
  *      (among other things) that for every Variable val, "val.equals(val)==true". If
- *      this property fails for some val, it adds a observation (at index i)
+ *      this property fails for some val, it adds a check (at index i)
  *      that records the failure.
  * </ul>
- *
- * NOTES
- *
+ * <p>
+ * NOTES.
+ * <p>
  * <ul>
  * <li> It only makes sense to call the following methods *after* executing the
  * i-th statement in a sequence:
@@ -78,12 +77,17 @@ public class ExecutableSequence implements Serializable {
   // The underlying sequence.
   public Sequence sequence;
 
-  // The i-th element of this list contains the observations for the i-th
-  // sequence element. Invariant: sequence.size() == observations.size().
-  protected List<List<Observation>> observations;
+  // The i-th element of this list contains the checks for the i-th
+  // sequence element. Invariant: sequence.size() == checks.size().
+  protected List<List<Check>> checks;
+  
+  // Contains the fail/pass results of executing the checks in this.checks.
+  // The <i,j>-th element of this list is true if during execution,
+  // the <i,j>-th check passed, and false if it failed.
+  protected List<List<Boolean>> checksResults;
 
-  // Container for putting the results of the execution: values created (the
-  // actual values, created via reflection) and exceptions thrown.
+  // Contains the runtime objects created and exceptions thrown (if any)
+  // during execution of this sequence.
   // Invariant: Invariant: sequence.size() == executionResults.size().
   // Transient because it can contain arbitrary objects that may not be
   // serializable.
@@ -93,6 +97,7 @@ public class ExecutableSequence implements Serializable {
   // excluding execution time.
   // Must be directly set by the generator that creates this object
   // (no code in this class sets its value).
+  // TODO doesn't this more properly belong in Sequence class?
   public long gentime = -1;
 
   // How long it took to execute this sequence in nanoseconds,
@@ -117,9 +122,11 @@ public class ExecutableSequence implements Serializable {
   /** Create an executable sequence that executes the given sequence. */
   public ExecutableSequence(Sequence sequence) {
     this.sequence = sequence;
-    this.observations = new ArrayList<List<Observation>>();
+    this.checks = new ArrayList<List<Check>>(sequence.size());
+    this.checksResults = new ArrayList<List<Boolean>>(sequence.size());
     for (int i = 0 ; i < this.sequence.size() ; i++) {
-      this.observations.add(new ArrayList<Observation>(1));
+      this.checks.add(new ArrayList<Check>(1));
+      this.checksResults.add(new ArrayList<Boolean>(1));
     }
     this.executionResults = new Execution(sequence);
   }
@@ -130,48 +137,39 @@ public class ExecutableSequence implements Serializable {
    * Don't use this constructor! (Unless you know what you're doing.)
    */
   protected ExecutableSequence(Sequence sequence,
-      Execution exec, List<List<Observation>> observations) {
+      Execution exec, List<List<Check>> checks) {
     this.sequence = sequence;
     this.executionResults = exec;
-    this.observations = observations;
+    this.checks = checks;
   }
 
-  /** Get the observations for the i-th element of the sequence. */
-  public List<Observation> getObservations(int i) {
+  /** Get the checks for the i-th element of the sequence. */
+  public List<Check> getChecks(int i) {
     sequence.checkIndex(i);
-    return observations.get(i);
+    return checks.get(i);
   }
 
   /**
-   * Adds the given observation to the i-th element of the sequence. Only one
-   * observation of class StatementThrowsException is allowed for each index,
-   * and attempting to add a second observation of this type will result in an
+   * Adds the given check to the i-th element of the sequence. Only one
+   * check of class StatementThrowsException is allowed for each index,
+   * and attempting to add a second check of this type will result in an
    * IllegalArgumentException.
+   * @param b 
    *
    * @throws IllegalArgumentException
-   *           If the given observation's class is StatementThrowsException and
-   *           there is already an observation of this class at the give index.
+   *           If the given check's class is StatementThrowsException and
+   *           there is already an check of this class at the give index.
    */
-  public void addObservation(int i, Observation observation) {
+  public void addCheck(int i, Check check, boolean passed) {
     sequence.checkIndex(i);
 
-    if (observation instanceof StatementThrowsException &&
-        hasObservation(i, StatementThrowsException.class))
-      throw new IllegalArgumentException("Sequence already has an observation"
-          + " of type " + StatementThrowsException.class.toString());
+    if (check instanceof ExpectedExceptionChecker &&
+        hasCheck(i, ExpectedExceptionChecker.class))
+      throw new IllegalArgumentException("Sequence already has an check"
+          + " of type " + ExpectedExceptionChecker.class.toString());
 
-    this.observations.get(i).add(observation);
-  }
-
-  /**
-   * Add the given observations to the i-th element of the sequence.
-   * Equivalent to multiple invocations of addObservation(int,Observation).
-   * See also documentation for that method.
-   */
-  public void addObservations(int i, Collection<? extends Observation> ds) {
-    for (Observation d : ds) {
-      addObservation(i, d);
-    }
+    this.checks.get(i).add(check);
+    this.checksResults.get(i).add(passed);
   }
 
   @Override
@@ -181,7 +179,7 @@ public class ExecutableSequence implements Serializable {
       sequence.printStatement(b, i);
       if (executionResults.size() > i)
         b.append(executionResults.get(i).toString());
-      for (Observation d : getObservations(i)) {
+      for (Check d : getChecks(i)) {
         b.append (Globals.lineSep);
         b.append(d.toString());
       }
@@ -192,10 +190,10 @@ public class ExecutableSequence implements Serializable {
 
   /**
    * Output this sequence as code. In addition to printing out the statements,
-   * this method prints the observations.
+   * this method prints the checks.
    *
-   * If for a given statement there is an observation of type
-   * StatementThrowsException, that observation's pre-statement code is printed
+   * If for a given statement there is an check of type
+   * StatementThrowsException, that check's pre-statement code is printed
    * immediately before the statement, and its post-statement code is printed
    * immediately after the statement.
    */
@@ -214,19 +212,19 @@ public class ExecutableSequence implements Serializable {
       StringBuilder oneStatement = new StringBuilder();
       sequence.printStatement(oneStatement, i);
 
-      // Print exception observation first, if present.
-      List<Observation> exObs = getObservations(i, StatementThrowsException.class);
+      // Print exception check first, if present.
+      List<Check> exObs = getChecks(i, ExpectedExceptionChecker.class);
       if (!exObs.isEmpty()) {
         assert exObs.size() == 1 : toString();
-        Observation o = exObs.get(0);
+        Check o = exObs.get(0);
         oneStatement.insert(0, o.toCodeStringPreStatement());
         oneStatement.append(o.toCodeStringPostStatement());
         oneStatement.append(Globals.lineSep);
       }
 
-      // Print the rest of the observations.
-      for (Observation d : getObservations(i)) {
-        if (d instanceof StatementThrowsException)
+      // Print the rest of the checks.
+      for (Check d : getChecks(i)) {
+        if (d instanceof ExpectedExceptionChecker)
           continue;
         oneStatement.insert(0, d.toCodeStringPreStatement());
         oneStatement.append(d.toCodeStringPostStatement());
@@ -247,7 +245,23 @@ public class ExecutableSequence implements Serializable {
   /**
    * Execute this sequence, invoking the given visitor as the execution
    * unfolds. After invoking this method, the client can query the outcome
-   * of executing each statement via the method getResult(i)
+   * of executing each statement via the method <code>getResult(i)</code>.
+   * 
+   * <ul>
+   * <li> Before the sequence is executed, removes all <code>Check</code>s
+   * <li> Executes each statement in the sequence. Before executing each statement
+   *      calls the given visitor's <code>visitBefore</code> method. After executing
+   *      each statement, calls the visitor's <code>visitAfter</code> method.
+   * <li> Execution stops if one of the following conditions holds:
+   *   <ul>
+   *   <li> All statements in the sequences have been executed.
+   *   <li> A statement's execution results in an exception and
+   *        <code>stop_on_exception==true</code>.
+   *   <li> After executing the i-th statement and calling the visitor's
+   *        <code>visitAfter</code> method, a <code>ContractViolation</code>
+   *        check is present at index i.
+   *   </ul>
+   * </ul>
    *
    * @param visitor can be null, in which case no visitor will be invoked
    *        during execution.
@@ -257,16 +271,17 @@ public class ExecutableSequence implements Serializable {
     // System.out.printf ("Executing sequence %s%n", this);
 
     executionResults.theList.clear();
-    observations.clear();
+    checks.clear();
     for (int i = 0 ; i < sequence.size() ; i++) {
       executionResults.theList.add(NotExecuted.create());
-      observations.add(new ArrayList<Observation>(1));
+      checks.add(new ArrayList<Check>(1));
     }
 
     for (int i = 0 ; i < this.sequence.size() ; i++) {
 
-      if (visitor != null)
+      if (visitor != null) {
         visitor.visitBefore(this, i);
+      }
 
       // Find and collect the input values to i-th statement.
       List<Variable> inputs = sequence.getInputs(i);
@@ -279,9 +294,6 @@ public class ExecutableSequence implements Serializable {
 
       if (visitor != null) {
         visitor.visitAfter(this, i);
-        // System.out.printf ("%d observations for sequence %d/%d%n",
-        //                    this.observations.get(i).size(), i,
-        //                    this.observations.size());
       }
 
       if (executionResults.get(i) instanceof ExceptionalExecution) {
@@ -289,7 +301,7 @@ public class ExecutableSequence implements Serializable {
           break;
       }
 
-      if (hasObservation(i, ContractViolation.class))
+      if (hasFailure(i))
         break;
     }
   }
@@ -425,10 +437,10 @@ public class ExecutableSequence implements Serializable {
     return false;
   }
 
-  public List<Observation> getObservations(int i, Class<? extends Observation> clazz) {
+  public List<Check> getChecks(int i, Class<? extends Check> clazz) {
     sequence.checkIndex(i);
-    List<Observation> matchingObs = new ArrayList<Observation>();
-    for (Observation d : observations.get(i)) {
+    List<Check> matchingObs = new ArrayList<Check>();
+    for (Check d : checks.get(i)) {
       if (Reflection.canBeUsedAs(d.getClass(), clazz)) {
         matchingObs.add(d);
       }
@@ -436,41 +448,40 @@ public class ExecutableSequence implements Serializable {
     return matchingObs;
   }
 
-  /**
-   * Remove all the observations at index i that are of type clazz
-   * (or a subtype).
-   */
-  private void removeObservations(int i) {
-    sequence.checkIndex(i);
-    this.observations.set(i, new ArrayList<Observation>(1));
+  public void removeChecks() {
+    for (int i = 0 ; i < checks.size() ; i++) {
+      checks.get(i).clear();
+    }
   }
+  
+  
 
 
-  public boolean hasObservation(Class<? extends Observation> clazz) {
+  public boolean hasCheck(Class<? extends Check> clazz) {
     for (int i = 0 ; i < sequence.size() ; i++) {
-      if (hasObservation(i, clazz))
+      if (hasCheck(i, clazz))
         return true;
     }
     return false;
   }
 
   /**
-   * @return the first index at which an observation of the given type occurs,
-   *         or -1 if there is no observation of the given type in this
+   * @return the first index at which an check of the given type occurs,
+   *         or -1 if there is no check of the given type in this
    *         sequence.
    */
-  public int getObservationIndex(Class<? extends Observation> clazz) {
+  public int getContractCheckIndex(Class<? extends Check> clazz) {
     for (int i = 0 ; i < sequence.size() ; i++) {
-      if (hasObservation(i, clazz))
+      if (hasCheck(i, clazz))
         return i;
     }
     return -1;
   }
 
-  /** True iff this sequences has at least one observation of the given type at index i. */
-  public boolean hasObservation(int i, Class<? extends Observation> clazz) {
+  /** True iff this sequences has at least one check of the given type at index i. */
+  public boolean hasCheck(int i, Class<? extends Check> clazz) {
     sequence.checkIndex(i);
-    for (Observation d : observations.get(i)) {
+    for (Check d : checks.get(i)) {
       if (Reflection.canBeUsedAs(d.getClass(), clazz)) {
         return true;
       }
@@ -478,11 +489,48 @@ public class ExecutableSequence implements Serializable {
     return false;
   }
 
-  public boolean hasObservation(int i) {
+  public boolean hasCheck(int i) {
     sequence.checkIndex(i);
-    return observations.get(i).size() > 0;
+    return checks.get(i).size() > 0;
   }
 
+  public boolean hasFailure(int i) {
+    for (boolean b : checksResults.get(i)) {
+      if (!b) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public boolean hasFailure() {
+    for (int i = 0 ; i < sequence.size() ; i++) {
+      if (hasFailure(i)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public List<Check> getFailures(int idx) {
+    List<Check> failedContracts = new ArrayList<Check>();
+    for (int i = 0 ; i < checksResults.get(idx).size() ; i++) {
+      if (!checksResults.get(idx).get(i)) {
+        failedContracts.add(checks.get(idx).get(i));
+      }
+    }
+    return failedContracts;
+  }
+
+  public int getFailureIndex() {
+    for (int i = 0 ; i < sequence.size() ; i++) {
+      if (hasFailure(i)) {
+        return i;
+      }
+    }
+    return -1;
+  }
+  
   /**
    * @return The index in the sequence at which an exception of the
    * given class (or a class compatible with it) was thrown. If no such
@@ -528,55 +576,11 @@ public class ExecutableSequence implements Serializable {
 
   public ExecutableSequence duplicate() {
     ExecutableSequence newSequence = new ExecutableSequence(this.sequence);
-    // Add observations
+    // Add checks
     for (int i = 0 ; i < newSequence.sequence.size() ; i++) {
-      newSequence.observations.get(i).addAll(getObservations(i));
+      newSequence.checks.get(i).addAll(getChecks(i));
     }
     return newSequence;
-  }
-
-  // TODO Document better. This is only used by minimizer; perhaps more there?
-  /**
-   * Returns a new ExecutableSequence that is the same as this, except that
-   * at the given index, it has the given statement/inputs, and has no observations.
-   */
-  public void replaceStatement(StatementKind statement, List<Variable> inputs, int index) {
-    sequence.checkIndex(index);
-
-    // Create the new Sequence.
-    Sequence newSequence = new Sequence();
-    for (int i = 0 ; i < this.sequence.size() ; i++) {
-      if (i == index) {
-        newSequence = newSequence.extend(statement, mapVals(newSequence, inputs));
-      } else {
-        newSequence = newSequence.extend(sequence.getStatementKind(i), mapVals(newSequence, sequence.getInputs(i)));
-      }
-    }
-    this.sequence = newSequence;
-    removeObservations(index);
-  }
-
-  // TODO Document. This is only used by minimizer; perhaps more there?
-  private List<Variable> mapVals(Sequence newSequence, List<Variable> inputs) {
-    List<Variable> ret = new ArrayList<Variable>(inputs.size());
-    for (Variable v : inputs)
-      ret.add(newSequence.getVariable(v.getDeclIndex()));
-    return ret;
-  }
-
-  // TODO Document. This is only used by minimizer; perhaps more there?
-  public final boolean canRemoveStatement(int statementIndex) {
-    sequence.checkIndex(statementIndex);
-    Variable removedStatementVariable = sequence.getVariable(statementIndex);
-    for (int i = statementIndex + 1 ; i < sequence.size() ; i++) {
-      Statement currStatement = sequence.statements.get(i);
-      for (RelativeNegativeIndex relIndex : currStatement.inputs) {
-        if (sequence.getVariableForInput(i, relIndex).equals(removedStatementVariable)) {
-          return false;
-        }
-      }
-    }
-    return true;
   }
 
   /**
@@ -594,28 +598,7 @@ public class ExecutableSequence implements Serializable {
     return -1;
   }
 
-  // TODO Document. This is only used by minimizer; perhaps more there?
-//  public final void removeStatement(int statementIndex) {
-//    sequence.checkIndex(statementIndex);
-//    if (!canRemoveStatement(statementIndex))
-//      throw new IllegalArgumentException("cannot replace statement at index " + statementIndex +
-//      " with a dummy statement, because its result is used later in the sequence.");
-//
-//    ArrayListSimpleList<Statement> newStatements = new ArrayListSimpleList<Statement>(sequence.size());
-//
-//    for (int i = 0 ; i < sequence.size() ; i++) {
-//      if (i == statementIndex) {
-//        newStatements.add(new Statement(new DummyStatement(), new ArrayList<RelativeNegativeIndex>(0)));
-//      } else {
-//        newStatements.add(sequence.statements.get(i));
-//      }
-//    }
-//
-//    this.sequence = new Sequence(newStatements);
-//    this.removeObservations(statementIndex);
-//  }
-
-  public static <D extends Observation> List<Sequence> getSequences(List<ExecutableSequence> exec) {
+  public static <D extends Check> List<Sequence> getSequences(List<ExecutableSequence> exec) {
     List<Sequence> result= new ArrayList<Sequence>(exec.size());
     for (ExecutableSequence execSeq : exec) {
       result.add(execSeq.sequence);
@@ -626,7 +609,7 @@ public class ExecutableSequence implements Serializable {
   @Override
   public int hashCode() {
     return sequence.hashCode() * 3 +
-    observations.hashCode() * 5;
+    checks.hashCode() * 5;
     //results are not part of this because they contain actual runtime objects. XXX is that bogus?
   }
 
@@ -638,7 +621,7 @@ public class ExecutableSequence implements Serializable {
     if (! this.sequence.equals(that.sequence))
       return false;
 
-    if (! this.observations.equals(that.observations))
+    if (! this.checks.equals(that.checks))
       return false;
 
     //results are not part of this because they contain actual runtime objects. XXX is that bogus?
@@ -647,29 +630,29 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-   * Compares the results of the observations of two sequences.  Returns the
-   * number of different observations.  If remove_diffs is true any
-   * differing observations are removed from both sequences.
+   * Compares the results of the checks of two sequences.  Returns the
+   * number of different checks.  If remove_diffs is true any
+   * differing checks are removed from both sequences.
    * Prints any differences to stdout if print_diffs is true.
    */
-  public int compare_observations (ExecutableSequence es, boolean remove_diffs,
+  public int compare_checks (ExecutableSequence es, boolean remove_diffs,
                                    boolean print_diffs){
 
     int cnt = 0;
 
-    for (int ii = 0; ii < observations.size(); ii++) {
+    for (int ii = 0; ii < checks.size(); ii++) {
       // System.out.printf ("Sequence1: %n%s%n", this);
       // System.out.printf ("Sequence2: %n%s%n", es);
-      List<Observation> obs1 = observations.get(ii);
-      List<Observation> obs2 = es.observations.get(ii);
+      List<Check> obs1 = checks.get(ii);
+      List<Check> obs2 = es.checks.get(ii);
       List<Integer> diff_obs = new ArrayList<Integer>();
-      // System.out.printf ("observations 1/%d = %s%n", ii, obs1);
-      // System.out.printf ("observations 2/%d = %s%n", ii, obs2);
+      // System.out.printf ("checks 1/%d = %s%n", ii, obs1);
+      // System.out.printf ("checks 2/%d = %s%n", ii, obs2);
       if (obs1.size() != obs2.size()) {
-        if ((ii < (observations.size()-1))
+        if ((ii < (checks.size()-1))
             && (obs1.size() == 0) && (obs2.size() == 1)) {
-          System.out.printf ("keeping mismatched observation %s%n", obs2);
-        } else { // number of observations must match
+          System.out.printf ("keeping mismatched check %s%n", obs2);
+        } else { // number of checks must match
           System.out.printf ("obs %d size mismatch %d - %d\n", ii, obs1.size(),
                              obs2.size());
           System.out.printf ("Sequence1: %n%s%n", this);
@@ -682,20 +665,20 @@ public class ExecutableSequence implements Serializable {
         }
       }
       for (int jj = 0; jj < obs1.size(); jj++) {
-        Observation ob1 = obs1.get(jj);
-        Observation ob2 = obs2.get(jj);
+        Check ob1 = obs1.get(jj);
+        Check ob2 = obs2.get(jj);
         if (!ob1.get_value().equals (ob2.get_value())) {
           diff_obs.add (0, jj);
           cnt++;
           if (print_diffs) {
-            System.out.printf ("observation mismatch in seq [%b]%n%s%n",
+            System.out.printf ("check mismatch in seq [%b]%n%s%n",
                                remove_diffs, es);
             System.out.printf ("Line %d, obs %d%n", ii, jj);
             System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
           }
         } else { // they match
           if (ob1.get_value().contains ("EquipmentHolder@")) {
-            System.out.printf ("observation match in seq [%b]%n%s%n",
+            System.out.printf ("check match in seq [%b]%n%s%n",
                                remove_diffs, es);
             System.out.printf ("Line %d, obs %d%n", ii, jj);
             System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
@@ -705,7 +688,7 @@ public class ExecutableSequence implements Serializable {
 
       }
 
-      // Remove any observations that don't match
+      // Remove any checks that don't match
       if (remove_diffs && (diff_obs.size() > 0)) {
         // System.out.printf ("obs1 size before = %d%n", obs1.size());
         for (int obs : diff_obs) {
@@ -759,9 +742,7 @@ public class ExecutableSequence implements Serializable {
       return "yellow";
     } else {
       assert res instanceof NormalExecution;
-      if (hasObservation(i, StatementThrowsNPE.class)) {
-        return "brown";
-      } else if (hasObservation(i, ExpressionEqFalse.class)) {
+      if (hasFailure(i)) {
         return "red";
       } else {
         return "green";
@@ -770,14 +751,14 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-   * Return the total number of observations in a list of sequences
+   * Return the total number of checks in a list of sequences
    */
-  public static int observations_count (List<ExecutableSequence> seqs) {
+  public static int checks_count (List<ExecutableSequence> seqs) {
 
     int cnt = 0;
 
     for (ExecutableSequence es : seqs) {
-      for (List<Observation> obs : es.observations) {
+      for (List<Check> obs : es.checks) {
         cnt += obs.size();
       }
     }

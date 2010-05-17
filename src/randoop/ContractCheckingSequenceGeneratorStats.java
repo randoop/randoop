@@ -31,7 +31,7 @@ public class ContractCheckingSequenceGeneratorStats extends SequenceGeneratorSta
 //StatementKind lastStatement = es.sequence.getLastStatement();
 //int lastIndex = es.sequence.size() - 1;
 
-//if (es.hasDecoration(ExceptionObservation.class, lastIndex)) { // XXX
+//if (es.hasDecoration(ExceptionCheck.class, lastIndex)) { // XXX
 //addToCount(lastStatement, STAT_SEQUENCE_FORBIDDEN_EXCEPTION_LAST_STATEMENT, 1);
 //return ExecutionSummary.BUG;
 //}

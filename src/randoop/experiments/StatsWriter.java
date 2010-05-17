@@ -115,7 +115,7 @@ public class StatsWriter {
       for (FailureAnalyzer.Failure f : fa.getFailures()) {
         classif.append(f.viocls.getSimpleName() + "\n");
         classif.append(f.st + "\n");
-        classif.append(f.reachablesize + "\n");
+        classif.append("0" + "\n"); // Means nothing but keeping for backwards compatibility.
         numclassifications++;
       }
     } else if (seq.isNormalExecution()) {

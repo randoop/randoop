@@ -14,7 +14,7 @@ import randoop.util.PrimitiveTypes;
  * An execution visitor that checks unary and binary object contracts on the
  * values created by the sequence. It does this only after the last statement
  * has been executed. For each contract violation, the visitor adds an
- * Observation to the last index in the sequence.
+ * Check to the last index in the sequence.
  *
  * If the sequence throws an exception, the visitor does not check any contracts [[
  * TODO update]]. If it does not throw an exception, it checks all contracts on
@@ -73,8 +73,8 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
        if (GenInputsAbstract.forbid_null) {
          ExceptionalExecution exec = (ExceptionalExecution)s.getResult(idx);
          if (exec.getException().getClass().equals(NullPointerException.class)) {
-           StatementThrowsNPE obs = StatementThrowsNPE.getInstance();
-          s.addObservation(idx, obs);
+           ForbiddenExceptionChecker obs = new ForbiddenExceptionChecker(NullPointerException.class);
+          s.addCheck(idx, obs, false);
          }
        }
        return true;
@@ -108,11 +108,11 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
 
         if (Log.isLoggingOn()) Log.logLine("Checking contract " + c.getClass() + " on " + i + ", " + j);
 
-        ExecutionOutcome exprOutcome = ExpressionUtils.execute(c,
+        ExecutionOutcome exprOutcome = ObjectContractUtils.execute(c,
             ((NormalExecution) result1).getRuntimeValue(),
             ((NormalExecution) result2).getRuntimeValue());
 
-        Observation obs = null;
+        Check obs = null;
 
         if (exprOutcome instanceof NormalExecution) {
           NormalExecution e = (NormalExecution)exprOutcome;
@@ -120,15 +120,12 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
             if (Log.isLoggingOn()) Log.logLine("Contract returned true.");
             continue; // Behavior ok.
           } else {
-            if (Log.isLoggingOn()) Log.logLine("Contract returned false. Will add ExpressionEqFalse observation");
-            List<Variable> vars = new ArrayList<Variable>();
-            vars.add(s.sequence.getVariable(i));
-            vars.add(s.sequence.getVariable(j));
-            // Create an observation that records the actual value
+            if (Log.isLoggingOn()) Log.logLine("Contract returned false. Will add ExpressionEqFalse check");
+            // Create an check that records the actual value
             // returned by the expression, marking it as invalid
             // behavior.
-            obs = new ExpressionEqFalse(c.getClass(), vars, e.getRuntimeValue());
-            s.addObservation(idx, obs);
+            obs = new ObjectCheck(c, s.sequence.getVariable(i), s.sequence.getVariable(j));
+            s.addCheck(idx, obs, false);
           }
         } else {
           if (Log.isLoggingOn()) Log.logLine("Contract threw exception.");
@@ -147,28 +144,39 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
       ExecutionOutcome result = s.getResult(i);
       assert result instanceof NormalExecution: s;
 
-      ExecutionOutcome exprOutcome = ExpressionUtils.execute(c,
+      ExecutionOutcome exprOutcome = ObjectContractUtils.execute(c,
           ((NormalExecution) result).getRuntimeValue());
 
-      Observation obs = null;
+      Object runtimeValue = null;
       if (exprOutcome instanceof NormalExecution) {
         NormalExecution e = (NormalExecution)exprOutcome;
+        runtimeValue = e.getRuntimeValue();
         if (e.getRuntimeValue().equals(true)) {
           continue; // Behavior ok.
-        } else {
-          List<Variable> vars = new ArrayList<Variable>();
-          vars.add(s.sequence.getVariable(i));
-          // Create an observation that records the actual value
-          // returned by the expression, marking it as invalid
-          // behavior.
-          obs = new ExpressionEqFalse(c.getClass(), vars, e.getRuntimeValue());
-          s.addObservation(idx, obs);
         }
       } else {
         // Execution of contract resulted in exception. Do not create
         // a contract-violation decoration.
         assert exprOutcome instanceof ExceptionalExecution;
+        ExceptionalExecution e = (ExceptionalExecution)exprOutcome;
+        if (e.getException().equals(BugInRandoopException.class)) {
+          throw new BugInRandoopException(e.getException());
+        }
+        if (!c.evalExceptionMeansFailure()) {
+          // Exception thrown, but not considered a failure.
+          // Will not record behavior.
+          continue; 
+        }
       }
+
+      // If we get here, either the contract returned false or resulted
+      // in an exception that is considered a failure. Add
+      // a contract violation check.
+      // Create an check that records the actual value
+      // returned by the expression, marking it as invalid
+      // behavior.
+      Check obs = new ObjectCheck(c, s.sequence.getVariable(i));
+      s.addCheck(idx, obs, false);
     }
   }
 
