@@ -61,9 +61,8 @@ public final class RMethod implements StatementKind, Serializable {
     return this.method;
   }
 
-  /*
-   * Creates MethodCallInfo from specified method by generating its input and
-   * output constraints.
+  /**
+   * Creates the Rmethod corresponding to the given reflection method.
    */
   private RMethod(Method method) {
     if (method == null)
@@ -200,7 +199,6 @@ public final class RMethod implements StatementKind, Serializable {
     }
   }
 
-  @Testable
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof RMethod))
@@ -259,9 +257,7 @@ public final class RMethod implements StatementKind, Serializable {
   }
 
   /**
-   * Extracts the input constraints for this MethodCallInfo
-   *
-   * @return list of input constraints
+   * Returns the input types of this method.
    */
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
@@ -278,9 +274,7 @@ public final class RMethod implements StatementKind, Serializable {
   }
 
   /**
-   * Returns constraint to represent new reference to this statement. Returns
-   * null if method represented by this MethodCallInfo is a void method,
-   * returns the return value otherwise.
+   * Returns the return type of this method.
    */
   public Class<?> getOutputType() {
     if (outputTypeCached == null) {

@@ -46,9 +46,7 @@ public final class RConstructor implements StatementKind, Serializable {
     return new SerializableRConstructor(constructor);
   }
 
-  /* Creates ConstructorCallInfo from specified constructor by
-   * generating its input and output constraints.
-   */
+  // Creates the RConstructor corresponding to the given reflection constructor.
   private RConstructor(Constructor<?> constructor) {
     if (constructor == null)
       throw new IllegalArgumentException("constructor should not be null.");
@@ -59,19 +57,16 @@ public final class RConstructor implements StatementKind, Serializable {
     this.constructor.setAccessible(true);
   }
 
-  /*
-   * Returns the constructor definining this ConstructorCallInfo
+  /**
+   * Returns the reflection constructor corresponding to this RConstructor.
    */
   public Constructor<?> getConstructor() {
     return this.constructor;
   }
 
   /**
-   * Returns the statement corresponding to the given constructor.
-   *
-   * @param constructor
+   * Creates the RConstructor corresponding to the given reflection constructor.
    */
-  @Testable
   public static RConstructor getRConstructor(Constructor<?> constructor) {
     return new RConstructor(constructor);
   }
@@ -127,7 +122,6 @@ public final class RConstructor implements StatementKind, Serializable {
     b.append(Globals.lineSep);
   }
 
-  @Testable
   @Override
   public boolean equals(Object o) {
     if (o == null)
@@ -173,8 +167,7 @@ public final class RConstructor implements StatementKind, Serializable {
   }
 
   /**
-   * Extracts the input constraints for this ConstructorCallInfo
-   * @return list of input constraints
+   * Returns the input types of this constructor.
    */
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
@@ -184,8 +177,7 @@ public final class RConstructor implements StatementKind, Serializable {
   }
 
   /**
-   * Returns constraint to represent new reference to this statement,
-   * namely the receiver that is generated.
+   * Returns the return type of this constructor.
    */
   public Class<?> getOutputType() {
     if (outputTypeCached == null) {
