@@ -1,6 +1,7 @@
 package randoop;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -156,6 +157,7 @@ public abstract class AbstractGenerator {
           Log.logLine("allSequences.size()=" + numSequences());
         }
       }
+      stats.progressDisplay.display();
       stats.stopProgressDisplay();
 
       if (print_stats)
@@ -165,8 +167,8 @@ public abstract class AbstractGenerator {
       System.out.println("Normal method executions:" + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions:" + ReflectionExecutor.excepExecs());
       System.out.println();
-      System.out.println("Average method execution time (normal termination):" + ReflectionExecutor.normalExecAvgMillis());
-      System.out.println("Average method execution time (exceptional termination):" + ReflectionExecutor.excepExecAvgMillis());
+      System.out.println("Average method execution time (normal termination):     " + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
+      System.out.println("Average method execution time (exceptional termination):" + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
 
       if (GenInputsAbstract.output_coverage_plot != null) {
         try {
