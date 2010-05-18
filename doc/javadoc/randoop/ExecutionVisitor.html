@@ -53,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/ExpectedExceptionChecker.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../index.html?randoop/ExecutionVisitor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="ExecutionVisitor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -89,7 +89,7 @@ randoop</FONT>
 <BR>
 Interface ExecutionVisitor</H2>
 <DL>
-<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../randoop/ContractCheckingVisitor.html" title="class in randoop">ContractCheckingVisitor</A>, <A HREF="../randoop/CovWitnessHelperVisitor.html" title="class in randoop">CovWitnessHelperVisitor</A>, <A HREF="../randoop/DummyVisitor.html" title="class in randoop">DummyVisitor</A>, <A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A>, <A HREF="../randoop/RegressionCaptureVisitor.html" title="class in randoop">RegressionCaptureVisitor</A></DD>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../randoop/ContractCheckingVisitor.html" title="class in randoop">ContractCheckingVisitor</A>, <A HREF="../randoop/CovWitnessHelperVisitor.html" title="class in randoop">CovWitnessHelperVisitor</A>, <A HREF="../randoop/DummyVisitor.html" title="class in randoop">DummyVisitor</A>, <A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A>, <A HREF="../randoop/RegressionCaptureVisitor.html" title="class in randoop">RegressionCaptureVisitor</A>, <A HREF="../randoop/ReplayVisitor.html" title="class in randoop">ReplayVisitor</A></DD>
 </DL>
 <HR>
 <DL>
@@ -117,6 +117,15 @@ A visitor that is invoked as the execution of a sequence unfolds.
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;executableSequence)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -185,6 +194,20 @@ boolean <B>visitAfter</B>(<A HREF="../randoop/ExecutableSequence.html" title="cl
 </DL>
 </DD>
 </DL>
+<HR>
+
+<A NAME="initialize(randoop.ExecutableSequence)"><!-- --></A><H3>
+initialize</H3>
+<PRE>
+void <B>initialize</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;executableSequence)</PRE>
+<DL>
+<DD>Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>executableSequence</CODE> - </DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -216,7 +239,7 @@ boolean <B>visitAfter</B>(<A HREF="../randoop/ExecutableSequence.html" title="cl
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/ExpectedExceptionChecker.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../index.html?randoop/ExecutionVisitor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="ExecutionVisitor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

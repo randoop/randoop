@@ -797,8 +797,7 @@ Static variable in class <A HREF="./randoop/main/GenInputsAbstract.html" title="
 <DT><A HREF="./randoop/main/CovUtils.html" title="class in randoop.main"><B>CovUtils</B></A> - Class in <A HREF="./randoop/main/package-summary.html">randoop.main</A><DD>&nbsp;<DT><A HREF="./randoop/main/CovUtils.html#CovUtils()"><B>CovUtils()</B></A> - 
 Constructor for class <A HREF="./randoop/main/CovUtils.html" title="class in randoop.main">CovUtils</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/CovWitnessHelperVisitor.html" title="class in randoop"><B>CovWitnessHelperVisitor</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>Records the branches covered after executing all-but-last method
- call in a sequence.<DT><A HREF="./randoop/CovWitnessHelperVisitor.html#CovWitnessHelperVisitor(java.util.List, java.util.Map)"><B>CovWitnessHelperVisitor(List&lt;Class&lt;?&gt;&gt;, Map&lt;CoverageAtom, Set&lt;Sequence&gt;&gt;)</B></A> - 
+<DT><A HREF="./randoop/CovWitnessHelperVisitor.html" title="class in randoop"><B>CovWitnessHelperVisitor</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>This class is only used by the branch-directed generation research project.<DT><A HREF="./randoop/CovWitnessHelperVisitor.html#CovWitnessHelperVisitor(java.util.List, java.util.Map)"><B>CovWitnessHelperVisitor(List&lt;Class&lt;?&gt;&gt;, Map&lt;CoverageAtom, Set&lt;Sequence&gt;&gt;)</B></A> - 
 Constructor for class <A HREF="./randoop/CovWitnessHelperVisitor.html" title="class in randoop">CovWitnessHelperVisitor</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/ForwardGenerator.html#covWitnessHelperVisitor"><B>covWitnessHelperVisitor</B></A> - 
@@ -1006,14 +1005,11 @@ Method in class <A HREF="./randoop/EqualsToNullRetFalse.html" title="class in ra
 <DT><A HREF="./randoop/ExecutableSequence.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/ExpectedExceptionChecker.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
-Method in class <A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/FailureAnalyzer.Failure.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class <A HREF="./randoop/FailureAnalyzer.Failure.html" title="class in randoop">FailureAnalyzer.Failure</A>
-<DD>&nbsp;
-<DT><A HREF="./randoop/ForbiddenExceptionChecker.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
-Method in class <A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/HashCodeReturnsNormally.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class <A HREF="./randoop/HashCodeReturnsNormally.html" title="class in randoop">HashCodeReturnsNormally</A>
@@ -1023,6 +1019,9 @@ Method in class <A HREF="./randoop/IsNotNull.html" title="class in randoop">IsNo
 <DD>&nbsp;
 <DT><A HREF="./randoop/IsNull.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class <A HREF="./randoop/IsNull.html" title="class in randoop">IsNull</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/NoExceptionCheck.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
+Method in class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/ObjectCheck.html#equals(java.lang.Object)"><B>equals(Object)</B></A> - 
 Method in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
@@ -1132,6 +1131,11 @@ Method in class <A HREF="./randoop/PrimValue.html" title="class in randoop">Prim
 <DT><A HREF="./randoop/ToStringReturnsNormally.html#evalExceptionMeansFailure()"><B>evalExceptionMeansFailure()</B></A> - 
 Method in class <A HREF="./randoop/ToStringReturnsNormally.html" title="class in randoop">ToStringReturnsNormally</A>
 <DD>&nbsp;
+<DT><A HREF="./randoop/Check.html#evaluate(randoop.Execution)"><B>evaluate(Execution)</B></A> - 
+Method in interface <A HREF="./randoop/Check.html" title="interface in randoop">Check</A>
+<DD>Evaluates this check on the given unfolding execution of a sequence,
+ returning <code>true</code> if the check succeeded, and <code>false</code>
+ otherwise.
 <DT><A HREF="./randoop/CheckRepContract.html#evaluate(java.lang.Object...)"><B>evaluate(Object...)</B></A> - 
 Method in class <A HREF="./randoop/CheckRepContract.html" title="class in randoop">CheckRepContract</A>
 <DD>&nbsp;
@@ -1147,6 +1151,9 @@ Method in class <A HREF="./randoop/EqualsSymmetric.html" title="class in randoop
 <DT><A HREF="./randoop/EqualsToNullRetFalse.html#evaluate(java.lang.Object...)"><B>evaluate(Object...)</B></A> - 
 Method in class <A HREF="./randoop/EqualsToNullRetFalse.html" title="class in randoop">EqualsToNullRetFalse</A>
 <DD>&nbsp;
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#evaluate(randoop.Execution)"><B>evaluate(Execution)</B></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
+<DD>&nbsp;
 <DT><A HREF="./randoop/HashCodeReturnsNormally.html#evaluate(java.lang.Object...)"><B>evaluate(Object...)</B></A> - 
 Method in class <A HREF="./randoop/HashCodeReturnsNormally.html" title="class in randoop">HashCodeReturnsNormally</A>
 <DD>&nbsp;
@@ -1155,6 +1162,12 @@ Method in class <A HREF="./randoop/IsNotNull.html" title="class in randoop">IsNo
 <DD>&nbsp;
 <DT><A HREF="./randoop/IsNull.html#evaluate(java.lang.Object...)"><B>evaluate(Object...)</B></A> - 
 Method in class <A HREF="./randoop/IsNull.html" title="class in randoop">IsNull</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/NoExceptionCheck.html#evaluate(randoop.Execution)"><B>evaluate(Execution)</B></A> - 
+Method in class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/ObjectCheck.html#evaluate(randoop.Execution)"><B>evaluate(Execution)</B></A> - 
+Method in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/ObjectContract.html#evaluate(java.lang.Object...)"><B>evaluate(Object...)</B></A> - 
 Method in interface <A HREF="./randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A>
@@ -1237,7 +1250,8 @@ Variable in class <A HREF="./randoop/ExecutableSequence.html" title="class in ra
 <DT><A HREF="./randoop/experiments/StatsWriter.html#exectime"><B>exectime</B></A> - 
 Variable in class <A HREF="./randoop/experiments/StatsWriter.html" title="class in randoop.experiments">StatsWriter</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/ExecutableSequence.html" title="class in randoop"><B>ExecutableSequence</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>An ExecutableSequence adds two functionalities to a Sequence:<DT><A HREF="./randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence)"><B>ExecutableSequence(Sequence)</B></A> - 
+<DT><A HREF="./randoop/ExecutableSequence.html" title="class in randoop"><B>ExecutableSequence</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>An ExecutableSequence wraps a @{link Sequence} with functionality for
+ executing the sequence.<DT><A HREF="./randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence)"><B>ExecutableSequence(Sequence)</B></A> - 
 Constructor for class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>Create an executable sequence that executes the given sequence.
 <DT><A HREF="./randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence, randoop.Execution, java.util.List)"><B>ExecutableSequence(Sequence, Execution, List&lt;List&lt;Check&gt;&gt;)</B></A> - 
@@ -1308,11 +1322,11 @@ Variable in class <A HREF="./randoop/AbstractGenerator.html" title="class in ran
 <DT><A HREF="./randoop/ExecutionVisitor.html" title="interface in randoop"><B>ExecutionVisitor</B></A> - Interface in <A HREF="./randoop/package-summary.html">randoop</A><DD>A visitor that is invoked as the execution of a sequence unfolds.<DT><A HREF="./randoop/experiments/Randoop100Stats.html#exp"><B>exp</B></A> - 
 Static variable in class <A HREF="./randoop/experiments/Randoop100Stats.html" title="class in randoop.experiments">Randoop100Stats</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop"><B>ExpectedExceptionChecker</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>A checker that checks for an expected exception from a method call.<DT><A HREF="./randoop/ExpectedExceptionChecker.html#ExpectedExceptionChecker(java.lang.Throwable)"><B>ExpectedExceptionChecker(Throwable)</B></A> - 
-Constructor for class <A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop"><B>ExpectedExceptionCheck</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>A checker that checks for an expected exception from a method call.<DT><A HREF="./randoop/ExpectedExceptionCheck.html#ExpectedExceptionCheck(java.lang.Throwable, int)"><B>ExpectedExceptionCheck(Throwable, int)</B></A> - 
+Constructor for class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/ExpectedExceptionChecker.html#ExpectedExceptionChecker(java.lang.Class)"><B>ExpectedExceptionChecker(Class&lt;? extends Throwable&gt;)</B></A> - 
-Constructor for class <A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#ExpectedExceptionCheck(java.lang.Class, int)"><B>ExpectedExceptionCheck(Class&lt;? extends Throwable&gt;, int)</B></A> - 
+Constructor for class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/main/ComputeFrontierBranches.html#experiment"><B>experiment</B></A> - 
 Static variable in class <A HREF="./randoop/main/ComputeFrontierBranches.html" title="class in randoop.main">ComputeFrontierBranches</A>
@@ -1414,12 +1428,6 @@ Variable in class <A HREF="./randoop/main/CommandHandler.html" title="class in r
 <DT><A HREF="./randoop/main/GenInputsAbstract.html#forbid_null"><B>forbid_null</B></A> - 
 Static variable in class <A HREF="./randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop"><B>ForbiddenExceptionChecker</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>A checker that checks that a forbidden exception was not thrown.<DT><A HREF="./randoop/ForbiddenExceptionChecker.html#ForbiddenExceptionChecker(java.lang.Throwable)"><B>ForbiddenExceptionChecker(Throwable)</B></A> - 
-Constructor for class <A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>
-<DD>&nbsp;
-<DT><A HREF="./randoop/ForbiddenExceptionChecker.html#ForbiddenExceptionChecker(java.lang.Class)"><B>ForbiddenExceptionChecker(Class&lt;? extends Throwable&gt;)</B></A> - 
-Constructor for class <A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>
-<DD>&nbsp;
 <DT><A HREF="./randoop/ForwardGenerator.html" title="class in randoop"><B>ForwardGenerator</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>Randoop's forward, component-based generator.<DT><A HREF="./randoop/ForwardGenerator.html#ForwardGenerator(java.util.List, java.util.List, long, int, randoop.SequenceCollection)"><B>ForwardGenerator(List&lt;StatementKind&gt;, List&lt;Class&lt;?&gt;&gt;, long, int, SequenceCollection)</B></A> - 
 Constructor for class <A HREF="./randoop/ForwardGenerator.html" title="class in randoop">ForwardGenerator</A>
 <DD>&nbsp;
@@ -1499,14 +1507,14 @@ Method in class <A HREF="./randoop/ExecutionOutcome.html" title="class in randoo
 <DD>Retrieve the output of the statement
 <DT><A HREF="./randoop/Check.html#get_value()"><B>get_value()</B></A> - 
 Method in interface <A HREF="./randoop/Check.html" title="interface in randoop">Check</A>
-<DD>Return a short string that can be used to uniquely identify
+<DD>Returns a short string that can be used to uniquely identify
  this check.
-<DT><A HREF="./randoop/ExpectedExceptionChecker.html#get_value()"><B>get_value()</B></A> - 
-Method in class <A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#get_value()"><B>get_value()</B></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
 <DD>Returns the class of the exception thrown
-<DT><A HREF="./randoop/ForbiddenExceptionChecker.html#get_value()"><B>get_value()</B></A> - 
-Method in class <A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>
-<DD>The 'value' of this exception is always NPE
+<DT><A HREF="./randoop/NoExceptionCheck.html#get_value()"><B>get_value()</B></A> - 
+Method in class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
+<DD>&nbsp;
 <DT><A HREF="./randoop/ObjectCheck.html#get_value()"><B>get_value()</B></A> - 
 Method in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
 <DD>For checks involving a primitive-lie value (primitive, String or null)
@@ -1581,6 +1589,9 @@ Static method in class <A HREF="./randoop/util/PrimitiveTypes.html" title="class
 Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>Get the checks for the i-th element of the sequence.
 <DT><A HREF="./randoop/ExecutableSequence.html#getChecks(int, java.lang.Class)"><B>getChecks(int, Class&lt;? extends Check&gt;)</B></A> - 
+Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/ExecutableSequence.html#getChecksResults()"><B>getChecksResults()</B></A> - 
 Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/util/RandoopSecurityManager.html#getClassContext()"><B>getClassContext()</B></A> - 
@@ -1941,6 +1952,9 @@ Static method in class <A HREF="./randoop/ExecutableSequence.html" title="class 
 <DT><A HREF="./randoop/NormalExecution.html#getRuntimeValue()"><B>getRuntimeValue()</B></A> - 
 Method in class <A HREF="./randoop/NormalExecution.html" title="class in randoop">NormalExecution</A>
 <DD>&nbsp;
+<DT><A HREF="./randoop/ExecutableSequence.html#getRuntimeValuesForVars(java.util.List, java.util.List)"><B>getRuntimeValuesForVars(List&lt;Variable&gt;, List&lt;ExecutionOutcome&gt;)</B></A> - 
+Static method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
+<DD>&nbsp;
 <DT><A HREF="./randoop/util/RandoopSecurityManager.html#getSecurityContext()"><B>getSecurityContext()</B></A> - 
 Method in class <A HREF="./randoop/util/RandoopSecurityManager.html" title="class in randoop.util">RandoopSecurityManager</A>
 <DD>&nbsp;
@@ -2123,7 +2137,7 @@ Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in rand
 <DT><A HREF="./randoop/ExecutableSequence.html#hasCheck(int, java.lang.Class)"><B>hasCheck(int, Class&lt;? extends Check&gt;)</B></A> - 
 Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>True iff this sequences has at least one check of the given type at index i.
-<DT><A HREF="./randoop/ExecutableSequence.html#hasCheck(int)"><B>hasCheck(int)</B></A> - 
+<DT><A HREF="./randoop/ExecutableSequence.html#hasChecks(int)"><B>hasChecks(int)</B></A> - 
 Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/ExecutableSequence.html#hasFailure(int)"><B>hasFailure(int)</B></A> - 
@@ -2156,14 +2170,11 @@ Method in class <A HREF="./randoop/EqualsToNullRetFalse.html" title="class in ra
 <DT><A HREF="./randoop/ExecutableSequence.html#hashCode()"><B>hashCode()</B></A> - 
 Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/ExpectedExceptionChecker.html#hashCode()"><B>hashCode()</B></A> - 
-Method in class <A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#hashCode()"><B>hashCode()</B></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/FailureAnalyzer.Failure.html#hashCode()"><B>hashCode()</B></A> - 
 Method in class <A HREF="./randoop/FailureAnalyzer.Failure.html" title="class in randoop">FailureAnalyzer.Failure</A>
-<DD>&nbsp;
-<DT><A HREF="./randoop/ForbiddenExceptionChecker.html#hashCode()"><B>hashCode()</B></A> - 
-Method in class <A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/HashCodeReturnsNormally.html#hashCode()"><B>hashCode()</B></A> - 
 Method in class <A HREF="./randoop/HashCodeReturnsNormally.html" title="class in randoop">HashCodeReturnsNormally</A>
@@ -2173,6 +2184,9 @@ Method in class <A HREF="./randoop/IsNotNull.html" title="class in randoop">IsNo
 <DD>&nbsp;
 <DT><A HREF="./randoop/IsNull.html#hashCode()"><B>hashCode()</B></A> - 
 Method in class <A HREF="./randoop/IsNull.html" title="class in randoop">IsNull</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/NoExceptionCheck.html#hashCode()"><B>hashCode()</B></A> - 
+Method in class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/ObjectCheck.html#hashCode()"><B>hashCode()</B></A> - 
 Method in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
@@ -2341,6 +2355,30 @@ Constructor for class <A HREF="./randoop/util/InformationalComparator.Comparison
 <DD>&nbsp;
 <DT><A HREF="./randoop/main/GenInputsAbstract.html#init_routine"><B>init_routine</B></A> - 
 Static variable in class <A HREF="./randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/ContractCheckingVisitor.html#initialize(randoop.ExecutableSequence)"><B>initialize(ExecutableSequence)</B></A> - 
+Method in class <A HREF="./randoop/ContractCheckingVisitor.html" title="class in randoop">ContractCheckingVisitor</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/CovWitnessHelperVisitor.html#initialize(randoop.ExecutableSequence)"><B>initialize(ExecutableSequence)</B></A> - 
+Method in class <A HREF="./randoop/CovWitnessHelperVisitor.html" title="class in randoop">CovWitnessHelperVisitor</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/DummyVisitor.html#initialize(randoop.ExecutableSequence)"><B>initialize(ExecutableSequence)</B></A> - 
+Method in class <A HREF="./randoop/DummyVisitor.html" title="class in randoop">DummyVisitor</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)"><B>initialize(ExecutableSequence)</B></A> - 
+Method in interface <A HREF="./randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>
+<DD>Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.
+<DT><A HREF="./randoop/MultiVisitor.html#initialize(randoop.ExecutableSequence)"><B>initialize(ExecutableSequence)</B></A> - 
+Method in class <A HREF="./randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A>
+<DD>Calls the initialize method for each of the visitors, in the
+ order in which the visitors were given during construction of
+ this MultiVisitor.
+<DT><A HREF="./randoop/RegressionCaptureVisitor.html#initialize(randoop.ExecutableSequence)"><B>initialize(ExecutableSequence)</B></A> - 
+Method in class <A HREF="./randoop/RegressionCaptureVisitor.html" title="class in randoop">RegressionCaptureVisitor</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/ReplayVisitor.html#initialize(randoop.ExecutableSequence)"><B>initialize(ExecutableSequence)</B></A> - 
+Method in class <A HREF="./randoop/ReplayVisitor.html" title="class in randoop">ReplayVisitor</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/main/GenBranchDir.html#input_components_ser"><B>input_components_ser</B></A> - 
 Static variable in class <A HREF="./randoop/main/GenBranchDir.html" title="class in randoop.main">GenBranchDir</A>
@@ -2920,6 +2958,10 @@ Static variable in class <A HREF="./randoop/experiments/Command.html" title="cla
 <DT><A HREF="./randoop/Globals.html#nochecks"><B>nochecks</B></A> - 
 Static variable in class <A HREF="./randoop/Globals.html" title="class in randoop">Globals</A>
 <DD>&nbsp;
+<DT><A HREF="./randoop/NoExceptionCheck.html" title="class in randoop"><B>NoExceptionCheck</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>Checks that no exception is thrown after a given statement
+ in a sequence.<DT><A HREF="./randoop/NoExceptionCheck.html#NoExceptionCheck(int)"><B>NoExceptionCheck(int)</B></A> - 
+Constructor for class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
+<DD>&nbsp;
 <DT><A HREF="./randoop/main/Main.html#nonStaticMain(java.lang.String[])"><B>nonStaticMain(String[])</B></A> - 
 Method in class <A HREF="./randoop/main/Main.html" title="class in randoop.main">Main</A>
 <DD>&nbsp;
@@ -2992,7 +3034,7 @@ Variable in class <A HREF="./randoop/ForwardGenerator.html" title="class in rand
 <DT><A HREF="./randoop/ObjectCache.html" title="class in randoop"><B>ObjectCache</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>&nbsp;<DT><A HREF="./randoop/ObjectCache.html#ObjectCache(randoop.StateMatcher)"><B>ObjectCache(StateMatcher)</B></A> - 
 Constructor for class <A HREF="./randoop/ObjectCache.html" title="class in randoop">ObjectCache</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/ObjectCheck.html" title="class in randoop"><B>ObjectCheck</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>A check that checks for expected properties of one or more values
+<DT><A HREF="./randoop/ObjectCheck.html" title="class in randoop"><B>ObjectCheck</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>A check that checks for expected properties of one or more objects
  generated during the execution of a <A HREF="./randoop/Sequence.html" title="class in randoop"><CODE>Sequence</CODE></A>, for example:<DT><A HREF="./randoop/ObjectCheck.html#ObjectCheck(randoop.ObjectContract, randoop.Variable...)"><B>ObjectCheck(ObjectContract, Variable...)</B></A> - 
 Constructor for class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
 <DD>&nbsp;
@@ -3567,6 +3609,11 @@ Static method in class <A HREF="./randoop/instrument/Instrument.html" title="cla
  regression decoration fails to replay.<DT><A HREF="./randoop/ReplayFailureException.html#ReplayFailureException(java.lang.String, randoop.Check)"><B>ReplayFailureException(String, Check)</B></A> - 
 Constructor for exception <A HREF="./randoop/ReplayFailureException.html" title="class in randoop">ReplayFailureException</A>
 <DD>&nbsp;
+<DT><A HREF="./randoop/ReplayVisitor.html" title="class in randoop"><B>ReplayVisitor</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>An execution visitor that evaluates the checks in the
+ given executable sequence, and returns <code>false</code>
+ if any of them fail.<DT><A HREF="./randoop/ReplayVisitor.html#ReplayVisitor()"><B>ReplayVisitor()</B></A> - 
+Constructor for class <A HREF="./randoop/ReplayVisitor.html" title="class in randoop">ReplayVisitor</A>
+<DD>&nbsp;
 <DT><A HREF="./randoop/experiments/Repro100.html" title="class in randoop.experiments"><B>Repro100</B></A> - Class in <A HREF="./randoop/experiments/package-summary.html">randoop.experiments</A><DD>&nbsp;<DT><A HREF="./randoop/experiments/Repro100.html#Repro100()"><B>Repro100()</B></A> - 
 Constructor for class <A HREF="./randoop/experiments/Repro100.html" title="class in randoop.experiments">Repro100</A>
 <DD>&nbsp;
@@ -3762,11 +3809,8 @@ Constructor for class <A HREF="./randoop/SerializableArrayDeclaration.html" titl
 <DT><A HREF="./randoop/SerializableCheckRepContract.html" title="class in randoop"><B>SerializableCheckRepContract</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>&nbsp;<DT><A HREF="./randoop/SerializableCheckRepContract.html#SerializableCheckRepContract(java.lang.reflect.Method)"><B>SerializableCheckRepContract(Method)</B></A> - 
 Constructor for class <A HREF="./randoop/SerializableCheckRepContract.html" title="class in randoop">SerializableCheckRepContract</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/SerializableExpectedExceptionChecker.html" title="class in randoop"><B>SerializableExpectedExceptionChecker</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>&nbsp;<DT><A HREF="./randoop/SerializableExpectedExceptionChecker.html#SerializableExpectedExceptionChecker(java.lang.Class)"><B>SerializableExpectedExceptionChecker(Class&lt;? extends Throwable&gt;)</B></A> - 
+<DT><A HREF="./randoop/SerializableExpectedExceptionChecker.html" title="class in randoop"><B>SerializableExpectedExceptionChecker</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>&nbsp;<DT><A HREF="./randoop/SerializableExpectedExceptionChecker.html#SerializableExpectedExceptionChecker(java.lang.Class, int)"><B>SerializableExpectedExceptionChecker(Class&lt;? extends Throwable&gt;, int)</B></A> - 
 Constructor for class <A HREF="./randoop/SerializableExpectedExceptionChecker.html" title="class in randoop">SerializableExpectedExceptionChecker</A>
-<DD>&nbsp;
-<DT><A HREF="./randoop/SerializableForbiddenExceptionChecker.html" title="class in randoop"><B>SerializableForbiddenExceptionChecker</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>&nbsp;<DT><A HREF="./randoop/SerializableForbiddenExceptionChecker.html#SerializableForbiddenExceptionChecker(java.lang.Class)"><B>SerializableForbiddenExceptionChecker(Class&lt;? extends Throwable&gt;)</B></A> - 
-Constructor for class <A HREF="./randoop/SerializableForbiddenExceptionChecker.html" title="class in randoop">SerializableForbiddenExceptionChecker</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/SerializableObserverEqValue.html" title="class in randoop"><B>SerializableObserverEqValue</B></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A><DD>&nbsp;<DT><A HREF="./randoop/SerializableObserverEqValue.html#SerializableObserverEqValue(java.lang.reflect.Method, java.lang.Object)"><B>SerializableObserverEqValue(Method, Object)</B></A> - 
 Constructor for class <A HREF="./randoop/SerializableObserverEqValue.html" title="class in randoop">SerializableObserverEqValue</A>
@@ -4258,27 +4302,29 @@ Static method in class <A HREF="./randoop/util/PrimitiveTypes.html" title="class
  be uesd in Java source to represent it.
 <DT><A HREF="./randoop/Check.html#toCodeStringPostStatement()"><B>toCodeStringPostStatement()</B></A> - 
 Method in interface <A HREF="./randoop/Check.html" title="interface in randoop">Check</A>
-<DD>Return a string of Java source code to be emitted after a
+<DD>Returns a string of Java source code to be emitted after a
  statement containing this check.
-<DT><A HREF="./randoop/ExpectedExceptionChecker.html#toCodeStringPostStatement()"><B>toCodeStringPostStatement()</B></A> - 
-Method in class <A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#toCodeStringPostStatement()"><B>toCodeStringPostStatement()</B></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
 <DD>The "catch" half of the try-catch wrapper.
-<DT><A HREF="./randoop/ForbiddenExceptionChecker.html#toCodeStringPostStatement()"><B>toCodeStringPostStatement()</B></A> - 
-Method in class <A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>
-<DD>The "catch" half of the try-catch wrapper.
+<DT><A HREF="./randoop/NoExceptionCheck.html#toCodeStringPostStatement()"><B>toCodeStringPostStatement()</B></A> - 
+Method in class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
+<DD>Returns the empty string: there is no code associated
+ with this check (if an exception occurs, it will
+ be reported by JUnit).
 <DT><A HREF="./randoop/ObjectCheck.html#toCodeStringPostStatement()"><B>toCodeStringPostStatement()</B></A> - 
 Method in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/Check.html#toCodeStringPreStatement()"><B>toCodeStringPreStatement()</B></A> - 
 Method in interface <A HREF="./randoop/Check.html" title="interface in randoop">Check</A>
-<DD>Return a string of Java source code to be emitted before a
+<DD>Returns a string of Java source code to be emitted before a
  statement containing this check.
-<DT><A HREF="./randoop/ExpectedExceptionChecker.html#toCodeStringPreStatement()"><B>toCodeStringPreStatement()</B></A> - 
-Method in class <A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#toCodeStringPreStatement()"><B>toCodeStringPreStatement()</B></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
 <DD>The "try" half of the try-catch wrapper.
-<DT><A HREF="./randoop/ForbiddenExceptionChecker.html#toCodeStringPreStatement()"><B>toCodeStringPreStatement()</B></A> - 
-Method in class <A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>
-<DD>The "try" half of the try-catch wrapper.
+<DT><A HREF="./randoop/NoExceptionCheck.html#toCodeStringPreStatement()"><B>toCodeStringPreStatement()</B></A> - 
+Method in class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
+<DD>&nbsp;
 <DT><A HREF="./randoop/ObjectCheck.html#toCodeStringPreStatement()"><B>toCodeStringPreStatement()</B></A> - 
 Method in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
 <DD>&nbsp;
@@ -4324,9 +4370,6 @@ Method in class <A HREF="./randoop/PrimValue.html" title="class in randoop">Prim
 <DD>&nbsp;
 <DT><A HREF="./randoop/ToStringReturnsNormally.html#toCommentString()"><B>toCommentString()</B></A> - 
 Method in class <A HREF="./randoop/ToStringReturnsNormally.html" title="class in randoop">ToStringReturnsNormally</A>
-<DD>&nbsp;
-<DT><A HREF="./randoop/ExecutableSequence.html#toDotString()"><B>toDotString()</B></A> - 
-Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/MSequence.html#toImmutableSequence()"><B>toImmutableSequence()</B></A> - 
 Method in class <A HREF="./randoop/MSequence.html" title="class in randoop">MSequence</A>
@@ -4410,8 +4453,8 @@ Method in class <A HREF="./randoop/ExceptionalExecution.html" title="class in ra
 <DT><A HREF="./randoop/ExecutableSequence.html#toString()"><B>toString()</B></A> - 
 Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
 <DD>&nbsp;
-<DT><A HREF="./randoop/ExpectedExceptionChecker.html#toString()"><B>toString()</B></A> - 
-Method in class <A HREF="./randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#toString()"><B>toString()</B></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/experiments/ExperimentBase.html#toString()"><B>toString()</B></A> - 
 Method in class <A HREF="./randoop/experiments/ExperimentBase.html" title="class in randoop.experiments">ExperimentBase</A>
@@ -4427,9 +4470,6 @@ Method in class <A HREF="./randoop/experiments/MultiRunResults.html" title="clas
 <DD>&nbsp;
 <DT><A HREF="./randoop/experiments/RandoopRun.html#toString()"><B>toString()</B></A> - 
 Method in class <A HREF="./randoop/experiments/RandoopRun.html" title="class in randoop.experiments">RandoopRun</A>
-<DD>&nbsp;
-<DT><A HREF="./randoop/ForbiddenExceptionChecker.html#toString()"><B>toString()</B></A> - 
-Method in class <A HREF="./randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/MSequence.html#toString()"><B>toString()</B></A> - 
 Method in class <A HREF="./randoop/MSequence.html" title="class in randoop">MSequence</A>
@@ -4735,6 +4775,9 @@ Method in class <A HREF="./randoop/MultiVisitor.html" title="class in randoop">M
 <DT><A HREF="./randoop/RegressionCaptureVisitor.html#visitAfter(randoop.ExecutableSequence, int)"><B>visitAfter(ExecutableSequence, int)</B></A> - 
 Method in class <A HREF="./randoop/RegressionCaptureVisitor.html" title="class in randoop">RegressionCaptureVisitor</A>
 <DD>&nbsp;
+<DT><A HREF="./randoop/ReplayVisitor.html#visitAfter(randoop.ExecutableSequence, int)"><B>visitAfter(ExecutableSequence, int)</B></A> - 
+Method in class <A HREF="./randoop/ReplayVisitor.html" title="class in randoop">ReplayVisitor</A>
+<DD>&nbsp;
 <DT><A HREF="./randoop/ContractCheckingVisitor.html#visitBefore(randoop.ExecutableSequence, int)"><B>visitBefore(ExecutableSequence, int)</B></A> - 
 Method in class <A HREF="./randoop/ContractCheckingVisitor.html" title="class in randoop">ContractCheckingVisitor</A>
 <DD>&nbsp;
@@ -4753,6 +4796,9 @@ Method in class <A HREF="./randoop/MultiVisitor.html" title="class in randoop">M
 <DD>&nbsp;
 <DT><A HREF="./randoop/RegressionCaptureVisitor.html#visitBefore(randoop.ExecutableSequence, int)"><B>visitBefore(ExecutableSequence, int)</B></A> - 
 Method in class <A HREF="./randoop/RegressionCaptureVisitor.html" title="class in randoop">RegressionCaptureVisitor</A>
+<DD>&nbsp;
+<DT><A HREF="./randoop/ReplayVisitor.html#visitBefore(randoop.ExecutableSequence, int)"><B>visitBefore(ExecutableSequence, int)</B></A> - 
+Method in class <A HREF="./randoop/ReplayVisitor.html" title="class in randoop">ReplayVisitor</A>
 <DD>&nbsp;
 <DT><A HREF="./randoop/main/GenInputsAbstract.html#visitor"><B>visitor</B></A> - 
 Static variable in class <A HREF="./randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</A>

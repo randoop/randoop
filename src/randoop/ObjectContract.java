@@ -14,7 +14,7 @@ import java.io.Serializable;
  * <p>
  * <ul>
  * <li> A method <code>evaluate(Object... objects)</code> that
- *      evaluates ones or more objects at runtime and determine if the
+ *      evaluates ones or more objects at runtime and determines if the
  *      given object(s) satisfy the property. The arity will depend
  *      on the specific property being checked.
  * <li> A method <code>toCodeString()</code> that emits Java code 
@@ -76,7 +76,7 @@ public interface ObjectContract extends Serializable {
    * expression being evaluated.
    * <p>
    * The string should be formatted as follows: the N-th object that
-   * participates in the expression should be referred to as "xN" (for N one of
+   * participates in the contract check should be referred to as "xN" (for N one of
    * 0, ... , 9). For example, if the expression or arity 2 represents a call of
    * the equals method between two objects, the comment should be something like
    * "x0.equals(x1)".

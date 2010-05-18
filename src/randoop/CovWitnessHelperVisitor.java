@@ -13,6 +13,8 @@ import cov.Coverage;
 import cov.CoverageAtom;
 
 /**
+ * This class is only used by the branch-directed generation research project.
+ *
  * Records the branches covered after executing all-but-last method
  * call in a sequence.
  * 
@@ -46,6 +48,11 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
     this.covWitnessMap = covWitnessMap;
     this.trues = null;
     this.falses = null;
+  }
+
+  @Override
+  public void initialize(ExecutableSequence executableSequence) {
+    // Nothing to do for initialization.
   }
 
   public boolean visitAfter(ExecutableSequence sequence, int idx) {
@@ -147,5 +154,4 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
   public void visitBefore(ExecutableSequence sequence, int i) {
     return;
   }
-
 }

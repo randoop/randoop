@@ -21,7 +21,7 @@ import java.io.Serializable;
  * only emit the assertion code after the statement. A checker that surrounds
  * the statement with a try-catch clause to test for an expected exception needs
  * to emit the <i>try</i> part of the clause before the statement, and the
- * <i>catch</i> part after the statement (see {@link ExpectedExceptionChecker},
+ * <i>catch</i> part after the statement (see {@link ExpectedExceptionCheck},
  * for example).
  *
  * <p>
@@ -38,21 +38,28 @@ import java.io.Serializable;
 public interface Check extends Serializable {
 
   /**
-   * Return a string of Java source code to be emitted before a
+   * Returns a string of Java source code to be emitted before a
    * statement containing this check.
    */
   String toCodeStringPreStatement();
 
   /**
-   * Return a string of Java source code to be emitted after a
+   * Returns a string of Java source code to be emitted after a
    * statement containing this check.
    */
   String toCodeStringPostStatement();
 
   /**
-   * Return a short string that can be used to uniquely identify
+   * Returns a short string that can be used to uniquely identify
    * this check.
    */
   String get_value();
+  
+  /**
+   * Evaluates this check on the given unfolding execution of a sequence,
+   * returning <code>true</code> if the check succeeded, and <code>false</code>
+   * otherwise.
+   */
+  boolean evaluate(Execution execution);
   
 }

@@ -46,6 +46,7 @@ import randoop.ObjectContract;
 import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.RegressionCaptureVisitor;
+import randoop.ReplayVisitor;
 import randoop.SeedSequences;
 import randoop.Sequence;
 import randoop.SequenceCollection;
@@ -418,8 +419,9 @@ public class GenTests extends GenInputsAbstract {
     
     if (output_tests_serialized != null) {
       // Output executable sequences.
-      System.out.println("Serializing tets...");
+      System.out.println("Serializing tests...");
       try {
+        
         FileOutputStream fileos = new FileOutputStream(output_tests_serialized);
         ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
         objectos.writeObject(sequences);
@@ -433,7 +435,12 @@ public class GenTests extends GenInputsAbstract {
         for (int i = 0 ; i < seqsfromfile.size() ; i++) {
           assert seqsfromfile.get(i).equals(sequences.get(i)) : seqsfromfile.get(i) + "@@@" + sequences.get(i);
           ExecutableSequence eseq = seqsfromfile.get(i);
-          eseq.execute(null);
+          ReplayVisitor visitor = new ReplayVisitor();
+          eseq.execute(visitor);
+          assert eseq.getChecksResults().equals(sequences.get(i).getChecksResults()) :
+            sequences.get(i).getChecksResults() + "\n" 
+            + seqsfromfile.get(i) + "\n"
+            + eseq.getChecksResults() + "\n" + sequences.get(i); 
           
         }
         fileis.close();

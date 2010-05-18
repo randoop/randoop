@@ -224,9 +224,9 @@ ps1.RatTerm var5 = new ps1.RatTerm(var1, var0);
 var4.addElement(var5);
 var4.addElement(var5);
 // Regression assertion (captures the current behavior of the code)
-assertFalse(var3 == null);
+assertNotNull(var3);
 // Regression assertion (captures the current behavior of the code)
-assertFalse(var4 == null);
+assertNotNull(var4);
 
 END TEST
 

@@ -17,7 +17,7 @@ public interface ExecutionVisitor {
    *
    * Precondition: statements 0..i-1 have been executed.
    */
-  public abstract void visitBefore(ExecutableSequence sequence, int i);
+  abstract void visitBefore(ExecutableSequence sequence, int i);
 
   /**
    * Invoked by ExecutableSequence.execute after the i-th statement executes.
@@ -27,6 +27,13 @@ public interface ExecutionVisitor {
    *
    * Precondition: statements 0..i have been executed.
    */
-  public abstract boolean visitAfter(ExecutableSequence sequence, int i);
+  abstract boolean visitAfter(ExecutableSequence sequence, int i);
+
+  /**
+   * Called before execution of a sequence, to allow the visitor to
+   * perform any initialization steps required before execution. 
+   * @param executableSequence 
+   */
+  void initialize(ExecutableSequence executableSequence);
 
 }

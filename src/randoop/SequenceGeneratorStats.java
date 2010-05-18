@@ -380,7 +380,6 @@ public class SequenceGeneratorStats {
           System.out.println("POTENTIAL ERROR FOUND: " + failure);
           System.out.println();
           System.out.println(es.toCodeString());
-          System.out.println(es.toDotString());
         }
 
         if (!addedToOutSeqs
