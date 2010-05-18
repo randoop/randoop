@@ -130,6 +130,7 @@ randoop1: bin
 # Runs Randoop on Collections and TreeSet.
 randoop2: bin
 	rm -rf systemtests/randoop-scratch
+	mkdir systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --dontexecute \
@@ -148,7 +149,8 @@ randoop2: bin
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
-	   --long-format
+	   --long-format \
+	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/Naive*.java
@@ -170,6 +172,7 @@ randoop3: bin
 randoop-contracts: bin
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Buggy.java
 	rm -rf systemtests/randoop-contracts-test-scratch
+	mkdir systemtests/randoop-contracts-test-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --output-tests=fail \
@@ -177,7 +180,8 @@ randoop-contracts: bin
 	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
 	   --junit-classname=BuggyTest \
 	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
-	   --log=systemtests/randoop-contracts-log.txt
+	   --log=systemtests/randoop-contracts-log.txt \
+	   --output-tests-serialized=systemtests/randoop-contracts-test-scratch/sequences_serialized.gzip
 	cd systemtests/randoop-contracts-test-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
 # We expect this to fail, so add a "-" so the target doesn't fail.

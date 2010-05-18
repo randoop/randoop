@@ -2,14 +2,8 @@ package randoop;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
 
 import randoop.util.PrimitiveTypes;
-import randoop.main.GenInputsAbstract;
-import randoop.util.Files;
-import randoop.util.Reflection;
 
 /**
  * An execution visitor that records regression checks on the values
@@ -42,6 +36,17 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
   public RegressionCaptureVisitor() {
     // Empty body.
   }
+  
+  @Override
+  public void initialize(ExecutableSequence s) {
+    s.checks.clear();
+    s.checksResults.clear();
+    for (int i = 0 ; i < s.sequence.size() ; i++) {
+      s.checks.add(new ArrayList<Check>(1));
+      s.checksResults.add(new ArrayList<Boolean>(1));
+    }
+  }
+
 
   // We don't create regression checks for these methods.
   private static final Method objectToString;
@@ -53,59 +58,6 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
       objectHashCode = Object.class.getDeclaredMethod("hashCode");
     } catch (Exception e) {
       throw new Error(e);
-    }
-  }
-
-  /** Map from each class to the list of observer methods for that class */
-  private static final Map<Class<?>, List<Method>> observer_map
-    = new LinkedHashMap<Class<?>, List<Method>>();
-  static {
-    if (GenInputsAbstract.observers != null) {
-      List<String> lines  = null;
-      try {
-        lines = Files.readWhole (GenInputsAbstract.observers);
-      } catch (Exception e) {
-        throw new RuntimeException ("problem reading observer file "
-                                    + GenInputsAbstract.observers, e);
-      }
-      for (String line : lines) {
-        if (line.startsWith ("//"))
-          continue;
-        if (line.trim().length() == 0)
-          continue;
-        int lastdot = line.lastIndexOf(".");
-        if (lastdot == -1)
-          throw new RuntimeException (String.format ("invalid observer '%s'",
-                                                     line));
-        String classname = line.substring (0, lastdot);
-        String methodname = line.substring (lastdot+1);
-        methodname = methodname.replaceFirst ("[()]*$", "");
-        Class<?> obs_class = null;
-        try {
-          obs_class = Class.forName (classname);
-        } catch (Exception e) {
-          throw new RuntimeException ("Can't load observer class " + classname,
-                                      e);
-        }
-        Method obs_method = null;
-        try {
-          obs_method = Reflection.super_get_declared_method (obs_class,
-                                                             methodname);
-        } catch (Exception e) {
-          throw new RuntimeException ("Can't find observer method "
-                                      + methodname, e);
-        }
-        if (!PrimitiveTypes.isPrimitiveOrStringType(obs_method.getReturnType()))
-          throw new RuntimeException
-            (String.format ("Observer method %s does not return a primitive "
-                            + "or string", obs_method));
-        List<Method> methods = observer_map.get (obs_class);
-        if (methods == null) {
-          methods = new ArrayList<Method>();
-          observer_map.put (obs_class, methods);
-        }
-        methods.add (obs_method);
-      }
     }
   }
 
@@ -181,7 +133,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           }
 
           // If the value is returned from a Date that we created,
-          // don't use it as its just going to have today's date in it.
+          // don't use it as it's just going to have today's date in it.
           if (s.sequence.getInputs(i).size() > 0) {
             Variable var0 = s.sequence.getInputs (i).get(0);
             if (var0.getType() == java.util.Date.class) {
@@ -206,36 +158,21 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
         } else { // its a more complex type with a non-null value
 
-          // Assert that the value is not null (just as interesting as is null)
+          // Assert that the value is not null.
           // Exception: if the value comes directly from a constructor call, 
-          // not interesting so omit the check in that case.
+          // not interesting that it's non-null; omit the check.
           if (!(st instanceof RConstructor)) {
             s.addCheck(idx, new ObjectCheck(new IsNotNull(), var), true);
-          }
-
-          // Put out any observers that exist for this type
-          Variable var0 = s.sequence.getVariable(i);
-          List<Method> observers = observer_map.get (var0.getType());
-          if (observers != null) {
-            for (Method m : observers) {
-              //Check observer = new ObserverEqValue (m, o);
-              // System.out.printf ("Adding observer %s%n", observer);
-              //s.addCheck (idx, observer);
-              throw new RuntimeException("Not implemented");
-            }
           }
         }
 
       } else if (s.getResult(i) instanceof ExceptionalExecution) {
 
         ExceptionalExecution e = (ExceptionalExecution)s.getResult(i);
-        s.addCheck(i, new ExpectedExceptionChecker(e.getException()), true);
+        s.addCheck(i, new ExpectedExceptionCheck(e.getException(), i), true);
 
       } else {
         assert s.getResult(i) instanceof NotExecuted;
-        // We should not get here because this should only happen after
-        // an ExceptionalExecution statement, and when that type of statement
-        // is processed, the method returns (see code above).
         assert false : "Randoop should not have gotten here (bug in Randoop)";
       }
     }

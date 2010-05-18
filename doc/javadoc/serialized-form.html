@@ -609,16 +609,16 @@ long <B>exectime</B></PRE>
 </DL>
 
 <P>
-<A NAME="randoop.ExpectedExceptionChecker"><!-- --></A>
+<A NAME="randoop.ExpectedExceptionCheck"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Class <A HREF="randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A> extends Object implements Serializable</B></FONT></TH>
+<B>Class <A HREF="randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A> extends Object implements Serializable</B></FONT></TH>
 </TR>
 </TABLE>
 
 <P>
-<B>serialVersionUID:&nbsp;</B>1L
+<B>serialVersionUID:&nbsp;</B>-1172907532417774517L
 
 <P>
 <A NAME="serialized_methods"><!-- --></A>
@@ -658,53 +658,11 @@ Class&lt;T&gt; <B>exceptionClass</B></PRE>
 <DL>
 </DL>
 </DL>
-
-<P>
-<A NAME="randoop.ForbiddenExceptionChecker"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Class <A HREF="randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A> extends Object implements Serializable</B></FONT></TH>
-</TR>
-</TABLE>
-
-<P>
-<B>serialVersionUID:&nbsp;</B>-5315922475732874865L
-
-<P>
-<A NAME="serialized_methods"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Serialization Methods</B></FONT></TH>
-</TR>
-</TABLE>
-
-<P>
-<A NAME="writeReplace()"><!-- --></A><H3>
-writeReplace</H3>
-<PRE>
-private Object <B>writeReplace</B>()
-                     throws ObjectStreamException</PRE>
-<DL>
-<DD><DL>
-
-<DT><B>Throws:</B>
-<DD><CODE>ObjectStreamException</CODE></DD>
-</DL>
-</DL>
-<A NAME="serializedForm"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Serialized Fields</B></FONT></TH>
-</TR>
-</TABLE>
-
+<HR>
 <H3>
-exceptionClass</H3>
+statementIdx</H3>
 <PRE>
-Class&lt;T&gt; <B>exceptionClass</B></PRE>
+int <B>statementIdx</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -751,6 +709,36 @@ Class&lt;T&gt; <B>exceptionClass</B></PRE>
 <B>serialVersionUID:&nbsp;</B>7854398123126127835L
 
 <P>
+
+<P>
+<A NAME="randoop.NoExceptionCheck"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A> extends Object implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<B>serialVersionUID:&nbsp;</B>6915136819752903798L
+
+<P>
+<A NAME="serializedForm"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Serialized Fields</B></FONT></TH>
+</TR>
+</TABLE>
+
+<H3>
+statementIdx</H3>
+<PRE>
+int <B>statementIdx</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
 
 <P>
 <A NAME="randoop.ObjectCache"><!-- --></A>
@@ -1570,53 +1558,11 @@ String <B>exceptionClass</B></PRE>
 <DL>
 </DL>
 </DL>
-
-<P>
-<A NAME="randoop.SerializableForbiddenExceptionChecker"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Class <A HREF="randoop/SerializableForbiddenExceptionChecker.html" title="class in randoop">SerializableForbiddenExceptionChecker</A> extends Object implements Serializable</B></FONT></TH>
-</TR>
-</TABLE>
-
-<P>
-<B>serialVersionUID:&nbsp;</B>20100429L
-
-<P>
-<A NAME="serialized_methods"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Serialization Methods</B></FONT></TH>
-</TR>
-</TABLE>
-
-<P>
-<A NAME="readResolve()"><!-- --></A><H3>
-readResolve</H3>
-<PRE>
-private Object <B>readResolve</B>()
-                    throws ObjectStreamException</PRE>
-<DL>
-<DD><DL>
-
-<DT><B>Throws:</B>
-<DD><CODE>ObjectStreamException</CODE></DD>
-</DL>
-</DL>
-<A NAME="serializedForm"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Serialized Fields</B></FONT></TH>
-</TR>
-</TABLE>
-
+<HR>
 <H3>
-exceptionClass</H3>
+statementIdx</H3>
 <PRE>
-String <B>exceptionClass</B></PRE>
+int <B>statementIdx</B></PRE>
 <DL>
 <DL>
 </DL>

@@ -3,7 +3,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ReplayFailureException
+ReplayVisitor
 </TITLE>
 
 
@@ -13,7 +13,7 @@ ReplayFailureException
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="ReplayFailureException";
+        parent.document.title="ReplayVisitor";
     }
 }
 </SCRIPT>
@@ -52,11 +52,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/RegressionCaptureVisitor.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/ReplayVisitor.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ReplayFailureException.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../randoop/RMethod.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/ReplayFailureException.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="ReplayFailureException.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/ReplayVisitor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ReplayVisitor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -87,30 +87,26 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&n
 <FONT SIZE="-1">
 randoop</FONT>
 <BR>
-Class ReplayFailureException</H2>
+Class ReplayVisitor</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by ">Throwable
-      <IMG SRC="../resources/inherit.gif" ALT="extended by ">Exception
-          <IMG SRC="../resources/inherit.gif" ALT="extended by ">RuntimeException
-              <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>ReplayFailureException</B>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>ReplayVisitor</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>Serializable</DD>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>ReplayFailureException</B><DT>extends RuntimeException</DL>
+<DT><PRE>public class <B>ReplayVisitor</B><DT>extends Object<DT>implements <A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></DL>
 </PRE>
 
 <P>
-Thrown by a ContractFailureReplayVisitor or a RegressionReplayVisitor when a
- regression decoration fails to replay.
+An execution visitor that evaluates the checks in the
+ given executable sequence, and returns <code>false</code>
+ if any of them fail.
 <P>
 
 <P>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../serialized-form.html#randoop.ReplayFailureException">Serialized Form</A></DL>
 <HR>
 
 <P>
@@ -124,8 +120,7 @@ Thrown by a ContractFailureReplayVisitor or a RegressionReplayVisitor when a
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/ReplayFailureException.html#ReplayFailureException(java.lang.String, randoop.Check)">ReplayFailureException</A></B>(String&nbsp;message,
-                       <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&nbsp;d)</CODE>
+<TD><CODE><B><A HREF="../randoop/ReplayVisitor.html#ReplayVisitor()">ReplayVisitor</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -142,20 +137,31 @@ Thrown by a ContractFailureReplayVisitor or a RegressionReplayVisitor when a
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ReplayFailureException.html#getDecoration()">getDecoration</A></B>()</CODE>
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ReplayVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-</TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_Throwable"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class Throwable</B></TH>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>fillInStackTrace, getCause, getLocalizedMessage, getMessage, getStackTrace, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</CODE></TD>
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ReplayVisitor.html#visitAfter(randoop.ExecutableSequence, int)">visitAfter</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
+           int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoked by ExecutableSequence.execute after the i-th statement executes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ReplayVisitor.html#visitBefore(randoop.ExecutableSequence, int)">visitBefore</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
+            int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoked by ExecutableSequence.execute before
+ the i-th statement executes.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
@@ -164,7 +170,7 @@ Thrown by a ContractFailureReplayVisitor or a RegressionReplayVisitor when a
 <TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -180,11 +186,10 @@ Thrown by a ContractFailureReplayVisitor or a RegressionReplayVisitor when a
 </TR>
 </TABLE>
 
-<A NAME="ReplayFailureException(java.lang.String, randoop.Check)"><!-- --></A><H3>
-ReplayFailureException</H3>
+<A NAME="ReplayVisitor()"><!-- --></A><H3>
+ReplayVisitor</H3>
 <PRE>
-public <B>ReplayFailureException</B>(String&nbsp;message,
-                              <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&nbsp;d)</PRE>
+public <B>ReplayVisitor</B>()</PRE>
 <DL>
 </DL>
 
@@ -198,11 +203,62 @@ public <B>ReplayFailureException</B>(String&nbsp;message,
 </TR>
 </TABLE>
 
-<A NAME="getDecoration()"><!-- --></A><H3>
-getDecoration</H3>
+<A NAME="initialize(randoop.ExecutableSequence)"><!-- --></A><H3>
+initialize</H3>
 <PRE>
-public <A HREF="../randoop/Check.html" title="interface in randoop">Check</A> <B>getDecoration</B>()</PRE>
+public void <B>initialize</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s)</PRE>
 <DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">ExecutionVisitor</A></CODE></B></DD>
+<DD>Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></CODE> in interface <CODE><A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="visitAfter(randoop.ExecutableSequence, int)"><!-- --></A><H3>
+visitAfter</H3>
+<PRE>
+public boolean <B>visitAfter</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
+                          int&nbsp;i)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ExecutionVisitor.html#visitAfter(randoop.ExecutableSequence, int)">ExecutionVisitor</A></CODE></B></DD>
+<DD>Invoked by ExecutableSequence.execute after the i-th statement executes.
+ The return value signals whether the execution of the sequence should be
+ aborted. If this method returns false, the remaining statements in the
+ sequence under execution will not be executed.
+
+ Precondition: statements 0..i have been executed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ExecutionVisitor.html#visitAfter(randoop.ExecutableSequence, int)">visitAfter</A></CODE> in interface <CODE><A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="visitBefore(randoop.ExecutableSequence, int)"><!-- --></A><H3>
+visitBefore</H3>
+<PRE>
+public void <B>visitBefore</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
+                        int&nbsp;i)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ExecutionVisitor.html#visitBefore(randoop.ExecutableSequence, int)">ExecutionVisitor</A></CODE></B></DD>
+<DD>Invoked by ExecutableSequence.execute before
+ the i-th statement executes.
+
+ Precondition: statements 0..i-1 have been executed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ExecutionVisitor.html#visitBefore(randoop.ExecutableSequence, int)">visitBefore</A></CODE> in interface <CODE><A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></CODE></DL>
+</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -237,11 +293,11 @@ public <A HREF="../randoop/Check.html" title="interface in randoop">Check</A> <B
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/RegressionCaptureVisitor.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/ReplayVisitor.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ReplayFailureException.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../randoop/RMethod.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/ReplayFailureException.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="ReplayFailureException.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/ReplayVisitor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ReplayVisitor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {

@@ -158,6 +158,15 @@ An execution visitor that records regression checks on the values
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/RegressionCaptureVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../randoop/RegressionCaptureVisitor.html#visitAfter(randoop.ExecutableSequence, int)">visitAfter</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s,
            int&nbsp;idx)</CODE>
@@ -214,6 +223,24 @@ public <B>RegressionCaptureVisitor</B>()</PRE>
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="initialize(randoop.ExecutableSequence)"><!-- --></A><H3>
+initialize</H3>
+<PRE>
+public void <B>initialize</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">ExecutionVisitor</A></CODE></B></DD>
+<DD>Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></CODE> in interface <CODE><A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="visitAfter(randoop.ExecutableSequence, int)"><!-- --></A><H3>
 visitAfter</H3>

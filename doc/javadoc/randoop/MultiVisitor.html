@@ -170,6 +170,16 @@ An execution visitor that chains a list of visitors in sequence. It can be
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/MultiVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;executableSequence)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calls the initialize method for each of the visitors, in the
+ order in which the visitors were given during construction of
+ this MultiVisitor.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../randoop/MultiVisitor.html#visitAfter(randoop.ExecutableSequence, int)">visitAfter</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
            int&nbsp;i)</CODE>
@@ -253,6 +263,24 @@ public <B>MultiVisitor</B>(List&lt;<A HREF="../randoop/ExecutionVisitor.html" ti
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="initialize(randoop.ExecutableSequence)"><!-- --></A><H3>
+initialize</H3>
+<PRE>
+public void <B>initialize</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;executableSequence)</PRE>
+<DL>
+<DD>Calls the initialize method for each of the visitors, in the
+ order in which the visitors were given during construction of
+ this MultiVisitor.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></CODE> in interface <CODE><A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="visitAfter(randoop.ExecutableSequence, int)"><!-- --></A><H3>
 visitAfter</H3>

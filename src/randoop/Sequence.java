@@ -7,9 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -52,7 +56,7 @@ public final class Sequence implements Serializable, WeightedElement {
   // Should be final but cannot because of serialization.
   // This info is used by some generators.
   private transient/* final */List<Class<?>> lastStatementTypes;
-
+  
   /*
    * Weight is used by heuristic that favors smaller sequences
    * so it makes sense to define weight as the inverse of size.

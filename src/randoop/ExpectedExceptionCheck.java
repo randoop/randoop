@@ -1,48 +1,55 @@
 package randoop;
 
 import java.io.ObjectStreamException;
-import java.io.Serializable;
+
+import randoop.util.Reflection;
 
 /**
  * A checker that checks for an expected exception from a method call.
  */
-public class ExpectedExceptionChecker implements Check, Serializable {
+public class ExpectedExceptionCheck implements Check {
 
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = -1172907532417774517L;
 
   private final Class<? extends Throwable> exceptionClass;
+  
+  // Indicates which statement results in the given exception. 
+  private final int statementIdx;
   
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;
     if (o == this) return true;
-    if (!(o instanceof ExpectedExceptionChecker)) {
+    if (!(o instanceof ExpectedExceptionCheck)) {
       return false;
     }
-    ExpectedExceptionChecker other = (ExpectedExceptionChecker)o;
-    return this.exceptionClass.equals(other.exceptionClass);
+    ExpectedExceptionCheck other = (ExpectedExceptionCheck)o;
+    return this.exceptionClass.equals(other.exceptionClass) && statementIdx == other.statementIdx;
   }
   
   @Override
   public int hashCode() {
     int h = 7;
     h = h * 31 + exceptionClass.hashCode();
+    h = h * 31 + new Integer(statementIdx).hashCode();
     return h;
   }
 
-  public ExpectedExceptionChecker(Throwable exception) {
+  public ExpectedExceptionCheck(Throwable exception, int statementIdx) {
     if (exception == null)
       throw new IllegalArgumentException("exception cannot be null.");
     this.exceptionClass = exception.getClass();
+    this.statementIdx = statementIdx;
   }
 
-  public ExpectedExceptionChecker (Class<? extends Throwable> exception_class) {
+  public ExpectedExceptionCheck (Class<? extends Throwable> exception_class, int statementIdx) {
     this.exceptionClass = exception_class;
+    this.statementIdx = statementIdx;
   }
 
   private Object writeReplace() throws ObjectStreamException {
     // System.out.printf ("writeReplace %s in StatementThrowsException%n", this);
-    return new SerializableExpectedExceptionChecker(exceptionClass);
+    return new SerializableExpectedExceptionChecker(exceptionClass, statementIdx);
   }
 
   public String toString() {
@@ -80,5 +87,17 @@ public class ExpectedExceptionChecker implements Check, Serializable {
     return b.toString();
   }
 
+  @Override
+  public boolean evaluate(Execution execution) {
+    ExecutionOutcome outcomeAtIdx = execution.get(statementIdx);
+    if (outcomeAtIdx instanceof NotExecuted) {
+      throw new IllegalArgumentException("Statement not executed");
+    }
+    if (!(outcomeAtIdx instanceof ExceptionalExecution)) {
+      return false;
+    }
+    ExceptionalExecution e = (ExceptionalExecution)outcomeAtIdx;
+    return Reflection.canBeUsedAs(e.getException().getClass(), exceptionClass);
+  }
 
 }

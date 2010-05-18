@@ -103,12 +103,19 @@ Object
 <P>
 An execution visitor that checks unary and binary object contracts on the
  values created by the sequence. It does this only after the last statement
- has been executed. For each contract violation, the visitor adds an
- Check to the last index in the sequence.
-
- If the sequence throws an exception, the visitor does not check any contracts [[
- TODO update]]. If it does not throw an exception, it checks all contracts on
- each object returned by each statement, except objects that are boxed
+ has been executed. For each contract violation, the visitor adds an Check to
+ the last index in the sequence.
+ 
+ These checks can be added at any time; however, Randoop usually adds these
+ checks (vian an <A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop"><CODE>ExecutionVisitor</CODE></A> as the execution unfolds, based on
+ observing the result of executing the statements in the sequence. For
+ example, a <code>RegressionCaptureVisitor</code> creates <code>NotNull</code>
+ checks as the sequence is executed, for those statments that return non-null
+ values.
+ 
+ If the sequence throws an exception, the visitor does not check any contracts
+ [[ TODO update]]. If it does not throw an exception, it checks all contracts
+ on each object returned by each statement, except objects that are boxed
  primitives or Strings.
 <P>
 
@@ -142,6 +149,15 @@ An execution visitor that checks unary and binary object contracts on the
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ContractCheckingVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -210,6 +226,24 @@ public <B>ContractCheckingVisitor</B>(List&lt;<A HREF="../randoop/ObjectContract
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="initialize(randoop.ExecutableSequence)"><!-- --></A><H3>
+initialize</H3>
+<PRE>
+public void <B>initialize</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">ExecutionVisitor</A></CODE></B></DD>
+<DD>Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></CODE> in interface <CODE><A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="visitBefore(randoop.ExecutableSequence, int)"><!-- --></A><H3>
 visitBefore</H3>

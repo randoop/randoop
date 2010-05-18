@@ -4,33 +4,27 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A check that checks for expected properties of one or more values
+ * A check that checks for expected properties of one or more objects
  * generated during the execution of a {@link Sequence}, for example:
  * <p>
  * <ul>
  * <li> Checking that the objects created during execution of a sequence 
- *      respect reflexivity, transitivity and symmetry of equality
+ *      respect reflexivity, transitivity and symmetry of equality.
  * <li> Checking that calling <code>toString()</code> on the objects
  *      created during execution of a sequence does not throw an exception.
  * </ul>  
  * <p>
- * Randoop performs these checks after a statement in a sequence is 
- * executed and has resulted in possibly new or modified objects; 
- * <p>
  * An <code>ObjectCheck</code> has two parts:
  * <p>
  * <ul>
- * <li>A {@link ObjectContract} object, that is responsible for performing
+ * <li>A {@link ObjectContract} responsible for performing
  *     the actual check on a set of runtime values. For example.
- *     the class <code>EqualsReflexive</code> is a checker code class that,
- *     given an object <i>o</i>, calls <i>o.equals(o)</i> and checks whether
+ *     the class {@link EqualsReflexive} is a checker code class that,
+ *     given an object <i>o</i>, calls <i>o.equals(o)</i> and checks that
  *     it returns <code>true</code>.
  *     
- * <li>A list of {@Variable}s, which describe the specific values in a
- *     sequence that the check is over; <code>Property</code> objects
- *     do not deal with these details.
- * </ul>
- * <p>
+ * <li>A list of {@link Variable}s, which describe the specific
+ *     objects in the sequence that the check is over.  </ul> <p>
  */
 public class ObjectCheck implements Check {
 
@@ -108,6 +102,18 @@ public class ObjectCheck implements Check {
       return ((PrimValue)contract).value.toString();
     } else {
       return contract.getClass().getName();
+    }
+  }
+
+  @Override
+  public boolean evaluate(Execution execution) {
+    Object[] obs = ExecutableSequence.getRuntimeValuesForVars(Arrays.asList(vars), execution.theList);
+    try {
+      return contract.evaluate(obs);
+    } catch (ThreadDeath t) {
+      throw t;
+    } catch (Throwable t) {
+      return contract.evalExceptionMeansFailure();
     }
   }
 }
