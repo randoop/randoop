@@ -101,33 +101,27 @@ Object
 </PRE>
 
 <P>
-A check that checks for expected properties of one or more values
+A check that checks for expected properties of one or more objects
  generated during the execution of a <A HREF="../randoop/Sequence.html" title="class in randoop"><CODE>Sequence</CODE></A>, for example:
  <p>
  <ul>
  <li> Checking that the objects created during execution of a sequence 
-      respect reflexivity, transitivity and symmetry of equality
+      respect reflexivity, transitivity and symmetry of equality.
  <li> Checking that calling <code>toString()</code> on the objects
       created during execution of a sequence does not throw an exception.
  </ul>  
  <p>
- Randoop performs these checks after a statement in a sequence is 
- executed and has resulted in possibly new or modified objects; 
- <p>
  An <code>ObjectCheck</code> has two parts:
  <p>
  <ul>
- <li>A <A HREF="../randoop/ObjectContract.html" title="interface in randoop"><CODE>ObjectContract</CODE></A> object, that is responsible for performing
+ <li>A <A HREF="../randoop/ObjectContract.html" title="interface in randoop"><CODE>ObjectContract</CODE></A> responsible for performing
      the actual check on a set of runtime values. For example.
-     the class <code>EqualsReflexive</code> is a checker code class that,
-     given an object <i>o</i>, calls <i>o.equals(o)</i> and checks whether
+     the class <A HREF="../randoop/EqualsReflexive.html" title="class in randoop"><CODE>EqualsReflexive</CODE></A> is a checker code class that,
+     given an object <i>o</i>, calls <i>o.equals(o)</i> and checks that
      it returns <code>true</code>.
      
- <li>A list of s, which describe the specific values in a
-     sequence that the check is over; <code>Property</code> objects
-     do not deal with these details.
- </ul>
- <p>
+ <li>A list of <A HREF="../randoop/Variable.html" title="class in randoop"><CODE>Variable</CODE></A>s, which describe the specific
+     objects in the sequence that the check is over.  </ul> <p>
 <P>
 
 <P>
@@ -197,6 +191,16 @@ A check that checks for expected properties of one or more values
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ObjectCheck.html#evaluate(randoop.Execution)">evaluate</A></B>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates this check on the given unfolding execution of a sequence,
+ returning <code>true</code> if the check succeeded, and <code>false</code>
+ otherwise.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../randoop/ObjectCheck.html#get_value()">get_value</A></B>()</CODE>
 
@@ -218,7 +222,7 @@ A check that checks for expected properties of one or more values
 <TD><CODE><B><A HREF="../randoop/ObjectCheck.html#toCodeStringPostStatement()">toCodeStringPostStatement</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a string of Java source code to be emitted after a
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted after a
  statement containing this check.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -227,7 +231,7 @@ A check that checks for expected properties of one or more values
 <TD><CODE><B><A HREF="../randoop/ObjectCheck.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a string of Java source code to be emitted before a
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted before a
  statement containing this check.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -356,7 +360,7 @@ toCodeStringPreStatement</H3>
 public String <B>toCodeStringPreStatement</B>()</PRE>
 <DL>
 <DD><B>Description copied from interface: <CODE><A HREF="../randoop/Check.html#toCodeStringPreStatement()">Check</A></CODE></B></DD>
-<DD>Return a string of Java source code to be emitted before a
+<DD>Returns a string of Java source code to be emitted before a
  statement containing this check.
 <P>
 <DD><DL>
@@ -374,7 +378,7 @@ toCodeStringPostStatement</H3>
 public String <B>toCodeStringPostStatement</B>()</PRE>
 <DL>
 <DD><B>Description copied from interface: <CODE><A HREF="../randoop/Check.html#toCodeStringPostStatement()">Check</A></CODE></B></DD>
-<DD>Return a string of Java source code to be emitted after a
+<DD>Returns a string of Java source code to be emitted after a
  statement containing this check.
 <P>
 <DD><DL>
@@ -397,6 +401,25 @@ public String <B>get_value</B>()</PRE>
 <P>
 <DD><DL>
 <DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/Check.html#get_value()">get_value</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(randoop.Execution)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+public boolean <B>evaluate</B>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">Check</A></CODE></B></DD>
+<DD>Evaluates this check on the given unfolding execution of a sequence,
+ returning <code>true</code> if the check succeeded, and <code>false</code>
+ otherwise.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">evaluate</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>

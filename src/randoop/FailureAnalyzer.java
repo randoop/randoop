@@ -74,7 +74,6 @@ public class FailureAnalyzer {
         }
 
       } else {
-        assert obs instanceof ForbiddenExceptionChecker;
         st = es.sequence.getStatementKind(idx);
 
         MSequence mseq = es.sequence.toModifiableSequence();

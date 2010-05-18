@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html" />
+<meta hcodep-equiv="Content-Type" content="text/html" />
 <link rel=stylesheet href="main.css" type="text/css" />
 <head><title>Randoop Developer's Manual</title></head>
 
@@ -20,12 +20,9 @@
     <ul>
       <li><a href="#sequence">Sequences</a>
         <ul>
-          <li>
-            <ul>
-              <li><a href="#executing_sequence">Creating a sequence</a></li>
-              <li><a href="#executing_sequence">Executing a sequence</a></li>
-              <li><a href="#inout_sequence">Writing and reading a sequences</a></li>
-            </ul></li>
+          <li><a href="#executing_sequence">Creating sequences</a></li>
+          <li><a href="#executing_sequence">Executing sequences</a></li>
+          <li><a href="#inout_sequence">Writing/reading sequences to file</a></li>
         </ul></li>
       <li><a href="#code">Main entry points</a></li>
       <li><a href="#code">Test generator classes</a></li>
@@ -49,9 +46,9 @@
 <p>Under Unix:</p>
 
 <ol>
-  <li>From a command prompt, type <tt>make build</tt> under Randoop's home
+  <li>From a command prompt, type <code>make build</code> under Randoop's home
     directory (the directory containing this file).
-  <li>If you want to rebuild from scratch, type <tt>make clean</tt> first.
+  <li>If you want to rebuild from scratch, type <code>make clean</code> first.
   <li> The generated classes are placed in bin/ directory.
 </ol>
 
@@ -65,8 +62,8 @@
 <h2 id="running">Running unit and system tests</h2>
 
 <ul>
-  <li>From a command prompt, type <tt>make tests</tt> under Randoop's home directory.
-  <li>To do everything (build <i>and</i> run all tests), type <tt>make all</tt>.
+  <li>From a command prompt, type <code>make tests</code> under Randoop's home directory.
+  <li>To do everything (build <i>and</i> run all tests), type <code>make all</code>.
 </ul>
 
 <h2 id="daytoday">Running Randoop: day to day play</h2>
@@ -77,7 +74,7 @@ for daily purposes? All you need to do to run Randoop is make sure the
 bin/ directory and the files under lib/ are part of the classpath.
 
 <ul>
-  <li>To avoid repeatedly setting up the classpath, some of us add the
+  <li>To avoid repeatedly secodeing up the classpath, some of us add the
   bin/ directory and the files under lib/ to our (global) CLASSPATH
   variable that we specify in a configuration file (e.g. .bashrc).
 
@@ -112,8 +109,8 @@ Then, run under Randoop's home directory:
 <h2 id="making_new_dist">Making a new distribution</h2>
 <p>
 <ol>
-  <li>Increase version number (modify variable <tt>RANDOOP_VERSION</tt> in <tt>src/randoop/Globals.java</tt>).
-  <li>Compile and test: run <tt>make clean</tt> followed by <tt>make all</tt>. Make sure all tests pass.
+  <li>Increase version number (modify variable <code>RANDOOP_VERSION</code> in <code>src/randoop/Globals.java</code>).
+  <li>Compile and test: run <code>make clean</code> followed by <code>make all</code>. Make sure all tests pass.
   <li>Rename the zip and jar files created under the <code>dist/</code> directory to the appropriate version number.
   <li>Upload the zip and jar files to google code.
 </ol>
@@ -121,68 +118,355 @@ Then, run under Randoop's home directory:
 
 <h1 id="code">Randoop Internals</h1>
 
-<h2 id="sequence">Sequences</h2>
 
-Randoop's main data structure is the <b><i>sequence</i></b>
-(class
-<a href="javadoc/randoop/Sequence.html">randoop.Sequence</a>).  A
-sequence describes the syntactic structure of a test input. In
-Randoop, all test inputs are sequences of operations that use the
-methods and constructors of the classes under test.
+This section describes Randoop's main concepts, data structures and
+internal algorithms. To this end, it helps to understand our model of
+unit tests.
+
+<p>
+
+At a general level, a unit test is just a snippet of code that checks
+some expected property of some classes under test. A more detailed
+description of a unit test (and one useful for the purpose of
+automatically generating tests) is as consisting of <i>two</i> things:
+<p>
+<ul>
+<li><b>A test input</b>, i.e. the portions of the code that call
+constructors and method of the clases under test, and
+<li><b>Test checks</b> (also known as the "test oracle"), i.e. the
+portions of the code that <i>check</i> that the test input behaves as
+expected.
+</ul>
+<p>
+As a simple example, suppose we're testing the JDK's collections
+classes (<code>LinkedList</code>, <code>Collections</code>, etc.)  The
+following unit test checks that the size of a linked list is computed
+correctly after an element is added.
 
 <pre class="code">
-    LinkedList list = new LinkedList();
-    Object o = new Object();
-    list.addFirst(o);
-    TreeSet t = new TreeSet(list);
-    Set s = Collections.synchronizedSet(t);
+1.   // Tests that the size of a list is 1 after adding an element.
+2.   public void testAdd() {
+3.      LinkedList list = new LinkedList();
+4.      list.add(null);
+5.      assert list.size() == 1;
+6.   }
+</pre>
+
+The test input consists of lines 3-4, which creates a list and calls the 
+<code>add</code> method, exercising the code of the list class under
+test. The test check is in line 5.
+
+<p>
+
+In Randoop, test inputs are represented using 
+<a href="javadoc/randoop/Sequence.html">Sequences</a>, which describe
+a sequence of Statement}s (like the statements in lines 3-4 above)
+exercising the code under test, and test checks are represented
+using <a href="javadoc/randoop/Check.html">Checks</a>.
+
+<p>
+
+Randoop's generation algorithms basically create collections of
+Sequences, add the appropriate Checks to them, and output the results
+to the user as unit tests.
+
+<h2 id="sequence">Sequences</h2>
+
+Randoop's main data structure is the
+<a href="javadoc/randoop/Sequence.html">Sequence</a>.  A sequence
+describes the syntactic structure of a test input. In Randoop, all
+test inputs are sequences of operations that use the methods and
+constructors of the classes under test.
+
+<p>
+
+Continuing with our running example (testing the JDK collections
+classes), here is an example of a sequence of statements that calls
+methods from the classees under test, which each statement in a
+separate line:
+
+<pre class="code">
+  LinkedList l = new LinkedList();
+  Object o = new Object();
+  l.addFirst(o);
+  int i = l.size();
+  TreeSet t = new TreeSet(l);
+  Set s = Collections.synchronizedSet(t);
 </pre>
 
 <p>
-
+Notice from the examples that each statement has three elements:
+<p>
+<ol>
+<li>A specific method (or constructor) that is being called.
+<li>A value (primitive or object) returned by each call
+(<code>l</code>,
+<code>o</code>,
+<code>i</code>,
+<code>t</code>, and
+<code>s</code>).
+<li>Inputs to the call, all of which come from values produced in earlier statements.
+</ol>
+<p>
+Rearranging the above sequence, we can see these elements more clearly:
+<p>
+<pre class="code">
+                  Result      StatementKind        Inputs
+                  ======      =============        ======
+statement 0:      l       =   new LinkedList       ()
+statement 1:      o       =   new Object           ()
+statement 2:                  addFirst             (l, o)
+statement 3:      i       =   size                 (l)
+statement 4:      t       =   new TreeSet          (l)
+statement 5:      s       =   synchronizedSet      (t)
+</pre>
+<p>
 </ul>
-
-
-<h4 id="executing_sequence">Creating a sequence</h4>
-
-<h4 id="executing_sequence">Executing a sequence</h4>
+<p>
+The three elements of a statement map to the following classes in Randoop:
 <p>
 <ul>
 
-<li>A <a href="javadoc/randoop/Sequence.html">Sequence</a> only
-describes the structure of a test input. All aspects related to the
-execution of a sequence are handled by the related class
-<a href="javadoc/randoop/ExecutableSequence.html">ExecutableSequence</a>. This
-class is basically a wrapper around a <tt>Sequence</tt> that adds the
-ability to execute the sequence statements, and add
-<a href="javadoc/randoop/Observation.html">Observation</a>s about the
-execution. Observations capture things like whether a sequence
-violated a contract, whether a method returned <tt>null</tt> or not,
-etc.)
+
+<li> A <a href="javadoc/randoop/StatementKind.html">StatementKind</a>
+represents the kind of operation that the statement
+performs.
 <p>
-<li>Output capture is implemented in ExecutableSequence.executeStatement.
-This is accomplished by changing stdout and stderr to a memory
-based printsteam and recording the results.
+Randoop statements include:
+<ul>
+<li><a href="javadoc/randoop/RMethod.html">RMethod</a> represents a
+particular method call. This class Randoop's analogue of java
+reflection's <code>Method</code> class, and adds additional
+functionality useful to Randoop.
+
+<li><a href="javadoc/randoop/RConstructor.html">RConstructor</a>
+represents a constructor call.
+
+<li><a href="javadoc/randoop/PrimitiveOrStringOrNullDecl.html">PrimitiveOrStringOrNullDecl</a>
+represents a statement that creates a primitive value, a String, or
+the <code>null</code> value (in code, <code>int x =
+1</code>, <code>String s = "s"</code>, <code>Foo f = null</code>,
+etc.).
+
+<li><a href="javadoc/randoop/ArrayDeclaration.html">ArrayDeclaration</a>
+represents a statement that creates an array out of values created in
+previous statements (e.g. <code>int[] x = new int[] { var0, var1
+};</code>).
 <p>
-Comparing observations to see if they return consistent results is
-implementedin ExecutableSequence.compare_observations()
+</ul>
+<li><a href="javadoc/randoop/Variable.html">Variables</a> represent
+both the inputs and the outputs of a statement. A variable is just a
+wrapper around an index in the sequence: given a
+sequence <code>s</code>, the variable <code>s.getVariable(i)</code>
+represents the value produced by the i-th statement in the sequence.
+
+
+</ul>
+
+<h3 id="executing_sequence">Creating sequences</h3>
+
+You can create sequences in a variety of ways. The first way is
+via <i>extension</i>: take a sequence and add a new statement at the
+bottom. Recall the example sequence:
+
+<p>
+
+<pre class="code">
+  LinkedList l = new LinkedList();
+  Object o = new Object();
+  l.addFirst(o);
+  int i = l.size();
+  TreeSet t = new TreeSet(l);
+  Set s = Collections.synchronizedSet(t);
+</pre>
+
+<p>
+Below is code that creates this sequence via extension. 
+<p>
+
+<pre class="code">
+
+  // First, create the StatementKinds we'll need.
+  StatementKind newLL = RConstructor.getRConstructor(LinkedList.class.getConstructor());
+  StatementKind newOb = RConstructor.getRConstructor(Object.class.getConstructor());
+  StatementKind addFist = RMethod.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
+  StatementKind size = RMethod.getRMethod(LinkedList.class.getMethod("size"));
+  StatementKind newTS = RConstructor.getRConstructor(TreeSet.class.getConstructor(Collection.class));
+  StatementKind syncS = RMethod.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+  
+  // Now, create the sequence by repeated extension.
+  Sequence s = new Sequence();
+  s = s.extend(newLL);
+  s = s.extend(newOb);
+  s = s.extend(addFist, s.getVariable(0), s.getVariable(1));
+  s = s.extend(size,    s.getVariable(0));
+  s = s.extend(newTS,   s.getVariable(0));
+  s = s.extend(syncS,   s.getVariable(4));
+</pre>
+
+<p>
+A couple notable points:
+<p>
+<ul>
+<li> Sequences are <b>immutable</b>. The <code>extend</code> operation
+returns a new sequence rather than modifying its receiver.
+<li> If the above code feels somewhat onerous, keep in mind that the
+Sequences classes were designed for automatic generation, not to
+create individual sequences by hand. The purpose of these examples is
+to show you how sequences are created so you can go forth and create
+new automated techniques for doing so!
 </ul>
 <p>
-<h4 id="inout_sequence">Writing and reading a sequences</h4>
+A second way to create a sequence is using <code>concatenation</code>:
+given sequences <code>s1</code>, <code>s2</code> and <code>s3</code>,
+you can create a new sequence that is the concatenation of the three
+sequences.
 <p>
-<h5>Writing a sequence as a JUnit test.</h5>
+<pre class="code">
+List&lt;Sequence&gt; seqs = new ArrayList&lt;Sequence&gt;();
+seqs.add(s1);
+seqs.add(s2);
+seqs.add(s3);
+Sequence newSeq = Sequence.concatenate(seqs);
+</pre>
 
-Places to look for when modifying the JUnit code that is output:
+<p>
+If you're wondering why concatenation is useful, it is actually how
+Randoop combines sequences to create new ones. To create a new
+sequence that tests method <code>m(A a, B b)</code>, Randoop first
+finds and concatenates previousl-generated sequences that create
+objects of type <code>A</code> and <code>B</code>, and then extends
+the concatenated sequence with a call of <code>m</code>. See
+<a href="http://www.cs.washington.edu/homes/mernst/pubs/feedback-testgen-icse2007.pdf">Section
+2.2. of this paper</a> for more details.
+<p>
+A third way to create a sequence is by parsing it from a String. For
+example, given s string <code>parseable</code> with the following contents:
+<p>
+<pre class="code">
+var0 =  cons : java.util.LinkedList.<init>() : 
+var1 =  cons : java.lang.Object.<init>() : 
+var2 =  method : java.util.LinkedList.addFirst(java.lang.Object) : var0 var1 
+var3 =  method : java.util.LinkedList.size() : var0 
+var4 =  cons : java.util.TreeSet.<init>(java.util.Collection) : var0 
+var5 =  method : java.util.Collections.synchronizedSet(java.util.Set) : var4 
+</pre>
+<p>
+The following call creates a sequence corresponding to our
+running-example sequence:
+<p>
+<pre class="code">
+Sequence seq = Sequence.parse(parseable);
+</pre>
+
+<h3 id="executing_sequence">Executing sequences</h3>
+<p>
+
+Sequences describe the structure of a test input. All aspects related
+to the execution of a sequence are handled by the related class
+<a href="javadoc/randoop/ExecutableSequence.html">ExecutableSequence</a>. This
+class wrapps around a <code>Sequence</code> and adds the ability to
+execute its statements. An ExecutableSequence also adds the ability
+to <i>decorate</i> a sequence
+with <a href="javadoc/randoop/Check.html">Checks</a>, which represent
+the checking code associated with a unit test.
+<p>
+<h4>Executing a sequence</h4>
+<p>
+Suppose we have created a Sequence <code>s</code> The following two
+lines will execute the sequence:
+<p>
+<pre class="code">
+ExecutableSequence es = new ExecutableSequence(s);
+es.execute(null);
+</pre>
+<p>
+After the <code>execute</code> method returns, you can access the
+runtime objects created during execution via the <code>getResult(int
+i)</code> method, which returns the result of executing
+statement <code>i</code>. For example, assuming <code>s</code> refers
+to our running-example sequence from above, the following code prints
+out
+<code>1</code>, i.e. the return value of the call to
+method <code>LinkedList.size()</code>.
+<p>
+<pre class="code">  
+  ExecutableSequence es = new ExecutableSequence(s);
+  es.execute(null);
+
+  // Assuming statement at index 3 returned normally, print the runtime value
+  ExecutionOutcome resultAt3 = es.getResult(3);
+  if (resultAt3 instanceof NormalExecution) {
+    System.out.println(((NormalExecution)resultAt3).getRuntimeValue());
+  }
+</pre>
+<p>
+To dig more into execution results, explore the
+classes <a href="javadoc/randoop/Execution.html">Execution</a> and
+<a href="javadoc/randoop/ExecutionOutcome.html">ExecutionOutcome</a>.
+<p>
+<h4>Miscellaneous Notes</h4>
+<ul>
+<li>Executing statements in a sequence may result in random stuff
+being printed to standard out. Capturing this output is possible via
+the method
+<code>ExecutableSequence.executeStatement</code>.  This is
+accomplished by changing stdout and stderr to a memory based
+printsteam and recording the results.
+</ul>
+
+<h3 id="inout_sequence">Writing/reading sequences to file</h3>
+<p>
+
+<h4>Writing/reading serialized sequences</h4>
+<p>
+Writing a list of sequences to a serialized file:
+<p>
+<pre class="code">
+  List&lt;ExecutableSequence&gt; sequences = ...;
+  FileOutputStream fileos = new FileOutputStream("MyFile.gz");
+  ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
+  objectos.writeObject(sequences);
+  objectos.close();
+  fileos.close();
+</pre>
+<p>
+Any <a href="javadoc/randoop/Check.html">Checks</a> decorating the
+sequences will also be serialized.
+<p>
+Reading a list of sequences from a serialized file:
+<p>
+<pre class="code">
+  FileInputStream fileis = new FileInputStream("MyFile.gz");
+  ObjectInputStream objectis = new ObjectInputStream(new GZIPInputStream(fileis));
+  List&lt;ExecutableSequence&gt; seqsfromfile = (List&lt;ExecutableSequence&gt;) objectis.readObject();
+</pre>
+<p>
+You can replay the execution of a deserialized sequence (including
+evaluation of its Checks) by executing it with
+a <a href="javadoc/randoop/ReplayVisitor.html">ReplayVisitor</a>.
+
+<h4>Writing a sequence as a JUnit test</h4>
+<p>
+Writing a list of executed sequences as JUnit files:
+<p>
+<pre class="code">
+  List&lt;ExecutableSequence&gt; sequences = ...;
+  JunitFileWriter jfw =
+  new JunitFileWriter(output_dir, junit_package_name, junit_classname, testsperfile);
+  jfw.createJunitFiles(seq);
+</pre>
+<p>
+If you want to modify Randoop's JUnit-generating code, here are laces to look:
 <p>
 <li>Class <code>randoop.JunitFileWriter</code> figures out how many JUnit classes/files
 to write, how many tests to put in each, what to name them, etc.
-<li>Methods
+<li>Methods responsible for writing the code for a single unit test:
   <ul>
-  <li><tt>randoop.ExecutableSequence.toCodeString(),</tt>
-  <li><tt>randoop.ExecutableSequence.toCodeString(),</tt>
-  <li><tt>and the various implementationgs of randoop.StatementKind.appendCode(...)</tt>
+  <li><code>randoop.ExecutableSequence.toCodeString(),</code>
+  <li><code>randoop.ExecutableSequence.toCodeString(),</code>
+  <li>and the various implementations of <code>StatementKind.appendCode(...)</code>
   </ul>
-  Are responsible for writing the code for a single unit test.
 </ul>
 <p>
 <h2 id="code">Main entry points</h2>
@@ -193,15 +477,15 @@ to write, how many tests to put in each, what to name them, etc.
 is the main class for Randoop as it is normally used.  There are other
 mains for other purposes.
 <p>
-<li>Method <tt>handle</tt> is the
+<li>Method <code>handle</code> is the
 main <a href="javadoc/randoop/main/GenTests.html">GenTests</a>
 entrypoint for Randoop. (This is not strictly true, as Randoop's true
 entrypoint is
 class <a href="javadoc/src/randoop/main/Main.java">randoop.main.Main</a>
-But <tt>GenTests</tt> is where all the action starts with test
-generation.) The <tt>handle</tt> method is long and mostly deals with
-setting up things before the generation process, and doing things like
-outputting tests after generation.
+But <code>GenTests</code> is where all the action starts with test
+generation.) The <code>handle</code> method is long and mostly deals with
+secodeing up things before the generation process, and doing things like
+outpucodeing tests after generation.
 <p>
 <li>Most command line options are specified
 in <a href="javadoc/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.

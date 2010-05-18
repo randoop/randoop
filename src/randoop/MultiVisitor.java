@@ -26,6 +26,18 @@ public class MultiVisitor implements ExecutionVisitor {
 
   public MultiVisitor() { }
 
+  /**
+   * Calls the initialize method for each of the visitors, in the
+   * order in which the visitors were given during construction of
+   * this MultiVisitor.
+   */
+  @Override
+  public void initialize(ExecutableSequence executableSequence) {
+    for (ExecutionVisitor visitor : visitors) {
+      visitor.initialize(executableSequence);
+    }    
+  }
+  
   public MultiVisitor(List<ExecutionVisitor> visitors) {
     this.visitors.addAll(visitors);
   }
@@ -44,5 +56,6 @@ public class MultiVisitor implements ExecutionVisitor {
       visitor.visitBefore(sequence, i);
     }
   }
+
 
 }

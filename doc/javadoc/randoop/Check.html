@@ -92,7 +92,7 @@ Interface Check</H2>
 <DT><B>All Superinterfaces:</B> <DD>Serializable</DD>
 </DL>
 <DL>
-<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A>, <A HREF="../randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A>, <A HREF="../randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A></DD>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>, <A HREF="../randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>, <A HREF="../randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A></DD>
 </DL>
 <HR>
 <DL>
@@ -118,7 +118,7 @@ A correctness check performed on some aspect of a unit test's execution.
  only emit the assertion code after the statement. A checker that surrounds
  the statement with a try-catch clause to test for an expected exception needs
  to emit the <i>try</i> part of the clause before the statement, and the
- <i>catch</i> part after the statement (see <A HREF="../randoop/ExpectedExceptionChecker.html" title="class in randoop"><CODE>ExpectedExceptionChecker</CODE></A>,
+ <i>catch</i> part after the statement (see <A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop"><CODE>ExpectedExceptionCheck</CODE></A>,
  for example).
 
  <p>
@@ -147,11 +147,21 @@ A correctness check performed on some aspect of a unit test's execution.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">evaluate</A></B>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates this check on the given unfolding execution of a sequence,
+ returning <code>true</code> if the check succeeded, and <code>false</code>
+ otherwise.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../randoop/Check.html#get_value()">get_value</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a short string that can be used to uniquely identify
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a short string that can be used to uniquely identify
  this check.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -160,7 +170,7 @@ A correctness check performed on some aspect of a unit test's execution.
 <TD><CODE><B><A HREF="../randoop/Check.html#toCodeStringPostStatement()">toCodeStringPostStatement</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a string of Java source code to be emitted after a
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted after a
  statement containing this check.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -169,7 +179,7 @@ A correctness check performed on some aspect of a unit test's execution.
 <TD><CODE><B><A HREF="../randoop/Check.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return a string of Java source code to be emitted before a
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted before a
  statement containing this check.</TD>
 </TR>
 </TABLE>
@@ -191,7 +201,7 @@ toCodeStringPreStatement</H3>
 <PRE>
 String <B>toCodeStringPreStatement</B>()</PRE>
 <DL>
-<DD>Return a string of Java source code to be emitted before a
+<DD>Returns a string of Java source code to be emitted before a
  statement containing this check.
 <P>
 <DD><DL>
@@ -208,7 +218,7 @@ toCodeStringPostStatement</H3>
 <PRE>
 String <B>toCodeStringPostStatement</B>()</PRE>
 <DL>
-<DD>Return a string of Java source code to be emitted after a
+<DD>Returns a string of Java source code to be emitted after a
  statement containing this check.
 <P>
 <DD><DL>
@@ -225,8 +235,26 @@ get_value</H3>
 <PRE>
 String <B>get_value</B>()</PRE>
 <DL>
-<DD>Return a short string that can be used to uniquely identify
+<DD>Returns a short string that can be used to uniquely identify
  this check.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(randoop.Execution)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+boolean <B>evaluate</B>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</PRE>
+<DL>
+<DD>Evaluates this check on the given unfolding execution of a sequence,
+ returning <code>true</code> if the check succeeded, and <code>false</code>
+ otherwise.
 <P>
 <DD><DL>
 </DL>

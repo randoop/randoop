@@ -1,5 +1,6 @@
 package randoop.test;
 
+import randoop.tests.CodeFromManual;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -37,6 +38,7 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(LineRemoverTests2.class);
     suite.addTestSuite(DependencyTests.class);
     suite.addTestSuite(SeedSequencesTests.class);
+    suite.addTestSuite(CodeFromManual.class);
 
     return suite;
   }

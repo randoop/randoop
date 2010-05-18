@@ -9,16 +9,22 @@ import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
 
-
 /**
  * An execution visitor that checks unary and binary object contracts on the
  * values created by the sequence. It does this only after the last statement
- * has been executed. For each contract violation, the visitor adds an
- * Check to the last index in the sequence.
- *
- * If the sequence throws an exception, the visitor does not check any contracts [[
- * TODO update]]. If it does not throw an exception, it checks all contracts on
- * each object returned by each statement, except objects that are boxed
+ * has been executed. For each contract violation, the visitor adds an Check to
+ * the last index in the sequence.
+ * 
+ * These checks can be added at any time; however, Randoop usually adds these
+ * checks (vian an {@link ExecutionVisitor} as the execution unfolds, based on
+ * observing the result of executing the statements in the sequence. For
+ * example, a <code>RegressionCaptureVisitor</code> creates <code>NotNull</code>
+ * checks as the sequence is executed, for those statments that return non-null
+ * values.
+ * 
+ * If the sequence throws an exception, the visitor does not check any contracts
+ * [[ TODO update]]. If it does not throw an exception, it checks all contracts
+ * on each object returned by each statement, except objects that are boxed
  * primitives or Strings.
  */
 public final class ContractCheckingVisitor implements ExecutionVisitor {
@@ -49,6 +55,17 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
     }
   }
 
+  @Override
+  public void initialize(ExecutableSequence s) {
+    s.checks.clear();
+    s.checksResults.clear();
+    for (int i = 0 ; i < s.sequence.size() ; i++) {
+      s.checks.add(new ArrayList<Check>(1));
+      s.checksResults.add(new ArrayList<Boolean>(1));
+    }
+  }
+
+
   public void visitBefore(ExecutableSequence sequence, int i) {
     // no body.
   }
@@ -73,7 +90,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
        if (GenInputsAbstract.forbid_null) {
          ExceptionalExecution exec = (ExceptionalExecution)s.getResult(idx);
          if (exec.getException().getClass().equals(NullPointerException.class)) {
-           ForbiddenExceptionChecker obs = new ForbiddenExceptionChecker(NullPointerException.class);
+           NoExceptionCheck obs = new NoExceptionCheck(idx);
           s.addCheck(idx, obs, false);
          }
        }

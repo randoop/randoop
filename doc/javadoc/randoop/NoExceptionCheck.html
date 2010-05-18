@@ -3,7 +3,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-IsNull
+NoExceptionCheck
 </TITLE>
 
 
@@ -13,7 +13,7 @@ IsNull
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="IsNull";
+        parent.document.title="NoExceptionCheck";
     }
 }
 </SCRIPT>
@@ -52,11 +52,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/IsNotNull.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/JavaFileWriter.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/NaiveRandomGenerator.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../randoop/NormalExecution.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/IsNull.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="IsNull.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/NoExceptionCheck.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="NoExceptionCheck.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -87,32 +87,27 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&n
 <FONT SIZE="-1">
 randoop</FONT>
 <BR>
-Class IsNull</H2>
+Class NoExceptionCheck</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>IsNull</B>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>NoExceptionCheck</B>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>Serializable, <A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></DD>
+<DT><B>All Implemented Interfaces:</B> <DD>Serializable, <A HREF="../randoop/Check.html" title="interface in randoop">Check</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public final class <B>IsNull</B><DT>extends Object<DT>implements <A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></DL>
+<DT><PRE>public class <B>NoExceptionCheck</B><DT>extends Object<DT>implements <A HREF="../randoop/Check.html" title="interface in randoop">Check</A></DL>
 </PRE>
 
 <P>
-The contract: <code>x == null</code>.
- <p>
- Obviously, this is not a property that must hold of all objects in a test.
- Randoop creates an instance of this contract when, during execution of
- a sequence, it determines that the above property holds. The property
- thus represents a <i>regression</i> as it captures the behavior of the
- code when it is executed.
+Checks that no exception is thrown after a given statement
+ in a sequence.
 <P>
 
 <P>
 <DL>
-<DT><B>See Also:</B><DD><A HREF="../serialized-form.html#randoop.IsNull">Serialized Form</A></DL>
+<DT><B>See Also:</B><DD><A HREF="../serialized-form.html#randoop.NoExceptionCheck">Serialized Form</A></DL>
 <HR>
 
 <P>
@@ -126,7 +121,7 @@ The contract: <code>x == null</code>.
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/IsNull.html#IsNull()">IsNull</A></B>()</CODE>
+<TD><CODE><B><A HREF="../randoop/NoExceptionCheck.html#NoExceptionCheck(int)">NoExceptionCheck</A></B>(int&nbsp;statementIdx)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -144,7 +139,7 @@ The contract: <code>x == null</code>.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/IsNull.html#equals(java.lang.Object)">equals</A></B>(Object&nbsp;o)</CODE>
+<TD><CODE><B><A HREF="../randoop/NoExceptionCheck.html#equals(java.lang.Object)">equals</A></B>(Object&nbsp;o)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -152,32 +147,26 @@ The contract: <code>x == null</code>.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/IsNull.html#evalExceptionMeansFailure()">evalExceptionMeansFailure</A></B>()</CODE>
+<TD><CODE><B><A HREF="../randoop/NoExceptionCheck.html#evaluate(randoop.Execution)">evaluate</A></B>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Communicates to Randoop how to interpret exceptional behavior
- from the <code>evaluate</code> method.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates this check on the given unfolding execution of a sequence,
+ returning <code>true</code> if the check succeeded, and <code>false</code>
+ otherwise.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/IsNull.html#evaluate(java.lang.Object...)">evaluate</A></B>(Object...&nbsp;objects)</CODE>
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/NoExceptionCheck.html#get_value()">get_value</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates the contract on the given values.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/IsNull.html#getArity()">getArity</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The number of values that this contract is over.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a short string that can be used to uniquely identify
+ this check.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/IsNull.html#hashCode()">hashCode</A></B>()</CODE>
+<TD><CODE><B><A HREF="../randoop/NoExceptionCheck.html#hashCode()">hashCode</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -185,20 +174,21 @@ The contract: <code>x == null</code>.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/IsNull.html#toCodeString()">toCodeString</A></B>()</CODE>
+<TD><CODE><B><A HREF="../randoop/NoExceptionCheck.html#toCodeStringPostStatement()">toCodeStringPostStatement</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A string that can be used as Java source code and will result in the
- expression being evaluated.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the empty string: there is no code associated
+ with this check (if an exception occurs, it will
+ be reported by JUnit).</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/IsNull.html#toCommentString()">toCommentString</A></B>()</CODE>
+<TD><CODE><B><A HREF="../randoop/NoExceptionCheck.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A string that will be inserted as a comment in the test before
- the code corresponding to this contract.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted before a
+ statement containing this check.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
@@ -223,10 +213,10 @@ The contract: <code>x == null</code>.
 </TR>
 </TABLE>
 
-<A NAME="IsNull()"><!-- --></A><H3>
-IsNull</H3>
+<A NAME="NoExceptionCheck(int)"><!-- --></A><H3>
+NoExceptionCheck</H3>
 <PRE>
-public <B>IsNull</B>()</PRE>
+public <B>NoExceptionCheck</B>(int&nbsp;statementIdx)</PRE>
 <DL>
 </DL>
 
@@ -268,113 +258,72 @@ public int <B>hashCode</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="evaluate(java.lang.Object...)"><!-- --></A><H3>
+<A NAME="get_value()"><!-- --></A><H3>
+get_value</H3>
+<PRE>
+public String <B>get_value</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/Check.html#get_value()">Check</A></CODE></B></DD>
+<DD>Returns a short string that can be used to uniquely identify
+ this check.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/Check.html#get_value()">get_value</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toCodeStringPostStatement()"><!-- --></A><H3>
+toCodeStringPostStatement</H3>
+<PRE>
+public String <B>toCodeStringPostStatement</B>()</PRE>
+<DL>
+<DD>Returns the empty string: there is no code associated
+ with this check (if an exception occurs, it will
+ be reported by JUnit).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/Check.html#toCodeStringPostStatement()">toCodeStringPostStatement</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toCodeStringPreStatement()"><!-- --></A><H3>
+toCodeStringPreStatement</H3>
+<PRE>
+public String <B>toCodeStringPreStatement</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/Check.html#toCodeStringPreStatement()">Check</A></CODE></B></DD>
+<DD>Returns a string of Java source code to be emitted before a
+ statement containing this check.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/Check.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(randoop.Execution)"><!-- --></A><H3>
 evaluate</H3>
 <PRE>
-public boolean <B>evaluate</B>(Object...&nbsp;objects)
-                 throws Throwable</PRE>
+public boolean <B>evaluate</B>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</PRE>
 <DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#evaluate(java.lang.Object...)">ObjectContract</A></CODE></B></DD>
-<DD>Evaluates the contract on the given values.
- <p>
- When calling this method during execution of a test, Randoop
- guarantees that <code>objects</code> does not contain any
- <code>null</code> objects, and that
- <code>objects.length == getArity()</code>.
- <p>
- This method should return <code>true</code> if the contract was 
- satisfied and <code>false</code> if it was violated.
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">Check</A></CODE></B></DD>
+<DD>Evaluates this check on the given unfolding execution of a sequence,
+ returning <code>true</code> if the check succeeded, and <code>false</code>
+ otherwise.
 <P>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#evaluate(java.lang.Object...)">evaluate</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
-</DD>
-<DD><DL>
-
-<DT><B>Throws:</B>
-<DD><CODE>Throwable</CODE></DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getArity()"><!-- --></A><H3>
-getArity</H3>
-<PRE>
-public int <B>getArity</B>()</PRE>
-<DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#getArity()">ObjectContract</A></CODE></B></DD>
-<DD>The number of values that this contract is over.
-<P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#getArity()">getArity</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="toCodeString()"><!-- --></A><H3>
-toCodeString</H3>
-<PRE>
-public String <B>toCodeString</B>()</PRE>
-<DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#toCodeString()">ObjectContract</A></CODE></B></DD>
-<DD>A string that can be used as Java source code and will result in the
- expression being evaluated.
- <p>
- The string should be formatted as follows: the N-th object that
- participates in the contract check should be referred to as "xN" (for N one of
- 0, ... , 9). For example, if the expression or arity 2 represents a call of
- the equals method between two objects, the comment should be something like
- "x0.equals(x1)".
- <p>
- The returned string should not be null.
-<P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#toCodeString()">toCodeString</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="toCommentString()"><!-- --></A><H3>
-toCommentString</H3>
-<PRE>
-public String <B>toCommentString</B>()</PRE>
-<DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#toCommentString()">ObjectContract</A></CODE></B></DD>
-<DD>A string that will be inserted as a comment in the test before
- the code corresponding to this contract.
-<P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#toCommentString()">toCommentString</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="evalExceptionMeansFailure()"><!-- --></A><H3>
-evalExceptionMeansFailure</H3>
-<PRE>
-public boolean <B>evalExceptionMeansFailure</B>()</PRE>
-<DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#evalExceptionMeansFailure()">ObjectContract</A></CODE></B></DD>
-<DD>Communicates to Randoop how to interpret exceptional behavior
- from the <code>evaluate</code> method.
- <p>
- If this method returns <code>true</code>, Randoop will interpret
- an exception that escapes during evaluation as a failure of the
- contract.
- <p>
- If the method returns <code>false</code>, Randoop will interpret
- an exception as passing behavior.
-<P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#evalExceptionMeansFailure()">evalExceptionMeansFailure</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">evaluate</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DL>
 </DD>
 <DD><DL>
 </DL>
@@ -410,11 +359,11 @@ public boolean <B>evalExceptionMeansFailure</B>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/IsNotNull.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/JavaFileWriter.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/NaiveRandomGenerator.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../randoop/NormalExecution.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/IsNull.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="IsNull.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/NoExceptionCheck.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="NoExceptionCheck.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {

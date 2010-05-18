@@ -152,8 +152,7 @@ Package randoop
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/CovWitnessHelperVisitor.html" title="class in randoop">CovWitnessHelperVisitor</A></B></TD>
-<TD>Records the branches covered after executing all-but-last method
- call in a sequence.</TD>
+<TD>This class is only used by the branch-directed generation research project.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/DataFlowInput.html" title="class in randoop">DataFlowInput</A></B></TD>
@@ -215,7 +214,8 @@ Package randoop
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A></B></TD>
-<TD>An ExecutableSequence adds two functionalities to a Sequence:</TD>
+<TD>An ExecutableSequence wraps a @{link Sequence} with functionality for
+ executing the sequence.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/Execution.html" title="class in randoop">Execution</A></B></TD>
@@ -227,7 +227,7 @@ Package randoop
  the value created by the statement, or the exception thrown.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../randoop/ExpectedExceptionChecker.html" title="class in randoop">ExpectedExceptionChecker</A></B></TD>
+<TD WIDTH="15%"><B><A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A></B></TD>
 <TD>A checker that checks for an expected exception from a method call.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -237,10 +237,6 @@ Package randoop
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/FailureAnalyzer.Failure.html" title="class in randoop">FailureAnalyzer.Failure</A></B></TD>
 <TD>&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../randoop/ForbiddenExceptionChecker.html" title="class in randoop">ForbiddenExceptionChecker</A></B></TD>
-<TD>A checker that checks that a forbidden exception was not thrown.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/ForwardGenerator.html" title="class in randoop">ForwardGenerator</A></B></TD>
@@ -307,6 +303,11 @@ Package randoop
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A></B></TD>
+<TD>Checks that no exception is thrown after a given statement
+ in a sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/NormalExecution.html" title="class in randoop">NormalExecution</A></B></TD>
 <TD>Means that the statement that this result represents completed normally.</TD>
 </TR>
@@ -320,7 +321,7 @@ Package randoop
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A></B></TD>
-<TD>A check that checks for expected properties of one or more values
+<TD>A check that checks for expected properties of one or more objects
  generated during the execution of a <A HREF="../randoop/Sequence.html" title="class in randoop"><CODE>Sequence</CODE></A>, for example:</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -348,6 +349,12 @@ Package randoop
 <TD WIDTH="15%"><B><A HREF="../randoop/RegressionCaptureVisitor.html" title="class in randoop">RegressionCaptureVisitor</A></B></TD>
 <TD>An execution visitor that records regression checks on the values
  created by the sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../randoop/ReplayVisitor.html" title="class in randoop">ReplayVisitor</A></B></TD>
+<TD>An execution visitor that evaluates the checks in the
+ given executable sequence, and returns <code>false</code>
+ if any of them fail.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/RMethod.html" title="class in randoop">RMethod</A></B></TD>
@@ -385,10 +392,6 @@ Package randoop
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../randoop/SerializableExpectedExceptionChecker.html" title="class in randoop">SerializableExpectedExceptionChecker</A></B></TD>
-<TD>&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../randoop/SerializableForbiddenExceptionChecker.html" title="class in randoop">SerializableForbiddenExceptionChecker</A></B></TD>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">

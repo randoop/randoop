@@ -101,7 +101,9 @@ Object
 </PRE>
 
 <P>
-Records the branches covered after executing all-but-last method
+This class is only used by the branch-directed generation research project.
+
+ Records the branches covered after executing all-but-last method
  call in a sequence.
  
  ASSUMPTIONS:
@@ -142,6 +144,15 @@ Records the branches covered after executing all-but-last method
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/CovWitnessHelperVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;executableSequence)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -204,6 +215,24 @@ public <B>CovWitnessHelperVisitor</B>(List&lt;Class&lt;?&gt;&gt;&nbsp;covClasses
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="initialize(randoop.ExecutableSequence)"><!-- --></A><H3>
+initialize</H3>
+<PRE>
+public void <B>initialize</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;executableSequence)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">ExecutionVisitor</A></CODE></B></DD>
+<DD>Called before execution of a sequence, to allow the visitor to
+ perform any initialization steps required before execution.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ExecutionVisitor.html#initialize(randoop.ExecutableSequence)">initialize</A></CODE> in interface <CODE><A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="visitAfter(randoop.ExecutableSequence, int)"><!-- --></A><H3>
 visitAfter</H3>

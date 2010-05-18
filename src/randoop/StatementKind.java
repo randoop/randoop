@@ -7,7 +7,7 @@ import java.util.List;
  * Represents a kind of statement that can be part of a sequence, for example, a
  * method call, constructor call, or primitive value declaration.
  * 
- * An implementing class C should additionally:
+ * An implementing class C should additionally provide the following:
  * 
  *  <ul>
  *  <li> A public static String field that contains a unique ID for the statement kind.

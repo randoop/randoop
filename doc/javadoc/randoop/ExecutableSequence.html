@@ -101,48 +101,46 @@ Object
 </PRE>
 
 <P>
-An ExecutableSequence adds two functionalities to a Sequence:
+An ExecutableSequence wraps a @{link Sequence} with functionality for
+ executing the sequence. It also lets the client add <A HREF="../randoop/Check.html" title="interface in randoop"><CODE>Check</CODE></A>s to
+ that check expected behaviors of the execution.
  <p>
- <ul>
- <li> The ability to execute the code that the sequence represents.
- <li> Checks can be added to elements in the sequence.
- </ul>
+ An ExecutableSequence augments a sequence with three additional pieces
+ of data:
  <p>
- Method execute(ExecutionVisitor v) executes the code that the sequence represents.
- This method uses reflection to execute each element in the sequence (method call,
- constructor call, primitive or array declaration, etc).
+ </ul><b>Execution results.</b>An ExecutableSequence can be executed, and the
+      results of the execution (meaning the objects created during execution,
+      and any exceptions thrown) are made available to clients or execution
+      visitors to inspect.
+ <ul> <b>Checks.</b> A check is an object representing an expected runtime behavior
+      of the sequence. Clients can add checks to specific indices of the sequence.
+      For example, a client might add a <code>NotNull</code> check to the ith index 
+      of a sequence to signify that the value returned by the statement at index i
+      should not be null.
+ <li> <b>Check evaluation results.</b>Corresponding to every check is a boolean value that
+      represents whether the check passed or failed during the last execution
+      of the sequence.
  <p>
+ 
+ Of the three pieces of data above, an ExecutableSequence only directly manages
+ the first one, i.e. the execution results. Other pieces of data, including
+ checks and check evaluation results, are added or removed by the
+ client of the ExecutableSequence. One way of doing this is by implementing an
+ <A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop"><CODE>ExecutionVisitor</CODE></A> and passing it as an argument to the <code>execute</code>
+ method.
+ 
+ <p>
+ 
+ The ethod <code>execute(ExecutionVisitor v)</code> executes the code that the 
+ sequence represents. This method uses reflection to execute each element in the 
+ sequence (method call, constructor call, primitive or array declaration, etc).
  Before executing each statement (e.g. the i-th statement), execute(v)
  calls v.visitBefore(this, i), and after executing each statement, it calls
  v.visitAfter(this, i). The purpose of the visitor is to examine the unfolding
  execution, and take some action depending on its intended purpose. For example,
- it may decorate the sequence with checks about the
- execution. Below are some examples.
- <p>
- <ul>
- <li> A ToStringVisitor calls val.toString() on each value created during
-      execution. and adds checks indicating the result of each call. For
-      example, consider executing the sequence
-
- <pre>
-      ArrayList var0 = new ArrayList();
-      int var1 = 3;
-      var0.add(var1)  ;
- </pre>
-      After executing the sequence with a ToStringVisitor, the sequence contains
-      the following checks:
-     <ul>
-     <li> checks at index 0: var0.String()=="[]"
-     <li> checks at index 1: var0.String()=="[]", var1.toString()=="3"
-     <li> checks at index 2: var0.String()=="[3]", var1.toString()=="3"
-     </ul>
- <li> A ContractCheckingVisitor v adds checks that represent contract violations.
-      For example, when v.visitAfter(this, i) is invoked, this visitor checks
-      (among other things) that for every Variable val, "val.equals(val)==true". If
-      this property fails for some val, it adds a check (at index i)
-      that records the failure.
- </ul>
- <p>
+ it may decorate the sequence with <A HREF="../randoop/Check.html" title="interface in randoop"><CODE>Check</CODE></A>s about the
+ execution.
+ 
  NOTES.
  <p>
  <ul>
@@ -375,6 +373,14 @@ An ExecutableSequence adds two functionalities to a Sequence:
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;List&lt;Boolean&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getChecksResults()">getChecksResults</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getContractCheckIndex(java.lang.Class)">getContractCheckIndex</A></B>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
 
@@ -420,7 +426,16 @@ An ExecutableSequence adds two functionalities to a Sequence:
                  List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
                  int&nbsp;i,
                  List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputs,
-                 Object[]&nbsp;inputVariables)</CODE>
+                 Object[]&nbsp;runtimeObjects)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;Object[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getRuntimeValuesForVars(java.util.List, java.util.List)">getRuntimeValuesForVars</A></B>(List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;vars,
+                        List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;execution)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -453,19 +468,19 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasCheck(int)">hasCheck</A></B>(int&nbsp;i)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasCheck(int, java.lang.Class)">hasCheck</A></B>(int&nbsp;i,
          Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;True iff this sequences has at least one check of the given type at index i.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasChecks(int)">hasChecks</A></B>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -555,14 +570,6 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output this sequence as code.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#toDotString()">toDotString</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -800,7 +807,8 @@ public void <B>execute</B>(<A HREF="../randoop/ExecutionVisitor.html" title="int
  of executing each statement via the method <code>getResult(i)</code>.
  
  <ul>
- <li> Before the sequence is executed, removes all <code>Check</code>s
+ <li> Before the sequence is executed, clears execution results and
+      calls <code>visitor.initialize(this)</code>.
  <li> Executes each statement in the sequence. Before executing each statement
       calls the given visitor's <code>visitBefore</code> method. After executing
       each statement, calls the visitor's <code>visitAfter</code> method.
@@ -832,7 +840,22 @@ protected static boolean <B>getRuntimeInputs</B>(<A HREF="../randoop/Sequence.ht
                                           List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
                                           int&nbsp;i,
                                           List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputs,
-                                          Object[]&nbsp;inputVariables)</PRE>
+                                          Object[]&nbsp;runtimeObjects)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRuntimeValuesForVars(java.util.List, java.util.List)"><!-- --></A><H3>
+getRuntimeValuesForVars</H3>
+<PRE>
+protected static Object[] <B>getRuntimeValuesForVars</B>(List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;vars,
+                                                  List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;execution)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -869,6 +892,20 @@ public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">Execu
 
  The result of executing the i-th element of the sequence.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChecksResults()"><!-- --></A><H3>
+getChecksResults</H3>
+<PRE>
+public List&lt;List&lt;Boolean&gt;&gt; <B>getChecksResults</B>()</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
@@ -1038,10 +1075,10 @@ public boolean <B>hasCheck</B>(int&nbsp;i,
 </DL>
 <HR>
 
-<A NAME="hasCheck(int)"><!-- --></A><H3>
-hasCheck</H3>
+<A NAME="hasChecks(int)"><!-- --></A><H3>
+hasChecks</H3>
 <PRE>
-public boolean <B>hasCheck</B>(int&nbsp;i)</PRE>
+public boolean <B>hasChecks</B>(int&nbsp;i)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1255,20 +1292,6 @@ public int <B>compare_checks</B>(<A HREF="../randoop/ExecutableSequence.html" ti
  differing checks are removed from both sequences.
  Prints any differences to stdout if print_diffs is true.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="toDotString()"><!-- --></A><H3>
-toDotString</H3>
-<PRE>
-public String <B>toDotString</B>()</PRE>
-<DL>
 <DD><DL>
 </DL>
 </DD>
