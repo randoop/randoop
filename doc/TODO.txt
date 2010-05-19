@@ -3,7 +3,8 @@ TODO list of Randoop improvements
 =================================
 
 These are not projects but rather smaller, straightforward
-nhancements.  See doc/projects.txt and the Wiki projects page for
+enhancements.  See doc/projects.txt and the Wiki projects page
+(http://code.google.com/p/randoop/wiki/ProjectIdeas) for
 larger potential projects.
 
 
@@ -47,7 +48,7 @@ larger potential projects.
   (plume task, but Randoop-related) Adding a @BeginOptionGroup
   annotation that specifies the delimits options thematically.
 
-  Remove as many @Unpublicized options as possible (in geral. not good
+  Remove as many @Unpublicized options as possible (in general, not good
   to hide things - impairs understanding). Remove dead options (no
   longer used).
 
@@ -60,7 +61,7 @@ larger potential projects.
   confusing because there might be useful debugging information in
   such output.)
 
-  --A basic randoop agent that gets rid of System.exit(int) calls
+  --A basic Randoop agent that gets rid of System.exit(int) calls
 
   --usethreads=false by default would make Randoop much faster but
     introduce the possibility of infinite loops from code under test
