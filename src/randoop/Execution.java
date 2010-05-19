@@ -5,7 +5,8 @@ import java.util.List;
 
 /**
  * Represents the unfolding execution of a sequence.
- * 
+ *
+ * This is essentially a wrapper around List&lt;ExecutionOutcome&gt;.
  * Stores information in a list of ExecutionOutcome objects, one for each
  * statement in the sequence.
  */
