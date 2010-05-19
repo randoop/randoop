@@ -34,7 +34,7 @@
 
 <h1 id="tasks">Compiling, testing, releasing, etc.</h1>
  
-<p>Prerequites for compiling and testing:</p>
+<p>Prerequisites for compiling and testing:</p>
 
 <ul>
   <li>Randoop requires Java 5.0 or greater.
@@ -74,7 +74,7 @@ for daily purposes? All you need to do to run Randoop is make sure the
 bin/ directory and the files under lib/ are part of the classpath.
 
 <ul>
-  <li>To avoid repeatedly secodeing up the classpath, some of us add the
+  <li>To avoid repeatedly setting up the classpath, some of us add the
   bin/ directory and the files under lib/ to our (global) CLASSPATH
   variable that we specify in a configuration file (e.g. .bashrc).
 
@@ -132,7 +132,7 @@ automatically generating tests) is as consisting of <i>two</i> things:
 <p>
 <ul>
 <li><b>A test input</b>, i.e. the portions of the code that call
-constructors and method of the clases under test, and
+constructors and method of the classes under test, and
 <li><b>Test checks</b> (also known as the "test oracle"), i.e. the
 portions of the code that <i>check</i> that the test input behaves as
 expected.
@@ -182,7 +182,7 @@ constructors of the classes under test.
 
 Continuing with our running example (testing the JDK collections
 classes), here is an example of a sequence of statements that calls
-methods from the classees under test, which each statement in a
+methods from the classes under test, which each statement in a
 separate line:
 
 <pre class="code">
@@ -334,7 +334,7 @@ Sequence newSeq = Sequence.concatenate(seqs);
 If you're wondering why concatenation is useful, it is actually how
 Randoop combines sequences to create new ones. To create a new
 sequence that tests method <code>m(A a, B b)</code>, Randoop first
-finds and concatenates previousl-generated sequences that create
+finds and concatenates previously-generated sequences that create
 objects of type <code>A</code> and <code>B</code>, and then extends
 the concatenated sequence with a call of <code>m</code>. See
 <a href="http://www.cs.washington.edu/homes/mernst/pubs/feedback-testgen-icse2007.pdf">Section
@@ -365,7 +365,7 @@ Sequence seq = Sequence.parse(parseable);
 Sequences describe the structure of a test input. All aspects related
 to the execution of a sequence are handled by the related class
 <a href="javadoc/randoop/ExecutableSequence.html">ExecutableSequence</a>. This
-class wrapps around a <code>Sequence</code> and adds the ability to
+class wraps around a <code>Sequence</code> and adds the ability to
 execute its statements. An ExecutableSequence also adds the ability
 to <i>decorate</i> a sequence
 with <a href="javadoc/randoop/Check.html">Checks</a>, which represent
@@ -484,8 +484,8 @@ entrypoint is
 class <a href="javadoc/src/randoop/main/Main.java">randoop.main.Main</a>
 But <code>GenTests</code> is where all the action starts with test
 generation.) The <code>handle</code> method is long and mostly deals with
-secodeing up things before the generation process, and doing things like
-outpucodeing tests after generation.
+setting up things before the generation process, and doing things like
+outputting tests after generation.
 <p>
 <li>Most command line options are specified
 in <a href="javadoc/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
@@ -502,3 +502,32 @@ in <a href="javadoc/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 
 </body>
 </html>
+
+<!--  LocalWords:  Randoop Randoop's Makefile classpath bashrc hoc gentests JDK
+ -->
+<!--  LocalWords:  google JDK's testAdd LinkedList addFirst TreeSet RMethod th
+ -->
+<!--  LocalWords:  synchronizedSet StatementKind RConstructor ArrayDeclaration
+ -->
+<!--  LocalWords:  PrimitiveOrStringOrNullDecl StatementKinds newLL newOb newTS
+ -->
+<!--  LocalWords:  getRConstructor addFist getRMethod syncS getVariable seqs gz
+ -->
+<!--  LocalWords:  ArrayList newSeq parseable ExecutableSequence runtime stdout
+ -->
+<!--  LocalWords:  ExecutionOutcome resultAt getResult instanceof stderr fileos
+ -->
+<!--  LocalWords:  NormalExecution getRuntimeValue printsteam FileOutputStream
+ -->
+<!--  LocalWords:  MyFile ObjectOutputStream objectos GZIPOutputStream fileis
+ -->
+<!--  LocalWords:  writeObject FileInputStream ObjectInputStream objectis JUnit
+ -->
+<!--  LocalWords:  GZIPInputStream seqsfromfile readObject deserialized jfw dir
+ -->
+<!--  LocalWords:  ReplayVisitor JunitFileWriter junit classname testsperfile
+ -->
+<!--  LocalWords:  createJunitFiles GenTests entrypoint GenInputsAbstract
+ -->
+<!--  LocalWords:  ForwardGenerator
+ -->
