@@ -108,7 +108,7 @@ public class ExecutableSequence implements Serializable {
 
   /** Output buffer used to capture the output from the executed sequence**/
   private static ByteArrayOutputStream output_buffer
-    = new ByteArrayOutputStream (1024);
+    = new ByteArrayOutputStream ();
   private static PrintStream ps_output_buffer = new PrintStream (output_buffer);
 
   // Re-initialize executionResults list.
