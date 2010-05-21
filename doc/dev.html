@@ -12,7 +12,7 @@
     <ul>
       <li><a href="#compiling">Compiling Randoop</a></li>
       <li><a href="#running">Running unit and system tests</a></li>
-      <li><a href="#daytoday">Running Randoop: day to day play</a></li>
+      <li><a href="#classpath">Randoop classpath</a></li>
       <li><a href="#modmanual">Modifying the manual</a></li>
       <li><a href="#making_new_dist">Making a new distribution</a></li>
     </ul></li>
@@ -21,8 +21,16 @@
       <li><a href="#sequence">Sequences</a>
         <ul>
           <li><a href="#executing_sequence">Creating sequences</a></li>
-          <li><a href="#executing_sequence">Executing sequences</a></li>
-          <li><a href="#inout_sequence">Writing/reading sequences to file</a></li>
+          <li><a href="#executing_sequences">Executing sequences</a>
+            <ul>
+              <li><a href="#executing_a_sequence">Executing a sequence</a></li>
+              <li><a href="#executing_misc">Miscellaneous Notes</a></li>
+            </ul></li>
+          <li><a href="#inout_sequence">Writing/reading sequences to file</a>
+            <ul>
+              <li><a href="#writing_reading_serialized">Writing/reading serialized sequences</a></li>
+              <li><a href="#writing_sequence_as_junit">Writing a sequence as a JUnit test</a></li>
+            </ul></li>
         </ul></li>
       <li><a href="#code">Main entry points</a></li>
       <li><a href="#code">Test generator classes</a></li>
@@ -66,23 +74,28 @@
   <li>To do everything (build <i>and</i> run all tests), type <code>make all</code>.
 </ul>
 
-<h2 id="daytoday">Running Randoop: day to day play</h2>
+<h2 id="classpath">Randoop classpath</h2>
 
-How to run Randoop?  The Makefile has targets for building and running
-unit/system tests. How to just run Randoop on some arbitrary classes
-for daily purposes? All you need to do to run Randoop is make sure the
-bin/ directory and the files under lib/ are part of the classpath.
+<p>
+Your classpath must include <tt>bin/</tt> and <tt>lib/*</tt> (either the
+literal text &ldquo;<tt>lib/*</tt>&rdquo;, or explicitly listing all the
+<tt>.jar</tt> files under <tt>lib/*</tt>, should work).
+</p>
+
+<p>
+To avoid repeatedly setting up the classpath, you can do either of the
+following:
+</p>
 
 <ul>
-  <li>To avoid repeatedly setting up the classpath, some of us add the
-  bin/ directory and the files under lib/ to our (global) CLASSPATH
-  variable that we specify in a configuration file (e.g. .bashrc).
+  <li>Set your (global) CLASSPATH
+  variable in <tt>~/.bashrc</tt> or some other configuration file.
 
-  <li>Others create a temporary shell script or mini-Makefile for ad-hoc
+  <li>Create a temporary shell script or mini-Makefile for ad-hoc
   use, for instance, a Make file such as:
 
 <pre class="code">
-  RANDOOP_HOME ?= <LOCATION OF RANDOOP PROJECT>
+  RANDOOP_HOME ?= <em>directory</em>
   include $(RANDOOP_HOME)/common.mk
   run:
 	java -ea randoop.main.Main help gentests
@@ -359,7 +372,7 @@ running-example sequence:
 Sequence seq = Sequence.parse(parseable);
 </pre>
 
-<h3 id="executing_sequence">Executing sequences</h3>
+<h3 id="executing_sequences">Executing sequences</h3>
 <p>
 
 Sequences describe the structure of a test input. All aspects related
@@ -371,7 +384,7 @@ to <i>decorate</i> a sequence
 with <a href="javadoc/randoop/Check.html">Checks</a>, which represent
 the checking code associated with a unit test.
 <p>
-<h4>Executing a sequence</h4>
+<h4 id="executing_a_sequence">Executing a sequence</h4>
 <p>
 Suppose we have created a Sequence <code>s</code> The following two
 lines will execute the sequence:
@@ -405,7 +418,7 @@ To dig more into execution results, explore the
 classes <a href="javadoc/randoop/Execution.html">Execution</a> and
 <a href="javadoc/randoop/ExecutionOutcome.html">ExecutionOutcome</a>.
 <p>
-<h4>Miscellaneous Notes</h4>
+<h4 id="executing_misc">Miscellaneous Notes</h4>
 <ul>
 <li>Executing statements in a sequence may result in random stuff
 being printed to standard out. Capturing this output is possible via
@@ -418,7 +431,7 @@ printsteam and recording the results.
 <h3 id="inout_sequence">Writing/reading sequences to file</h3>
 <p>
 
-<h4>Writing/reading serialized sequences</h4>
+<h4 id="writing_reading_serialized">Writing/reading serialized sequences</h4>
 <p>
 Writing a list of sequences to a serialized file:
 <p>
@@ -446,7 +459,7 @@ You can replay the execution of a deserialized sequence (including
 evaluation of its Checks) by executing it with
 a <a href="javadoc/randoop/ReplayVisitor.html">ReplayVisitor</a>.
 
-<h4>Writing a sequence as a JUnit test</h4>
+<h4 id="writing_sequence_as_junit">Writing a sequence as a JUnit test</h4>
 <p>
 Writing a list of executed sequences as JUnit files:
 <p>
