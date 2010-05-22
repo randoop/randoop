@@ -21,8 +21,8 @@ import plume.UtilMDE;
  * ...
  * END person
  * 
- * Whitespace is allowed between records, as well as comment lines.
- * A comment line is a line that begins with "#".
+ * Any lines within and between records, that are only whitespace
+ * or start with "#", are skipped.
  * 
  * This class includes the functionality to parse individual records
  * out of a file. How each record is processed is up to the client,
@@ -30,20 +30,21 @@ import plume.UtilMDE;
  */
 public class RecordListReader {
   
-  // Set in constructor.
-  // The string that should follow "BEGIN" to signal a new record.
-  private String recordType;
+  // startMarker is "START <recordType>"
+  // endMarker   is "END <recordType>"
+  private final String startMarker, endMarker;
 
   // The object in charge of doing whatever is to be done with the record. 
-  private RecordProcessor processor;
+  private final RecordProcessor processor;
 
   public RecordListReader(String recordType, RecordProcessor proc) {
     if (recordType == null || recordType.length() == 0)
       throw new IllegalArgumentException("Invalid record type:" + recordType);
     if (proc == null)
       throw new IllegalArgumentException("proc cannot be null.");
-    this.recordType = recordType;
     this.processor = proc;
+    this.startMarker = "START " + recordType;
+    this.endMarker = "END " + recordType;
   }
 
   public void parse(String inFile) {
@@ -60,8 +61,6 @@ public class RecordListReader {
     String line;
     try {
       line = nextNWCLine(reader);
-      String startMarker = "START " + recordType;
-
       while (line != null) {
         line = line.trim();
         if (line.startsWith(startMarker)) {
@@ -80,7 +79,6 @@ public class RecordListReader {
   private List<String> readOneRecord(BufferedReader reader) throws IOException {
     List<String> ret = new ArrayList<String>();
     String line = nextNWCLine(reader);
-    String endMarker = "END " + recordType;
     while (line != null && !line.equals(endMarker)) {
       if (line.length() == 0 || line.charAt(0) == '#')
         continue;
