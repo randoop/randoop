@@ -1,7 +1,6 @@
 package randoop;
 
 import randoop.util.PrimitiveTypes;
-import randoop.util.Util;
 
 /**
  * An check recording the value of a primitive value obtained
