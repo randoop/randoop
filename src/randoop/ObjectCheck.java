@@ -71,8 +71,8 @@ public class ObjectCheck implements Check {
   public String toString() {
     StringBuilder b = new StringBuilder();
     b.append("<");
-    b.append(contract.getClass().getName());
-    b.append(" " + vars.toString() + " ");
+    b.append(contract.toString());
+    b.append(" " + Arrays.toString(vars) + " ");
     return b.toString();
   }
 

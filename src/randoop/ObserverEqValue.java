@@ -7,21 +7,22 @@ import randoop.util.PrimitiveTypes;
 import randoop.util.Util;
 
 /**
- * WARNING: This code is old and hasn't been tested recently.
  * 
- * An check recording the value of an observer call on a
- * variable evaluated during execution. For example:
+ * A check recording the value that an observer method
+ * returned during execution, e.g. a check recording that
+ * a collection's <code>size()</code> method returned <code>3</code>
+ * when called in particular sequence.
  *
- *     x.F() == value
+ * <p>
  *
+ * ObserverEqValue checks are not checks that must hold of all objects
+ * of a given class (unlike a check like {@link EqualsReflexive},
+ * which must hold for any objects, no matter its execution context).
+ * Randoop creates an instance of this contract when, during execution
+ * of a sequence, it determines that the above property holds. The
+ * property thus represents a <i>regression</i> as it captures the
+ * behavior of the code when it is executed.
  *
- * Obviously, this is not a property that must hold of all objects in a test.
- * Randoop creates an instance of this contract when, during execution of
- * a sequence, it determines that the above property holds. The property
- * thus represents a <i>regression</i> as it captures the behavior of the
- * code when it is executed.
-
- * where value is a primitive value or a String.
  */
 public final class ObserverEqValue implements ObjectContract {
 
@@ -30,10 +31,15 @@ public final class ObserverEqValue implements ObjectContract {
   // if the field is missing.
   private static final long serialVersionUID = 20100429; 
 
-  /* The observer method */
+  /**
+   * The observer method.
+   */
   public Method observer;
 
-  /* The runtime value of the observer */
+  /**
+   *  The runtime value of the observer. This variable holds a
+   * primitive value or String.
+   */
   public Object value;
 
   @Override
@@ -59,6 +65,7 @@ public final class ObserverEqValue implements ObjectContract {
 
   public ObserverEqValue(Method observer, Object value) {
     this.observer = observer;
+    this.value = value;
     assert (this.value == null)
       || PrimitiveTypes.isBoxedPrimitiveTypeOrString (this.value.getClass())
       : "obs value/class = " + this.value +"/" + this.value.getClass()
@@ -103,28 +110,16 @@ public final class ObserverEqValue implements ObjectContract {
 
   /**
    * Create an ObserverEqValue from its basic parts (used when
-   * reading from a serialized file).  Note that the 'val' parameter
-   * is the actual value to check, not the object from the sequence
-   * execution (as it is with the public constructor)
+   * reading from a serialized file).
    */
-  public static ObserverEqValue getObserverEqValue (Method method,
-                                                    Object val) {
-    return new ObserverEqValue (method, val);
+  public static ObserverEqValue getObserverEqValue (Method method, Object val) {
+    return new ObserverEqValue(method, val);
   }
 
   @Override
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 0;
     throw new RuntimeException("not implemented.");
-//    try {
-//      this.value = observer.invoke (obj);
-//    } catch (Exception e) {
-//      throw new RuntimeException ("unexpected error invoking observer "
-//                                  + observer + " on " + var + "[" +
-//                                  var.getType() + "]" + " with value "
-//                                  + obj + " [" + obj.getClass() + "]",
-//                                  e);
-//    }
   }
 
   @Override
@@ -140,6 +135,10 @@ public final class ObserverEqValue implements ObjectContract {
   @Override
   public boolean evalExceptionMeansFailure() {
     return true;
+  }
+
+  public String toString() {
+    return String.format ("<ObserverEqValue %s, value = '%s'", observer, value);
   }
   
 }
