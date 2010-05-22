@@ -35,7 +35,7 @@ import java.io.Serializable;
  * 
  * <p>
  * 
- * Checks should be Serializable so that an ExecutableSequence can be
+ * Checks are Serializable so that an <code>ExecutableSequence</code> can be
  * serialized along with its associated checks.
  * 
  */
@@ -65,5 +65,4 @@ public interface Check extends Serializable {
    * otherwise.
    */
   boolean evaluate(Execution execution);
-  
 }
