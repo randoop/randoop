@@ -164,10 +164,8 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
       ExecutionOutcome exprOutcome = ObjectContractUtils.execute(c,
           ((NormalExecution) result).getRuntimeValue());
 
-      Object runtimeValue = null;
       if (exprOutcome instanceof NormalExecution) {
         NormalExecution e = (NormalExecution)exprOutcome;
-        runtimeValue = e.getRuntimeValue();
         if (e.getRuntimeValue().equals(true)) {
           continue; // Behavior ok.
         }
