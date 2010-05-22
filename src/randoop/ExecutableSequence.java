@@ -20,11 +20,12 @@ import randoop.util.Reflection;
  * An ExecutableSequence augments a sequence with three additional pieces
  * of data:
  * <p>
- * </ul><b>Execution results.</b>An ExecutableSequence can be executed, and the
+ * <ul>
+ * <li> <b>Execution results.</b>An ExecutableSequence can be executed, and the
  *      results of the execution (meaning the objects created during execution,
  *      and any exceptions thrown) are made available to clients or execution
  *      visitors to inspect.
- * <ul> <b>Checks.</b> A check is an object representing an expected runtime behavior
+ * <li> <b>Checks.</b> A check is an object representing an expected runtime behavior
  *      of the sequence. Clients can add checks to specific indices of the sequence.
  *      For example, a client might add a <code>NotNull</code> check to the ith index 
  *      of a sequence to signify that the value returned by the statement at index i
@@ -32,6 +33,7 @@ import randoop.util.Reflection;
  * <li> <b>Check evaluation results.</b>Corresponding to every check is a boolean value that
  *      represents whether the check passed or failed during the last execution
  *      of the sequence.
+ * </ul>
  * <p>
  * 
  * Of the three pieces of data above, an ExecutableSequence only directly manages
@@ -444,21 +446,6 @@ public class ExecutableSequence implements Serializable {
     return true;
   }
 
-  /**
-   * Returns true if there was an exception on any statement other than
-   * the last statement.  Exceptions within a sequence are unexpected, because
-   * Randoop only builds on sequences that don't throw exceptions.  They
-   * can happen in some cases, though, when changes to the global state
-   * cause an existing sequence to throw an exception early
-   */
-  public boolean hasUnexpectedException() {
-    for (int i = 0 ; i < (this.sequence.size()-1) ; i++) {
-      if (!isNormalExecution(i))
-        return true;
-    }
-    return false;
-  }
-
   public List<Check> getChecks(int i, Class<? extends Check> clazz) {
     sequence.checkIndex(i);
     List<Check> matchingObs = new ArrayList<Check>();
@@ -741,6 +728,4 @@ public class ExecutableSequence implements Serializable {
 
     return cnt;
   }
-
-
 }
