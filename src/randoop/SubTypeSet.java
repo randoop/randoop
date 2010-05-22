@@ -1,6 +1,3 @@
-/**
- * 
- */
 package randoop;
 
 import java.util.Collections;
@@ -15,6 +12,12 @@ import randoop.util.ReversibleMultiMap;
 import randoop.util.ReversibleSet;
 import randoop.util.SimpleSet;
 
+/**
+ * A set of classes. This data structure additionally allows for
+ * efficient answers to queries about can-be-used-as
+ * ({@link randoop.util.Reflection@canBeUsedAs(Class,Class)})
+ *  relationships.
+ */
 public class SubTypeSet {
 
   // The set of classes that have sequences. I.e. membership in this
@@ -92,8 +95,8 @@ public class SubTypeSet {
   }
 
   /**
-   * Returns an unmodifiable list of the typesWithsequences in this subTypesWithsequences that can be used as c.
-   * For each c2 in the result, Reflection.canBeUsedAs(c2, c).
+   * Returns all the classes in the set that can-be-used-as the given
+   * <code>c</code>.
    */
   public Set<Class<?>> getMatches(Class<?> c) {
     if (!subTypesWithsequences.keySet().contains(c)) {
@@ -103,6 +106,15 @@ public class SubTypeSet {
   }
 
   // TODO create tests for this method.
+  /**
+   * If <code>match==COMPATIBLE_TYPE</code>, returns <code>true</code> if this
+   * set contains any classes that can-be-used-as the given class <code>c</code>.
+   *
+   * <p>
+   *
+   * Otherwise, returns <code>true</code> if this set contains the
+   * given class <code>c</code>
+   */
   public boolean containsAssignableType(Class<?> c, Reflection.Match match) {
     if (!subTypesWithsequences.keySet().contains(c)) {
       addQueryType(c);
