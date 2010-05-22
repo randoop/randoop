@@ -1,7 +1,6 @@
 package randoop;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * A check that checks for expected properties of one or more objects
