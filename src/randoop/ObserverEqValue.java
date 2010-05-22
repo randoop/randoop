@@ -88,23 +88,27 @@ public final class ObserverEqValue implements ObjectContract {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
-    b.append("assertTrue(");
 
     String methodname = observer.getName();
     if (value == null) {
-      b.append(String.format ("x0.%s() == null", methodname));
+      b.append(String.format ("assertNull(x0.%s() == null", methodname));
     } else if (observer.getReturnType().isPrimitive()) {
-      b.append(String.format ("x0.%s()  == %s", methodname,
-                              PrimitiveTypes.toCodeString(value)));
+      if (observer.getReturnType().equals(boolean.class)) {
+        assert value.equals(true) || value.equals(false);
+        if (value.equals(true)) {
+          b.append(String.format ("assertTrue(x0.%s());", methodname));
+        } else {
+          b.append(String.format ("assertFalse(x0.%s());", methodname));
+        }
+      } else {
+        b.append(String.format ("assertTrue(x0.%s()  == %s);", methodname,
+                                PrimitiveTypes.toCodeString(value)));
+      }
     } else { // string
       // System.out.printf ("value = %s - %s\n", value, value.getClass());
-      b.append(String.format ("x0.%s().equals(%s)", methodname,
+      b.append(String.format ("assertEquals(x0.%s(),%s);", methodname,
                               PrimitiveTypes.toCodeString(value)));
     }
-
-    // Close assert.
-    b.append(");");
-
     return b.toString();
   }
 
