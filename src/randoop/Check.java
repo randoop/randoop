@@ -9,25 +9,29 @@ import java.io.Serializable;
  * 
  * <p>
  * 
- * <code>Check</code> objects are inserted as a decorations on specific
- * indices of an {@link ExecutableSequence}. Thus, a check is always associated
- * with a specific statement in a sequence.
+ * <code>Check</code> objects are inserted as a decorations on
+ * specific indices of an {@link ExecutableSequence}. Thus, a check is
+ * always associated with a specific index in a sequence. A check at
+ * index i means that the check is to performed after statement i
+ * finishes executing.
  * 
  * <p>
- * 
- * A check may require some code to be emitted before and/or after the
- * statement is printed. For example, a checker that inserts the assertion "
- * <code>x != null</code>" for a statement "<code>Foo var0 = m()</code>" need
- * only emit the assertion code after the statement. A checker that surrounds
- * the statement with a try-catch clause to test for an expected exception needs
- * to emit the <i>try</i> part of the clause before the statement, and the
- * <i>catch</i> part after the statement (see {@link ExpectedExceptionCheck},
- * for example).
+ *
+ * A check implements two methods that specify the code to be *
+ * emitted before and/or after a statement in a <code>Sequence</code>
+ * is executed.
  *
  * <p>
  * 
- * A check must implement two methods that specify the code to be emitted
- * before and/or after a statement in a <code>Sequence</code> is executed.
+ * A check may require some code to be emitted before and/or after the
+ * statement is printed. For example, a check for checking that
+ * <code>x</code> is not null after the statement "<code>Foo x =
+ * m()</code>" is executed might emit the assertion code
+ * "<code>assertNotNull(x);</code>", and would do so after the
+ * statement is printed. As a second example, a check for checking
+ * that an expected exception is thrown by a statement would need to
+ * emit something like "<code>try {</code>" before the statement, and
+ * the catch clause after the statement.
  * 
  * <p>
  * 
