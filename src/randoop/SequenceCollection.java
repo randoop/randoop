@@ -18,7 +18,36 @@ import randoop.util.Reflection.Match;
 
 /**
  * A collection of sequences that makes its efficient to ask for
- * all the sequences that declare a variable of a given type.
+ * all the sequences that create a value of a given type.
+ *
+ * <p>
+ * RANDOOP IMPLEMENTATION NOTE.
+ * <p>
+ * 
+ * When creating new sequences, Randoop often needs to search for all
+ * the previously-generated sequences that create one or more values
+ * of a given type. Since this set can contain thousands of sequences,
+ * finding these sequences can can be time-consuming and a bottleneck
+ * in generation (as we discovered during profiling).
+ * 
+ * <p>
+ *
+ * This class makes the above search faster by maintanining two data structures:
+ *
+ * <ul>
+ * <li> A map from types to the sets of all sequences that create one
+ *      or more values of exactly the given type.
+ *
+ * <li> A set of all the types that can be created with the existing
+ *      set of sequences.  The set is maintained as a {@link
+ *      SubTypeSet} that allows for quick queries about can-be-used-as
+ *      relationships among the types in the set.
+ * </ul>
+ *
+ * To find all the sequences that create values of a given type,
+ * Randoop first uses the <code>SubTypeSet</code> to find the set
+ * <code>S</code> of feasible subtypes in set of sequences, and
+ * returns the range of <code>S</cod> in the sequence map.
  */
 public class SequenceCollection {
 
