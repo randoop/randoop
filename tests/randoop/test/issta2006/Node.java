@@ -3,14 +3,12 @@ package randoop.test.issta2006;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.Abstractable;
-
 
 
 
 //Taken from JPF examples directory.
 
-public class Node implements Abstractable {
+public class Node {
 
     public Node parent, left, right, child;
 
