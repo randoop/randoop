@@ -66,7 +66,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	touch bin
 
 # Run all tests.
-tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual jdoc results 
+tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
 
 # Runs pure Randoop-related tests.
 randoop-tests: unit randoop1 randoop2 randoop-contracts randoop-checkrep
@@ -118,6 +118,7 @@ randoop1: bin
 	   --log=systemtests/randoop-log.txt \
 	   --nochecks=false \
 	   --randooptestrun=true \
+	   --observers=systemtests/resources/randoop1_observers.txt \
 	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
