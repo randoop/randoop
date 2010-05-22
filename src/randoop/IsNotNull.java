@@ -1,6 +1,5 @@
 package randoop;
 
-import org.junit.Assert;
 
 
 /**
