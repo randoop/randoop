@@ -16,21 +16,25 @@
       <li><a href="#modmanual">Modifying the manual</a></li>
       <li><a href="#making_new_dist">Making a new distribution</a></li>
     </ul></li>
-  <li><a href="#code">Randoop Internals</a>
+  <li><a href="#randoop_internals">Randoop Internals</a>
     <ul>
+      <li><a href="#unit_tests">Unit test concepts</a></li>
       <li><a href="#sequence">Sequences</a>
         <ul>
           <li><a href="#executing_sequence">Creating sequences</a></li>
-          <li><a href="#executing_sequences">Executing sequences</a>
-            <ul>
-              <li><a href="#executing_a_sequence">Executing a sequence</a></li>
-              <li><a href="#executing_misc">Miscellaneous Notes</a></li>
-            </ul></li>
-          <li><a href="#inout_sequence">Writing/reading sequences to file</a>
+        </ul></li>
+      <li><a href="#executing_sequence">Executable Sequences</a></li>
+      <li><a href="#inout_sequence">Writing/reading sequences to file</a>
+        <ul>
+          <li>
             <ul>
               <li><a href="#writing_reading_serialized">Writing/reading serialized sequences</a></li>
               <li><a href="#writing_sequence_as_junit">Writing a sequence as a JUnit test</a></li>
             </ul></li>
+        </ul></li>
+      <li><a href="#checks">Checks</a>
+        <ul>
+          <li><a href="#checks_">Executing Checks</a></li>
         </ul></li>
       <li><a href="#code">Main entry points</a></li>
       <li><a href="#code">Test generator classes</a></li>
@@ -129,14 +133,15 @@ Then, run under Randoop's home directory:
 </ol>
 <p>
 
-<h1 id="code">Randoop Internals</h1>
-
+<h1 id="randoop_internals">Randoop Internals</h1>
 
 This section describes Randoop's main concepts, data structures and
 internal algorithms. To this end, it helps to understand our model of
 unit tests.
 
 <p>
+
+<h2 id="unit_tests">Unit test concepts</h1>
 
 At a general level, a unit test is just a snippet of code that checks
 some expected property of some classes under test. A more detailed
@@ -146,8 +151,8 @@ automatically generating tests) is as consisting of <i>two</i> things:
 <ul>
 <li><b>A test input</b>, i.e. the portions of the code that call
 constructors and method of the classes under test, and
-<li><b>Test checks</b> (also known as the "test oracle"), i.e. the
-portions of the code that <i>check</i> that the test input behaves as
+<li><b>Checking code</b> (also known as the "test oracle"), i.e. the
+portion of the code that <i>check</i> that the test input behaves as
 expected.
 </ul>
 <p>
@@ -160,7 +165,7 @@ correctly after an element is added.
 1.   // Tests that the size of a list is 1 after adding an element.
 2.   public void testAdd() {
 3.      LinkedList list = new LinkedList();
-4.      list.add(null);
+4.      boolean b = list.add(null);
 5.      assert list.size() == 1;
 6.   }
 </pre>
@@ -372,19 +377,33 @@ running-example sequence:
 Sequence seq = Sequence.parse(parseable);
 </pre>
 
-<h3 id="executing_sequences">Executing sequences</h3>
+<h2 id="executing_sequence">Executable Sequences</h2>
 <p>
 
-Sequences describe the structure of a test input. All aspects related
-to the execution of a sequence are handled by the related class
-<a href="javadoc/randoop/ExecutableSequence.html">ExecutableSequence</a>. This
-class wraps around a <code>Sequence</code> and adds the ability to
-execute its statements. An ExecutableSequence also adds the ability
-to <i>decorate</i> a sequence
-with <a href="javadoc/randoop/Check.html">Checks</a>, which represent
-the checking code associated with a unit test.
+An <a href="javadoc/randoop/ExecutableSequence.html">ExecutableSequence</a>
+ wraps around a <code>Sequence</code> and adds two pieces of
+ functionality:
 <p>
-<h4 id="executing_a_sequence">Executing a sequence</h4>
+<ul>
+<li> <b>An <code>ExecutableSequence</code> can be augmented with
+checks of expected properties.</b>  A <a href="#checks">Check</a> is
+an object that represents some <i>expected property</i> of a sequence;
+for a example, that a specific method call in the sequence returns
+normally. When an executable sequence is executed, any checks that are
+present in the sequence are checked at runtime, and the
+passing/failing status of the checks is available for the client to
+inspect.
+<p>
+<li> <b>An <code>ExecutableSequence</code> can be executed.</b>
+Randoop uses Java's reflection mechanism to call the methods and
+constructors in the sequence, and uses the structure of the
+underlying <code>Sequence</code> to determine what inputs to pass to
+them.
+</ul>
+
+
+<p>
+<h3>Executing a sequence</h3>
 <p>
 Suppose we have created a Sequence <code>s</code> The following two
 lines will execute the sequence:
@@ -418,7 +437,9 @@ To dig more into execution results, explore the
 classes <a href="javadoc/randoop/Execution.html">Execution</a> and
 <a href="javadoc/randoop/ExecutionOutcome.html">ExecutionOutcome</a>.
 <p>
-<h4 id="executing_misc">Miscellaneous Notes</h4>
+
+<h3>Miscellaneous Notes</h3> <!-- omit from toc -->
+
 <ul>
 <li>Executing statements in a sequence may result in random stuff
 being printed to standard out. Capturing this output is possible via
@@ -428,7 +449,7 @@ accomplished by changing stdout and stderr to a memory based
 printsteam and recording the results.
 </ul>
 
-<h3 id="inout_sequence">Writing/reading sequences to file</h3>
+<h2 id="inout_sequence">Writing/reading sequences to file</h2>
 <p>
 
 <h4 id="writing_reading_serialized">Writing/reading serialized sequences</h4>
@@ -481,6 +502,94 @@ to write, how many tests to put in each, what to name them, etc.
   <li>and the various implementations of <code>StatementKind.appendCode(...)</code>
   </ul>
 </ul>
+<p>
+
+<h2 id="checks">Checks</h2>
+
+A <a href="javadoc/randoop/Check.html">Check</a> is an object that
+represents an <b>expected property</b> of a sequence. In terms of
+ <a href="#unit_tests">unit test concepts</a>, a check represents some
+piece of checking code (or "test oracle") of a unit test.
+<p>
+For example, consider the following unit test:
+<p>
+<pre class="code">
+ 1.  // Tests that the size of a list is 1 after adding an element.
+ 2.  public void testAdd() {
+ 3.     LinkedList l = new LinkedList();         // Create a list.
+ 3.     assertTrue(l.equals(l));                 // List should be equal to itself.
+ 4.     Object o = new Object(); 
+ 5.     boolean b = l.add(o);                    // Add an element to it.
+ 6.     assertTrue(l.size() == 1);               // List should have size 1.
+ 7.     assertTrue(l.equals(l));                 // List should still be equal to itself.
+ 8.     int i = 10;                              
+ 9.     try {
+10.       Object o2 = l.remove(i);               // Removing from invalid index
+11.       fail();                                // should throw exception.
+12.     } catch (IndexOutOfBoundsException e) {
+13.       // expected exception.
+14.     }
+15.  }
+</pre>
+<p>
+Like a typical unit test, this test combines <i>test input code</i>
+(the code creating a list, adding an element to it, removing an
+element, etc.)  with <i>checking code</i> (the code in lines 6-7
+creating assertions, and the code in lines 9, 11-14 checking that the
+correct exception is thrown). In Randoop, test input code is
+represented as a <a href="#sequence">Sequence</a> and checking code is
+represented with <code>Check</code>s associated with the sequence.
+<p>
+More specifically, each check is associated with an index in the
+sequence, where the index represents the time at which the check
+should be performed. For example, rearranging the above test to better
+see its structure, we have:
+
+<pre class="code">
+
+                          Checks performed
+Statement                 after statement
+=========                 ===============
+l  = new LinkedList()
+                           l.equals(l) returns true.
+o  = new Object()
+                           no checks.
+b  = l.add(o)
+                           l.size() returns 1.
+                           l.equals(l) returns true.
+i = 10;
+                           no checks.
+o2 = l.remove(i)
+                           throws IndexOutOfBoundsException.
+</pre>
+<p>
+The example illustrates how Randoop represents a test input along with
+its correctness checks.
+<p>
+<h3 id="distinction">Statements vs. Checks</h3> <!-- omit from toc -->
+<p>
+Looking at the above example, you may reasonably ask: why do we draw a
+distinction between "test input code" (the statements on the left) and
+"checking code" (the statements on the right)? After all, aren't the
+calls to <code>size</code> and <code>equals</code> in the checking
+column also calls of the classes under test, and why not consider them
+part of the test input?
+<p>
+We offer an answer in terms of how Randoop works. Randoop generates
+test inputs (<a href="#sequence">Sequences</a>) <i> randomly</i>, by
+combining and extending previously-generated sequences. On the other
+hand, Randoop performs its checks <i>deterministically</i>. For every
+sequence it creates, it performs checks on all the objects of the
+sequence.
+<p>
+Given how Randoop treats sequences and checks differently, it makes
+more sense for a call like <code>l.equals(l)</code> to be expressed as
+a <a href="javadoc/randoop/Check.html">Check</a>, so that it is always
+(not randomly) performed.
+<p>
+<h3 id="checks_">Executing Checks</h3>
+<p>
+(Under construction)
 <p>
 <h2 id="code">Main entry points</h2>
 
