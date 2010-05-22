@@ -7,7 +7,6 @@ package randoop;
 public class BugInRandoopException extends RuntimeException {
 
   private static final long serialVersionUID = -5508231959912731870L;
-  private Throwable cause;
 
   public BugInRandoopException() {
     super();
