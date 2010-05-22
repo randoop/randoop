@@ -1,0 +1,3 @@
+java2.util2.TreeSet.isEmpty()
+java2.util2.TreeSet.size()
+java2.util2.TreeSet.toString()
