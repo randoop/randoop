@@ -7,13 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -744,6 +740,9 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /** Create a new sequence that is the concatenation of the given sequences. */
+  
+
+  
   public static Sequence concatenate(List<Sequence> sequences) {
     List<SimpleList<Statement>> statements1 = new ArrayList<SimpleList<Statement>>();
     int newHashCode = 0;
@@ -833,10 +832,11 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a string representing this sequence. The string can be parsed back
    * into a sequence using the method Sequence.parse(String). In particular, the
    * following invariant holds:
-   *
-   *   st.equals(parse(st.toParseableCode()))
-   *
-   * For a dicussion of performance, see note in class-level documentation.
+   *  <p>
+   *  <code>st.equals(parse(st.toParseableCode()))</code>
+   *  <p>
+   *  See the {@link randoop.Sequence#parse(List<String>) parse} for the 
+   *  required format of a String representing a Sequence.
    */
   public String toParseableString() {
     return toParseableString(Globals.lineSep);
@@ -921,19 +921,19 @@ public final class Sequence implements Serializable, WeightedElement {
         int colonInd = statement.lastIndexOf(':');
         
         if (equalsInd == -1) {
-        	String msg = "A statement must be of the form "
-        		+ "varname = <statementkind> : varname ... varname"
-        		+ " but the " + statementCount + "-th (1-based) is missing"
-        		+ " an \"=\" symbol.";
-        	throw new SequenceParseException(msg, statements, statementCount);
+            String msg = "A statement must be of the form "
+                + "varname = <statementkind> : varname ... varname"
+                + " but the " + statementCount + "-th (1-based) is missing"
+                + " an \"=\" symbol.";
+            throw new SequenceParseException(msg, statements, statementCount);
         }
 
         if (colonInd == -1) {
-        	String msg = "A statement must be of the form "
-        		+ "varname = <statementkind> : varname ... varname"
-        		+ " but the " + statementCount + "-th (1-based) is missing"
-        		+ " a \":\" symbol.";
-        	throw new SequenceParseException(msg, statements, statementCount);
+            String msg = "A statement must be of the form "
+                + "varname = <statementkind> : varname ... varname"
+                + " but the " + statementCount + "-th (1-based) is missing"
+                + " a \":\" symbol.";
+            throw new SequenceParseException(msg, statements, statementCount);
         }
         
         String newVar = statement.substring(0, equalsInd).trim();
