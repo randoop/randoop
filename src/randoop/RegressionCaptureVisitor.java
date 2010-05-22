@@ -1,7 +1,11 @@
 package randoop;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.*;
+
+import randoop.*;
+import randoop.main.*;
+import randoop.util.*;
 
 import randoop.util.PrimitiveTypes;
 
@@ -58,6 +62,59 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
       objectHashCode = Object.class.getDeclaredMethod("hashCode");
     } catch (Exception e) {
       throw new Error(e);
+    }
+  }
+
+  /** Map from each class to the list of observer methods for that class */
+  private static final Map<Class<?>, List<Method>> observer_map
+    = new LinkedHashMap<Class<?>, List<Method>>();
+  static {
+    if (GenInputsAbstract.observers != null) {
+      List<String> lines  = null;
+      try {
+        lines = Files.readWhole (GenInputsAbstract.observers);
+      } catch (Exception e) {
+        throw new RuntimeException ("problem reading observer file "
+                                    + GenInputsAbstract.observers, e);
+      }
+      for (String line : lines) {
+        if (line.startsWith ("//"))
+          continue;
+        if (line.trim().length() == 0)
+          continue;
+        int lastdot = line.lastIndexOf(".");
+        if (lastdot == -1)
+          throw new RuntimeException (String.format ("invalid observer '%s'",
+                                                     line));
+        String classname = line.substring (0, lastdot);
+        String methodname = line.substring (lastdot+1);
+        methodname = methodname.replaceFirst ("[()]*$", "");
+        Class<?> obs_class = null;
+        try {
+          obs_class = Class.forName (classname);
+        } catch (Exception e) {
+          throw new RuntimeException ("Can't load observer class " + classname,
+                                      e);
+        }
+        Method obs_method = null;
+        try {
+          obs_method = Reflection.super_get_declared_method (obs_class,
+                                                             methodname);
+        } catch (Exception e) {
+          throw new RuntimeException ("Can't find observer method "
+                                      + methodname, e);
+        }
+        if (!PrimitiveTypes.isPrimitiveOrStringType(obs_method.getReturnType()))
+          throw new RuntimeException
+            (String.format ("Observer method %s does not return a primitive "
+                            + "or string", obs_method));
+        List<Method> methods = observer_map.get (obs_class);
+        if (methods == null) {
+          methods = new ArrayList<Method>();
+          observer_map.put (obs_class, methods);
+        }
+        methods.add (obs_method);
+      }
     }
   }
 
@@ -122,8 +179,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           // If value is a String that contains "<classname>@<hex>" we
           // guess it might come from a call of Object.toString() and
           // don't print it either.  This may happen if some method
-          // internally calls Object.toString().  This used to check for
-          // ;@, but that doesn't seem to be correct.
+          // internally calls Object.toString().
           if (o instanceof String) {
             String str = (String)o;
             if (str.matches (".*[a-zA-Z]{2,}[a-zA-Z0-9.]*@[0-9a-h]{4,}.*")) {
@@ -163,6 +219,31 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           // not interesting that it's non-null; omit the check.
           if (!(st instanceof RConstructor)) {
             s.addCheck(idx, new ObjectCheck(new IsNotNull(), var), true);
+          }
+
+
+          // Put out any observers that exist for this type
+          Variable var0 = s.sequence.getVariable(i);
+          List<Method> observers = observer_map.get (var0.getType());
+          if (observers != null) {
+            for (Method m : observers) {
+
+	      Object value = null;
+	      try {
+		value = m.invoke (o);
+	      } catch (Exception e2) {
+		throw new RuntimeException ("unexpected error invoking observer "
+					    + m + " on " + var + "[" +
+					    var.getType() + "]" + " with value "
+					    + o + " [" + o.getClass() + "]",
+					    e2);
+	      }
+
+	      ObjectContract observerEqValue = new ObserverEqValue (m, value);
+	      ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
+	      //System.out.printf ("Adding observer %s%n", observerCheck);
+	      s.addCheck(idx, observerCheck, true);
+            }
           }
         }
 
