@@ -15,6 +15,15 @@ public class TestClass0 extends TestCase {
     boolean var2 = var0.contains((java.lang.Object)1);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == false);
 
   }
@@ -39,6 +48,15 @@ public class TestClass0 extends TestCase {
     boolean var3 = var0.containsAll((java2.util2.Collection)var2);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
     
     // Regression assertion (captures the current behavior of the code)
@@ -52,6 +70,15 @@ public class TestClass0 extends TestCase {
     java2.util2.SortedSet var1 = java2.util2.Collections.synchronizedSortedSet((java2.util2.SortedSet)var0);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var1);
 
   }
@@ -60,6 +87,15 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     int var1 = var0.size();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var1 == 0);
@@ -71,6 +107,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Map var2 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)(-1));
     java2.util2.Map var3 = java2.util2.Collections.synchronizedMap(var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -86,6 +131,15 @@ public class TestClass0 extends TestCase {
     java.lang.Object var1 = var0.clone();
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var1);
 
   }
@@ -96,6 +150,15 @@ public class TestClass0 extends TestCase {
     boolean var2 = var0.remove((java.lang.Object)10L);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == false);
 
   }
@@ -104,6 +167,24 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet((java2.util2.Collection)var0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
 
   }
 
@@ -118,6 +199,16 @@ public class TestClass0 extends TestCase {
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
+    
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
 
   }
 
@@ -125,6 +216,15 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Comparator var1 = var0.comparator();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNull(var1);
@@ -137,6 +237,15 @@ public class TestClass0 extends TestCase {
     boolean var2 = var0.equals((java.lang.Object)1L);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == false);
 
   }
@@ -145,6 +254,15 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.remove((java.lang.Object)'4');
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == false);
@@ -157,6 +275,15 @@ public class TestClass0 extends TestCase {
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)var2);
     boolean var4 = var0.addAll((java2.util2.Collection)var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1.0]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -173,6 +300,15 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     var0.clear();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
 
   }
 
@@ -183,6 +319,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
 
   }
 
@@ -191,6 +336,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Map var2 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)(short)0);
     java2.util2.Map var3 = java2.util2.Collections.synchronizedMap(var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -216,6 +370,24 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var3);
@@ -245,6 +417,15 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
     
     // Regression assertion (captures the current behavior of the code)
@@ -261,6 +442,15 @@ public class TestClass0 extends TestCase {
     java.lang.String var1 = var0.toString();
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue("'" + var1 + "' != '" + "[]"+ "'", var1.equals("[]"));
 
   }
@@ -270,6 +460,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Map var2 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)(short)0);
     java2.util2.Map var3 = java2.util2.Collections.unmodifiableMap(var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -283,6 +482,24 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet((java2.util2.SortedSet)var0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
 
   }
 
@@ -309,6 +526,15 @@ public class TestClass0 extends TestCase {
     boolean var1 = var0.isEmpty();
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var1 == true);
 
   }
@@ -327,6 +553,24 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var3);
@@ -352,6 +596,15 @@ public class TestClass0 extends TestCase {
     java2.util2.SortedSet var2 = var0.headSet((java.lang.Object)(-1L));
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
 
   }
@@ -360,6 +613,15 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.contains((java.lang.Object)(-1L));
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == false);
@@ -372,6 +634,15 @@ public class TestClass0 extends TestCase {
     java2.util2.SortedSet var1 = java2.util2.Collections.unmodifiableSortedSet((java2.util2.SortedSet)var0);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var1);
 
   }
@@ -381,6 +652,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     boolean var3 = var0.containsAll((java2.util2.Collection)var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -397,6 +677,15 @@ public class TestClass0 extends TestCase {
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Enumeration var4 = java2.util2.Collections.enumeration((java2.util2.Collection)var2);
     boolean var5 = var0.equals((java.lang.Object)var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -417,6 +706,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1);
     java2.util2.Iterator var3 = var0.iterator();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -480,6 +778,15 @@ public class TestClass0 extends TestCase {
     java2.util2.Comparator var3 = var0.comparator();
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
@@ -520,6 +827,16 @@ public class TestClass0 extends TestCase {
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
+    
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
 
   }
 
@@ -544,7 +861,25 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var4.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var4.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var4.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var6);
@@ -580,6 +915,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -654,6 +998,24 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
     boolean var2 = var0.containsAll((java2.util2.Collection)var1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -766,6 +1128,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -922,6 +1293,15 @@ public class TestClass0 extends TestCase {
     java.lang.Object var7 = java2.util2.Collections.min(var3);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
     
     // Regression assertion (captures the current behavior of the code)
@@ -952,6 +1332,16 @@ public class TestClass0 extends TestCase {
     } catch (java.lang.ClassCastException e) {
       // Expected exception.
     }
+    
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
 
   }
 
@@ -1046,6 +1436,15 @@ public class TestClass0 extends TestCase {
     java.lang.Object var3 = var0.last();
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
@@ -1058,6 +1457,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1);
     java.lang.Object var3 = var0.first();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -1149,6 +1557,15 @@ public class TestClass0 extends TestCase {
     int var3 = var0.size();
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
@@ -1174,7 +1591,25 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var3.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var5);
@@ -1199,6 +1634,24 @@ public class TestClass0 extends TestCase {
     java2.util2.List var11 = java2.util2.Collections.singletonList((java.lang.Object)var5);
     boolean var12 = var1.containsAll(var5);
     boolean var13 = var0.retainAll((java2.util2.Collection)var1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var3);
@@ -1271,10 +1724,37 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var3.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var5.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var5.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var5.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var7);
@@ -1461,6 +1941,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var28.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var28.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var28.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var31);
     
     // Regression assertion (captures the current behavior of the code)
@@ -1519,6 +2008,24 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var5.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var5.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var5.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var6.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var6.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var6.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var8);
@@ -1646,6 +2153,15 @@ public class TestClass0 extends TestCase {
     java2.util2.Set var3 = java2.util2.Collections.unmodifiableSet((java2.util2.Set)var0);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
@@ -1662,6 +2178,15 @@ public class TestClass0 extends TestCase {
     java.lang.Object var5 = java2.util2.Collections.max(var3, var4);
     boolean var6 = var0.containsAll(var3);
     java.lang.Object var7 = java2.util2.Collections.min(var3);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -1712,6 +2237,15 @@ public class TestClass0 extends TestCase {
     boolean var3 = var0.isEmpty();
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
@@ -1734,6 +2268,15 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
 
   }
@@ -1743,6 +2286,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1);
     java.lang.String var3 = var0.toString();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -1811,6 +2363,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1);
     java2.util2.SortedSet var4 = var0.headSet((java.lang.Object)'#');
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -1900,6 +2461,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
@@ -2016,6 +2586,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var7 = new java2.util2.TreeSet(var3);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
     
     // Regression assertion (captures the current behavior of the code)
@@ -2029,6 +2608,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue("'" + var6 + "' != '" + 10L+ "'", var6.equals(10L));
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var7.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var7.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var7.toString(),"[10]");
 
   }
 
@@ -2062,6 +2650,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -2107,6 +2704,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var20.toString(),"[]");
 
   }
 
@@ -2115,6 +2721,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1);
     java2.util2.Set var3 = java2.util2.Collections.synchronizedSet((java2.util2.Set)var0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -2148,7 +2763,25 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.SortedSet)var0);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var3.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var3.toString(),"[1]");
 
   }
 
@@ -2156,6 +2789,15 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.SortedSet var2 = var0.headSet((java.lang.Object)(short)0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -2167,6 +2809,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1);
     java2.util2.SortedSet var3 = java2.util2.Collections.unmodifiableSortedSet((java2.util2.SortedSet)var0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -2229,6 +2880,15 @@ public class TestClass0 extends TestCase {
     var0.clear();
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
 
   }
@@ -2246,6 +2906,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -2325,6 +2994,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var15);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var19);
 
   }
@@ -2334,6 +3012,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1);
     java2.util2.SortedSet var3 = java2.util2.Collections.synchronizedSortedSet((java2.util2.SortedSet)var0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -2421,6 +3108,15 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
 
   }
@@ -2487,6 +3183,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
 
   }
 
@@ -2503,6 +3208,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -2713,6 +3427,15 @@ public class TestClass0 extends TestCase {
     boolean var2 = var0.remove((java.lang.Object)100.0d);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == false);
 
   }
@@ -2726,6 +3449,15 @@ public class TestClass0 extends TestCase {
     java.lang.Object var6 = java2.util2.Collections.max(var4, var5);
     boolean var7 = var1.containsAll(var4);
     java2.util2.List var8 = java2.util2.Collections.nCopies(0, (java.lang.Object)var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var3);
@@ -2751,6 +3483,15 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.remove((java.lang.Object)100);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == false);
@@ -2819,6 +3560,15 @@ public class TestClass0 extends TestCase {
     boolean var9 = var0.removeAll(var6);
     java2.util2.Comparator var10 = java2.util2.Collections.reverseOrder();
     java.lang.Object var11 = java2.util2.Collections.min((java2.util2.Collection)var0, var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -3016,6 +3766,15 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
@@ -3098,7 +3857,25 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var3.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var5);
@@ -3191,6 +3968,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var15);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
     
     // Regression assertion (captures the current behavior of the code)
@@ -3242,6 +4028,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -3528,6 +4323,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var32);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var34.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var34.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var34.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var37);
     
     // Regression assertion (captures the current behavior of the code)
@@ -3570,6 +4374,24 @@ public class TestClass0 extends TestCase {
     java2.util2.Collection var4 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var3);
     boolean var5 = var1.removeAll(var4);
     boolean var6 = var0.containsAll((java2.util2.Collection)var1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var3);
@@ -3718,6 +4540,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var10);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var12.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var12.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var12.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var14);
     
     // Regression assertion (captures the current behavior of the code)
@@ -3814,6 +4645,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var10 = new java2.util2.TreeSet((java2.util2.Collection)var0);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
     
     // Regression assertion (captures the current behavior of the code)
@@ -3836,6 +4676,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var9 == false);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var10.toString(),"[]");
 
   }
 
@@ -3855,6 +4704,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -3888,6 +4746,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -4002,6 +4869,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var15);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
     
     // Regression assertion (captures the current behavior of the code)
@@ -4075,6 +4951,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -4173,6 +5058,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var23.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var23.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var23.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var25);
@@ -4363,6 +5257,15 @@ public class TestClass0 extends TestCase {
     java2.util2.Collection var28 = java2.util2.Collections.unmodifiableCollection(var23);
     boolean var29 = var5.retainAll(var28);
     boolean var30 = var0.removeAll((java2.util2.Collection)var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -4611,6 +5514,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var41);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var43.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var43.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var43.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var46);
     
     // Regression assertion (captures the current behavior of the code)
@@ -4722,6 +5634,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
@@ -4957,6 +5878,15 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
     
     // Regression assertion (captures the current behavior of the code)
@@ -5079,6 +6009,16 @@ public class TestClass0 extends TestCase {
     } catch (java.lang.ClassCastException e) {
       // Expected exception.
     }
+    
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
 
   }
 
@@ -5286,6 +6226,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var15);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
     
     // Regression assertion (captures the current behavior of the code)
@@ -5438,6 +6387,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var15);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
     
     // Regression assertion (captures the current behavior of the code)
@@ -5549,6 +6507,15 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
@@ -5592,6 +6559,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var20.toString(),"[]");
 
   }
 
@@ -5868,6 +6844,24 @@ public class TestClass0 extends TestCase {
     boolean var3 = var0.remove((java.lang.Object)var2);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
     
     // Regression assertion (captures the current behavior of the code)
@@ -5972,6 +6966,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
 
   }
 
@@ -5979,6 +6982,15 @@ public class TestClass0 extends TestCase {
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.SortedSet var2 = var0.tailSet((java.lang.Object)(short)(-1));
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -6068,6 +7080,15 @@ public class TestClass0 extends TestCase {
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1);
     java.lang.Object var3 = var0.clone();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -6184,6 +7205,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var30);
     
     // Regression assertion (captures the current behavior of the code)
@@ -6217,6 +7247,15 @@ public class TestClass0 extends TestCase {
     boolean var5 = var1.removeAll(var4);
     java.lang.Object var6 = java2.util2.Collections.min(var4);
     java2.util2.List var7 = java2.util2.Collections.nCopies(0, (java.lang.Object)var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var3);
@@ -6318,6 +7357,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
@@ -6632,6 +7680,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -6928,6 +7985,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -7093,6 +8159,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
@@ -7303,6 +8378,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -7550,6 +8634,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
 
   }
@@ -7700,6 +8793,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -7811,6 +8913,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var18.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var21);
@@ -8032,6 +9143,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -8107,6 +9227,15 @@ public class TestClass0 extends TestCase {
     boolean var4 = var0.removeAll(var3);
     java.lang.Object var5 = java2.util2.Collections.min(var3);
     java2.util2.Set var6 = java2.util2.Collections.singleton(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -8369,6 +9498,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var53);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var54.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var54.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var54.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var55);
     
     // Regression assertion (captures the current behavior of the code)
@@ -8499,6 +9637,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -8669,6 +9816,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var48.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var48.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var48.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var49 == true);
@@ -8900,6 +10056,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -9038,6 +10203,15 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
@@ -9615,6 +10789,15 @@ public class TestClass0 extends TestCase {
     assertTrue(var31 == true);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var32.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var32.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var32.toString(),"[10]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var33);
     
     // Regression assertion (captures the current behavior of the code)
@@ -9646,6 +10829,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var45.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var45.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var45.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var47 == true);
@@ -9892,6 +11084,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -10141,6 +11342,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -10285,6 +11495,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -10355,6 +11574,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var57);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var58.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var58.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var58.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var59);
@@ -10643,6 +11871,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var15);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
     
     // Regression assertion (captures the current behavior of the code)
@@ -10908,6 +12145,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var16);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var18.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var21);
     
     // Regression assertion (captures the current behavior of the code)
@@ -11166,6 +12412,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -11209,6 +12464,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var46.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var49);
@@ -11290,6 +12554,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var79);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var81.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var81.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var81.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var84);
@@ -11457,6 +12730,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -11675,6 +12957,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -11790,6 +13081,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -11959,10 +13259,37 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var30.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var30.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var30.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var31.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var31.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var31.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var33);
@@ -12056,6 +13383,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var18.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var21);
@@ -12181,6 +13517,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -12348,6 +13693,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var39);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var41.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var44);
     
     // Regression assertion (captures the current behavior of the code)
@@ -12406,6 +13760,24 @@ public class TestClass0 extends TestCase {
       // Expected exception.
     }
     
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var3);
@@ -12526,6 +13898,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -12641,6 +14022,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var18.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var21);
@@ -12850,10 +14240,28 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var31.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var31.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var31.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var33);
@@ -13008,6 +14416,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -13072,6 +14489,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var55);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var56.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var56.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var56.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var57);
@@ -13157,6 +14583,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var12.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var12.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var12.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var14);
@@ -13330,6 +14765,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
@@ -13547,6 +14991,15 @@ public class TestClass0 extends TestCase {
     java2.util2.Map var3 = java2.util2.Collections.unmodifiableMap(var2);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
     
     // Regression assertion (captures the current behavior of the code)
@@ -13741,6 +15194,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var39);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var41.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var44);
     
     // Regression assertion (captures the current behavior of the code)
@@ -13841,6 +15303,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var86);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var87.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var87.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var87.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var88);
@@ -14095,6 +15566,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -14464,6 +15944,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -14572,6 +16061,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -14845,6 +16343,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var39);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var41.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var44);
     
     // Regression assertion (captures the current behavior of the code)
@@ -14942,6 +16449,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var87 == true);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var88.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var88.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var88.toString(),"[10]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var89 == (-1));
@@ -15259,6 +16775,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var58);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var59.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var59.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var59.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var60);
     
     // Regression assertion (captures the current behavior of the code)
@@ -15337,6 +16862,15 @@ public class TestClass0 extends TestCase {
     
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[1]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var2 == true);
     
     // Regression assertion (captures the current behavior of the code)
@@ -15401,6 +16935,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var30.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var30.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var30.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var31);
@@ -15697,6 +17240,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var40);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var42.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var42.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var42.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertTrue(var44 == (-1));
 
   }
@@ -15873,6 +17425,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -16009,6 +17570,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -16296,6 +17866,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var49);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var50.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var50.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var50.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var51);
     
     // Regression assertion (captures the current behavior of the code)
@@ -16495,6 +18074,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -16768,6 +18356,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -16811,6 +18408,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var46.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var49);
@@ -17000,6 +18606,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -17342,6 +18957,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -17560,6 +19184,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var15);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var19);
 
   }
@@ -17657,6 +19290,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -17782,6 +19424,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -17953,6 +19604,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var18.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var21);
@@ -18307,6 +19967,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var46 == true);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var47.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var47.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var47.toString(),"[10]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var48 == false);
@@ -19007,6 +20676,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -19076,6 +20754,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var56);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var57.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var57.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var57.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var58);
     
     // Regression assertion (captures the current behavior of the code)
@@ -19086,6 +20773,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var61);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var62.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var62.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var62.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var63);
@@ -19229,6 +20925,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -19296,6 +21001,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var57.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var57.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var57.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var58);
@@ -19469,6 +21183,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -19822,6 +21545,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var27);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var28.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var28.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var28.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var29);
     
     // Regression assertion (captures the current behavior of the code)
@@ -19952,6 +21684,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var29);
@@ -20117,6 +21858,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -20485,6 +22235,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -20495,6 +22254,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var32.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var32.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var32.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue("'" + var33 + "' != '" + "[[10]]"+ "'", var33.equals("[[10]]"));
@@ -20595,6 +22363,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -20708,6 +22485,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -21081,6 +22867,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -21091,6 +22886,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var32.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var32.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var32.toString(),"[[10]]");
 
   }
 
@@ -21190,6 +22994,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -21200,6 +23013,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var32.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var32.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var32.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var33);
@@ -21481,6 +23303,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -21533,6 +23364,15 @@ public class TestClass0 extends TestCase {
     java2.util2.ArrayList var10 = java2.util2.Collections.list(var9);
     java2.util2.Map var11 = java2.util2.Collections.singletonMap(var5, (java.lang.Object)var9);
     java2.util2.Map var12 = java2.util2.Collections.unmodifiableMap(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var0.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var0.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
@@ -21675,6 +23515,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var27);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var28.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var28.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var28.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var29);
     
     // Regression assertion (captures the current behavior of the code)
@@ -21688,6 +23537,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var34.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var34.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var34.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var36);
@@ -21821,6 +23679,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -22005,6 +23872,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var18.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var21);
@@ -22428,6 +24304,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var27);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var28.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var28.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var28.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var29);
     
     // Regression assertion (captures the current behavior of the code)
@@ -22809,6 +24694,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -23018,6 +24912,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -23043,6 +24946,15 @@ public class TestClass0 extends TestCase {
     boolean var3 = var1.add((java.lang.Object)1);
     java2.util2.Map var4 = java2.util2.Collections.singletonMap((java.lang.Object)100L, (java.lang.Object)var3);
     java2.util2.Map var5 = java2.util2.Collections.unmodifiableMap(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var1.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var1.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var1.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var3 == true);
@@ -23176,6 +25088,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var3.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var5);
@@ -23353,7 +25274,25 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var29.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var29.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var29.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var30);
@@ -23498,6 +25437,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -23833,6 +25781,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var16);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var18.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var21);
     
     // Regression assertion (captures the current behavior of the code)
@@ -24024,6 +25981,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -24327,6 +26293,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -24491,7 +26466,25 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var29.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var29.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var29.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var30);
@@ -24635,6 +26628,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -24790,6 +26792,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
 
   }
@@ -24888,6 +26899,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -25090,6 +27110,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -25264,6 +27293,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -25274,6 +27312,24 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var32.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var32.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var32.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var33.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var33.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var33.toString(),"[1]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var35 == true);
@@ -25450,6 +27506,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -25508,6 +27573,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var52.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var52.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var52.toString(),"[[10]]");
 
   }
 
@@ -25610,6 +27684,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue("'" + var23 + "' != '" + "[[10]]"+ "'", var23.equals("[[10]]"));
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var24.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var24.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var24.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
@@ -25721,6 +27804,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
@@ -25844,6 +27936,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -26000,7 +28101,25 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var29.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var29.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var29.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertTrue(var30 == false);
@@ -26122,6 +28241,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
@@ -26494,6 +28622,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var32);
     
     // Regression assertion (captures the current behavior of the code)
+    assertTrue(var33.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var33.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var33.toString(),"[]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var35);
     
     // Regression assertion (captures the current behavior of the code)
@@ -26694,6 +28831,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -26704,6 +28850,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var32.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var32.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var32.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var33);
@@ -26773,6 +28928,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var61);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertFalse(var62.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var62.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var62.toString(),"[[10]]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var63);
@@ -26898,6 +29062,15 @@ public class TestClass0 extends TestCase {
     assertNotNull(var26);
     
     // Regression assertion (captures the current behavior of the code)
+    assertFalse(var27.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27.size()  == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var27.toString(),"[[10]]");
+    
+    // Regression assertion (captures the current behavior of the code)
     assertNotNull(var28);
     
     // Regression assertion (captures the current behavior of the code)
@@ -26989,6 +29162,15 @@ public class TestClass0 extends TestCase {
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.isEmpty());
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var17.size()  == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertEquals(var17.toString(),"[]");
     
     // Regression assertion (captures the current behavior of the code)
     assertNotNull(var20);
