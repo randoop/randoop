@@ -18,7 +18,7 @@ import java.util.List;
  * approach.
  *
  * <p> When profiling Randoop, we observed that naive concatenation
- * took up a large portion of the tool’s running time, and the
+ * took up a large portion of the tool's running time, and the
  * component set quickly exhausted the memory available.
  *
  * <p> To improve memory and time efficiency, we do concatenation
