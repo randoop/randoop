@@ -55,6 +55,8 @@ temp.mk
 
 utils/plume-lib/
 
+plugin/bin/
+
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.
 (^|/)\#.*\#$

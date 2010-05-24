@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Sample Category"
+            id="randoop">
+      </category>
+      <view
+            name="Randoop"
+            icon="icons/sample.gif"
+            category="randoop"
+            class="randoop.plugin.views.RandoopView"
+            id="randoop.plugin.views.RandoopView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"
+               id="randoop.plugin.views.RandoopView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="randoop.preferences.SamplePreferencePage"
+            id="randoop.preferences.SamplePreferencePage"
+            name="Sample Preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="randoop.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+          <launchConfigurationType
+            name="Randoop Launcher"
+            delegate="randoop.plugin.launching.RandoopLaunchConfigurationDelegate"
+            modes="run, debug"
+            id="randoop.plugin.launching.launchconfig">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+         
+          <launchConfigurationTabGroup
+            type="randoop.plugin.launching.launchconfig"
+            class="randoop.plugin.launching.RandoopLaunchConfigTabGroup"
+            id="randoop.plugin.launching.launchconfig.tabgroup">
+      </launchConfigurationTabGroup> 
+   </extension>
+  </plugin>
