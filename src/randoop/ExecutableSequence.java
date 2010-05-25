@@ -13,7 +13,7 @@ import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
 
 /**
- * An ExecutableSequence wraps a @{link Sequence} with functionality for
+ * An ExecutableSequence wraps a {@link Sequence} with functionality for
  * executing the sequence. It also lets the client add {@link Check}s to
  * that check expected behaviors of the execution.
  * <p>
@@ -167,7 +167,7 @@ public class ExecutableSequence implements Serializable {
 
     if (check instanceof ExpectedExceptionCheck &&
         hasCheck(i, ExpectedExceptionCheck.class))
-      throw new IllegalArgumentException("Sequence already has an check"
+      throw new IllegalArgumentException("Sequence already has a check"
           + " of type " + ExpectedExceptionCheck.class.toString());
 
     this.checks.get(i).add(check);
