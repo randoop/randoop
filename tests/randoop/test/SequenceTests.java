@@ -1,5 +1,8 @@
 package randoop.test;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +64,9 @@ public class SequenceTests extends TestCase {
     boolean long_format_old = GenInputsAbstract.long_format;
     GenInputsAbstract.long_format = true;
     RecordListReader reader = new RecordListReader("TEST", processor);
-    reader.parse(SequenceTests.class.getResource("resources/sequence_tests_script.txt").getFile());
+    InputStream stream = SequenceTests.class.getResourceAsStream("resources/sequence_tests_script.txt");
+    BufferedReader b = new BufferedReader(new InputStreamReader(stream));
+    reader.parse(b);
     GenInputsAbstract.long_format = long_format_old;
   }
   
