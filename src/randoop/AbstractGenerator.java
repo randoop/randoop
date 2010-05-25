@@ -104,7 +104,9 @@ public abstract class AbstractGenerator {
 
       timer.startTiming();
 
-      stats.startProgressDisplay();
+      if (!GenInputsAbstract.noprogressdisplay) {
+        stats.startProgressDisplay();
+      }
 
       while (!stop()) {
 
@@ -157,8 +159,11 @@ public abstract class AbstractGenerator {
           Log.logLine("allSequences.size()=" + numSequences());
         }
       }
-      stats.progressDisplay.display();
-      stats.stopProgressDisplay();
+      
+      if (!GenInputsAbstract.noprogressdisplay) {
+        stats.progressDisplay.display();
+        stats.stopProgressDisplay();
+      }
 
       if (print_stats)
         stats.printStatistics();
