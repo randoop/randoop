@@ -105,7 +105,6 @@ public class JunitFileWriter {
       out.println();
       out.println("public class " + className + " extends TestCase {");
       out.println();
-      writeMain(out, className);
       out.println();
       int testCounter = 1;
       for (ExecutableSequence fault : sequencesForOneFile) {
@@ -129,28 +128,14 @@ public class JunitFileWriter {
     return file;
   }
 
-  private String indent(String codeString) {
+  // TODO document and move to util directory.
+  public static String indent(String codeString) {
     StringBuilder indented = new StringBuilder();
     String[] lines = codeString.split(Globals.lineSep);
     for (String line : lines) {
       indented.append("    " + line + Globals.lineSep);
     }
     return indented.toString();
-  }
-
-
-  /**
-   * Writes out the main routine of the junit regression tests (the one
-   * that calls each of the individual tests).  If an init routine was
-   * specified, executes that before the individual tests
-   */
-  private void writeMain(PrintStream out, String className) {
-    out.println("  // Runs all the tests in this file.");
-    out.println("  public static void main(String[] args) {");
-    if (GenInputsAbstract.init_routine != null)
-      out.println ("    " + GenInputsAbstract.init_routine + "();");
-    out.println("    junit.textui.TestRunner.run(" + className + ".class);");
-    out.println("  }");
   }
 
   private void outputPackageName(PrintStream out) {
