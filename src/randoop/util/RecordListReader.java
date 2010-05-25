@@ -57,6 +57,11 @@ public class RecordListReader {
     } catch (IOException e) {
       throw new Error(e);
     }
+    
+    parse(reader);
+  }
+  
+  public void parse(BufferedReader reader) {
 
     String line;
     try {
@@ -100,4 +105,5 @@ public class RecordListReader {
     }
     return line;
   }
+
 }
