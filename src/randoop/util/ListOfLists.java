@@ -24,6 +24,22 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   private int totalelements;
 
+  public ListOfLists(SimpleList<T>... lists) {
+    this.lists = new ArrayList<SimpleList<T>>(lists.length);
+    for (SimpleList<T> sl : lists) {
+      this.lists.add(sl);
+    }
+    this.accumulatedSize = new int[lists.length];
+    this.totalelements = 0;
+    for (int i = 0; i < lists.length ; i++) {
+      SimpleList<T> l = lists[i];
+      if (l == null)
+        throw new IllegalArgumentException("All lists should be non-null");
+      this.totalelements += l.size();
+      this.accumulatedSize[i] = this.totalelements;
+    }
+  }
+  
   public ListOfLists(List<SimpleList<T>> lists) {
     if (lists == null)
       throw new IllegalArgumentException("param cannot be null");
