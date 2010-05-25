@@ -53,8 +53,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     super(statements, coverageClasses, timeMillis, maxSequences, seeds);
 
-    System.out.printf ("list of statements for ForwardGenerator = %s%n",
-                       statements);
+//    System.out.printf ("list of statements for ForwardGenerator = %s%n",
+//                       statements);
 
     if (seeds == null)
       this.components = new SequenceCollection(SeedSequences.defaultSeeds());
@@ -297,6 +297,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public InputsAndSuccessFlag selectInputs(StatementKind statement, SequenceCollection  components) {
 
     List<Class<?>> inputClasses = statement.getInputTypes();
@@ -341,8 +342,10 @@ public class ForwardGenerator extends AbstractGenerator {
         if (Log.isLoggingOn()) Log.logLine("Integer-as-object heuristic: will use random Integer.");
         l = components.getSequencesForType(int.class, false);
       } else if (t.isArray()) {
-        if (Log.isLoggingOn()) Log.logLine("Array creation heuristic: will create helper array of type " + t);
-        l = HelperSequenceCreator.createSequence(t, components);
+         SimpleList<Sequence> l1 = components.getSequencesForType(t, false);
+         if (Log.isLoggingOn()) Log.logLine("Array creation heuristic: will create helper array of type " + t);
+         SimpleList<Sequence> l2 = HelperSequenceCreator.createSequence(t, components);
+         l = new ListOfLists<Sequence>(l1, l2);
       } else {
         if (Log.isLoggingOn()) Log.logLine("Will query component set for objects of type" + t);
         l = components.getSequencesForType(t, false);
