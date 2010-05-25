@@ -1,7 +1,7 @@
 package randoop;
 
 /**
- * Thrown to indicate that the exceptional behavior that definitely indicates
+ * Thrown to indicate exceptional behavior that definitely indicates
  * a bug in Randoop.
  */
 public class BugInRandoopException extends RuntimeException {
