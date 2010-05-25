@@ -89,7 +89,8 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
      if (s.getResult(idx) instanceof ExceptionalExecution) {
        if (GenInputsAbstract.forbid_null) {
          ExceptionalExecution exec = (ExceptionalExecution)s.getResult(idx);
-         if (exec.getException().getClass().equals(NullPointerException.class)) {
+         if (exec.getException().getClass().equals(NullPointerException.class)
+             || exec.getException().getClass().equals(AssertionError.class)) {
            NoExceptionCheck obs = new NoExceptionCheck(idx);
           s.addCheck(idx, obs, false);
          }
