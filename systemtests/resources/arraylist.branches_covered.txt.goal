@@ -8,6 +8,7 @@ classname=java2.util2.AbstractCollection,methodname=remove,line=245,id=9,directi
 classname=java2.util2.AbstractCollection,methodname=remove,line=253,id=12,direction=false
 classname=java2.util2.AbstractCollection,methodname=remove,line=253,id=12,direction=true
 classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=false
+classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=true
 classname=java2.util2.AbstractCollection,methodname=removeAll,line=353,id=18,direction=false
 classname=java2.util2.AbstractCollection,methodname=removeAll,line=353,id=18,direction=true
 classname=java2.util2.AbstractCollection,methodname=removeAll,line=354,id=19,direction=false
@@ -60,7 +61,6 @@ classname=java2.util2.ArrayList,methodname=lastIndexOf,line=235,id=9,direction=f
 classname=java2.util2.ArrayList,methodname=lastIndexOf,line=240,id=12,direction=false
 classname=java2.util2.ArrayList,methodname=lastIndexOf,line=240,id=12,direction=true
 classname=java2.util2.ArrayList,methodname=lastIndexOf,line=241,id=13,direction=false
-classname=java2.util2.ArrayList,methodname=lastIndexOf,line=241,id=13,direction=true
 classname=java2.util2.ArrayList,methodname=remove,line=398,id=17,direction=false
 classname=java2.util2.ArrayList,methodname=remove,line=398,id=17,direction=true
 classname=java2.util2.ArrayList,methodname=toArray,line=301,id=14,direction=false
