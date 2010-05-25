@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A statement call that is part of a mutable sequence.
+ * A statement that is part of a mutable sequence.
  */
 public class MStatement {
 
