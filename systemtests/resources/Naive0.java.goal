@@ -4,10 +4,6 @@ import junit.framework.*;
 
 public class Naive0 extends TestCase {
 
-  // Runs all the tests in this file.
-  public static void main(String[] args) {
-    junit.textui.TestRunner.run(Naive0.class);
-  }
 
   public void test1() throws Throwable {
 
