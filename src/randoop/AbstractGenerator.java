@@ -107,6 +107,13 @@ public abstract class AbstractGenerator {
       if (!GenInputsAbstract.noprogressdisplay) {
         stats.startProgressDisplay();
       }
+      
+      if (Log.isLoggingOn()) {
+        Log.logLine("Initial sequences (seeds):");
+        for (Sequence s : seeds.getAllSequences()) {
+          Log.logLine(s.toString());          
+        }
+      }
 
       while (!stop()) {
 
