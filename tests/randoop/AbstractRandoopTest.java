@@ -1,6 +1,7 @@
 package randoop;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
+import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 
@@ -56,9 +58,17 @@ public abstract class AbstractRandoopTest extends TestCase {
 
   public abstract Mode getMode();
   
-  public abstract int getTimeLimitSeconds();
+  public int getInputLimit() {
+    return 10000;
+  }
+  
+  public int getTimeLimitSeconds() {
+    return 10;
+  }
 
   public void test() throws Throwable {
+
+    Randomness.reset(1);
 
     File randoopTestsDir = new File(new File(getProjectHome(), "tests"), "randoop");
     if (!randoopTestsDir.exists() && !randoopTestsDir.mkdirs()) {
@@ -97,10 +107,11 @@ public abstract class AbstractRandoopTest extends TestCase {
     GenInputsAbstract.forbid_null = false;
     GenInputsAbstract.null_ratio = 0.2;
     ReflectionExecutor.usethreads = false;
-    ForwardGenerator explorer = new ForwardGenerator(model, null, getTimeLimitSeconds() * 1000, 100000, components);
+    ForwardGenerator explorer = new ForwardGenerator(model, null, getTimeLimitSeconds() * 1000, getInputLimit(), components);
     GenInputsAbstract.noprogressdisplay = true;
     GenInputsAbstract.output_tests = (getMode() == Mode.ERRORS ? "fail" : "pass");
     GenInputsAbstract.junit_output_dir = "tests";
+    
     explorer.executionVisitor.visitors.addAll(visitors);
 
     explorer.explore();
@@ -108,7 +119,9 @@ public abstract class AbstractRandoopTest extends TestCase {
     System.out.println(explorer.allSequences.size() + " inputs generated.");
 
     List<ExecutableSequence> tests = explorer.stats.outSeqs;
-    System.out.println(tests.size() + " failing input" + (tests.size() > 1 || tests.size() == 0 ? "s" : "") + ".");
+    if (getMode() == Mode.ERRORS) {
+      System.out.println(tests.size() + " failing input" + (tests.size() > 1 || tests.size() == 0 ? "s" : "") + ".");
+    }
 
     if (tests.isEmpty()) {
       return;
