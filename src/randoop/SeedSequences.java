@@ -23,11 +23,15 @@ public final class SeedSequences {
   }
 
   public static final List<Object> primitiveSeeds = Arrays.<Object> asList(
-      (byte) (-1), (byte) 0, (byte) 1, (byte) 10, (byte) 100, (short) (-1),
-      (short) 0, (short) 1, (short) 10, (short) 100, (-1), 0, 1, 10, 100,
-      (-1L), 0L, 1L, 10L, 100L, (float) -1.0, (float) 0.0, (float) 1.0,
-      (float) 10.0, (float) 100.0, -1.0, 0.0, 1.0, 10.0, 100.0, '#', ' ', '4',
-      'a', true, false, "", "hi!");
+      (byte) (-1), (byte) 0, (byte) 1, (byte) 10, (byte) 100,
+      (short) (-1), (short) 0, (short) 1, (short) 10, (short) 100,
+      (-1), 0, 1, 10, 100,
+      (-1L), 0L, 1L, 10L, 100L,
+      (float) -1.0, (float) 0.0, (float) 1.0, (float) 10.0, (float) 100.0,
+      -1.0, 0.0, 1.0, 10.0, 100.0,
+      '#', ' ', '4', 'a',
+      true, false,
+      "", "hi!");
 
   /**
    * A set of sequences that create primitive values, e.g. int i = 0; or String
