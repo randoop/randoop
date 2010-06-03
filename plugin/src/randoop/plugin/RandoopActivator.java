@@ -23,7 +23,7 @@ import org.osgi.framework.BundleContext;
 public class RandoopActivator extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "randoop";
+	public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
 
 	// The shared instance
 	private static RandoopActivator plugin = null;
