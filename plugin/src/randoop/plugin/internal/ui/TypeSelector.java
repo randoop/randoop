@@ -53,7 +53,6 @@ public class TypeSelector {
       public void handleEvent(Event event) {
         if (event.detail == SWT.CHECK) {
           TreeItem item = (TreeItem) event.item;
-
           updateTree(item);
         }
       }
@@ -67,45 +66,35 @@ public class TypeSelector {
    * @param emptyTree
    *          empty tree that can be used to add
    */
-  public TypeSelector(Tree emptyTree, Collection<String> checkedElements,
-      Collection<String> uncheckedTypes) {
+  public TypeSelector(Tree emptyTree, Collection<String> allTypes,
+      Collection<String> checkedElements) {
     this(emptyTree);
 
+    for (String id : allTypes) {
+      IJavaElement element = JavaCore.create(id);
+      if (element instanceof IType) {
+        IType type = (IType) element;
+
+        addType(type, false);
+      }
+    }
+
+    // Iterate through the checked elements and check the corresponding elements
+    // in the Tree
     for (String id : checkedElements) {
       IJavaElement element = JavaCore.create(id);
       if (element instanceof IType) {
         IType type = (IType) element;
+        String handlerId = type.getHandleIdentifier();
 
-        TreeItem typeItem = addType(type);
-        typeItem.setChecked(true);
-        updateTree(typeItem);
+        TreeItem typeTreeItem = fTreeItemsByHandlerId.get(handlerId);
+        setChecked(typeTreeItem, true);
       } else if (element instanceof IMethod) {
         IMethod method = (IMethod) element;
-        IType type = method.getDeclaringType();
+        String handlerId = method.getHandleIdentifier();
 
-        Assert.isNotNull(type);
-        TreeItem typeItem = fTreeItemsByHandlerId.get(type
-            .getHandleIdentifier());
-        if (typeItem == null) {
-          typeItem = addType(type);
-        }
-
-        TreeItem methodItem = fTreeItemsByHandlerId.get(method
-            .getHandleIdentifier());
-        Assert.isNotNull(methodItem);
-
-        methodItem.setChecked(true);
-        updateTree(methodItem);
-      }
-    }
-    for (String id : uncheckedTypes) {
-      IJavaElement element = JavaCore.create(id);
-      if (element instanceof IType) {
-        IType type = (IType) element;
-
-        TreeItem typeItem = addType(type);
-        typeItem.setChecked(false);
-        updateTree(typeItem);
+        TreeItem methodTreeItem = fTreeItemsByHandlerId.get(handlerId);
+        setChecked(methodTreeItem, true);
       }
     }
   }
@@ -116,7 +105,7 @@ public class TypeSelector {
    * 
    * @param type
    */
-  public TreeItem addType(IType type) {
+  public TreeItem addType(IType type, boolean checked) {
     TreeItem root = new TreeItem(fTypeTree, SWT.NONE);
     root.setText(type.getFullyQualifiedName());
     fTreeItemsByHandlerId.put(type.getHandleIdentifier(), root);
@@ -134,7 +123,8 @@ public class TypeSelector {
     } catch (JavaModelException e) {
       RandoopActivator.log(e);
     }
-
+    
+    setChecked(root, checked);
     return root;
   }
 
@@ -170,24 +160,41 @@ public class TypeSelector {
     return types;
   }
 
-  public List<String> getUncheckedTypeHandlerIds() {
+  public List<String> getAllTypeHandlerIds() {
     List<String> types = new ArrayList<String>();
 
     for (String id : fTreeItemsByHandlerId.keySet()) {
       TreeItem item = fTreeItemsByHandlerId.get(id);
 
-      if (!item.getChecked()) {
-        // If the parent item is null, then this must be a type
-        if (item.getParentItem() == null) {
-          // Put this type's handler ID in the list
-          types.add(id);
-        }
+      // If the parent item is null, then this must be a type
+      if (item.getParentItem() == null) {
+        // Put this type's handler ID in the list
+        types.add(id);
       }
     }
 
     return types;
   }
 
+  /**
+   * Updates the checked state of this item and its descendants and ancestors.
+   * 
+   * @param item
+   *          the TreeItem which has just been changed
+   * @param checked
+   *          the new checked state of item
+   */
+  protected void setChecked(TreeItem item, boolean checked) {
+    item.setChecked(checked);
+    updateTree(item);
+  }
+
+  /**
+   * Updates the checked state of this item's descendants and ancestors.
+   * 
+   * @param item
+   *          the TreeItem for whom the descendants and ancestors will update
+   */
   protected void updateTree(TreeItem item) {
     // Items that have just been checked should never be grayed.
     item.setGrayed(false);

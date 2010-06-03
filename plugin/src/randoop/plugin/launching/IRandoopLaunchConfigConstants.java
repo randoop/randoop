@@ -46,9 +46,9 @@ public class IRandoopLaunchConfigConstants {
   
   public static final String ATTR_TEMP_FOLDER = RandoopActivator.getPluginId() + ".TEMP_FOLDER"; //$NON-NLS-1$
   
-  public static final String ATTR_CHECKED_JAVA_ELEMENTS = RandoopActivator.getPluginId() + ".CHECKED_JAVA_ELEMENTS"; //$NON-NLS-1$
+  public static final String ATTR_ALL_JAVA_TYPES = RandoopActivator.getPluginId() + ".ALL_JAVA_TYPES"; //$NON-NLS-1$
   
-  public static final String ATTR_UNCHECKED_JAVA_TYPES = RandoopActivator.getPluginId() + ".UNCHECKED_JAVA_TYPES"; //$NON-NLS-1$
+  public static final String ATTR_CHECKED_JAVA_ELEMENTS = RandoopActivator.getPluginId() + ".CHECKED_JAVA_ELEMENTS"; //$NON-NLS-1$
   
   public static final String DEFAULT_RANDOM_SEED = "0"; //$NON-NLS-1$
   
@@ -82,8 +82,7 @@ public class IRandoopLaunchConfigConstants {
 
   public static final String DEFAULT_TEMP_FOLDER = "randoop-tmp/"; //$NON-NLS-1$
   
-  public static final List<String> DEFAULT_CHECKED_JAVA_ELEMENTS = new ArrayList<String>();
-  
-  public static final List<String> DEFAULT_UNCHECKED_JAVA_TYPES = new ArrayList<String>();
+  public static final List<String> DEFAULT_ALL_JAVA_TYPES = new ArrayList<String>();
 
+  public static final List<String> DEFAULT_CHECKED_JAVA_ELEMENTS = new ArrayList<String>();
 }
