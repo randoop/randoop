@@ -38,10 +38,10 @@ import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.TypeSelector;
 
 public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfigurationTab {
-  private TypeSelector typeSelector;
-  private Tree typeTree;
-  private Button classAddButton;
-  private Button classRemoveButton;
+  private TypeSelector fTypeSelector;
+  private Tree fTypeTree;
+  private Button fClassAdd;
+  private Button fClassRemove;
 
   /**
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
@@ -66,10 +66,10 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
     gd.horizontalAlignment = SWT.LEFT;
     gd.verticalAlignment = SWT.TOP;
 
-    typeTree = new Tree(leftcomp, SWT.CHECK);
-    typeTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-    typeSelector = new TypeSelector(typeTree);
-    typeTree.addListener(SWT.Selection, new Listener() {
+    fTypeTree = new Tree(leftcomp, SWT.CHECK);
+    fTypeTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+    fTypeSelector = new TypeSelector(fTypeTree);
+    fTypeTree.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event event) {
         if (event.detail == SWT.CHECK) {
           setErrorMessage(null);
@@ -78,8 +78,8 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
       }
     });
 
-    classAddButton = SWTFactory.createPushButton(rightcomp, "Add", null);
-    classAddButton.addSelectionListener(new SelectionAdapter() {
+    fClassAdd = SWTFactory.createPushButton(rightcomp, "Add", null);
+    fClassAdd.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
         handleSearchButtonSelected();
@@ -89,8 +89,8 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
       }
     });
 
-    classRemoveButton = SWTFactory.createPushButton(rightcomp, "Remove", null);
-    classRemoveButton.addSelectionListener(new SelectionAdapter() {
+    fClassRemove = SWTFactory.createPushButton(rightcomp, "Remove", null);
+    fClassRemove.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
         // XXX remove the selected element
@@ -116,7 +116,7 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
         if (element instanceof IType) {
           IType type = (IType) element;
           if (type != null) {
-            typeSelector.addType(type);
+            fTypeSelector.addType(type, false);
           }
         }
       }
@@ -181,7 +181,7 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
   public boolean canSave() {
     setErrorMessage(null);
 
-    if (typeTree == null) {
+    if (fTypeTree == null) {
       return false;
     }
 
@@ -202,11 +202,11 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
    */
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (typeSelector != null) {
+    if (fTypeSelector != null) {
+      config.setAttribute(IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
+          fTypeSelector.getAllTypeHandlerIds());
       config.setAttribute(IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-          typeSelector.getCheckedHandlerIds());
-      config.setAttribute(IRandoopLaunchConfigConstants.ATTR_UNCHECKED_JAVA_TYPES,
-          typeSelector.getUncheckedTypeHandlerIds());
+          fTypeSelector.getCheckedHandlerIds());
     }
   }
 
@@ -214,10 +214,10 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
    */
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    config.setAttribute(IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
+        IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES);
     config.setAttribute(IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
         IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
-    config.setAttribute(IRandoopLaunchConfigConstants.ATTR_UNCHECKED_JAVA_TYPES,
-        IRandoopLaunchConfigConstants.DEFAULT_UNCHECKED_JAVA_TYPES);
   }
 
   /**
@@ -225,20 +225,19 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
    */
   @SuppressWarnings("unchecked")
   public void initializeFrom(ILaunchConfiguration config) {
-    if (typeTree != null)
+    if (fTypeTree != null)
       try {
+        List<String> allTypes = config.getAttribute(
+            IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
+            IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES);
         List<String> checkedElements = config.getAttribute(
             IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
             IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
-        List<String> uncheckedElements = config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_UNCHECKED_JAVA_TYPES,
-            IRandoopLaunchConfigConstants.DEFAULT_UNCHECKED_JAVA_TYPES);
-        typeSelector = new TypeSelector(typeTree, checkedElements,
-            uncheckedElements);
+        fTypeSelector = new TypeSelector(fTypeTree, allTypes, checkedElements);
       } catch (CoreException ce) {
-        typeSelector = new TypeSelector(typeTree,
-            IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS,
-            IRandoopLaunchConfigConstants.DEFAULT_UNCHECKED_JAVA_TYPES);
+        fTypeSelector = new TypeSelector(fTypeTree,
+            IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES,
+            IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
       }
   }
 

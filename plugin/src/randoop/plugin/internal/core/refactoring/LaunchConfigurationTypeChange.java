@@ -40,6 +40,7 @@ public class LaunchConfigurationTypeChange extends Change {
   /**
    * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
    */
+  @Override
   public Object getModifiedElement() {
     return fLaunchConfiguration;
   }
@@ -47,6 +48,7 @@ public class LaunchConfigurationTypeChange extends Change {
   /**
    * @see org.eclipse.ltk.core.refactoring.Change#getName()
    */
+  @Override
   public String getName() {
     return "Update test input types in launch configuration";
   }
@@ -55,6 +57,7 @@ public class LaunchConfigurationTypeChange extends Change {
    * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse
    *      .core.runtime.IProgressMonitor)
    */
+  @Override
   public void initializeValidationData(IProgressMonitor pm) {
   }
 
@@ -62,6 +65,7 @@ public class LaunchConfigurationTypeChange extends Change {
    * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime
    *      .IProgressMonitor)
    */
+  @Override
   public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException,
       OperationCanceledException {
 
@@ -72,20 +76,21 @@ public class LaunchConfigurationTypeChange extends Change {
    * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime
    *      .IProgressMonitor)
    */
+  @Override
   @SuppressWarnings("unchecked")
   public Change perform(IProgressMonitor pm) throws CoreException {
+    List<String> allTypes;
     List<String> checkedElements;
-    List<String> uncheckedElements;
     final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration
         .getWorkingCopy();
 
     try {
+      allTypes = wc.getAttribute(
+          IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
+          IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES);
       checkedElements = wc.getAttribute(
           IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
           IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
-      uncheckedElements = wc.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_UNCHECKED_JAVA_TYPES,
-          IRandoopLaunchConfigConstants.DEFAULT_UNCHECKED_JAVA_TYPES);
     } catch (CoreException ce) {
       return null;
     }
@@ -98,9 +103,9 @@ public class LaunchConfigurationTypeChange extends Change {
       }
     }
 
-    for (int i = 0; i < uncheckedElements.size(); i++) {
-      if (oldHandlerId.equals(uncheckedElements.get(i))) {
-        uncheckedElements.set(i, newHandlerId);
+    for (int i = 0; i < allTypes.size(); i++) {
+      if (oldHandlerId.equals(allTypes.get(i))) {
+        allTypes.set(i, newHandlerId);
       }
     }
 
