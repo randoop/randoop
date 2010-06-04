@@ -1,0 +1,1590 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Sequence
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Sequence";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../randoop/SeedSequences.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/Sequence.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Sequence.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop</FONT>
+<BR>
+Class Sequence</H2>
+<PRE>
+Object
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>Sequence</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>Serializable, <A HREF="../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>Sequence</B><DT>extends Object<DT>implements Serializable, <A HREF="../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</A></DL>
+</PRE>
+
+<P>
+Immutable.
+ <p>
+ A sequence of statements. Each element in the sequence represents a
+ particular Statement, like a method call "Foo f = m(i1...iN)" or a
+ declaration "int x = 0".
+ <p>
+ This class represents only the structure of a well-formed sequence of
+ statements, and does not contain any information about the runtime behavior
+ of the sequence. The class randoop.ExecutableSequence adds
+ functionality that executes the sequence.
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../serialized-form.html#randoop.Sequence">Serialized Form</A></DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop">Sequence.RelativeNegativeIndex</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;BitSet</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#activeFlags">activeFlags</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#lastTimeUsed">lastTimeUsed</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#savedHashCode">savedHashCode</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;Statement&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#statements">statements</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../randoop/Sequence.html#Sequence()">Sequence</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new, empty sequence.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#checkIndex(int)">checkIndex</A></B>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#clearActiveFlag(int)">clearActiveFlag</A></B>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#clearAllActiveFlags()">clearAllActiveFlags</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#concatenate(java.util.List)">concatenate</A></B>(List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;sequences)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new sequence that is the concatenation of the given sequences.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#create(randoop.PrimitiveOrStringOrNullDecl)">create</A></B>(<A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</A>&nbsp;info)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a sequence that consists of a single primitive declaration
+ statement (e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#equals(java.lang.Object)">equals</A></B>(Object&nbsp;o)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Two sequences are equal if their statements(+inputs) are element-wise
+ equal.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#extend(randoop.StatementKind, java.util.List)">extend</A></B>(<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&nbsp;statement,
+       List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputVariables)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a new sequence that is equivalent to this sequence plus the given
+ statement appended at the end.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#extend(randoop.StatementKind, randoop.Variable...)">extend</A></B>(<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&nbsp;statement,
+       <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>...&nbsp;inputs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a new sequence that is equivalent to this sequence plus the given
+ statement appended at the end.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getAllVariables()">getAllVariables</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The values associated with this sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getCreatingStatement(randoop.Variable)">getCreatingStatement</A></B>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The statement that created this value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getFirstVariableFromLastStatementVariables()">getFirstVariableFromLastStatementVariables</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getInputs(int)">getInputs</A></B>(int&nbsp;statementIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The inputs for the ith statement.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;Integer&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getInputsAsAbsoluteIndices(int)">getInputsAsAbsoluteIndices</A></B>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The inputs for the ith statement, as indices.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getLastStatement()">getLastStatement</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The last Statement in the sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getLastStatementTypes()">getLastStatementTypes</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The types of all the variables involved in the last statement.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getLastStatementVariables()">getLastStatementVariables</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The variables involved in the last statement.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getLastVariable()">getLastVariable</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The value created by the last statement in the sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getNetSize()">getNetSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop">Sequence.RelativeNegativeIndex</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getRelativeIndexForVariable(int, randoop.Variable)">getRelativeIndexForVariable</A></B>(int&nbsp;statementPosition,
+                            <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the relative negative index that would result if we use the given
+ value as an input to the statement at position statementPosition.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getStatementKind(int)">getStatementKind</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The statement for the statement at the given index.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;Statement</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getStatementWithInputs(int)">getStatementWithInputs</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The statement(+inputs) at the given index.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getVariable(int)">getVariable</A></B>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The value created by the ith statement.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getVariableForInput(int, randoop.Sequence.RelativeNegativeIndex)">getVariableForInput</A></B>(int&nbsp;statementPosition,
+                    <A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop">Sequence.RelativeNegativeIndex</A>&nbsp;input)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the Variable corresponding to the given input, which is an input to
+ the statement at position statementPosition.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getVariablesOfType(java.lang.Class, randoop.util.Reflection.Match)">getVariablesOfType</A></B>(Class&lt;?&gt;&nbsp;clazz,
+                   <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All the variables declared in this sequences whose type matches the
+ given class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#getWeight()">getWeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#hasActiveFlags()">hasActiveFlags</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#hashCode()">hashCode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#isActive(int)">isActive</A></B>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#isOwnerOf(randoop.Variable)">isOwnerOf</A></B>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#lastUseBefore(int, randoop.Variable)">lastUseBefore</A></B>(int&nbsp;idx,
+              <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;var)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#parse(java.util.List)">parse</A></B>(List&lt;String&gt;&nbsp;statements)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parse a sequence encoded as a list of strings, each string corresponding to
+ one statement.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#parse(java.lang.String)">parse</A></B>(String&nbsp;string)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parse a sequence encoded as a strings.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#printStatement(java.lang.StringBuilder, int)">printStatement</A></B>(StringBuilder&nbsp;b,
+               int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#randomVariableForType(java.lang.Class, randoop.util.Reflection.Match)">randomVariableForType</A></B>(Class&lt;?&gt;&nbsp;t,
+                      <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#randomVariableForTypeLastStatement(java.lang.Class, randoop.util.Reflection.Match)">randomVariableForTypeLastStatement</A></B>(Class&lt;?&gt;&nbsp;t,
+                                   <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#randomVariableOfTypeLastStatement(java.lang.Class, randoop.util.Reflection.Match)">randomVariableOfTypeLastStatement</A></B>(Class&lt;?&gt;&nbsp;clazz,
+                                  <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A value declared in this sequence whose type matches the given
+ class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#readTextSequences(java.lang.String, java.util.Collection)">readTextSequences</A></B>(String&nbsp;file,
+                  Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;collection)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a file containing a collection of sequences in textual
+ representation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#repeatLast(int)">repeatLast</A></B>(int&nbsp;times)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#setActiveFlag(int)">setActiveFlag</A></B>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#setAllActiveFlags()">setAllActiveFlags</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#size()">size</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The number of statements in the sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#toCodeString()">toCodeString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A Java source code representation of this sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/MSequence.html" title="class in randoop">MSequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#toModifiableSequence()">toModifiableSequence</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#toParseableString()">toParseableString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string representing this sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#toParseableString(java.lang.String)">toParseableString</A></B>(String&nbsp;statementSep)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like toParseableString, but the client can specify a string that
+ will be used a separator between statements.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Equivalent to toParseableString().</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#valuesAppearingInLastStatement(java.lang.Class, randoop.util.Reflection.Match)">valuesAppearingInLastStatement</A></B>(Class&lt;?&gt;&nbsp;clazz,
+                               <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;All the values declared in this sequences whose type matches the
+ given class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../randoop/Sequence.html#zero(java.lang.Class)">zero</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a sequence that is of the form "Foo f = null;" where Foo is the
+ given class.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="lastTimeUsed"><!-- --></A><H3>
+lastTimeUsed</H3>
+<PRE>
+public double <B>lastTimeUsed</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="statements"><!-- --></A><H3>
+statements</H3>
+<PRE>
+protected final <A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;Statement&gt; <B>statements</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="activeFlags"><!-- --></A><H3>
+activeFlags</H3>
+<PRE>
+public BitSet <B>activeFlags</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="savedHashCode"><!-- --></A><H3>
+savedHashCode</H3>
+<PRE>
+protected final int <B>savedHashCode</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Sequence()"><!-- --></A><H3>
+Sequence</H3>
+<PRE>
+public <B>Sequence</B>()</PRE>
+<DL>
+<DD>Create a new, empty sequence.
+<P>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getWeight()"><!-- --></A><H3>
+getWeight</H3>
+<PRE>
+public double <B>getWeight</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/util/WeightedElement.html#getWeight()">getWeight</A></CODE> in interface <CODE><A HREF="../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStatementKind(int)"><!-- --></A><H3>
+getStatementKind</H3>
+<PRE>
+public final <A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A> <B>getStatementKind</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>The statement for the statement at the given index.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="size()"><!-- --></A><H3>
+size</H3>
+<PRE>
+public final int <B>size</B>()</PRE>
+<DL>
+<DD>The number of statements in the sequence.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVariable(int)"><!-- --></A><H3>
+getVariable</H3>
+<PRE>
+public <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A> <B>getVariable</B>(int&nbsp;i)</PRE>
+<DL>
+<DD>The value created by the ith statement.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAllVariables()"><!-- --></A><H3>
+getAllVariables</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt; <B>getAllVariables</B>()</PRE>
+<DL>
+<DD>The values associated with this sequence.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastStatementVariables()"><!-- --></A><H3>
+getLastStatementVariables</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt; <B>getLastStatementVariables</B>()</PRE>
+<DL>
+<DD>The variables involved in the last statement.
+ This includes the output variable.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastStatementTypes()"><!-- --></A><H3>
+getLastStatementTypes</H3>
+<PRE>
+public List&lt;Class&lt;?&gt;&gt; <B>getLastStatementTypes</B>()</PRE>
+<DL>
+<DD>The types of all the variables involved in the last statement.
+ This includes the output variable.
+ The types returned are not the types in the signature of the
+ StatementKind, but the types of the variables.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastVariable()"><!-- --></A><H3>
+getLastVariable</H3>
+<PRE>
+public <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A> <B>getLastVariable</B>()</PRE>
+<DL>
+<DD>The value created by the last statement in the sequence.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastStatement()"><!-- --></A><H3>
+getLastStatement</H3>
+<PRE>
+public <A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A> <B>getLastStatement</B>()</PRE>
+<DL>
+<DD>The last Statement in the sequence.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCreatingStatement(randoop.Variable)"><!-- --></A><H3>
+getCreatingStatement</H3>
+<PRE>
+public <A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A> <B>getCreatingStatement</B>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;value)</PRE>
+<DL>
+<DD>The statement that created this value.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInputs(int)"><!-- --></A><H3>
+getInputs</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt; <B>getInputs</B>(int&nbsp;statementIndex)</PRE>
+<DL>
+<DD>The inputs for the ith statement.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toCodeString()"><!-- --></A><H3>
+toCodeString</H3>
+<PRE>
+public String <B>toCodeString</B>()</PRE>
+<DL>
+<DD>A Java source code representation of this sequence.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public String <B>toString</B>()</PRE>
+<DL>
+<DD>Equivalent to toParseableString().
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasActiveFlags()"><!-- --></A><H3>
+hasActiveFlags</H3>
+<PRE>
+public boolean <B>hasActiveFlags</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isActive(int)"><!-- --></A><H3>
+isActive</H3>
+<PRE>
+public boolean <B>isActive</B>(int&nbsp;i)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAllActiveFlags()"><!-- --></A><H3>
+setAllActiveFlags</H3>
+<PRE>
+public void <B>setAllActiveFlags</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearAllActiveFlags()"><!-- --></A><H3>
+clearAllActiveFlags</H3>
+<PRE>
+public void <B>clearAllActiveFlags</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setActiveFlag(int)"><!-- --></A><H3>
+setActiveFlag</H3>
+<PRE>
+public void <B>setActiveFlag</B>(int&nbsp;i)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearActiveFlag(int)"><!-- --></A><H3>
+clearActiveFlag</H3>
+<PRE>
+public void <B>clearActiveFlag</B>(int&nbsp;i)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRelativeIndexForVariable(int, randoop.Variable)"><!-- --></A><H3>
+getRelativeIndexForVariable</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop">Sequence.RelativeNegativeIndex</A> <B>getRelativeIndexForVariable</B>(int&nbsp;statementPosition,
+                                                                         <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;v)</PRE>
+<DL>
+<DD>Returns the relative negative index that would result if we use the given
+ value as an input to the statement at position statementPosition.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVariableForInput(int, randoop.Sequence.RelativeNegativeIndex)"><!-- --></A><H3>
+getVariableForInput</H3>
+<PRE>
+public <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A> <B>getVariableForInput</B>(int&nbsp;statementPosition,
+                                    <A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop">Sequence.RelativeNegativeIndex</A>&nbsp;input)</PRE>
+<DL>
+<DD>Returns the Variable corresponding to the given input, which is an input to
+ the statement at position statementPosition.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="create(randoop.PrimitiveOrStringOrNullDecl)"><!-- --></A><H3>
+create</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>create</B>(<A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</A>&nbsp;info)</PRE>
+<DL>
+<DD>Returns a sequence that consists of a single primitive declaration
+ statement (e.g. int i = 1;)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="zero(java.lang.Class)"><!-- --></A><H3>
+zero</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>zero</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD>Returns a sequence that is of the form "Foo f = null;" where Foo is the
+ given class.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public final boolean <B>equals</B>(Object&nbsp;o)</PRE>
+<DL>
+<DD>Two sequences are equal if their statements(+inputs) are element-wise
+ equal.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNetSize()"><!-- --></A><H3>
+getNetSize</H3>
+<PRE>
+public final int <B>getNetSize</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public final int <B>hashCode</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStatementWithInputs(int)"><!-- --></A><H3>
+getStatementWithInputs</H3>
+<PRE>
+protected final Statement <B>getStatementWithInputs</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>The statement(+inputs) at the given index.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="randomVariableForTypeLastStatement(java.lang.Class, randoop.util.Reflection.Match)"><!-- --></A><H3>
+randomVariableForTypeLastStatement</H3>
+<PRE>
+public <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A> <B>randomVariableForTypeLastStatement</B>(Class&lt;?&gt;&nbsp;t,
+                                                   <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="randomVariableForType(java.lang.Class, randoop.util.Reflection.Match)"><!-- --></A><H3>
+randomVariableForType</H3>
+<PRE>
+public <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A> <B>randomVariableForType</B>(Class&lt;?&gt;&nbsp;t,
+                                      <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="randomVariableOfTypeLastStatement(java.lang.Class, randoop.util.Reflection.Match)"><!-- --></A><H3>
+randomVariableOfTypeLastStatement</H3>
+<PRE>
+public final <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A> <B>randomVariableOfTypeLastStatement</B>(Class&lt;?&gt;&nbsp;clazz,
+                                                        <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</PRE>
+<DL>
+<DD>A value declared in this sequence whose type matches the given
+ class. Returns null if there are no matches.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="valuesAppearingInLastStatement(java.lang.Class, randoop.util.Reflection.Match)"><!-- --></A><H3>
+valuesAppearingInLastStatement</H3>
+<PRE>
+public final List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt; <B>valuesAppearingInLastStatement</B>(Class&lt;?&gt;&nbsp;clazz,
+                                                           <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</PRE>
+<DL>
+<DD>All the values declared in this sequences whose type matches the
+ given class. Returns an empty list if there are no matches.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVariablesOfType(java.lang.Class, randoop.util.Reflection.Match)"><!-- --></A><H3>
+getVariablesOfType</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt; <B>getVariablesOfType</B>(Class&lt;?&gt;&nbsp;clazz,
+                                         <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</PRE>
+<DL>
+<DD>All the variables declared in this sequences whose type matches the
+ given class. Returns an empty list if there are no matches.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="checkIndex(int)"><!-- --></A><H3>
+checkIndex</H3>
+<PRE>
+protected void <B>checkIndex</B>(int&nbsp;i)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="extend(randoop.StatementKind, java.util.List)"><!-- --></A><H3>
+extend</H3>
+<PRE>
+public final <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>extend</B>(<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&nbsp;statement,
+                             List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputVariables)</PRE>
+<DL>
+<DD>Returns a new sequence that is equivalent to this sequence plus the given
+ statement appended at the end.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="extend(randoop.StatementKind, randoop.Variable...)"><!-- --></A><H3>
+extend</H3>
+<PRE>
+public final <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>extend</B>(<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&nbsp;statement,
+                             <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>...&nbsp;inputs)</PRE>
+<DL>
+<DD>Returns a new sequence that is equivalent to this sequence plus the given
+ statement appended at the end.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="concatenate(java.util.List)"><!-- --></A><H3>
+concatenate</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>concatenate</B>(List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;sequences)</PRE>
+<DL>
+<DD>Create a new sequence that is the concatenation of the given sequences.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstVariableFromLastStatementVariables()"><!-- --></A><H3>
+getFirstVariableFromLastStatementVariables</H3>
+<PRE>
+public <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A> <B>getFirstVariableFromLastStatementVariables</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInputsAsAbsoluteIndices(int)"><!-- --></A><H3>
+getInputsAsAbsoluteIndices</H3>
+<PRE>
+public List&lt;Integer&gt; <B>getInputsAsAbsoluteIndices</B>(int&nbsp;i)</PRE>
+<DL>
+<DD>The inputs for the ith statement, as indices. An index equal to x
+ means that the input is the value created by the x-th statement in
+ the sequence.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="printStatement(java.lang.StringBuilder, int)"><!-- --></A><H3>
+printStatement</H3>
+<PRE>
+public void <B>printStatement</B>(StringBuilder&nbsp;b,
+                           int&nbsp;index)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="repeatLast(int)"><!-- --></A><H3>
+repeatLast</H3>
+<PRE>
+public <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>repeatLast</B>(int&nbsp;times)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toModifiableSequence()"><!-- --></A><H3>
+toModifiableSequence</H3>
+<PRE>
+public <A HREF="../randoop/MSequence.html" title="class in randoop">MSequence</A> <B>toModifiableSequence</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isOwnerOf(randoop.Variable)"><!-- --></A><H3>
+isOwnerOf</H3>
+<PRE>
+public boolean <B>isOwnerOf</B>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;v)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toParseableString()"><!-- --></A><H3>
+toParseableString</H3>
+<PRE>
+public String <B>toParseableString</B>()</PRE>
+<DL>
+<DD>Returns a string representing this sequence. The string can be parsed back
+ into a sequence using the method Sequence.parse(String). In particular, the
+ following invariant holds:
+
+   st.equals(parse(st.toParseableCode()))
+
+ For a dicussion of performance, see note in class-level documentation.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toParseableString(java.lang.String)"><!-- --></A><H3>
+toParseableString</H3>
+<PRE>
+public String <B>toParseableString</B>(String&nbsp;statementSep)</PRE>
+<DL>
+<DD>Like toParseableString, but the client can specify a string that
+ will be used a separator between statements.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="parse(java.util.List)"><!-- --></A><H3>
+parse</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>parse</B>(List&lt;String&gt;&nbsp;statements)
+                      throws <A HREF="../randoop/SequenceParseException.html" title="class in randoop">SequenceParseException</A></PRE>
+<DL>
+<DD>Parse a sequence encoded as a list of strings, each string corresponding to
+ one statement. This method is similar to parse(String), but expects the
+ individual statements already as separate strings. Each statement is
+ expected to be of the form:
+
+ VAR = STATEMENT_KIND : VAR ... VAR
+
+ Where the VAR are strings representing a variable name, and STATEMENT_KIND
+ is a string representing a StatementKind. For more on STATEMENT_KIND, see
+ the documentation for StatementKinds.parse(String).
+
+ The first VAR token represents the "output variable" that is the result of
+ the statement call. The VAR tokens appearing after STATEMENT_KIND represent
+ the "input variables" to the statement call. At the i-th line, the input
+ variable tokens should appear as an output variable for some previous j-th
+ line, j < i.
+
+ Here is an example of a list of lines representing a sequence.
+
+ var0 = cons : java.util.HashMap.<init>() :
+ var1 = prim : double:-1.0 :
+ var2 = prim : java.lang.String:"hi!" :
+ var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
+
+ The above sequence corresponds to the following java code (with package
+ names omitted for brevity):
+
+ HashMap var0 = new HashMap(); double var1 = -1.0; String var2 = "hi!";
+ Object var3 = var0.put(var1, var2);
+
+ When writing/reading sequences out to file: you have two options: serialize
+ the sequences using java's serialization mechanism, or write them out as
+ parseable text. Serialization is faster, and text is human-readable.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../randoop/SequenceParseException.html" title="class in randoop">SequenceParseException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="parse(java.lang.String)"><!-- --></A><H3>
+parse</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>parse</B>(String&nbsp;string)
+                      throws <A HREF="../randoop/SequenceParseException.html" title="class in randoop">SequenceParseException</A></PRE>
+<DL>
+<DD>Parse a sequence encoded as a strings. Convience method for parse(List<String>),
+ which parses a sequence of strings, each representing a Statement. See
+ that method for more documentation on the string representation of a sequence.
+
+ This method breaks up the given string into statements assuming that each
+ statement is separated by a line separator character.
+
+ The following invariant holds:
+
+     st.equals(parse(st.toParseableCode()))
+
+ When writing/reading sequences out to file: you have two options: serialize
+ the sequences using java's serialization mechanism, or write them out as
+ parseable text. Serialization is faster, and text is human-readable.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../randoop/SequenceParseException.html" title="class in randoop">SequenceParseException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readTextSequences(java.lang.String, java.util.Collection)"><!-- --></A><H3>
+readTextSequences</H3>
+<PRE>
+public static void <B>readTextSequences</B>(String&nbsp;file,
+                                     Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;collection)</PRE>
+<DL>
+<DD>Reads a file containing a collection of sequences in textual
+ representation.
+
+ The file should be made up of a list of records, each as follows:
+
+ START SEQUENCE
+ <parseable-sequence-string>
+ END SEQUENCE
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="lastUseBefore(int, randoop.Variable)"><!-- --></A><H3>
+lastUseBefore</H3>
+<PRE>
+public int <B>lastUseBefore</B>(int&nbsp;idx,
+                         <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;var)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../randoop/SeedSequences.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/Sequence.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Sequence.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

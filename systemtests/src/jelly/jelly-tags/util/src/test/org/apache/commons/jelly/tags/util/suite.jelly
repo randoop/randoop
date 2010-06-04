@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<test:suite 
+    xmlns:j="jelly:core" 
+    xmlns:util="jelly:util" 
+    xmlns:test="jelly:junit">
+
+  <test:case name="testTokenize">
+    
+        <util:tokenize var="tokens" delim=",">Test1,Test2,Test3,Test4</util:tokenize>
+
+        <j:set var="s" value="${size(tokens)}"/>        
+        <test:assert test="${s == 4}"/>
+        <test:assert test="${size(tokens) == 4}"/>
+
+<!--        
+        <j:set var="s" value="${tokens.size()}"/>        
+        <test:assert test="${s == 4}"/>
+        
+        <test:assert test="${tokens.size() == 4}"/>
+-->
+
+            
+        <test:assertEquals expected="Test1" actual="${tokens[0]}"/>
+        <test:assertEquals expected="Test2" actual="${tokens[1]}"/>
+        <test:assertEquals expected="Test3" actual="${tokens[2]}"/>
+        <test:assertEquals expected="Test4" actual="${tokens[3]}"/>
+        
+        <test:assertEquals expected="Test4" actual="${tokens[s - 1]}"/>
+        <test:assertEquals expected="Test4" actual="${tokens[size(tokens) - 1]}"/>
+        
+<!--        
+        <test:assertEquals expected="Test4" actual="${tokens.get(size(tokens) - 1)}"/>
+        
+        
+        <test:assertEquals expected="Test4" actual="${tokens[tokens.size() - 1]}"/>
+        <test:assertEquals expected="Test4" actual="${tokens.get(tokens.size() - 1)}"/>
+-->        
+        
+  </test:case>
+
+  <test:case name="testFileExists">
+
+      <!-- ensure that ${base.dir} is defined -->
+      <j:if test="${empty base.dir}">
+          <j:set var="base.dir" value="."/>
+      </j:if>
+        
+      <j:set var="flag" value="not found"/>
+
+      <util:available file="${base.dir}/project.xml">
+          <j:set var="flag" value="found"/>
+      </util:available>
+
+        
+      <test:assertEquals expected="found" actual="${flag}">
+          Should have found the file via the file $${base.dir}/project.xml with base.dir=${base.dir}
+      </test:assertEquals>
+        
+      <util:available file="${base.dir}/doesNotExist.xml">
+          <test:fail>The file ${base.dir}/doesNotExist.xml should not exist</test:fail>
+      </util:available>
+        
+  </test:case>
+    
+  <test:case name="testURIExists">
+
+      <j:set var="flag" value="not found"/>
+
+        <!-- use relative URIs-->
+        
+      <util:available uri="dummy.xml">
+          <j:set var="flag" value="found"/>
+      </util:available>
+        
+      <test:assertEquals expected="found" actual="${flag}">
+        Should have found the file via the URI dummy.xml
+      </test:assertEquals>
+        
+      <util:available uri="doesNotExist.xml">
+
+          <test:fail>The URI doesNotExist.xml should not exist!</test:fail>
+      </util:available>
+        
+  </test:case>
+  
+  <test:case name="testReplace">
+    
+    <util:replace oldChar="\" newChar="/" var="testString">A\B</util:replace>
+    <test:assertEquals expected="A/B" actual="${testString}">
+      Should have replaced a back slash with a forward one
+    </test:assertEquals>
+
+    
+    <j:set var="testString2"><util:replace oldChar="\" newChar="/">A\B</util:replace></j:set>
+    <test:assertEquals expected="A/B" actual="${testString2}">
+      Should have replaced a back slash with a forward one
+      and placed the result into output
+    </test:assertEquals>
+    
+    <util:replace oldChar="/" newChar="\" value="${testString}" var="testString3" />
+    <test:assertEquals expected="A\B" actual="${testString3}">
+      Should have replaced a slash with a back slash from a variable
+      and placed the result into a variable
+    </test:assertEquals>
+
+    <util:replace oldChar="ABC" newChar="123" value="CBABC" var="testString4" />
+
+    <test:assertEquals expected="CB1BC" actual="${testString4}">
+      Should have only substituted the 1 for the A, since the
+      old/newChar attributes were used.
+    </test:assertEquals>
+
+    <util:replace old="brown" new="black" value="The quick brown fox" var="testString6" />
+    <test:assertEquals expected="The quick black fox" actual="${testString6}">
+        Should have substituted the string "black" for "brown"
+    </test:assertEquals>
+
+  </test:case>
+
+  <test:case name="testProperties">
+      
+      <util:properties uri="foo.properties"/>
+      
+      <test:assertEquals expected="ABC" actual="${foo}"/>
+    
+  </test:case>
+    
+  <test:case name="testPropertiesVar">
+      
+      <util:properties uri="foo.properties" var="props"/>
+      
+      <test:assertEquals expected="ABC" actual="${props.foo}"/>
+    
+      Loaded properties value ${props}
+    
+  </test:case>
+
+  
+  <test:case name="testPropertiesAreNotLocked">
+      <j:set var="filename" value="${basedir}/target/test-classes/org/apache/commons/jelly/tags/util/deletable.properties"/>
+      
+      <util:properties file="${filename}"/>
+      
+      <j:new var="f" className="java.io.File">
+        <j:arg type="java.lang.String" value="${filename}"/>
+      </j:new>        
+      <j:mute>
+        ${f.delete()}
+      </j:mute>
+    
+      <test:assertEquals expected="${false}" actual="${f.exists()}" >The file ${name} should no longer exist</test:assertEquals>
+
+  </test:case>
+    
+
+  <test:case name="testFileTag">
+      <util:file name="${basedir}/src/test/org/apache/commons/jelly/tags/util/suite.jelly" 
+        var="suite" />
+      <test:assert test="${suite != null}" >The suite should exist</test:assert>
+  </test:case>
+  
+  <test:case name="testSortBasic">
+    <j:new var="testCollection" className="java.util.ArrayList"/>
+    <j:mute>
+
+    	${testCollection.add('Hello')}
+    	${testCollection.add('World')}
+    	${testCollection.add('Jelly')}
+    </j:mute>
+    <util:sort var="sorted" items="${testCollection}" />
+    <test:assertEquals expected="Hello" actual="${sorted[0]}"/>
+    <test:assertEquals expected="Jelly" actual="${sorted[1]}"/>
+    <test:assertEquals expected="World" actual="${sorted[2]}"/>
+  </test:case>
+  
+  <test:case name="testSortBean">
+    <j:new var="testCollection" className="java.util.ArrayList"/>
+
+    <j:useBean var="cust1" class="org.apache.commons.jelly.util.Customer" city="Sydney" location="Australia" name="Fred Nerk"/>
+    <j:useBean var="cust2" class="org.apache.commons.jelly.util.Customer" city="Melbourne" location="Australia" name="Joe Nerk"/>
+    <j:useBean var="cust3" class="org.apache.commons.jelly.util.Customer" city="San Francisco" location="U.S.A." name="Colette Cool"/>
+    <j:mute>
+    	${testCollection.add(cust1)}
+    	${testCollection.add(cust2)}
+    	${testCollection.add(cust3)}
+    </j:mute>
+    <!-- test sorting by the name property -->
+    <util:sort var="sortedByName" items="${testCollection}" property="name"/>
+    <test:assertEquals expected="Colette Cool" actual="${sortedByName[0].name}"/>
+
+    <test:assertEquals expected="Fred Nerk" actual="${sortedByName[1].name}"/>
+    <test:assertEquals expected="Joe Nerk" actual="${sortedByName[2].name}"/>
+
+    <!-- test sorting by the location property -->
+    <util:sort var="sortedByLocation" items="${testCollection}" property="location"/>
+    <test:assertEquals expected="Australia" actual="${sortedByLocation[0].location}"/>
+    <test:assertEquals expected="Australia" actual="${sortedByLocation[1].location}"/>
+    <test:assertEquals expected="U.S.A." actual="${sortedByLocation[2].location}"/>
+  
+  </test:case>
+
+    
+</test:suite>

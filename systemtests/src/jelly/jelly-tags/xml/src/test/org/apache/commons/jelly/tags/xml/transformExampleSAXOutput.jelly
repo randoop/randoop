@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:x="jelly:xml">
+
+  <x:parse var="xsl_doc">
+                <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+      <xsl:template match="document">
+        <html>
+          <xsl:apply-templates/>
+          <body></body>
+        </html>
+      </xsl:template>
+
+      <xsl:template match="chapter">
+        <title><xsl:apply-templates/></title>
+      </xsl:template>
+
+    </xsl:stylesheet>
+        </x:parse>
+
+        <!-- here we're testing if the output of the XSLT comes out as SAX events
+                || that the <x:parse> tag can then parse.
+                || We're using the <x:parse> around the <x:transform> purely to test
+                || that the <x:transform> is capable of outputting SAX events -->
+        <x:parse var="doc">             
+          <x:transform xslt="${xsl_doc}">
+            <document>
+              <chapter>It works!</chapter>
+            </document>
+          </x:transform>
+        </x:parse>      
+        
+  <x:expr select="$doc/html/title"/>
+
+</j:jelly>
+
+

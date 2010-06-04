@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+<struts-config>
+    <display-name><![CDATA[
+    Mailreader 
+      ]]>
+    </display-name>
+    <description><![CDATA[
+         Struts Mailreader Application for Commons Chain
+     Create and maintina user registrations and subscriptions.
+  ]]>
+    </description>
+    
+    <form-beans/>
+
+    <global-exceptions/>
+
+    <global-forwards/>
+
+    <action-mappings>
+        <action path="/RegistrationAdd" forward="/missing.jsp" />
+    </action-mappings>
+
+</struts-config>
