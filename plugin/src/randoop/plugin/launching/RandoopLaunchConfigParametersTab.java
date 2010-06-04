@@ -3,6 +3,8 @@ package randoop.plugin.launching;
 import java.text.DecimalFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -19,10 +21,11 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.ui.SWTFactory;
 
 public class RandoopLaunchConfigParametersTab extends AbstractLaunchConfigurationTab {
-  private Text fRandomSeedText;
+  private Text fRandomSeed;
   private Text fMaxTestSize;
   private Button fUseThreads;
   private Text fThreadTimeout;
@@ -33,6 +36,8 @@ public class RandoopLaunchConfigParametersTab extends AbstractLaunchConfiguratio
   private Text fTimeLimit;
   private Label lConvertedTimeLimit;
 
+  private ModifyListener fBasicModifyListener = new GeneratorTabListener();
+
   private class GeneratorTabListener extends SelectionAdapter implements
       ModifyListener {
     public void modifyText(ModifyEvent e) {
@@ -40,9 +45,6 @@ public class RandoopLaunchConfigParametersTab extends AbstractLaunchConfiguratio
       updateLaunchConfigurationDialog();
     }
   }
-
-  private ModifyListener fBasicModifyListener = new GeneratorTabListener();
-
   /**
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
    */
@@ -77,8 +79,8 @@ public class RandoopLaunchConfigParametersTab extends AbstractLaunchConfiguratio
     ld.marginHeight = 1;
 
     SWTFactory.createLabel(comp, "Random &Seed:", 1);
-    fRandomSeedText = SWTFactory.createSingleText(comp, 1);
-    fRandomSeedText.addModifyListener(fBasicModifyListener);
+    fRandomSeed = SWTFactory.createSingleText(comp, 1);
+    fRandomSeed.addModifyListener(fBasicModifyListener);
 
     SWTFactory.createLabel(comp, "Maximum Test Si&ze:", 1);
     fMaxTestSize = SWTFactory.createSingleText(comp, 1);
@@ -127,10 +129,16 @@ public class RandoopLaunchConfigParametersTab extends AbstractLaunchConfiguratio
 
     SWTFactory.createLabel(comp, "&Time Limit:", 1);
     fTimeLimit = SWTFactory.createSingleText(comp, 1);
+    fTimeLimit.addModifyListener(new ModifyListener() {
+      @Override
+      public void modifyText(ModifyEvent e) {
+        setConvertedTime();
+      }
+    });
     fTimeLimit.addModifyListener(fBasicModifyListener);
 
-    SWTFactory.createLabel(comp, "", 1); // spacer
-    lConvertedTimeLimit = SWTFactory.createLabel(comp, "", 1);
+    SWTFactory.createLabel(comp, IRandoopLaunchConfigConstants.EMPTY_STRING, 1); // spacer
+    lConvertedTimeLimit = SWTFactory.createLabel(comp, IRandoopLaunchConfigConstants.EMPTY_STRING, 1);
     lConvertedTimeLimit.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false,
         false));
     setConvertedTime();
@@ -140,108 +148,56 @@ public class RandoopLaunchConfigParametersTab extends AbstractLaunchConfiguratio
   public boolean canSave() {
     setErrorMessage(null);
 
-    if (fRandomSeedText == null || fMaxTestSize == null || fUseThreads == null
+    if (fRandomSeed == null || fMaxTestSize == null || fUseThreads == null
         || fThreadTimeout == null || fUseNull == null || fNullRatio == null
         || fJUnitTestInputs == null || fTimeLimit == null
         || lConvertedTimeLimit == null) {
       return false;
     }
+    
+    String randomSeed = fRandomSeed.getText();
+    String maxTestSize = fMaxTestSize.getText();
+    boolean useThreads = fUseThreads.getSelection();
+    String threadTimeout = fThreadTimeout.getText();
+    boolean useNull = fUseNull.getSelection();
+    String nullRatio = fNullRatio.getText();
+    String junitTestInputs = fJUnitTestInputs.getText();
+    String timeLimit = fTimeLimit.getText();
 
-    try {
-      Integer.parseInt(fRandomSeedText.getText());
-    } catch (NumberFormatException nfe) {
-      setErrorMessage("Random Seed is not a valid integer");
-      return false;
-    }
-    if (!assertPositiveInt("Maximum Test Size", fMaxTestSize.getText())) {
-      return false;
-    }
-    if (fUseThreads.getSelection()) {
-      if (!assertPositiveInt("Thread Timeout", fThreadTimeout.getText())) {
-        return false;
-      }
-    }
-    try {
-      if (fUseNull.getSelection()) {
-        Double.parseDouble(fNullRatio.getText());
-      }
-    } catch (NumberFormatException nfe) {
-      setErrorMessage("Null Ratio is not a valid number");
-      return false;
-    }
-
-    if (!assertPositiveInt("JUnit Test Inputs", fJUnitTestInputs.getText())) {
-      return false;
-    }
-    if (assertPositiveInt("Time Limit", fTimeLimit.getText())) {
-      setConvertedTime();
+    IStatus status = validate(randomSeed, maxTestSize, useThreads, threadTimeout, useNull,
+        nullRatio, junitTestInputs, timeLimit);
+    if(status.isOK()) {
+      return true;
     } else {
-      lConvertedTimeLimit.setText("");
+      setErrorMessage(status.getMessage());
       return false;
     }
-
-    return true;
   }
 
   /**
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
    */
   @Override
-  public boolean isValid(ILaunchConfiguration launchConfig) {
-    RandoopLaunchConfigParametersTab tab = new RandoopLaunchConfigParametersTab();
-    tab.initializeFrom(launchConfig);
-    return tab.canSave();
-  };
+  public boolean isValid(ILaunchConfiguration config) {
+    String randomSeed = getRandomSeed(config);
+    String maxTestSize = getMaxTestSize(config);
+    boolean useThreads = getUseThreads(config);
+    String threadTimeout = getThreadTimeout(config);
+    boolean useNull = getUseNull(config);
+    String nullRatio = getNullRatio(config);
+    String junitTestInputs = getJUnitTestInputs(config);
+    String timeLimit = getTimeLimit(config);
 
-  private boolean assertPositiveInt(String name, String n) {
-    try {
-      if (Integer.parseInt(n) < 1) {
-        setErrorMessage(name + " is not a positive integer");
-        return false;
-      }
-      return true;
-    } catch (NumberFormatException nfe) {
-      setErrorMessage(name + " is not a valid integer");
-      return false;
-    }
-  }
-
-  private void setConvertedTime() {
-    final String MINUTES = "minutes";
-    final String HOURS = "hours";
-    final String DAYS = "days";
-    final String YEARS = "years";
-
-    try {
-      int seconds = Integer.parseInt(fTimeLimit.getText());
-
-      DecimalFormat time = new DecimalFormat("#0.0"); //$NON-NLS-1$
-      if (seconds < 60) {
-        lConvertedTimeLimit.setText(""); //$NON-NLS-1$
-      } else if (seconds < 3600) {
-        lConvertedTimeLimit
-            .setText("(" + time.format(seconds / 60.0) + " " + MINUTES + ")"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
-      } else if (seconds < 86400) {
-        lConvertedTimeLimit
-            .setText("(" + time.format(seconds / 3600.0) + " " + HOURS + ")"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-      } else if (seconds < 31556926) {
-        lConvertedTimeLimit
-            .setText("(" + time.format(seconds / 86400.0) + " " + DAYS + ")"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
-      } else {
-        lConvertedTimeLimit
-            .setText("(" + time.format(seconds / 31556926.0) + " " + YEARS + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      }
-    } catch (NumberFormatException e) {
-    }
-
+    return validate(randomSeed, maxTestSize, useThreads, threadTimeout, useNull,
+        nullRatio, junitTestInputs, timeLimit).isOK();
   }
 
   /**
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
    */
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fRandomSeedText != null)
-      config.setAttribute(IRandoopLaunchConfigConstants.ATTR_RANDOM_SEED, fRandomSeedText
+    if (fRandomSeed != null)
+      config.setAttribute(IRandoopLaunchConfigConstants.ATTR_RANDOM_SEED, fRandomSeed
           .getText());
     if (fMaxTestSize != null)
       config.setAttribute(IRandoopLaunchConfigConstants.ATTR_MAXIMUM_TEST_SIZE,
@@ -267,6 +223,29 @@ public class RandoopLaunchConfigParametersTab extends AbstractLaunchConfiguratio
   }
 
   /**
+   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+   */
+  public void initializeFrom(ILaunchConfiguration config) {
+    if (fRandomSeed != null)
+      fRandomSeed.setText(getRandomSeed(config));
+    if (fMaxTestSize != null)
+      fMaxTestSize.setText(getMaxTestSize(config));
+    if (fUseThreads != null)
+      fUseThreads.setSelection(getUseThreads(config));
+    if (fThreadTimeout != null)
+      fThreadTimeout.setText(getThreadTimeout(config));
+    if (fUseNull != null)
+      fUseNull.setSelection(getUseNull(config));
+    if (fNullRatio != null)
+      fNullRatio.setText(getNullRatio(config));
+    if (fJUnitTestInputs != null)
+      fJUnitTestInputs.setText(getJUnitTestInputs(config));
+    if (fTimeLimit != null) {
+      fTimeLimit.setText(getTimeLimit(config));
+    }
+  }
+
+  /**
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
    */
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
@@ -288,78 +267,154 @@ public class RandoopLaunchConfigParametersTab extends AbstractLaunchConfiguratio
         IRandoopLaunchConfigConstants.DEFAULT_TIME_LIMIT);
   }
 
-  /**
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
-   */
-  public void initializeFrom(ILaunchConfiguration config) {
-    if (fRandomSeedText != null)
-      try {
-        fRandomSeedText.setText(config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_RANDOM_SEED,
-            IRandoopLaunchConfigConstants.DEFAULT_RANDOM_SEED));
-      } catch (CoreException ce) {
-        fRandomSeedText.setText(IRandoopLaunchConfigConstants.DEFAULT_RANDOM_SEED);
+  protected IStatus validate(String randomSeed, String maxTestSize,
+      boolean useThreads, String threadTimeout, boolean useNull,
+      String nullRatio, String junitTestInputs, String timeLimit) {
+    
+    try {
+      Integer.parseInt(randomSeed);
+    } catch (NumberFormatException nfe) {
+      return StatusFactory.createErrorStatus("Random Seed is not a valid integer");
+    }
+    
+    IStatus status = RandoopLaunchingUtil.validatePositiveInt(maxTestSize, "Maximum Test Size");
+    if (status.getSeverity() == IStatus.ERROR) {
+      return status;
+    }
+    if (useThreads) {
+      status = RandoopLaunchingUtil.validatePositiveInt(threadTimeout, "Thread Timeout");
+      if (status.getSeverity() == IStatus.ERROR) {
+        return status;
       }
-    if (fMaxTestSize != null)
-      try {
-        fMaxTestSize.setText(config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_MAXIMUM_TEST_SIZE,
-            IRandoopLaunchConfigConstants.DEFAULT_MAXIMUM_TEST_SIZE));
-      } catch (CoreException ce) {
-        fMaxTestSize.setText(IRandoopLaunchConfigConstants.DEFAULT_MAXIMUM_TEST_SIZE);
+    }
+    
+    try {
+      if (useNull) {
+        Double.parseDouble(nullRatio);
       }
-    if (fUseThreads != null)
-      try {
-        fUseThreads.setSelection(config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_USE_THREADS, Boolean
-                .parseBoolean(IRandoopLaunchConfigConstants.ATTR_USE_THREADS)));
-      } catch (CoreException ce) {
-        fUseThreads.setSelection(Boolean
-            .parseBoolean(IRandoopLaunchConfigConstants.DEFAULT_USE_THREADS));
+    } catch (NumberFormatException nfe) {
+      return StatusFactory.createErrorStatus("Null Ratio is not a valid number");
+    }
+
+    status = RandoopLaunchingUtil.validatePositiveInt(junitTestInputs, "JUnit Test Inputs");
+    if (status.getSeverity() == IStatus.ERROR) {
+      return status;
+    }
+    
+    status = RandoopLaunchingUtil.validatePositiveInt(timeLimit, "Time Limit");
+    if (status.getSeverity() == IStatus.ERROR) {
+      return status;
+    }
+
+    return Status.OK_STATUS;
+  }
+
+  public String getRandomSeed(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(
+          IRandoopLaunchConfigConstants.ATTR_RANDOM_SEED,
+          IRandoopLaunchConfigConstants.DEFAULT_RANDOM_SEED);
+    } catch (CoreException ce) {
+      return IRandoopLaunchConfigConstants.DEFAULT_RANDOM_SEED;
+    }
+  }
+
+  public String getMaxTestSize(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(
+          IRandoopLaunchConfigConstants.ATTR_MAXIMUM_TEST_SIZE,
+          IRandoopLaunchConfigConstants.DEFAULT_MAXIMUM_TEST_SIZE);
+    } catch (CoreException ce) {
+      return IRandoopLaunchConfigConstants.DEFAULT_MAXIMUM_TEST_SIZE;
+    }
+  }
+
+  public boolean getUseThreads(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(
+          IRandoopLaunchConfigConstants.ATTR_USE_THREADS, Boolean
+              .parseBoolean(IRandoopLaunchConfigConstants.ATTR_USE_THREADS));
+    } catch (CoreException ce) {
+      return Boolean
+          .parseBoolean(IRandoopLaunchConfigConstants.DEFAULT_USE_THREADS);
+    }
+  }
+
+  public String getThreadTimeout(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(
+          IRandoopLaunchConfigConstants.ATTR_THREAD_TIMEOUT,
+          IRandoopLaunchConfigConstants.DEFAULT_THREAD_TIMEOUT);
+    } catch (CoreException ce) {
+      return IRandoopLaunchConfigConstants.DEFAULT_THREAD_TIMEOUT;
+    }
+  }
+
+  public boolean getUseNull(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(IRandoopLaunchConfigConstants.ATTR_USE_NULL,
+          Boolean.parseBoolean(IRandoopLaunchConfigConstants.ATTR_USE_NULL));
+    } catch (CoreException ce) {
+      return Boolean
+          .parseBoolean(IRandoopLaunchConfigConstants.DEFAULT_USE_NULL);
+    }
+  }
+
+  public String getNullRatio(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(IRandoopLaunchConfigConstants.ATTR_NULL_RATIO,
+          IRandoopLaunchConfigConstants.DEFAULT_NULL_RATIO);
+    } catch (CoreException ce) {
+      return IRandoopLaunchConfigConstants.DEFAULT_NULL_RATIO;
+    }
+  }
+
+  public String getJUnitTestInputs(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(
+          IRandoopLaunchConfigConstants.ATTR_JUNIT_TEST_INPUTS,
+          IRandoopLaunchConfigConstants.DEFAULT_JUNIT_TEST_INPUTS);
+    } catch (CoreException ce) {
+      return IRandoopLaunchConfigConstants.DEFAULT_JUNIT_TEST_INPUTS;
+    }
+  }
+
+  public String getTimeLimit(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(IRandoopLaunchConfigConstants.ATTR_TIME_LIMIT,
+          IRandoopLaunchConfigConstants.DEFAULT_TIME_LIMIT);
+    } catch (CoreException ce) {
+      return IRandoopLaunchConfigConstants.DEFAULT_TIME_LIMIT;
+    }
+  }
+
+  private void setConvertedTime() {
+    final String MINUTES = "minutes";
+    final String HOURS = "hours";
+    final String DAYS = "days";
+    final String YEARS = "years";
+  
+    try {
+      int seconds = Integer.parseInt(fTimeLimit.getText());
+  
+      DecimalFormat time = new DecimalFormat("#0.0"); //$NON-NLS-1$
+      if (seconds < 60) {
+        lConvertedTimeLimit.setText(IRandoopLaunchConfigConstants.EMPTY_STRING);
+      } else if (seconds < 3600) {
+        lConvertedTimeLimit
+            .setText("(" + time.format(seconds / 60.0) + " " + MINUTES + ")"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+      } else if (seconds < 86400) {
+        lConvertedTimeLimit
+            .setText("(" + time.format(seconds / 3600.0) + " " + HOURS + ")"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+      } else if (seconds < 31556926) {
+        lConvertedTimeLimit
+            .setText("(" + time.format(seconds / 86400.0) + " " + DAYS + ")"); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+      } else {
+        lConvertedTimeLimit
+            .setText("(" + time.format(seconds / 31556926.0) + " " + YEARS + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       }
-    if (fThreadTimeout != null)
-      try {
-        fThreadTimeout.setText(config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_THREAD_TIMEOUT,
-            IRandoopLaunchConfigConstants.DEFAULT_THREAD_TIMEOUT));
-      } catch (CoreException ce) {
-        fThreadTimeout.setText(IRandoopLaunchConfigConstants.DEFAULT_THREAD_TIMEOUT);
-      }
-    if (fUseNull != null)
-      try {
-        fUseNull.setSelection(config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_USE_NULL, Boolean
-                .parseBoolean(IRandoopLaunchConfigConstants.ATTR_USE_NULL)));
-      } catch (CoreException ce) {
-        fUseNull.setSelection(Boolean
-            .parseBoolean(IRandoopLaunchConfigConstants.DEFAULT_USE_NULL));
-      }
-    if (fNullRatio != null)
-      try {
-        fNullRatio.setText(config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_NULL_RATIO,
-            IRandoopLaunchConfigConstants.DEFAULT_NULL_RATIO));
-      } catch (CoreException ce) {
-        fNullRatio.setText(IRandoopLaunchConfigConstants.DEFAULT_NULL_RATIO);
-      }
-    if (fJUnitTestInputs != null)
-      try {
-        fJUnitTestInputs.setText(config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_JUNIT_TEST_INPUTS,
-            IRandoopLaunchConfigConstants.DEFAULT_JUNIT_TEST_INPUTS));
-      } catch (CoreException ce) {
-        fJUnitTestInputs.setText(IRandoopLaunchConfigConstants.DEFAULT_JUNIT_TEST_INPUTS);
-      }
-    if (fTimeLimit != null) {
-      try {
-        fTimeLimit.setText(config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_TIME_LIMIT,
-            IRandoopLaunchConfigConstants.DEFAULT_TIME_LIMIT));
-      } catch (CoreException ce) {
-        fTimeLimit.setText(IRandoopLaunchConfigConstants.DEFAULT_TIME_LIMIT);
-      }
-      if (lConvertedTimeLimit != null)
-        setConvertedTime();
+    } catch (NumberFormatException e) {
+      lConvertedTimeLimit.setText(IRandoopLaunchConfigConstants.EMPTY_STRING);
     }
   }
 

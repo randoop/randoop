@@ -7,6 +7,8 @@ import randoop.plugin.RandoopActivator;
 
 public class IRandoopLaunchConfigConstants {
   public static final String ATTR_PORT = "PORT";
+  
+  public static String EMPTY_STRING = ""; //$NON-NLS-1$
 
   public static String STR_ALL = "All";
   

@@ -181,7 +181,7 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
   public boolean canSave() {
     setErrorMessage(null);
 
-    if (fTypeTree == null) {
+    if (fTypeSelector == null) {
       return false;
     }
 
@@ -192,10 +192,23 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
    */
   @Override
-  public boolean isValid(ILaunchConfiguration launchConfig) {
-    RandoopLaunchConfigStatementsTab tab = new RandoopLaunchConfigStatementsTab();
-    tab.initializeFrom(launchConfig);
-    return tab.canSave();
+  public boolean isValid(ILaunchConfiguration config) {
+    List<?> selected;
+    try {
+      selected = config.getAttribute(
+          IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
+          IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
+    } catch (CoreException e) {
+      selected = IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS;
+    }
+    for (Object id : selected) {
+      if (JavaCore.create((String) id).exists()) {
+        return true;
+      }
+    }
+
+    setErrorMessage("At least one existing type or method must be selected.");
+    return false;
   };
 
   /**
@@ -208,16 +221,6 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
       config.setAttribute(IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
           fTypeSelector.getCheckedHandlerIds());
     }
-  }
-
-  /**
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
-   */
-  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    config.setAttribute(IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
-        IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES);
-    config.setAttribute(IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-        IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
   }
 
   /**
@@ -239,6 +242,16 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
             IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES,
             IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
       }
+  }
+
+  /**
+   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+   */
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    config.setAttribute(IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
+        IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES);
+    config.setAttribute(IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
+        IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
   }
 
   /**
