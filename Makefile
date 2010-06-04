@@ -20,7 +20,7 @@ default:
 	@echo "update-goals   update test goal files."
 	@echo "manual         update the user manual."
 	@echo "jdoc           update the javadoc."
-	@echo "distribution-files  create distribution zip and jar files."
+	@echo "distribution-files  create distribution zip and jar files, in dist/ dir."
 
 # Put user-specific changes in your own Makefile.user.
 # Make will silently continue if that file does not exist.
