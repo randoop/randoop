@@ -193,14 +193,7 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
    */
   @Override
   public boolean isValid(ILaunchConfiguration config) {
-    List<?> selected;
-    try {
-      selected = config.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-          IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
-    } catch (CoreException e) {
-      selected = IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS;
-    }
+    List<?> selected = RandoopLaunchConfigArgumentCollector.getCheckedJavaElements(config);
     for (Object id : selected) {
       if (JavaCore.create((String) id).exists()) {
         return true;
@@ -228,20 +221,12 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
    */
   @SuppressWarnings("unchecked")
   public void initializeFrom(ILaunchConfiguration config) {
-    if (fTypeTree != null)
-      try {
-        List<String> allTypes = config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
-            IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES);
-        List<String> checkedElements = config.getAttribute(
-            IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-            IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
+    if (fTypeTree != null) {
+        List<String> allTypes = RandoopLaunchConfigArgumentCollector.getAllJavaTypes(config);
+        List<String> checkedElements = RandoopLaunchConfigArgumentCollector.getCheckedJavaElements(config);
+        
         fTypeSelector = new TypeSelector(fTypeTree, allTypes, checkedElements);
-      } catch (CoreException ce) {
-        fTypeSelector = new TypeSelector(fTypeTree,
-            IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES,
-            IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
-      }
+    }
   }
 
   /**
@@ -249,9 +234,9 @@ public class RandoopLaunchConfigStatementsTab extends AbstractLaunchConfiguratio
    */
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     config.setAttribute(IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
-        IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES);
+        IRandoopLaunchConfigConstants.EMPTY_LIST);
     config.setAttribute(IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-        IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
+        IRandoopLaunchConfigConstants.EMPTY_LIST);
   }
 
   /**

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -28,6 +29,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -43,10 +46,8 @@ import randoop.plugin.RandoopActivator;
 public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfigurationDelegate {
 
   @Override
-    public void launch(ILaunchConfiguration configuration,
-                       String mode,
-                       ILaunch launch,
-                       IProgressMonitor monitor) throws CoreException {
+  public void launch(ILaunchConfiguration configuration, String mode,
+      ILaunch launch, IProgressMonitor monitor) throws CoreException {
 
     if (monitor == null) {
       monitor = new NullProgressMonitor();
@@ -59,7 +60,6 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
     }
 
     try {
-                        
       monitor.subTask("verifying_attriburtes_description");
       try {
         preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
@@ -133,7 +133,7 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
       monitor.worked(1);
 
       // Launch the configuration - 1 unit of work
-      runner.run(runConfig, launch, monitor);
+      // runner.run(runConfig, launch, monitor);
 
       // check for cancellation
       if (monitor.isCanceled()) {

@@ -148,12 +148,12 @@ public class RandoopLaunchConfigOutputTab extends
    */
   @Override
   public boolean isValid(ILaunchConfiguration config) {
-    String outputSourceFolderHandlerId = getOutputDirectoryHandlerId(config);
-    String junitPackageName = getJUnitPackageName(config);
-    String junitClassname = getJUnitClassName(config);
-    String testKinds = getTestKinds(config);
-    String maxTestsWritten = getMaxTestsWritten(config);
-    String maxTestsPerFile = getMaxTestsPerFile(config);
+    String outputSourceFolderHandlerId = RandoopLaunchConfigArgumentCollector.getOutputDirectoryHandlerId(config);
+    String junitPackageName = RandoopLaunchConfigArgumentCollector.getJUnitPackageName(config);
+    String junitClassname = RandoopLaunchConfigArgumentCollector.getJUnitClassName(config);
+    String testKinds = RandoopLaunchConfigArgumentCollector.getTestKinds(config);
+    String maxTestsWritten = RandoopLaunchConfigArgumentCollector.getMaxTestsWritten(config);
+    String maxTestsPerFile = RandoopLaunchConfigArgumentCollector.getMaxTestsPerFile(config);
     
     return validate(outputSourceFolderHandlerId, junitPackageName, junitClassname, testKinds, maxTestsWritten, maxTestsPerFile).isOK();
   };
@@ -182,9 +182,9 @@ public class RandoopLaunchConfigOutputTab extends
    */
   public void initializeFrom(ILaunchConfiguration config) {
     if (fOutputDirectory != null) {
-      String handlerId = getOutputDirectoryHandlerId(config);
+      String handlerId = RandoopLaunchConfigArgumentCollector.getOutputDirectoryHandlerId(config);
   
-      fOutputSourceFolder = getPackageFragmentRoot(handlerId);
+      fOutputSourceFolder = RandoopLaunchConfigUtil.getPackageFragmentRoot(handlerId);
       if (fOutputSourceFolder != null) {
         fOutputDirectory.setText(fOutputSourceFolder.getPath().makeRelative()
             .toString());
@@ -193,15 +193,15 @@ public class RandoopLaunchConfigOutputTab extends
       }
     }
     if (fJUnitPackageName != null)
-      fJUnitPackageName.setText(getJUnitPackageName(config));
+      fJUnitPackageName.setText(RandoopLaunchConfigArgumentCollector.getJUnitPackageName(config));
     if (fJUnitClassName != null)
-      fJUnitClassName.setText(getJUnitClassName(config));
+      fJUnitClassName.setText(RandoopLaunchConfigArgumentCollector.getJUnitClassName(config));
     if (fTestKinds != null)
-      fTestKinds.setText(getTestKinds(config));
+      fTestKinds.setText(RandoopLaunchConfigArgumentCollector.getTestKinds(config));
     if (fMaxTestsWritten != null)
-      fMaxTestsWritten.setText(getMaxTestsWritten(config));
+      fMaxTestsWritten.setText(RandoopLaunchConfigArgumentCollector.getMaxTestsWritten(config));
     if (fMaxTestsPerFile != null)
-      fMaxTestsPerFile.setText(getMaxTestsPerFile(config));
+      fMaxTestsPerFile.setText(RandoopLaunchConfigArgumentCollector.getMaxTestsPerFile(config));
   }
 
   /**
@@ -226,7 +226,7 @@ public class RandoopLaunchConfigOutputTab extends
       String junitClassname, String testKinds, String maxTestsWritten, String maxTestsPerFile) {
     IStatus status;
     
-    IPackageFragmentRoot outputDir = getPackageFragmentRoot(outputSourceFolderHandlerId);
+    IPackageFragmentRoot outputDir = RandoopLaunchConfigUtil.getPackageFragmentRoot(outputSourceFolderHandlerId);
     if(outputDir == null) {
       status = StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
       if (!status.isOK()) {
@@ -255,12 +255,12 @@ public class RandoopLaunchConfigOutputTab extends
       return StatusFactory.createErrorStatus("Test Kinds must be of type {}, {}, or {}.");
     }
   
-    status = RandoopLaunchingUtil.validatePositiveInt(maxTestsWritten, "Maximum Tests Written");
+    status = RandoopLaunchConfigUtil.validatePositiveInt(maxTestsWritten, "Maximum Tests Written");
     if (!status.isOK()) {
       return status;
     }
     
-    status = RandoopLaunchingUtil.validatePositiveInt(maxTestsPerFile, "Maximum Tests Per File");
+    status = RandoopLaunchConfigUtil.validatePositiveInt(maxTestsPerFile, "Maximum Tests Per File");
     if (!status.isOK()) {
       return status;
     }
@@ -268,74 +268,6 @@ public class RandoopLaunchConfigOutputTab extends
     return Status.OK_STATUS;
   }
 
-  protected IPackageFragmentRoot getPackageFragmentRoot(String handlerId) {
-    IJavaElement element = JavaCore.create(handlerId);
-
-    if (element == null || !(element instanceof IPackageFragmentRoot)) {
-      return null;
-    } else {
-      return (IPackageFragmentRoot) element;
-    }
-  }
-  
-  public String getOutputDirectoryHandlerId(ILaunchConfiguration config) {
-    try {
-      return config.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_OUTPUT_DIRECTORY,
-          IRandoopLaunchConfigConstants.DEFAULT_OUTPUT_DIRECTORY);
-    } catch (CoreException ce) {
-      return IRandoopLaunchConfigConstants.DEFAULT_OUTPUT_DIRECTORY;
-    }
-  }
-
-  public String getJUnitPackageName(ILaunchConfiguration config) {
-    try {
-      return config.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_JUNIT_PACKAGE_NAME,
-          IRandoopLaunchConfigConstants.DEFAULT_JUNIT_PACKAGE_NAME);
-    } catch (CoreException ce) {
-      return IRandoopLaunchConfigConstants.DEFAULT_JUNIT_PACKAGE_NAME;
-    }
-  }
-
-  public String getJUnitClassName(ILaunchConfiguration config) {
-    try {
-      return config.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_JUNIT_CLASS_NAME,
-          IRandoopLaunchConfigConstants.DEFAULT_JUNIT_CLASS_NAME);
-    } catch (CoreException ce) {
-      return IRandoopLaunchConfigConstants.DEFAULT_JUNIT_CLASS_NAME;
-    }
-  }
-
-  public String getTestKinds(ILaunchConfiguration config) {
-    try {
-      return config.getAttribute(IRandoopLaunchConfigConstants.ATTR_TEST_KINDS,
-          IRandoopLaunchConfigConstants.DEFAULT_TEST_KINDS);
-    } catch (CoreException ce) {
-      return IRandoopLaunchConfigConstants.DEFAULT_TEST_KINDS;
-    }
-  }
-
-  public String getMaxTestsWritten(ILaunchConfiguration config) {
-    try {
-      return config.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_MAXIMUM_TESTS_WRITTEN,
-          IRandoopLaunchConfigConstants.DEFAULT_MAXIMUM_TESTS_WRITTEN);
-    } catch (CoreException ce) {
-      return IRandoopLaunchConfigConstants.DEFAULT_MAXIMUM_TESTS_WRITTEN;
-    }
-  }
-
-  public String getMaxTestsPerFile(ILaunchConfiguration config) {
-    try {
-      return config.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_MAXIMUM_TESTS_PER_FILE,
-          IRandoopLaunchConfigConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
-    } catch (CoreException ce) {
-      return IRandoopLaunchConfigConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE;
-    }
-  }
   /**
    * Opens a selection dialog that allows to select a source container.
    * 
