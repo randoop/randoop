@@ -13,17 +13,24 @@
 package randoop.plugin.launching;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -60,20 +67,21 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
     }
 
     try {
-      monitor.subTask("verifying_attriburtes_description");
-      try {
-        preLaunchCheck(configuration, launch, new SubProgressMonitor(monitor, 2));
-      } catch (CoreException e) {
-        if (e.getStatus().getSeverity() == IStatus.CANCEL) {
-          monitor.setCanceled(true);
-          return;
-        }
-        throw e;
-      }
-      // check for cancellation
-      if (monitor.isCanceled()) {
-        return;
-      }
+      // monitor.subTask("verifying_attributes_description");
+      // try {
+      // preLaunchCheck(configuration, launch,
+      // new SubProgressMonitor(monitor, 2));
+      // } catch (CoreException e) {
+      // if (e.getStatus().getSeverity() == IStatus.CANCEL) {
+      // monitor.setCanceled(true);
+      // return;
+      // }
+      // throw e;
+      // }
+      // // check for cancellation
+      // if (monitor.isCanceled()) {
+      // return;
+      // }
                         
       int fPort = evaluatePort();
       launch.setAttribute(IRandoopLaunchConfigConstants.ATTR_PORT, String.valueOf(fPort));
@@ -90,26 +98,41 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
       // Environment variables
       String[] envp= getEnvironment(configuration);
 
-      ArrayList vmArguments= new ArrayList();
-      ArrayList programArguments= new ArrayList();
+      ArrayList<String> vmArguments = new ArrayList<String>();
+      ArrayList<String> programArguments = new ArrayList<String>();
       collectExecutionArguments(configuration, vmArguments, programArguments);
 
       // VM-specific attributes
       Map vmAttributesMap= getVMSpecificAttributesMap(configuration);
 
       // Classpath
+      URL[] entries = FileLocator.findEntries(RandoopActivator.getDefault()
+          .getBundle(), new Path("/lib"));
+      if (entries.length != 1) {
+        informAndAbort("Lib folder not found", null,
+            IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+      }
+      
       List<String> cpList = new ArrayList<String>(Arrays.asList(getClasspath(configuration)));
-
-      // CANNED...
-      cpList.add("C:\\Documents and Settings\\Carlos\\workspace\\randoop\\bin");
-      cpList.add("C:\\Documents and Settings\\Carlos\\workspace\\randoop\\lib\\plume.jar");
-
+      
+      try {
+        URL libFolder = FileLocator.toFileURL(entries[0]);
+        
+        cpList.add(libFolder.getPath() + "randoop.jar");
+        cpList.add(libFolder.getPath() + "plume.jar");
+      } catch (IOException e) {
+        informAndAbort("Lib folder not found", null,
+            IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+      }
+      
       String[] classpath = cpList.toArray(new String[0]);
-                        
-      System.out.println(Arrays.toString(classpath));
+      System.out.println("CLASSPATH=" + Arrays.toString(classpath));
 
       // Create VM config
       VMRunnerConfiguration runConfig= new VMRunnerConfiguration(mainTypeName, classpath);
+      for(String s : programArguments) {
+        System.out.println(s);
+      }
       runConfig.setVMArguments((String[]) vmArguments.toArray(new String[vmArguments.size()]));
       runConfig.setProgramArguments((String[]) programArguments.toArray(new String[programArguments.size()]));
       runConfig.setEnvironment(envp);
@@ -133,7 +156,7 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
       monitor.worked(1);
 
       // Launch the configuration - 1 unit of work
-      // runner.run(runConfig, launch, monitor);
+      runner.run(runConfig, launch, monitor);
 
       // check for cancellation
       if (monitor.isCanceled()) {
@@ -152,8 +175,10 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
    * @param programArguments a {@link List} of {@link String} representing the resulting program arguments
    * @exception CoreException if unable to collect the execution arguments
    */
-  protected void collectExecutionArguments(ILaunchConfiguration configuration, List/*String*/ vmArguments, List/*String*/ programArguments) throws CoreException {
-
+  protected void collectExecutionArguments(ILaunchConfiguration configuration,
+      List<String> vmArguments, List<String> programArguments) throws CoreException {
+    RandoopLaunchConfigArgumentCollector args = new RandoopLaunchConfigArgumentCollector(configuration);
+    
     // add program & VM arguments provided by getProgramArguments and getVMArguments
     String pgmArgs= getProgramArguments(configuration);
     String vmArgs= getVMArguments(configuration);
@@ -161,17 +186,29 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
     vmArguments.addAll(Arrays.asList(execArgs.getVMArgumentsArray()));
     programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
 
-      // CANNED...
-    programArguments.add("gentests"); //$NON-NLS-1$
-    programArguments.add("--maxsize=50"); //$NON-NLS-1$
-    programArguments.add("--forbid-null=false"); //$NON-NLS-1$
-    programArguments.add("--null-ratio=0.2"); //$NON-NLS-1$
-    programArguments.add("--usethreads=false"); //$NON-NLS-1$
-    programArguments.add("--noprogressdisplay=true"); //$NON-NLS-1$
-    programArguments.add("--inputlimit=1000"); //$NON-NLS-1$
-    programArguments.add("--output-tests=fail"); //$NON-NLS-1$
-    programArguments.add("--testclass=Graph"); //$NON-NLS-1$
-    programArguments.add("--testclass=NameVisitor"); //$NON-NLS-1$
+    programArguments.add("gentests");  //$NON-NLS-1$
+    
+    for(IType type : args.getCheckedTypes()) {
+      programArguments.add("--testclass="+type.getFullyQualifiedName()); //$NON-NLS-1$
+    }
+    
+    programArguments.add("--randomseed=" + args.getRandomSeed());//$NON-NLS-1$
+    programArguments.add("--maxsize=" + args.getMaxTestSize());//$NON-NLS-1$
+    programArguments.add("--usethreads=" + args.getUseThreads());//$NON-NLS-1$
+    programArguments.add("--timeout=" + args.getThreadTimeout());//$NON-NLS-1$
+    programArguments.add("--forbid-null=" + !args.getUseNull());//$NON-NLS-1$
+    programArguments.add("--null-ratio=" + args.getNullRatio());//$NON-NLS-1$
+    programArguments.add("--inputlimit=" + args.getJUnitTestInputs());//$NON-NLS-1$
+    programArguments.add("--timelimit=" + args.getTimeLimit());//$NON-NLS-1$
+    
+    IPath absoluteOutputDir = ResourcesPlugin.getWorkspace().getRoot()
+        .getLocation().append(args.getOutputDirectory());
+    programArguments.add("--junit-output-dir=" + absoluteOutputDir);//$NON-NLS-1$
+    programArguments.add("--junit-package-name=" + args.getJUnitPackageName());//$NON-NLS-1$
+    programArguments.add("--junit-classname=" + args.getJUnitClassName());//$NON-NLS-1$
+    programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$
+    programArguments.add("--outputlimit=" + args.getMaxTestsWritten());//$NON-NLS-1$
+    programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
   }
 
   private int evaluatePort() throws CoreException {
@@ -192,18 +229,20 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
    * @throws CoreException an exception is thrown when the verification fails
    */
   protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
-    try {
-      IJavaProject javaProject= getJavaProject(configuration);
-      if ((javaProject == null) || !javaProject.exists()) {
-        informAndAbort("error_invalidproject", null, IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
-      }
-    } finally {
-      monitor.done();
-    }
+    // XXX Check project dependencies
+    // try {
+    // IJavaProject javaProject= getJavaProject(configuration);
+    // if ((javaProject == null) || !javaProject.exists()) {
+    // informAndAbort("error_invalidproject", null,
+    // IJavaLaunchConfigurationConstants.ERR_NOT_A_JAVA_PROJECT);
+    // }
+    // } finally {
+    // monitor.done();
+    // }
   }
 
   private void informAndAbort(String message, Throwable exception, int code) throws CoreException {
-    IStatus status= new Status(IStatus.INFO, RandoopActivator.PLUGIN_ID, code, message, exception);
+    IStatus status= new Status(IStatus.INFO, RandoopActivator.getPluginId(), code, message, exception);
     if (showStatusMessage(status)) {
       // Status message successfully shown
       // -> Abort with INFO exception
@@ -234,7 +273,6 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
                           );
     return success[0];
   }
-        
 
   private Display getDisplay() {
     Display display;
