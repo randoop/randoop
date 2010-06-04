@@ -8,13 +8,15 @@ import randoop.plugin.RandoopActivator;
 public class IRandoopLaunchConfigConstants {
   public static final String ATTR_PORT = "PORT";
   
-  public static String EMPTY_STRING = ""; //$NON-NLS-1$
-
-  public static String STR_ALL = "All";
+  public static final String EMPTY_STRING = ""; //$NON-NLS-1$
   
-  public static String STR_PASS = "Pass";
+  public static final List<String> EMPTY_LIST = new ArrayList<String>();
   
-  public static String STR_FAIL = "Fail";
+  public static final String STR_ALL = "All";
+  
+  public static final String STR_PASS = "Pass";
+  
+  public static final String STR_FAIL = "Fail";
   
   public static final String ATTR_RANDOM_SEED = RandoopActivator.getPluginId() + ".RANDOM_SEED"; //$NON-NLS-1$
   
@@ -83,8 +85,4 @@ public class IRandoopLaunchConfigConstants {
   public static final String DEFUALT_USE_LOCAL_TEMP_FOLDER = "false"; //$NON-NLS-1$
 
   public static final String DEFAULT_TEMP_FOLDER = "randoop-tmp/"; //$NON-NLS-1$
-  
-  public static final List<String> DEFAULT_ALL_JAVA_TYPES = new ArrayList<String>();
-
-  public static final List<String> DEFAULT_CHECKED_JAVA_ELEMENTS = new ArrayList<String>();
 }
