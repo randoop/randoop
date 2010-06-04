@@ -63,7 +63,7 @@
           <launchConfigurationType
             name="Randoop Launcher"
             delegate="randoop.plugin.launching.RandoopLaunchConfigDelegate"
-            modes="run, debug"
+            modes="run"
             id="randoop.plugin.launching.launchconfig">
       </launchConfigurationType>
    </extension>
