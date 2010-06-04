@@ -12,6 +12,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import randoop.plugin.launching.IRandoopLaunchConfigConstants;
+import randoop.plugin.launching.RandoopLaunchConfigArgumentCollector;
 
 public class LaunchConfigurationTypeChange extends Change {
   private ILaunchConfiguration fLaunchConfiguration;
@@ -84,16 +85,8 @@ public class LaunchConfigurationTypeChange extends Change {
     final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration
         .getWorkingCopy();
 
-    try {
-      allTypes = wc.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_ALL_JAVA_TYPES,
-          IRandoopLaunchConfigConstants.DEFAULT_ALL_JAVA_TYPES);
-      checkedElements = wc.getAttribute(
-          IRandoopLaunchConfigConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-          IRandoopLaunchConfigConstants.DEFAULT_CHECKED_JAVA_ELEMENTS);
-    } catch (CoreException ce) {
-      return null;
-    }
+    allTypes = RandoopLaunchConfigArgumentCollector.getAllJavaTypes(wc);
+    checkedElements = RandoopLaunchConfigArgumentCollector.getCheckedJavaElements(wc);
 
     String oldHandlerId = fOldType.getHandleIdentifier();
     String newHandlerId = fNewType.getHandleIdentifier();
