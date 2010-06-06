@@ -58,7 +58,7 @@ public class ForwardExplorerTests extends TestCase {
     classes.add(BiSort.class);
     //GenFailures.noprogressdisplay = true;
     //Log.log = new FileWriter("templog.txt");
-    long oldTimeout = ReflectionExecutor.timeout;
+    int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 200;
     ForwardGenerator exp =
       new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, null);
