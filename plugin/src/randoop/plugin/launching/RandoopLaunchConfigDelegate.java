@@ -107,7 +107,10 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
 
       // Classpath
       URL[] entries = FileLocator.findEntries(RandoopActivator.getDefault()
-          .getBundle(), new Path("/lib"));
+          .getBundle(), new Path("")); //$NON-NLS-1$ XXX change "" to /lib
+      for(URL url : entries) {
+        System.out.println(url);
+      }
       if (entries.length != 1) {
         informAndAbort("Lib folder not found", null,
             IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
@@ -118,8 +121,9 @@ public class RandoopLaunchConfigDelegate extends AbstractJavaLaunchConfiguration
       try {
         URL libFolder = FileLocator.toFileURL(entries[0]);
         
-        cpList.add(libFolder.getPath() + "randoop.jar");
-        cpList.add(libFolder.getPath() + "plume.jar");
+        // XXX change to randoop.jar and plume.jar
+        cpList.add(libFolder.getPath() + "../bin/"); //$NON-NLS-1$
+        cpList.add(libFolder.getPath() + "../lib/plume.jar"); //$NON-NLS-1$
       } catch (IOException e) {
         informAndAbort("Lib folder not found", null,
             IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
