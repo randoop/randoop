@@ -17,7 +17,7 @@ public class NonterminatingInputTest extends TestCase {
 
     Sequence s = new Sequence();
     s = s.extend(RConstructor.getRConstructor(Looper.class.getConstructor()), new ArrayList<Variable>());
-    long oldTimeout = ReflectionExecutor.timeout;
+    int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;
     ExecutableSequence es = new ExecutableSequence(s);
     es.execute(new DummyVisitor());

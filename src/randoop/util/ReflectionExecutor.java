@@ -20,7 +20,7 @@ public final class ReflectionExecutor {
   public static boolean usethreads = true;
   
   @Option("See \"usethreads\" option. This option specificies the number of milliseconds after which a non-returning method call, and its associated test, are stopped forcefully. Only meaningfull with --usethreads.")
-  public static long timeout = 5000;
+  public static int timeout = 5000;
 
 
   public static class TimeoutExceeded extends RuntimeException {
