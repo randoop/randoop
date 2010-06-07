@@ -38,7 +38,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-import randoop.plugin.RandoopActivator;
+import randoop.plugin.RandoopPlugin;
 
 /**
  * This is a specialization of <code>FilteredItemsSelectionDialog</code> used to
@@ -155,7 +155,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
                 return project.getOutputLocation().toOSString().substring(1)
                     + " - " + name; //$NON-NLS-1$
               } catch (JavaModelException e) {
-                RandoopActivator.log(e);
+                RandoopPlugin.log(e);
               }
             }
           } else {
@@ -211,7 +211,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
     }
   }
 
-  private static final String SETTINGS_ID = RandoopActivator.PLUGIN_ID
+  private static final String SETTINGS_ID = RandoopPlugin.PLUGIN_ID
       + ".MAIN_METHOD_SELECTION_DIALOG"; //$NON-NLS-1$
   private IType[] fTypes = null;
 
@@ -252,7 +252,7 @@ public class DebugTypeSelectionDialog extends FilteredItemsSelectionDialog {
    */
   @Override
   protected IDialogSettings getDialogSettings() {
-    IDialogSettings settings = RandoopActivator.getDefault().getDialogSettings();
+    IDialogSettings settings = RandoopPlugin.getDefault().getDialogSettings();
     IDialogSettings section = settings.getSection(SETTINGS_ID);
     if (section == null) {
       section = settings.addNewSection(SETTINGS_ID);

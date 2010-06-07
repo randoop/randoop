@@ -12,7 +12,7 @@
             name="Randoop"
             icon="icons/sample.gif"
             category="randoop"
-            class="randoop.plugin.views.RandoopView"
+            class="randoop.plugin.internal.ui.views.RandoopView"
             id="randoop.plugin.views.RandoopView">
       </view>
    </extension>
@@ -37,7 +37,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="randoop.preferences.SamplePreferencePage"
+            class="randoop.plugin.internal.ui.preferences.SamplePreferencePage"
             id="randoop.preferences.SamplePreferencePage"
             name="Sample Preferences">
       </page>
@@ -46,7 +46,7 @@
          point="org.eclipse.ui.propertyPages">
       <page
             adaptable="true"
-            class="randoop.plugin.properties.ProjectPropertyPage"
+            class="randoop.plugin.internal.ui.properties.ProjectPropertyPage"
             id="randoop.plugin.projectPage"
             name="Randoop"
             objectClass="org.eclipse.core.resources.IProject">
@@ -55,14 +55,14 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="randoop.preferences.PreferenceInitializer">
+            class="randoop.plugin.internal.ui.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
           <launchConfigurationType
             name="Randoop Launcher"
-            delegate="randoop.plugin.launching.RandoopLaunchConfigDelegate"
+            delegate="randoop.plugin.internal.launching.RandoopLaunchConfigurationDelegate"
             modes="run"
             id="randoop.plugin.launching.launchconfig">
       </launchConfigurationType>
@@ -72,7 +72,7 @@
          
           <launchConfigurationTabGroup
             type="randoop.plugin.launching.launchconfig"
-            class="randoop.plugin.launching.RandoopLaunchConfigTabGroup"
+            class="randoop.plugin.internal.launching.RandoopLaunchConfigurationTabGroup"
             id="randoop.plugin.launching.launchconfig.tabgroup">
       </launchConfigurationTabGroup> 
    </extension>
@@ -87,7 +87,7 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
-            class="randoop.plugin.internal.core.refactoring.ITypeRenameParticipant"
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationITypeRenameParticipant"
             id="randoop.plugin.refactoring.launching.typeRename"
             name="Launch configuration participant">
          <enablement>
@@ -109,7 +109,7 @@
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="randoop.plugin.internal.core.refactoring.IPackageFragmentRenameParticipant"
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationIPackageFragmentRenameParticipant"
             id="randoop.plugin.refactoring.launching.packageRename"
             name="Launch configuration participant">
          <enablement>
@@ -131,7 +131,7 @@
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="randoop.plugin.internal.core.refactoring.IJavaProjectRenameParticipant"
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationIJavaProjectRenameParticipant"
             id="randoop.plugin.refactoring.launching.projectRename"
             name="Launch configuration participant">
          <enablement>
@@ -153,7 +153,7 @@
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="randoop.plugin.internal.core.refactoring.ITypeRenameParticipant"
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationITypeRenameParticipant"
             id="randoop.plugin.refactoring.launching.methodRename"
             name="Launch configuration participant">
          <enablement>
@@ -175,7 +175,7 @@
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="randoop.plugin.internal.core.refactoring.IPackageFragmentRootRenameParticipant"
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationIPackageFragmentRootRenameParticipant"
             id="randoop.plugin.refactoring.launching.folderRename"
             name="Launch configuration participant">
          <enablement>
@@ -200,7 +200,7 @@
    <extension
          point="org.eclipse.ltk.core.refactoring.moveParticipants">
       <moveParticipant
-            class="randoop.plugin.internal.core.refactoring.ITypeMoveParticipant"
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationITypeMoveParticipant"
             id="randoop.plugin.refactoring.launching.typeMove"
             name="Launch configuration participant">
          <enablement>
@@ -221,7 +221,7 @@
             </with></enablement>
       </moveParticipant>
       <moveParticipant
-            class="randoop.plugin.internal.core.refactoring.IPackageFragmentMoveParticipant"
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationIPackageFragmentMoveParticipant"
             id="randoop.plugin.refactoring.launching.packageMove"
             name="Launch configuration participant">
          <enablement>

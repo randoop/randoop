@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-import randoop.plugin.RandoopActivator;
+import randoop.plugin.RandoopPlugin;
 
 /**
  * Factory class to create some SWT resources.
@@ -638,7 +638,7 @@ public class SWTFactory {
    */
   public static void showPreferencePage(String id) {
     PreferencesUtil.createPreferenceDialogOn(
-        RandoopActivator.getActiveWorkbenchShell(), id, new String[] { id },
+        RandoopPlugin.getActiveWorkbenchShell(), id, new String[] { id },
         null).open();
   }
 }
