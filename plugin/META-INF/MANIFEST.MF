@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Randoop
 Bundle-SymbolicName: randoop; singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: randoop.plugin.RandoopActivator
+Bundle-Activator: randoop.plugin.RandoopPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.debug.core;bundle-version="3.5.1",
