@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.core.runtime.Assert;
 
-import randoop.plugin.RandoopActivator;
+import randoop.plugin.RandoopPlugin;
 
 /**
  * The TypeSelector class is used to manage a Tree object so that the user can
@@ -121,9 +121,9 @@ public class TypeSelector {
         fTreeItemsByHandlerId.put(m.getHandleIdentifier(), methodItem);
       }
     } catch (JavaModelException e) {
-      RandoopActivator.log(e);
+      RandoopPlugin.log(e);
     }
-    
+
     setChecked(root, checked);
     return root;
   }
@@ -268,6 +268,32 @@ public class TypeSelector {
     TreeItem[] items = item.getItems();
     for (int i = 0; i < items.length; i++) {
       checkItems(items[i], checked);
+    }
+  }
+
+  public void removeSelectedTypes() {
+    TreeItem[] items = fTypeTree.getSelection();
+
+    for (TreeItem item : items) {
+      // Only remove root elements
+      if (item.getParentItem() == null) {
+        item.dispose();
+      }
+    }
+
+    // Find the keys for the TreeItems that have been disposed and add them to a
+    // list
+    List<String> disposables = new ArrayList<String>();
+    for (String id : fTreeItemsByHandlerId.keySet()) {
+      TreeItem item = fTreeItemsByHandlerId.get(id);
+      if (item.isDisposed()) {
+        disposables.add(id);
+      }
+    }
+
+    // remove the TreeItems that have been disposed
+    for (String id : disposables) {
+      fTreeItemsByHandlerId.remove(id);
     }
   }
 }
