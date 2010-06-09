@@ -102,8 +102,8 @@ public class OutputTab extends
     fJUnitClassName.addModifyListener(fBasicModifyListener);
 
     SWTFactory.createLabel(comp, "Test &Kinds:", 1);
-    fTestKinds = SWTFactory.createCombo(comp, SWT.READ_ONLY, 2, new String[] {
-        "All", "Pass", "Fail" });
+    fTestKinds = SWTFactory.createCombo(comp, SWT.READ_ONLY, 2,
+        TestKinds.getTranslatableNames());
 
     SWTFactory.createLabel(comp, "Maximum Tests &Written:", 1);
     fMaxTestsWritten = SWTFactory.createSingleText(comp, 2);

@@ -17,6 +17,7 @@ import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.ui.RandoopLaunchConfigurationUtil;
 
 public class RandoopArgumentCollector {
+  private String fName;
   private List<IType> fCheckedTypes;
   private List<IMethod> fCheckedMethods;
   private int fRandomSeed;
@@ -35,6 +36,8 @@ public class RandoopArgumentCollector {
   private int fMaxTestsPerFile;
 
   public RandoopArgumentCollector(ILaunchConfiguration config) {
+    fName = config.getName();
+
     fCheckedTypes = new ArrayList<IType>();
     fCheckedMethods = new ArrayList<IMethod>();
 
@@ -53,9 +56,11 @@ public class RandoopArgumentCollector {
     fRandomSeed = Integer.parseInt(getRandomSeed(config));
     fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
     fUseThreads = getUseThreads(config);
-    fThreadTimeout = Integer.parseInt(getThreadTimeout(config));
+    if (fUseThreads)
+      fThreadTimeout = Integer.parseInt(getThreadTimeout(config));
     fUseNull = getUseNull(config);
-    fNullRatio = Double.parseDouble(getNullRatio(config));
+    if (fUseNull)
+      fNullRatio = Double.parseDouble(getNullRatio(config));
     fJUnitTestInputs = Integer.parseInt(getJUnitTestInputs(config));
     fTimeLimit = Integer.parseInt(getTimeLimit(config));
 
@@ -63,7 +68,7 @@ public class RandoopArgumentCollector {
     IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil
         .getPackageFragmentRoot(outputSourceFolderHandlerId);
     if (outputDir != null) {
-      fOutputDirectory = outputDir.getPath().makeAbsolute();
+      fOutputDirectory = outputDir.getPath().makeRelative();
     }
 
     fJUnitPackageName = getJUnitPackageName(config);
@@ -71,6 +76,10 @@ public class RandoopArgumentCollector {
     fTestKinds = getTestKinds(config);
     fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
     fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
+  }
+
+  public Object getName() {
+    return fName;
   }
 
   public List<IType> getCheckedTypes() {
@@ -162,9 +171,11 @@ public class RandoopArgumentCollector {
   }
 
   public static boolean getUseThreads(ILaunchConfiguration config) {
-    return getAttribute(config,
+    return getAttribute(
+        config,
         IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS,
-        Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS));
+        Boolean
+            .parseBoolean(IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS));
   }
 
   public static String getThreadTimeout(ILaunchConfiguration config) {
