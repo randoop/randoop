@@ -170,7 +170,6 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
         IRunnableWithProgress typeSearcher = new IRunnableWithProgress() {
           @Override
           public void run(IProgressMonitor pm) throws InvocationTargetException {
-            int work = 0;
             pm.beginTask("Searching for Java types...", IProgressMonitor.UNKNOWN);
             
             // Search each IJavaProject for ITypes and add them to a list.
@@ -181,7 +180,7 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
                   for (ICompilationUnit cu : pf.getCompilationUnits()) {
                     for (IType t : cu.getAllTypes()) {
                       availableTypes.add(t);
-                      pm.worked(work++);
+                      pm.worked(1);
                     }
                   }
                 }

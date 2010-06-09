@@ -62,7 +62,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
           <launchConfigurationType
             name="Randoop Launcher"
-            delegate="randoop.plugin.internal.launching.RandoopLaunchConfigurationDelegate"
+            delegate="randoop.plugin.internal.ui.launchConfigurations.RandoopLaunchConfigurationDelegate"
             modes="run"
             id="randoop.plugin.launching.launchconfig">
       </launchConfigurationType>
@@ -72,7 +72,7 @@
          
           <launchConfigurationTabGroup
             type="randoop.plugin.launching.launchconfig"
-            class="randoop.plugin.internal.launching.RandoopLaunchConfigurationTabGroup"
+            class="randoop.plugin.internal.ui.launchConfigurations.RandoopLaunchConfigurationTabGroup"
             id="randoop.plugin.launching.launchconfig.tabgroup">
       </launchConfigurationTabGroup> 
    </extension>
