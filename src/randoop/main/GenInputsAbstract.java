@@ -73,6 +73,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use null with the given frequency. [TODO explain]")
   public static Double null_ratio = null;
   
+  @Option("Force Randoop to relay information about the program's execution over "
+      + "a connection to the specified port on the local machine. Information is "
+  		+ "sent using a serialized randoop.runtime.Message object. Printing is also "
+      + "suppressed.")
+  public static int comm_port = -1;
+  
   @Unpublicized @Option("Use long format for outputting JUnit tests. The long format" +
   "emits exactly one line per statement, including primitive declarations, and" +
   "uses boxed primitives. This option is used in the branch-directed generation project.")

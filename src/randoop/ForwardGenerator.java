@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
+import randoop.runtime.MessageSender;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -49,9 +50,9 @@ public class ForwardGenerator extends AbstractGenerator {
   public ForwardGenerator(List<StatementKind> statements,
       List<Class<?>> coverageClasses,
       long timeMillis, int maxSequences,
-      SequenceCollection seeds) {
+      SequenceCollection seeds, MessageSender msgSender) {
 
-    super(statements, coverageClasses, timeMillis, maxSequences, seeds);
+    super(statements, coverageClasses, timeMillis, maxSequences, seeds, msgSender);
 
 //    System.out.printf ("list of statements for ForwardGenerator = %s%n",
 //                       statements);

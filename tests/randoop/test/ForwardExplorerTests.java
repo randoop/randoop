@@ -39,7 +39,7 @@ public class ForwardExplorerTests extends TestCase {
 
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     ForwardGenerator explorer = new ForwardGenerator(m,
-      null, Long.MAX_VALUE, 5000, null);
+      null, Long.MAX_VALUE, 5000, null, null);
     explorer.explore();
     GenInputsAbstract.dontexecute = false;
     assertTrue(explorer.allSequences.size() != 0);
@@ -61,7 +61,7 @@ public class ForwardExplorerTests extends TestCase {
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 200;
     ForwardGenerator exp =
-      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, null);
+      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, null, null);
     exp.explore();
     ReflectionExecutor.timeout = oldTimeout;
     for (Sequence s : exp.allSequences()) {
@@ -164,7 +164,7 @@ public class ForwardExplorerTests extends TestCase {
     System.out.println(classes);
 
     ForwardGenerator exp =
-      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, null);
+      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, null, null);
     GenInputsAbstract.forbid_null = false;
     exp.explore();
     for (Sequence s : exp.allSequences()) {
