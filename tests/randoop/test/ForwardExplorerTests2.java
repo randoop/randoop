@@ -27,7 +27,7 @@ public class ForwardExplorerTests2 extends TestCase {
 
     //SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
     ForwardGenerator exp =
-      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 100, null);
+      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 100, null, null);
     GenInputsAbstract.forbid_null = false;
     exp.explore();
     for (Sequence s : exp.allSequences()) {

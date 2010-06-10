@@ -107,7 +107,7 @@ public abstract class AbstractRandoopTest extends TestCase {
     GenInputsAbstract.forbid_null = false;
     GenInputsAbstract.null_ratio = 0.2;
     ReflectionExecutor.usethreads = false;
-    ForwardGenerator explorer = new ForwardGenerator(model, null, getTimeLimitSeconds() * 1000, getInputLimit(), components);
+    ForwardGenerator explorer = new ForwardGenerator(model, null, getTimeLimitSeconds() * 1000, getInputLimit(), components, null);
     GenInputsAbstract.noprogressdisplay = true;
     GenInputsAbstract.output_tests = (getMode() == Mode.ERRORS ? "fail" : "pass");
     GenInputsAbstract.junit_output_dir = "tests";

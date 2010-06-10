@@ -14,6 +14,8 @@ import randoop.SequenceGeneratorStats;
 import randoop.experiments.SizeEqualizer;
 import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
+import randoop.runtime.Message;
+import randoop.runtime.MessageSender;
 import randoop.util.Files;
 import randoop.util.Log;
 import randoop.util.ReflectionExecutor;
@@ -43,6 +45,7 @@ public abstract class AbstractGenerator {
   public List<Class<?>> covClasses;
   public SequenceCollection seeds;
   public SizeEqualizer sizeEqualizer = new SizeEqualizer();
+  private MessageSender msgSender;
 
   /**
    *
@@ -76,6 +79,16 @@ public abstract class AbstractGenerator {
     } else {
       this.seeds = seeds;
     }
+    
+    msgSender = null;
+  }
+
+  public AbstractGenerator(List<StatementKind> statements,
+      List<Class<?>> covClasses, long timeMillis, int maxSequences,
+      SequenceCollection seeds, MessageSender msgSender) {
+    this(statements, covClasses, timeMillis, maxSequences, seeds);
+    
+    this.msgSender = msgSender;
   }
 
   protected boolean stop() {
@@ -115,6 +128,11 @@ public abstract class AbstractGenerator {
         }
       }
 
+      if (msgSender != null) {
+        Message msg = new Message(Message.Type.START, timeMillis, maxSequences);
+        msgSender.send(msg);
+      }
+      
       while (!stop()) {
 
         Coverage.clearCoverage(covClasses);
@@ -165,6 +183,11 @@ public abstract class AbstractGenerator {
           Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
           Log.logLine("allSequences.size()=" + numSequences());
         }
+        
+        if (msgSender != null) {
+          Message msg = new Message(Message.Type.WORK, timer.getTimeElapsedMillis(), numSequences());
+          msgSender.send(msg);
+        }
       }
       
       if (!GenInputsAbstract.noprogressdisplay) {
@@ -190,6 +213,11 @@ public abstract class AbstractGenerator {
         }
       }
 
+      if (msgSender != null) {
+        Message msg = new Message(Message.Type.DONE, timer.getTimeElapsedMillis(), numSequences());
+        msgSender.send(msg);
+        msgSender.close();
+      }
     }
 
   /**
