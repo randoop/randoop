@@ -53,6 +53,7 @@ import randoop.SequenceCollection;
 import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
 import randoop.Variable;
+import randoop.runtime.MessageSender;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.Randomness;
@@ -158,6 +159,17 @@ public class GenTests extends GenInputsAbstract {
       System.out.println("Use the --classlist, --testclass, or --methodlist options.");
       System.exit(1);
     }
+    
+    MessageSender msgSender = null;
+    if (comm_port > 0) {
+      try {
+        msgSender = new MessageSender(comm_port);
+      } catch (IOException e) {
+        System.out.println("Could not connect to port " + comm_port + " on local host");
+        System.exit(1);
+      }
+    }
+    
     List<Class<?>> allClasses = findClassesFromArgs(options);
 
     // Remove private (non-.isVisible) classes and abstract classes
@@ -275,7 +287,8 @@ public class GenTests extends GenInputsAbstract {
         covClasses,
         timelimit * 1000,
         inputlimit,
-        components);
+        components,
+        msgSender);
 
     } else {
 

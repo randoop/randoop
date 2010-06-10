@@ -13,6 +13,7 @@
 package randoop.plugin.internal.ui.launchConfigurations;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMRunner;
-import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -42,10 +42,13 @@ import org.eclipse.swt.widgets.Shell;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopResources;
 import randoop.plugin.internal.core.RandoopTestSetResources;
+import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
 
 public class RandoopLaunchConfigurationDelegate extends
     AbstractJavaLaunchConfigurationDelegate {
+  private int fPort;
+  
   /*
    * (non-Javadoc)
    * 
@@ -77,7 +80,8 @@ public class RandoopLaunchConfigurationDelegate extends
         informAndAbort(status);
       }
       
-      int fPort = evaluatePort();
+      MessageReceiver msgReceiver = new MessageReceiver();
+      fPort = msgReceiver.getPort();
       launch.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_PORT,
           String.valueOf(fPort));
       
@@ -146,12 +150,15 @@ public class RandoopLaunchConfigurationDelegate extends
       monitor.worked(1);
 
       // Launch the configuration - 1 unit of work
+      new Thread(msgReceiver).start();
       runner.run(runConfig, launch, monitor);
 
       // check for cancellation
       if (monitor.isCanceled()) {
         return;
       }
+    } catch (IOException e) {
+      System.err.println("Could not find free communication port");
     } finally {
       monitor.done();
     }
@@ -208,23 +215,7 @@ public class RandoopLaunchConfigurationDelegate extends
     programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$
     programArguments.add("--outputlimit=" + args.getMaxTestsWritten());//$NON-NLS-1$
     programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
-  }
-
-  /**
-   * Finds and returns a free port for the system to use. A
-   * <code>CoreException</code> is thrown if no free port could be found.
-   * 
-   * @return a free socket
-   * @throws CoreException
-   *           if no socket is found
-   */
-  private int evaluatePort() throws CoreException {
-    int port = SocketUtil.findFreePort();
-    if (port == -1) {
-      informAndAbort("Error: no available ports found found", null,
-          IJavaLaunchConfigurationConstants.ERR_NO_SOCKET_AVAILABLE);
-    }
-    return port;
+    programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
   }
 
   private void informAndAbort(String message, Throwable exception, int code)

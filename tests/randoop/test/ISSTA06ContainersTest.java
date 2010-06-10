@@ -36,7 +36,7 @@ public class ISSTA06ContainersTest extends TestCase {
       Reflection.getStatements(classList, new DefaultReflectionFilter(pattern));
 
     ForwardGenerator explorer = new ForwardGenerator(statements,
-        null, Long.MAX_VALUE, inputLimit, null);
+        null, Long.MAX_VALUE, inputLimit, null, null);
     explorer.setObjectCache(new ObjectCache(new EverythingIsDifferentMatcher()));
     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
     GenInputsAbstract.repeat_heuristic = true;

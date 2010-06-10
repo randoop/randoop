@@ -16,7 +16,7 @@ public class JPF_Containers_Test extends TestCase {
     List<Class<?>> l = new ArrayList<Class<?>>();
     l.add(randoop.test.issta2006.BinomialHeap.class);
     ForwardGenerator explorer =
-      new ForwardGenerator(Reflection.getStatements(l, null), null, Long.MAX_VALUE, 100, null);
+      new ForwardGenerator(Reflection.getStatements(l, null), null, Long.MAX_VALUE, 100, null, null);
     explorer.explore();
     //assertEquals(36, BinomialHeap.counter);
   }
@@ -25,7 +25,7 @@ public class JPF_Containers_Test extends TestCase {
     List<Class<?>> l = new ArrayList<Class<?>>();
     l.add(randoop.test.issta2006.BinTree.class);
     ForwardGenerator explorer =
-      new ForwardGenerator(Reflection.getStatements(l, null), null, Long.MAX_VALUE, 100, null);
+      new ForwardGenerator(Reflection.getStatements(l, null), null, Long.MAX_VALUE, 100, null, null);
     explorer.explore();
     //assertEquals(32, BinTree.counter);
   }
@@ -34,7 +34,7 @@ public class JPF_Containers_Test extends TestCase {
     List<Class<?>> l = new ArrayList<Class<?>>();
     l.add(randoop.test.issta2006.FibHeap.class);
     ForwardGenerator explorer =
-      new ForwardGenerator(Reflection.getStatements(l, null), null, Long.MAX_VALUE, 100, null);
+      new ForwardGenerator(Reflection.getStatements(l, null), null, Long.MAX_VALUE, 100, null, null);
     explorer.explore();
     //assertEquals(91, FibHeap.counter);
   }
@@ -43,7 +43,7 @@ public class JPF_Containers_Test extends TestCase {
     List<Class<?>> l = new ArrayList<Class<?>>();
     l.add(randoop.test.issta2006.TreeMap.class);
     ForwardGenerator explorer =
-      new ForwardGenerator(Reflection.getStatements(l, null), null, Long.MAX_VALUE, 100, null);
+      new ForwardGenerator(Reflection.getStatements(l, null), null, Long.MAX_VALUE, 100, null, null);
     explorer.explore();
     //assertEquals(32, TreeMap.counter);
   }
