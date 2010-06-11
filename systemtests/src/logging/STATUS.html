@@ -1,0 +1,171 @@
+<!--
+
+ Copyright 2001-2004 The Apache Software Foundation.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+
+<html>
+<head>
+<title>Status File for Jakarta Commons "Logging" Component</title>
+<head>
+<body bgcolor="white">
+
+
+<div align="center">
+<h1>The Jakarta Commons <em>Logging</em> Component</h1>
+$Id: STATUS.html,v 1.16 2004/02/28 23:20:57 craigmcc Exp $<br />
+<a href="#Introduction">[Introduction]</a>
+<a href="#Dependencies">[Dependencies]</a>
+<a href="#Release Info">[Release Info]</a>
+<a href="#Committers">[Committers]</a>
+<a href="#Action Items">[Action Items]</a>
+<br /><br />
+</div>
+
+
+<a name="Introduction"></a>
+<h3>1.  INTRODUCTION</h3>
+
+
+<p> The commons-logging package provides a simple, component 
+oriented interface (<code>org.apache.commons.logging.Log</code>) together with wrappers for 
+logging systems. The user can choose at runtime
+which system they want to use. 
+In addition, a small number of basic implementations are provided
+to allow users to use the package standalone.
+</p>
+
+<p>commons-logging was heavily influenced by Avalon's Logkit and Log4J.  The commons-logging
+abstraction is meant to minimixe the differences between the two, and to allow a
+developer to not tie himself to a particular logging implementation.
+</p>
+
+<p>
+The package does :
+<ul>
+<li>Have an API which should be as simple to use as possible</li>
+<li>Provide support for Avalon's Logkit</li>
+<li>Provide support for JDK 1.4 logging</li>
+<li>Provide support for Log4J</li>
+<li>Provide support for Avalon-Framework's Logger</li>
+<li>Provide support for <a href="http://sourceforge.net/projects/lumberjack/>
+    LumberJack</a> logger</li>
+<li>Provide pluggable support for other logging APIs</li>
+<li>Privide a simple System.out logger</li>
+</ul>
+</p>
+
+<p>
+Non-goals:
+<ul>
+<li>This package will not perform logging itself, except at the most basic
+    level.</li>
+<li>We do not seek to become a "standard" API.</li>
+</ul>
+</p>
+ 
+
+<a name="Dependencies"></a>
+<h3>2.  DEPENDENCIES</h3>
+
+<p>The <em>Logging</em> component is dependent upon the following external
+components for compilation:</p>
+<ul>
+<li><a href="http://java.sun.com/j2se">Java Development Kit</a>
+    (Version 1.2 or later)</li>
+<li><a href="http://jakarta.apache.org/log4j/">Jakarta Log4j</a>
+    (Optional, Version 1.2.6 or later)</li>
+<li><a href="http://avalon.apache.org/">Apache Avalon
+    LogKit</a> (Optional, Version 1.0.1 or later)</li>
+<li><a href="http://avalon.apache.org/">Apache Avalon
+    Framework</a> (Optional, Version 4.0 or later)</li>
+<li><a href="http://projects.sourceforge.net/lumberjack/">LumberJack</a></li>
+<li><a href="http://java.sun.com/j2se">Java Development Kit</a> (Version 1.4
+    or later) logging APIs (Optional)</li>
+</ul>
+
+<p> Of course, the user must ensure that any logging systems that they wish
+to use are present in the classpath when they use this component. </p>
+
+<a name="Release Info"></a>
+<h3>3.  RELEASE INFO</h3>
+
+<table border="1">
+  <tr>
+    <th width="50%">Version</th>
+    <th width="50%">Release Date</th>
+  </tr>
+  <tr>
+    <td>commons-logging-1.0.3 is available through the standard mirrors.
+    Binaries are <a href='http://jakarta.apache.org/site/binindex.cgi'>here</a> and
+    source is <a href='http://jakarta.apache.org/site/sourceindex.cgi'>here</a>
+    </td>
+    <td>7-Apr-2003</td>
+  </tr>
+  <tr>
+    <td><a href='http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0.2'>
+        commons-logging-1.0.2</a></td>
+    <td>27-Sep-2002</td>
+  </tr>
+  <tr>
+    <td><a href='http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0.1'>
+        commons-logging-1.0.1</td>
+    <td>12-Aug-2002</td>
+  </tr>
+  <tr>
+    <td><a href='http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0'>
+        commons-logging-1.0</td>
+    <td>20-Feb-2002</td>
+  </tr>
+</table>
+
+<p>Planned Next Release:  TBD</p>
+
+
+
+<a name="Committers"></a>
+<h3>4.  COMMITTERS</h3>
+
+<p>The following individuals are the primary developers and maintainers of this
+component.  Developers who plan to use <em>Logging</em> in their own
+projects are encouraged to collaborate on the future development of this
+component to ensure that it continues to meet a variety of needs.</p>
+<ul>
+  <li>Morgan Delagrange</li>
+  <li>Rodney Waldhoff</li>
+  <li>Craig McClanahan</li>
+  <li>Robert Burrell Donkin</li>
+  <li>Scott Sanders</li>
+  <li>Peter Donald</li>
+  <li>Costin Manolache</li>
+  <li>Richard A. Sitze</li>
+  <li>Juozas Baliuka</li>  
+</ul>
+
+
+<a name="Action Items"></a>
+<h3>5.  ACTION ITEMS</h3>
+
+<p>TO DO List:</p>
+
+<table border="1">
+  <tr>
+    <th width="80%">Action Item</th>
+    <th width="20%">Volunteer</th>
+  </tr>
+</table>
+
+</body>
+</html>

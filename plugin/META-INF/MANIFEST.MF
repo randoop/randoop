@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Randoop
+Bundle-SymbolicName: randoop; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: randoop.plugin.RandoopPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.jdt.core;bundle-version="3.5.2",
+ org.eclipse.debug.ui;bundle-version="3.5.2",
+ org.eclipse.jdt.launching;bundle-version="3.5.1",
+ org.eclipse.jdt.debug.ui;bundle-version="3.4.1",
+ org.eclipse.ltk.core.refactoring;bundle-version="3.5.0",
+ org.junit
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: ../bin,
+ .

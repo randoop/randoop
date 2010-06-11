@@ -1,0 +1,94 @@
+<!--
+   Copyright 2003-2004 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<html>
+<head>
+<title>Proposal for Primitives Package</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>Proposal for <em>Primitives</em> Package</h1>
+</div>
+
+<h3>(0) Rationale</h3>
+
+<p>
+The Java language has a fundamental distinction between Object and primitive
+types. The JDK provides many method for manipulating and working with
+Objects. However, there is relatively little support for working with
+primitive types.
+</p>
+<p>
+One key example is the Java Collection Framework. This defines a well-known
+and widely used API for object-based collections. The framework requires
+each primitive to be wrapped in an object, such as Integer, before they can
+be used in collections. This has a memory and performance overhead.
+</p>
+<p>
+The primitives component will provide an API for collections and utilities
+based on primitives. Wrappers and adaptors will be provided for integration
+with object-based APIs.
+</p>
+
+<h3>(1) Scope of the Package</h3>
+
+<p>
+The package will create and maintain a set of collections and utilities for
+primitive types, distributed under the ASF license.
+</p>
+
+<h3>(1.5) Interaction With Other Packages</h3>
+<p>
+   <em>Primitives</em> relies only on standard JDK 1.2 (or later) APIs for
+   production deployment.  It utilizes the JUnit unit testing framework for
+   developing and executing unit tests, but this is of interest only to
+   developers of the component.
+</p>
+<p>
+   No external configuration files are utilized.
+</p>
+
+<h3>(2) Initial Source of the Package</h3>
+<p>
+   The initial codebase was harvested from code in the Commons Collections CVS.
+</p>
+
+<p>The proposed package name for the new component is
+<code>org.apache.commons.primitives</code>.</p>
+
+
+<h3>(3)  Required Jakarta-Commons Resources</h3>
+<ul>
+<li>CVS Repository - New directory <code>primitives</code> in the
+    <code>jakarta-commons</code> CVS repository.</li>
+<li>Mailing List - Discussions will take place on the general
+    <em>commons-dev@jakarta.apache.org</em> mailing list.  To help
+    list subscribers identify messages of interest, it is suggested that
+    the message subject of messages about this component be prefixed with
+    [primitives].</li>
+<li>Bugzilla - New component "Primitives" under the "Commons" product
+    category, with appropriate version identifiers as needed.</li>
+<li>Jyve FAQ - New category "commons-primitives" (when available).
+</ul>
+
+
+<h3>(4) Initial Committers</h3>
+<ul>
+   <li>Rodney Waldhoff</li>
+   <li>Stephen Colebourne</li>
+</ul>
+</body>
+</html>
