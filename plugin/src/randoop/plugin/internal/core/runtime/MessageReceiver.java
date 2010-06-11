@@ -6,17 +6,24 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.eclipse.ui.PlatformUI;
+
+import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 import randoop.runtime.Message;
 
 public class MessageReceiver implements Runnable {
+  private TestGeneratorViewPart fViewPart;
   private ServerSocket fServerSocket;
 
   /**
    * 
+   * @param viewPart
    * @throws IOException
    *           if unable to create socket
    */
-  public MessageReceiver() throws IOException {
+  public MessageReceiver(TestGeneratorViewPart viewPart) throws IOException {
+    fViewPart = viewPart;
+
     fServerSocket = new ServerSocket(0);
     assert fServerSocket.isBound();
   }
@@ -33,14 +40,18 @@ public class MessageReceiver implements Runnable {
       ObjectInputStream objectInputStream = new ObjectInputStream(iStream);
 
       Message start = (Message) objectInputStream.readObject();
-      Message work = (Message) objectInputStream.readObject();
-      while (work.getType() != Message.Type.DONE) {
+      Message work = null;
+      do {
         work = (Message) objectInputStream.readObject();
 
-        // XXX use some kind of monitor or listener here
-        System.out.print("Percent done = ");
-        System.out.println(work.getPercentDone(start));
-      }
+        final double percentDone = work.getPercentDone(start);
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+          @Override
+          public void run() {
+            fViewPart.getProgressBar().step(percentDone);
+          }
+        });
+      } while (work != null && work.getType() != Message.Type.DONE);
     } catch (IOException ioe) {
       System.err.println("Stream terminated unexpectedly");
     } catch (ClassNotFoundException e) {

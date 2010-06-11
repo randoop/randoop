@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.internal.compiler.ast.Argument;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -38,17 +39,27 @@ import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopResources;
 import randoop.plugin.internal.core.RandoopTestSetResources;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
-import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 
 public class RandoopLaunchConfigurationDelegate extends
     AbstractJavaLaunchConfigurationDelegate {
   private int fPort;
-  
+  MessageReceiver fMessageReceiver;
+
+  public RandoopLaunchConfigurationDelegate() {
+    super();
+    fPort = -1;
+    fMessageReceiver = null;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -67,101 +78,116 @@ public class RandoopLaunchConfigurationDelegate extends
     if (monitor.isCanceled())
       return;
 
-    try {
-      // check for cancellation
-      if (monitor.isCanceled())
-        return;
+    // check for cancellation
+    if (monitor.isCanceled())
+      return;
 
-      RandoopArgumentCollector args = new RandoopArgumentCollector(configuration);
-      RandoopTestSetResources testSetResources = new RandoopTestSetResources(args, monitor);
+    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration);
+    RandoopTestSetResources testSetResources = new RandoopTestSetResources(
+        args, monitor);
 
-      IStatus status = testSetResources.getStatus();
-      if (!status.isOK()) {
-        informAndAbort(status);
-      }
-      
-      MessageReceiver msgReceiver = new MessageReceiver();
-      fPort = msgReceiver.getPort();
-      launch.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_PORT,
-          String.valueOf(fPort));
-      
-      String mainTypeName = verifyMainTypeName(configuration);
-      IVMRunner runner = getVMRunner(configuration, mode);
-      
-      IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-      File workingDir = root.getLocation().toFile();
-      String workingDirName = workingDir.getAbsolutePath();
-
-      // Environment variables
-      String[] envp = getEnvironment(configuration);
-
-      ArrayList<String> vmArguments = new ArrayList<String>();
-      ArrayList<String> programArguments = new ArrayList<String>();
-      collectExecutionArguments(configuration, vmArguments, programArguments);
-      collectProgramArguments(args, programArguments);
-
-      // VM-specific attributes
-      Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
-
-      // Classpath
-      List<String> cpList = new ArrayList<String>(Arrays
-          .asList(getClasspath(configuration)));
-
-      // XXX change to getFile("/lib")
-      File libFolder = RandoopResources.getPluginBase();
-      if (libFolder == null) {
-        informAndAbort("Library folder not found", null,
-            IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-      }
-
-      // XXX change to randoop.jar and plume.jar
-      cpList.add(libFolder.getPath() + "../bin/"); //$NON-NLS-1$
-      cpList.add(libFolder.getPath() + "../lib/plume.jar"); //$NON-NLS-1$
-      for (IPath path : testSetResources.getClasspath()) {
-        cpList.add(path.makeRelative().toOSString());
-      }
-      String[] classpath = cpList.toArray(new String[0]);
-
-      // Create VM config
-      VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
-      
-      runConfig.setVMArguments((String[]) vmArguments
-          .toArray(new String[vmArguments.size()]));
-      runConfig.setProgramArguments((String[]) programArguments
-          .toArray(new String[programArguments.size()]));
-      runConfig.setEnvironment(envp);
-      runConfig.setWorkingDirectory(workingDirName);
-      runConfig.setVMSpecificAttributesMap(vmAttributesMap);
-      
-      // Bootpath
-      runConfig.setBootClassPath(getBootpath(configuration));
-
-      // check for cancellation
-      if (monitor.isCanceled()) {
-        return;
-      }
-
-      // done the verification phase
-      monitor.worked(1);
-
-      // monitor.subTask("create_source_locator_description");
-      // // set the default source locator if required
-      // setDefaultSourceLocator(launch, configuration);
-      monitor.worked(1);
-
-      // Launch the configuration - 1 unit of work
-      new Thread(msgReceiver).start();
-      runner.run(runConfig, launch, monitor);
-
-      // check for cancellation
-      if (monitor.isCanceled()) {
-        return;
-      }
-    } catch (IOException e) {
-      System.err.println("Could not find free communication port");
-    } finally {
-      monitor.done();
+    IStatus status = testSetResources.getStatus();
+    if (!status.isOK()) {
+      informAndAbort(status);
     }
+
+    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      public void run() {
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchPage page = window.getActivePage();
+        
+        if (page != null) {
+          TestGeneratorViewPart viewPart = (TestGeneratorViewPart) page
+              .findView(TestGeneratorViewPart.ID);
+          try {
+            fMessageReceiver = new MessageReceiver(viewPart);
+            fPort = fMessageReceiver.getPort();
+          } catch (IOException e) {
+            fMessageReceiver = null;
+            System.err.println("Could not find free communication port");
+          }
+        }
+      }
+    });
+
+    String mainTypeName = verifyMainTypeName(configuration);
+    IVMRunner runner = getVMRunner(configuration, mode);
+
+    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    File workingDir = root.getLocation().toFile();
+    String workingDirName = workingDir.getAbsolutePath();
+
+    // Environment variables
+    String[] envp = getEnvironment(configuration);
+
+    ArrayList<String> vmArguments = new ArrayList<String>();
+    ArrayList<String> programArguments = new ArrayList<String>();
+    collectExecutionArguments(configuration, vmArguments, programArguments);
+    collectProgramArguments(testSetResources, programArguments);
+
+    // VM-specific attributes
+    Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
+
+    // Classpath
+    List<String> cpList = new ArrayList<String>(Arrays
+        .asList(getClasspath(configuration)));
+
+    // XXX change to getFile("/lib")
+    IPath libFolder = RandoopResources.getFullPath("/"); //$NON-NLS-1$
+    if (libFolder == null) {
+      informAndAbort("Library folder not found", null,
+          IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+    }
+
+    // XXX change to randoop.jar and plume.jar
+    cpList.add(libFolder.toOSString() + "/../bin/"); //$NON-NLS-1$
+    cpList.add(libFolder.toOSString() + "/../lib/plume.jar"); //$NON-NLS-1$
+    for (IPath path : testSetResources.getClasspath()) {
+      cpList.add(path.makeRelative().toOSString());
+    }
+    String[] classpath = cpList.toArray(new String[0]);
+    
+    for(String str : classpath) {
+      System.out.println(str);
+    }
+
+    // Create VM config
+    VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName,
+        classpath);
+
+    runConfig.setVMArguments((String[]) vmArguments
+        .toArray(new String[vmArguments.size()]));
+    runConfig.setProgramArguments((String[]) programArguments
+        .toArray(new String[programArguments.size()]));
+    runConfig.setEnvironment(envp);
+    runConfig.setWorkingDirectory(workingDirName);
+    runConfig.setVMSpecificAttributesMap(vmAttributesMap);
+
+    // Bootpath
+    runConfig.setBootClassPath(getBootpath(configuration));
+
+    // check for cancellation
+    if (monitor.isCanceled()) {
+      return;
+    }
+
+    // done the verification phase
+    monitor.worked(1);
+
+    for (String str : programArguments) {
+      System.out.println(str);
+    }
+    
+    // PlatformUI.getWorkbench().getDisplay().asyncExec()
+    new Thread(fMessageReceiver).start();
+    runner.run(runConfig, launch, monitor);
+
+    // check for cancellation
+    if (monitor.isCanceled()) {
+      return;
+    }
+    
+    monitor.done();
   }
 
   /**
@@ -193,8 +219,9 @@ public class RandoopLaunchConfigurationDelegate extends
     programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
   }
 
-  protected void collectProgramArguments(RandoopArgumentCollector args,
+  protected void collectProgramArguments(RandoopTestSetResources testSetResources,
       List<String> programArguments) {
+    RandoopArgumentCollector args = testSetResources.getArguments();
     programArguments.add("gentests"); //$NON-NLS-1$
 
     for (IType type : args.getCheckedTypes()) {
@@ -215,6 +242,9 @@ public class RandoopLaunchConfigurationDelegate extends
     programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$
     programArguments.add("--outputlimit=" + args.getMaxTestsWritten());//$NON-NLS-1$
     programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
+    // if (testSetResources.getMethodFilePath() != null)
+    // programArguments
+    //          .add("--methodlist=" + testSetResources.getMethodFilePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
   }
 
