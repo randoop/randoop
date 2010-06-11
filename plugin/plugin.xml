@@ -5,15 +5,16 @@
    <extension
          point="org.eclipse.ui.views">
       <category
+            id="randoop"
             name="Sample Category"
-            id="randoop">
+            parentCategory="org.eclipse.jdt.ui.java">
       </category>
       <view
             name="Randoop"
             icon="icons/sample.gif"
             category="randoop"
-            class="randoop.plugin.internal.ui.views.RandoopView"
-            id="randoop.plugin.views.RandoopView">
+            class="randoop.plugin.internal.ui.views.TestGeneratorViewPart"
+            id="randoop.plugin.views.TestGeneratorViewPart">
       </view>
    </extension>
    <extension

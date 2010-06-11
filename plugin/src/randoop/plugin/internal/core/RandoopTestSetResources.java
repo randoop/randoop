@@ -1,7 +1,11 @@
 package randoop.plugin.internal.core;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -28,10 +32,11 @@ import randoop.plugin.internal.ui.launchConfigurations.RandoopArgumentCollector;
  */
 public class RandoopTestSetResources {
   public static String tempSegment = "temp/"; //$NON-NLS-1$
-  public static IPath binSegment = new Path("bin/"); //$NON-NLS-1$
+  public static String methodsSegment = "methods"; //$NON-NLS-1$
 
   private RandoopArgumentCollector fArguments;
-  private File fResourceFolder;
+  private IPath fResourceFolder;
+  private IPath fMethodsFile;
   private String fId;
   private IPath[] fClasspath;
   private IStatus fStatus;
@@ -55,11 +60,42 @@ public class RandoopTestSetResources {
         + System.currentTimeMillis() + '.' + System.nanoTime();
 
     // Make a directory that may be used for storing temporary file if needed
-    fResourceFolder = RandoopResources.getFile(fId);
-    fResourceFolder.mkdirs();
+    fResourceFolder = RandoopResources.getFullPath(new Path(fId));
+    fResourceFolder.toFile().mkdirs();
     
     // Search the arguments for all necessary classpaths in the workspace
     fStatus = findClasspaths(monitor);
+    
+    writeMethods();
+  }
+
+  private void writeMethods() {
+    try {
+      fMethodsFile = fResourceFolder.append(methodsSegment);
+      File f = fMethodsFile.toFile();
+      f.createNewFile();
+      
+      FileWriter fw = new FileWriter(f);
+      BufferedWriter bw = new BufferedWriter(fw);
+      
+      List<IMethod> methods = fArguments.getCheckedMethods();
+      
+      for (IMethod method : methods) {
+        if(method.isConstructor()) {
+          bw.write("cons : ");
+        } else {
+          bw.write("method : ");
+        }
+        
+        bw.newLine();
+      }
+      
+      bw.close();
+    } catch (IOException e) {
+      fMethodsFile = null;
+    } catch (JavaModelException e) {
+      fMethodsFile = null;
+    }
   }
 
   /**
@@ -197,8 +233,12 @@ public class RandoopTestSetResources {
     return fArguments;
   }
 
-  public File getFolder() {
+  public IPath getFolder() {
     return fResourceFolder;
+  }
+  
+  public IPath getMethodFilePath() {
+    return fMethodsFile;
   }
 
   public IPath[] getClasspath() {
