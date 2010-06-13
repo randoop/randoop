@@ -80,7 +80,7 @@ public abstract class AbstractGenerator {
       this.seeds = seeds;
     }
     
-    msgSender = null;
+    this.msgSender = null;
   }
 
   public AbstractGenerator(List<StatementKind> statements,
@@ -127,10 +127,12 @@ public abstract class AbstractGenerator {
           Log.logLine(s.toString());          
         }
       }
-
+      
+      long timeOfLastUpdate = 0;
       if (msgSender != null) {
         Message msg = new Message(Message.Type.START, timeMillis, maxSequences);
         msgSender.send(msg);
+        timeOfLastUpdate = timer.getTimeElapsedMillis();
       }
       
       while (!stop()) {
@@ -185,8 +187,14 @@ public abstract class AbstractGenerator {
         }
         
         if (msgSender != null) {
-          Message msg = new Message(Message.Type.WORK, timer.getTimeElapsedMillis(), numSequences());
-          msgSender.send(msg);
+          long currentTime = timer.getTimeElapsedMillis();
+          
+          // Send a message once a second
+          if (currentTime - timeOfLastUpdate > 250) {
+            Message msg = new Message(Message.Type.WORK, currentTime, numSequences());
+            msgSender.send(msg);
+            timeOfLastUpdate = currentTime;
+          }
         }
       }
       

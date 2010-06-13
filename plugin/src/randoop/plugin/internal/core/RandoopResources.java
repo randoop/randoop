@@ -30,24 +30,23 @@ import randoop.plugin.RandoopPlugin;
 public class RandoopResources {
   private static URI pluginDirectory;
   private static IPath pluginPath;
-  private static File pluginBase;
 
   static {
     try {
       pluginDirectory = FileLocator
           .toFileURL(
               Platform.getBundle(RandoopPlugin.getPluginId()).getEntry("/")).toURI(); //$NON-NLS-1$
-      pluginBase = new File(pluginDirectory);
-      pluginPath = Path.fromOSString(pluginBase.getAbsolutePath());
-      pluginBase = getFile("/"); //$NON-NLS-1$
+      pluginPath = Path.fromOSString(new File(pluginDirectory).getAbsolutePath());
     } catch (URISyntaxException e) {
       pluginDirectory = null;
-      pluginBase = null;
     } catch (IOException e) {
       pluginDirectory = null;
-      pluginBase = null;
     }
   }
+  
+  public static IPath getFullPath(String string) {
+    return getFullPath(new Path(string));
+  }
 
   /**
    * 
@@ -56,37 +55,13 @@ public class RandoopResources {
    * @return the absolute path to the resource, or <code>null</code> if
    *         <code>RandoopResources</code> was initialized improperly
    */
-  public static File getFile(IPath path) {
-    if (pluginBase == null)
+  public static IPath getFullPath(IPath path) {
+    if (pluginDirectory == null)
       return null;
 
-    return getFile(path.makeRelativeTo(pluginPath).toString());
+    return pluginPath.append(path);
   }
-
-  /**
-   * 
-   * 
-   * @param relativePath
-   *          path to the file relative to the plugins base directory
-   * @return the absolute path to the resource, or <code>null</code> if
-   *         <code>RandoopResources</code> was initialized improperly
-   */
-  public static File getFile(String relativePath) {
-    if (pluginBase == null)
-      return null;
-
-    return new File(pluginBase, relativePath);
-  }
-
-  /**
-   * Convenience method equivalent to getFile("/")
-   * 
-   * @return the plug-in's base directory, or <code>null</code>
-   */
-  public static File getPluginBase() {
-    return pluginBase;
-  }
-
+  
   /**
    * Copies a file from a source to the supplied destination
    * 
