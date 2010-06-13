@@ -6,6 +6,7 @@ Makefile.user
 bin/randoop/version.txt
 randoop.zip
 randoop_agent.jar
+bin/randoop/instrument/manifest.txt
 bin/randoop/test/resources/dependencytests-output.txt
 bin/randoop/test/resources/dependencytests.txt
 bin/randoop/test/resources/java.util.classlist.java1.6.txt
