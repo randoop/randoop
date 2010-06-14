@@ -26,6 +26,7 @@
         </ul></li>
       <li><a href="#cutomize">Customizing Randoop's behavior to your application</a>
         <ul>
+          <li><a href="#map_calls">Avoiding calls to specific methods</a></li>
           <li><a href="#checkrep">Specifying representation invariant ("checkRep") methods</a></li>
           <li><a href="#primitives">Specifying additional primitive values</a></li>
         </ul></li>
@@ -55,7 +56,7 @@ added by hand): </p>
     // A TreeSet is an ordered collection. According to Sun's
     // API, this constructor call should throw a ClassCastException
     // because the list element is not Comparable. But
-    // the constuctor silently (and problematically) accepts the list.
+    // the constructor silently (and problematically) accepts the list.
     TreeSet t1 = new TreeSet(list);
   
     Set s1 = Collections.synchronizedSet(t1);
@@ -257,7 +258,7 @@ public static void test1() {
   // A TreeSet is an ordered collection. According to Sun's
   // API, this constructor call should throw a ClassCastException
   // because the list element is not Comparable. But
-  // the constuctor silently (and problematically) accepts the list.
+  // the constructor silently (and problematically) accepts the list.
   TreeSet t1 = new TreeSet(list);
 
   Set s1 = Collections.synchronizedSet(t1);
@@ -267,7 +268,7 @@ public static void test1() {
   // to itself! This assertion fails at runtime on Sun's JDK.
   Assert.assertTrue(s1.equals(s1));
 }</pre><p><img src="http://people.csail.mit.edu/cpacheco/lightbulb.jpg"
-  width="50" alt="lightbulb" /> The test shown above is nicely succint: it shows a small number of method calls leading up to the assertion violation. Because Randoop's generation is random, the actual test revealing the error can be significantly longer, and contain many &quot;random&quot; calls leading up to the violation. An older version of Randoop used to have a <i>minimizer</i> built in, i.e. a module that attempted to reduce the number of calls in a failing test to ease debugging. The current version of the tool does not have a minimizer -- but we are hoping to implement it for the next release. </p>
+  width="50" alt="lightbulb" /> The test shown above is nicely succinct: it shows a small number of method calls leading up to the assertion violation. Because Randoop's generation is random, the actual test revealing the error can be significantly longer, and contain many &quot;random&quot; calls leading up to the violation. An older version of Randoop used to have a <i>minimizer</i> built in, i.e. a module that attempted to reduce the number of calls in a failing test to ease debugging. The current version of the tool does not have a minimizer -- but we are hoping to implement it for the next release. </p>
 
 <p>This test shows a scenario that makes it possible to create a <tt>TreeSet</tt> that violates reflexivity of equality. Test test reveals an error in the <tt>TreeSet</tt> constructor, which does not properly check its arguments (and possibly a second error in the <tt>TreeSet.equals</tt> method, which should always check if its argument is the same object as itself and return <tt>true</tt> in such a case). </p>
 
@@ -314,6 +315,66 @@ public void test10() throws Throwable {
 }</pre><p>This test will pass when you run it right after executing it. But notice that it captures an important behavior of the method TreeSet<a href="/p/randoop/w/edit/TreeSet">?</a>.contains: it returns false if the set is empty. If later, as the developers of this class, we introduced an error that caused contains to return true on an empty set, the test would fail and thus alert us to the error. </p>
 
 <h2 id="cutomize">Customizing Randoop's behavior to your application</h2>
+
+<h3 id="map_calls">Avoiding calls to specific methods</h3>
+
+<p>
+The code under test may make calls to certain methods that you do not want
+Randoop to execute.  Two examples are <tt>System.exit</tt> (which will
+terminate not just the target program but also Randoop!) and methods that
+require user interaction, such as popping up a modal dialog box.
+</p>
+
+<p>
+You can provide a different implementation of a method that will be used
+when running under Randoop.  Randoop transforms the code under test,
+replacing each call to a undesired method by a call to a new implementation
+that you provide.
+</p>
+
+<p>
+To transform calls to undesired methods, pass the following command-line
+option to <tt>java</tt> when running Randoop:
+</p>
+<pre>
+    -javaagent:$(randoop)/randoop_agent.jar=--map_calls=map_calls.txt
+</pre>
+<p>
+You need to supply the <tt>map_calls.txt</tt> file, and also a definition
+of the replacement methods.
+</p>
+
+<p>
+The <tt>map_calls.txt</tt> file consists of sections, where each section
+has the format
+</p>
+<pre>
+class-regex
+  old-method-name (arg-type, ...) new-class-name
+  old-method-name (arg-type, ...) new-class-name
+  ...
+</pre>
+
+<p>
+Each section gives a regular expression that matches class names, and one or
+more replacements that will be done in classes that match the regexp.  The
+replacement is the fully-qualified method name, fully-qualified argument
+types, and a new class name.  A call to the old method will be replaced by
+a call to a method with identical name and arguments in the new class.
+</p>
+
+<p>
+Blank lines and <tt>//</tt> comments are ignored in the
+<tt>map_calls.txt</tt> file.
+</p>
+
+<p>
+See an <a href="map_calls_example.txt">example map_calls.txt</a> file and
+an <a href="RandoopMappedCalls.java.txt">example definition of replacement
+methods</a>.
+</p>
+
+
 
 <h3 id="checkrep">Specifying representation invariant ("checkRep") methods</h3>
 
@@ -407,7 +468,7 @@ to a field in one of your classes under test, as long as it adheres to
 the above requirements.</p>
 
 <p>Below is an example helper class that demonstrates the use of the
-@TestValue annotation. For Randoop to use the primtive values
+@TestValue annotation. For Randoop to use the primitive values
 described in the class, you would add this class to the list of
 classes under test
 (e.g. via the option <tt>--testclass=example.TestValueExamples</tt>).</p>
@@ -459,3 +520,14 @@ classes under test
 
 </body>
 </html>
+
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util
+ -->
+<!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
+ -->
+<!--  LocalWords:  usethreads testclass timelimit classlist myclasses hashcode
+ -->
+<!--  LocalWords:  RandoopTest hashCode NullPointerException Throwable boolean
+ -->
+<!--  LocalWords:  assertTrue javaagent regex arg TestValue TestValueExamples
+ -->
