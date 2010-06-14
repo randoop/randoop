@@ -12,17 +12,17 @@ import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 import randoop.runtime.Message;
 
 public class MessageReceiver implements Runnable {
-  private TestGeneratorViewPart fViewPart;
+  private IMessageListener fIMessageListener;
   private ServerSocket fServerSocket;
 
   /**
    * 
-   * @param viewPart
+   * @param messageListener
    * @throws IOException
    *           if unable to create socket
    */
-  public MessageReceiver(TestGeneratorViewPart viewPart) throws IOException {
-    fViewPart = viewPart;
+  public MessageReceiver(IMessageListener messageListener) throws IOException {
+    fIMessageListener = messageListener;
 
     fServerSocket = new ServerSocket(0);
     assert fServerSocket.isBound();
@@ -40,17 +40,12 @@ public class MessageReceiver implements Runnable {
       ObjectInputStream objectInputStream = new ObjectInputStream(iStream);
 
       Message start = (Message) objectInputStream.readObject();
+      fIMessageListener.handleMessage(start);
+      
       Message work = null;
       do {
         work = (Message) objectInputStream.readObject();
-
-        final double percentDone = work.getPercentDone(start);
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-          @Override
-          public void run() {
-            fViewPart.getProgressBar().step(percentDone);
-          }
-        });
+        fIMessageListener.handleMessage(work);
       } while (work != null && work.getType() != Message.Type.DONE);
     } catch (IOException ioe) {
       System.err.println("Stream terminated unexpectedly");
