@@ -319,6 +319,13 @@ public void test10() throws Throwable {
 <h3 id="map_calls">Avoiding calls to specific methods</h3>
 
 <p>
+To avoid Randoop calling certain methods in the code under test, use the
+<tt>--omitmethods=regexp</tt> command-line option.  The rest of this
+section of the manual discusses how to cope with undesired calls by the code
+under test.
+</p>
+
+<p>
 The code under test may make calls to certain methods that you do not want
 Randoop to execute.  Two examples are <tt>System.exit</tt> (which will
 terminate not just the target program but also Randoop!) and methods that
