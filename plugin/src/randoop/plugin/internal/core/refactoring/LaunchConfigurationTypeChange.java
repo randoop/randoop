@@ -11,9 +11,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-import randoop.plugin.launching.IRandoopLaunchConfigConstants;
-import randoop.plugin.launching.RandoopLaunchConfigArgumentCollector;
-
 public class LaunchConfigurationTypeChange extends Change {
   private ILaunchConfiguration fLaunchConfiguration;
   private IType fOldType;
@@ -80,30 +77,29 @@ public class LaunchConfigurationTypeChange extends Change {
   @Override
   @SuppressWarnings("unchecked")
   public Change perform(IProgressMonitor pm) throws CoreException {
-    List<String> allTypes;
-    List<String> checkedElements;
-    final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration
-        .getWorkingCopy();
-
-    allTypes = RandoopLaunchConfigArgumentCollector.getAllJavaTypes(wc);
-    checkedElements = RandoopLaunchConfigArgumentCollector.getCheckedJavaElements(wc);
-
-    String oldHandlerId = fOldType.getHandleIdentifier();
-    String newHandlerId = fNewType.getHandleIdentifier();
-    for (int i = 0; i < checkedElements.size(); i++) {
-      if (oldHandlerId.equals(checkedElements.get(i))) {
-        checkedElements.set(i, newHandlerId);
-      }
-    }
-
-    for (int i = 0; i < allTypes.size(); i++) {
-      if (oldHandlerId.equals(allTypes.get(i))) {
-        allTypes.set(i, newHandlerId);
-      }
-    }
-
-    // create the undo change
-    return new LaunchConfigurationTypeChange(fLaunchConfiguration, fNewType,
-        fOldType);
+  //List<String> allTypes;
+  //List<String> checkedElements;
+  //final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
+  //
+  //allTypes = ArgumentCollector.getAllJavaTypes(wc);
+  //checkedElements = ArgumentCollector.getCheckedJavaElements(wc);
+  //
+  //String oldHandlerId = fOldType.getHandleIdentifier();
+  //String newHandlerId = fNewType.getHandleIdentifier();
+  //for (int i = 0; i < checkedElements.size(); i++) {
+  //  if (oldHandlerId.equals(checkedElements.get(i))) {
+  //    checkedElements.set(i, newHandlerId);
+  //  }
+  //}
+  //
+  //for (int i = 0; i < allTypes.size(); i++) {
+  //  if (oldHandlerId.equals(allTypes.get(i))) {
+  //    allTypes.set(i, newHandlerId);
+  //  }
+  //}
+  //
+  //// create the undo change
+  //return new LaunchConfigurationTypeChange(fLaunchConfiguration, fNewType, fOldType);
+    return null;
   }
 }

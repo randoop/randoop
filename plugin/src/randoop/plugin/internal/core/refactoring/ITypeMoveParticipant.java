@@ -12,7 +12,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
-import randoop.plugin.RandoopActivator;
+import randoop.plugin.RandoopPlugin;
 
 public class ITypeMoveParticipant extends MoveParticipant {
   private IType fType;
@@ -34,7 +34,7 @@ public class ITypeMoveParticipant extends MoveParticipant {
         declaringType = declaringType.getDeclaringType();
       }
     } catch (JavaModelException e) {
-      RandoopActivator.log(e);
+      RandoopPlugin.log(e);
     }
     Object destination = getArguments().getDestination();
     if (destination instanceof IPackageFragment || destination instanceof IType) {

@@ -30,10 +30,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.internal.compiler.ast.Argument;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -41,12 +39,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.core.RandoopResources;
-import randoop.plugin.internal.core.RandoopTestSetResources;
+import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
+import randoop.plugin.internal.ui.views.MessageViewListener;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 
 public class RandoopLaunchConfigurationDelegate extends
@@ -83,10 +82,10 @@ public class RandoopLaunchConfigurationDelegate extends
       return;
 
     RandoopArgumentCollector args = new RandoopArgumentCollector(configuration);
-    RandoopTestSetResources testSetResources = new RandoopTestSetResources(
+    TestGroupResources testGroupResources = new TestGroupResources(
         args, monitor);
 
-    IStatus status = testSetResources.getStatus();
+    IStatus status = testGroupResources.getStatus();
     if (!status.isOK()) {
       informAndAbort(status);
     }
@@ -97,11 +96,14 @@ public class RandoopLaunchConfigurationDelegate extends
         IWorkbenchPage page = window.getActivePage();
         
         if (page != null) {
-          TestGeneratorViewPart viewPart = (TestGeneratorViewPart) page
-              .findView(TestGeneratorViewPart.ID);
+          TestGeneratorViewPart viewPart;
           try {
-            fMessageReceiver = new MessageReceiver(viewPart);
+            viewPart = (TestGeneratorViewPart) page.showView(TestGeneratorViewPart.ID);
+            fMessageReceiver = new MessageReceiver(new MessageViewListener(viewPart));
             fPort = fMessageReceiver.getPort();
+          } catch (PartInitException e1) {
+            fMessageReceiver = null;
+            System.err.println("Randoop view could not be initialized");
           } catch (IOException e) {
             fMessageReceiver = null;
             System.err.println("Could not find free communication port");
@@ -123,26 +125,18 @@ public class RandoopLaunchConfigurationDelegate extends
     ArrayList<String> vmArguments = new ArrayList<String>();
     ArrayList<String> programArguments = new ArrayList<String>();
     collectExecutionArguments(configuration, vmArguments, programArguments);
-    collectProgramArguments(testSetResources, programArguments);
+    collectProgramArguments(testGroupResources, programArguments);
 
     // VM-specific attributes
     Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
     // Classpath
-    List<String> cpList = new ArrayList<String>(Arrays
-        .asList(getClasspath(configuration)));
+    List<String> cpList = new ArrayList<String>(Arrays.asList(getClasspath(configuration)));
 
-    // XXX change to getFile("/lib")
-    IPath libFolder = RandoopResources.getFullPath("/"); //$NON-NLS-1$
-    if (libFolder == null) {
-      informAndAbort("Library folder not found", null,
-          IJavaLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
-    }
-
-    // XXX change to randoop.jar and plume.jar
-    cpList.add(libFolder.toOSString() + "/../bin/"); //$NON-NLS-1$
-    cpList.add(libFolder.toOSString() + "/../lib/plume.jar"); //$NON-NLS-1$
-    for (IPath path : testSetResources.getClasspath()) {
+    cpList.add(RandoopPlugin.getRandoopJar().toOSString());
+    cpList.add(RandoopPlugin.getPlumeJar().toOSString());
+    
+    for (IPath path : testGroupResources.getClasspath()) {
       cpList.add(path.makeRelative().toOSString());
     }
     String[] classpath = cpList.toArray(new String[0]);
@@ -219,7 +213,7 @@ public class RandoopLaunchConfigurationDelegate extends
     programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
   }
 
-  protected void collectProgramArguments(RandoopTestSetResources testSetResources,
+  protected void collectProgramArguments(TestGroupResources testSetResources,
       List<String> programArguments) {
     RandoopArgumentCollector args = testSetResources.getArguments();
     programArguments.add("gentests"); //$NON-NLS-1$

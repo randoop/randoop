@@ -1,5 +1,7 @@
 package randoop.plugin.internal.ui.views;
 
+import java.awt.TrayIcon.MessageType;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -28,6 +30,9 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+
+import randoop.plugin.internal.core.runtime.IMessageListener;
+import randoop.runtime.Message;
 
 /**
  * This sample class demonstrates how to plug-in a new workbench view. The view
