@@ -6,9 +6,6 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.eclipse.ui.PlatformUI;
-
-import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 import randoop.runtime.Message;
 
 public class MessageReceiver implements Runnable {
@@ -22,8 +19,12 @@ public class MessageReceiver implements Runnable {
    *           if unable to create socket
    */
   public MessageReceiver(IMessageListener messageListener) throws IOException {
-    fIMessageListener = messageListener;
-
+    if (messageListener == null) {
+      fIMessageListener = new NullMessageListener();
+    } else {
+      fIMessageListener = messageListener;
+    }
+    
     fServerSocket = new ServerSocket(0);
     assert fServerSocket.isBound();
   }
