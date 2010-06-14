@@ -1,6 +1,12 @@
 package randoop.plugin;
 
+import java.io.IOException;
+import java.net.URL;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
@@ -21,30 +27,37 @@ import org.osgi.framework.BundleContext;
 public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
-
+  
+  // XXX Change these to the local runtime archives
+  // Should be: "/randoop.jar"
+  private static final IPath RANDOOP_JAR = new Path("../bin/");//$NON-NLS-1$
+  
+  // Should be: "/plume.jar"
+  private static final IPath PLUME_JAR = new Path("../lib/plume.jar"); //$NON-NLS-1$
+  
   /** The shared instance */
-  private static RandoopPlugin plugin = null;
+  private static RandoopPlugin fPlugin = null;
 
   /**
    * Indicator of when the shared instance is stopped. This is not reset when
    * <code>stop</code> is called
    */
-  private static boolean isStopped = false;
+  private static boolean fIsStopped = false;
 
   /**
    * Constructs the plug-in and sets the shared instance to <code>this</code>.
    */
   public RandoopPlugin() {
-    plugin = this;
+    fPlugin = this;
   }
-
+  
   /**
    * Returns the shared instance of this plug-in.
    * 
    * @return the shared instance
    */
   public static RandoopPlugin getDefault() {
-    return plugin;
+    return fPlugin;
   }
 
   /**
@@ -56,7 +69,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
   @Override
   public void start(BundleContext context) throws Exception {
     super.start(context);
-    plugin = this;
+    fPlugin = this;
   }
 
   /**
@@ -66,8 +79,8 @@ public class RandoopPlugin extends AbstractUIPlugin {
    */
   @Override
   public void stop(BundleContext context) throws Exception {
-    plugin = null;
-    isStopped = true;
+    fPlugin = null;
+    fIsStopped = true;
     super.stop(context);
   }
 
@@ -89,7 +102,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * @return <code>true</code> if <code>stop</code> has been called prior
    */
   public static boolean isStopped() {
-    return isStopped;
+    return fIsStopped;
   }
 
   /**
@@ -136,18 +149,51 @@ public class RandoopPlugin extends AbstractUIPlugin {
       return null;
     return workBenchWindow.getShell();
   }
-
+  
   /**
    * Returns the active workbench window.
    * 
    * @return the active workbench window
    */
   public static IWorkbenchWindow getActiveWorkbenchWindow() {
-    if (plugin == null)
+    if (fPlugin == null)
       return null;
-    IWorkbench workBench = plugin.getWorkbench();
+    IWorkbench workBench = fPlugin.getWorkbench();
     if (workBench == null)
       return null;
     return workBench.getActiveWorkbenchWindow();
+  }
+  
+
+  /**
+   * Returns a local path to the randoop.jar runtime archive.
+   * 
+   * @return local path to randoop.jar, or <code>null</code> if no local version
+   *         could be created
+   */
+  public static IPath getRandoopJar() {
+    URL url = FileLocator.find(getDefault().getBundle(), RANDOOP_JAR, null); 
+    try {
+      url = FileLocator.toFileURL(url);
+    } catch (IOException e) {
+      return null;
+    }
+    return new Path(url.getPath());
+  }
+  
+  /**
+   * Returns a local path to the plume.jar runtime archive.
+   * 
+   * @return local path to plume.jar, or <code>null</code> if no local version
+   *         could be created
+   */
+  public static IPath getPlumeJar() {
+    URL url = FileLocator.find(getDefault().getBundle(), PLUME_JAR, null); 
+    try {
+      url = FileLocator.toFileURL(url);
+    } catch (IOException e) {
+      return null;
+    }
+    return new Path(url.getPath());
   }
 }

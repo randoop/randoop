@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -23,6 +22,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.ui.launchConfigurations.RandoopArgumentCollector;
 
 /**
@@ -30,13 +31,14 @@ import randoop.plugin.internal.ui.launchConfigurations.RandoopArgumentCollector;
  * include the temporary folder for storing class files, and arguments used for
  * generating the test files.
  */
-public class RandoopTestSetResources {
-  public static String tempSegment = "temp/"; //$NON-NLS-1$
-  public static String methodsSegment = "methods"; //$NON-NLS-1$
+public class TestGroupResources {
+  public static final IPath TEMP_PATH = RandoopPlugin.getDefault()
+                                            .getStateLocation().append("/temp"); //$NON-NLS-1$
+  public static final String METHODS_FILE = "methods"; //$NON-NLS-1$
 
   private RandoopArgumentCollector fArguments;
-  private IPath fResourceFolder;
-  private IPath fMethodsFile;
+  private File fResourceFolder;
+  private File fMethodsFile;
   private String fId;
   private IPath[] fClasspath;
   private IStatus fStatus;
@@ -49,19 +51,19 @@ public class RandoopTestSetResources {
    * @param name
    *          a name for this set of resources
    */
-  public RandoopTestSetResources(RandoopArgumentCollector args, IProgressMonitor monitor) {
+  public TestGroupResources(RandoopArgumentCollector args, IProgressMonitor monitor) {
     if (monitor == null)
       monitor = new NullProgressMonitor();
 
     fArguments = args;
 
     // Create a unique name from the name and time stamp
-    fId = tempSegment + Math.abs(args.getName().hashCode()) + '.'
+    fId = IConstants.EMPTY_STRING + Math.abs(args.getName().hashCode()) + '.'
         + System.currentTimeMillis() + '.' + System.nanoTime();
 
     // Make a directory that may be used for storing temporary file if needed
-    fResourceFolder = RandoopResources.getFullPath(new Path(fId));
-    fResourceFolder.toFile().mkdirs();
+    fResourceFolder = TEMP_PATH.append(fId).toFile();
+    fResourceFolder.mkdirs();
     
     // Search the arguments for all necessary classpaths in the workspace
     fStatus = findClasspaths(monitor);
@@ -71,11 +73,10 @@ public class RandoopTestSetResources {
 
   private void writeMethods() {
     try {
-      fMethodsFile = fResourceFolder.append(methodsSegment);
-      File f = fMethodsFile.toFile();
-      f.createNewFile();
+      fMethodsFile = new File(fResourceFolder, METHODS_FILE);
+      fMethodsFile.createNewFile();
       
-      FileWriter fw = new FileWriter(f);
+      FileWriter fw = new FileWriter(fMethodsFile);
       BufferedWriter bw = new BufferedWriter(fw);
       
       List<IMethod> methods = fArguments.getCheckedMethods();
@@ -233,11 +234,11 @@ public class RandoopTestSetResources {
     return fArguments;
   }
 
-  public IPath getFolder() {
+  public File getFolder() {
     return fResourceFolder;
   }
   
-  public IPath getMethodFilePath() {
+  public File getMethodFile() {
     return fMethodsFile;
   }
 
