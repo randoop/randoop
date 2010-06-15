@@ -41,7 +41,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
         && paramTypes.length == 1
         && paramTypes[0].isArray()
         && paramTypes[0].getComponentType().equals(String.class)) {
-      if (VERBOSE){
+      if (VERBOSE) {
         System.out.println("Will not use: " + m.toString());
         System.out.println("  reason: main method not applicable to unit testing.");
       }
@@ -49,30 +49,32 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     }
 
     if (matchesOmitMethodPattern(m.toString())) {
-      if (VERBOSE){
+      if (VERBOSE) {
         System.out.println("Will not use: " + m.toString());
         System.out.println("  reason: matches regexp specified in -omitmethods option.");
       }
       return false;
     }
 
-    if (m.isBridge()){
-      if (VERBOSE){
+    if (m.isBridge()) {
+      if (VERBOSE) {
         System.out.println("Will not use: " + m.toString());
         System.out.println("  reason: it's a bridge method");
       }
       return false;
     }
 
-    if (m.isSynthetic()){
-      if (VERBOSE){
+    if (m.isSynthetic()) {
+      if (VERBOSE) {
         System.out.println("Will not use: " + m.toString());
         System.out.println("  reason: it's a synthetic method");
       }
       return false;
     }
 
-    if (!Reflection.isVisible (m.getModifiers()))
+    if (!Reflection.isVisible(m.getModifiers()))
+      return false;
+    if (!Reflection.isVisible(m.getReturnType()))
       return false;
 
     //TODO we could enable some methods from Object, like getClass
@@ -88,7 +90,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     
     String reason = doNotUseSpecialCase(m);
     if (reason != null) {
-      if (VERBOSE){
+      if (VERBOSE) {
         System.out.println("Will not use: " + m.toString());
         System.out.println("  reason: " + reason);
       }
