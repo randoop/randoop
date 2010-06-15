@@ -50,7 +50,7 @@ public abstract class SimpleList<T> {
 
   public abstract T get(int index);
 
-  public final boolean isEmpty(){
+  public final boolean isEmpty() {
     return size() == 0;
   }
 

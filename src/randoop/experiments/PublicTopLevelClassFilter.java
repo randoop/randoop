@@ -14,7 +14,7 @@ public class PublicTopLevelClassFilter implements ClassFilter {
    */
   public PublicTopLevelClassFilter(String omitPatternString) {
     if (omitPatternString != null) {
-      this.omitPattern =  Pattern.compile(omitPatternString);
+      this.omitPattern = Pattern.compile(omitPatternString);
     } else {
       this.omitPattern = null;
     }

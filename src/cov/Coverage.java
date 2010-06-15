@@ -175,7 +175,7 @@ public class Coverage {
         } else {
           b.append("_");
         }
-        if (falses[branchNumber] > 0){
+        if (falses[branchNumber] > 0) {
           b.append("F");
         } else {
           b.append("_");

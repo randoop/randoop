@@ -109,7 +109,7 @@ public class ReproduceISSTA06 {
     } else {
       assert runType == RunType.OFFLINE;
       if (packageName.equals("org.apache.commons.chain")) {
-        //checkEquals(p, "testcases", 22);
+        // checkEquals(p, "testcases", 22);
         checkEquals(p, "faultymethods", 14);
         checkEquals(p, "faultyclasses", 11);
         checkEquals(p, "exceptioncontractviolations", 13);

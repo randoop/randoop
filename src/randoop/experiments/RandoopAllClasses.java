@@ -99,8 +99,8 @@ public class RandoopAllClasses {
     randoop.add(exp.covInstSourcesDir + ":" + exp.classPath);
     randoop.add("randoop.main.Main");
     randoop.add("gentests");
-    //randoop.add("--output-coverage-plot=" + summary + ".covplot");
-    //randoop.add("--output-tests=fail");
+    // randoop.add("--output-coverage-plot=" + summary + ".covplot");
+    // randoop.add("--output-tests=fail");
     randoop.add("--timelimit=1000000");
     randoop.add("--stop-when-plateau=50");
     randoop.add("--helpers=true");
@@ -109,7 +109,7 @@ public class RandoopAllClasses {
     if (exp.methodOmitPattern != null && !exp.methodOmitPattern.trim().equals("")) {
       randoop.add("--omitmethods=" + exp.methodOmitPattern);
     }
-    //randoop.add("--junit-classname=" + summary);
+    // randoop.add("--junit-classname=" + summary);
     randoop.add("--dont-output-tests");
     randoop.add("--forbid-null=true");
     randoop.add("--stats-coverage=true");
@@ -123,10 +123,10 @@ public class RandoopAllClasses {
     }
     randoop.add("--maxsize=50");
     randoop.add("--randomseed=" + seed);
-    //randoop.add("--output-components=" + exp.experimentName + ".components.gz");
-    //randoop.add("--output-covmap=" + exp.experimentName + ".covmap.gz");
-    //randoop.add("--randoop-exp");
-    //randoop.add("--dontexecute");
+    // randoop.add("--output-components=" + exp.experimentName + ".components.gz");
+    // randoop.add("--output-covmap=" + exp.experimentName + ".covmap.gz");
+    // randoop.add("--randoop-exp");
+    // randoop.add("--dontexecute");
     randoop.add("--expfile="
                 + ttss
                 + "/"

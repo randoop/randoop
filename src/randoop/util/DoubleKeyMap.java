@@ -13,7 +13,7 @@ public final class DoubleKeyMap<K1, K2, V> {
 
   private final Map<K1, Map<K2, V>> fMap;
 
-  public DoubleKeyMap(){
+  public DoubleKeyMap() {
     fMap= new LinkedHashMap<K1, Map<K2, V>>();
   }
 
@@ -29,31 +29,31 @@ public final class DoubleKeyMap<K1, K2, V> {
     return Collections.unmodifiableSet(new LinkedHashSet<V>(getSecondLevel(k1).values()));
   }
 
-  private Map<K2, V> getSecondLevel(K1 k1){
+  private Map<K2, V> getSecondLevel(K1 k1) {
     if (fMap.containsKey(k1))
       return fMap.get(k1);
     else
       return Collections.emptyMap();
   }
 
-  public boolean containsKeys(K1 k1, K2 k2){
-    Map<K2, V> secondLevel= fMap.get(k1);//get directly, for speed
+  public boolean containsKeys(K1 k1, K2 k2) {
+    Map<K2, V> secondLevel= fMap.get(k1);// get directly, for speed
     if (secondLevel == null)
       return false;
     else
       return secondLevel.containsKey(k2);
   }
 
-  public V get(K1 k1, K2 k2){
-    Map<K2,V> secondLevel= fMap.get(k1);//get directly, for speed
+  public V get(K1 k1, K2 k2) {
+    Map<K2,V> secondLevel= fMap.get(k1);// get directly, for speed
     if (secondLevel == null)
       return null;
     return secondLevel.get(k2);
   }
 
-  public V put(K1 k1, K2 k2, V v){
-    Map<K2, V> secLvl= fMap.get(k1);//get directly, for speed
-    if (secLvl == null){
+  public V put(K1 k1, K2 k2, V v) {
+    Map<K2, V> secLvl= fMap.get(k1);// get directly, for speed
+    if (secLvl == null) {
       secLvl= new LinkedHashMap<K2,V>(2);
       fMap.put(k1, secLvl);
     }

@@ -77,12 +77,12 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     if (!Reflection.isVisible(m.getReturnType()))
       return false;
 
-    //TODO we could enable some methods from Object, like getClass
+    // TODO we could enable some methods from Object, like getClass
     if (m.getDeclaringClass().equals(java.lang.Object.class))
-      return false;//handled here to avoid printing reasons
+      return false;// handled here to avoid printing reasons
 
     if (m.getDeclaringClass().equals(java.lang.Thread.class))
-      return false;//handled here to avoid printing reasons
+      return false;// handled here to avoid printing reasons
 
     if (m.getAnnotation(CheckRep.class) != null) {
       return false;
@@ -116,7 +116,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
       return "We're skipping this to get reproducibility when running java.util tests.";
 
     // Special case 2:
-    //hashCode is bad in general but String.hashCode is fair game
+    // hashCode is bad in general but String.hashCode is fair game
     if (m.getName().equals("hashCode") && ! m.getDeclaringClass().equals(String.class))
       return "hashCode";
 
@@ -158,7 +158,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
       return false;
     }
 
-    //synthetic constructors are OK
+    // synthetic constructors are OK
 
     if (Modifier.isAbstract(c.getDeclaringClass().getModifiers()))
       return false;

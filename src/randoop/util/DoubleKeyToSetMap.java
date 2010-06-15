@@ -10,7 +10,7 @@ import java.util.Set;
 public final class DoubleKeyToSetMap<K1, K2, V> {
   private final DoubleKeyMap<K1, K2, Set<V>> dkMap;
 
-  public DoubleKeyToSetMap(){
+  public DoubleKeyToSetMap() {
     dkMap = new DoubleKeyMap<K1, K2, Set<V>>();
   }
 
@@ -22,11 +22,11 @@ public final class DoubleKeyToSetMap<K1, K2, V> {
     return dkMap.getK2Set(k1);
   }
 
-  public boolean containsKeys(K1 k1, K2 k2){
+  public boolean containsKeys(K1 k1, K2 k2) {
     return dkMap.containsKeys(k1, k2);
   }
 
-  public Set<V> get(K1 k1, K2 k2){
+  public Set<V> get(K1 k1, K2 k2) {
     Set<V> ret = dkMap.get(k1, k2);
     if (ret == null) {
       return Collections.emptySet();

@@ -13,8 +13,8 @@ import java.io.ObjectOutputStream;
  */
 public final class SerializationHelper {
 
-  private SerializationHelper(){
-    //no instances
+  private SerializationHelper() {
+    throw new IllegalStateException("no instances");
   }
 
   public static void writeSerialized(String fileName, Object o) {

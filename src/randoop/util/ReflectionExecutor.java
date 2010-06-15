@@ -122,15 +122,15 @@ public final class ReflectionExecutor {
     try {
       code.runReflectionCode();
       return null;
-    } catch (ThreadDeath e) {//can't stop these guys
+    } catch (ThreadDeath e) { // can't stop these guys
       throw e;
-    } catch (ReflectionCode.NotCaughtIllegalStateException e) {//exception in randoop code
+    } catch (ReflectionCode.NotCaughtIllegalStateException e) { // exception in randoop code
       throw e;
     } catch (Throwable e) {
       if (e instanceof java.lang.reflect.InvocationTargetException)
         e = e.getCause();
 
-      if (out != null){
+      if (out != null) {
         out.println("Exception thrown:" + e.toString());
         out.println("Message: " + e.getMessage());
         out.println("Stack trace: ");

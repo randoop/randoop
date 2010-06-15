@@ -51,7 +51,7 @@ public class ExperimentBase {
   // The name of a file containing the list of all coverage-instumented class names.
   public String covInstClassListFile;
   // The name of a file containing the source (.java) files.
-  //public String sourceListFile; //XXX this includes everything now, not just one package, right? same for targetClassListFile.
+  // public String sourceListFile; // XXX this includes everything now, not just one package, right? same for targetClassListFile.
   // The name of the coverage-instrumented sources (This directory is created by running randoop.experiments.PrepareSubjectProgram).
   public String covInstSourcesDir;
 

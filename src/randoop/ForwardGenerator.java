@@ -34,7 +34,7 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   public final Set<Sequence> allSequences;
   
- //public ComponentManager components;
+  // public ComponentManager components;
 
   /** Sequences that are used in other sequences (and are thus redundant) **/
   public Set<Sequence> subsumed_sequences = new LinkedHashSet<Sequence>();
@@ -437,7 +437,7 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       }
 
-      //assert Reflection.canBeUsedAs(randomVariable.getType(), t);
+      // assert Reflection.canBeUsedAs(randomVariable.getType(), t);
       variables.add(totStatements + randomVariable.index);
       sequences.add(chosenSeq);
       totStatements += chosenSeq.size();

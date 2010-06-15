@@ -53,7 +53,7 @@ public final class RConstructor implements StatementKind, Serializable {
     this.constructor = constructor;
     // TODO move this earlier in the process: check first that all
     // methods to be used can be made accessible.
-    //XXX this should not be here but I get infinite loop when comment out
+    // XXX this should not be here but I get infinite loop when comment out
     this.constructor.setAccessible(true);
   }
 
@@ -79,8 +79,8 @@ public final class RConstructor implements StatementKind, Serializable {
     return toParseableString();
   }
 
-  //TODO: integrate with below method
-  public void appendCode(Variable varName, List<Variable> inputVars, StringBuilder b){
+  // TODO: integrate with below method
+  public void appendCode(Variable varName, List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == this.getInputTypes().size();
 
     Class<?> declaringClass = constructor.getDeclaringClass();
@@ -155,9 +155,9 @@ public final class RConstructor implements StatementKind, Serializable {
     ConstructorReflectionCode code = new ConstructorReflectionCode(
         this.constructor, statementInput);
 
-    //long startTime = System.currentTimeMillis();
+    // long startTime = System.currentTimeMillis();
     Throwable thrown = ReflectionExecutor.executeReflectionCode(code, out);
-    //long totalTime = System.currentTimeMillis() - startTime;
+    // long totalTime = System.currentTimeMillis() - startTime;
 
     if (thrown == null) {
       return new NormalExecution(code.getReturnVariable(), 0);

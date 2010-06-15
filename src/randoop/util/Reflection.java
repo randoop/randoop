@@ -45,8 +45,8 @@ public final class Reflection {
   static Map<String, Member> cached_deserializeMethodOrCtor =
     new LinkedHashMap<String, Member>();
 
-  private Reflection(){
-    //no instance
+  private Reflection() {
+    // no instance
   }
 
   /**
@@ -226,7 +226,7 @@ public final class Reflection {
      return ret;
    }
 
-   public static Set<Class<?>> getDirectSuperTypes(Class<?> c){
+   public static Set<Class<?>> getDirectSuperTypes(Class<?> c) {
      Set<Class<?>> result= new LinkedHashSet<Class<?>>();
      Class<?> superclass = c.getSuperclass();
      if (superclass != null)
@@ -345,7 +345,7 @@ public final class Reflection {
     * errMsgContext is uninterpreted - just printed in error messages
     * Returns null if inputs are OK wrt paramTypes. Returns error message otherwise.
     */
-   public static String checkArgumentTypes(Object[] inputs, Class<?>[] paramTypes, Object errMsgContext){
+   public static String checkArgumentTypes(Object[] inputs, Class<?>[] paramTypes, Object errMsgContext) {
      if (inputs.length != paramTypes.length)
        return "Bad number of parameters for " + errMsgContext + " was:" + inputs.length;
 
@@ -365,7 +365,7 @@ public final class Reflection {
    public static boolean canBePassedAsArgument(Object inputObject, Class<?> parameterType) {
      if (parameterType == null || parameterType.equals(Void.TYPE))
        throw new IllegalStateException("Illegal type of parameter " + parameterType);
-     if (inputObject == null){
+     if (inputObject == null) {
        return true;
      } else if (! Reflection.canBeUsedAs(inputObject.getClass(), parameterType)) {
        return false;
@@ -505,7 +505,7 @@ public final class Reflection {
    private static Map<Class<?>, Boolean> cached_isVisible =
      new LinkedHashMap<Class<?>, Boolean>();
 
-   public static boolean isVisible(Class<?> c){
+   public static boolean isVisible(Class<?> c) {
 
      Boolean cached = cached_isVisible.get(c);
      if (cached == null) {
@@ -555,7 +555,7 @@ public final class Reflection {
          for (Method m : getMethodsOrdered(c)) {
            // System.out.printf ("Considering method %s%n", m);
            if (filter.canUse(m)) {
-             RMethod mc =  RMethod.getRMethod(m);
+             RMethod mc = RMethod.getRMethod(m);
              statements.add(mc);
            }
          }
@@ -606,8 +606,8 @@ public final class Reflection {
 
 
 
-   //XXX stolen from Constructor.toString - but we don't need modifiers or exceptions
-   //and we need a slightly different format
+   // XXX stolen from Constructor.toString - but we don't need modifiers or exceptions
+   // and we need a slightly different format
    public static String getSignature(Constructor<?> c) {
      StringBuilder sb = new StringBuilder();
      sb.append(c.getName() + ".<init>(");
@@ -621,7 +621,7 @@ public final class Reflection {
      return sb.toString();
    }
 
-   //XXX stolen from Method.toString - but we don't need modifiers or exceptions
+   // XXX stolen from Method.toString - but we don't need modifiers or exceptions
    public static String getSignature(Method m) {
      StringBuilder sb = new StringBuilder();
      sb.append(m.getDeclaringClass().getName() + ".");

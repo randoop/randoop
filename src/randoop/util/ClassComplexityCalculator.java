@@ -20,7 +20,7 @@ public final class ClassComplexityCalculator {
   private final Map<Class<?>, Integer> counts;
   private final ClassHierarchy h;
 
-  public ClassComplexityCalculator(Collection<Class<?>> classes){
+  public ClassComplexityCalculator(Collection<Class<?>> classes) {
     counts= new LinkedHashMap<Class<?>, Integer>();
     h= new ClassHierarchy(ClassHierarchy.superClassClosure(new LinkedHashSet<Class<?>>(Reflection.relatedClasses(classes, 1))));
     computeForAll();
@@ -35,32 +35,32 @@ public final class ClassComplexityCalculator {
     }
   }
 
-  public int classComplexity(Class<?> c){
+  public int classComplexity(Class<?> c) {
     return counts.get(c);
   }
 
-  private int internalClassComplexity(Class<?> c){
+  private int internalClassComplexity(Class<?> c) {
     if (counts.containsKey(c))
       return counts.get(c);
-    if (c.isPrimitive()){
+    if (c.isPrimitive()) {
       counts.put(c, 1);
       return 1;            
     }
-    if (c.isArray()){
+    if (c.isArray()) {
       int r= internalClassComplexity(c.getComponentType());
       counts.put(c, r);
       return r;
     }
-    if (! Modifier.isPublic(c.getModifiers())){
+    if (! Modifier.isPublic(c.getModifiers())) {
       counts.put(c, Integer.MAX_VALUE);
       return Integer.MAX_VALUE;
     }
-    if (c.isAnonymousClass()){
+    if (c.isAnonymousClass()) {
       counts.put(c, Integer.MAX_VALUE);
       return Integer.MAX_VALUE;
     }
 
-    if (! isConcreteClass(c)){
+    if (! isConcreteClass(c)) {
       int r= minComplexityOfSubclass(c);
       counts.put(c, r);
       return r;
@@ -130,17 +130,17 @@ return result;
       System.out.println("loading " +classNa + " " + (classCount++) + " of " + args.length);
       try{
         classes.add(Class.forName(classNa));
-      } catch (NoClassDefFoundError e){
+      } catch (NoClassDefFoundError e) {
         System.out.println("Not found:" + classNa);
-        //keep going
+        // keep going
       }
     }
     System.out.println("loaded all");
     ClassComplexityCalculator ccc= new ClassComplexityCalculator(classes);
-    //int count= 0;
+    // int count= 0;
     Histogram<Class<?>> h= new Histogram<Class<?>>();
     for (Class<?> c : classes) {
-      //System.out.println((count++) + " of " + classes.size());
+      // System.out.println((count++) + " of " + classes.size());
       h.addToCount(c, ccc.classComplexity(c));
     }
     System.out.println(h.toStringSortedByNumbers());

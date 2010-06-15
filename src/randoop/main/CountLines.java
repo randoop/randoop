@@ -10,7 +10,7 @@ import randoop.util.Files;
 /** Counts lines in multiple files. Prints the sum. 
  */
 public final class CountLines {
-  private CountLines(){
+  private CountLines() {
     throw new IllegalStateException("no instances");
   }
 
