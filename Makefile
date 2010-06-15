@@ -471,8 +471,8 @@ utils/plume-lib:
 	cd utils && hg clone https://plume-lib.googlecode.com/hg/ plume-lib
 
 manual: utils/plume-lib
-	validate doc/index.html
-	validate doc/dev.html
+	utils/validate doc/index.html
+	utils/validate doc/dev.html
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
 
