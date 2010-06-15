@@ -159,16 +159,14 @@ public final class PrimitiveTypes {
 
     } else if (double.class.equals(valueClass)) {
       Double d = (Double) value;
-      String rep = null;
       if (d.isNaN()) {
 	return "Double.NaN";
       } else if (d == Double.POSITIVE_INFINITY) {
         return "Double.POSITIVE_INFINITY";
       } else if (d == Double.NEGATIVE_INFINITY) {
         return "Double.NEGATIVE_INFINITY";
-      } else {
-        rep = d.toString();
       }
+      String rep = d.toString();
       assert rep != null;
       rep = rep + "d";
       if (rep.charAt(0) == '-')
@@ -177,16 +175,14 @@ public final class PrimitiveTypes {
 
     } else if (float.class.equals(valueClass)) {
       Float d = (Float) value;
-      String rep = null;
       if (d.isNaN()) {
         return "Float.NaN";
       } else if (d == Float.POSITIVE_INFINITY) {
         return "Float.POSITIVE_INFINITY";
       } else if (d == Float.NEGATIVE_INFINITY) {
 	return "Float.NEGATIVE_INFINITY";
-      } else {
-        rep = d.toString();
       }
+      String rep = d.toString();
       assert rep != null;
       rep = rep + "f";
       if (rep.charAt(0) == '-')
@@ -200,14 +196,14 @@ public final class PrimitiveTypes {
 
     } else if (long.class.equals(valueClass)) {
 
-      String rep =value.toString() + "L";
+      String rep = value.toString() + "L";
       if (rep.charAt(0) == '-')
         rep = "(" + rep + ")";
       return rep;
 
     } else if (byte.class.equals(valueClass)) {
 
-      String rep =  value.toString();
+      String rep = value.toString();
       if (rep.charAt(0) == '-')
         rep = "(" + rep + ")";
       rep = "(byte)" + rep;
@@ -215,7 +211,7 @@ public final class PrimitiveTypes {
 
     } else if (short.class.equals(valueClass)) {
 
-      String rep =  value.toString();
+      String rep = value.toString();
       if (rep.charAt(0) == '-')
         rep = "(" + rep + ")";
       rep = "(short)" + rep;
@@ -225,7 +221,7 @@ public final class PrimitiveTypes {
       assert int.class.equals(valueClass) : valueClass;
 
       // We don't need to cast an int.
-      String rep =  value.toString();
+      String rep = value.toString();
       if (rep.charAt(0) == '-')
         rep = "(" + rep + ")";
       return rep;
