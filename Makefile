@@ -274,6 +274,8 @@ df-ds: $(DYNCOMP) bin
 	   --outputfile=temp.txt \
 	   systemtests/resources/simple_ds.dfin.txt
 
+test-constants:
+	java -ea randoop.util.ReadConstants bin/randoop/util/ReadConstants.class
 
 # Runs Randoop on arraylist.
 # Compares the results with the goal results.
