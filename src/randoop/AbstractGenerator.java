@@ -43,9 +43,9 @@ public abstract class AbstractGenerator {
   public List<StatementKind> statements;
   public SequenceGeneratorStats stats;
   public List<Class<?>> covClasses;
-  public SequenceCollection seeds;
   public SizeEqualizer sizeEqualizer = new SizeEqualizer();
   private MessageSender msgSender;
+  public ComponentManager componentManager;
 
   /**
    *
@@ -56,7 +56,7 @@ public abstract class AbstractGenerator {
    * @param seeds can be null.
    */
   public AbstractGenerator(List<StatementKind> statements,
-      List<Class<?>> covClasses, long timeMillis, int maxSequences, SequenceCollection seeds) {
+      List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentManager) {
     assert statements != null;
 
     this.timeMillis = timeMillis;
@@ -74,10 +74,10 @@ public abstract class AbstractGenerator {
 
     this.stats =  new SequenceGeneratorStats(statements, this.covClasses);
 
-    if (seeds == null) {
-      this.seeds = new SequenceCollection();
+    if (componentManager == null) {
+      this.componentManager = new ComponentManager();
     } else {
-      this.seeds = seeds;
+      this.componentManager = componentManager;
     }
     
     this.msgSender = null;
@@ -85,8 +85,8 @@ public abstract class AbstractGenerator {
 
   public AbstractGenerator(List<StatementKind> statements,
       List<Class<?>> covClasses, long timeMillis, int maxSequences,
-      SequenceCollection seeds, MessageSender msgSender) {
-    this(statements, covClasses, timeMillis, maxSequences, seeds);
+      ComponentManager componentMgr, MessageSender msgSender) {
+    this(statements, covClasses, timeMillis, maxSequences, componentMgr);
     
     this.msgSender = msgSender;
   }
@@ -123,7 +123,7 @@ public abstract class AbstractGenerator {
       
       if (Log.isLoggingOn()) {
         Log.logLine("Initial sequences (seeds):");
-        for (Sequence s : seeds.getAllSequences()) {
+        for (Sequence s : componentManager.getAllSequences()) {
           Log.logLine(s.toString());          
         }
       }

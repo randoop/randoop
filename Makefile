@@ -209,6 +209,20 @@ randoop-checkrep: bin
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopCheckRepTest
 
+randoop-literals: bin
+	rm -rf systemtests/randoop-scratch
+	java -ea -classpath $(CLASSPATH) \
+	  randoop.main.Main gentests \
+	   --inputlimit=1000 \
+	   --testclass=ps1.RatNum \
+	   --testclass=java.lang.Long \
+	   --junit-classname=Literals \
+	   --junit-output-dir=systemtests/randoop-scratch \
+	   --use-class-literals=CLASS \
+	   --class-literal-file=systemtests/resources/literalsfile.txt
+	cp systemtests/randoop-scratch/Literals0.java systemtests/resources/Literals0.java
+
+
 # Performance tests. Removed from Randoop tests because results highly dependent on machine that
 # tests are run, resulting in many false positives.
 perf: perf1 perf2
