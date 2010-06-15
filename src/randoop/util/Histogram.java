@@ -18,15 +18,15 @@ public final class Histogram<T> {
   public final Map<T, Integer> fMap= new LinkedHashMap<T, Integer>();
   private String fName;
 
-  public Histogram(String name){
+  public Histogram(String name) {
     fName= name;
   }
 
-  public Histogram(){
+  public Histogram() {
     this(null);
   }
 
-  public void addToCount(T t, int i){
+  public void addToCount(T t, int i) {
     if (i <= 0)
       throw new IllegalArgumentException("negative argument:" + i);
     if (! fMap.containsKey(t))
@@ -35,7 +35,7 @@ public final class Histogram<T> {
       fMap.put(t, getCount(t) + i);
   }
 
-  public void addOneToCount(T t){
+  public void addOneToCount(T t) {
     addToCount(t, 1);
   }
 
@@ -45,8 +45,8 @@ public final class Histogram<T> {
   }
 
   public String toStringSortedByNumbers() {
-    return entriesToString(true, new Comparator<Map.Entry<T, Integer>>(){
-      public int compare(Map.Entry<T, Integer> e1, Map.Entry<T, Integer> e2){
+    return entriesToString(true, new Comparator<Map.Entry<T, Integer>>() {
+      public int compare(Map.Entry<T, Integer> e1, Map.Entry<T, Integer> e2) {
         Integer value1= e1.getValue();
         Integer value2= e2.getValue();
         return value2.intValue() - value1.intValue();
@@ -54,11 +54,11 @@ public final class Histogram<T> {
     });
   }
 
-  //this works only when keys are comparable
+  // this works only when keys are comparable
   public String toStringSortedByKey() {
-    return entriesToString(false, new Comparator<Map.Entry<T, Integer>>(){
+    return entriesToString(false, new Comparator<Map.Entry<T, Integer>>() {
       @SuppressWarnings("unchecked")
-      public int compare(Map.Entry<T, Integer> e1, Map.Entry<T, Integer> e2){
+      public int compare(Map.Entry<T, Integer> e1, Map.Entry<T, Integer> e2) {
         Comparable key1= (Comparable) e1.getKey();
         Comparable key2= (Comparable) e2.getKey();
         return key2.compareTo(key1);
@@ -74,7 +74,7 @@ public final class Histogram<T> {
       sb.append("Histogram:").append(fName).append(Globals.lineSep);
     int size = getSize();
     sb.append("Total size:" + size).append(Globals.lineSep);
-    for(Iterator<Map.Entry<T, Integer>> iter= entries.iterator(); iter.hasNext();){
+    for(Iterator<Map.Entry<T, Integer>> iter= entries.iterator(); iter.hasNext();) {
       Map.Entry<T, Integer> e= iter.next();
       sb.append(UtilMDE.rpad(e.getValue(), 9));
       if (append_percent)
@@ -85,27 +85,27 @@ public final class Histogram<T> {
   }
 
   private String createPercentString(int size, Map.Entry<T, Integer> e) {
-    float size_f = size;//this this assignment for conversion
-    float count = getCount(e.getKey());//this assignment for conversion
+    float size_f = size;// this this assignment for conversion
+    float count = getCount(e.getKey());// this assignment for conversion
     int percent = Math.round((count/size_f)*100);
     return " ["+ percent +"%]";
   }
 
   private int getSize() {
     int result= 0;
-    for(Iterator<T> iter= fMap.keySet().iterator(); iter.hasNext();){
+    for(Iterator<T> iter= fMap.keySet().iterator(); iter.hasNext();) {
       result += getCount(iter.next());
     }
     return result;
   }
 
-  public int getCount(T t){
+  public int getCount(T t) {
     if (fMap.containsKey(t))
       return fMap.get(t);
     else return 0;
 
   }
-  public void clear(){
+  public void clear() {
     fMap.clear();
   }
 }

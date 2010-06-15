@@ -59,7 +59,7 @@ public class BDGenOneFile {
     branchdir.add("--input-covinst-classes=" + exp.covInstClassListFile);
     branchdir.add("--input-df-results=" + frontier + ".dfout.gz");
 
-    //branchdir.add("--input-covmap=" + expName + ".covmap.gz");
+    // branchdir.add("--input-covmap=" + expName + ".covmap.gz");
 
     branchdir.add("--output-new-sequences=" + frontier + ".genoutput.txt");
     branchdir.add("--output-summary=" + frontier + ".result");

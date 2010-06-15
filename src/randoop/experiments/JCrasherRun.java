@@ -93,7 +93,7 @@ public class JCrasherRun {
     compileJunit.add(finalOutputDir);
     compileJunit.add("-classpath");
     compileJunit.add(finalOutputDir
-        //+ (this.jcrasherPackageToPrepend != null ? "/" + this.jcrasherPackageToPrepend : "")
+        // + (this.jcrasherPackageToPrepend != null ? "/" + this.jcrasherPackageToPrepend : "")
         + ":" 
         + this.base.classPath);
     compileJunit.addAll(jcrasherGeneratedJunitFiles);
@@ -104,7 +104,7 @@ public class JCrasherRun {
     runJunit.add("java");
     runJunit.add("-classpath");
     runJunit.add(finalOutputDir
-        //+ (this.jcrasherPackageToPrepend != null ? "/" + this.jcrasherPackageToPrepend : "")
+        // + (this.jcrasherPackageToPrepend != null ? "/" + this.jcrasherPackageToPrepend : "")
         + ":" 
         + this.base.classPath);
     runJunit.add("edu.gatech.cc.junit.textui.RaGTestRunner");

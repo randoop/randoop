@@ -241,7 +241,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
 	      ObjectContract observerEqValue = new ObserverEqValue (m, value);
 	      ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
-	      //System.out.printf ("Adding observer %s%n", observerCheck);
+	      // System.out.printf ("Adding observer %s%n", observerCheck);
 	      s.addCheck(idx, observerCheck, true);
             }
           }

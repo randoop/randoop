@@ -20,7 +20,7 @@ public class HelperSequenceCreator {
    */
   public static SimpleList<Sequence> createSequence(ComponentManager components, Class<?> cls) {
 
-    //Class<?> cls = statement.getInputTypes().get(i);
+    // Class<?> cls = statement.getInputTypes().get(i);
     
     if (!cls.isArray()) {
       return new ArrayListSimpleList<Sequence>();

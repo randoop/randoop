@@ -72,7 +72,7 @@ public class MachineManager extends Thread {
 
         fproc = null;
         int exitVariable = 0;
-        //try {
+        // try {
         System.out.println("Machine " + machine + " starting experiment " + e);
         System.out.println("Executing command:" + e);
 
@@ -92,7 +92,7 @@ public class MachineManager extends Thread {
           str.close();
           out.close();
           if (exitVariable == 0) {
-            //tmp.delete(); // Succeeded executing target; no need to keep around output.
+            // tmp.delete(); // Succeeded executing target; no need to keep around output.
           }
         } catch (Exception ex) {
           throw new Error(ex);

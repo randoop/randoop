@@ -529,7 +529,7 @@ public class GenBranchDir {
     };
     Set<VariableInfo> sorted = new TreeSet<VariableInfo>(comp);
     sorted.addAll(r.values);
-    //System.out.println("vars: " + sorted);
+    // System.out.println("vars: " + sorted);
     VariableInfo[] vars = sorted.toArray(new VariableInfo[0]);
     for (int i = 0 ; i < vars.length ; i++) {
       for (int j = 0 ; j < vars.length ; j++) {
@@ -1011,7 +1011,7 @@ public class GenBranchDir {
     MVariable mvar = seq.getVariable(var.getDeclIndex());
     StatementKind st = new PrimitiveOrStringOrNullDecl(mvar.getType(), val);
     seq.statements.set(var.getDeclIndex(), new MStatement(st, new ArrayList<MVariable>(), mvar));
-    //out.println("@@@" + seq.toCodeString());
+    // out.println("@@@" + seq.toCodeString());
 
     return seq.toImmutableSequence();
   }
@@ -1037,16 +1037,16 @@ public class GenBranchDir {
       frontierWasCovered = true;
     }
 
-    //Branch db = Branch.parse("classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=true");
+    // Branch db = Branch.parse("classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=true");
 
     boolean usefulSequence = false;
     for (Branch b : coveredBranches) {
       if (uncoveredByRandoop.contains(b)) {
         usefulSequence = true;
-        //if (br.equals(db)) System.out.println(">>" + b);
+        // if (br.equals(db)) System.out.println(">>" + b);
         break;
       } else {
-        //if (br.equals(db)) System.out.println("<<" + b);
+        // if (br.equals(db)) System.out.println("<<" + b);
       }
     }
 

@@ -6,7 +6,7 @@ package randoop;
 // reduce the size of a failing tests to aid debugging.
 public class LineRemover {
 
-  //Statistics collected across all calls to minimize().
+  // Statistics collected across all calls to minimize().
   protected static int original_sequence_size_accum = 0;
   protected static int minimized_sequence_size_accum = 0;
   protected static int times_minimize_was_called = 0;
@@ -33,7 +33,7 @@ public class LineRemover {
     return replaced;
   }
 
-  //returns null if cannot minimize
+  // returns null if cannot minimize
   private static ExecutableSequence replaceRemovedWithDummies(ExecutableSequence seq) {
     times_minimize_was_called++;
     original_sequence_size_accum += seq.sequence.size();

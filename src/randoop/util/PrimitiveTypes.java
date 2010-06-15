@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 public final class PrimitiveTypes {
-  private PrimitiveTypes(){
-    //no instances
+  private PrimitiveTypes() {
+    throw new IllegalStateException("no instances");
   }
 
   private static final Map<String, Class<?>> typeNameToBoxed= new LinkedHashMap<String, Class<?>>();
@@ -69,14 +69,14 @@ public final class PrimitiveTypes {
     return typeNameToBoxed.containsKey(typeName);
   }
 
-  public static Class<?> getBoxedType(String typeName){
+  public static Class<?> getBoxedType(String typeName) {
     Class<?> boxed = typeNameToBoxed.get(typeName);
     if (boxed == null)
       throw new IllegalArgumentException("not a primitive type:" + typeName);
     return boxed;
   }
 
-  public static Class<?> getPrimitiveTypeOrString(String typeName){
+  public static Class<?> getPrimitiveTypeOrString(String typeName) {
     return typeNameToPrimitiveOrString.get(typeName);
   }
 

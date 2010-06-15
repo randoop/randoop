@@ -72,7 +72,7 @@ public abstract class AbstractGenerator {
 
     this.executionVisitor = new MultiVisitor();
 
-    this.stats =  new SequenceGeneratorStats(statements, this.covClasses);
+    this.stats = new SequenceGeneratorStats(statements, this.covClasses);
 
     if (componentManager == null) {
       this.componentManager = new ComponentManager();

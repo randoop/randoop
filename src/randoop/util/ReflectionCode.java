@@ -64,7 +64,7 @@ public abstract class ReflectionCode {
 
 
   protected final void setRunAlready() {
-    //called from inside runReflectionCode, so use NotCaughtIllegalStateException
+    // called from inside runReflectionCode, so use NotCaughtIllegalStateException
     if (runAlready) throw new NotCaughtIllegalStateException("cannot call this twice");
     runAlready= true;
   }

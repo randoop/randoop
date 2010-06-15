@@ -359,7 +359,7 @@ public class MultiMachineRunner {
           String processNumber = tokens[0].trim();
           try {
             Long.parseLong(processNumber);
-          } catch (NumberFormatException e){
+          } catch (NumberFormatException e) {
             System.out.println("Process number \"" +
                 processNumber + "\" not a number in line: " + s);
             System.out.println("Aborting kill.");

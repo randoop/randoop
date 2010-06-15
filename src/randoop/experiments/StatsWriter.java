@@ -123,8 +123,8 @@ public class StatsWriter {
       classif.append(-1 + "\n");
       numclassifications = 1;
     } else {
-      //int idx = seq.getExceptionIndex(Throwable.class);
-      //assert idx >= 0 : seq;// TODO this fails for FDRT sometimes.
+      // int idx = seq.getExceptionIndex(Throwable.class);
+      // assert idx >= 0 : seq;// TODO this fails for FDRT sometimes.
       classif.append("exception\nn/a\n");
       classif.append(-1 + "\n");
       numclassifications = 1;

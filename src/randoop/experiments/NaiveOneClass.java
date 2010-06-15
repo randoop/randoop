@@ -44,18 +44,18 @@ public class NaiveOneClass {
     randoop.add("gentests");
     randoop.add("--naive");
     randoop.add("--check-object-contracts=false");
-    //randoop.add("--timelimit=10000"); // No time limit. We use plateau limit.
+    // randoop.add("--timelimit=10000"); // No time limit. We use plateau limit.
     randoop.add("--stop-when-plateau=10");
     randoop.add("--coverage-instrumented-classes=" + exp.covInstClassListFile);
     randoop.add("--testclass=" + className);
     randoop.add("--dont-output-tests");
-    //randoop.add("--forbid-null=true");
-    //randoop.add("--always-use-ints-as-objects=true");
-    //randoop.add("--helpers=true");
+    // randoop.add("--forbid-null=true");
+    // randoop.add("--always-use-ints-as-objects=true");
+    // randoop.add("--helpers=true");
 //     randoop.add("--forbid-null=false");
 //     randoop.add("--null-ratio=0.5");
-    //randoop.add("--output-components=rp1." + args[0] + ".components.gz");
-    //randoop.add("--output-covmap=rp1." + args[0] + ".covmap.gz");
+    // randoop.add("--output-components=rp1." + args[0] + ".components.gz");
+    // randoop.add("--output-covmap=rp1." + args[0] + ".covmap.gz");
     ExperimentBase.printCommand(randoop, false, true);
     int retval = Command.exec(randoop.toArray(new String[0]), System.out,
         err, "", false, Integer.MAX_VALUE, null);

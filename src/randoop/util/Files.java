@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class Files {
-  private Files(){
+  private Files() {
     throw new IllegalStateException("no instances");
   }
 
@@ -64,15 +64,15 @@ public final class Files {
     return retval;
   }
 
-  public static void writeToFile(String s, File file) throws IOException{
+  public static void writeToFile(String s, File file) throws IOException {
     writeToFile(s, file, false);
   }
 
-  public static void writeToFile(String s, String fileName) throws IOException{
+  public static void writeToFile(String s, String fileName) throws IOException {
     writeToFile(s, fileName, false);
   }
 
-  public static void writeToFile(String s, File file, Boolean append) throws IOException{
+  public static void writeToFile(String s, File file, Boolean append) throws IOException {
     BufferedWriter writer= new BufferedWriter(new FileWriter(file, append));
     try{
       writer.append(s);
@@ -81,11 +81,11 @@ public final class Files {
     }        
   }
 
-  public static void writeToFile(String s, String fileName, Boolean append) throws IOException{
+  public static void writeToFile(String s, String fileName, Boolean append) throws IOException {
     writeToFile(s, new File(fileName));
   }
 
-  public static void writeToFile(List<String> lines, String fileName) throws IOException{
+  public static void writeToFile(List<String> lines, String fileName) throws IOException {
     writeToFile(CollectionsExt.toStringInLines(lines), fileName);
   }
 
@@ -96,7 +96,7 @@ public final class Files {
   public static List<String> readWhole(BufferedReader reader) throws IOException {
     List<String> result= new ArrayList<String>();
     String line= reader.readLine();
-    while(line != null){
+    while(line != null) {
       result.add(line);
       line= reader.readLine();
     }
@@ -199,7 +199,7 @@ public final class Files {
       throw new IllegalStateException("Expected exactly 1 line in " + file + " but found " + lines.size());
     try{
       return Long.valueOf(lines.get(0));
-    } catch (NumberFormatException e){
+    } catch (NumberFormatException e) {
       throw new IllegalStateException("Expected a number (type long) in " + file + " but found " + lines.get(0));
     }
   }

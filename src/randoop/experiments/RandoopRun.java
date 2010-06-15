@@ -223,7 +223,7 @@ public class RandoopRun {
     randoop.add("genfailures");
     randoop.add("--progressinterval=1");
     randoop.add("--minimize");
-    //randoop.add("--log=temp.log");
+    // randoop.add("--log=temp.log");
     randoop.add("--track-coverage=cobertura.ser");
     randoop.add("--maxsize=50");
     randoop.add("--usethreads=false");
@@ -243,14 +243,14 @@ public class RandoopRun {
       randoop.add("--omitmethods=" + this.base.methodOmitPattern);
     if (verbose)
       ExperimentBase.printCommand(randoop, true, true);
-    //ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    // ByteArrayOutputStream bos = new ByteArrayOutputStream();
     FileOutputStream fos = new FileOutputStream("temp.txt");
     PrintStream err = new PrintStream(fos);
     // Kill the process if randoop takes 100 seconds more to execute than the time limit
     // (this likely means it's definitely stuck).
     int killAfterMillis = Integer.parseInt(this.time) * 1000 + 100000;
     Command.exec(randoop.toArray(new String[0]), System.out, err, "RUN JOE", true, killAfterMillis, null);
-    //Command.runCommand(randoop.toArray(new String[0]), "RUN JOE", true, "", true);
+    // Command.runCommand(randoop.toArray(new String[0]), "RUN JOE", true, "", true);
 
     this.junitFiles = findGeneratedJunitFiles(runType);
   }
