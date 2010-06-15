@@ -305,6 +305,9 @@ randoop-df: bin
 # Cleanup scratch files
 	rm frontier[123456] test.dftargets.txt
 
+test-constants: 
+	java -ea randoop.util.ReadConstants bin/randoop/util/ReadConstants.class
+
 # Runs dataflow on the results of Randoop on arraylist.
 #
 # Its input is the output of target randoop.
