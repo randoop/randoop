@@ -1,0 +1,30 @@
+$Id: RELEASE-NOTES.txt,v 1.1.1.1 2003/08/11 04:44:16 craigmcc Exp $
+
+                           Commons Chain Package
+                                Version 1.0
+                               Release Notes
+
+
+INTRODUCTION:
+============
+
+This document contains the release notes for this version of the Commons
+Chain package, and highlights changes since the previous version.
+
+
+NEW FEATURES:
+============
+
+Initial release, so all features are new.
+
+
+CHANGES:
+========
+
+Initial release, so no changes to existing features.
+
+
+BUG REPORTS ADDRESSED:
+=====================
+
+Initial release, so no bug reports addressed since the previous release.

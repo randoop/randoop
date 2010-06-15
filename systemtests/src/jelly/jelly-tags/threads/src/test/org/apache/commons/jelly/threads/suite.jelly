@@ -1,0 +1,243 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<test:suite xmlns="jelly:core" xmlns:test="jelly:junit" xmlns:threads="jelly:threads">
+    <test:case name="testBasic">
+        <set var="result" value=""/>
+
+        <threads:thread var="thread1">
+            <threads:sleep for="700"/>
+            <set var="result" value="${result}1"/>
+            <test:assertEquals expected="4321" actual="${result}"/>
+        </threads:thread>
+
+        <threads:thread>
+            <threads:sleep for="400"/>
+            <set var="result" value="${result}2"/>
+        </threads:thread>
+
+        <threads:thread>
+            <threads:sleep for="100"/>
+            <set var="result" value="${result}3"/>
+        </threads:thread>
+
+        <threads:thread>
+            <set var="result" value="${result}4"/>
+        </threads:thread>
+    </test:case>
+
+    <test:case name="testSync">
+        <set var="result" value=""/>
+        <threads:mutex var="mutex"/>
+
+        <threads:thread var="thread1">
+            <threads:synchronize mutex="${mutex}">
+                <set var="cnt1" value="0"/>
+                <while test="${cnt1 != 5}">
+                    <set var="result" value="${result}${cnt1}"/>
+                    <set var="cnt1" value="${cnt1 + 1}"/>
+                    <threads:interrupt/>
+                </while>
+            </threads:synchronize>
+        </threads:thread>
+
+        <threads:thread var="thread2">
+            <!-- let the other thread start -->
+            <threads:sleep for="100"/>
+            <threads:synchronize mutex="${mutex}">
+                <set var="cnt2" value="5"/>
+                <while test="${cnt2 != 10}">
+                    <set var="result" value="${result}${cnt2}"/>
+                    <set var="cnt2" value="${cnt2 + 1}"/>
+                    <threads:interrupt/>
+                </while>
+            </threads:synchronize>
+        </threads:thread>
+
+        <threads:join thread="${thread1}"/>
+        <threads:join thread="${thread2}"/>
+        <test:assertEquals expected="0123456789" actual="${result}"/>
+    </test:case>
+
+    <test:case name="testWaitNotify">
+        <set var="result" value=""/>
+        <threads:mutex var="mutex"/>
+
+        <threads:thread var="thread1">
+            <threads:synchronize mutex="${mutex}">
+                <set var="cnt1" value="0"/>
+                <while test="${cnt1 != 5}">
+                    <set var="result" value="${result}${cnt1}"/>
+                    <set var="cnt1" value="${cnt1 + 1}"/>
+                    <!-- let the other thread go -->
+                    <threads:notify mutex="${mutex}"/>
+                    <threads:wait mutex="${mutex}"/>
+                </while>
+                <!-- one last notify -->
+                <threads:notify mutex="${mutex}"/>
+            </threads:synchronize>
+        </threads:thread>
+
+        <threads:thread var="thread2">
+            <!-- let the other thread start -->
+            <threads:sleep for="100"/>
+            <threads:synchronize mutex="${mutex}">
+                <set var="cnt2" value="0"/>
+                <while test="${cnt2 != 5}">
+                    <set var="result" value="${result}${cnt2}"/>
+                    <set var="cnt2" value="${cnt2 + 1}"/>
+                    <!-- let the other thread go -->
+                    <threads:notify mutex="${mutex}"/>
+                    <threads:wait mutex="${mutex}"/>
+                </while>
+                <!-- one last notify -->
+                <threads:notify mutex="${mutex}"/>
+            </threads:synchronize>
+        </threads:thread>
+
+        <threads:join thread="${thread1}"/>
+        <threads:join thread="${thread2}"/>
+        <test:assertEquals expected="0011223344" actual="${result}"/>
+    </test:case>
+
+    <test:case name="testWaitFor">
+        <set var="result" value=""/>
+
+        <threads:thread var="thread1">
+            <set var="cnt1" value="0"/>
+            <while test="${cnt1 != 5}">
+                <set var="result" value="${result}${cnt1}"/>
+                <set var="cnt1" value="${cnt1 + 1}"/>
+                <!-- force an interrupt, shouldn't matter -->
+                <threads:interrupt/>
+            </while>
+        </threads:thread>
+
+        <threads:thread var="thread2">
+            <threads:waitfor thread="${thread1}"/>
+            <set var="cnt2" value="5"/>
+            <while test="${cnt2 != 10}">
+                <set var="result" value="${result}${cnt2}"/>
+                <set var="cnt2" value="${cnt2 + 1}"/>
+            </while>
+        </threads:thread>
+
+        <threads:join thread="${thread1}"/>
+        <threads:join thread="${thread2}"/>
+        <test:assertEquals expected="0123456789" actual="${result}"/>
+    </test:case>
+
+    <test:case name="testWaitForTimeout">
+        <set var="result" value=""/>
+
+        <threads:thread var="thread1">
+            <set var="cnt1" value="0"/>
+            <while test="${cnt1 != 5}">
+                <set var="result" value="${result}${cnt1}"/>
+                <set var="cnt1" value="${cnt1 + 1}"/>
+                <!-- force an interrupt, shouldn't matter -->
+                <threads:sleep for="500"/>
+            </while>
+        </threads:thread>
+
+        <threads:thread var="thread2">
+            <!-- this will fail since thread 1 is sleeping -->
+            <threads:waitfor thread="${thread1}" onlyWait="100"/>
+            <set var="cnt2" value="5"/>
+            <while test="${cnt2 != 10}">
+                <set var="result" value="${result}${cnt2}"/>
+                <set var="cnt2" value="${cnt2 + 1}"/>
+            </while>
+        </threads:thread>
+
+        <threads:thread var="thread3">
+            <threads:waitfor thread="${thread1}"/>
+            <!-- thread2 will have been avoided -->
+            <threads:waitfor thread="${thread2}" status="AVOIDED"/>
+            <set var="cnt2" value="10"/>
+            <while test="${cnt2 != 15}">
+                <set var="result" value="${result}${cnt2}"/>
+                <set var="cnt2" value="${cnt2 + 1}"/>
+            </while>
+        </threads:thread>
+
+        <threads:join thread="${thread1}"/>
+        <threads:join thread="${thread2}"/>
+        <threads:join thread="${thread3}"/>
+        <test:assertEquals expected="012341011121314" actual="${result}"/>
+    </test:case>
+
+    <test:case name="testWaitForFailure">
+        <set var="result" value=""/>
+
+        <threads:thread var="thread1">
+            THROW AN EXCEPTION
+            <new var="bogus" className="java.lang.System"/>
+        </threads:thread>
+
+        <threads:thread var="thread2">
+            <!-- this will fail since thread 1 is sleeping -->
+            <threads:waitfor thread="${thread1}" status="SUCCESS"/>
+            <set var="cnt2" value="5"/>
+            <while test="${cnt2 != 10}">
+                <set var="result" value="${result}${cnt2}"/>
+                <set var="cnt2" value="${cnt2 + 1}"/>
+            </while>
+        </threads:thread>
+
+        <threads:thread var="thread3">
+            <!-- this will fail since thread 1 is sleeping -->
+            <threads:waitfor thread="${thread1}" status="FAILURE"/>
+            <set var="cnt2" value="10"/>
+            <while test="${cnt2 != 15}">
+                <set var="result" value="${result}${cnt2}"/>
+                <set var="cnt2" value="${cnt2 + 1}"/>
+            </while>
+        </threads:thread>
+
+        <threads:join thread="${thread1}"/>
+        <threads:join thread="${thread2}"/>
+        <threads:join thread="${thread3}"/>
+        <test:assertEquals expected="1011121314" actual="${result}"/>
+    </test:case>
+
+    <test:case name="testThreadGroup">
+        <set var="result" value=""/>
+
+        <threads:group var="group1">
+            <threads:thread var="thread1">
+                <!-- let thread 3 try and go -->
+                <threads:sleep for="100"/>
+                <set var="result" value="${result}1"/>
+            </threads:thread>
+
+            <threads:thread>
+                <threads:waitFor thread="${thread1}"/>
+                <!-- let thread 3 try and go -->
+                <threads:sleep for="100"/>
+                <set var="result" value="${result}2"/>
+            </threads:thread>
+        </threads:group>
+
+        <threads:thread>
+            <!-- wait for the thread group to complete -->
+            <threads:waitFor group="${group1}"/>
+            <set var="result" value="${result}3"/>
+            <test:assertEquals expected="123" actual="${result}"/>
+        </threads:thread>
+    </test:case>
+    
+</test:suite>
