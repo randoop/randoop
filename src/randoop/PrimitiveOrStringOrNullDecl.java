@@ -214,18 +214,20 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
    * 
    * Examples:
    * 
-   * java.lang.String:null        represents: String x = null
+   * String:null                  represents: String x = null
    * java.lang.String:""          represents: String x = "";
-   * java.lang.String:" "         represents: String x = " ";
-   * java.lang.String:"\""        represents: String x = "\"";
-   * java.lang.String:"\n"        represents: String x = "\n";
-   * java.lang.String:"\u0000"    represents: String x = "\u0000";
+   * String:""                    represents: String x = "";
+   * String:" "                   represents: String x = " ";
+   * String:"\""                  represents: String x = "\"";
+   * String:"\n"                  represents: String x = "\n";
+   * String:"\u0000"              represents: String x = "\u0000";
    * java.lang.Object:null        represents: Object x = null;
    * [[Ljava.lang.Object;:null    represents: Object[][] = null;
    * int:0                        represents: int x = 0;
    * boolean:false                represents: boolean x = false;
    * char:20                      represents: char x = ' ';
    * 
+   * Note that a string type can be given as both "String" or "java.lang.String".
    */
   public static PrimitiveOrStringOrNullDecl parse(String s) throws StatementKindParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
@@ -244,6 +246,11 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       String msg = "A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the <type> description \"" + s + "\" contains invalid whitespace characters.";
       throw new StatementKindParseException(msg);
+    }
+    
+    // Convert "String" to "java.lang.String"
+    if (typeString.equals("String")) {
+      typeString = "java.lang.String";
     }
     
     Class<?> type = Reflection.classForName(typeString, true);

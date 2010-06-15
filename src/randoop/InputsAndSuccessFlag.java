@@ -6,12 +6,18 @@ package randoop;
 import java.util.List;
 
 /**
- * Return type of an InputSelector's method selectsequencesAndMap(..).
- * It encapsulates a list of sequences and an inputMapping on those sequences.
- *
+ * Return type for ForwardGenerator's selectInputs method, which is
+ * responsible for selecting a set of component sequences to be
+ * concatenated into a longer sequence.
+ * 
  */
-public class InputsAndSuccessFlag   {
+class InputsAndSuccessFlag {
 
+  /**
+   * True if method selectInputs(StatementKind statement) was able to
+   * find component sequences for all the input types required by
+   * the given statement. 
+   */
   public boolean success;
   
   public List<Sequence> sequences;

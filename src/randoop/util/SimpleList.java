@@ -19,9 +19,10 @@ import java.util.List;
  *
  * <p> When profiling Randoop, we observed that naive concatenation
  * took up a large portion of the tool's running time, and the
- * component set quickly exhausted the memory available.
+ * component set (i.e. the set of stored sequences used to create
+ * more sequences) quickly exhausted the memory available.
  *
- * <p> To improve memory and time efficiency, we do concatenation
+ * <p> To improve memory and time efficiency, we now do concatenation
  * differently.  We store the list of statements in a Sequence in a
  * SimpleList, an abstract class that has three subclasses:
  *
