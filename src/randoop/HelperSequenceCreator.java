@@ -18,8 +18,10 @@ public class HelperSequenceCreator {
    *
    * CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an array.
    */
-  public static SimpleList<Sequence> createSequence(Class<?> cls, SequenceCollection components) {
+  public static SimpleList<Sequence> createSequence(ComponentManager components, Class<?> cls) {
 
+    //Class<?> cls = statement.getInputTypes().get(i);
+    
     if (!cls.isArray()) {
       return new ArrayListSimpleList<Sequence>();
     }
