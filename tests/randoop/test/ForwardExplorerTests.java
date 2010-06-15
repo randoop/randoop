@@ -5,8 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
+import randoop.ComponentManager;
 import randoop.ForwardGenerator;
+import randoop.SeedSequences;
 import randoop.Sequence;
+import randoop.SequenceCollection;
 import randoop.StatementKind;
 import randoop.main.GenInputsAbstract;
 import randoop.test.bh.BH;
@@ -38,8 +41,9 @@ public class ForwardExplorerTests extends TestCase {
       Reflection.getStatements(Arrays.<Class<?>>asList(Long.class), null);
 
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
+    ComponentManager mgr = new ComponentManager(new SequenceCollection(SeedSequences.defaultSeeds()));
     ForwardGenerator explorer = new ForwardGenerator(m,
-      null, Long.MAX_VALUE, 5000, null, null);
+      null, Long.MAX_VALUE, 5000, mgr, null);
     explorer.explore();
     GenInputsAbstract.dontexecute = false;
     assertTrue(explorer.allSequences.size() != 0);
@@ -60,8 +64,9 @@ public class ForwardExplorerTests extends TestCase {
     //Log.log = new FileWriter("templog.txt");
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 200;
+    ComponentManager mgr = new ComponentManager(new SequenceCollection(SeedSequences.defaultSeeds()));
     ForwardGenerator exp =
-      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, null, null);
+      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, mgr, null);
     exp.explore();
     ReflectionExecutor.timeout = oldTimeout;
     for (Sequence s : exp.allSequences()) {
@@ -163,8 +168,9 @@ public class ForwardExplorerTests extends TestCase {
 
     System.out.println(classes);
 
+    ComponentManager mgr = new ComponentManager(new SequenceCollection(SeedSequences.defaultSeeds()));
     ForwardGenerator exp =
-      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, null, null);
+      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, mgr, null);
     GenInputsAbstract.forbid_null = false;
     exp.explore();
     for (Sequence s : exp.allSequences()) {

@@ -31,6 +31,7 @@ import randoop.AbstractGenerator;
 import randoop.BugInRandoopException;
 import randoop.CheckRep;
 import randoop.CheckRepContract;
+import randoop.ComponentManager;
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsHashcode;
 import randoop.EqualsSymmetric;
@@ -41,8 +42,10 @@ import randoop.ExecutionVisitor;
 import randoop.ForwardGenerator;
 import randoop.Globals;
 import randoop.JunitFileWriter;
+import randoop.LiteralFileReader;
 import randoop.NaiveRandomGenerator;
 import randoop.ObjectContract;
+import randoop.PrimitiveOrStringOrNullDecl;
 import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.RegressionCaptureVisitor;
@@ -56,6 +59,7 @@ import randoop.Variable;
 import randoop.runtime.MessageSender;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
+import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
@@ -278,7 +282,16 @@ public class GenTests extends GenInputsAbstract {
     
     // Add user-specified seeds.
     components.addAll(SeedSequences.getSeedsFromAnnotatedFields(classes.toArray(new Class<?>[0])));
-  
+
+    ComponentManager componentMgr = null;
+    if (components == null) {
+      componentMgr = new ComponentManager(new SequenceCollection(SeedSequences.defaultSeeds()));
+    } else {
+      componentMgr = new ComponentManager(new SequenceCollection(components));
+    }
+    
+    addClassLiterals(componentMgr);
+    
     AbstractGenerator explorer = null;
 
     if (component_based) {
@@ -287,7 +300,7 @@ public class GenTests extends GenInputsAbstract {
         covClasses,
         timelimit * 1000,
         inputlimit,
-        components,
+        componentMgr,
         msgSender);
 
     } else {
@@ -298,7 +311,7 @@ public class GenTests extends GenInputsAbstract {
           covClasses,
           timelimit * 1000,
           inputlimit,
-          components);
+          componentMgr);
     }
 
     System.out.printf ("Explorer = %s\n", explorer);
@@ -404,7 +417,7 @@ public class GenTests extends GenInputsAbstract {
       try {
         FileOutputStream fileos = new FileOutputStream(output_components);
         ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-        Set<Sequence> components = gen.components.getAllSequences();
+        Set<Sequence> components = gen.componentManager.getAllSequences();
         System.out.println(" (" + components.size() + " components) ");
         objectos.writeObject(components);
         objectos.close();
@@ -537,6 +550,36 @@ public class GenTests extends GenInputsAbstract {
     write_junit_tests (junit_output_dir, sequences);
 
     return true;
+  }
+
+  private void addClassLiterals(ComponentManager compMgr) {
+    
+    // Parameter check.
+    boolean validMode = GenInputsAbstract.use_class_literals != ClassLiteralsMode.NONE;
+    if (GenInputsAbstract.class_literal_file.size() > 0 && !validMode) {
+      System.out.println("Invalid parameter combination: specified a class literal file but use-class-literals is NONE");
+      System.exit(1);
+    }
+
+    // Add a (1-element) sequence corresponding to each literal to the component manager. 
+    for (String filename : GenInputsAbstract.class_literal_file) {
+      MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap = LiteralFileReader.parse(filename);
+      for (Class<?> cls : literalmap.keySet()) {
+        Package pkg = (GenInputsAbstract.use_class_literals == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
+        for (PrimitiveOrStringOrNullDecl p : literalmap.getValues(cls)) {
+          Sequence seq = Sequence.create(p);
+          if (GenInputsAbstract.use_class_literals == ClassLiteralsMode.CLASS) {
+            compMgr.addClassLevelLiteral(cls, seq);
+          } else if (GenInputsAbstract.use_class_literals == ClassLiteralsMode.PACKAGE) {
+            compMgr.addPackageLevelLiteral(pkg, seq);
+          } else {
+            // see parameter check above. 
+            assert GenInputsAbstract.use_class_literals == ClassLiteralsMode.ALL;
+            compMgr.add(seq);
+          }
+        }
+      }
+    }
   }
 
   /**

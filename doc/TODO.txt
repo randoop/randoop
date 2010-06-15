@@ -7,6 +7,9 @@ enhancements.  See doc/projects.txt and the Wiki projects page
 (http://code.google.com/p/randoop/wiki/ProjectIdeas) for
 larger potential projects.
 
+* Clean up logging facilities: running Randoop with --log=<filename>
+  option should result in a log file that contains useful (not
+  cryptic) information.
 
 * Figure out what the difference is between options
   randoop.Globals.nochecks and randoop.Globals.randooptestrun. Merge
