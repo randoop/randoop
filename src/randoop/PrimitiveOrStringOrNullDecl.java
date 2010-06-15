@@ -53,7 +53,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
         throw new IllegalArgumentException("o is not a primitive-like value.");
     } else if (!t.equals(String.class) && o != null) {
-      //if it's not primitive or string then must be null
+      // if it's not primitive or string then must be null
       throw new IllegalArgumentException("value must be null for not primitive, not string type " + t + " but was " + o);
     }
 
@@ -111,7 +111,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
     return Collections.emptyList();
   }
 
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b){
+  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
 
     if (type.isPrimitive()) {
 

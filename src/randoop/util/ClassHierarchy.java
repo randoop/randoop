@@ -13,10 +13,10 @@ public final class ClassHierarchy {
   private final MultiMap<Class<?>, Class<?>> classToSubclasses;
   private final MultiMap<Class<?>, Class<?>> classToSuperclasses;
 
-  public ClassHierarchy(Collection<Class<?>> classes){
+  public ClassHierarchy(Collection<Class<?>> classes) {
     if (classes == null)
       throw new IllegalArgumentException("null argument");
-    this.classes= Collections.unmodifiableSet(new LinkedHashSet<Class<?>>(classes));//copy
+    this.classes= Collections.unmodifiableSet(new LinkedHashSet<Class<?>>(classes));// copy
     this.classToSubclasses= new MultiMap<Class<?>, Class<?>>();
     this.classToSuperclasses= new MultiMap<Class<?>, Class<?>>();
     compute();
@@ -34,12 +34,12 @@ public final class ClassHierarchy {
   }
 
   private Collection<Class<?>> internalSuperClasses(Class<?> clazz) {
-    if (classToSuperclasses.contains(clazz))           //already computed
+    if (classToSuperclasses.contains(clazz))           // already computed
       return classToSuperclasses.getValues(clazz);
 
     Set<Class<?>> result= new LinkedHashSet<Class<?>>();
     for (Class<?> directSuper : Reflection.getDirectSuperTypes(clazz)) {
-      if (classes.contains(directSuper)){
+      if (classes.contains(directSuper)) {
         result.addAll(internalSuperClasses(directSuper));
         result.add(directSuper);
       }
@@ -48,12 +48,12 @@ public final class ClassHierarchy {
     return result;
   }
 
-  public Set<Class<?>> superClasses(Class<?> c){
+  public Set<Class<?>> superClasses(Class<?> c) {
     return Collections.unmodifiableSet(classToSuperclasses.getValues(c));
   }
 
-  public Set<Class<?>> subClasses(Class<?> c){
-    if (classToSubclasses.contains(c)){
+  public Set<Class<?>> subClasses(Class<?> c) {
+    if (classToSubclasses.contains(c)) {
 //    System.out.println("subClasses:" + c.getName() + " precomputed");
       return Collections.unmodifiableSet(classToSubclasses.getValues(c));
     }
@@ -63,13 +63,13 @@ public final class ClassHierarchy {
         result.add(eachClass);
     }
     classToSubclasses.put(c, result);
-    if (!classToSubclasses.contains(c)){
+    if (!classToSubclasses.contains(c)) {
       throw new IllegalStateException(c.getName() + " : " + result.toString() + " all:" + CollectionsExt.toStringInSortedLines(getClasses()));
     }
     return Collections.unmodifiableSet(result);
   }
 
-  //Should this go to Reflection?
+  // Should this go to Reflection?
   /**
    * Returns the set of all direct and indirect superclasses and superinterfaces of the given class.
    * The returned set includes also the class itself.

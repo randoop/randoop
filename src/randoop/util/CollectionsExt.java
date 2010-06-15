@@ -18,7 +18,7 @@ import randoop.Globals;
 import plume.Hasher;
 
 public final class CollectionsExt {
-  private CollectionsExt(){ 
+  private CollectionsExt() { 
     throw new IllegalStateException("no instances");
   }
 
@@ -26,14 +26,14 @@ public final class CollectionsExt {
    * Make a copy of the list with duplicates removed. 
    * The first elements of each equivalence class will be retained (and in the original order) 
    */
-  public static <T> List<T> unique(List<T> lst){
+  public static <T> List<T> unique(List<T> lst) {
     return new ArrayList<T>(new LinkedHashSet<T>(lst));
   }
 
   /**
    * Return a unmodifiable list that has all elements of the given collection.
    */
-  public static <T> List<T> roCopyList(Collection<T> l){
+  public static <T> List<T> roCopyList(Collection<T> l) {
     return Collections.unmodifiableList(new ArrayList<T>(l));
   }
 
@@ -72,7 +72,7 @@ public final class CollectionsExt {
    * Returns an ArrayList that is a concatenation of the arguments. 
    * Elements of arguments are copied, the argument lists are NOT shared. 
    */
-  public static <T> List<T> concat(List<? extends T>... lists){
+  public static <T> List<T> concat(List<? extends T>... lists) {
     List<T> result= new ArrayList<T>();
     for (List<? extends T> list : lists) {
       result.addAll(list);
@@ -84,7 +84,7 @@ public final class CollectionsExt {
    * Returns an ArrayList that is a concatenation of the arguments. 
    * Elements of arguments are copied, the argument lists are NOT shared. 
    */
-  public static <T> List<T> concatAll(Collection<? extends List<? extends T>> lists){
+  public static <T> List<T> concatAll(Collection<? extends List<? extends T>> lists) {
     List<T> result= new ArrayList<T>();
     for (List<? extends T> list : lists) {
       result.addAll(list);
@@ -117,7 +117,7 @@ public final class CollectionsExt {
     throw new IllegalArgumentException("invalid index:" + index + " size:" + counter);
   }
 
-  public static SortedSet<Integer> findAll(List<?> list, Object elem){
+  public static SortedSet<Integer> findAll(List<?> list, Object elem) {
     if (list == null)
       throw new IllegalArgumentException("list cannot be null.");
     SortedSet<Integer> result = new TreeSet<Integer>();
@@ -134,7 +134,7 @@ public final class CollectionsExt {
    * Prints out the String.valueOf() of all elements of the collection, inserting a new line after each element. 
    * The order is specified by the collection's iterator.
    */
-  public static String toStringInLines(Collection<?> c){
+  public static String toStringInLines(Collection<?> c) {
     if (c.isEmpty()) return "";
     return join(Globals.lineSep, toStringLines(c)) + Globals.lineSep;
   }
@@ -143,7 +143,7 @@ public final class CollectionsExt {
    * Prints out the elements of the collection in lines, 
    * in lexicographic order of String.valueOf called on each element.
    */
-  public static String toStringInSortedLines(Collection<?> c){
+  public static String toStringInSortedLines(Collection<?> c) {
     if (c.isEmpty()) return "";
     return join(Globals.lineSep, sort(toStringLines(c))) + Globals.lineSep;
   }
@@ -152,7 +152,7 @@ public final class CollectionsExt {
    * List of String.valueOf() of all elements of the collection. 
    * The order is specified by the collection's iterator.
    */
-  public static List<String> toStringLines(Collection<?> c){
+  public static List<String> toStringLines(Collection<?> c) {
     List<String> lines= new ArrayList<String>(c.size());
     for (Object each : c) {
       lines.add(String.valueOf(each));
@@ -164,7 +164,7 @@ public final class CollectionsExt {
    * Sort and return the list. 
    * Useful for chaining the call. 
    */
-  public static List<String> sort(List<String> strings){
+  public static List<String> sort(List<String> strings) {
     Collections.sort(strings);
     return strings;
   }
@@ -177,7 +177,7 @@ public final class CollectionsExt {
    * The result list is unmodifiable.
    * It does <em>not</em> copy the list and simply shares it.   
    */
-  public static <T> List<List<T>> chunkUp(List<T> list, int maxLength){
+  public static <T> List<List<T>> chunkUp(List<T> list, int maxLength) {
     if (maxLength <= 0) throw new IllegalArgumentException("maxLength must be > 0 but was " + maxLength);
     int fullChunks= list.size() / maxLength;
 
@@ -193,7 +193,7 @@ public final class CollectionsExt {
     return Collections.unmodifiableList(result);
   }
 
-  public static <T> Set<T> getAll(Enumeration<T> e){
+  public static <T> Set<T> getAll(Enumeration<T> e) {
     Set<T> result= new LinkedHashSet<T>();
     while(e.hasMoreElements())
       result.add(e.nextElement());
@@ -205,7 +205,7 @@ public final class CollectionsExt {
    * Returns the modified collection, for easier chaining.
    */
   public static <T extends Collection<String>> T removeMatching(String pattern, T strings) {
-    for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
+    for (Iterator<String> iter = strings.iterator(); iter.hasNext(); ) {
       String s = iter.next();
       if (s.matches(pattern))
         iter.remove();
@@ -219,7 +219,7 @@ public final class CollectionsExt {
    */
   public static String join(String separator, List<String> strings) {
     StringBuilder sb= new StringBuilder();
-    for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
+    for (Iterator<String> iter = strings.iterator(); iter.hasNext(); ) {
       String s = iter.next();
       sb.append(s);
       if (iter.hasNext())
@@ -267,7 +267,7 @@ public final class CollectionsExt {
     result.put(0, Collections.singleton(new Object[0]));
     for (int i = 1; i <= max; i++) {
       Set<Object[]> newSet= new LinkedHashSet<Object[]>();
-      //add each object to each one smaller
+      // add each object to each one smaller
       for (Object[] oneSmaller : result.get(i-1)) {
         for (Object object : objects) {
           newSet.add(CollectionsExt.addToArray(oneSmaller, object));
@@ -284,7 +284,7 @@ public final class CollectionsExt {
    * 
    * The runtime type of the resulting array is the same as the type of the argument array. 
    */
-  @SuppressWarnings("unchecked")//nothing we can do here, we must cast
+  @SuppressWarnings("unchecked") // nothing we can do here, we must cast
   public static <T> T[] addToArray(T[] array, T el) {
     T[] newArray = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length + 1);
     System.arraycopy(array, 0, newArray, 0, array.length);
@@ -311,7 +311,7 @@ public final class CollectionsExt {
    * For empty input, returns a list with one element: empty list.
    * Requires: all lists non-empty
    */
-  public static <T> List<List<T>> allCombinations(List<List<T>> inputs){
+  public static <T> List<List<T>> allCombinations(List<List<T>> inputs) {
     if (inputs.isEmpty()) {
       ArrayList<List<T>> result = new ArrayList<List<T>>(1);
       result.add(new ArrayList<T>(1));
@@ -335,7 +335,7 @@ public final class CollectionsExt {
    * Returns true iff the collection contains the element.
    * Objects are compared by identity (==).
    */
-  public static <T> boolean containsIdentical(Collection<T> c, Object o){
+  public static <T> boolean containsIdentical(Collection<T> c, Object o) {
     for (T t : c) {
       if (t == o)
         return true;
@@ -347,7 +347,7 @@ public final class CollectionsExt {
    * Returns true iff the collection contains an element equivalent to the given one, 
    * as decided by the hasher. 
    */
-  public static <T> boolean containsEquivalent(Collection<T> c, Object o, Hasher h){
+  public static <T> boolean containsEquivalent(Collection<T> c, Object o, Hasher h) {
     for (T t : c) {
       if (h.equals(t, o))
         return true;

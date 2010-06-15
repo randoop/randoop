@@ -140,7 +140,7 @@ public class DFResultsOneSeq implements Serializable {
 
     // Read the VariableInfos.
     Set<VariableInfo> varinfos = new LinkedHashSet<VariableInfo>();
-    for (int i = varIndex + 1; i < lines.size() ; i++){
+    for (int i = varIndex + 1; i < lines.size() ; i++) {
       String[] split = lines.get(i).trim().split("\\s");
       
       // Check that there is at least one token.

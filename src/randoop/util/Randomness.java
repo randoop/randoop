@@ -11,8 +11,8 @@ import randoop.BugInRandoopException;
 
 public final class Randomness {
 
-  private Randomness(){
-    //no instances
+  private Randomness() {
+    throw new IllegalStateException("no instances");
   }
   public static final long SEED = 0;
 
@@ -22,7 +22,7 @@ public final class Randomness {
    */
   static Random random = new Random(SEED);
 
-  public static void reset(long newSeed){
+  public static void reset(long newSeed) {
     random = new Random(newSeed);
   }
 

@@ -48,7 +48,7 @@ public class RunnerThread extends Thread {
     try {
       code.runReflectionCode();
       // exceptionThrown remains null.
-    } catch (ThreadDeath e) {//can't stop these guys
+    } catch (ThreadDeath e) {// can't stop these guys
       throw e;
     } catch (ReflectionCode.NotCaughtIllegalStateException e) {// bug in randoop code
       throw e;

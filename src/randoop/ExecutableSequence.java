@@ -619,7 +619,7 @@ public class ExecutableSequence implements Serializable {
   public int hashCode() {
     return sequence.hashCode() * 3 +
     checks.hashCode() * 5;
-    //results are not part of this because they contain actual runtime objects. XXX is that bogus?
+    // results are not part of this because they contain actual runtime objects. XXX is that bogus?
   }
 
   @Override
@@ -633,7 +633,7 @@ public class ExecutableSequence implements Serializable {
     if (! this.checks.equals(that.checks))
       return false;
 
-    //results are not part of this because they contain actual runtime objects. XXX is that bogus?
+    // results are not part of this because they contain actual runtime objects. XXX is that bogus?
 
     return true;
   }
@@ -645,7 +645,7 @@ public class ExecutableSequence implements Serializable {
    * Prints any differences to stdout if print_diffs is true.
    */
   public int compare_checks (ExecutableSequence es, boolean remove_diffs,
-                                   boolean print_diffs){
+                                   boolean print_diffs) {
 
     int cnt = 0;
 

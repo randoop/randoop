@@ -59,7 +59,7 @@ public class StreamRedirectThread extends Thread
   private final PrintStream outWriter;
 
   private static final int BUFFER_SIZE = 2048;
-  //private static final int BUFFER_SIZE = 1;
+  // private static final int BUFFER_SIZE = 1;
 
   /**
    * Set up for copy.

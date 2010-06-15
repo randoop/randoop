@@ -67,9 +67,9 @@ public class KeyToMultiSet<T1, T2> {
     return map.containsKey(obj);
   }
 
-  //Removes all keys with an empty set
+  // Removes all keys with an empty set
   public void clean() {
-    for (Iterator<Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext();) {
+    for (Iterator<Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
       Entry<T1, MultiSet<T2>> element = iter.next();
       if (element.getValue().isEmpty()) {
         iter.remove();

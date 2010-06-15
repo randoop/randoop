@@ -78,7 +78,7 @@ public final class MethodReflectionCode extends ReflectionCode {
     } catch (NullPointerException e) {
       this.exceptionThrown= e;
       throw e;
-    } catch (InvocationTargetException e){
+    } catch (InvocationTargetException e) {
       this.exceptionThrown= e.getCause();
       throw e;
     } finally {
@@ -101,7 +101,7 @@ public final class MethodReflectionCode extends ReflectionCode {
   }
 
   @Override
-  public Throwable getExceptionThrown(){
+  public Throwable getExceptionThrown() {
     if (! hasRunAlready())
       throw new IllegalStateException("run first, then ask");
     if (receiver == null && !(exceptionThrown instanceof NullPointerException) && isInstanceMethod())
@@ -118,7 +118,7 @@ public final class MethodReflectionCode extends ReflectionCode {
   }
 
   public Object[] getInputs() {
-    return this.inputs.clone(); //be defensive
+    return this.inputs.clone(); // be defensive
   }
 
   @Override

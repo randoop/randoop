@@ -194,7 +194,7 @@ public class SequenceCollection {
 
     if (Log.isLoggingOn()) {
       Log.logLine("getActivesequencesThatYield: entering method, clazz=" + clazz .toString());
-      //Log.logLine(activesequences.toString());
+      // Log.logLine(activesequences.toString());
     }
 
     List<SimpleList<Sequence>> ret = new ArrayList<SimpleList<Sequence>>();
@@ -215,7 +215,7 @@ public class SequenceCollection {
       if (Log.isLoggingOn())
         Log.logLine("getActivesequencesThatYield: found no sequences matching class " + clazz);
     }
-    SimpleList<Sequence> selector =  new ListOfLists<Sequence>(ret);
+    SimpleList<Sequence> selector = new ListOfLists<Sequence>(ret);
     if (Log.isLoggingOn())
       Log.logLine("getActivesequencesThatYield: returning " + selector.size() + " sequences.");
     return selector;

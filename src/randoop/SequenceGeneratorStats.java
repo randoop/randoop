@@ -291,7 +291,7 @@ public class SequenceGeneratorStats {
   /** Starts the progress-display thread. */
   public void startProgressDisplay() {
     if (!GenInputsAbstract.noprogressdisplay) {
-      //printLegend();
+      // printLegend();
       progressDisplay = new ProgressDisplay(this,ProgressDisplay.Mode.MULTILINE, 200);
       progressDisplay.display();
       progressDisplay.start();
@@ -347,7 +347,7 @@ public class SequenceGeneratorStats {
   }
 
   public Set<Pair<StatementKind,Class<?>>> errors = new LinkedHashSet<Pair<StatementKind,Class<?>>>();
-  //public Set<FailureAnalyzer.Failure> errors = new LinkedHashSet<FailureAnalyzer.Failure>();
+  // public Set<FailureAnalyzer.Failure> errors = new LinkedHashSet<FailureAnalyzer.Failure>();
 
   public List<ExecutableSequence> outSeqs = new ArrayList<ExecutableSequence>();
 

@@ -20,7 +20,7 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
 
   @Override
   public int size() {
-    return size; //XXX this is bogus: what if the list changes size?
+    return size; // XXX this is bogus: what if the list changes size?
   }
 
   @Override

@@ -63,10 +63,10 @@ public class JavaFileWriter {
       out.println("public class " + junitClassName + " {");
       out.println("  public static int numTests = 0;");
       out.println("  public static void main(String[] args) {");
-      out.println("    long startTime =  System.currentTimeMillis();");
+      out.println("    long startTime = System.currentTimeMillis();");
       for (int i = 0; i < numSubSuites; i++)
         out.println("    " + junitClassName + i + ".run();");
-      out.println("    long stopTime =  System.currentTimeMillis();");
+      out.println("    long stopTime = System.currentTimeMillis();");
       out.println("    System.out.println(\"Executed \" + numTests + \" tests.\");");
       out.println("    System.out.println(\"Time spent executing tests: \" + (stopTime-startTime) + \"ms.\");");
       out.println("  }");
@@ -85,7 +85,7 @@ public class JavaFileWriter {
       Log.out.println("Exception thrown while creating text print stream:" + fileName);
       e.printStackTrace();
       System.exit(1);
-      return null;//make compiler happy
+      return null;// make compiler happy
     }
   }
 }
