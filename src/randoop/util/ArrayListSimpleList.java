@@ -9,7 +9,7 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
   private static final long serialVersionUID = 9155161101212598259L;
 
   public final ArrayList<T> theList;
-
+  
   public ArrayListSimpleList(ArrayList<T> list) {
     theList = new ArrayList<T>(list);
   }

@@ -288,6 +288,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Silently ignore any class names specified by the user that cannot be found by Randoop at runtime.")
   public static boolean silently_ignore_bad_class_names = false;
 
+  public static enum ClassLiteralsMode {
+    NONE, CLASS, PACKAGE, ALL;
+  }
+  
+  @Option("Specify how to use literal values given in a class literal file (see --class-literal-file)." +
+  "Set --use-class-literals=CLASS if you wish literals for a given class to be used as inputs to methods of only that class. " +
+  "Set --use-class-literals=PACKAGE if you wish literals for a given class to be used as inputs to methods of any classes in the same package. " +
+  "Set --use-class-literals=ALL if you wish literals for a given class to be used as inputs to any method under test."
+  )
+  public static ClassLiteralsMode use_class_literals = ClassLiteralsMode.NONE;
+  
+  @Option("Specifies a file containing literal values to be used as inputs to methods under test. " +
+      "For the expected format of this file, see documentation in class randoop.LiteralFileReader.")
+  public static List<String> class_literal_file = new ArrayList<String>(); 
 
   public GenInputsAbstract(String command, String pitch,
       String commandGrammar, String where, String summary, List<String> notes, String input,

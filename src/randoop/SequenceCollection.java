@@ -248,6 +248,4 @@ public class SequenceCollection {
     return result;
 
   }
-
-
 }

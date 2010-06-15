@@ -65,10 +65,24 @@ public abstract class AbstractRandoopTest extends TestCase {
   public int getTimeLimitSeconds() {
     return 10;
   }
+  
+  public void init() {
+    // GenInputsAbstract.clear = 330;
+    GenInputsAbstract.use_object_cache = true;
+    GenInputsAbstract.maxsize = 50;
+    GenInputsAbstract.forbid_null = false;
+    GenInputsAbstract.null_ratio = 0.2;
+    ReflectionExecutor.usethreads = false;
+    GenInputsAbstract.noprogressdisplay = true;
+    GenInputsAbstract.output_tests = (getMode() == Mode.ERRORS ? "fail" : "pass");
+    GenInputsAbstract.junit_output_dir = "tests";
+  }
 
   public void test() throws Throwable {
+    
+    init();
 
-    Randomness.reset(1);
+    //Randomness.reset(1);
 
     File randoopTestsDir = new File(new File(getProjectHome(), "tests"), "randoop");
     if (!randoopTestsDir.exists() && !randoopTestsDir.mkdirs()) {
@@ -100,17 +114,9 @@ public abstract class AbstractRandoopTest extends TestCase {
     ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts, true);
     visitors.add(contractVisitor);
     visitors.add(new RegressionCaptureVisitor());
+    ComponentManager componentMgr = new ComponentManager(components);
 
-    // GenInputsAbstract.clear = 330;
-    GenInputsAbstract.use_object_cache = true;
-    GenInputsAbstract.maxsize = 50;
-    GenInputsAbstract.forbid_null = false;
-    GenInputsAbstract.null_ratio = 0.2;
-    ReflectionExecutor.usethreads = false;
-    ForwardGenerator explorer = new ForwardGenerator(model, null, getTimeLimitSeconds() * 1000, getInputLimit(), components, null);
-    GenInputsAbstract.noprogressdisplay = true;
-    GenInputsAbstract.output_tests = (getMode() == Mode.ERRORS ? "fail" : "pass");
-    GenInputsAbstract.junit_output_dir = "tests";
+    ForwardGenerator explorer = new ForwardGenerator(model, null, getTimeLimitSeconds() * 1000, getInputLimit(), componentMgr, null);
     
     explorer.executionVisitor.visitors.addAll(visitors);
 
