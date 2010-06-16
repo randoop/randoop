@@ -1,13 +1,15 @@
 package randoop;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import randoop.*;
-import randoop.main.*;
-import randoop.util.*;
-
+import randoop.main.GenInputsAbstract;
+import randoop.util.Files;
 import randoop.util.PrimitiveTypes;
+import randoop.util.Reflection;
 
 /**
  * An execution visitor that records regression checks on the values
@@ -68,11 +70,6 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
   /** Map from each class to the list of observer methods for that class */
   private static final Map<Class<?>, List<Method>> observer_map
     = new LinkedHashMap<Class<?>, List<Method>>();
-  
-  //If value is a String that contains "<classname>@<hex>" we
-  // guess it might come from a call of Object.toString() and
-  // don't print it.
-  private static final String OBJECT_REF_PATTERN = ".*[a-zA-Z]{2,}[a-zA-Z0-9.$]*@[0-9a-h]{4,}.*";
   
   static {
     if (GenInputsAbstract.observers != null) {
@@ -186,7 +183,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           if (o instanceof String) {
             String str = (String)o;
             // Don't create assertions over string that look like raw object references.
-            if (str.matches (OBJECT_REF_PATTERN)) {
+            if (PrimitiveTypes.looksLikeObjectToString(str)) {
               // System.out.printf ("ignoring Object.toString obs %s%n", str);
               continue;
             }
@@ -240,7 +237,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
                     + o.getClass() + "]", e2);
               }
               // Don't create assertions over string that look like raw object references.
-              if ((value instanceof String) && ((String)value).matches(OBJECT_REF_PATTERN)) {
+              if ((value instanceof String) && PrimitiveTypes.looksLikeObjectToString((String)value)) {
                 continue;
               }
 
