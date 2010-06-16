@@ -234,6 +234,7 @@ public class ReadConstants {
         case Constants.SIPUSH: {
           ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
           System.out.printf ("integer constant = %s%n", cpi.getValue());
+          break;
         }
 
         // Primitive Binary operators.  
