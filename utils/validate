@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -T
 
 #####################################################################
 #
@@ -28,7 +28,6 @@ use strict;
 use Getopt::Long qw(GetOptions);
 use Text::Wrap qw(wrap);
 use POSIX qw(:fcntl_h);
-use File::Basename;
 
 # If File::Spec::Functions isn't available, let's fall back quietly
 # to a replacement function.
@@ -51,10 +50,10 @@ by Liam Quinn <liam\@htmlhelp.com>";
 my $usage = "Usage: validate [OPTION] [FILE...]";
 
 # SGML directory (catalog, DTDs, SGML declarations)
-my $sgmlDir = dirname(readlink($0)) . '/../src/wdg/sgml-lib';
+my $sgmlDir = '/usr/share/sgml/html/dtd';
 
 # Location of lq-nsgmls executable
-my $nsgmlsLocation = dirname(readlink($0)) . '/../src/lq-sp-1.3.4.14/nsgmls/lq-nsgmls';
+my $nsgmlsLocation = '/usr/bin/onsgmls';
 
 # lq-nsgmls command line
 # The SGML declaration and HTML document's filename will be appended
@@ -75,8 +74,8 @@ my %errorAsWarning = (
 );
 
 # Catalog files for HTML/SGML and XHTML/XML
-my $htmlCatalog  = catfile($sgmlDir, 'catalog');
-my $xhtmlCatalog = catfile($sgmlDir, 'xhtml.soc');
+my $htmlCatalog  = "/etc/sgml/sgml-data.cat";
+my $xhtmlCatalog = "/etc/sgml/w3c-dtd-xhtml.cat";
 
 # Where to direct errors (typically *STDOUT or *STDERR)
 my $errout = *STDOUT;
@@ -127,37 +126,37 @@ my %HTMLversion = (
 
 # SGML declarations for a given level of HTML
 my %sgmlDecl = (
-  'XHTML 1.1 plus MathML 2.0 plus SVG 1.1' => catfile($sgmlDir, 'xhtml11', 'xml1n.dcl'),
-  'XHTML 1.1 plus MathML 2.0' => catfile($sgmlDir, 'xhtml11', 'xml1n.dcl'),
-  'MathML 2.0'                => catfile($sgmlDir, 'xhtml11', 'xml1n.dcl'),
-  'XHTML 1.1'                 => catfile($sgmlDir, 'xhtml11', 'xml1n.dcl'),
-  'WML 1.3'                   => catfile($sgmlDir, 'xhtml1', 'xhtml1.dcl'),
-  'WML 1.2'                   => catfile($sgmlDir, 'xhtml1', 'xhtml1.dcl'),
-  'WML 1.1'                   => catfile($sgmlDir, 'xhtml1', 'xhtml1.dcl'),
-  'WML 1.0'                   => catfile($sgmlDir, 'xhtml1', 'xhtml1.dcl'),
-  'XHTML Basic'               => catfile($sgmlDir, 'xhtml-basic10','xml1.dcl'),
-  'ISO/IEC 15445:2000'        => catfile($sgmlDir, '15445.dcl'),
-  'XHTML 1.0 Strict'          => catfile($sgmlDir ,'xhtml1', 'xhtml1.dcl'),
-  'XHTML 1.0 Transitional'    => catfile($sgmlDir, 'xhtml1', 'xhtml1.dcl'),
-  'XHTML 1.0 Frameset'        => catfile($sgmlDir, 'xhtml1', 'xhtml1.dcl'),
-  'HTML 4.01 Strict'          => catfile($sgmlDir, 'HTML4.dcl'),
-  'HTML 4.01 Transitional'    => catfile($sgmlDir, 'HTML4.dcl'),
-  'HTML 4.01 Frameset'        => catfile($sgmlDir, 'HTML4.dcl'),
-  'HTML 4.0 Strict'           => catfile($sgmlDir, 'HTML4.dcl'),
-  'HTML 4.0 Transitional'     => catfile($sgmlDir, 'HTML4.dcl'),
-  'HTML 4.0 Frameset'         => catfile($sgmlDir, 'HTML4.dcl'),
-  'HTML 3.2'                  => catfile($sgmlDir, 'HTML32.dcl'),
+  'XHTML 1.1 plus MathML 2.0 plus SVG 1.1' => catfile($sgmlDir, 'xhtml', '1.1', 'xml1n.dcl'),
+  'XHTML 1.1 plus MathML 2.0' => catfile($sgmlDir, 'xhtml', '1.1', 'xml1n.dcl'),
+  'MathML 2.0'                => catfile($sgmlDir, 'xhtml', '1.1', 'xml1n.dcl'),
+  'XHTML 1.1'                 => catfile($sgmlDir, 'xhtml', '1.1', 'xml1n.dcl'),
+  'WML 1.3'                   => catfile($sgmlDir, 'xhtml', '1.0', 'xhtml1.dcl'),
+  'WML 1.2'                   => catfile($sgmlDir, 'xhtml', '1.0', 'xhtml1.dcl'),
+  'WML 1.1'                   => catfile($sgmlDir, 'xhtml', '1.0', 'xhtml1.dcl'),
+  'WML 1.0'                   => catfile($sgmlDir, 'xhtml', '1.0', 'xhtml1.dcl'),
+  'XHTML Basic'               => catfile($sgmlDir, 'xhtml', 'basic', 'xml1.dcl'),
+  'ISO/IEC 15445:2000'        => catfile($sgmlDir, 'iso-15445', '15445.dcl'),
+  'XHTML 1.0 Strict'          => catfile($sgmlDir ,'xhtml', '1.0', 'xhtml1.dcl'),
+  'XHTML 1.0 Transitional'    => catfile($sgmlDir, 'xhtml', '1.0', 'xhtml1.dcl'),
+  'XHTML 1.0 Frameset'        => catfile($sgmlDir, 'xhtml', '1.0', 'xhtml1.dcl'),
+  'HTML 4.01 Strict'          => catfile($sgmlDir, '4.01', 'HTML4.decl'),
+  'HTML 4.01 Transitional'    => catfile($sgmlDir, '4.01', 'HTML4.decl'),
+  'HTML 4.01 Frameset'        => catfile($sgmlDir, '4.01', 'HTML4.decl'),
+  'HTML 4.0 Strict'           => catfile($sgmlDir, '4.0', 'HTML4.decl'),
+  'HTML 4.0 Transitional'     => catfile($sgmlDir, '4.0', 'HTML4.decl'),
+  'HTML 4.0 Frameset'         => catfile($sgmlDir, '4.0', 'HTML4.decl'),
+  'HTML 3.2'                  => catfile($sgmlDir, 'html-3.2.decl'),
   'HTML 3.2 + Style'          => catfile($sgmlDir, 'html-970421.decl'),
-  'HTML 3.0 Draft'            => catfile($sgmlDir, 'HTML3.dcl'),
-  'HTML 2.0 + i18n'           => catfile($sgmlDir, 'i18n.dcl'),
-  'HTML 2.0'                  => catfile($sgmlDir, 'html.dcl'),
-  'HTML 2.0 Strict'           => catfile($sgmlDir, 'html.dcl'),
-  'HTML 2.0 Level 1'          => catfile($sgmlDir, 'html.dcl'),
-  'HTML 2.0 Strict Level 1'   => catfile($sgmlDir, 'html.dcl'),
-  'Unknown'                   => catfile($sgmlDir, 'custom.dcl'),
-
+  'HTML 3.0 Draft'            => catfile($sgmlDir, 'html-3.decl'),
+  'HTML 2.0 + i18n'           => catfile($sgmlDir, 'html-2-i18n.decl'),
+  'HTML 2.0'                  => catfile($sgmlDir, 'html-2.decl'),
+  'HTML 2.0 Strict'           => catfile($sgmlDir, 'html-2.decl'),
+  'HTML 2.0 Level 1'          => catfile($sgmlDir, 'html-2.decl'),
+  'HTML 2.0 Strict Level 1'   => catfile($sgmlDir, 'html-2.decl'),
+  'Unknown'                   => catfile($sgmlDir, '/usr/share/wdg-html-validator/custom.dcl'),
+ 
   # For generic XML validation (using the --xml option)
-  'XML'                       => catfile($sgmlDir, 'xhtml1', 'xhtml1.dcl'),
+  'XML'                       => catfile($sgmlDir, 'xhtml', '1.0', 'xhtml1.dcl'),
 );
 
 # XHTML DTDs
@@ -617,7 +616,7 @@ sub quoteFilename {
     return "\"$filename\"";
 }
 
-# Clean the "{{foo}}" used in lq-nsgmls error messages
+# Clean the "{{foo}}" used in nsgmls error messages
 # The error message must be given as the first argument
 sub stripLqNsgmlsGunk {
     my $errorMsg = shift;
