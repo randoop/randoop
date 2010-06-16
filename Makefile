@@ -69,7 +69,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop1 randoop2 randoop-contracts randoop-checkrep
+randoop-tests: unit randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -214,12 +214,13 @@ randoop-literals: bin
 	java -ea -classpath $(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
-	   --testclass=ps1.RatNum \
-	   --testclass=java.lang.Long \
+	   --testclass=randoop.literals.A \
+	   --testclass=randoop.literals.A2 \
+	   --testclass=randoop.literals.B \
 	   --junit-classname=Literals \
 	   --junit-output-dir=systemtests/randoop-scratch \
-	   --use-class-literals=CLASS \
-	   --class-literal-file=systemtests/resources/literalsfile.txt
+	   --literals-level=CLASS \
+	   --literals-file=systemtests/resources/literalsfile.txt
 	cp systemtests/randoop-scratch/Literals0.java systemtests/resources/Literals0.java
 
 

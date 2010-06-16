@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import plume.Option;
 import plume.Options;
 import plume.Unpublicized;
-import randoop.SequenceCollection;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.Util;
@@ -197,9 +196,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Name of a file containing a textual list of sequences.")
   public static List<String> componentfile_txt = new ArrayList<String>();
 
-  // Set in main method. Component sequences to help bdgen.
-  public static SequenceCollection components;
-
   @Unpublicized
   @Option("Print to the given file source files annotated with coverage information.")
   public static String covreport = null;
@@ -293,15 +289,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
   
   @Option("Specify how to use literal values given in a class literal file (see --class-literal-file)." +
-  "Set --use-class-literals=CLASS if you wish literals for a given class to be used as inputs to methods of only that class. " +
-  "Set --use-class-literals=PACKAGE if you wish literals for a given class to be used as inputs to methods of any classes in the same package. " +
-  "Set --use-class-literals=ALL if you wish literals for a given class to be used as inputs to any method under test."
+  "Set --literals-level=CLASS if you wish literals for a given class to be used as inputs to methods of only that class. " +
+  "Set --literals-level=PACKAGE if you wish literals for a given class to be used as inputs to methods of any classes in the same package. " +
+  "Set --literals-level=ALL if you wish literals for a given class to be used as inputs to any method under test."
   )
-  public static ClassLiteralsMode use_class_literals = ClassLiteralsMode.NONE;
+  public static ClassLiteralsMode literals_level = ClassLiteralsMode.NONE;
   
   @Option("Specifies a file containing literal values to be used as inputs to methods under test. " +
       "For the expected format of this file, see documentation in class randoop.LiteralFileReader.")
-  public static List<String> class_literal_file = new ArrayList<String>(); 
+  public static List<String> literals_file = new ArrayList<String>(); 
 
   public GenInputsAbstract(String command, String pitch,
       String commandGrammar, String where, String summary, List<String> notes, String input,

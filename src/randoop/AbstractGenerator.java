@@ -123,7 +123,7 @@ public abstract class AbstractGenerator {
       
       if (Log.isLoggingOn()) {
         Log.logLine("Initial sequences (seeds):");
-        for (Sequence s : componentManager.getAllSequences()) {
+        for (Sequence s : componentManager.getAllGeneratedSequences()) {
           Log.logLine(s.toString());          
         }
       }

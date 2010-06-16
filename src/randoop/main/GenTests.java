@@ -252,7 +252,7 @@ public class GenTests extends GenInputsAbstract {
 
 
     // Initialize components.
-    components = new SequenceCollection();
+    Set<Sequence> components = new LinkedHashSet<Sequence>();
     if (!componentfile_ser.isEmpty()) {
       for (String onefile : componentfile_ser) {
         try {
@@ -285,9 +285,9 @@ public class GenTests extends GenInputsAbstract {
 
     ComponentManager componentMgr = null;
     if (components == null) {
-      componentMgr = new ComponentManager(new SequenceCollection(SeedSequences.defaultSeeds()));
+      componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
     } else {
-      componentMgr = new ComponentManager(new SequenceCollection(components));
+      componentMgr = new ComponentManager(components);
     }
     
     addClassLiterals(componentMgr);
@@ -417,9 +417,9 @@ public class GenTests extends GenInputsAbstract {
       try {
         FileOutputStream fileos = new FileOutputStream(output_components);
         ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-        Set<Sequence> components = gen.componentManager.getAllSequences();
-        System.out.println(" (" + components.size() + " components) ");
-        objectos.writeObject(components);
+        Set<Sequence> componentset = gen.componentManager.getAllGeneratedSequences();
+        System.out.println(" (" + componentset.size() + " components) ");
+        objectos.writeObject(componentset);
         objectos.close();
         fileos.close();
       } catch (Exception e) {
@@ -552,30 +552,35 @@ public class GenTests extends GenInputsAbstract {
     return true;
   }
 
+  /**
+   * Adds literals to the component manager, by parsing any literals
+   * files specified by the user.
+   */
   private void addClassLiterals(ComponentManager compMgr) {
     
     // Parameter check.
-    boolean validMode = GenInputsAbstract.use_class_literals != ClassLiteralsMode.NONE;
-    if (GenInputsAbstract.class_literal_file.size() > 0 && !validMode) {
+    boolean validMode = GenInputsAbstract.literals_level != ClassLiteralsMode.NONE;
+    if (GenInputsAbstract.literals_file.size() > 0 && !validMode) {
       System.out.println("Invalid parameter combination: specified a class literal file but use-class-literals is NONE");
       System.exit(1);
     }
 
     // Add a (1-element) sequence corresponding to each literal to the component manager. 
-    for (String filename : GenInputsAbstract.class_literal_file) {
+    for (String filename : GenInputsAbstract.literals_file) {
       MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap = LiteralFileReader.parse(filename);
+
       for (Class<?> cls : literalmap.keySet()) {
-        Package pkg = (GenInputsAbstract.use_class_literals == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
+        Package pkg = (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
         for (PrimitiveOrStringOrNullDecl p : literalmap.getValues(cls)) {
           Sequence seq = Sequence.create(p);
-          if (GenInputsAbstract.use_class_literals == ClassLiteralsMode.CLASS) {
+          if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
             compMgr.addClassLevelLiteral(cls, seq);
-          } else if (GenInputsAbstract.use_class_literals == ClassLiteralsMode.PACKAGE) {
+          } else if (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE) {
             compMgr.addPackageLevelLiteral(pkg, seq);
           } else {
             // see parameter check above. 
-            assert GenInputsAbstract.use_class_literals == ClassLiteralsMode.ALL;
-            compMgr.add(seq);
+            assert GenInputsAbstract.literals_level == ClassLiteralsMode.ALL;
+            compMgr.addGeneratedSequence(seq);
           }
         }
       }

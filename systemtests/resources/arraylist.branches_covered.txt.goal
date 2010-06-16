@@ -1,5 +1,3 @@
-classname=java2.util2.AbstractCollection,methodname=contains,line=94,id=0,direction=false
-classname=java2.util2.AbstractCollection,methodname=contains,line=99,id=3,direction=false
 classname=java2.util2.AbstractCollection,methodname=containsAll,line=284,id=14,direction=false
 classname=java2.util2.AbstractCollection,methodname=containsAll,line=284,id=14,direction=true
 classname=java2.util2.AbstractCollection,methodname=containsAll,line=285,id=15,direction=false
@@ -8,7 +6,6 @@ classname=java2.util2.AbstractCollection,methodname=remove,line=245,id=9,directi
 classname=java2.util2.AbstractCollection,methodname=remove,line=253,id=12,direction=false
 classname=java2.util2.AbstractCollection,methodname=remove,line=253,id=12,direction=true
 classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=false
-classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=true
 classname=java2.util2.AbstractCollection,methodname=removeAll,line=353,id=18,direction=false
 classname=java2.util2.AbstractCollection,methodname=removeAll,line=353,id=18,direction=true
 classname=java2.util2.AbstractCollection,methodname=removeAll,line=354,id=19,direction=false

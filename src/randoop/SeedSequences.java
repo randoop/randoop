@@ -49,16 +49,11 @@ public final class SeedSequences {
   public static Set<Sequence> objectsToSeeds(Collection<Object> objs) {
     Set<Sequence> retval = new LinkedHashSet<Sequence>();
     for (Object o : objs) {
-      Class<?> cls = o.getClass();
-
-      if (PrimitiveTypes.isBoxedOrPrimitiveOrStringType(cls)) {
-        cls = PrimitiveTypes.primitiveType(cls);
-      }
-      retval.add(Sequence.create(new PrimitiveOrStringOrNullDecl(cls, o)));
+      retval.add(PrimitiveOrStringOrNullDecl.sequenceForPrimitive(o));
     }
     return retval;
   }
-
+  
   public static Set<Object> getSeeds(Class<?> c) {
     Set<Object> result = new LinkedHashSet<Object>();
     for (Object seed : primitiveSeeds) {
