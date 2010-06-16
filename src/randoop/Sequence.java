@@ -1064,5 +1064,19 @@ public final class Sequence implements Serializable, WeightedElement {
     }
     throw new IllegalStateException("Bug in Randoop.");
   }
+
+  /**
+   * A sequence representing a single primitive values, like
+   * "Foo var0 = null" or "int var0 = 1".
+   */
+  public boolean isPrimitive() {
+    if (size() > 1) {
+      return false;
+    }
+    if (!(getStatementKind(0) instanceof PrimitiveOrStringOrNullDecl)) {
+      return false;
+    }
+    return true;
+  }
   
 }

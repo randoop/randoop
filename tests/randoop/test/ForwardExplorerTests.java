@@ -41,7 +41,7 @@ public class ForwardExplorerTests extends TestCase {
       Reflection.getStatements(Arrays.<Class<?>>asList(Long.class), null);
 
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
-    ComponentManager mgr = new ComponentManager(new SequenceCollection(SeedSequences.defaultSeeds()));
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer = new ForwardGenerator(m,
       null, Long.MAX_VALUE, 5000, mgr, null);
     explorer.explore();
@@ -64,7 +64,7 @@ public class ForwardExplorerTests extends TestCase {
     //Log.log = new FileWriter("templog.txt");
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 200;
-    ComponentManager mgr = new ComponentManager(new SequenceCollection(SeedSequences.defaultSeeds()));
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp =
       new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, mgr, null);
     exp.explore();
@@ -168,7 +168,7 @@ public class ForwardExplorerTests extends TestCase {
 
     System.out.println(classes);
 
-    ComponentManager mgr = new ComponentManager(new SequenceCollection(SeedSequences.defaultSeeds()));
+    ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp =
       new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, mgr, null);
     GenInputsAbstract.forbid_null = false;

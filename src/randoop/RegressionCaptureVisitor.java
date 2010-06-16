@@ -68,6 +68,12 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
   /** Map from each class to the list of observer methods for that class */
   private static final Map<Class<?>, List<Method>> observer_map
     = new LinkedHashMap<Class<?>, List<Method>>();
+  
+  //If value is a String that contains "<classname>@<hex>" we
+  // guess it might come from a call of Object.toString() and
+  // don't print it.
+  private static final String OBJECT_REF_PATTERN = ".*[a-zA-Z]{2,}[a-zA-Z0-9.$]*@[0-9a-h]{4,}.*";
+  
   static {
     if (GenInputsAbstract.observers != null) {
       List<String> lines  = null;
@@ -176,13 +182,11 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
         } else if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(o.getClass())) {
 
-          // If value is a String that contains "<classname>@<hex>" we
-          // guess it might come from a call of Object.toString() and
-          // don't print it either.  This may happen if some method
-          // internally calls Object.toString().
+          
           if (o instanceof String) {
             String str = (String)o;
-            if (str.matches (".*[a-zA-Z]{2,}[a-zA-Z0-9.]*@[0-9a-h]{4,}.*")) {
+            // Don't create assertions over string that look like raw object references.
+            if (str.matches (OBJECT_REF_PATTERN)) {
               // System.out.printf ("ignoring Object.toString obs %s%n", str);
               continue;
             }
@@ -224,25 +228,26 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
           // Put out any observers that exist for this type
           Variable var0 = s.sequence.getVariable(i);
-          List<Method> observers = observer_map.get (var0.getType());
+          List<Method> observers = observer_map.get(var0.getType());
           if (observers != null) {
             for (Method m : observers) {
 
-	      Object value = null;
-	      try {
-		value = m.invoke (o);
-	      } catch (Exception e2) {
-		throw new RuntimeException ("unexpected error invoking observer "
-					    + m + " on " + var + "[" +
-					    var.getType() + "]" + " with value "
-					    + o + " [" + o.getClass() + "]",
-					    e2);
-	      }
+              Object value = null;
+              try {
+                value = m.invoke(o);
+              } catch (Exception e2) {
+                throw new RuntimeException("unexpected error invoking observer " + m + " on " + var + "[" + var.getType() + "]" + " with value " + o + " ["
+                    + o.getClass() + "]", e2);
+              }
+              // Don't create assertions over string that look like raw object references.
+              if ((value instanceof String) && ((String)value).matches(OBJECT_REF_PATTERN)) {
+                continue;
+              }
 
-	      ObjectContract observerEqValue = new ObserverEqValue (m, value);
-	      ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
-	      // System.out.printf ("Adding observer %s%n", observerCheck);
-	      s.addCheck(idx, observerCheck, true);
+              ObjectContract observerEqValue = new ObserverEqValue(m, value);
+              ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
+              // System.out.printf ("Adding observer %s%n", observerCheck);
+              s.addCheck(idx, observerCheck, true);
             }
           }
         }

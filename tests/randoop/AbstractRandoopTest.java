@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -100,7 +101,7 @@ public abstract class AbstractRandoopTest extends TestCase {
     GenInputsAbstract.public_only = false;
 
     List<StatementKind> model = Reflection.getStatements(classes, new DefaultReflectionFilter(null));
-    SequenceCollection components = new SequenceCollection();
+    Set<Sequence> components = new LinkedHashSet<Sequence>();
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
     components.addAll(SeedSequences.getSeedsFromAnnotatedFields(classes.toArray(new Class<?>[0])));
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();

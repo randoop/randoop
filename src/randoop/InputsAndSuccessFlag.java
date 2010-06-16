@@ -21,17 +21,13 @@ class InputsAndSuccessFlag {
   public boolean success;
   
   public List<Sequence> sequences;
-  
-  // Each pair represents a variable.
-  // The first element is the sequence that the variable comes from.
-  // The second element is the index of the variable in the sequence.
-  public List<Integer> variables;
+  public List<Integer> indices;
   
   public InputsAndSuccessFlag(boolean success, List<Sequence> sequences,
       List<Integer> vars) {
     this.success = success;
     this.sequences = sequences;
-    this.variables = vars;
+    this.indices = vars;
   }
 
 }
