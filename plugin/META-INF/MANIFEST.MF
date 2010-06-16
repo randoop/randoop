@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.launching;bundle-version="3.5.1",
  org.eclipse.jdt.debug.ui;bundle-version="3.4.1",
  org.eclipse.ltk.core.refactoring;bundle-version="3.5.0",
- org.junit
+ org.junit,
+ org.eclipse.jdt.ui;bundle-version="3.5.2"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: ../bin,

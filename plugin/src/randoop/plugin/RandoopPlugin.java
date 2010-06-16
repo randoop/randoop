@@ -36,19 +36,19 @@ public class RandoopPlugin extends AbstractUIPlugin {
   private static final IPath PLUME_JAR = new Path("../lib/plume.jar"); //$NON-NLS-1$
   
   /** The shared instance */
-  private static RandoopPlugin fPlugin = null;
+  private static RandoopPlugin plugin = null;
 
   /**
    * Indicator of when the shared instance is stopped. This is not reset when
    * <code>stop</code> is called
    */
-  private static boolean fIsStopped = false;
+  private static boolean isStopped = false;
 
   /**
    * Constructs the plug-in and sets the shared instance to <code>this</code>.
    */
   public RandoopPlugin() {
-    fPlugin = this;
+    plugin = this;
   }
   
   /**
@@ -57,7 +57,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * @return the shared instance
    */
   public static RandoopPlugin getDefault() {
-    return fPlugin;
+    return plugin;
   }
 
   /**
@@ -69,7 +69,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
   @Override
   public void start(BundleContext context) throws Exception {
     super.start(context);
-    fPlugin = this;
+    plugin = this;
   }
 
   /**
@@ -79,8 +79,8 @@ public class RandoopPlugin extends AbstractUIPlugin {
    */
   @Override
   public void stop(BundleContext context) throws Exception {
-    fPlugin = null;
-    fIsStopped = true;
+    plugin = null;
+    isStopped = true;
     super.stop(context);
   }
 
@@ -102,7 +102,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * @return <code>true</code> if <code>stop</code> has been called prior
    */
   public static boolean isStopped() {
-    return fIsStopped;
+    return isStopped;
   }
 
   /**
@@ -156,39 +156,42 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * @return the active workbench window
    */
   public static IWorkbenchWindow getActiveWorkbenchWindow() {
-    if (fPlugin == null)
+    if (plugin == null)
       return null;
-    IWorkbench workBench = fPlugin.getWorkbench();
+    IWorkbench workBench = plugin.getWorkbench();
     if (workBench == null)
       return null;
     return workBench.getActiveWorkbenchWindow();
   }
-  
 
   /**
-   * Returns a local path to the randoop.jar runtime archive.
+   * Returns the full path to the randoop.jar runtime archive.
    * 
-   * @return local path to randoop.jar, or <code>null</code> if no local version
-   *         could be created
+   * @return full path to randoop.jar, or <code>null</code> if no the
+   *         <code>IPath</code> could not be created
    */
   public static IPath getRandoopJar() {
-    URL url = FileLocator.find(getDefault().getBundle(), RANDOOP_JAR, null); 
-    try {
-      url = FileLocator.toFileURL(url);
-    } catch (IOException e) {
-      return null;
-    }
-    return new Path(url.getPath());
+    return getFullPath(RANDOOP_JAR);
   }
-  
+
   /**
-   * Returns a local path to the plume.jar runtime archive.
+   * Returns the full path to the plume.jar runtime archive.
    * 
-   * @return local path to plume.jar, or <code>null</code> if no local version
-   *         could be created
+   * @return full path to plume.jar, or <code>null</code> if no the
+   *         <code>IPath</code> could not be created
    */
   public static IPath getPlumeJar() {
-    URL url = FileLocator.find(getDefault().getBundle(), PLUME_JAR, null); 
+    return getFullPath(PLUME_JAR);
+  }
+
+  /**
+   * Returns the full path to the the given Path.
+   * 
+   * @return local path to the , or <code>null</code> if no the
+   *         <code>IPath</code> could not be created
+   */
+  private static IPath getFullPath(IPath localPath) {
+    URL url = FileLocator.find(getDefault().getBundle(), localPath, null);
     try {
       url = FileLocator.toFileURL(url);
     } catch (IOException e) {

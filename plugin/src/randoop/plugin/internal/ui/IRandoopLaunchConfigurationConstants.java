@@ -8,6 +8,9 @@ import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.TestKinds;
 
 public class IRandoopLaunchConfigurationConstants {
+  // XXX should agree with plugin.xml
+  public static final String ID_RANDOOP_TEST_GENERATION = "randoop.plugin.launchConfigType";
+  
   public static final String ATTR_PORT = RandoopPlugin.getPluginId() + ".PORT"; //$NON-NLS-1$
   
   public static final String ATTR_RANDOM_SEED = RandoopPlugin.getPluginId() + ".RANDOM_SEED"; //$NON-NLS-1$
