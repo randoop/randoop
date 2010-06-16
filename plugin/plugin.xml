@@ -63,16 +63,16 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
           <launchConfigurationType
             name="Randoop Launcher"
-            delegate="randoop.plugin.internal.ui.launchConfigurations.RandoopLaunchConfigurationDelegate"
+            delegate="randoop.plugin.internal.ui.launchConfigurations.RandoopLaunchDelegate"
             modes="run"
-            id="randoop.plugin.launching.launchconfig">
+            id="randoop.plugin.launchConfigType">
       </launchConfigurationType>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
          
           <launchConfigurationTabGroup
-            type="randoop.plugin.launching.launchconfig"
+            type="randoop.plugin.launchConfigType"
             class="randoop.plugin.internal.ui.launchConfigurations.RandoopLaunchConfigurationTabGroup"
             id="randoop.plugin.launching.launchconfig.tabgroup">
       </launchConfigurationTabGroup> 
@@ -80,7 +80,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            configTypeID="randoop.plugin.launching.launchconfig"
+            configTypeID="randoop.plugin.launchConfigType"
             icon="icons/sample.gif"
             id="randoop.plugin.launching.launchconfig.image">
       </launchConfigurationTypeImage>
@@ -242,5 +242,12 @@
                </instanceof>
             </with></enablement>
       </moveParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.compilationParticipant">
+      <compilationParticipant
+            class="randoop.plugin.internal.core.autotesting.TestingCompilationParticipant"
+            id="randoop.plugin.internal.core.testingCompilationParticipant">
+      </compilationParticipant>
    </extension>
   </plugin>
