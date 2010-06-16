@@ -232,4 +232,20 @@ public final class PrimitiveTypes {
   public static Class<?> getUnboxType(Class<?> c) {
     return boxedToPrimitiveAndString.get(c);
   }
+
+  private static final String OBJECT_REF_PATTERN = ".*[a-zA-Z]{2,}[a-zA-Z0-9.$]*@[0-9a-h]{4,}.*";
+
+  /**
+   * Returns true if the given string looks like it came from a call of
+   * Object.toString(); in other words, looks something like
+   * "<classname>@<hex>". Such strings are rarely useful in generation because
+   * they contain non-reproducible hash strings.
+   */
+  public static boolean looksLikeObjectToString(String s) {
+    if (s == null) {
+      throw new IllegalArgumentException("s is null");
+    }
+    return s.matches(OBJECT_REF_PATTERN);
+  }
+
 }
