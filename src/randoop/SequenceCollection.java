@@ -58,8 +58,6 @@ public class SequenceCollection {
 
   public int numActivesequences = 0;
 
-  private Collection<Sequence> seeds;
-
   private void checkRep() {
     if (Globals.nochecks)
       return;
@@ -81,48 +79,33 @@ public class SequenceCollection {
   }
 
   /**
-   * Restores the collection to its initial state, meaning: the collection
-   * contains only the seeds given as input argument to the constructor.
-   * In other words, this method removes all the sequences
-   * from the collection, and them adds back the seeds
-   * given in the constructor call.
+   * Removes all sequences from this collection.
    */
   public void clear() {
-    if (Log.isLoggingOn()) Log.logLine("Clearing activesequences.");
-    init();
+    if (Log.isLoggingOn()) Log.logLine("Clearing sequence collection.");
+    this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence >>();
+    this.typesWithSequencesMap = new SubTypeSet(false);
+    numActivesequences = 0;
+    checkRep();
   }
 
   /**
-   * Create a new, empty collection with no seeds. 
+   * Create a new, empty collection. 
    */
   public SequenceCollection() {
     this(new ArrayList<Sequence>());
   }
-
+ 
   /**
-   * Creates a new one that is a copy of the old one.
+   * Create a new collection and adds the given initial sequences.
    */
-  public SequenceCollection(SequenceCollection c) {
-    this(new ArrayList<Sequence>(c.size()));
-    addAll(c);
-  }
-  /** Create a new collection that uses the given seeds.
-   * Note: The clear() method removes all the sequences
-   * from the collection, and them adds back the seeds
-   * given in the constructor call.
-   */
-  public SequenceCollection(Collection<Sequence> seeds) {
-    if (seeds == null)
-      throw new IllegalArgumentException("seeds cannot be null.");
-    this.seeds = Collections.unmodifiableCollection(seeds);
-    init();
-  }
-
-  private void init() {
+  public SequenceCollection(Collection<Sequence> initialSequences) {
+    if (initialSequences == null)
+      throw new IllegalArgumentException("initialSequences is null.");
     this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence >>();
     this.typesWithSequencesMap = new SubTypeSet(false);
     numActivesequences = 0;
-    addAll(this.seeds);
+    addAll(initialSequences);
     checkRep();
   }
 
@@ -140,6 +123,16 @@ public class SequenceCollection {
     }       
   }
 
+  /**
+   * Add a sequence to this collection. This method takes into account the
+   * active indices in the sequence. If sequence[i] creates a values of type T,
+   * and sequence[i].isActive==true, then the sequence is seen as creating a
+   * useful value at index i. More precisely, the method/constructor at that
+   * index is said to produce a useful value (and if the user later queries for
+   * all sequences that create a T, the sequence will be in the collection
+   * returned by the query). How a value is deemed useful or not is left up to
+   * the client.
+   */
   public void add(Sequence sequence) {
     List<Class<?>> classes = new ArrayList<Class<?>>();
     List<Class<?>> constraints = sequence.getLastStatementTypes();

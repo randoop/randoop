@@ -2,24 +2,38 @@
 START CLASSLITERALS
 
 CLASSNAME
-ps1.RatNum
+randoop.literals.A
 
 LITERALS
-int:31
-int:72
-String:"31/73"
+int:111
+String:"111"
 
 END CLASSLITERALS
 
 START CLASSLITERALS
 
 CLASSNAME
-java.lang.Long
+randoop.literals.A2
 
 LITERALS
+byte:22
+short:222
+int:222
+char:22
+long:222
+float:222
+double:222
+String:"222"
 
-long:1333
-int:1333
-String:"1222"
+END CLASSLITERALS
+
+START CLASSLITERALS
+
+CLASSNAME
+randoop.literals.B
+
+LITERALS
+int:333
+String:"333"
 
 END CLASSLITERALS

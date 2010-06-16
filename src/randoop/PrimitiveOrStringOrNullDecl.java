@@ -204,6 +204,20 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
   }
 
   /**
+   * Returns the sequence corresponding to the given non-null primitive value.
+   * 
+   * Requires: o != null and o is a boxed primitive or String.
+   */
+  public static Sequence sequenceForPrimitive(Object o) {
+    if (o == null) throw new IllegalArgumentException("o is null");
+    Class<?> cls = o.getClass();    
+    if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(cls)) {
+      throw new IllegalArgumentException("o is not a boxed primitive or String");
+    }
+    return Sequence.create(new PrimitiveOrStringOrNullDecl(PrimitiveTypes.primitiveType(cls), o));
+  }
+
+  /**
    * A string representing this primitive declaration. The string is of the form:
    * 
    * TYPE:VALUE
@@ -243,7 +257,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
     
     // Basic sanity check: no whitespace in type string.
     if (typeString.matches(".*\\s+.*")) {
-      String msg = "A primitive value declaration description must be of the form "
+      String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the <type> description \"" + s + "\" contains invalid whitespace characters.";
       throw new StatementKindParseException(msg);
     }
@@ -255,7 +269,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
     
     Class<?> type = Reflection.classForName(typeString, true);
     if (type == null) {
-      String msg = "A primitive value declaration description must be of the form "
+      String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the <type> given (\"" + typeString + "\") was unrecognized.";
       throw new StatementKindParseException(msg);
     }
@@ -265,7 +279,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       try {
         value = (char)Integer.parseInt(valString, 16);
       } catch (NumberFormatException e) {
-        String msg = "A primitive value declaration description must be of the form "
+        String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
         throw new StatementKindParseException(msg);
       }
@@ -273,7 +287,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       try {
         value = Byte.valueOf(valString);
       } catch (NumberFormatException e) {
-        String msg = "A primitive value declaration description must be of the form "
+        String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
         throw new StatementKindParseException(msg);
       }
@@ -281,7 +295,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       try {
         value = Short.valueOf(valString);
       } catch (NumberFormatException e) {
-        String msg = "A primitive value declaration description must be of the form "
+        String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
         throw new StatementKindParseException(msg);
       }
@@ -289,7 +303,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       try {
         value = Integer.valueOf(valString);
       } catch (NumberFormatException e) {
-        String msg = "A primitive value declaration description must be of the form "
+        String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
         throw new StatementKindParseException(msg);
       }
@@ -297,7 +311,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       try {
         value = Long.valueOf(valString);
       } catch (NumberFormatException e) {
-        String msg = "A primitive value declaration description must be of the form "
+        String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
         throw new StatementKindParseException(msg);
       }
@@ -305,7 +319,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       try {
         value = Float.valueOf(valString);
       } catch (NumberFormatException e) {
-        String msg = "A primitive value declaration description must be of the form "
+        String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
         throw new StatementKindParseException(msg);
       }
@@ -313,7 +327,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       try {
         value = Double.valueOf(valString);
       } catch (NumberFormatException e) {
-        String msg = "A primitive value declaration description must be of the form "
+        String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
         throw new StatementKindParseException(msg);
       }
@@ -321,7 +335,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       if (valString.equals("true") || valString.equals("false")) {
         value = Boolean.valueOf(valString);        
       } else {
-        String msg = "A primitive value declaration description must be of the form "
+        String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
         throw new StatementKindParseException(msg);
       }
@@ -331,7 +345,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } else {
         value = valString;
         if (valString.charAt(0) != '"' || valString.charAt(valString.length() - 1) != '"') {
-          String msg = "A String value declaration description must be of the form "
+          String msg = "Error when parsing type/value pair " + s +  ". A String value declaration description must be of the form "
             + "java.lang.String:\"thestring\"" + " but the string given was not enclosed in quotation marks.";
           throw new StatementKindParseException(msg);
         }
@@ -341,7 +355,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       if (valString.equals("null")) {
         value = null;
       } else {
-        String msg = "A primitve value declaration description that is not a primitive value or a string must be of the form "
+        String msg = "Error when parsing type/value pair " + s +  ". A primitve value declaration description that is not a primitive value or a string must be of the form "
           + "<type>:null but the string given (\"" + valString + "\") was not of this form.";
         throw new StatementKindParseException(msg);
       }

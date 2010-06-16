@@ -84,6 +84,10 @@ public final class PrimValue implements ObjectContract {
   }
 
   @Override
+  public String toString() {
+    return "randoop.PrimValue, value=" + value;
+  }
+  @Override
   public String toCodeString() {
   
     StringBuilder b = new StringBuilder();
