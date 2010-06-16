@@ -58,8 +58,9 @@ build: bin randoop_agent.jar
 
 bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	mkdir -p bin
-	@echo ${JAVAC_COMMAND} -Xlint -g -d bin ...
+	@echo ${JAVAC_COMMAND} -Xlint -Xlint:unchecked -g -d bin ...
 	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
+	@echo "Compiling test files ..."
 	@${JAVAC_COMMAND} -nowarn -g -d bin $(RANDOOP_TESTS_FILES)
 	mkdir -p bin/randoop/test/resources
 	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
@@ -475,10 +476,13 @@ utils/plume-lib:
 	cd utils && hg clone https://plume-lib.googlecode.com/hg/ plume-lib
 
 manual: utils/plume-lib
-	utils/validate doc/index.html
-	utils/validate doc/dev.html
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
+
+validate-manual:
+	validate doc/index.html
+	validate doc/dev.html
+
 
 ############################################################
 # Targets for updating Randoop's distribution.
