@@ -7,6 +7,18 @@ enhancements.  See doc/projects.txt and the Wiki projects page
 (http://code.google.com/p/randoop/wiki/ProjectIdeas) for
 larger potential projects.
 
+* Reinstate HTML validation for manual pages. Perhaps
+
+  http://www.w3.org/QA/Tools/LogValidator/
+
+* The Randoop test suite checks for expected failures (which is good!).
+But, it prints out scary messages that suggest that the Randoop tests may
+have failed, followed by a line like:
+
+ Test passed; got 7 failures.
+
+Randoop should display error messages to the user only if there really is a problem with the Randoop tests.
+
 * Clean up logging facilities: running Randoop with --log=<filename>
   option should result in a log file that contains useful (not
   cryptic) information.
