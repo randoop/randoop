@@ -1070,7 +1070,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * "Foo var0 = null" or "int var0 = 1".
    */
   public boolean isPrimitive() {
-    if (size() > 1) {
+    if (size() != 1) {
       return false;
     }
     if (!(getStatementKind(0) instanceof PrimitiveOrStringOrNullDecl)) {
