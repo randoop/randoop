@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
-import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.core.launchConfigurations.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.RandoopLaunchConfigurationUtil;
 import randoop.plugin.internal.ui.SWTFactory;
 
@@ -101,8 +101,6 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
 
     fThreadTimeout = SWTFactory.createSingleText(comp, 1);
     fThreadTimeout.addModifyListener(fBasicModifyListener);
-    fThreadTimeout.setEnabled(Boolean
-        .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
 
     fUseNull = createCheckButton(comp, "Null R&atio:");
     fUseNull.addSelectionListener(new SelectionAdapter() {
@@ -210,29 +208,21 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fRandomSeed != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED, fRandomSeed
-          .getText());
+      RandoopArgumentCollector.setRandomSeed(config, fRandomSeed.getText());
     if (fMaxTestSize != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE,
-          fMaxTestSize.getText());
+      RandoopArgumentCollector.setMaxTestSize(config, fMaxTestSize.getText());
     if (fUseThreads != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, Boolean
-          .toString(fUseThreads.getSelection()));
+      RandoopArgumentCollector.setUseThreads(config, fUseThreads.getSelection());
     if (fThreadTimeout != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT,
-          fThreadTimeout.getText());
+      RandoopArgumentCollector.setThreadTimeout(config,  fThreadTimeout.getText());
     if (fUseNull != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean
-          .toString(fUseNull.getSelection()));
+      RandoopArgumentCollector.setUseNull(config, fUseNull.getSelection());
     if (fNullRatio != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO, fNullRatio
-          .getText());
+      RandoopArgumentCollector.setNullRatio(config, fNullRatio.getText());
     if (fJUnitTestInputs != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
-          fJUnitTestInputs.getText());
+      RandoopArgumentCollector.setJUnitTestInputs(config, fJUnitTestInputs.getText());
     if (fTimeLimit != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT, fTimeLimit
-          .getText());
+      RandoopArgumentCollector.setTimeLimit(config, fTimeLimit.getText());
   }
 
   /*
@@ -266,22 +256,14 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
    */
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED,
-        IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE,
-        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TEST_SIZE);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT,
-        IRandoopLaunchConfigurationConstants.DEFAULT_THREAD_TIMEOUT);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_USE_NULL,
-        IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO,
-        IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT,
-        IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
+    RandoopArgumentCollector.restoreRandomSeed(config);
+    RandoopArgumentCollector.restoreMaxTestSize(config);
+    RandoopArgumentCollector.restoreUseThreads(config);
+    RandoopArgumentCollector.restoreThreadTimeout(config);
+    RandoopArgumentCollector.restoreUseNull(config);
+    RandoopArgumentCollector.restoreNullRatio(config);
+    RandoopArgumentCollector.restoreJUnitTestInputs(config);
+    RandoopArgumentCollector.restoreTimeLimit(config);
   }
 
   /**

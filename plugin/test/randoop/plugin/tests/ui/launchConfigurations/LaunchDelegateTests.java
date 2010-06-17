@@ -2,10 +2,14 @@ package randoop.plugin.tests.ui.launchConfigurations;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -16,14 +20,27 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.core.launchConfigurations.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.core.launchConfigurations.RandoopArgumentCollector;
+import randoop.plugin.internal.core.runtime.IMessageListener;
+import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.ui.launchConfigurations.OutputTab;
 import randoop.plugin.internal.ui.launchConfigurations.ParametersTab;
 import randoop.plugin.internal.ui.launchConfigurations.StatementsTab;
+import randoop.runtime.Message;
 
 public class LaunchDelegateTests extends TestCase {
+  private IJavaProject fJavaProject;
+  
   private static IPath getFullPath(IPath localPath) {
     URL url = FileLocator.find(RandoopPlugin.getDefault().getBundle(), localPath, null);
     try {
@@ -32,6 +49,11 @@ public class LaunchDelegateTests extends TestCase {
       return null;
     }
     return new Path(url.getPath());
+  }
+  
+  @Override
+  protected void setUp() throws Exception {
+    fJavaProject = ProjectCreator.createStandardDemoProject();
   }
   
   /**
@@ -102,5 +124,64 @@ public class LaunchDelegateTests extends TestCase {
     // delegate will throw exception if test fails
     ILaunch launch = workingCopy.launch(ILaunchManager.RUN_MODE, null);
     manager.removeLaunch(launch);
+  }
+  
+  public void testStartRandoop() throws CoreException, IOException {
+    ILaunchConfigurationType javaType = DebugPlugin.getDefault()
+        .getLaunchManager().getLaunchConfigurationType(
+            IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
+    
+    final ILaunchConfigurationWorkingCopy config = javaType.newInstance(null,
+        "Test Config"); //$NON-NLS-1$
+    
+    IProject project = fJavaProject.getProject();
+    IFolder folder = project.getFolder(ProjectCreator.testFolderName);
+    IPackageFragmentRoot testFolder = fJavaProject.getPackageFragmentRoot(folder);
+
+    List<String> availableTypes = new ArrayList<String>();
+    for (IPackageFragmentRoot pfRoot : fJavaProject.getPackageFragmentRoots()) {
+      if (pfRoot.getKind() == IPackageFragmentRoot.K_SOURCE) {
+        for (IJavaElement element : pfRoot.getChildren()) {
+          if (element instanceof IPackageFragment) {
+            IPackageFragment packageFragment = (IPackageFragment) element;
+            for(IJavaElement compElement : packageFragment.getChildren()) {
+            if (compElement instanceof ICompilationUnit) {
+              IType[] types = ((ICompilationUnit) compElement).getAllTypes();
+              for (IType type : types) {
+                availableTypes.add(type.getHandleIdentifier());
+              }
+            }
+          }}
+        }
+      }
+    }
+    
+    RandoopArgumentCollector.setAllJavaTypes(config, availableTypes);
+    RandoopArgumentCollector.setTimeLimit(config, "100"); //$NON-NLS-1$
+    RandoopArgumentCollector.setOutputDirectoryHandlerId(config, testFolder.getHandleIdentifier());
+    RandoopArgumentCollector.setJUnitPackageName(config, "demo.pathplanning.allTests"); //$NON-NLS-1$
+    RandoopArgumentCollector.setJUnitPackageName(config, "Test"); //$NON-NLS-1$
+    
+    MessageReceiver mr = new MessageReceiver(new IMessageListener() {
+      @Override
+      public void handleMessage(Message m) {
+        System.out.println(m);
+      }
+    });
+    RandoopArgumentCollector.setPort(config, mr.getPort());
+    new Thread(mr).start();
+
+    // Launch the configuration from the UI thread
+    PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          config.launch(ILaunchManager.RUN_MODE, null, true);
+        } catch (CoreException e) {
+          e.printStackTrace();
+          fail();
+        }
+      }
+    });
   }
 }

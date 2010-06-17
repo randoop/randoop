@@ -12,7 +12,6 @@ import junit.framework.TestCase;
 public class FileResources extends TestCase {
   public static void copy(File source, File destination) throws IOException {
     assertTrue(source.exists());
-    assertFalse(destination.exists());
 
     if (source.isFile()) {
       copyFile(source, destination);
@@ -23,10 +22,11 @@ public class FileResources extends TestCase {
 
   private static void copyDirectory(File source, File destination) throws IOException {
     assertTrue(source.isDirectory());
+    assertTrue(!destination.exists() || destination.isDirectory());
+    
     if (destination.exists()) {
       destination.mkdirs();
     }
-    assertTrue(destination.isDirectory());
 
     for (File f : source.listFiles()) {
       copy(f, new File(destination, f.getName()));
@@ -45,6 +45,8 @@ public class FileResources extends TestCase {
    * @throws IOException
    */
   private static void copyFile(File source, File destination) throws IOException {
+    assertFalse(destination.exists());
+        
     // Create the directories and file for destination
     destination.getParentFile().mkdirs();
     destination.createNewFile();
