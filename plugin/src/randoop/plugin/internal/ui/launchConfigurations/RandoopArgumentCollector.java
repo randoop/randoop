@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -175,7 +176,7 @@ public class RandoopArgumentCollector {
         config,
         IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS,
         Boolean
-            .parseBoolean(IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS));
+            .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
   }
 
   public static String getThreadTimeout(ILaunchConfiguration config) {
@@ -187,7 +188,7 @@ public class RandoopArgumentCollector {
   public static boolean getUseNull(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean
-            .parseBoolean(IRandoopLaunchConfigurationConstants.ATTR_USE_NULL));
+            .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
   }
 
   public static String getNullRatio(ILaunchConfiguration config) {
@@ -244,6 +245,198 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
   }
 
+  /*
+   * Methods to restore default values
+   */
+  public static void restoreAllJavaTypes(ILaunchConfigurationWorkingCopy config) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
+        IConstants.EMPTY_STRING_LIST);
+  }
+
+  public static void restoreCheckedJavaElements(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_JAVA_ELEMENTS,
+        IConstants.EMPTY_STRING_LIST);
+  }
+
+  public static void restoreRandomSeedToDefault(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED,
+        IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
+  }
+
+  public static void restoreMaxTestSizeToDefault(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE,
+        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TEST_SIZE);
+  }
+
+  public static void restoreUseThreadsToDefault(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(
+        config,
+        IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS,
+        Boolean
+            .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
+  }
+
+  public static void restoreThreadTimeout(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT,
+        IRandoopLaunchConfigurationConstants.DEFAULT_THREAD_TIMEOUT);
+  }
+
+  public static void restoreUseNull(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean
+            .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+  }
+
+  public static void restoreNullRatio(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO,
+        IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
+  }
+
+  public static void restoreJUnitTestInputs(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
+        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
+  }
+
+  public static void restoreTimeLimit(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT,
+        IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
+  }
+
+  public static void restoreOutputDirectoryHandlerId(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
+        IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY);
+  }
+
+  public static void restoreJUnitPackageName(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
+        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME);
+  }
+
+  public static void restoreJUnitClassName(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
+        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME);
+  }
+
+  public static void restoreTestKinds(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_TEST_KINDS,
+        IRandoopLaunchConfigurationConstants.DEFAULT_TEST_KINDS);
+  }
+
+  public static void restoreMaxTestsWritten(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_WRITTEN,
+        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_WRITTEN);
+  }
+
+  public static void restoreMaxTestsPerFile(ILaunchConfigurationWorkingCopy config) {
+     setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_PER_FILE,
+        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
+  }
+
+
+  /*
+   * Methods to set ILaunchConfigurationWorkingCopy attributes 
+   */
+  public static void setAllJavaTypes(ILaunchConfigurationWorkingCopy config, List<String> availableTypes) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
+        availableTypes);
+  }
+
+  public static void setCheckedJavaElements(ILaunchConfigurationWorkingCopy config, List<String> checkedElements) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_JAVA_ELEMENTS,
+        checkedElements);
+  }
+
+  public static void setRandomSeed(ILaunchConfigurationWorkingCopy config, String seed) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED,
+        seed);
+  }
+
+  public static void setMaxTestSize(ILaunchConfigurationWorkingCopy config, String size) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE, size);
+  }
+
+  public static void setUseThreads(ILaunchConfigurationWorkingCopy config, boolean useThreads) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS,
+        useThreads);
+  }
+
+  public static void setThreadTimeout(ILaunchConfigurationWorkingCopy config, String threadTimeout) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT, threadTimeout);
+  }
+
+  public static void setUseNull(ILaunchConfigurationWorkingCopy config, boolean useNull) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL,
+        useNull);
+  }
+
+  public static void setNullRatio(ILaunchConfigurationWorkingCopy config, String nullRatio) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO,
+        nullRatio);
+  }
+
+  public static void setJUnitTestInputs(ILaunchConfigurationWorkingCopy config, String testInputs) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS, testInputs);
+  }
+
+  public static void setTimeLimit(ILaunchConfigurationWorkingCopy config, String timeLimit) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT,
+        timeLimit);
+  }
+
+  public static void setOutputDirectoryHandlerId(ILaunchConfigurationWorkingCopy config, String outputDirectory) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
+        outputDirectory);
+  }
+
+  public static void setJUnitPackageName(ILaunchConfigurationWorkingCopy config, String junitPackageName) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
+        junitPackageName);
+  }
+
+  public static void setJUnitClassName(ILaunchConfigurationWorkingCopy config, String junitClassName) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
+        junitClassName);
+  }
+
+  public static void setTestKinds(ILaunchConfigurationWorkingCopy config, String testKinds) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_TEST_KINDS,
+        testKinds);
+  }
+
+  public static void setMaxTestsWritten(ILaunchConfigurationWorkingCopy config, String maxTestsWritten) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_WRITTEN,
+        maxTestsWritten);
+  }
+
+  public static void setMaxTestsPerFile(ILaunchConfigurationWorkingCopy config, String maxTestsPerFile) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_PER_FILE,
+        maxTestsPerFile);
+  }
+
   private static String getAttribute(ILaunchConfiguration config,
       String attributeName, String defaultValue) {
     try {
@@ -269,5 +462,20 @@ public class RandoopArgumentCollector {
     } catch (CoreException ce) {
       return defaultValue;
     }
+  }
+
+  private static void setAttribute(ILaunchConfigurationWorkingCopy config,
+      String attributeName, String value) {
+    config.setAttribute(attributeName, value);
+  }
+
+  private static void setAttribute(ILaunchConfigurationWorkingCopy config,
+      String attributeName, boolean value) {
+    config.setAttribute(attributeName, value);
+  }
+
+  private static void setAttribute(ILaunchConfigurationWorkingCopy config,
+      String attributeName, List<String> value) {
+    config.setAttribute(attributeName, value);
   }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -226,16 +227,10 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
    */
   @Override
   public boolean isValid(ILaunchConfiguration config) {
-    List<?> selected = RandoopArgumentCollector.getCheckedJavaElements(config);
-    for (Object id : selected) {
-      if (JavaCore.create((String) id).exists()) {
-        return true;
-      }
-    }
-    
-    setErrorMessage("At least one existing type or method must be selected.");
-    return false;
-  };
+    List<String> selectedTypes = RandoopArgumentCollector.getCheckedJavaElements(config);
+
+    return validate(selectedTypes).isOK();
+  }
 
   /*
    * (non-Javadoc)
@@ -280,8 +275,28 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
         IConstants.EMPTY_STRING_LIST);
   }
 
+  /**
+   * Returns an OK <code>IStatus</code> if the specified arguments could be
+   * passed to Randoop without raising any error. If the arguments are not
+   * valid, an ERROR status is returned with a message indicating what is wrong.
+   * 
+   * @param timeLimit
+   * @return
+   */
+  protected IStatus validate(List<String> selectedTypes) {
+    for (String handlerId : selectedTypes) {
+      if (!JavaCore.create((String) handlerId).exists()) {
+        return StatusFactory
+            .createErrorStatus("At least one existing type or method must be selected.");
+      }
+    }
+
+    return StatusFactory.createOkStatus();
+  }
+
   /*
    * (non-Javadoc)
+   * 
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
    */
   @Override
