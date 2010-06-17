@@ -24,7 +24,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
-import randoop.plugin.internal.ui.launchConfigurations.RandoopArgumentCollector;
+import randoop.plugin.internal.core.launchConfigurations.RandoopArgumentCollector;
 
 /**
  * Manages and supplies resources used for generating a test set. Resources

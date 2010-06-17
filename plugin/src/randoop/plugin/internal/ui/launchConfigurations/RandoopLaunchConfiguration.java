@@ -2,6 +2,8 @@ package randoop.plugin.internal.ui.launchConfigurations;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 
+import randoop.plugin.internal.core.launchConfigurations.RandoopArgumentCollector;
+
 
 public class RandoopLaunchConfiguration {
   ILaunchConfiguration fConfig;

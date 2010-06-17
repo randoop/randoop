@@ -31,19 +31,20 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.TestGroupResources;
+import randoop.plugin.internal.core.launchConfigurations.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.ui.views.MessageViewListener;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 
 public class RandoopLaunchDelegate extends
     AbstractJavaLaunchConfigurationDelegate {
-  private int fPort;
   MessageReceiver fMessageReceiver;
+  int fPort;
 
   public RandoopLaunchDelegate() {
     super();
-    fPort = -1;
     fMessageReceiver = null;
   }
 
@@ -58,6 +59,8 @@ public class RandoopLaunchDelegate extends
   @Override
   public void launch(ILaunchConfiguration configuration, String mode,
       ILaunch launch, IProgressMonitor monitor) throws CoreException {
+    System.out.println("Begin launch");
+    
     if (monitor == null)
       monitor = new NullProgressMonitor();
 
@@ -77,27 +80,37 @@ public class RandoopLaunchDelegate extends
       informAndAbort(status);
     }
 
-    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-      public void run() {
-        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        IWorkbenchPage page = window.getActivePage();
-        
-        if (page != null) {
-          TestGeneratorViewPart viewPart;
-          try {
-            viewPart = (TestGeneratorViewPart) page.showView(TestGeneratorViewPart.ID);
-            fMessageReceiver = new MessageReceiver(new MessageViewListener(viewPart));
-            fPort = fMessageReceiver.getPort();
-          } catch (PartInitException e1) {
-            fMessageReceiver = null;
-            System.err.println("Randoop view could not be initialized");
-          } catch (IOException e) {
-            fMessageReceiver = null;
-            System.err.println("Could not find free communication port");
+    fPort = RandoopArgumentCollector.getPort(configuration);
+    boolean useDefault = fPort != IConstants.INVALID_PORT;
+    
+    if (useDefault) {
+      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+        public void run() {
+          IWorkbenchWindow window = PlatformUI.getWorkbench()
+              .getActiveWorkbenchWindow();
+          IWorkbenchPage page = window.getActivePage();
+
+          if (page != null) {
+            TestGeneratorViewPart viewPart;
+            try {
+              viewPart = (TestGeneratorViewPart) page
+                  .showView(TestGeneratorViewPart.ID);
+              fMessageReceiver = new MessageReceiver(new MessageViewListener(
+                  viewPart));
+              fPort = fMessageReceiver.getPort();
+            } catch (PartInitException e1) {
+              fMessageReceiver = null;
+              System.err.println("Randoop view could not be initialized");
+            } catch (IOException e) {
+              fMessageReceiver = null;
+              System.err.println("Could not find free communication port");
+            }
           }
         }
-      }
-    });
+      });
+    } else {
+      fMessageReceiver = null;
+    }
 
     String mainTypeName = verifyMainTypeName(configuration);
     IVMRunner runner = getVMRunner(configuration, mode);
@@ -156,8 +169,9 @@ public class RandoopLaunchDelegate extends
       System.out.println(str);
     }
     
-    // PlatformUI.getWorkbench().getDisplay().asyncExec()
-    new Thread(fMessageReceiver).start();
+    if (useDefault)
+      new Thread(fMessageReceiver).start();
+    
     runner.run(runConfig, launch, monitor);
     
     // check for cancellation
@@ -165,7 +179,7 @@ public class RandoopLaunchDelegate extends
       return;
     }
     
-    System.out.println("Done");
+    System.out.println("Launching complete");
   }
 
   /**
@@ -220,7 +234,7 @@ public class RandoopLaunchDelegate extends
     programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$
     programArguments.add("--outputlimit=" + args.getMaxTestsWritten());//$NON-NLS-1$
     programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
-    // if (testSetResources.getMethodFilePath() != null)
+    // if (testSetResources.getMethodFilePath() != null) // XXX Write the method writing method
     // programArguments
     //          .add("--methodlist=" + testSetResources.getMethodFilePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
