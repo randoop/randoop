@@ -34,7 +34,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TestKinds;
-import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.core.launchConfigurations.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.RandoopLaunchConfigurationUtil;
 import randoop.plugin.internal.ui.SWTFactory;
 
@@ -75,7 +75,6 @@ public class OutputTab extends
     SWTFactory.createLabel(comp, "Output Directory:", 1);
     fOutputDirectory = SWTFactory.createSingleText(comp, 1);
     fOutputDirectory.setEditable(false);
-    fOutputDirectory.setText(IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY);
 
     fSourceFolderBrowse = SWTFactory.createPushButton(comp, "Browse...", null);
     fSourceFolderBrowse.addSelectionListener(new SelectionAdapter() {
@@ -183,22 +182,27 @@ public class OutputTab extends
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fOutputDirectory != null && fOutputSourceFolder != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
+      RandoopArgumentCollector.setOutputDirectoryHandlerId(config,
           fOutputSourceFolder.getHandleIdentifier());
+    
     if (fJUnitPackageName != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
+      RandoopArgumentCollector.setJUnitPackageName(config,
           fJUnitPackageName.getText());
+    
     if (fJUnitClassName != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
+      RandoopArgumentCollector.setJUnitClassName(config,
           fJUnitClassName.getText());
+    
     if (fTestKinds != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_TEST_KINDS,
+      RandoopArgumentCollector.setTestKinds(config,
           TestKinds.getTestKind(fTestKinds.getSelectionIndex()).getArgumentName());
+    
     if (fMaxTestsWritten != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_WRITTEN,
+      RandoopArgumentCollector.setMaxTestsWritten(config,
           fMaxTestsWritten.getText());
+    
     if (fMaxTestsPerFile != null)
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_PER_FILE,
+      RandoopArgumentCollector.setMaxTestsPerFile(config,
           fMaxTestsPerFile.getText());
   }
 
@@ -241,18 +245,12 @@ public class OutputTab extends
    */
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_TEST_KINDS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_TEST_KINDS);
-    config.setAttribute(
-        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_WRITTEN,
-        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_WRITTEN);
-    config.setAttribute(
-        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_PER_FILE,
-        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
+    RandoopArgumentCollector.restoreOutputDirectoryHandlerId(config);
+    RandoopArgumentCollector.restoreJUnitPackageName(config);
+    RandoopArgumentCollector.restoreJUnitClassName(config);
+    RandoopArgumentCollector.restoreTestKinds(config);
+    RandoopArgumentCollector.restoreMaxTestsWritten(config);
+    RandoopArgumentCollector.restoreMaxTestsPerFile(config);
   }
 
   /**

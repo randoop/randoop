@@ -35,8 +35,9 @@ import org.eclipse.swt.widgets.Tree;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.launchConfigurations.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.core.launchConfigurations.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.DebugTypeSelectionDialog;
-import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.TypeSelector;
 
@@ -238,15 +239,10 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
    */
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fTypeSelector == null) {
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
-          IConstants.EMPTY_STRING);
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-          IConstants.EMPTY_STRING);
+      setDefaults(config);
     } else {
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
-          fTypeSelector.getAllTypeHandlerIds());
-      config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-          fTypeSelector.getCheckedHandlerIds());
+      RandoopArgumentCollector.setAllJavaTypes(config, fTypeSelector.getAllTypeHandlerIds());
+      RandoopArgumentCollector.setCheckedJavaElements(config, fTypeSelector.getCheckedHandlerIds());
     }
   }
 
@@ -269,10 +265,8 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
    */
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
-        IConstants.EMPTY_STRING_LIST);
-    config.setAttribute(IRandoopLaunchConfigurationConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-        IConstants.EMPTY_STRING_LIST);
+    RandoopArgumentCollector.restoreCheckedJavaElements(config);
+    RandoopArgumentCollector.restoreAllJavaTypes(config);
   }
 
   /**
@@ -284,10 +278,16 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
    * @return
    */
   protected IStatus validate(List<String> selectedTypes) {
+    IStatus errorStatus = StatusFactory
+        .createErrorStatus("At least one existing type or method must be selected.");
+    
+    if (selectedTypes == null || selectedTypes.isEmpty()) {
+      return errorStatus;
+    }
+
     for (String handlerId : selectedTypes) {
       if (!JavaCore.create((String) handlerId).exists()) {
-        return StatusFactory
-            .createErrorStatus("At least one existing type or method must be selected.");
+        return errorStatus;
       }
     }
 

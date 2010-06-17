@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 
@@ -31,6 +32,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.tests.resources.FileResources;
 
 public class ProjectCreator extends TestCase {
+  private static HashMap<String, Boolean> okToDeleteByWorkspace = new HashMap<String, Boolean>();
   public static String demoProjectName = "Demo Project"; //$NON-NLS-1$
   public static String sourceFolderName = "src"; //$NON-NLS-1$
   public static String testFolderName = "test"; //$NON-NLS-1$
@@ -69,6 +71,9 @@ public class ProjectCreator extends TestCase {
   }
 
   public static IJavaProject create(String projectName, Collection<File> contents) {
+    if (contents == null)
+      contents = new ArrayList<File>();
+    
     for (File f : contents) {
       assertTrue(f.isAbsolute());
     }
@@ -99,8 +104,11 @@ public class ProjectCreator extends TestCase {
         IClasspathEntry srcEntry = JavaCore.newSourceEntry(srcPath);
         IClasspathEntry testEntry = JavaCore.newSourceEntry(testPath);
 
-        IClasspathEntry[] buildPath = { srcEntry, testEntry, 
-            JavaRuntime.getDefaultJREContainerEntry() };
+        IClasspathEntry[] buildPath = {
+            srcEntry,
+            testEntry, 
+            JavaRuntime.getDefaultJREContainerEntry()
+        };
 
         javaProject.setRawClasspath(buildPath, null);
 
@@ -136,12 +144,21 @@ public class ProjectCreator extends TestCase {
     IWorkbench workbench = PlatformUI.getWorkbench();
     IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
     
-    boolean continuteWithTest = MessageDialog.openQuestion(window.getShell(),
-        "Warning", //$NON-NLS-1$
-        "This test will delete all contents of the active workspace:\n" //$NON-NLS-1$
-            + root.getLocation() + "\n\n" //$NON-NLS-1$
-            + "Do you want to continue? (Pressing Yes will delete workspace)"); //$NON-NLS-1$
-
+    String location = root.getLocation().toOSString();
+    Boolean okToDelete = okToDeleteByWorkspace.get(location);
+    
+    boolean continuteWithTest;
+    if (okToDelete == null) {
+      continuteWithTest = MessageDialog.openQuestion(window.getShell(),
+          "Warning", //$NON-NLS-1$
+          "This test will delete all contents of the active workspace:\n" //$NON-NLS-1$
+              + location + "\n\n" //$NON-NLS-1$
+              + "Do you want to continue? (Pressing Yes will delete workspace)"); //$NON-NLS-1$
+      okToDeleteByWorkspace.put(location, continuteWithTest);
+    } else {
+      continuteWithTest = okToDelete.booleanValue();
+    }
+    
     if (continuteWithTest) {
       // Test fails if an exception is thrown
       ProjectCreator.clearWorkspace();
