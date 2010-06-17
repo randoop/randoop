@@ -34,11 +34,6 @@ public class LaunchDelegateTests extends TestCase {
     return new Path(url.getPath());
   }
   
-  @Override
-  protected void setUp() throws Exception {
-    // XXX - Set up the project so we can test it
-  }
-  
   /**
    * Returns the launch manager
    * 
