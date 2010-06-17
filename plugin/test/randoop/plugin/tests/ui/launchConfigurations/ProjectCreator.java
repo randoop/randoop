@@ -26,12 +26,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.tests.resources.FileResources;
 
 public class ProjectCreator extends TestCase {
+  public static String demoProjectName = "Demo Project"; //$NON-NLS-1$
+  public static String sourceFolderName = "src"; //$NON-NLS-1$
+  public static String testFolderName = "test"; //$NON-NLS-1$
+  
   /**
    * Returns the <code>File</code> in the test bundle given a relative path
    * name, or <code>null</code> if the <code>File</code> does not exist.
@@ -65,18 +68,17 @@ public class ProjectCreator extends TestCase {
     }
   }
 
-  public static void create(String projectName, Collection<File> contents) {
+  public static IJavaProject create(String projectName, Collection<File> contents) {
     for (File f : contents) {
       assertTrue(f.isAbsolute());
     }
-
-    ProjectCreator.clearWorkspace();
 
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     IProject project = root.getProject(projectName);
 
     if (project.exists()) {
       System.out.println(projectName + " already exists!");
+      return JavaCore.create(project);
     } else {
       try {
         project.create(null);
@@ -87,13 +89,17 @@ public class ProjectCreator extends TestCase {
         project.setDescription(description, null);
         IJavaProject javaProject = JavaCore.create(project);
 
-        IFolder srcFolder = project.getFolder("src");
+        IFolder srcFolder = project.getFolder(sourceFolderName);
+        IFolder testFolder = project.getFolder(testFolderName);
         srcFolder.create(true, true, null);
+        testFolder.create(true, true, null);
 
-        IPath srcPath = javaProject.getPath().append("src"); //$NON-NLS-1$
+        IPath srcPath = javaProject.getPath().append(sourceFolderName);
+        IPath testPath = javaProject.getPath().append(testFolderName);
         IClasspathEntry srcEntry = JavaCore.newSourceEntry(srcPath);
+        IClasspathEntry testEntry = JavaCore.newSourceEntry(testPath);
 
-        IClasspathEntry[] buildPath = { srcEntry,
+        IClasspathEntry[] buildPath = { srcEntry, testEntry, 
             JavaRuntime.getDefaultJREContainerEntry() };
 
         javaProject.setRawClasspath(buildPath, null);
@@ -109,8 +115,11 @@ public class ProjectCreator extends TestCase {
         }
 
         srcFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+        
+        return javaProject;
       } catch (CoreException e) {
         e.printStackTrace();
+        return null;
       }
     }
   }
@@ -118,21 +127,21 @@ public class ProjectCreator extends TestCase {
   /**
    * 
    * WARNING: This will delete all projects from the working directory.
+   * 
    * @throws Exception
    */
-  public void testCreateProject() throws Exception {
+  public static IJavaProject createStandardDemoProject() {
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-    
+
     IWorkbench workbench = PlatformUI.getWorkbench();
     IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
     
-    boolean continuteWithTest = MessageDialog.openQuestion(
-            window.getShell(),
-            "Warning", //$NON-NLS-1$
-            "This test will delete all contents of the active workspace:\n" //$NON-NLS-1$
+    boolean continuteWithTest = MessageDialog.openQuestion(window.getShell(),
+        "Warning", //$NON-NLS-1$
+        "This test will delete all contents of the active workspace:\n" //$NON-NLS-1$
             + root.getLocation() + "\n\n" //$NON-NLS-1$
             + "Do you want to continue? (Pressing Yes will delete workspace)"); //$NON-NLS-1$
-    
+
     if (continuteWithTest) {
       // Test fails if an exception is thrown
       ProjectCreator.clearWorkspace();
@@ -140,9 +149,14 @@ public class ProjectCreator extends TestCase {
       Collection<File> contents = new ArrayList<File>();
       contents.add(getFileInTestBundle("/demo"));//$NON-NLS-1$
 
-      ProjectCreator.create("Demo Project", contents); //$NON-NLS-1$
+      return ProjectCreator.create(demoProjectName, contents);
     } else {
       fail();
+      return null;
     }
+  }
+
+  public void testCreateProject() throws Exception {
+    createStandardDemoProject();
   }
 }
