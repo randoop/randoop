@@ -1,7 +1,6 @@
 package randoop.plugin.tests.ui.launching;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,9 +10,6 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -28,7 +24,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.ui.PlatformUI;
 
-import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.IMessageListener;
@@ -38,18 +33,9 @@ import randoop.plugin.internal.ui.launching.ParametersTab;
 import randoop.plugin.internal.ui.launching.StatementsTab;
 import randoop.runtime.Message;
 
+@SuppressWarnings("nls")
 public class LaunchDelegateTests extends TestCase {
   private IJavaProject fJavaProject;
-  
-  private static IPath getFullPath(IPath localPath) {
-    URL url = FileLocator.find(RandoopPlugin.getDefault().getBundle(), localPath, null);
-    try {
-      url = FileLocator.toFileURL(url);
-    } catch (IOException e) {
-      return null;
-    }
-    return new Path(url.getPath());
-  }
   
   @Override
   protected void setUp() throws Exception {
@@ -125,42 +111,9 @@ public class LaunchDelegateTests extends TestCase {
     ILaunch launch = workingCopy.launch(ILaunchManager.RUN_MODE, null);
     manager.removeLaunch(launch);
   }
-  
-  public void testStartRandoop() throws CoreException, IOException {
-    ILaunchConfigurationType javaType = DebugPlugin.getDefault()
-        .getLaunchManager().getLaunchConfigurationType(
-            IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
-    
-    final ILaunchConfigurationWorkingCopy config = javaType.newInstance(null,
-        "Test Config"); //$NON-NLS-1$
-    
-    IProject project = fJavaProject.getProject();
-    IFolder folder = project.getFolder(ProjectCreator.testFolderName);
-    IPackageFragmentRoot testFolder = fJavaProject.getPackageFragmentRoot(folder);
 
-    List<String> availableTypes = new ArrayList<String>();
-    for (IPackageFragmentRoot pfRoot : fJavaProject.getPackageFragmentRoots()) {
-      if (pfRoot.getKind() == IPackageFragmentRoot.K_SOURCE) {
-        for (IJavaElement element : pfRoot.getChildren()) {
-          if (element instanceof IPackageFragment) {
-            IPackageFragment packageFragment = (IPackageFragment) element;
-            for(IJavaElement compElement : packageFragment.getChildren()) {
-            if (compElement instanceof ICompilationUnit) {
-              IType[] types = ((ICompilationUnit) compElement).getAllTypes();
-              for (IType type : types) {
-                availableTypes.add(type.getHandleIdentifier());
-              }
-            }
-          }}
-        }
-      }
-    }
-    
-    RandoopArgumentCollector.setAllJavaTypes(config, availableTypes);
-    RandoopArgumentCollector.setTimeLimit(config, "100"); //$NON-NLS-1$
-    RandoopArgumentCollector.setOutputDirectoryHandlerId(config, testFolder.getHandleIdentifier());
-    RandoopArgumentCollector.setJUnitPackageName(config, "demo.pathplanning.allTests"); //$NON-NLS-1$
-    RandoopArgumentCollector.setJUnitPackageName(config, "Test"); //$NON-NLS-1$
+  public void testStartRandoop() throws CoreException, IOException {
+    final ILaunchConfigurationWorkingCopy config = ProjectCreator.createNewAllTypeConfig(fJavaProject);
     
     MessageReceiver mr = new MessageReceiver(new IMessageListener() {
       @Override
@@ -183,5 +136,8 @@ public class LaunchDelegateTests extends TestCase {
         }
       }
     });
+    
+    // TODO: Eclipse should remain open so that assertions can be made in the
+    // message listener
   }
 }
