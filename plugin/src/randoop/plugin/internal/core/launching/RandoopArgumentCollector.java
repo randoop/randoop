@@ -501,4 +501,41 @@ public class RandoopArgumentCollector {
       String attributeName, List<String> value) {
     config.setAttribute(attributeName, value);
   }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof RandoopArgumentCollector) {
+      RandoopArgumentCollector other = (RandoopArgumentCollector) obj;
+
+      return getName().equals(other.getName())
+          && getCheckedTypes().equals(other.getCheckedTypes())
+          && getCheckedMethods().equals(other.getCheckedMethods())
+          && getRandomSeed() == other.getRandomSeed()
+          && getMaxTestSize() == other.getMaxTestSize()
+          && getUseThreads() == other.getUseThreads()
+          && getThreadTimeout() == other.getThreadTimeout()
+          && getUseNull() == other.getUseNull()
+          && getNullRatio() == other.getNullRatio()
+          && getJUnitTestInputs() == other.getJUnitTestInputs()
+          && getTimeLimit() == other.getTimeLimit()
+          && getOutputDirectory().equals(other.getOutputDirectory())
+          && getJUnitPackageName().equals(other.getJUnitPackageName())
+          && getJUnitClassName().equals(other.getJUnitClassName())
+          && getTestKinds().equals(other.getTestKinds())
+          && getMaxTestsWritten() == other.getMaxTestsWritten()
+          && getMaxTestsPerFile() == other.getMaxTestsPerFile();
+    }
+
+    return super.equals(obj);
+  }
+  
+  @Override
+  public int hashCode() {
+    return (getName() + getCheckedTypes().toString()
+        + getCheckedMethods().toString() + getRandomSeed() + getMaxTestSize()
+        + getUseThreads() + getThreadTimeout() + getUseNull() + getNullRatio()
+        + getJUnitTestInputs() + getTimeLimit() + getOutputDirectory()
+        + getJUnitPackageName() + getJUnitClassName() + getTestKinds()
+        + getMaxTestsWritten() + getMaxTestsPerFile()).hashCode();
+  }
 }

@@ -15,6 +15,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationStore;
+
 /**
  * The activator class controls the plug-in life cycle. It stores a shared
  * instance of the plug-in and provides a static method to access it.
@@ -49,6 +51,8 @@ public class RandoopPlugin extends AbstractUIPlugin {
    */
   public RandoopPlugin() {
     plugin = this;
+    
+    RandoopLaunchConfigurationStore.initialize();
   }
   
   /**

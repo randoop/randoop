@@ -20,3 +20,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: ../bin,
  .
+Import-Package: org.eclipse.jdt.internal.junit.buildpath
