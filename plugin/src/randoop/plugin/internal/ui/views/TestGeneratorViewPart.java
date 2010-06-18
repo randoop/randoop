@@ -53,7 +53,7 @@ public class TestGeneratorViewPart extends ViewPart {
   /**
    * The ID of the view as specified by the extension.
    */
-  public static final String ID = "randoop.plugin.views.TestGeneratorViewPart";
+  public static final String ID = "randoop.plugin.ui.views.TestGeneratorViewPart";
 
   private Composite fParent;
   private RandoopProgressBar fProgressBar;

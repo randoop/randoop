@@ -11,7 +11,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-import randoop.plugin.internal.core.launchConfigurations.RandoopArgumentCollector;
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class LaunchConfigurationTypeChange extends Change {
   private ILaunchConfiguration fLaunchConfiguration;
