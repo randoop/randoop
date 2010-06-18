@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.jdt.core.IJavaProject;
 
-import randoop.plugin.tests.ui.launchConfigurations.ProjectCreator;
+import randoop.plugin.tests.ui.launching.ProjectCreator;
 
 public class MessageReceiverTest extends TestCase {
   IJavaProject fJavaProject;
