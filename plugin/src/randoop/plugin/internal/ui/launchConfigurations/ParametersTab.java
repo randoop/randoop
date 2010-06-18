@@ -197,8 +197,15 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
     String junitTestInputs = RandoopArgumentCollector.getJUnitTestInputs(config);
     String timeLimit = RandoopArgumentCollector.getTimeLimit(config);
 
-    return validate(randomSeed, maxTestSize, useThreads, threadTimeout, useNull,
-        nullRatio, junitTestInputs, timeLimit).isOK();
+    IStatus status = validate(randomSeed, maxTestSize, useThreads,
+        threadTimeout, useNull, nullRatio, junitTestInputs, timeLimit);
+    if (status.getSeverity() == IStatus.ERROR) {
+      setErrorMessage(status.getMessage());
+      return false;
+    } else {
+      setMessage(status.getMessage());
+      return true;
+    }
   }
 
   /*
