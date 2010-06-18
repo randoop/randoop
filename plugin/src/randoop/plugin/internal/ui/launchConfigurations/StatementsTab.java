@@ -230,7 +230,14 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
   public boolean isValid(ILaunchConfiguration config) {
     List<String> selectedTypes = RandoopArgumentCollector.getCheckedJavaElements(config);
 
-    return validate(selectedTypes).isOK();
+    IStatus status = validate(selectedTypes);
+    if (status.getSeverity() == IStatus.ERROR) {
+      setErrorMessage(status.getMessage());
+      return false;
+    } else {
+      setMessage(status.getMessage());
+      return true;
+    }
   }
 
   /*
