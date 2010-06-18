@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -19,10 +20,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.internal.junit.buildpath.BuildPathSupport;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
@@ -30,6 +40,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.tests.resources.FileResources;
 
 public class ProjectCreator extends TestCase {
@@ -108,12 +120,13 @@ public class ProjectCreator extends TestCase {
         IClasspathEntry[] buildPath = {
             srcEntry,
             testEntry, 
-            JavaRuntime.getDefaultJREContainerEntry()
+            JavaRuntime.getDefaultJREContainerEntry(),
+            BuildPathSupport.getJUnit4ClasspathEntry()
         };
 
         javaProject.setRawClasspath(buildPath, null);
 
-        File destination = root.getLocation().append(srcPath).toFile();
+        File destination = root.getLocation().append(javaProject.getPath()).toFile();
 
         try {
           for (File f : contents) {
@@ -124,6 +137,7 @@ public class ProjectCreator extends TestCase {
         }
 
         srcFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+        testFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
         
         return javaProject;
       } catch (CoreException e) {
@@ -182,7 +196,49 @@ public class ProjectCreator extends TestCase {
     }
   }
 
+  public static ILaunchConfigurationWorkingCopy createNewAllTypeConfig(IJavaProject javaProject) throws CoreException {
+    ILaunchConfigurationType randoopType = DebugPlugin.getDefault()
+    .getLaunchManager().getLaunchConfigurationType(
+        IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
+
+    final ILaunchConfigurationWorkingCopy config = randoopType.newInstance(null, "All Type Config");
+    
+    IProject project = javaProject.getProject();
+    IFolder folder = project.getFolder(ProjectCreator.testFolderName);
+    IPackageFragmentRoot testFolder = javaProject
+        .getPackageFragmentRoot(folder);
+
+    // Search for all java elements in the project and add them to the
+    // configuration
+    List<String> availableTypes = new ArrayList<String>();
+    for (IPackageFragmentRoot pfRoot : javaProject.getPackageFragmentRoots()) {
+      if (pfRoot.getKind() == IPackageFragmentRoot.K_SOURCE) {
+        for (IJavaElement element : pfRoot.getChildren()) {
+          if (element instanceof IPackageFragment) {
+            IPackageFragment packageFragment = (IPackageFragment) element;
+            for (IJavaElement compElement : packageFragment.getChildren()) {
+              if (compElement instanceof ICompilationUnit) {
+                IType[] types = ((ICompilationUnit) compElement).getAllTypes();
+                for (IType type : types) {
+                  availableTypes.add(type.getHandleIdentifier());
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    RandoopArgumentCollector.setAllJavaTypes(config, availableTypes);
+    RandoopArgumentCollector.setOutputDirectoryHandlerId(config, testFolder.getHandleIdentifier());
+    RandoopArgumentCollector.setJUnitPackageName(config, "demo.pathplanning.allTests");
+    RandoopArgumentCollector.setJUnitPackageName(config, "AllTypeTest");
+    
+    return config;
+  }
+  
   public void testCreateProject() throws Exception {
     createStandardDemoProject();
   }
 }
+

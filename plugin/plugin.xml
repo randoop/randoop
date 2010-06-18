@@ -25,7 +25,7 @@
                ratio="0.5"
                relative="org.eclipse.ui.views.TaskList"
                relationship="right"
-               id="randoop.plugin.views.RandoopView">
+               id="randoop.plugin.ui.views.RandoopView">
          </view>
       </perspectiveExtension>
    </extension>
@@ -63,7 +63,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
           <launchConfigurationType
             name="Randoop Launcher"
-            delegate="randoop.plugin.tests.internal.ui.launching.RandoopLaunchDelegate"
+            delegate="randoop.plugin.internal.ui.launching.RandoopLaunchDelegate"
             modes="run"
             id="randoop.plugin.core.launching.gentestsType">
       </launchConfigurationType>

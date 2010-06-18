@@ -3,7 +3,6 @@ package randoop.plugin.internal.core.autotesting;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.compiler.BuildContext;
 import org.eclipse.jdt.core.compiler.CompilationParticipant;
-import org.eclipse.jdt.core.compiler.ReconcileContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
