@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -140,20 +141,28 @@ public class ProjectCreator extends TestCase {
    */
   public static IJavaProject createStandardDemoProject() {
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
-    IWorkbench workbench = PlatformUI.getWorkbench();
-    IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
     
-    String location = root.getLocation().toOSString();
+    final String location = root.getLocation().toOSString();
     Boolean okToDelete = okToDeleteByWorkspace.get(location);
     
     boolean continuteWithTest;
     if (okToDelete == null) {
-      continuteWithTest = MessageDialog.openQuestion(window.getShell(),
-          "Warning", //$NON-NLS-1$
-          "This test will delete all contents of the active workspace:\n" //$NON-NLS-1$
-              + location + "\n\n" //$NON-NLS-1$
-              + "Do you want to continue? (Pressing Yes will delete workspace)"); //$NON-NLS-1$
+      final MutableBoolean response = new MutableBoolean(false);
+      Display.getDefault().syncExec(new Runnable() {
+        public void run() {
+          IWorkbench workbench = PlatformUI.getWorkbench();
+          IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+          
+          response.setResponse(MessageDialog
+              .openQuestion(window.getShell(),
+                  "Warning", //$NON-NLS-1$
+                  "This test will delete all contents of the active workspace:\n" //$NON-NLS-1$
+                    + location + "\n\n" //$NON-NLS-1$
+                    + "Do you want to continue? (Pressing Yes will delete workspace)")); //$NON-NLS-1$
+        }
+      });
+      
+      continuteWithTest = response.getValue();
       okToDeleteByWorkspace.put(location, continuteWithTest);
     } else {
       continuteWithTest = okToDelete.booleanValue();

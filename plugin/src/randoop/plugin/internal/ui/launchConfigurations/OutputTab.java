@@ -169,8 +169,15 @@ public class OutputTab extends
     String maxTestsWritten = RandoopArgumentCollector.getMaxTestsWritten(config);
     String maxTestsPerFile = RandoopArgumentCollector.getMaxTestsPerFile(config);
 
-    return validate(outputSourceFolderHandlerId, junitPackageName,
-        junitClassname, testKinds, maxTestsWritten, maxTestsPerFile).isOK();
+    IStatus status = validate(outputSourceFolderHandlerId, junitPackageName,
+        junitClassname, testKinds, maxTestsWritten, maxTestsPerFile);
+    if (status.getSeverity() == IStatus.ERROR) {
+      setErrorMessage(status.getMessage());
+      return false;
+    } else {
+      setMessage(status.getMessage());
+      return true;
+    }
   };
 
   /*
