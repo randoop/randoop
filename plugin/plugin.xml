@@ -18,6 +18,31 @@
       </view>
    </extension>
    <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="randoop.plugin.autoTestRunnerActionSet"
+            label="Randoop Auto-Test Runner"
+            visible="true">
+         <menu
+               id="plugin.menu1"
+               label="label">
+         </menu>
+         <action
+               class="randoop.plugin.internal.core.autotesting.ToggleAutomatedTestingActionDelegate"
+               icon="icons/autorun.png"
+               id="randoop.plugin.toggleAutoTestRunner"
+               label="Randoop Auto-Test Runner"
+               style="toggle"
+               toolbarPath="Normal"
+               tooltip="Automate execution of tests">
+         </action>
+         <menu
+               id="plugin.menu1"
+               label="Randoop Auto-Test Runner">
+         </menu>
+      </actionSet>
+   </extension>
+   <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
@@ -28,12 +53,6 @@
                id="randoop.plugin.ui.views.RandoopView">
          </view>
       </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -249,5 +268,11 @@
             class="randoop.plugin.internal.core.autotesting.TestingCompilationParticipant"
             id="randoop.plugin.internal.core.testingCompilationParticipant">
       </compilationParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
    </extension>
   </plugin>
