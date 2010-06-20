@@ -9,4 +9,9 @@ import randoop.runtime.Message;
 public interface IMessageListener {
 
   public void handleMessage(Message m);
+
+  /**
+   * Handles an unexpected termination
+   */
+  public void handleTermination();
 }

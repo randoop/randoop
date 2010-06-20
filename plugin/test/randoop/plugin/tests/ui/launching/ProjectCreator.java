@@ -44,6 +44,7 @@ import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstan
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.tests.resources.FileResources;
 
+@SuppressWarnings("nls")
 public class ProjectCreator extends TestCase {
   private static HashMap<String, Boolean> okToDeleteByWorkspace = new HashMap<String, Boolean>();
   public static String demoProjectName = "Demo Project"; //$NON-NLS-1$
@@ -196,7 +197,7 @@ public class ProjectCreator extends TestCase {
     }
   }
 
-  public static ILaunchConfigurationWorkingCopy createNewAllTypeConfig(IJavaProject javaProject) throws CoreException {
+  public static ILaunchConfigurationWorkingCopy createNewAllTypeConfig(IJavaProject javaProject, int timelimit) throws CoreException {
     ILaunchConfigurationType randoopType = DebugPlugin.getDefault()
     .getLaunchManager().getLaunchConfigurationType(
         IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
@@ -229,7 +230,8 @@ public class ProjectCreator extends TestCase {
       }
     }
     
-    RandoopArgumentCollector.setAllJavaTypes(config, availableTypes);
+    RandoopArgumentCollector.setCheckedJavaElements(config, availableTypes);
+    RandoopArgumentCollector.setTimeLimit(config, "" + timelimit);
     RandoopArgumentCollector.setOutputDirectoryHandlerId(config, testFolder.getHandleIdentifier());
     RandoopArgumentCollector.setJUnitPackageName(config, "demo.pathplanning.allTests");
     RandoopArgumentCollector.setJUnitPackageName(config, "AllTypeTest");

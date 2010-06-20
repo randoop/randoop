@@ -46,12 +46,14 @@ public class MessageReceiver implements Runnable {
       Message work = null;
       do {
         work = (Message) objectInputStream.readObject();
+        
         fIMessageListener.handleMessage(work);
       } while (work != null && work.getType() != Message.Type.DONE);
     } catch (IOException ioe) {
-      System.err.println("Stream terminated unexpectedly");
+      // Stream terminated unexpectedly
+      fIMessageListener.handleTermination();
     } catch (ClassNotFoundException e) {
-      System.out.println("Incorrect class " + e);
+      System.err.println("Incorrect class " + e);
     } finally {
       try {
         fServerSocket.close();

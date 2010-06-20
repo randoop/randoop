@@ -8,4 +8,9 @@ public class NullMessageListener implements IMessageListener{
   public void handleMessage(Message m) {
     // do nothing
   }
+
+  @Override
+  public void handleTermination() {
+    // do nothing
+  }
 }
