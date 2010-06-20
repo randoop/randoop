@@ -122,7 +122,9 @@ public class LaunchDelegateTests extends TestCase {
       }
     });
     RandoopArgumentCollector.setPort(config, mr.getPort());
-    new Thread(mr).start();
+    
+    Thread messageReceivingThread = new Thread(mr);
+    messageReceivingThread.start();
 
     // Launch the configuration from the UI thread
     PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
@@ -139,5 +141,12 @@ public class LaunchDelegateTests extends TestCase {
     
     // TODO: Eclipse should remain open so that assertions can be made in the
     // message listener
+    
+    try {
+      messageReceivingThread.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println("Done");
   }
 }

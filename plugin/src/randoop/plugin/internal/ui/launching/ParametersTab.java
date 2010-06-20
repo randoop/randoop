@@ -19,12 +19,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.RandoopLaunchConfigurationUtil;
-import randoop.plugin.internal.ui.SWTFactory;
 
 public class ParametersTab extends AbstractLaunchConfigurationTab {
   private Text fRandomSeed;

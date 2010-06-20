@@ -31,15 +31,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
-import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.DebugTypeSelectionDialog;
-import randoop.plugin.internal.ui.SWTFactory;
-import randoop.plugin.internal.ui.TypeSelector;
 
 public class StatementsTab extends AbstractLaunchConfigurationTab {
   private TypeSelector fTypeSelector;

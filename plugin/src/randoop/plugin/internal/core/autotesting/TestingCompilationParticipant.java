@@ -11,13 +11,13 @@ import org.eclipse.debug.core.ILaunchManager;
 public class TestingCompilationParticipant extends CompilationParticipant {
   @Override
   public int aboutToBuild(IJavaProject project) {
-    System.out.println("About to build " + project.getElementName());
+//    System.out.println("About to build " + project.getElementName());
     return READY_FOR_BUILD;
   }
 
   @Override
   public void buildStarting(BuildContext[] files, boolean isBatch) {
-    System.out.println("Build starting");
+//    System.out.println("Build starting");
   }
 
   /**
@@ -28,17 +28,17 @@ public class TestingCompilationParticipant extends CompilationParticipant {
    */
   @Override
   public void buildFinished(IJavaProject project) {
-    System.out.println("Build finished " + project.getElementName());
-
-    ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-    try {
-      ILaunchConfiguration[] launchConfigs = launchManager
-          .getLaunchConfigurations();
-      for (ILaunchConfiguration lc : launchConfigs) {
-        System.out.println(lc.getName());
-      }
-    } catch (CoreException e) {
-    }
+//    System.out.println("Build finished " + project.getElementName());
+//
+//    ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+//    try {
+//      ILaunchConfiguration[] launchConfigs = launchManager
+//          .getLaunchConfigurations();
+//      for (ILaunchConfiguration lc : launchConfigs) {
+//        System.out.println(lc.getName());
+//      }
+//    } catch (CoreException e) {
+//    }
   }
 
   /**
