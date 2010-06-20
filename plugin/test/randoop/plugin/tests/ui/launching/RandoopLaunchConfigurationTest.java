@@ -29,7 +29,7 @@ public class RandoopLaunchConfigurationTest {
 
   @Test
   public void create() throws CoreException, IOException {
-    ILaunchConfigurationWorkingCopy config = ProjectCreator.createNewAllTypeConfig(javaProject);
+    ILaunchConfigurationWorkingCopy config = ProjectCreator.createNewAllTypeConfig(javaProject, 10);
     
     RandoopLaunchConfiguration rlc = new RandoopLaunchConfiguration(config);
     

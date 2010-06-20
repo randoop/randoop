@@ -34,7 +34,7 @@ public class RandoopProgressBar extends Canvas {
   private static final int DEFAULT_WIDTH = 160;
   private static final int DEFAULT_HEIGHT = 18;
 
-  private double fPercentComplete;
+  private double fPercentDone;
   private int fColorBarWidth;
   private Color fOKColor;
   private Color fFailureColor;
@@ -44,7 +44,7 @@ public class RandoopProgressBar extends Canvas {
 
   public RandoopProgressBar(Composite parent) {
     super(parent, SWT.NONE);
-    fPercentComplete = 0;
+    fPercentDone = 0;
     fColorBarWidth = 0;
 
     addControlListener(new ControlAdapter() {
@@ -92,7 +92,7 @@ public class RandoopProgressBar extends Canvas {
 
   private int scale() {
     Rectangle r = getClientArea();
-    return (int) (fPercentComplete * (r.width - 2));
+    return (int) (fPercentDone * (r.width - 2));
   }
 
   private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topleft,
@@ -132,15 +132,20 @@ public class RandoopProgressBar extends Canvas {
     return size;
   }
 
-  public void step(double percentComplete) {
-    fPercentComplete = percentComplete;
+  public void setPercentDone(double percentDone) {
+    fPercentDone = percentDone;
     int x = fColorBarWidth;
 
     fColorBarWidth = scale();
 
     if (fColorBarWidth >= (getClientArea().width - 2))
       fColorBarWidth = getClientArea().width - 1;
-    
+
     paintStep(x, fColorBarWidth);
+  }
+
+  public void stop() {
+    fStopped = true;
+    redraw();
   }
 }

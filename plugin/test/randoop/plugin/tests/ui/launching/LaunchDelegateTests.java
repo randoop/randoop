@@ -111,42 +111,4 @@ public class LaunchDelegateTests extends TestCase {
     ILaunch launch = workingCopy.launch(ILaunchManager.RUN_MODE, null);
     manager.removeLaunch(launch);
   }
-
-  public void testStartRandoop() throws CoreException, IOException {
-    final ILaunchConfigurationWorkingCopy config = ProjectCreator.createNewAllTypeConfig(fJavaProject);
-    
-    MessageReceiver mr = new MessageReceiver(new IMessageListener() {
-      @Override
-      public void handleMessage(Message m) {
-        System.out.println(m);
-      }
-    });
-    RandoopArgumentCollector.setPort(config, mr.getPort());
-    
-    Thread messageReceivingThread = new Thread(mr);
-    messageReceivingThread.start();
-
-    // Launch the configuration from the UI thread
-    PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          config.launch(ILaunchManager.RUN_MODE, null, true);
-        } catch (CoreException e) {
-          e.printStackTrace();
-          fail();
-        }
-      }
-    });
-    
-    // TODO: Eclipse should remain open so that assertions can be made in the
-    // message listener
-    
-    try {
-      messageReceivingThread.join();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    System.out.println("Done");
-  }
 }

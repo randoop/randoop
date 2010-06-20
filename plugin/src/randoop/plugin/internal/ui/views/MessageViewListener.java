@@ -26,9 +26,19 @@ public class MessageViewListener implements IMessageListener {
       PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
-          fViewPart.getProgressBar().step(percentDone);
+          fViewPart.getProgressBar().setPercentDone(percentDone);
         }
       });
     }
+  }
+
+  @Override
+  public void handleTermination() {
+    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      @Override
+      public void run() {
+        fViewPart.getProgressBar().stop();
+      }
+    });
   }
 }
