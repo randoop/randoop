@@ -30,13 +30,12 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.RandoopLaunchConfigurationUtil;
-import randoop.plugin.internal.ui.SWTFactory;
 
 public class OutputTab extends
     AbstractLaunchConfigurationTab {

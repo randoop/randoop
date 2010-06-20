@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.JavaCore;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
-import randoop.plugin.internal.ui.RandoopLaunchConfigurationUtil;
+import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class RandoopArgumentCollector {
   private String fName;

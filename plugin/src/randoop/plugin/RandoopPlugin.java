@@ -193,8 +193,9 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * 
    * @return local path to the , or <code>null</code> if no the
    *         <code>IPath</code> could not be created
+   * TODO: Make private
    */
-  private static IPath getFullPath(IPath localPath) {
+  public static IPath getFullPath(IPath localPath) {
     URL url = FileLocator.find(getDefault().getBundle(), localPath, null);
     try {
       url = FileLocator.toFileURL(url);

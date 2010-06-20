@@ -1,4 +1,4 @@
-package randoop.plugin.internal.ui;
+package randoop.plugin.internal.ui.launching;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaElement;
