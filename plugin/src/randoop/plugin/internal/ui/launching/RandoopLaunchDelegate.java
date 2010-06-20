@@ -81,7 +81,7 @@ public class RandoopLaunchDelegate extends
     }
 
     fPort = RandoopArgumentCollector.getPort(configuration);
-    boolean useDefault = fPort != IConstants.INVALID_PORT;
+    boolean useDefault = (fPort == IConstants.INVALID_PORT);
     
     if (useDefault) {
       PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -240,10 +240,8 @@ public class RandoopLaunchDelegate extends
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
   }
 
-  private void informAndAbort(String message, Throwable exception, int code)
-      throws CoreException {
-    IStatus status = new Status(IStatus.INFO, RandoopPlugin.getPluginId(),
-        code, message, exception);
+  private void informAndAbort(String message, Throwable exception, int code) throws CoreException {
+    IStatus status = new Status(IStatus.INFO, RandoopPlugin.getPluginId(), code, message, exception);
     informAndAbort(status);
   }
 
