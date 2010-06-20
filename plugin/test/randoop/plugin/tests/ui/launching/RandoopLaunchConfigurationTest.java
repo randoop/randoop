@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -16,7 +17,6 @@ import org.junit.Test;
 
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfiguration;
-import randoop.runtime.Message;
 
 @SuppressWarnings("nls")
 public class RandoopLaunchConfigurationTest {
@@ -36,8 +36,10 @@ public class RandoopLaunchConfigurationTest {
     assertEquals(new RandoopArgumentCollector(config), rlc.getArguments());
     
     List<String> testFiles = new ArrayList<String>();
-    
-    String testFolder = '/' + ProjectCreator.demoProjectName + '/' + ProjectCreator.testFolderName + '/';
+
+    String testFolder = IPath.SEPARATOR + ProjectCreator.demoProjectName
+        + IPath.SEPARATOR + ProjectCreator.testFolderName + IPath.SEPARATOR;
+
     testFiles.add(testFolder + "demo/pathplanning/tests/AllTest.java");
     testFiles.add(testFolder + "demo/pathplanning/tests/AllTest0.java");
     testFiles.add(testFolder + "demo/pathplanning/tests/AllTest1.java");

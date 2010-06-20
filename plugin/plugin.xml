@@ -11,7 +11,7 @@
       </category>
       <view
             name="Randoop"
-            icon="icons/sample.gif"
+            icon="icons/config.png"
             category="randoop"
             class="randoop.plugin.internal.ui.views.TestGeneratorViewPart"
             id="randoop.plugin.ui.views.TestGeneratorViewPart">
@@ -91,7 +91,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="randoop.plugin.core.launching.gentestsType"
-            icon="icons/sample.gif"
+            icon="icons/config.png"
             id="randoop.plugin.ui.gentestsTypeImage">
       </launchConfigurationTypeImage>
    </extension>
@@ -274,5 +274,16 @@
       <contexts
             file="contexts.xml">
       </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.classpathFixProcessors">
+      <classpathFixProcessor
+            class="randoop.plugin.internal.ui.buildpath.RandoopClasspathFixProcessor"
+            id="randoop.plugin.ui.classpathFixProcessor"
+            name="Randoop Classpath Fix Processor">
+      </classpathFixProcessor>
    </extension>
   </plugin>

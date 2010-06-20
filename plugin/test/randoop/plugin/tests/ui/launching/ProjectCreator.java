@@ -40,8 +40,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.tests.resources.FileResources;
 
 public class ProjectCreator extends TestCase {

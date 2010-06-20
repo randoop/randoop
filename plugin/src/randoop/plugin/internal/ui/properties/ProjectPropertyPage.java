@@ -11,9 +11,9 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
+import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.ui.SWTFactory;
 
 public class ProjectPropertyPage extends PropertyPage implements
     IWorkbenchPropertyPage {
