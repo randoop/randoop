@@ -253,6 +253,11 @@ public class RandoopArgumentCollector {
   /*
    * Methods to restore default values
    */
+  public static void restorePort(ILaunchConfigurationWorkingCopy config) {
+    String nullStr = null;
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_PORT, nullStr);
+  }
+  
   public static void restoreAllJavaTypes(ILaunchConfigurationWorkingCopy config) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
