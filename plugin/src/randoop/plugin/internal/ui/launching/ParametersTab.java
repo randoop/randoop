@@ -2,16 +2,20 @@ package randoop.plugin.internal.ui.launching;
 
 import java.text.DecimalFormat;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -19,7 +23,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
+import org.eclipse.jdt.ui.ISharedImages;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
@@ -333,7 +339,7 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
       return status;
     }
 
-    return Status.OK_STATUS;
+    return StatusFactory.createOkStatus();
   }
 
   private void setConvertedTime() {
@@ -381,6 +387,7 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
    */
   @Override
   public String getId() {
-    return "randoop.plugin.launching.testInputConfig.parameters"; //$NON-NLS-1$
+    return "randoop.plugin.ui.launching.parametersTab"; //$NON-NLS-1$
   }
+  
 }
