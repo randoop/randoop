@@ -4,23 +4,34 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -29,8 +40,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import org.eclipse.jdt.internal.debug.ui.SWTFactory;
 
@@ -38,12 +58,26 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
-public class StatementsTab extends AbstractLaunchConfigurationTab {
+public class TestInputsTab extends AbstractLaunchConfigurationTab {
   private TypeSelector fTypeSelector;
   private Tree fTypeTree;
-  private Button fClassAdd;
+  private Button fClassUp;
+  private Button fClassDown;
+  private Button fClassAddFromProject;
+  private Button fClassAddFromClasspaths;
+  private Button fClassAddFromSystemLibraries;
   private Button fClassRemove;
-
+  
+  private ModifyListener fBasicModifyListener = new RandoopTabListener();
+  
+  private class RandoopTabListener extends SelectionAdapter implements
+      ModifyListener {
+    public void modifyText(ModifyEvent e) {
+      setErrorMessage(null);
+      updateLaunchConfigurationDialog();
+    }
+  }
+  
   /*
    * (non-Javadoc)
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -53,6 +87,8 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
         GridData.FILL_HORIZONTAL);
     setControl(comp);
 
+    SWTFactory.createLabel(comp, "Test Inputs:", 2);
+    
     final Composite leftcomp = SWTFactory.createComposite(comp, 1, 1,
         GridData.FILL_BOTH);
     GridLayout ld = (GridLayout) leftcomp.getLayout();
@@ -68,7 +104,7 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
     gd.horizontalAlignment = SWT.LEFT;
     gd.verticalAlignment = SWT.TOP;
 
-    fTypeTree = new Tree(leftcomp, SWT.MULTI | SWT.CHECK);
+    fTypeTree = new Tree(leftcomp, SWT.MULTI | SWT.CHECK | SWT.BORDER);
     fTypeTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     
     // Add type selector functionalities to this tree. This will also add a
@@ -86,8 +122,44 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
       }
     });
     
-    fClassAdd = SWTFactory.createPushButton(rightcomp, "Add", null);
-    fClassAdd.addSelectionListener(new SelectionAdapter() {
+    fClassUp = SWTFactory.createPushButton(rightcomp, "Up", null);
+    fClassUp.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+     // TODO: Move class Up
+        
+        setErrorMessage(null);
+        updateLaunchConfigurationDialog();
+      }
+    });
+    
+    
+    fClassDown = SWTFactory.createPushButton(rightcomp, "Down", null);
+    fClassDown.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        // TODO: Move class Down
+        setErrorMessage(null);
+        updateLaunchConfigurationDialog();
+      }
+    });
+    
+    fClassRemove = SWTFactory.createPushButton(rightcomp, "Remove", null);
+    fClassRemove.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        fTypeSelector.removeSelectedTypes();
+        
+        setErrorMessage(null);
+        updateLaunchConfigurationDialog();
+      }
+    });
+    
+    SWTFactory.createHorizontalSpacer(rightcomp, 0);
+    SWTFactory.createLabel(rightcomp, "Add classes from:", 1);
+    
+    fClassAddFromProject = SWTFactory.createPushButton(rightcomp, "Project...", null);
+    fClassAddFromProject.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
         handleSearchButtonSelected();
@@ -96,13 +168,24 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
         updateLaunchConfigurationDialog();
       }
     });
-
-    fClassRemove = SWTFactory.createPushButton(rightcomp, "Remove", null);
-    fClassRemove.addSelectionListener(new SelectionAdapter() {
+    
+    fClassAddFromClasspaths = SWTFactory.createPushButton(rightcomp, "Referenced Classpaths...", null);
+    fClassAddFromClasspaths.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.removeSelectedTypes();
-        
+        handleSearchButtonSelected();
+
+        setErrorMessage(null);
+        updateLaunchConfigurationDialog();
+      }
+    });
+    
+    fClassAddFromSystemLibraries = SWTFactory.createPushButton(rightcomp, "System Libraries...", null);
+    fClassAddFromSystemLibraries.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        handleSearchButtonSelected();
+
         setErrorMessage(null);
         updateLaunchConfigurationDialog();
       }
@@ -159,7 +242,7 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
 
     final List<IType> availableTypes = new ArrayList<IType>();
 
-    IJavaModel model = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
+    IJavaModel model = JavaCore.create(getWorkspaceRoot());
     if (model != null) {
       try {
         final IJavaProject[] javaProjects = model.getJavaProjects();
@@ -206,6 +289,13 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
     }
     
     return availableTypes.toArray(new IType[availableTypes.size()]);
+  }
+  
+  /*
+   * Convenience method to get the workspace root.
+   */
+  private static IWorkspaceRoot getWorkspaceRoot() {
+      return ResourcesPlugin.getWorkspace().getRoot();
   }
 
   /**
@@ -305,7 +395,7 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
    */
   @Override
   public String getName() {
-    return "Statements";
+    return "Test Inputs";
   }
 
   /*
@@ -314,15 +404,7 @@ public class StatementsTab extends AbstractLaunchConfigurationTab {
    */
   @Override
   public String getId() {
-    return "randoop.plugin.launching.testInputConfig.randoop"; //$NON-NLS-1$
+    return "randoop.plugin.ui.launching.testInputsTab"; //$NON-NLS-1$
   }
-
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-   */
-  @Override
-  public Image getImage() {
-    return null;
-  }
+  
 }

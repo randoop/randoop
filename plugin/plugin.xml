@@ -101,7 +101,7 @@
           <launchConfigurationTabGroup
             type="randoop.plugin.core.launching.gentestsType"
             class="randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationTabGroup"
-            id="randoop.plugin.launching.launchconfig.tabgroup">
+            id="randoop.plugin.ui.launching.gentestsTabGroup">
       </launchConfigurationTabGroup> 
    </extension>
    <extension

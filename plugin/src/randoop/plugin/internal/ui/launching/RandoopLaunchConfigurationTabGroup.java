@@ -18,8 +18,8 @@ public class RandoopLaunchConfigurationTabGroup extends AbstractLaunchConfigurat
   @Override
     public void createTabs(ILaunchConfigurationDialog arg0, String arg1) {
     ILaunchConfigurationTab[] tabs= new ILaunchConfigurationTab[] {
-        new StatementsTab(),
-        new OutputTab(),
+        new GeneralTab(),
+        new TestInputsTab(),
         new ParametersTab(),
         new JavaClasspathTab(),
         new JavaJRETab(),
