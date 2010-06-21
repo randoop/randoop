@@ -28,9 +28,9 @@ import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstan
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
-import randoop.plugin.internal.ui.launching.OutputTab;
+import randoop.plugin.internal.ui.launching.GeneralTab;
 import randoop.plugin.internal.ui.launching.ParametersTab;
-import randoop.plugin.internal.ui.launching.StatementsTab;
+import randoop.plugin.internal.ui.launching.TestInputsTab;
 import randoop.runtime.Message;
 
 @SuppressWarnings("nls")
@@ -103,9 +103,9 @@ public class LaunchDelegateTests extends TestCase {
     assertNotNull("Missing test launch config type", configurationType); //$NON-NLS-1$
     ILaunchConfigurationWorkingCopy workingCopy = configurationType.newInstance(null, "provide-launch-object"); //$NON-NLS-1$
     
-    new OutputTab().setDefaults(workingCopy);
+    new GeneralTab().setDefaults(workingCopy);
     new ParametersTab().setDefaults(workingCopy);
-    new StatementsTab().setDefaults(workingCopy);
+    new TestInputsTab().setDefaults(workingCopy);
     
     // delegate will throw exception if test fails
     ILaunch launch = workingCopy.launch(ILaunchManager.RUN_MODE, null);
