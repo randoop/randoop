@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -29,6 +30,7 @@ import org.eclipse.jdt.ui.ISharedImages;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class ParametersTab extends AbstractLaunchConfigurationTab {
@@ -42,6 +44,10 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
   private Text fJUnitTestInputs;
   private Text fTimeLimit;
   private Label lConvertedTimeLimit;
+  
+  private Combo fTestKinds;
+  private Text fMaxTestsWritten;
+  private Text fMaxTestsPerFile;
 
   private ModifyListener fBasicModifyListener = new GeneratorTabListener();
 
@@ -64,6 +70,7 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
 
     createGeneralGroup(comp);
     createGenerationLimitGroup(comp);
+    createOutputRestrictionsGroup(comp);
 
     Button bRestoreDefaults = new Button(comp, 0);
     bRestoreDefaults.setText("Restore Defaults");
@@ -150,6 +157,23 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
         false));
     setConvertedTime();
   }
+  
+  private void createOutputRestrictionsGroup(Composite parent) {
+    Group group = SWTFactory.createGroup(parent, "&Output Restrictions", 3, 1,
+        GridData.FILL_HORIZONTAL);
+
+    SWTFactory.createLabel(group, "Test &Kinds:", 1);
+    fTestKinds = SWTFactory.createCombo(group, SWT.READ_ONLY, 2, TestKinds
+        .getTranslatableNames());
+
+    SWTFactory.createLabel(group, "Maximum Tests &Written:", 1);
+    fMaxTestsWritten = SWTFactory.createSingleText(group, 2);
+    fMaxTestsWritten.addModifyListener(fBasicModifyListener);
+
+    SWTFactory.createLabel(group, "Maximum Tests Per &File:", 1);
+    fMaxTestsPerFile = SWTFactory.createSingleText(group, 2);
+    fMaxTestsPerFile.addModifyListener(fBasicModifyListener);
+  }
 
   /*
    * (non-Javadoc)
@@ -163,7 +187,9 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
     if (fRandomSeed == null || fMaxTestSize == null || fUseThreads == null
         || fThreadTimeout == null || fUseNull == null || fNullRatio == null
         || fJUnitTestInputs == null || fTimeLimit == null
-        || lConvertedTimeLimit == null) {
+        || lConvertedTimeLimit == null || fTestKinds == null
+        || fMaxTestsWritten == null || fMaxTestsPerFile == null
+        || fMaxTestsWritten == null || fMaxTestsPerFile == null) {
       return false;
     }
     
@@ -175,10 +201,13 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
     String nullRatio = fNullRatio.getText();
     String junitTestInputs = fJUnitTestInputs.getText();
     String timeLimit = fTimeLimit.getText();
-
+    String testKinds = TestKinds.getTestKind(fTestKinds.getSelectionIndex()).getArgumentName();
+    String maxTestsWritten = fMaxTestsWritten.getText();
+    String maxTestsPerFile = fMaxTestsPerFile.getText();
     
     IStatus status = validate(randomSeed, maxTestSize, useThreads, threadTimeout, useNull,
-        nullRatio, junitTestInputs, timeLimit);
+        nullRatio, junitTestInputs, timeLimit, testKinds, maxTestsWritten,
+        maxTestsPerFile);
     if(status.isOK()) {
       return true;
     } else {
@@ -201,9 +230,13 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
     String nullRatio = RandoopArgumentCollector.getNullRatio(config);
     String junitTestInputs = RandoopArgumentCollector.getJUnitTestInputs(config);
     String timeLimit = RandoopArgumentCollector.getTimeLimit(config);
+    String testKinds = RandoopArgumentCollector.getTestKinds(config);
+    String maxTestsWritten = RandoopArgumentCollector.getMaxTestsWritten(config);
+    String maxTestsPerFile = RandoopArgumentCollector.getMaxTestsPerFile(config);
 
     IStatus status = validate(randomSeed, maxTestSize, useThreads,
-        threadTimeout, useNull, nullRatio, junitTestInputs, timeLimit);
+        threadTimeout, useNull, nullRatio, junitTestInputs, timeLimit, testKinds, maxTestsWritten,
+        maxTestsPerFile);
     if (status.getSeverity() == IStatus.ERROR) {
       setErrorMessage(status.getMessage());
       return false;
@@ -235,6 +268,12 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
       RandoopArgumentCollector.setJUnitTestInputs(config, fJUnitTestInputs.getText());
     if (fTimeLimit != null)
       RandoopArgumentCollector.setTimeLimit(config, fTimeLimit.getText());
+    if (fTestKinds != null)
+      RandoopArgumentCollector.setTestKinds(config, TestKinds.getTestKind(fTestKinds.getSelectionIndex()).getArgumentName());
+    if (fMaxTestsWritten != null)
+      RandoopArgumentCollector.setMaxTestsWritten(config, fMaxTestsWritten.getText());
+    if (fMaxTestsPerFile != null)
+      RandoopArgumentCollector.setMaxTestsPerFile(config, fMaxTestsPerFile.getText());
   }
 
   /*
@@ -260,6 +299,12 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
     if (fTimeLimit != null) {
       fTimeLimit.setText(RandoopArgumentCollector.getTimeLimit(config));
     }
+    if (fTestKinds != null)
+      fTestKinds.setText(RandoopArgumentCollector.getTestKinds(config));
+    if (fMaxTestsWritten != null)
+      fMaxTestsWritten.setText(RandoopArgumentCollector.getMaxTestsWritten(config));
+    if (fMaxTestsPerFile != null)
+      fMaxTestsPerFile.setText(RandoopArgumentCollector.getMaxTestsPerFile(config));
   }
 
   /*
@@ -276,6 +321,9 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
     RandoopArgumentCollector.restoreNullRatio(config);
     RandoopArgumentCollector.restoreJUnitTestInputs(config);
     RandoopArgumentCollector.restoreTimeLimit(config);
+    RandoopArgumentCollector.restoreTestKinds(config);
+    RandoopArgumentCollector.restoreMaxTestsWritten(config);
+    RandoopArgumentCollector.restoreMaxTestsPerFile(config);
   }
 
   /**
@@ -295,7 +343,8 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
    */
   protected IStatus validate(String randomSeed, String maxTestSize,
       boolean useThreads, String threadTimeout, boolean useNull,
-      String nullRatio, String junitTestInputs, String timeLimit) {
+      String nullRatio, String junitTestInputs, String timeLimit,
+      String testKinds, String maxTestsWritten, String maxTestsPerFile) {
     try {
       Integer.parseInt(randomSeed);
     } catch (NumberFormatException nfe) {
@@ -339,6 +388,29 @@ public class ParametersTab extends AbstractLaunchConfigurationTab {
       return status;
     }
 
+    boolean validKind = false;
+    for (TestKinds kindCandidate : TestKinds.values()) {
+      validKind |= kindCandidate.getArgumentName().equals(testKinds);
+    }
+    if (!validKind) {
+      return StatusFactory
+          .createErrorStatus("Test Kinds must be of type All, Pass, or Fail.");
+    }
+
+    status = RandoopLaunchConfigurationUtil.validatePositiveInt(
+        maxTestsWritten, "Maximum Tests Written is not a positive integer",
+        "Maximum Tests Written is not a valid integer");
+    if (!status.isOK()) {
+      return status;
+    }
+
+    status = RandoopLaunchConfigurationUtil.validatePositiveInt(
+        maxTestsPerFile, "Maximum Tests Per File is not a positive integer",
+        "Maximum Tests Per File is not a valid integer");
+    if (!status.isOK()) {
+      return status;
+    }
+    
     return StatusFactory.createOkStatus();
   }
 

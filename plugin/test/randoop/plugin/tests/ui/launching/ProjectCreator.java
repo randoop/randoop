@@ -168,7 +168,7 @@ public class ProjectCreator extends TestCase {
           IWorkbench workbench = PlatformUI.getWorkbench();
           IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
           
-          response.setResponse(MessageDialog
+          response.setValue(MessageDialog
               .openQuestion(window.getShell(),
                   "Warning", //$NON-NLS-1$
                   "This test will delete all contents of the active workspace:\n" //$NON-NLS-1$
@@ -233,8 +233,8 @@ public class ProjectCreator extends TestCase {
     RandoopArgumentCollector.setCheckedJavaElements(config, availableTypes);
     RandoopArgumentCollector.setTimeLimit(config, "" + timelimit);
     RandoopArgumentCollector.setOutputDirectoryHandlerId(config, testFolder.getHandleIdentifier());
-    RandoopArgumentCollector.setJUnitPackageName(config, "demo.pathplanning.allTests");
-    RandoopArgumentCollector.setJUnitPackageName(config, "AllTypeTest");
+    RandoopArgumentCollector.setJUnitFullyQualifiedTypeName(config, "demo.pathplanning.allTests");
+    RandoopArgumentCollector.setJUnitFullyQualifiedTypeName(config, "AllTypeTest");
     
     return config;
   }

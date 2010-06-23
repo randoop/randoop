@@ -35,6 +35,8 @@ public class IRandoopLaunchConfigurationConstants {
   
   static final String ATTR_MAXIMUM_TESTS_PER_FILE = RandoopPlugin.getPluginId() + ".MAXIMUM_TESTS_PER_FILE"; //$NON-NLS-1$
   
+  static final String ATTR_PROJECT = RandoopPlugin.getPluginId() + ".PROJECT"; //$NON-NLS-1$
+  
   static final String ATTR_OUTPUT_DIRECTORY = RandoopPlugin.getPluginId() + ".OUTPUT_DIRECTORY"; //$NON-NLS-1$
   
   static final String ATTR_USE_LOCAL_TEMP_FOLDER = RandoopPlugin.getPluginId() +  ".USE_LOCAL_TEMP_FOLDER"; //$NON-NLS-1$
@@ -63,7 +65,7 @@ public class IRandoopLaunchConfigurationConstants {
   
   static final String DEFAULT_JUNIT_PACKAGE_NAME = ""; //$NON-NLS-1$
   
-  static final String DEFAULT_JUNIT_CLASS_NAME = "RandoopTest"; //$NON-NLS-1$
+  static final String DEFAULT_JUNIT_FULLY_QUALIFIED_TYPE_NAME = "RandoopTest"; //$NON-NLS-1$
   
   static final String DEFAULT_MAXIMUM_TESTS_WRITTEN = "100000000"; //$NON-NLS-1$
   
@@ -71,6 +73,8 @@ public class IRandoopLaunchConfigurationConstants {
   
   static final String DEFAULT_TEST_KINDS = TestKinds.ALL.getArgumentName();
 
+  static final String DEFAULT_PROJECT = ""; //$NON-NLS-1$
+  
   static final String DEFAULT_OUTPUT_DIRECTORY = ""; //$NON-NLS-1$
 
   static final String DEFUALT_USE_LOCAL_TEMP_FOLDER = "false"; //$NON-NLS-1$
