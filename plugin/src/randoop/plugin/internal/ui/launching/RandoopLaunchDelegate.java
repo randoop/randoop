@@ -261,11 +261,11 @@ public class RandoopLaunchDelegate extends
 
   private boolean showStatusMessage(final IStatus status) {
     final boolean[] success = new boolean[] { false };
-    getDisplay().syncExec(new Runnable() {
+    RandoopPlugin.getDisplay().syncExec(new Runnable() {
       public void run() {
         Shell shell = RandoopPlugin.getActiveWorkbenchShell();
         if (shell == null)
-          shell = getDisplay().getActiveShell();
+          shell = RandoopPlugin.getDisplay().getActiveShell();
         if (shell != null) {
           MessageDialog.openInformation(shell, "Problems Launching Randoop",
               status.getMessage());
@@ -274,21 +274,6 @@ public class RandoopLaunchDelegate extends
       }
     });
     return success[0];
-  }
-
-  /**
-   * Returns the current display, or the default display if the currently
-   * running thread is not a user-interface thread for any display.
-   * 
-   * @see org.eclipse.swt.widgets.Display#getCurrent()
-   * @see org.eclipse.swt.widgets.Display#getDefault()
-   */
-  private Display getDisplay() {
-    Display display;
-    display = Display.getCurrent();
-    if (display == null)
-      display = Display.getDefault();
-    return display;
   }
 
   /*

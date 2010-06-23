@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -24,13 +25,13 @@ import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationStore;
  * logging statuses and exceptions and for accessing the <code>Shell</code> that
  * the shared instance is running in.
  * 
- * XXX The UI and core plug-ins should be separate.
+ * TODO: The UI and core plug-ins should be separate.
  */
 public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
   
-  // XXX Change these to the local runtime archives
+  // TODO: Change these to the local runtime archives
   // Should be: "/randoop.jar"
   private static final IPath RANDOOP_JAR = new Path("../bin/");//$NON-NLS-1$
   
@@ -203,5 +204,20 @@ public class RandoopPlugin extends AbstractUIPlugin {
       return null;
     }
     return new Path(url.getPath());
+  }
+  
+  /**
+   * Returns the current display, or the default display if the currently
+   * running thread is not a user-interface thread for any display.
+   * 
+   * @see org.eclipse.swt.widgets.Display#getCurrent()
+   * @see org.eclipse.swt.widgets.Display#getDefault()
+   */
+  public static Display getDisplay() {
+    Display display;
+    display = Display.getCurrent();
+    if (display == null)
+      display = Display.getDefault();
+    return display;
   }
 }

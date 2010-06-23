@@ -30,7 +30,6 @@ import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.ui.launching.GeneralTab;
 import randoop.plugin.internal.ui.launching.ParametersTab;
-import randoop.plugin.internal.ui.launching.TestInputsTab;
 import randoop.runtime.Message;
 
 @SuppressWarnings("nls")
@@ -105,7 +104,6 @@ public class LaunchDelegateTests extends TestCase {
     
     new GeneralTab().setDefaults(workingCopy);
     new ParametersTab().setDefaults(workingCopy);
-    new TestInputsTab().setDefaults(workingCopy);
     
     // delegate will throw exception if test fails
     ILaunch launch = workingCopy.launch(ILaunchManager.RUN_MODE, null);
