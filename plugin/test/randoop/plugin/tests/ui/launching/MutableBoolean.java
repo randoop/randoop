@@ -11,7 +11,7 @@ public class MutableBoolean {
     return fValue;
   }
 
-  public void setResponse(boolean value) {
+  public void setValue(boolean value) {
     fValue = value;
   }
 }

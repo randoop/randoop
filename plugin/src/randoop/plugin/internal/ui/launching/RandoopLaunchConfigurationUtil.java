@@ -2,6 +2,7 @@ package randoop.plugin.internal.ui.launching;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
@@ -27,6 +28,16 @@ public class RandoopLaunchConfigurationUtil {
       return null;
     } else {
       return (IPackageFragmentRoot) element;
+    }
+  }
+
+  public static IJavaProject getProject(String handlerId) {
+    IJavaElement element = JavaCore.create(handlerId);
+
+    if (element == null || !(element instanceof IJavaProject)) {
+      return null;
+    } else {
+      return (IJavaProject) element;
     }
   }
 }

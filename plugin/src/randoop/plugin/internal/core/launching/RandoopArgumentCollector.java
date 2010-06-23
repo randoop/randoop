@@ -72,8 +72,16 @@ public class RandoopArgumentCollector {
       fOutputDirectory = outputDir.getPath().makeRelative();
     }
 
-    fJUnitPackageName = getJUnitPackageName(config);
-    fJUnitClassName = getJUnitClassName(config);
+    String fqName = getJUnitFullyQualifiedTypeName(config);
+    int pIndex = fqName.lastIndexOf('.');
+    if (pIndex == -1) {
+      fJUnitPackageName = IConstants.EMPTY_STRING;
+      fJUnitClassName = fqName;
+    } else {
+      fJUnitPackageName = fqName.substring(0, pIndex);
+      fJUnitClassName = fqName.substring(pIndex + 1);
+    }
+    
     fTestKinds = getTestKinds(config);
     fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
     fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
@@ -214,22 +222,23 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
   }
 
+  public static String getProjectHandlerId(ILaunchConfiguration config) {
+    return getAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_PROJECT,
+        IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
+  }
+  
   public static String getOutputDirectoryHandlerId(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
         IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY);
   }
 
-  public static String getJUnitPackageName(ILaunchConfiguration config) {
+  public static String getJUnitFullyQualifiedTypeName(
+      ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME);
-  }
-
-  public static String getJUnitClassName(ILaunchConfiguration config) {
-    return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME);
+        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_FULLY_QUALIFIED_TYPE_NAME);
   }
 
   public static String getTestKinds(ILaunchConfiguration config) {
@@ -320,6 +329,12 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
   }
 
+  public static void restoreProjectHandlerId(ILaunchConfigurationWorkingCopy config) {
+    setAttribute(config,
+       IRandoopLaunchConfigurationConstants.ATTR_PROJECT,
+       IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
+ }
+  
   public static void restoreOutputDirectoryHandlerId(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
@@ -335,7 +350,7 @@ public class RandoopArgumentCollector {
   public static void restoreJUnitClassName(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME);
+        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_FULLY_QUALIFIED_TYPE_NAME);
   }
 
   public static void restoreTestKinds(ILaunchConfigurationWorkingCopy config) {
@@ -415,14 +430,19 @@ public class RandoopArgumentCollector {
     setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT,
         timeLimit);
   }
-
+  
+  public static void setProjectHandlerId(ILaunchConfigurationWorkingCopy config, String project) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_PROJECT, project);
+  }
+  
   public static void setOutputDirectoryHandlerId(ILaunchConfigurationWorkingCopy config, String outputDirectory) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
         outputDirectory);
   }
 
-  public static void setJUnitPackageName(ILaunchConfigurationWorkingCopy config, String junitPackageName) {
+  public static void setJUnitFullyQualifiedTypeName(ILaunchConfigurationWorkingCopy config, String junitPackageName) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
         junitPackageName);
