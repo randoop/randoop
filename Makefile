@@ -70,7 +70,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals
+randoop-tests: unit randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -224,6 +224,37 @@ randoop-literals: bin
 	   --literals-file=systemtests/resources/literalsfile.txt
 	cp systemtests/randoop-scratch/Literals0.java systemtests/resources/Literals0.java
 
+randoop-custom-visitor: bin
+	rm -rf systemtests/randoop-scratch
+	java -ea -classpath $(CLASSPATH) \
+	  randoop.main.Main gentests \
+	   --inputlimit=100 \
+	   --testclass=randoop.test.A \
+	   --visitor=randoop.test.CustomVisitor \
+	   --junit-classname=CustomVisitorTest \
+	   --junit-output-dir=systemtests/randoop-scratch \
+	   --check-object-contracts=false
+	cd systemtests/randoop-scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) CustomVisitorTest.java
+	cd systemtests/randoop-scratch && \
+	  java  -cp .:$(CLASSPATH) CustomVisitorTest
+	cp systemtests/randoop-scratch/CustomVisitorTest0.java \
+	  systemtests/resources/CustomVisitorTest0.java
+
+randoop-long-string: bin
+	rm -rf systemtests/randoop-scratch
+	java -ea -classpath $(CLASSPATH) \
+	  randoop.main.Main gentests \
+	   --timelimit=1 \
+	   --testclass=randoop.test.LongString \
+	   --junit-classname=LongString \
+	   --junit-output-dir=systemtests/randoop-scratch
+	cd systemtests/randoop-scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) LongString.java
+	cd systemtests/randoop-scratch && \
+	  java  -cp .:$(CLASSPATH) LongString
+	cp systemtests/randoop-scratch/LongString0.java \
+	  systemtests/resources/LongString0.java
 
 # Performance tests. Removed from Randoop tests because results highly dependent on machine that
 # tests are run, resulting in many false positives.
