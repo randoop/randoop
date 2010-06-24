@@ -29,6 +29,7 @@
           <li><a href="#map_calls">Avoiding calls to specific methods</a></li>
           <li><a href="#checkrep">Specifying representation invariant ("checkRep") methods</a></li>
           <li><a href="#primitives">Specifying additional primitive values</a></li>
+          <li><a href="#usethreads">Speeding up test generation</a></li>
         </ul></li>
     </ul>
 <!-- end toc -->
@@ -518,6 +519,24 @@ classes under test
 
   }
 </pre>
+
+<h3 id="usethreads">Speeding up test generation</h3>
+
+<p>
+If you're interested in increasing the number of tests that Randoop
+generates in a given amount of time, you can try running Randoop with
+the option <code>--usethreads=false</code>. This will cause Randoop to
+use a single thead to execute all tests, and can speed up the tool by
+an order of magnitude.
+</p>
+
+<p>By default, Randoop executes generated tests in separate threads,
+so that it can kill non-terminating threads that might otherwise
+prevent Randoop from making progress. For this reason, if you
+set <code>--usethreads</code> to <code>false</code> and Randoop
+appears to hang, it may be due to a randomly-generated test that is
+taking too long to execute and cannot be killed by Randoop.
+</p>
 
 <!-- <h2 id="faq">FAQ: Frequently Asked Questions (and common problems)</h2> -->
 <!-- <h3 id="q1">How do I determine what "helper" classes to add?</h3> -->
