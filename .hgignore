@@ -37,6 +37,8 @@ systemtests/resources/df2-output.txt
 systemtests/resources/df3-output.txt
 systemtests/sources.txt
 systemtests/resources/Literals0.java
+systemtests/resources/CustomVisitorTest0.java
+systemtests/resources/LongString0.java 
 
 bdgen-log.txt
 bdgen2-log.txt
