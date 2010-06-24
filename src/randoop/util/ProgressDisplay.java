@@ -84,7 +84,7 @@ public class ProgressDisplay extends Thread {
     System.out.println();
     System.out.print("*** Randoop has detected no input generation attempts after ");
     System.out.println(exit_if_no_new_sequences_after_mseconds + " milliseconds.");
-    System.out.println("This indicates Randoop may be executing an sequence");
+    System.out.println("This indicates Randoop may be executing a sequence");
     System.out.println("that leads to nonterminating behavior.");
     System.out.println("Last sequence generated:");
     System.out.println();
