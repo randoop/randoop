@@ -1,5 +1,7 @@
 package randoop.main;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
@@ -16,11 +18,15 @@ public class RandoopContractsTest {
 
     Test test = (Test) tstCls.getMethod("suite").invoke(null);
 
-    TestRunner runner = new TestRunner();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    TestRunner runner = new TestRunner(new PrintStream(baos));
     TestResult result = runner.doRun(test, false);
 
     if (result.failureCount() != 7) {
-      throw new RuntimeException("Expected 7 failures but got " + result.failureCount());
+      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE 7 FAILURES BUT GOT " + result.failureCount());
+      b.append("\n\nJUNIT OUTPUT ON RANDOOP-GENERATED TESTS:");
+      b.append(baos.toString());
+      throw new RuntimeException(b.toString());
     }
 
     System.out.println("Test passed; got 7 failures.");

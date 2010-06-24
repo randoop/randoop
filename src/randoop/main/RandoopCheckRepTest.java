@@ -1,5 +1,7 @@
 package randoop.main;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
@@ -16,12 +18,16 @@ public class RandoopCheckRepTest {
     {
       Class<TestCase> tstCls = (Class<TestCase>) Class.forName("CheckRepTest");
       Test test = (Test) tstCls.getMethod("suite").invoke(null);
-      TestRunner runner = new TestRunner();
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      TestRunner runner = new TestRunner(new PrintStream(baos));
       TestResult result = runner.doRun(test, false);
-      if (result.failureCount() != 1) {
-        throw new RuntimeException("Expected 2 failures but got " + result.failureCount());
+      if (result.failureCount() == 1 && result.errorCount() == 1) {
+        // passed.
+      } else {
+        StringBuilder b = new StringBuilder("\n\nRANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE 1 FAILURE and 1 ERROR");
+        b.append(baos.toString());
+        throw new RuntimeException(b.toString());
       }
-      System.out.println("Test passed; got 2 failures.");
     }
   }
 
