@@ -182,9 +182,15 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           
           if (o instanceof String) {
             String str = (String)o;
-            // Don't create assertions over string that look like raw object references.
+            // Don't create assertions over strings that look like raw object references.
             if (PrimitiveTypes.looksLikeObjectToString(str)) {
               // System.out.printf ("ignoring Object.toString obs %s%n", str);
+              continue;
+            }
+            // Don't create assertions over strings that are really long, as this
+            // can cause the generate unit tests to be unreadable and/or non-compilable
+            // due to Java restrictions on String constants.
+            if (str.length() > GenInputsAbstract.assertion_string_maxlen) {
               continue;
             }
           }
