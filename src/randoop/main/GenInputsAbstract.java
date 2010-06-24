@@ -284,8 +284,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Silently ignore any class names specified by the user that cannot be found by Randoop at runtime.")
   public static boolean silently_ignore_bad_class_names = false;
   
-  @Option("Maximum length of strings allowed in assertions stating that a runtime value equals a given string. "
-      + "Note that String constants of length greater than 65KB"
+  @Option("Maximum length of strings allowed in assertions. "
+      + "Note that String constants of length greater than 65KB "
       + "may be rejected, according to the Java Virtual Machine specification.")
   public static int assertion_string_maxlen = 10000;
 
