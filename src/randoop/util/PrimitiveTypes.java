@@ -233,18 +233,36 @@ public final class PrimitiveTypes {
     return boxedToPrimitiveAndString.get(c);
   }
 
-  private static final String OBJECT_REF_PATTERN = ".*[a-zA-Z]{2,}[a-zA-Z0-9.$]*@[0-9a-h]{4,}.*";
+  // If you modify, update doc for looksLikeObjectToString method.
+  private static final String OBJECT_REF_PATTERN = ".*@[0-9a-h]{1,8}.*";
 
   /**
    * Returns true if the given string looks like it came from a call of
    * Object.toString(); in other words, looks something like
    * "<classname>@<hex>". Such strings are rarely useful in generation because
    * they contain non-reproducible hash strings.
+   * 
+   * This method is actually more restrictive in what it determines to look like
+   * it came from Object.toString(): it deems anything that matches the pattern
+   * 
+   * .*@[0-9a-h]{1,8}.*
+   * 
+   * Meaning, if it looks like the string contains the telltale "@<hex>"
+   * pattern, the method returns false. This almost always works and is a
+   * faster check.
    */
   public static boolean looksLikeObjectToString(String s) {
     if (s == null) {
       throw new IllegalArgumentException("s is null");
     }
+    int len = s.length();
+
+    // Object.toString() string must have at least one character for
+    // the class name, plus '@', plus one character for hashCode().
+    if (len < 3) {
+      return false;
+    }
+
     return s.matches(OBJECT_REF_PATTERN);
   }
 
