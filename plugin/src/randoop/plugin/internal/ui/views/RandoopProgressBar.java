@@ -40,12 +40,11 @@ public class RandoopProgressBar extends Canvas {
   private Color fFailureColor;
   private Color fStoppedColor;
   private boolean fError;
-  private boolean fStopped = false;
+  private boolean fStopped;
 
   public RandoopProgressBar(Composite parent) {
     super(parent, SWT.NONE);
-    fPercentDone = 0;
-    fColorBarWidth = 0;
+    start();
 
     addControlListener(new ControlAdapter() {
       @Override
@@ -143,9 +142,17 @@ public class RandoopProgressBar extends Canvas {
 
     paintStep(x, fColorBarWidth);
   }
-
+  
   public void stop() {
     fStopped = true;
     redraw();
   }
+
+	public void start() {
+		fPercentDone = 0;
+		fColorBarWidth = 0;
+		fError = false;
+		fStopped = false;
+		redraw();
+	}
 }
