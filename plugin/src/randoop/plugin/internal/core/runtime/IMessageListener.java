@@ -1,6 +1,6 @@
 package randoop.plugin.internal.core.runtime;
 
-import randoop.runtime.Message;
+import randoop.runtime.IMessage;
 
 /**
  * Provides a simple <code>handleMessage()</code> method that is used to process
@@ -8,7 +8,7 @@ import randoop.runtime.Message;
  */
 public interface IMessageListener {
 
-  public void handleMessage(Message m);
+  public void handleMessage(IMessage m);
 
   /**
    * Handles an unexpected termination

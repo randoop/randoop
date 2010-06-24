@@ -1,11 +1,11 @@
 package randoop.plugin.internal.core.runtime;
 
-import randoop.runtime.Message;
+import randoop.runtime.IMessage;
 
 public class NullMessageListener implements IMessageListener{
 
   @Override
-  public void handleMessage(Message m) {
+  public void handleMessage(IMessage m) {
     // do nothing
   }
 

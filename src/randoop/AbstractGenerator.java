@@ -1,7 +1,6 @@
 package randoop;
 
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -9,19 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import randoop.Globals;
-import randoop.SequenceGeneratorStats;
+import plume.Option;
+import plume.Unpublicized;
 import randoop.experiments.SizeEqualizer;
 import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
-import randoop.runtime.Message;
+import randoop.runtime.IMessage;
 import randoop.runtime.MessageSender;
+import randoop.runtime.PercentDone;
+import randoop.runtime.RandoopFinished;
+import randoop.runtime.RandoopStarted;
 import randoop.util.Files;
 import randoop.util.Log;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
-import plume.Option;
-import plume.Unpublicized;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
@@ -130,7 +130,7 @@ public abstract class AbstractGenerator {
       
       long timeOfLastUpdate = 0;
       if (msgSender != null) {
-        Message msg = new Message(Message.Type.START, timeMillis, maxSequences);
+        IMessage msg = new RandoopStarted();
         msgSender.send(msg);
         timeOfLastUpdate = timer.getTimeElapsedMillis();
       }
@@ -186,17 +186,27 @@ public abstract class AbstractGenerator {
           Log.logLine("allSequences.size()=" + numSequences());
         }
         
-        if (msgSender != null) {
-          long currentTime = timer.getTimeElapsedMillis();
-          
-          // Send a message once a second
-          if (currentTime - timeOfLastUpdate > 250) {
-            Message msg = new Message(Message.Type.WORK, currentTime, numSequences());
-            msgSender.send(msg);
-            timeOfLastUpdate = currentTime;
-          }
+      if (msgSender != null) {
+        long timeSoFar = timer.getTimeElapsedMillis();
+        double percentTimeDone = timeSoFar / (double)timeMillis;
+        double percentSequencesDone = numSequences() / (double)maxSequences;
+
+        // Randoop has more than one stopping criteria. To determine how close we are
+        // to finishing, we calculate how close we are wrt the time limit, and wrt the
+        // input (sequence) limit. We report whichever is greater, but never report
+        // more than 100% (which can happen if Randoop went just a bit over before stopping).
+        double percentDone = Math.min(Math.max(percentTimeDone, percentSequencesDone), 1.0);
+        
+        // Send a message once a second
+        if (timeSoFar - timeOfLastUpdate > 250) {
+
+          // Convert to percentage, between 0-100.
+          IMessage msg = new PercentDone(percentDone);
+          msgSender.send(msg);
+          timeOfLastUpdate = timeSoFar;
         }
       }
+    }
       
       if (!GenInputsAbstract.noprogressdisplay) {
         stats.progressDisplay.display();
@@ -222,7 +232,7 @@ public abstract class AbstractGenerator {
       }
 
       if (msgSender != null) {
-        Message msg = new Message(Message.Type.DONE, timer.getTimeElapsedMillis(), numSequences());
+        IMessage msg = new RandoopFinished();
         msgSender.send(msg);
         msgSender.close();
       }

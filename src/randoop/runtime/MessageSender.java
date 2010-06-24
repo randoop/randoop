@@ -17,7 +17,7 @@ public class MessageSender {
     fObjectOutputStream = new ObjectOutputStream(oStream);
   }
 
-  public boolean send(Message payload) {
+  public boolean send(IMessage payload) {
     try {
       fObjectOutputStream.writeObject(payload);
       return true;

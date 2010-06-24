@@ -3,12 +3,14 @@ package randoop.plugin.internal.ui.views;
 import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.internal.core.runtime.IMessageListener;
-import randoop.runtime.Message;
+import randoop.runtime.IMessage;
+import randoop.runtime.PercentDone;
+import randoop.runtime.RandoopStarted;
 
 public class MessageViewListener implements IMessageListener {
   private TestGeneratorViewPart fViewPart;
 
-  private Message fStart;
+  private IMessage fStart;
 
   public MessageViewListener(TestGeneratorViewPart viewPart) {
     fViewPart = viewPart;
@@ -16,13 +18,19 @@ public class MessageViewListener implements IMessageListener {
   }
 
   @Override
-  public void handleMessage(Message m) {
-    if (m.getType() == Message.Type.START) {
+  public void handleMessage(IMessage m) {
+    if (m instanceof RandoopStarted) {
       if (fStart == null) {
         fStart = m;
       }
-    } else {
-      final double percentDone = m.getPercentDone(fStart);
+      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+          @Override
+          public void run() {
+            fViewPart.getProgressBar().start();
+          }
+        });
+    } else if (m instanceof PercentDone) {
+      final double percentDone = ((PercentDone)m).getPercentDone();
       PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {

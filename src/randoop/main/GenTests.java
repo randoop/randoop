@@ -56,6 +56,7 @@ import randoop.SequenceCollection;
 import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
 import randoop.Variable;
+import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.MessageSender;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
@@ -526,7 +527,7 @@ public class GenTests extends GenInputsAbstract {
       } catch (Exception e) {
         throw new Error ("can't create temp file", e);
       }
-      write_junit_tests ("./before_clean", sequences);
+      write_junit_tests ("./before_clean", sequences, msgSender);
       write_sequences (sequences, tmpfile.getPath());
       generate_clean_checks (tmpfile.getPath());
     }
@@ -535,7 +536,7 @@ public class GenTests extends GenInputsAbstract {
     // This removes any checks whose values are not deterministic
     // (such as values dependent on the current date/time)
     if (GenInputsAbstract.compare_checks) {
-      write_junit_tests ("./before_cmp", sequences);
+      write_junit_tests ("./before_cmp", sequences, msgSender);
       remove_diff_checks (tmpfile.getPath());
       sequences = read_sequences (tmpfile.getPath());
     }
@@ -547,7 +548,7 @@ public class GenTests extends GenInputsAbstract {
         seqs.add (sequences.get (ii));
       sequences = seqs;
     }
-    write_junit_tests (junit_output_dir, sequences);
+    write_junit_tests (junit_output_dir, sequences, msgSender);
 
     return true;
   }
@@ -591,7 +592,8 @@ public class GenTests extends GenInputsAbstract {
    * Writes the sequences as junit files to the specified directory
    **/
   public static void write_junit_tests (String output_dir,
-                                        List<ExecutableSequence> seq) {
+                                        List<ExecutableSequence> seq,
+                                        MessageSender msgSender) {
 
     System.out.printf ("Writing %d junit tests%n", seq.size());
     JunitFileWriter jfw
@@ -601,6 +603,7 @@ public class GenTests extends GenInputsAbstract {
     System.out.println();
     for (File f : files) {
       System.out.println("Created file: " + f.getAbsolutePath());
+      msgSender.send(new CreatedJUnitFile(f));
     }
   }
 
