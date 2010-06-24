@@ -589,7 +589,9 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Writes the sequences as junit files to the specified directory
+   * Writes the sequences as junit files to the specified directory.
+   *
+   * msgSender can be null.
    **/
   public static void write_junit_tests (String output_dir,
                                         List<ExecutableSequence> seq,
@@ -603,7 +605,9 @@ public class GenTests extends GenInputsAbstract {
     System.out.println();
     for (File f : files) {
       System.out.println("Created file: " + f.getAbsolutePath());
-      msgSender.send(new CreatedJUnitFile(f));
+      if (msgSender != null) {
+        msgSender.send(new CreatedJUnitFile(f));
+      }
     }
   }
 
