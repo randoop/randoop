@@ -6,7 +6,8 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import randoop.runtime.Message;
+import randoop.runtime.IMessage;
+import randoop.runtime.RandoopFinished;
 
 public class MessageReceiver implements Runnable {
   private IMessageListener fIMessageListener;
@@ -40,15 +41,15 @@ public class MessageReceiver implements Runnable {
       InputStream iStream = sock.getInputStream();
       ObjectInputStream objectInputStream = new ObjectInputStream(iStream);
 
-      Message start = (Message) objectInputStream.readObject();
+      IMessage start = (IMessage) objectInputStream.readObject();
       fIMessageListener.handleMessage(start);
       
-      Message work = null;
+      IMessage work = null;
       do {
-        work = (Message) objectInputStream.readObject();
+        work = (IMessage) objectInputStream.readObject();
         
         fIMessageListener.handleMessage(work);
-      } while (work != null && work.getType() != Message.Type.DONE);
+      } while (work != null && !(work instanceof RandoopFinished));
     } catch (IOException ioe) {
       // Stream terminated unexpectedly
       fIMessageListener.handleTermination();

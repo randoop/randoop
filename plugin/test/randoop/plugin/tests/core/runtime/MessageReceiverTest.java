@@ -14,7 +14,10 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.tests.ui.launching.ProjectCreator;
-import randoop.runtime.Message;
+import randoop.runtime.IMessage;
+import randoop.runtime.PercentDone;
+import randoop.runtime.RandoopFinished;
+import randoop.runtime.RandoopStarted;
 
 /**
  * Do not run this test in the UI thread
@@ -24,27 +27,27 @@ public class MessageReceiverTest extends TestCase {
   IJavaProject fJavaProject;
   
   private class TestMessageListener implements IMessageListener {
-    Message fStartMessage = null;
+    IMessage fStartMessage = null;
     boolean fReceivedLast = false;
     double fLastPercentDone = 0.0;
     
     @Override
-    public void handleMessage(Message m) {
+    public void handleMessage(IMessage m) {
       System.out.println(m);
-      switch(m.getType()) {
-      case START:
-        fStartMessage = m;
-        return;
-      case DONE:
-        fReceivedLast = true;
-        return;
-      case WORK:
-        assertNotNull("START message must be received before WORK", fStartMessage);
-        assertFalse("WORK message must not be received after DONE", fReceivedLast);
-        
-        double pDone = m.getPercentDone(fStartMessage);
-        assertTrue("Percent done cannot decrease", fLastPercentDone < pDone);
-        fLastPercentDone = pDone;
+      if (m instanceof RandoopStarted) {
+    	  fStartMessage = m;
+    	  return;    	  
+      } else if (m instanceof RandoopFinished) {
+    	  fReceivedLast = true;
+    	  return;    	  
+      } else if (m instanceof PercentDone) {
+    	  assertNotNull("START message must be received before WORK", fStartMessage);
+    	  assertFalse("WORK message must not be received after DONE", fReceivedLast);
+    	  
+    	  double pDone = ((PercentDone)m).getPercentDone();
+    	  assertTrue("Percent done cannot decrease", fLastPercentDone < pDone);
+    	  fLastPercentDone = pDone;
+    	  
       }
     }
 

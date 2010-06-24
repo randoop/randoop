@@ -1,14 +1,9 @@
 package randoop.plugin.tests.ui.launching;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -16,21 +11,11 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.core.runtime.IMessageListener;
-import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.ui.launching.GeneralTab;
 import randoop.plugin.internal.ui.launching.ParametersTab;
-import randoop.runtime.Message;
 
 @SuppressWarnings("nls")
 public class LaunchDelegateTests extends TestCase {

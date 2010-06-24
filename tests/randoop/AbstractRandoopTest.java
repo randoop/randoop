@@ -1,8 +1,6 @@
 package randoop;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,31 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
-
 import junit.framework.TestCase;
-import randoop.Check;
-import randoop.CheckRepContract;
-import randoop.EqualsHashcode;
-import randoop.EqualsReflexive;
-import randoop.EqualsSymmetric;
-import randoop.EqualsToNullRetFalse;
-import randoop.ExceptionalExecution;
-import randoop.ExecutableSequence;
-import randoop.ExecutionVisitor;
-import randoop.ForwardGenerator;
-import randoop.JunitFileWriter;
-import randoop.NoExceptionCheck;
-import randoop.ObjectCheck;
-import randoop.ObjectContract;
-import randoop.RegressionCaptureVisitor;
-import randoop.SeedSequences;
-import randoop.SequenceCollection;
-import randoop.StatementKind;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
 import randoop.util.DefaultReflectionFilter;
@@ -51,7 +25,9 @@ public abstract class AbstractRandoopTest extends TestCase {
 
   public abstract Collection<Class<?>> getClassesUnderTest();
 
-  public abstract String getProjectHome();
+  public String getProjectHome() {
+    return "C:\\Documents and Settings\\Carlos\\workspace\\data_structures";
+  }
 
   public enum Mode {
     REGRESSION, ERRORS
@@ -69,7 +45,7 @@ public abstract class AbstractRandoopTest extends TestCase {
   
   public void init() {
     // GenInputsAbstract.clear = 330;
-    GenInputsAbstract.use_object_cache = true;
+    //GenInputsAbstract.use_object_cache = true;
     GenInputsAbstract.maxsize = 50;
     GenInputsAbstract.forbid_null = false;
     GenInputsAbstract.null_ratio = 0.2;
@@ -83,7 +59,7 @@ public abstract class AbstractRandoopTest extends TestCase {
     
     init();
 
-    //Randomness.reset(1);
+    Randomness.reset(2);
 
     File randoopTestsDir = new File(new File(getProjectHome(), "tests"), "randoop");
     if (!randoopTestsDir.exists() && !randoopTestsDir.mkdirs()) {
