@@ -38,7 +38,7 @@ public class ComponentManager {
    */
   // Is never null. Contains both general components
   // and seed sequences.
-  private SequenceCollection gralComponents = null;
+  private SequenceCollection gralComponents;
 
   /**
    * The subset of the sequences that were given pre-generation
@@ -47,7 +47,7 @@ public class ComponentManager {
   // seeds are all contains in gralComponents. This list
   // is kept to restore seeds if the user calls
   // clearGeneratedSequences().
-  private Collection<Sequence> gralSeeds;
+  private final Collection<Sequence> gralSeeds;
   
   /**
    * A set of additional components representing literals that
@@ -65,19 +65,27 @@ public class ComponentManager {
 
 
   /**
-   * Create an empty component manager.
+   * Create an empty component manager, with an empty seed sequence set.
    */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
+    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
   }
   
   /**
    * Create a component manager, initially populated with the
    * given sequences, which are considered seed sequences.
+   * 
+   * @param generalSeeds seed sequences. Can be null, in which case
+   * the seed sequences set is considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
-    this.gralSeeds = Collections.unmodifiableSet(new LinkedHashSet<Sequence>(generalSeeds));
-    gralComponents = new SequenceCollection(generalSeeds);
+    Set<Sequence> seedSet = new LinkedHashSet<Sequence>(generalSeeds.size());
+    if (generalSeeds != null) {
+      seedSet.addAll(generalSeeds);
+    }
+    this.gralSeeds = Collections.unmodifiableSet(seedSet);
+    gralComponents = new SequenceCollection(seedSet);
   }
 
   /**

@@ -1,6 +1,9 @@
 package randoop;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -9,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import plume.Option;
+import plume.Pair;
 import plume.Unpublicized;
 import randoop.experiments.SizeEqualizer;
 import randoop.experiments.StatsWriter;
@@ -18,10 +22,10 @@ import randoop.runtime.MessageSender;
 import randoop.runtime.PercentDone;
 import randoop.runtime.RandoopFinished;
 import randoop.runtime.RandoopStarted;
-import randoop.util.Files;
 import randoop.util.Log;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
+import randoop.util.ReflectionExecutor.TimeoutExceeded;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
@@ -46,6 +50,7 @@ public abstract class AbstractGenerator {
   public SizeEqualizer sizeEqualizer = new SizeEqualizer();
   private MessageSender msgSender;
   public ComponentManager componentManager;
+  private IStoppingCriterion stopper;
 
   /**
    *
@@ -56,7 +61,8 @@ public abstract class AbstractGenerator {
    * @param seeds can be null.
    */
   public AbstractGenerator(List<StatementKind> statements,
-      List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentManager) {
+      List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentManager,
+      IStoppingCriterion stopper) {
     assert statements != null;
 
     this.timeMillis = timeMillis;
@@ -81,12 +87,14 @@ public abstract class AbstractGenerator {
     }
     
     this.msgSender = null;
+    
+    this.stopper = stopper;
   }
 
   public AbstractGenerator(List<StatementKind> statements,
       List<Class<?>> covClasses, long timeMillis, int maxSequences,
-      ComponentManager componentMgr, MessageSender msgSender) {
-    this(statements, covClasses, timeMillis, maxSequences, componentMgr);
+      ComponentManager componentMgr, MessageSender msgSender, IStoppingCriterion stopper) {
+    this(statements, covClasses, timeMillis, maxSequences, componentMgr, stopper);
     
     this.msgSender = msgSender;
   }
@@ -99,7 +107,8 @@ public abstract class AbstractGenerator {
     || (stop_when_plateau > 0
         && (now - stats.progressDisplay.lastCovIncrease) > stop_when_plateau * 1000)
     || (timer.getTimeElapsedMillis() >= timeMillis)
-    || (numSequences() >= maxSequences);
+    || (numSequences() >= maxSequences)
+    || (stopper != null && stopper.stop());
   }
 
   public abstract ExecutableSequence step();
@@ -173,7 +182,7 @@ public abstract class AbstractGenerator {
           }
         }
 
-        stats.updateStatistics(eSeq, cov, fa);
+        updateStatistics(stats, eSeq, cov, fa);
 
         if (dump_sequences) {
           System.out.printf ("Sequence after execution:%n%s%n",
@@ -223,14 +232,6 @@ public abstract class AbstractGenerator {
       System.out.println("Average method execution time (normal termination):     " + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
       System.out.println("Average method execution time (exceptional termination):" + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
 
-      if (GenInputsAbstract.output_coverage_plot != null) {
-        try {
-          Files.writeToFile(stats.covPlot,GenInputsAbstract.output_coverage_plot);
-        } catch (Exception e) {
-          throw new Error(e);
-        }
-      }
-
       if (msgSender != null) {
         IMessage msg = new RandoopFinished();
         msgSender.send(msg);
@@ -238,6 +239,151 @@ public abstract class AbstractGenerator {
       }
     }
 
+  
+
+  public Set<Pair<StatementKind,Class<?>>> errors = new LinkedHashSet<Pair<StatementKind,Class<?>>>();
+  // public Set<FailureAnalyzer.Failure> errors = new LinkedHashSet<FailureAnalyzer.Failure>();
+
+  public List<ExecutableSequence> outSeqs = new ArrayList<ExecutableSequence>();
+
+  // TODO: This method is doing two things: (1) maintaining the list
+  // of sequences generated that will ultimately be output to the user, and (2) updating
+  // statistics regarding the generation process. The first thing does not belong in this class/method,
+  // it just ended up here. This method/class should only keep track of statistics.
+  public void updateStatistics(SequenceGeneratorStats stats, ExecutableSequence es, Set<Branch> coveredBranches, FailureAnalyzer fa) {
+
+    boolean addedToOutSeqs = false;
+    if ((GenInputsAbstract.output_nonexec || !es.hasNonExecutedStatements())
+        && (GenInputsAbstract.output_tests.equals(GenInputsAbstract.pass)
+            || GenInputsAbstract.output_tests.equals(GenInputsAbstract.all))) {
+      outSeqs.add(es);
+      addedToOutSeqs = true;
+    }
+
+    boolean counted = false;
+    for (FailureAnalyzer.Failure failure : fa.getFailures()) {
+
+      if (!counted) {
+        stats.globalStats.addToCount(SequenceGeneratorStats.STAT_SEQUENCE_RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT, 1);
+        counted = true;
+      }
+
+      if (errors.add(new Pair<StatementKind,Class<?>>(failure.st, failure.viocls))) {
+
+        if (!addedToOutSeqs
+            && (GenInputsAbstract.output_nonexec || !es.hasNonExecutedStatements())
+            && (GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail)
+                || GenInputsAbstract.output_tests.equals(GenInputsAbstract.all))) {
+          outSeqs.add(es);
+        }
+
+        stats.globalStats.addToCount(SequenceGeneratorStats.STAT_SEQUENCE_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT, 1);
+      }
+    }
+
+    // Update coverage information.
+    for (Branch ca : coveredBranches) {
+
+      // This branch was already counted.
+      if (stats.branchesCovered.contains(ca))
+        continue;
+
+      stats.branchesCovered.add(ca);
+
+      Member member = Coverage.getMemberContaining(ca);
+      if (member == null) {
+        // Atom does not belong to method or constructor.
+        // Add only to global stats.
+        stats.globalStats.addToCount(SequenceGeneratorStats.STAT_BRANCHCOV, 1);
+        continue;
+      }
+
+      if (member instanceof Method) {
+        // Atom belongs to a method.
+        // Add to method stats (and implicitly, global stats).
+        Method method = (Method)member;
+        stats.addToCount(RMethod.getRMethod(method), SequenceGeneratorStats.STAT_BRANCHCOV, 1);
+        continue;
+      }
+
+      // Atom belongs to a constructor.
+      // Add to constructor stats (and implicitly, global stats).
+      assert member instanceof Constructor<?> : member.toString();
+      Constructor<?> cons = (Constructor<?>)member;
+      stats.addToCount(RConstructor.getRConstructor(cons), SequenceGeneratorStats.STAT_BRANCHCOV, 1);
+    }
+
+    for (int i = 0; i < es.sequence.size(); i++) {
+      StatementKind statement = es.sequence.getStatementKind(i);
+
+      ExecutionOutcome o = es.getResult(i);
+
+      if (!(statement instanceof RMethod || statement instanceof RConstructor)) {
+        continue;
+      }
+
+      if (o instanceof NotExecuted) {
+        // We don't record this fact (it's not interesting at the
+        // statement-level, because
+        // a statement not being executed is unrelated to the statement.
+        // (It's often due to a previous statement throwing an exception).
+        continue;
+      }
+
+      stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_EXECUTION_TIME, o
+          .getExecutionTime());
+
+      if (o instanceof NormalExecution) {
+        stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_NORMAL, 1);
+        continue;
+      }
+
+      assert o instanceof ExceptionalExecution;
+      ExceptionalExecution exc = (ExceptionalExecution) o;
+
+      Class<?> exceptionClass = exc.getException().getClass();
+      Integer count = stats.exceptionTypes.get(exceptionClass);
+      stats.exceptionTypes.put(exceptionClass.getPackage().toString() + "." + exceptionClass.getSimpleName(),
+          count == null ? 1 : count
+              .intValue() + 1);
+
+      if (exc.getException() instanceof StackOverflowError
+          || exc.getException() instanceof OutOfMemoryError) {
+        stats.addToCount(statement,
+            SequenceGeneratorStats.STAT_STATEMENT_EXCEPTION_RESOURCE_EXHAUSTION, 1);
+
+      } else if (exc.getException() instanceof TimeoutExceeded) {
+        stats.addToCount(statement,
+            SequenceGeneratorStats.STAT_STATEMENT_EXCEPTION_TIMEOUT_EXCEEDED, 1);
+      } else {
+        stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_EXCEPTION_OTHER, 1);
+      }
+    }
+
+    StatementKind statement = es.sequence.getLastStatement();
+    // if(statement instanceof MethodCall && !statement.isVoidMethod()) {
+    // MethodCall sm = ((MethodCall)statement);
+    // statement = MethodCall.getDefaultStatementInfo(sm.getMethod());
+    // }
+    if (es.hasNonExecutedStatements()) {
+      stats.addToCount(statement,
+          SequenceGeneratorStats.STAT_SEQUENCE_STOPPED_EXEC_BEFORE_LAST_STATEMENT, 1);
+      return;
+    }
+
+    ExecutionOutcome o = es.getResult(es.sequence.size() - 1);
+
+    if (o instanceof ExceptionalExecution) {
+      stats.addToCount(statement, SequenceGeneratorStats.STAT_SEQUENCE_OTHER_EXCEPTION_LAST_STATEMENT,
+          1);
+      return;
+    }
+
+    assert o instanceof NormalExecution;
+    stats.addToCount(statement, SequenceGeneratorStats.STAT_SEQUENCE_EXECUTED_NORMALLY, 1);
+  }
+
+  
   /**
    * Returns the set of sequences that are used as inputs in other sequences
    * (and can thus be thought of as subsumed by another sequence).  This should

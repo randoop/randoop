@@ -99,7 +99,6 @@ public class RandoopAllClasses {
     randoop.add(exp.covInstSourcesDir + ":" + exp.classPath);
     randoop.add("randoop.main.Main");
     randoop.add("gentests");
-    // randoop.add("--output-coverage-plot=" + summary + ".covplot");
     // randoop.add("--output-tests=fail");
     randoop.add("--timelimit=1000000");
     randoop.add("--stop-when-plateau=50");

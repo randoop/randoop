@@ -63,8 +63,9 @@ public class NaiveRandomGenerator extends AbstractGenerator {
       SeedSequences.defaultSeeds());
 
   public NaiveRandomGenerator(List<StatementKind> statements,
-      List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentMgr) {
-    super(statements, covClasses, timeMillis, maxSequences, componentMgr);
+      List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentMgr,
+      IStoppingCriterion stopper) {
+    super(statements, covClasses, timeMillis, maxSequences, componentMgr, stopper);
 
     this.allStatements = statements;
 

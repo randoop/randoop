@@ -34,8 +34,8 @@ import randoop.CheckRepContract;
 import randoop.ComponentManager;
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsHashcode;
-import randoop.EqualsSymmetric;
 import randoop.EqualsReflexive;
+import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
 import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
@@ -52,7 +52,6 @@ import randoop.RegressionCaptureVisitor;
 import randoop.ReplayVisitor;
 import randoop.SeedSequences;
 import randoop.Sequence;
-import randoop.SequenceCollection;
 import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
 import randoop.Variable;
@@ -302,7 +301,8 @@ public class GenTests extends GenInputsAbstract {
         timelimit * 1000,
         inputlimit,
         componentMgr,
-        msgSender);
+        msgSender,
+        null);
 
     } else {
 
@@ -312,7 +312,8 @@ public class GenTests extends GenInputsAbstract {
           covClasses,
           timelimit * 1000,
           inputlimit,
-          componentMgr);
+          componentMgr,
+          null);
     }
 
     System.out.printf ("Explorer = %s\n", explorer);
@@ -438,9 +439,9 @@ public class GenTests extends GenInputsAbstract {
     // Create JUnit files containing faults.
     System.out.println();
     System.out.print("Creating Junit tests ("
-        + explorer.stats.outSeqs.size() + " tests)...");
+        + explorer.outSeqs.size() + " tests)...");
     List<ExecutableSequence> sequences = new ArrayList<ExecutableSequence>();
-    for (ExecutableSequence p : explorer.stats.outSeqs) {
+    for (ExecutableSequence p : explorer.outSeqs) {
       sequences.add(p);
     }
     
