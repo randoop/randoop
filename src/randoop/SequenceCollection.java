@@ -110,6 +110,9 @@ public class SequenceCollection {
   }
 
   public void addAll(Collection<Sequence> col) {
+    if (col == null) {
+      throw new IllegalArgumentException("col is null");
+    }
     for (Sequence  c : col) {
       add(c);
     }

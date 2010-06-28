@@ -10,14 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import plume.Option;
+import plume.Unpublicized;
+import plume.UtilMDE;
 import randoop.main.GenInputsAbstract;
 import randoop.util.CollectionsExt;
 import randoop.util.ProgressDisplay;
-import randoop.util.ReflectionExecutor.TimeoutExceeded;
-import plume.Option;
-import plume.Pair;
-import plume.Unpublicized;
-import plume.UtilMDE;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
@@ -44,8 +42,6 @@ public class SequenceGeneratorStats {
 
   public final Set<Branch> branchesCovered;
 
-  public final List<String> covPlot = new ArrayList<String>();
-
   private final Map<StatementKind, StatsForMethod> methodStats;
   public final StatsForMethod globalStats;
   private List<StatName> keys = new ArrayList<StatName>();
@@ -53,44 +49,44 @@ public class SequenceGeneratorStats {
   public static final StatName STAT_BRANCHTOT = new StatName("TOTAL NUMBER OF BRANCHES IN METHOD",
       "Brtot", "Total number of branches in method", false);
 
-  private static final StatName STAT_BRANCHCOV = new StatName("BRANCHES",
+  public static final StatName STAT_BRANCHCOV = new StatName("BRANCHES",
       "Brcov", "Number of branches covered in method", false);
 
-  private static final StatName STAT_SEQUENCE_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT =
+  public static final StatName STAT_SEQUENCE_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT =
     new StatName("STAT_SEQUENCE_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT", "ObjVio",
         "Non-repetitive number of sequences where object contract violated after last statement.", false);
 
-  private static final StatName STAT_SEQUENCE_RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT =
+  public static final StatName STAT_SEQUENCE_RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT =
     new StatName("STAT_SEQUENCE__RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT", "Failing inputs",
         "Number of sequences where object contract violated after last statement.", true);
 
-  private static final StatName STAT_SEQUENCE_FORBIDDEN_EXCEPTION_LAST_STATEMENT =
+  public static final StatName STAT_SEQUENCE_FORBIDDEN_EXCEPTION_LAST_STATEMENT =
     new StatName("STAT_SEQUENCE_FORBIDDEN_EXCEPTION_LAST_STATEMENT", "ExVio",
         "Number of sequences where bad exception was thrown after last statement.", false);
 
 
-  private static final StatName STAT_SELECTED = new StatName("SELECTED",
+  public static final StatName STAT_SELECTED = new StatName("SELECTED",
       "Select", "Selected method to create new sequence.", stats_generation);
 
-  private static final StatName STAT_DID_NOT_FIND_INPUT_ARGUMENTS = new StatName(
+  public static final StatName STAT_DID_NOT_FIND_INPUT_ARGUMENTS = new StatName(
       "DID NOT FIND SEQUENCE ARGUMENTS",
       "NoArgs",
       "Did not create a new sequence: could not find components that create sequence argument types.",
       stats_generation);
 
-  private static final StatName STAT_DID_NOT_FIND_INPUT_ARGUMENTS_CYCLE = new StatName(
+  public static final StatName STAT_DID_NOT_FIND_INPUT_ARGUMENTS_CYCLE = new StatName(
       "DID NOT FIND SEQUENCE ARGUMENTS DUE TO A CYCLE",
       "NoArgsC",
       "Did not create a new sequence: could not find components that create sequence argument types due to a dependency cycle between the ctors.",
       stats_generation);
 
-  private static final StatName STAT_DISCARDED_SIZE = new StatName(
+  public static final StatName STAT_DISCARDED_SIZE = new StatName(
       "DISCARDED (EXCEEDS SIZE LIMIT)",
       "TooBig",
       "Did not create a new sequence: sequence exceeded maximum allowed size.",
       stats_generation);
 
-  private static final StatName STAT_DISCARDED_REPEATED = new StatName(
+  public static final StatName STAT_DISCARDED_REPEATED = new StatName(
       "DISCARDED (ALREADY CREATED SEQUENCE)",
       "Repeat",
       "Did not create a new sequence: sequence was already created.",
@@ -101,50 +97,50 @@ public class SequenceGeneratorStats {
       "Created a new test input.",
       true /* always printable */);
 
-  private static final StatName STAT_SEQUENCE_STOPPED_EXEC_BEFORE_LAST_STATEMENT = new StatName(
+  public static final StatName STAT_SEQUENCE_STOPPED_EXEC_BEFORE_LAST_STATEMENT = new StatName(
       "STAT_SEQUENCE_STOPPED_EXEC_BEFORE_LAST_STATEMENT",
       "Abort",
       "Execution outcome 1 (of 3): stopped before last statement (due to exception or contract violation).",
       stats_generation);
 
-  private static final StatName STAT_SEQUENCE_EXECUTED_NORMALLY = new StatName(
+  public static final StatName STAT_SEQUENCE_EXECUTED_NORMALLY = new StatName(
       "STAT_SEQUENCE_EXECUTED_NORMALLY", "NoEx",
       "Execution outcome 2 (of 3): executed to the end and threw no exceptions.",
       stats_generation);
 
-  private static final StatName STAT_SEQUENCE_OTHER_EXCEPTION_LAST_STATEMENT = new StatName(
+  public static final StatName STAT_SEQUENCE_OTHER_EXCEPTION_LAST_STATEMENT = new StatName(
       "STAT_SEQUENCE_OTHER_EXCEPTION_LAST_STATEMENT", "Excep",
       "Execution outcome 3 (or 3): threw an exception when executing last statement.",
       stats_generation);
 
-  private static final StatName STAT_SEQUENCE_ADDED_TO_COMPONENTS = new StatName(
+  public static final StatName STAT_SEQUENCE_ADDED_TO_COMPONENTS = new StatName(
       "STAT_SEQUENCE_ADDED_TO_COMPONENTS", "Comp",
       "Post-execution outcome 1 (of 1): Added sequence to components.",
       stats_generation);
 
-  private static final StatName STAT_STATEMENT_EXECUTION_TIME = new StatName(
+  public static final StatName STAT_STATEMENT_EXECUTION_TIME = new StatName(
       "STAT_STATEMENT_EXECUTION_TIME", "Time",
       "Milliseconds spent executing statement (across all sequences).",
       stats_generation);
 
-  private static final StatName STAT_STATEMENT_EXCEPTION_OTHER = new StatName(
+  public static final StatName STAT_STATEMENT_EXCEPTION_OTHER = new StatName(
       "STAT_STATEMENT_EXCEPTION_OTHER", "OthEx",
       "Times statement threw non-VM exception (across all sequences).",
       stats_generation);
 
-  private static final StatName STAT_STATEMENT_EXCEPTION_RESOURCE_EXHAUSTION = new StatName(
+  public static final StatName STAT_STATEMENT_EXCEPTION_RESOURCE_EXHAUSTION = new StatName(
       "STAT_STATEMENT_EXCEPTION_RESOURCE_EXHAUSTION",
       "VmEx",
       "Times statement threw VM exception, e.g. stack overflow (across all sequences).",
       stats_generation);
 
-  private static final StatName STAT_STATEMENT_EXCEPTION_TIMEOUT_EXCEEDED = new StatName(
+  public static final StatName STAT_STATEMENT_EXCEPTION_TIMEOUT_EXCEEDED = new StatName(
       "STAT_STATEMENT_EXCEPTION_TIMEOUT_EXCEEDED",
       "Killed",
       "Times statement killed because it exceeded time allowed (across all sequences).",
       stats_generation);
 
-  private static final StatName STAT_STATEMENT_NORMAL = new StatName(
+  public static final StatName STAT_STATEMENT_NORMAL = new StatName(
       "STAT_STATEMENT_NORMAL", "NoEx",
       "Times statement executed normally (across all sequences).",
       stats_generation);
@@ -344,155 +340,6 @@ public class SequenceGeneratorStats {
         + globalStats.getCount(STAT_DISCARDED_SIZE)) {
       throw new BugInRandoopException();
     }
-  }
-
-  public Set<Pair<StatementKind,Class<?>>> errors = new LinkedHashSet<Pair<StatementKind,Class<?>>>();
-  // public Set<FailureAnalyzer.Failure> errors = new LinkedHashSet<FailureAnalyzer.Failure>();
-
-  public List<ExecutableSequence> outSeqs = new ArrayList<ExecutableSequence>();
-
-  // TODO: This method is doing two things: (1) maintaining the list
-  // of sequences generated that will ultimately be output to the user, and (2) updating
-  // statistics regarding the generation process. The first thing does not belong in this class/method,
-  // it just ended up here. This method/class should only keep track of statistics.
-  public void updateStatistics(ExecutableSequence es, Set<Branch> coveredBranches, FailureAnalyzer fa) {
-
-    boolean addedToOutSeqs = false;
-    if ((GenInputsAbstract.output_nonexec || !es.hasNonExecutedStatements())
-        && (GenInputsAbstract.output_tests.equals(GenInputsAbstract.pass)
-            || GenInputsAbstract.output_tests.equals(GenInputsAbstract.all))) {
-      outSeqs.add(es);
-      addedToOutSeqs = true;
-    }
-
-    boolean counted = false;
-    for (FailureAnalyzer.Failure failure : fa.getFailures()) {
-
-      if (!counted) {
-        globalStats.addToCount(STAT_SEQUENCE_RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT, 1);
-        counted = true;
-      }
-
-      if (errors.add(new Pair<StatementKind,Class<?>>(failure.st, failure.viocls))) {
-
-        if (randoop_exp) {
-          System.out.println();
-          System.out.println("POTENTIAL ERROR FOUND: " + failure);
-          System.out.println();
-          System.out.println(es.toCodeString());
-        }
-
-        if (!addedToOutSeqs
-            && (GenInputsAbstract.output_nonexec || !es.hasNonExecutedStatements())
-            && (GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail)
-                || GenInputsAbstract.output_tests.equals(GenInputsAbstract.all))) {
-          outSeqs.add(es);
-        }
-
-        globalStats.addToCount(STAT_SEQUENCE_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT, 1);
-      }
-    }
-
-    // Update coverage information.
-    for (Branch ca : coveredBranches) {
-
-      // This branch was already counted.
-      if (branchesCovered.contains(ca))
-        continue;
-
-      branchesCovered.add(ca);
-
-      Member member = Coverage.getMemberContaining(ca);
-      if (member == null) {
-        // Atom does not belong to method or constructor.
-        // Add only to global stats.
-        globalStats.addToCount(STAT_BRANCHCOV, 1);
-        continue;
-      }
-
-      if (member instanceof Method) {
-        // Atom belongs to a method.
-        // Add to method stats (and implicitly, global stats).
-        Method method = (Method)member;
-        addToCount(RMethod.getRMethod(method), STAT_BRANCHCOV, 1);
-        continue;
-      }
-
-      // Atom belongs to a constructor.
-      // Add to constructor stats (and implicitly, global stats).
-      assert member instanceof Constructor<?> : member.toString();
-      Constructor<?> cons = (Constructor<?>)member;
-      addToCount(RConstructor.getRConstructor(cons), STAT_BRANCHCOV, 1);
-    }
-
-    for (int i = 0; i < es.sequence.size(); i++) {
-      StatementKind statement = es.sequence.getStatementKind(i);
-
-      ExecutionOutcome o = es.getResult(i);
-
-      if (!(statement instanceof RMethod || statement instanceof RConstructor)) {
-        continue;
-      }
-
-      if (o instanceof NotExecuted) {
-        // We don't record this fact (it's not interesting at the
-        // statement-level, because
-        // a statement not being executed is unrelated to the statement.
-        // (It's often due to a previous statement throwing an exception).
-        continue;
-      }
-
-      addToCount(statement, STAT_STATEMENT_EXECUTION_TIME, o
-          .getExecutionTime());
-
-      if (o instanceof NormalExecution) {
-        addToCount(statement, STAT_STATEMENT_NORMAL, 1);
-        continue;
-      }
-
-      assert o instanceof ExceptionalExecution;
-      ExceptionalExecution exc = (ExceptionalExecution) o;
-
-      Class<?> exceptionClass = exc.getException().getClass();
-      Integer count = exceptionTypes.get(exceptionClass);
-      exceptionTypes.put(exceptionClass.getPackage().toString() + "." + exceptionClass.getSimpleName(),
-          count == null ? 1 : count
-              .intValue() + 1);
-
-      if (exc.getException() instanceof StackOverflowError
-          || exc.getException() instanceof OutOfMemoryError) {
-        addToCount(statement,
-            STAT_STATEMENT_EXCEPTION_RESOURCE_EXHAUSTION, 1);
-
-      } else if (exc.getException() instanceof TimeoutExceeded) {
-        addToCount(statement,
-            STAT_STATEMENT_EXCEPTION_TIMEOUT_EXCEEDED, 1);
-      } else {
-        addToCount(statement, STAT_STATEMENT_EXCEPTION_OTHER, 1);
-      }
-    }
-
-    StatementKind statement = es.sequence.getLastStatement();
-    // if(statement instanceof MethodCall && !statement.isVoidMethod()) {
-    // MethodCall sm = ((MethodCall)statement);
-    // statement = MethodCall.getDefaultStatementInfo(sm.getMethod());
-    // }
-    if (es.hasNonExecutedStatements()) {
-      addToCount(statement,
-          STAT_SEQUENCE_STOPPED_EXEC_BEFORE_LAST_STATEMENT, 1);
-      return;
-    }
-
-    ExecutionOutcome o = es.getResult(es.sequence.size() - 1);
-
-    if (o instanceof ExceptionalExecution) {
-      addToCount(statement, STAT_SEQUENCE_OTHER_EXCEPTION_LAST_STATEMENT,
-          1);
-      return;
-    }
-
-    assert o instanceof NormalExecution;
-    addToCount(statement, STAT_SEQUENCE_EXECUTED_NORMALLY, 1);
   }
 
   public void statStatementSelected(StatementKind statement) {
