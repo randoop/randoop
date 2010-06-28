@@ -3,8 +3,6 @@ package randoop;
 import java.io.Serializable;
 
 import randoop.util.Log;
-import randoop.util.PrimitiveTypes;
-import randoop.util.Reflection;
 
 public class ObjectCache implements Serializable {
 

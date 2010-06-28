@@ -2,9 +2,9 @@ package randoop.util;
 
 import java.util.Map;
 
+import plume.UtilMDE;
 import randoop.Globals;
 import randoop.SequenceGeneratorStats;
-import plume.UtilMDE;
 
 /**
  * Modified from Daikon.FileIOProgress.
@@ -24,7 +24,7 @@ public class ProgressDisplay extends Thread {
   public static enum Mode { SINGLE_LINE_OVERWRITE, MULTILINE, NO_DISPLAY }
 
   private Mode outputMode;
-  private final long progressIntervalMillis = 1000;
+  private long progressIntervalMillis = 1000;
   private SequenceGeneratorStats stats;
 
   public ProgressDisplay(SequenceGeneratorStats stats,
@@ -120,13 +120,7 @@ public class ProgressDisplay extends Thread {
   private int lastNumBranches = 0;
 
   private void updateLastBranchCov() {
-
-    String str =
-      Integer.toString(stats.branchesCovered.size()) +
-      " " +
-      Integer.toString(stats.errors.size());
-
-    stats.covPlot.add(str);
+   
     if (stats.branchesCovered.size() > lastNumBranches) {
       lastCovIncrease = System.currentTimeMillis();
       lastNumBranches = stats.branchesCovered.size();

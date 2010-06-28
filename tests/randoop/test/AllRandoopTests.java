@@ -10,15 +10,9 @@ public class AllRandoopTests extends TestCase {
   public static Test suite() {
     TestSuite suite = new TestSuite("Test for randoop.test");
 
-    // This test runs before others because it's a
-    // performance test, and is more likely to pass
-    // on a fresh JVM.
-    //suite.addTestSuite(ISSTA06ContainersTest.class);
-
     suite.addTestSuite(SequenceTests.class);
     suite.addTestSuite(ClassComplexityCalculatorTests.class);
     suite.addTestSuite(ClassHierarchyTests.class);
-    suite.addTestSuite(Test_AllPass.class);
     suite.addTestSuite(ReflectionTests.class);
     suite.addTestSuite(UtilTests.class);
     suite.addTestSuite(ListOfListsSelectorTest.class);
@@ -38,6 +32,7 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(DependencyTests.class);
     suite.addTestSuite(SeedSequencesTests.class);
     suite.addTestSuite(CodeFromManual.class);
+    suite.addTestSuite(ICSE07ContainersTest.class);
 
     return suite;
   }

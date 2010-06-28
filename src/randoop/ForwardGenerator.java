@@ -61,9 +61,10 @@ public class ForwardGenerator extends AbstractGenerator {
   public ForwardGenerator(List<StatementKind> statements,
       List<Class<?>> coverageClasses,
       long timeMillis, int maxSequences,
-      ComponentManager componentManager, MessageSender msgSender) {
+      ComponentManager componentManager, MessageSender msgSender,
+      IStoppingCriterion stopper) {
 
-    super(statements, coverageClasses, timeMillis, maxSequences, componentManager, msgSender);
+    super(statements, coverageClasses, timeMillis, maxSequences, componentManager, msgSender, stopper);
 
     this.allSequences = new LinkedHashSet<Sequence>();
 

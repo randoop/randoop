@@ -19,7 +19,7 @@ public class NaiveGeneratorTest extends TestCase {
     
     List<StatementKind> statements = Reflection.getStatements(classes, null);
 
-    NaiveRandomGenerator gen = new NaiveRandomGenerator(statements, null, Long.MAX_VALUE, 1000000, null);
+    NaiveRandomGenerator gen = new NaiveRandomGenerator(statements, null, Long.MAX_VALUE, 1000000, null, null);
 
     gen.explore();
   }

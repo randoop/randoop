@@ -93,7 +93,7 @@ public abstract class AbstractRandoopTest extends TestCase {
     visitors.add(new RegressionCaptureVisitor());
     ComponentManager componentMgr = new ComponentManager(components);
 
-    ForwardGenerator explorer = new ForwardGenerator(model, null, getTimeLimitSeconds() * 1000, getInputLimit(), componentMgr, null);
+    ForwardGenerator explorer = new ForwardGenerator(model, null, getTimeLimitSeconds() * 1000, getInputLimit(), componentMgr, null, null);
     
     explorer.executionVisitor.visitors.addAll(visitors);
 
@@ -101,7 +101,7 @@ public abstract class AbstractRandoopTest extends TestCase {
 
     System.out.println(explorer.allSequences.size() + " inputs generated.");
 
-    List<ExecutableSequence> tests = explorer.stats.outSeqs;
+    List<ExecutableSequence> tests = explorer.outSeqs;
     if (getMode() == Mode.ERRORS) {
       System.out.println(tests.size() + " failing input" + (tests.size() > 1 || tests.size() == 0 ? "s" : "") + ".");
     }

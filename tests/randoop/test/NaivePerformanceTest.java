@@ -23,7 +23,7 @@ public class NaivePerformanceTest extends AbstractPerformanceTest {
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     Globals.nochecks = true;
-    NaiveRandomGenerator explorer = new NaiveRandomGenerator(m, null, Long.MAX_VALUE, 100000, null);
+    NaiveRandomGenerator explorer = new NaiveRandomGenerator(m, null, Long.MAX_VALUE, 100000, null, null);
     explorer.explore();
   }
 
