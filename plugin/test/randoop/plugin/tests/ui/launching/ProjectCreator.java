@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.internal.junit.buildpath.BuildPathSupport;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -229,6 +230,51 @@ public class ProjectCreator extends TestCase {
         }
       }
     }
+    
+    RandoopArgumentCollector.setCheckedJavaElements(config, availableTypes);
+    RandoopArgumentCollector.setTimeLimit(config, "" + timelimit);
+    RandoopArgumentCollector.setOutputDirectoryHandlerId(config, testFolder.getHandleIdentifier());
+    RandoopArgumentCollector.setJUnitFullyQualifiedTypeName(config, "demo.pathplanning.allTests");
+    RandoopArgumentCollector.setJUnitFullyQualifiedTypeName(config, "AllTypeTest");
+    
+    return config;
+  }
+  
+  public static ILaunchConfigurationWorkingCopy createTestConfigWithSingleClass(IJavaProject javaProject, int timelimit) throws CoreException {
+    ILaunchConfigurationType randoopType = DebugPlugin.getDefault()
+    .getLaunchManager().getLaunchConfigurationType(
+        IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
+
+    final ILaunchConfigurationWorkingCopy config = randoopType.newInstance(null, "All Type Config");
+    
+    IProject project = javaProject.getProject();
+    IFolder folder = project.getFolder(ProjectCreator.testFolderName);
+    IPackageFragmentRoot testFolder = javaProject
+        .getPackageFragmentRoot(folder);
+
+    // Search for all java elements in the project and add them to the
+    // configuration
+    List<String> availableTypes = new ArrayList<String>();
+    for (IPackageFragmentRoot pfRoot : javaProject.getPackageFragmentRoots()) {
+      if (pfRoot.getKind() == IPackageFragmentRoot.K_SOURCE) {
+        for (IJavaElement element : pfRoot.getChildren()) {
+          if (element instanceof IPackageFragment) {
+            IPackageFragment packageFragment = (IPackageFragment) element;
+            for (IJavaElement compElement : packageFragment.getChildren()) {
+              if (compElement instanceof ICompilationUnit) {
+                IType[] types = ((ICompilationUnit) compElement).getAllTypes();
+                for (IType type : types) {
+                  availableTypes.add(type.getHandleIdentifier());
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    ArrayList<String> a = new ArrayList<String>();
+    a.add(availableTypes.get(0));
     
     RandoopArgumentCollector.setCheckedJavaElements(config, availableTypes);
     RandoopArgumentCollector.setTimeLimit(config, "" + timelimit);

@@ -71,40 +71,6 @@
       </initializer>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="randoop.plugin.internal.ui.preferences.SamplePreferencePage"
-            id="randoop.plugin.ui.preferences.randoopPreferencePage"
-            name="Randoop">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-          <launchConfigurationType
-            name="Randoop Launcher"
-            delegate="randoop.plugin.internal.ui.launching.RandoopLaunchDelegate"
-            modes="run"
-            id="randoop.plugin.core.launching.gentestsType">
-      </launchConfigurationType>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
-      <launchConfigurationTypeImage
-            configTypeID="randoop.plugin.core.launching.gentestsType"
-            icon="icons/config.png"
-            id="randoop.plugin.ui.gentestsTypeImage">
-      </launchConfigurationTypeImage>
-   </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-         
-          <launchConfigurationTabGroup
-            type="randoop.plugin.core.launching.gentestsType"
-            class="randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationTabGroup"
-            id="randoop.plugin.ui.launching.gentestsTabGroup">
-      </launchConfigurationTabGroup> 
-   </extension>
-   <extension
          point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
             class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationITypeRenameParticipant"
@@ -270,13 +236,96 @@
       </compilationParticipant>
    </extension>
    <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="randoop.plugin.internal.ui.preferences.SamplePreferencePage"
+            id="randoop.plugin.ui.preferences.randoopPreferencePage"
+            name="Randoop">
+      </page>
    </extension>
    <extension
-         point="org.eclipse.jdt.core.classpathContainerInitializer">
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+          <launchConfigurationType
+            name="Randoop Launcher"
+            delegate="randoop.plugin.internal.ui.launching.RandoopLaunchDelegate"
+            modes="run"
+            id="randoop.plugin.core.launching.gentestsType">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="randoop.plugin.core.launching.gentestsType"
+            icon="icons/config.png"
+            id="randoop.plugin.ui.gentestsTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+         
+          <launchConfigurationTabGroup
+            type="randoop.plugin.core.launching.gentestsType"
+            class="randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationTabGroup"
+            id="randoop.plugin.ui.launching.gentestsTabGroup">
+      </launchConfigurationTabGroup> 
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="randoop.plugin.internal.ui.launching.RandoopLaunchShortcut"
+            icon="icons/config.png"
+            id="randoop.plugin.ui.launchin.gentestsShortcut"
+            label="Randoop Test Input"
+            modes="run">
+         <contextualLaunch>
+	         <enablement>
+		       <or>
+            <with
+                  variable="selection">
+               <and>
+                  <test
+                        property="randoop.arraylist.isAllInSameProject">
+                  </test>
+                  <iterate
+                        operator="and">
+                     <and>
+                        <adapt
+                              type="org.eclipse.jdt.core.IJavaElement">
+                           <test
+                                 property="org.eclipse.jdt.core.isInJavaProject">
+                           </test>
+                        </adapt>
+                        <test
+                              property="randoop.adaptable.isTestable">
+                        </test>
+                     </and>
+                  </iterate>
+               </and>
+            </with>
+		          <with
+		                variable="selection">
+		             <count
+		                   value="1">
+		             </count>
+		             <iterate>
+		                <and>
+		                   <test
+		                         property="org.eclipse.jdt.launching.isContainer">
+		                   </test>
+		                   <test
+		                         args="org.eclipse.jdt.core.javanature"
+		                         property="org.eclipse.jdt.launching.hasProjectNature">
+		                   </test>
+		                </and>
+		             </iterate>
+		          </with>
+		       </or>
+	         </enablement>
+         </contextualLaunch>
+         <configurationType
+               id="randoop.plugin.core.launching.gentestsType">
+         </configurationType>
+      </shortcut>
    </extension>
    <extension
          point="org.eclipse.jdt.ui.classpathFixProcessors">
@@ -285,5 +334,28 @@
             id="randoop.plugin.ui.classpathFixProcessor"
             name="Randoop Classpath Fix Processor">
       </classpathFixProcessor>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="randoop.plugin.ui.AdaptablePropertyTester"
+            id="randoop.plugin.adaptablePropertyTester"
+            namespace="randoop.adaptable"
+            properties="isTestable"
+            type="org.eclipse.core.runtime.IAdaptable">
+      </propertyTester>
+      <propertyTester
+            class="randoop.plugin.ui.ArrayListPropertyTester"
+            id="randoop.plugin.arraylistPropertyTester"
+            namespace="randoop.arraylist"
+            properties="isAllInSameProject"
+            type="java.util.ArrayList">
+      </propertyTester>
    </extension>
   </plugin>
