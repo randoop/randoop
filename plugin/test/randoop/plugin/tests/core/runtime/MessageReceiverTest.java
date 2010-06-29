@@ -9,11 +9,14 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.PlatformUI;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.tests.ui.launching.ProjectCreator;
+import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.IMessage;
 import randoop.runtime.PercentDone;
 import randoop.runtime.RandoopFinished;
@@ -41,19 +44,22 @@ public class MessageReceiverTest extends TestCase {
     	  fReceivedLast = true;
     	  return;    	  
       } else if (m instanceof PercentDone) {
-    	  assertNotNull("START message must be received before WORK", fStartMessage);
-    	  assertFalse("WORK message must not be received after DONE", fReceivedLast);
+    	  assertNotNull("RandoopStarted message must be received before PercentDone", fStartMessage);
+    	  assertFalse("PercentDone message must not be received after RandoopFinished", fReceivedLast);
     	  
     	  double pDone = ((PercentDone)m).getPercentDone();
     	  assertTrue("Percent done cannot decrease", fLastPercentDone < pDone);
     	  fLastPercentDone = pDone;
-    	  
+      } else if (m instanceof CreatedJUnitFile) {
+        CreatedJUnitFile fileCreatedMsg = (CreatedJUnitFile) m;
+        
+        System.out.println(fileCreatedMsg.getFile());
       }
     }
 
     @Override
     public void handleTermination() {
-      fail("Steam terminated unexpectedly");
+      fail("Terminated unexpectedly");
     }
     
     public boolean hasReceivedLast() {
@@ -61,14 +67,24 @@ public class MessageReceiverTest extends TestCase {
     }
   }
   
-  @Override
+  @BeforeClass
   protected void setUp() throws Exception {
     fJavaProject = ProjectCreator.createStandardDemoProject();
   }
   
-  public void testStartRandoop() throws CoreException, IOException {
-    final ILaunchConfigurationWorkingCopy config = ProjectCreator.createNewAllTypeConfig(fJavaProject, 10);
-    
+//  @Test
+//  public void generateTestsForTypesInProject() throws CoreException, IOException {
+//    ILaunchConfigurationWorkingCopy config = ProjectCreator.createNewAllTypeConfig(fJavaProject, 10);
+//    testStartRandoop(config);
+//  }
+  
+  @Test
+  public void testGenerateTestsForTypesArrayList() throws CoreException, IOException {
+    ILaunchConfigurationWorkingCopy config = ProjectCreator.createTestConfigWithSingleClass(fJavaProject, 10);
+    testStartRandoop(config);
+  }
+  
+  public void testStartRandoop(final ILaunchConfigurationWorkingCopy config) throws CoreException, IOException {
     TestMessageListener tml = new TestMessageListener();
     MessageReceiver mr = new MessageReceiver(tml);
     
