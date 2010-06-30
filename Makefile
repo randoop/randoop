@@ -70,7 +70,10 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
+randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
+
+temp:  covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
+
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -100,6 +103,12 @@ unit: bin
 	  junit.textui.TestRunner \
 	   randoop.test.AllRandoopTests
 
+# The tests run correctly under Java 1.6. Using an earlier version of
+# Java may result in test failures.
+ds-coverage: bin
+	java ${XMXHEAP} -ea \
+	  junit.textui.TestRunner \
+	   randoop.test.ICSE07ContainersTest
 
 # Runs Randoop on Collections and TreeSet.
 randoop1: bin

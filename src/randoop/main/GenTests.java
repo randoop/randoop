@@ -144,7 +144,10 @@ public class GenTests extends GenInputsAbstract {
     Randomness.reset(randomseed);
 
     java.security.Policy policy = java.security.Policy.getPolicy();
-    System.out.printf ("policy = %s%n", policy);
+    
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.printf ("policy = %s%n", policy);
+    }
 
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
@@ -234,7 +237,9 @@ public class GenTests extends GenInputsAbstract {
       Log.out.println("There are no methods to test. Exiting.");
       System.exit(1);
     }
-    System.out.println("PUBLIC MEMBERS=" + model.size());
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.println("PUBLIC MEMBERS=" + model.size());
+    }
 
     List<Class<?>> covClasses = new ArrayList<Class<?>>();
     if (coverage_instrumented_classes != null) {
@@ -259,8 +264,9 @@ public class GenTests extends GenInputsAbstract {
           FileInputStream fileos = new FileInputStream(onefile);
           ObjectInputStream objectos = new ObjectInputStream(new GZIPInputStream(fileos));
           Set<Sequence> seqset = (Set<Sequence>)objectos.readObject();
-          System.out.println("Adding " + seqset.size() + " component sequences from file "
-              + onefile);
+          if (!GenInputsAbstract.noprogressdisplay) {
+            System.out.println("Adding " + seqset.size() + " component sequences from file " + onefile);
+          }
           components.addAll(seqset);
         } catch (Exception e) {
           throw new Error(e);
@@ -271,8 +277,9 @@ public class GenTests extends GenInputsAbstract {
       for (String onefile : componentfile_txt) {
         Set<Sequence> seqset = new LinkedHashSet<Sequence>();
         Sequence.readTextSequences(onefile, seqset);
-        System.out.println("Adding " + seqset.size() + " component sequences from file "
-            + onefile);
+        if (!GenInputsAbstract.noprogressdisplay) {
+          System.out.println("Adding " + seqset.size() + " component sequences from file " + onefile);
+        }
         components.addAll(seqset);
       }
     }
@@ -315,8 +322,9 @@ public class GenTests extends GenInputsAbstract {
           componentMgr,
           null);
     }
-
-    System.out.printf ("Explorer = %s\n", explorer);
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.printf ("Explorer = %s\n", explorer);
+    }
 
     // Determine what visitors to install.
     // NOTE that order matters! Regression capture visitor
@@ -437,9 +445,10 @@ public class GenTests extends GenInputsAbstract {
       return true;
 
     // Create JUnit files containing faults.
-    System.out.println();
-    System.out.print("Creating Junit tests ("
-        + explorer.outSeqs.size() + " tests)...");
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.println();
+      System.out.print("Creating Junit tests (" + explorer.outSeqs.size() + " tests)...");
+    }
     List<ExecutableSequence> sequences = new ArrayList<ExecutableSequence>();
     for (ExecutableSequence p : explorer.outSeqs) {
       sequences.add(p);
@@ -513,8 +522,9 @@ public class GenTests extends GenInputsAbstract {
           unique_seqs.add(es);
         }
       }
-      System.out.printf ("%d subsumed tests removed%n", 
-                         sequences.size() - unique_seqs.size());
+      if (!GenInputsAbstract.noprogressdisplay) {
+        System.out.printf("%d subsumed tests removed%n", sequences.size() - unique_seqs.size());
+      }
       sequences = unique_seqs;
     }
 
@@ -598,14 +608,20 @@ public class GenTests extends GenInputsAbstract {
                                         List<ExecutableSequence> seq,
                                         MessageSender msgSender) {
 
-    System.out.printf ("Writing %d junit tests%n", seq.size());
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.printf("Writing %d junit tests%n", seq.size());
+    }
     JunitFileWriter jfw
       = new JunitFileWriter(output_dir, junit_package_name,
                             junit_classname, testsperfile);
     List<File> files = jfw.createJunitFiles(seq);
-    System.out.println();
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.println();
+    }
     for (File f : files) {
-      System.out.println("Created file: " + f.getAbsolutePath());
+      if (!GenInputsAbstract.noprogressdisplay) {
+        System.out.println("Created file: " + f.getAbsolutePath());
+      }
       if (msgSender != null) {
         msgSender.send(new CreatedJUnitFile(f));
       }

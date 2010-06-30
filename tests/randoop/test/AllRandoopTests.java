@@ -32,7 +32,6 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(DependencyTests.class);
     suite.addTestSuite(SeedSequencesTests.class);
     suite.addTestSuite(CodeFromManual.class);
-    suite.addTestSuite(ICSE07ContainersTest.class);
 
     return suite;
   }
