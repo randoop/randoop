@@ -61,6 +61,8 @@ public class RandoopLaunchDelegate extends
       ILaunch launch, IProgressMonitor monitor) throws CoreException {
     System.out.println("Begin launch");
     
+    final ILaunch theLaunch = launch;
+    
     if (monitor == null)
       monitor = new NullProgressMonitor();
 
@@ -95,8 +97,10 @@ public class RandoopLaunchDelegate extends
             try {
               viewPart = (TestGeneratorViewPart) page
                   .showView(TestGeneratorViewPart.ID);
+              assert viewPart != null; // TODO is this true?
               fMessageReceiver = new MessageReceiver(new MessageViewListener(
                   viewPart));
+              viewPart.setLaunch(theLaunch);
               fPort = fMessageReceiver.getPort();
             } catch (PartInitException e1) {
               fMessageReceiver = null;
@@ -208,6 +212,7 @@ public class RandoopLaunchDelegate extends
     String vmArgs = getVMArguments(configuration);
     ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
     vmArguments.addAll(Arrays.asList(execArgs.getVMArgumentsArray()));
+    vmArguments.add("-ea");
     programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
   }
 
@@ -238,6 +243,7 @@ public class RandoopLaunchDelegate extends
     // programArguments
     //          .add("--methodlist=" + testSetResources.getMethodFilePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
+    //programArguments.add("--noprogressdisplay");
   }
 
   private void informAndAbort(String message, Throwable exception, int code) throws CoreException {

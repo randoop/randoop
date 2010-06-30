@@ -460,7 +460,7 @@ public class NaiveRandomGenerator extends AbstractGenerator {
   }
 
   @Override
-  public long numSequences() {
+  public int numSequences() {
     return numSeqs;
   }
 

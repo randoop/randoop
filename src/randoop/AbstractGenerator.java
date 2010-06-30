@@ -14,6 +14,7 @@ import java.util.Set;
 import plume.Option;
 import plume.Pair;
 import plume.Unpublicized;
+import randoop.FailureAnalyzer.Failure;
 import randoop.experiments.SizeEqualizer;
 import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
@@ -32,17 +33,20 @@ import cov.CoverageAtom;
 
 public abstract class AbstractGenerator {
 
-  @Unpublicized @Option("Print detailed statistics after generation.")
+  @Unpublicized
+  @Option("Print detailed statistics after generation.")
   public static boolean print_stats = false;
-  @Unpublicized @Option("When branch coverage fails to increase for the given number of seconds (>0), stop generation.")
+  @Unpublicized
+  @Option("When branch coverage fails to increase for the given number of seconds (>0), stop generation.")
   public static int stop_when_plateau = -1;
-  @Unpublicized @Option ("Dump each sequence to the log file")
+  @Unpublicized
+  @Option("Dump each sequence to the log file")
   public static boolean dump_sequences = false;
 
   private final Timer timer = new Timer();
   protected final long timeMillis;
   protected final int maxSequences;
-  public final Map<CoverageAtom,Set<Sequence>> branchesToCoveringSeqs = new LinkedHashMap<CoverageAtom, Set<Sequence>>();
+  public final Map<CoverageAtom, Set<Sequence>> branchesToCoveringSeqs = new LinkedHashMap<CoverageAtom, Set<Sequence>>();
   public final MultiVisitor executionVisitor;
   public List<StatementKind> statements;
   public SequenceGeneratorStats stats;
@@ -53,15 +57,16 @@ public abstract class AbstractGenerator {
   private IStoppingCriterion stopper;
 
   /**
-   *
+   * 
    * @param statements
-   * @param covClasses can be null.
+   * @param covClasses
+   *          can be null.
    * @param timeMillis
    * @param maxSequences
-   * @param seeds can be null.
+   * @param seeds
+   *          can be null.
    */
-  public AbstractGenerator(List<StatementKind> statements,
-      List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentManager,
+  public AbstractGenerator(List<StatementKind> statements, List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentManager,
       IStoppingCriterion stopper) {
     assert statements != null;
 
@@ -113,7 +118,7 @@ public abstract class AbstractGenerator {
 
   public abstract ExecutableSequence step();
 
-  public abstract long numSequences();
+  public abstract int numSequences();
 
   /**
    * Creates and executes new sequences in a loop, using the sequences
@@ -145,6 +150,28 @@ public abstract class AbstractGenerator {
       }
       
       while (!stop()) {
+
+      if (msgSender != null) {
+        long timeSoFar = timer.getTimeElapsedMillis();
+        if (timeSoFar - timeOfLastUpdate > 250) {
+          double percentTimeDone = timeSoFar / (double) timeMillis;
+          double percentSequencesDone = numSequences() / (double) maxSequences;
+
+          /*
+           * Randoop has more than one stopping criteria. To determine how close
+           * we are to finishing, we calculate how close we are wrt the time
+           * limit, and wrt the input (sequence) limit. We report whichever is
+           * greater, but never report more than 100% (which can happen if
+           * Randoop went just a bit over before stopping).
+           */
+          double percentDone = Math.min(Math.max(percentTimeDone, percentSequencesDone), 1.0);
+
+          // Convert to percentage, between 0-100.
+          IMessage msg = new PercentDone(percentDone, numSequences(), 0);
+          msgSender.send(msg);
+          timeOfLastUpdate = timeSoFar;
+        }
+      }
 
         Coverage.clearCoverage(covClasses);
 
@@ -185,8 +212,7 @@ public abstract class AbstractGenerator {
         updateStatistics(stats, eSeq, cov, fa);
 
         if (dump_sequences) {
-          System.out.printf ("Sequence after execution:%n%s%n",
-                             eSeq.toString());
+          System.out.printf ("Sequence after execution:%n%s%n", eSeq.toString());
           System.out.printf ("allSequences.size() = %d%n", numSequences());
         }
 
@@ -195,26 +221,6 @@ public abstract class AbstractGenerator {
           Log.logLine("allSequences.size()=" + numSequences());
         }
         
-      if (msgSender != null) {
-        long timeSoFar = timer.getTimeElapsedMillis();
-        double percentTimeDone = timeSoFar / (double)timeMillis;
-        double percentSequencesDone = numSequences() / (double)maxSequences;
-
-        // Randoop has more than one stopping criteria. To determine how close we are
-        // to finishing, we calculate how close we are wrt the time limit, and wrt the
-        // input (sequence) limit. We report whichever is greater, but never report
-        // more than 100% (which can happen if Randoop went just a bit over before stopping).
-        double percentDone = Math.min(Math.max(percentTimeDone, percentSequencesDone), 1.0);
-        
-        // Send a message once a second
-        if (timeSoFar - timeOfLastUpdate > 250) {
-
-          // Convert to percentage, between 0-100.
-          IMessage msg = new PercentDone(percentDone);
-          msgSender.send(msg);
-          timeOfLastUpdate = timeSoFar;
-        }
-      }
     }
       
       if (!GenInputsAbstract.noprogressdisplay) {
@@ -233,7 +239,9 @@ public abstract class AbstractGenerator {
       System.out.println("Average method execution time (exceptional termination):" + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
 
       if (msgSender != null) {
-        IMessage msg = new RandoopFinished();
+	IMessage msg = new PercentDone(1.0, numSequences(), 0);
+	msgSender.send(msg);
+        msg = new RandoopFinished();
         msgSender.send(msg);
         msgSender.close();
       }
@@ -260,6 +268,23 @@ public abstract class AbstractGenerator {
       addedToOutSeqs = true;
     }
 
+    if (msgSender != null) {
+      if (fa.getFailures().size() > 0) {
+        for (Failure f : fa.getFailures()) {
+          int fidx = es.getFailureIndex();
+          assert fidx >= 0;
+          Check failure = es.getFailures(fidx).get(0);
+          String description = failure.getClass().toString();
+          if (failure instanceof ObjectCheck) {
+            ObjectCheck objCheck = (ObjectCheck)failure;
+            description = objCheck.contract.getClass().toString();
+          }
+          ErrorRevealed msg = new ErrorRevealed(es.toCodeString(), description);
+          msgSender.send(msg);
+        }
+      }
+    }
+
     boolean counted = false;
     for (FailureAnalyzer.Failure failure : fa.getFailures()) {
 
@@ -268,12 +293,10 @@ public abstract class AbstractGenerator {
         counted = true;
       }
 
-      if (errors.add(new Pair<StatementKind,Class<?>>(failure.st, failure.viocls))) {
+      if (errors.add(new Pair<StatementKind, Class<?>>(failure.st, failure.viocls))) {
 
-        if (!addedToOutSeqs
-            && (GenInputsAbstract.output_nonexec || !es.hasNonExecutedStatements())
-            && (GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail)
-                || GenInputsAbstract.output_tests.equals(GenInputsAbstract.all))) {
+        if (!addedToOutSeqs && (GenInputsAbstract.output_nonexec || !es.hasNonExecutedStatements())
+            && (GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail) || GenInputsAbstract.output_tests.equals(GenInputsAbstract.all))) {
           outSeqs.add(es);
         }
 
@@ -301,7 +324,7 @@ public abstract class AbstractGenerator {
       if (member instanceof Method) {
         // Atom belongs to a method.
         // Add to method stats (and implicitly, global stats).
-        Method method = (Method)member;
+        Method method = (Method) member;
         stats.addToCount(RMethod.getRMethod(method), SequenceGeneratorStats.STAT_BRANCHCOV, 1);
         continue;
       }
@@ -309,7 +332,7 @@ public abstract class AbstractGenerator {
       // Atom belongs to a constructor.
       // Add to constructor stats (and implicitly, global stats).
       assert member instanceof Constructor<?> : member.toString();
-      Constructor<?> cons = (Constructor<?>)member;
+      Constructor<?> cons = (Constructor<?>) member;
       stats.addToCount(RConstructor.getRConstructor(cons), SequenceGeneratorStats.STAT_BRANCHCOV, 1);
     }
 
@@ -330,8 +353,7 @@ public abstract class AbstractGenerator {
         continue;
       }
 
-      stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_EXECUTION_TIME, o
-          .getExecutionTime());
+      stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_EXECUTION_TIME, o.getExecutionTime());
 
       if (o instanceof NormalExecution) {
         stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_NORMAL, 1);
@@ -343,18 +365,13 @@ public abstract class AbstractGenerator {
 
       Class<?> exceptionClass = exc.getException().getClass();
       Integer count = stats.exceptionTypes.get(exceptionClass);
-      stats.exceptionTypes.put(exceptionClass.getPackage().toString() + "." + exceptionClass.getSimpleName(),
-          count == null ? 1 : count
-              .intValue() + 1);
+      stats.exceptionTypes.put(exceptionClass.getPackage().toString() + "." + exceptionClass.getSimpleName(), count == null ? 1 : count.intValue() + 1);
 
-      if (exc.getException() instanceof StackOverflowError
-          || exc.getException() instanceof OutOfMemoryError) {
-        stats.addToCount(statement,
-            SequenceGeneratorStats.STAT_STATEMENT_EXCEPTION_RESOURCE_EXHAUSTION, 1);
+      if (exc.getException() instanceof StackOverflowError || exc.getException() instanceof OutOfMemoryError) {
+        stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_EXCEPTION_RESOURCE_EXHAUSTION, 1);
 
       } else if (exc.getException() instanceof TimeoutExceeded) {
-        stats.addToCount(statement,
-            SequenceGeneratorStats.STAT_STATEMENT_EXCEPTION_TIMEOUT_EXCEEDED, 1);
+        stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_EXCEPTION_TIMEOUT_EXCEEDED, 1);
       } else {
         stats.addToCount(statement, SequenceGeneratorStats.STAT_STATEMENT_EXCEPTION_OTHER, 1);
       }
@@ -366,16 +383,14 @@ public abstract class AbstractGenerator {
     // statement = MethodCall.getDefaultStatementInfo(sm.getMethod());
     // }
     if (es.hasNonExecutedStatements()) {
-      stats.addToCount(statement,
-          SequenceGeneratorStats.STAT_SEQUENCE_STOPPED_EXEC_BEFORE_LAST_STATEMENT, 1);
+      stats.addToCount(statement, SequenceGeneratorStats.STAT_SEQUENCE_STOPPED_EXEC_BEFORE_LAST_STATEMENT, 1);
       return;
     }
 
     ExecutionOutcome o = es.getResult(es.sequence.size() - 1);
 
     if (o instanceof ExceptionalExecution) {
-      stats.addToCount(statement, SequenceGeneratorStats.STAT_SEQUENCE_OTHER_EXCEPTION_LAST_STATEMENT,
-          1);
+      stats.addToCount(statement, SequenceGeneratorStats.STAT_SEQUENCE_OTHER_EXCEPTION_LAST_STATEMENT, 1);
       return;
     }
 
@@ -383,13 +398,12 @@ public abstract class AbstractGenerator {
     stats.addToCount(statement, SequenceGeneratorStats.STAT_SEQUENCE_EXECUTED_NORMALLY, 1);
   }
 
-  
   /**
    * Returns the set of sequences that are used as inputs in other sequences
-   * (and can thus be thought of as subsumed by another sequence).  This should
+   * (and can thus be thought of as subsumed by another sequence). This should
    * only be called for subclasses that support this.
    */
   public Set<Sequence> subsumed_sequences() {
-    throw new Error ("subsumed_sequences not supported for " + this.getClass());
+    throw new Error("subsumed_sequences not supported for " + this.getClass());
   }
 }

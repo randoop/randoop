@@ -35,3 +35,6 @@ Randoop uses the Java port of the GNU getopt library, which is copyright
 1998 Aaron M. Renn. The getopt library is free software, and may be
 redistributed or modified under the terms of the GNU Library General
 Public License version 2.
+
+The Randoop plugin uses the Silk icon set created by Mark James
+(http://www.famfamfam.com/lab/icons/silk/).
