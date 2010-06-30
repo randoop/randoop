@@ -17,7 +17,7 @@ import java.io.Serializable;
  * 
  * <p>
  *
- * A check implements two methods that specify the code to be *
+ * A check implements two methods that specify the code to be
  * emitted before and/or after a statement in a <code>Sequence</code>
  * is executed.
  *
@@ -65,4 +65,5 @@ public interface Check extends Serializable {
    * otherwise.
    */
   boolean evaluate(Execution execution);
+  
 }

@@ -66,7 +66,7 @@ public class RandoopProgressBar extends Canvas {
       }
     });
     Display display = parent.getDisplay();
-    fFailureColor = new Color(display, 159, 63, 63);
+    fFailureColor = new Color(display, 159, 80, 80);
     fOKColor = new Color(display, 95, 191, 95);
     fStoppedColor = new Color(display, 120, 120, 120);
   }
@@ -91,7 +91,7 @@ public class RandoopProgressBar extends Canvas {
 
   private int scale() {
     Rectangle r = getClientArea();
-    return (int) (fPercentDone * (r.width - 2));
+    return (int) (fPercentDone * r.width - 2);
   }
 
   private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topleft,
@@ -117,7 +117,9 @@ public class RandoopProgressBar extends Canvas {
 
     setStatusColor(gc);
     fColorBarWidth = Math.min(rect.width - 2, fColorBarWidth);
-    gc.fillRectangle(1, 1, fColorBarWidth, rect.height - 2);
+    if (fColorBarWidth > 0) {
+      gc.fillRectangle(1, 1, fColorBarWidth, rect.height - 2);
+    }
   }
 
   @Override
@@ -137,14 +139,19 @@ public class RandoopProgressBar extends Canvas {
 
     fColorBarWidth = scale();
 
-    if (fColorBarWidth >= (getClientArea().width - 2))
+    if (fColorBarWidth >= (getClientArea().width - 2)) {
       fColorBarWidth = getClientArea().width - 1;
-
+    }
     paintStep(x, fColorBarWidth);
   }
   
   public void stop() {
     fStopped = true;
+    redraw();
+  }
+  
+  public void error() {
+    fError = true;
     redraw();
   }
 

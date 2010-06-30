@@ -1,26 +1,31 @@
 package randoop.plugin.internal.ui.views;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.part.ViewPart;
 
-/**
- * This sample class demonstrates how to plug-in a new workbench view. The view
- * shows data obtained from the model. The sample creates a dummy model on the
- * fly, but a real implementation would connect to the model available either in
- * this or another plug-in (e.g. the workspace). The view is connected to the
- * model using a content provider.
- * <p>
- * The view uses a label provider to define how model objects should be
- * presented in the view. Each view can present the same model objects using
- * different labels and icons, if needed. Alternatively, a single label provider
- * can be shared between views in order to ensure that objects of the same type
- * are presented in the same way everywhere.
- * <p>
- */
+import randoop.ErrorRevealed;
+import randoop.plugin.RandoopPlugin;
 
 public class TestGeneratorViewPart extends ViewPart {
   /**
@@ -28,14 +33,23 @@ public class TestGeneratorViewPart extends ViewPart {
    */
   public static final String ID = "randoop.plugin.ui.views.TestGeneratorViewPart"; //$NON-NLS-1$
 
+  private TreeViewer viewer;
   private Composite fParent;
+  private CounterPanel fCounterPanel;
   private RandoopProgressBar fProgressBar;
+
+  Map<String, Set<ErrorRevealed>> errors;
+
+  RandoopErrors randoopErrors;
+
+  ILaunch launch;
+
+  Action relaunchAction;
 
   /**
    * The constructor.
    */
   public TestGeneratorViewPart() {
-
   }
 
   /**
@@ -46,28 +60,77 @@ public class TestGeneratorViewPart extends ViewPart {
   public void createPartControl(Composite parent) {
     fParent = parent;
 
-    Composite composite = new Composite(fParent, SWT.NONE);
     GridLayout layout = new GridLayout();
-    composite.setLayout(layout);
+    layout.marginWidth = 3;
+    layout.marginHeight = 3;
+    layout.horizontalSpacing = 3;
+    layout.numColumns = 1;
+    parent.setLayout(layout);
 
-    fProgressBar = new RandoopProgressBar(composite);
-    fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-        | GridData.HORIZONTAL_ALIGN_FILL));
+    fCounterPanel = new CounterPanel(parent);
+    fCounterPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+    fProgressBar = new RandoopProgressBar(parent);
+    fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+
+    errors = new LinkedHashMap<String, Set<ErrorRevealed>>();
+
+    Label errTitle = new Label(fParent, SWT.NONE);
+    errTitle.setText("Errors:");
+    
+    
+    viewer = new TreeViewer(parent);
+    randoopErrors = new RandoopErrors(errors);
+    randoopErrors.viewPart = this;
+    viewer.setContentProvider(randoopErrors);
+    viewer.setLabelProvider(new RandoopLabelProvider());
+    viewer.setInput(errors);
+    GridData gd = new GridData();
+    gd.grabExcessHorizontalSpace = true;
+    gd.grabExcessVerticalSpace = true;
+    gd.horizontalAlignment = SWT.FILL;
+    gd.verticalAlignment = SWT.FILL;
+    viewer.getControl().setLayoutData(gd);
+    viewer.addDoubleClickListener(randoopErrors);
+
+    createActions();
+    createToolBar();
+  }
+
+  private void createActions() {
+    relaunchAction = new Action("Rerun last launch") {
+      public void run() {
+        ILaunchConfiguration config = launch.getLaunchConfiguration();
+        assert config != null; // TODO right?
+        String mode = launch.getLaunchMode();
+        assert mode != null; // TODO right?
+        DebugUITools.launch(config, mode);
+      }
+    };
+
+    // TODO dispose?
+    ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/arrow_redo.png");
+    relaunchAction.setImageDescriptor(desc);
+  }
+
+  private void createToolBar() {
+    IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+    mgr.add(relaunchAction);
+  }
+
+  public CounterPanel getCounterPanel() {
+    return fCounterPanel;
   }
 
   public RandoopProgressBar getProgressBar() {
     return fProgressBar;
   }
 
-  private void showMessage(String message) {
-    MessageDialog.openInformation(fParent.getShell(), "Randoop View", message);
-  }
-
-  /**
-   * Passing the focus request to the viewer's control.
-   */
+  // TODO what is the right thing to do here?
   @Override
   public void setFocus() {
-    // viewer.getControl().setFocus();
+  }
+
+  public void setLaunch(ILaunch launch) {
+    this.launch = launch;
   }
 }

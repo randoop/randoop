@@ -13,11 +13,23 @@ public class PercentDone implements IMessage {
    */
   private final double percentDone;
 
-  public PercentDone(double percentDone) {
+  private final int sequencesGenerated;
+
+  private final int errorsRevealed;
+
+  public PercentDone(double percentDone, int sequencesGenerated, int errorsRevealed) {
     if (percentDone < 0 || percentDone > 100) {
       throw new IllegalArgumentException("percentDone outside range [0,100]");
     }
+    if (sequencesGenerated < 0) {
+      throw new IllegalArgumentException("sequencesGenerated is negative");
+    }
+    if (errorsRevealed < 0) {
+      throw new IllegalArgumentException("errorsRevealed is negative");
+    }
     this.percentDone = percentDone;
+    this.sequencesGenerated = sequencesGenerated;
+    this.errorsRevealed = errorsRevealed;
   }
 
   /**
@@ -26,5 +38,13 @@ public class PercentDone implements IMessage {
    */
   public double getPercentDone() {
     return percentDone;
+  }
+
+  public int getSequencesGenerated() {
+    return sequencesGenerated;
+  }
+
+  public int getNumErrors() {
+    return errorsRevealed;
   }
 }
