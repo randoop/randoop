@@ -1,130 +1,49 @@
 package randoop.plugin.internal.ui.wizards;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWizard;
 
-public class RandoopLaunchConfigurationWizard implements IWizard {
-  IWizardContainer fWizardContainer;
-  
-  @Override
-  public void addPages() {
-    // TODO Auto-generated method stub
-  }
+public class RandoopLaunchConfigurationWizard extends Wizard implements IWorkbenchWizard {
+  protected static final String DIALOG_SETTINGS_KEY = "RandoopWizard"; //$NON-NLS-1$
 
-  @Override
-  public boolean canFinish() {
-    // TODO Auto-generated method stub
-    return false;
-  }
+  IWizardPage fMainPage;
+  IWizardPage fTestInputsPage;
 
-  @Override
-  public void createPageControls(Composite pageContainer) {
-    // TODO Auto-generated method stub
-    
-  }
+  private IWorkbench fWorkbench;
 
-  @Override
-  public void dispose() {
-    // TODO Auto-generated method stub
-    
-  }
+  private IStructuredSelection fSelection;
 
-  @Override
-  public IWizardContainer getContainer() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+  public RandoopLaunchConfigurationWizard() {
+    super();
 
-  @Override
-  public Image getDefaultPageImage() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    fMainPage = new MainPage("Main");
+    fTestInputsPage = new TestInputsPage("Test Inputs");
+    fTestInputsPage.setPreviousPage(fMainPage);
 
-  @Override
-  public IDialogSettings getDialogSettings() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    addPage(fMainPage);
+    addPage(fTestInputsPage);
 
-  @Override
-  public IWizardPage getNextPage(IWizardPage page) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    setNeedsProgressMonitor(true);
+    setHelpAvailable(true);
 
-  @Override
-  public IWizardPage getPage(String pageName) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public int getPageCount() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public IWizardPage[] getPages() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IWizardPage getPreviousPage(IWizardPage page) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IWizardPage getStartingPage() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public RGB getTitleBarColor() {
-    return new RGB(167, 215, 250);
-  }
-
-  @Override
-  public String getWindowTitle() {
-    return "New Randoop Launch Configuration";
-  }
-
-  @Override
-  public boolean isHelpAvailable() {
-    return false;
-  }
-
-  @Override
-  public boolean needsPreviousAndNextButtons() {
-    return false;
-  }
-
-  @Override
-  public boolean needsProgressMonitor() {
-    return true;
-  }
-
-  @Override
-  public boolean performCancel() {
-    return false;
+    setTitleBarColor(new RGB(167, 215, 250));
+    setWindowTitle("New Randoop Launch Configuration");
   }
 
   @Override
   public boolean performFinish() {
+    // TODO Auto-generated method stub
     return false;
   }
 
   @Override
-  public void setContainer(IWizardContainer wizardContainer) {
-    fWizardContainer = wizardContainer;
+  public void init(IWorkbench workbench, IStructuredSelection selection) {
+    fWorkbench = workbench;
+    fSelection = selection;
   }
 }
