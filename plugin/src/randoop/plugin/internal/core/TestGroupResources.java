@@ -10,6 +10,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,6 +22,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
@@ -32,8 +34,7 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
  * generating the test files.
  */
 public class TestGroupResources {
-  public static final IPath TEMP_PATH = RandoopPlugin.getDefault()
-                                            .getStateLocation().append("/temp"); //$NON-NLS-1$
+  public static final IPath TEMP_PATH = RandoopPlugin.getDefault().getStateLocation().append("/temp"); //$NON-NLS-1$
   public static final String METHODS_FILE = "methods"; //$NON-NLS-1$
 
   private RandoopArgumentCollector fArguments;
@@ -79,16 +80,45 @@ public class TestGroupResources {
       FileWriter fw = new FileWriter(fMethodsFile);
       BufferedWriter bw = new BufferedWriter(fw);
       
-      List<IMethod> methods = fArguments.getCheckedMethods();
+      List<IMethod> methods = fArguments.getSelectedMethods();
       
       for (IMethod method : methods) {
-        if(method.isConstructor()) {
-          bw.write("cons : ");
+        boolean isConstructor = method.isConstructor();
+        
+        if(isConstructor) {
+          bw.write("cons : "); //$NON-NLS-1$
         } else {
-          bw.write("method : ");
+          bw.write("method : "); //$NON-NLS-1$
         }
         
+        bw.write(method.getDeclaringType().getFullyQualifiedName());
+        bw.write('.');
+        bw.write(method.getElementName());
+        if(isConstructor) {
+          bw.write("<init>"); //$NON-NLS-1$
+        }
+        bw.write('(');
+        
+        String[] parameters = method.getParameterTypes();
+        for(int i=0;i<parameters.length;i++) {
+          String parameter = Signature.toString(parameters[i]);
+          IType type = method.getDeclaringType();
+          String[][] types = type.resolveType(parameter);
+          Assert.isNotNull(types, parameter + " could not be resolved in type " + type.getElementName());
+          
+          // Write the first type that was resolved
+          bw.write(types[0][0]); // the package name
+          bw.write('.');
+          bw.write(types[0][1]); // the class name 
+          
+          if (i < parameters.length - 1) {
+            bw.write(',');
+          }
+        }
+        bw.write(')');
+        
         bw.newLine();
+        bw.flush();
       }
       
       bw.close();
@@ -118,10 +148,10 @@ public class TestGroupResources {
       HashSet<IJavaProject> usedProjects = new HashSet<IJavaProject>();
       
       // Find projects containing the types and methods to be tested
-      for (IType type : fArguments.getCheckedTypes()) {
+      for (IType type : fArguments.getSelectedTypes()) {
         usedProjects.add(type.getJavaProject());
       }
-      for (IMethod method : fArguments.getCheckedMethods()) {
+      for (IMethod method : fArguments.getSelectedMethods()) {
         usedProjects.add(method.getJavaProject());
       }
       
@@ -223,7 +253,7 @@ public class TestGroupResources {
       }
       return findClasspaths(resolved, classpaths);
     case IClasspathEntry.CPE_CONTAINER:
-      // XXX implement this
+      // TODO: Implement this
       return StatusFactory.createOkStatus();
     default:
       return StatusFactory.createErrorStatus("Unknown entry kind");

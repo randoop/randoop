@@ -41,11 +41,11 @@ public class IRandoopLaunchConfigurationConstants {
   
   static final String ATTR_USE_LOCAL_TEMP_FOLDER = RandoopPlugin.getPluginId() +  ".USE_LOCAL_TEMP_FOLDER"; //$NON-NLS-1$
   
-  static final String ATTR_TEMP_FOLDER = RandoopPlugin.getPluginId() + ".TEMP_FOLDER"; //$NON-NLS-1$
+  static final String ATTR_AVAILABLE_TYPES = RandoopPlugin.getPluginId() + ".AVAILABLE_TYPES"; //$NON-NLS-1$
   
-  static final String ATTR_ALL_JAVA_TYPES = RandoopPlugin.getPluginId() + ".ALL_JAVA_TYPES"; //$NON-NLS-1$
+  static final String ATTR_SELECTED_TYPES = RandoopPlugin.getPluginId() + ".SELECTED_TYPES"; //$NON-NLS-1$
   
-  static final String ATTR_CHECKED_JAVA_ELEMENTS = RandoopPlugin.getPluginId() + ".CHECKED_JAVA_ELEMENTS"; //$NON-NLS-1$
+  static final String ATTR_SELECTED_METHODS = RandoopPlugin.getPluginId() + ".SELECTED_METHODS"; //$NON-NLS-1$
   
   static final String DEFAULT_RANDOM_SEED = "0"; //$NON-NLS-1$
   
@@ -78,6 +78,5 @@ public class IRandoopLaunchConfigurationConstants {
   static final String DEFAULT_OUTPUT_DIRECTORY = ""; //$NON-NLS-1$
 
   static final String DEFUALT_USE_LOCAL_TEMP_FOLDER = "false"; //$NON-NLS-1$
-
-  static final String DEFAULT_TEMP_FOLDER = "randoop-tmp/"; //$NON-NLS-1$
+  
 }

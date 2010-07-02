@@ -7,13 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
@@ -29,7 +33,8 @@ import randoop.plugin.RandoopPlugin;
  * show the methods that are contained.
  */
 public class TypeSelector {
-  private Map<String, TreeItem> fTreeItemsByHandlerId;
+  private static final String HANDLER_ID = "TypeSelector.HANDLER_ID"; //$NON-NLS-1$
+  
   private Tree fTypeTree;
 
   /**
@@ -38,11 +43,13 @@ public class TypeSelector {
    * 
    * @param typeTree
    *          tree that can be used to display elements
+   * @param selectedMethods 
+   * @param selectedTypes 
+   * @param availableTypes 
    */
   public TypeSelector(Tree typeTree) {
     Assert.isNotNull(typeTree);
 
-    fTreeItemsByHandlerId = new HashMap<String, TreeItem>();
     fTypeTree = typeTree;
     fTypeTree.removeAll();
 
@@ -66,35 +73,22 @@ public class TypeSelector {
    * @param emptyTree
    *          empty tree that can be used to add
    */
-  public TypeSelector(Tree emptyTree, Collection<String> allTypes,
-      Collection<String> checkedElements) {
+  public TypeSelector(Tree emptyTree, Collection<String> availableTypes, Collection<String> selectedTypes, Collection<String> selectedMethods) {
     this(emptyTree);
 
-    for (String id : allTypes) {
+    for (String id : availableTypes) {
       IJavaElement element = JavaCore.create(id);
-      if (element instanceof IType) {
-        IType type = (IType) element;
+      
+      Assert.isTrue(element instanceof IType);
+      IType type = (IType) element;
 
-        addType(type, false);
-      }
-    }
-
-    // Iterate through the checked elements and check the corresponding elements
-    // in the Tree
-    for (String id : checkedElements) {
-      IJavaElement element = JavaCore.create(id);
-      if (element instanceof IType) {
-        IType type = (IType) element;
-        String handlerId = type.getHandleIdentifier();
-
-        TreeItem typeTreeItem = fTreeItemsByHandlerId.get(handlerId);
-        setChecked(typeTreeItem, true);
-      } else if (element instanceof IMethod) {
-        IMethod method = (IMethod) element;
-        String handlerId = method.getHandleIdentifier();
-
-        TreeItem methodTreeItem = fTreeItemsByHandlerId.get(handlerId);
-        setChecked(methodTreeItem, true);
+      TreeItem typeItem = addType(type, selectedTypes.contains(id));
+      for (TreeItem methodItem : typeItem.getItems()) {
+        Object methodId = methodItem.getData(HANDLER_ID);
+        if (selectedMethods.contains(methodId)) {
+          methodItem.setChecked(true);
+          updateTree(methodItem);
+        }
       }
     }
   }
@@ -104,54 +98,95 @@ public class TypeSelector {
    * children to this tree.
    * 
    * @param type
+   * @return the <code>TreeItem</code> added to the <code>Tree</code> or
+   *         <code>null</code> if it was not added
    */
   public TreeItem addType(IType type, boolean checked) {
-    TreeItem root = new TreeItem(fTypeTree, SWT.NONE);
-    root.setText(type.getFullyQualifiedName());
-    fTreeItemsByHandlerId.put(type.getHandleIdentifier(), root);
-
     // XXX set images for different types and methods
     try {
+      TreeItem root = new TreeItem(fTypeTree, SWT.NONE);
+      
+      Image image = null;
+      if (type.isInterface()) {
+        image = JavaUI.getSharedImages().getImage(
+            ISharedImages.IMG_OBJS_INTERFACE);
+      } else if (type.isEnum()) {
+        image = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_ENUM);
+      } else if (type.isClass()) {
+        image = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
+      }
+      
+      if (image != null) {
+        root.setImage(image);
+      }
+
+      root.setText(type.getFullyQualifiedName());
+      root.setData(HANDLER_ID, type.getHandleIdentifier());
+
       IMethod[] methods = type.getMethods();
       for (IMethod m : methods) {
         TreeItem methodItem = new TreeItem(root, SWT.NONE);
-        methodItem.setText(Signature.toString(m.getSignature(), m
-            .getElementName(), null, false, true));
+        methodItem.setText(Signature.toString(m.getSignature(),
+            m.getElementName(), null, false, true));
 
-        fTreeItemsByHandlerId.put(m.getHandleIdentifier(), methodItem);
+        int flags = m.getFlags();
+        if (Flags.isPublic(flags)) {
+          image = JavaUI.getSharedImages().getImage(
+              ISharedImages.IMG_OBJS_PUBLIC);
+        } else if (Flags.isPrivate(flags)) {
+          image = JavaUI.getSharedImages().getImage(
+              ISharedImages.IMG_OBJS_PRIVATE);
+        } else if (Flags.isProtected(flags)) {
+          image = JavaUI.getSharedImages().getImage(
+              ISharedImages.IMG_OBJS_PROTECTED);
+        } else {
+          image = JavaUI.getSharedImages().getImage(
+              ISharedImages.IMG_OBJS_DEFAULT);
+        }
+
+        methodItem.setImage(image);
+        methodItem.setData(HANDLER_ID, m.getHandleIdentifier());
       }
+
+      setChecked(root, checked);
+      return root;
+      
     } catch (JavaModelException e) {
       RandoopPlugin.log(e);
+      return null;
     }
-
-    setChecked(root, checked);
-    return root;
   }
 
   /**
    * 
-   * @return list of handlers for types that are fully checked
+   * @return list of handlers for types that are fully checked (not grayed)
    */
-  public List<String> getCheckedHandlerIds() {
+  public List<String> getSelectedTypes() {
     List<String> types = new ArrayList<String>();
 
-    for (String id : fTreeItemsByHandlerId.keySet()) {
-      TreeItem item = fTreeItemsByHandlerId.get(id);
+    for(TreeItem item : fTypeTree.getItems()) {
+      if(item.getChecked() && !item.getGrayed()) {
+        types.add((String) item.getData(HANDLER_ID));
+      }
+    }
 
-      if (item.getChecked()) {
-        // If the parent item is null, then this must be a type
-        if (item.getParentItem() == null) {
-          // Put this type's handler ID in the list
-          if (!item.getGrayed()) {
-            types.add(id);
-          }
-        } else {
-          // Otherwise, this is a method. Only methods contained by unchecked
-          // types should be added, so check if the parent is checked
-          if (item.getParentItem().getChecked()
-              && item.getParentItem().getGrayed()) {
-            // Put this method's handler ID in the list
-            types.add(id);
+    return types;
+  }
+
+  /**
+   * Returns a list of <code>IMethod</code>s that are checked, but whose
+   * containing types are grayed.
+   * 
+   * @return list
+   */
+  public List<String> getSelectedMethods() {
+    List<String> types = new ArrayList<String>();
+
+    for(TreeItem item : fTypeTree.getItems()) {
+      for (TreeItem child : item.getItems()) {
+        if (child.getChecked() && !child.getGrayed()) {
+          if (child.getParentItem().getGrayed()) {
+            types.add((String) child.getData(HANDLER_ID));
           }
         }
       }
@@ -159,20 +194,14 @@ public class TypeSelector {
 
     return types;
   }
-
-  public List<String> getAllTypeHandlerIds() {
+  
+  public List<String> getAllTypes() {
     List<String> types = new ArrayList<String>();
 
-    for (String id : fTreeItemsByHandlerId.keySet()) {
-      TreeItem item = fTreeItemsByHandlerId.get(id);
-
-      // If the parent item is null, then this must be a type
-      if (item.getParentItem() == null) {
-        // Put this type's handler ID in the list
-        types.add(id);
-      }
+    for (TreeItem item : fTypeTree.getItems()) {
+      types.add((String) item.getData(HANDLER_ID));
     }
-
+    
     return types;
   }
 
@@ -246,6 +275,7 @@ public class TypeSelector {
         }
       }
     }
+    
     parent.setChecked(parentChecked);
     parent.setGrayed(parentGrayed);
     checkPath(parent.getParentItem(), childChecked, childGrayed);
@@ -271,6 +301,76 @@ public class TypeSelector {
     }
   }
 
+  private TreeItem[] getSelectedRoots() {
+    TreeItem[] items = fTypeTree.getSelection();
+    List<TreeItem> roots = new ArrayList<TreeItem>();
+
+    for (TreeItem item : items) {
+      // Only move root elements
+      if (item.getParentItem() == null) {
+        roots.add(item);
+      }
+    }
+
+    return roots.toArray(new TreeItem[roots.size()]);
+  }
+  
+  public void moveSelectedTypesUp() {
+    moveSelectedTypes(true);
+  }
+
+  public void moveSelectedTypesDown() {
+    moveSelectedTypes(false);
+  }
+  
+  private void moveSelectedTypes(boolean up) {
+    TreeItem[] selectedRoots = getSelectedRoots();
+    Map<TreeItem, TreeItem> newItemsByDisposedItems = new HashMap<TreeItem, TreeItem>();
+
+    if (up) {
+      for (int i = 0; i < selectedRoots.length; i++) {
+        moveItem(selectedRoots[i], true, newItemsByDisposedItems);
+      }
+    } else {
+      for (int i = selectedRoots.length - 1; i >= 0; i--) {
+        moveItem(selectedRoots[i], false, newItemsByDisposedItems);
+      }
+    }
+
+    // Update the TreeItems mapped to by the HandlerId map
+    System.out.println("done!!");
+  }
+  
+  private TreeItem moveItem(TreeItem oldItem, boolean up, Map<TreeItem, TreeItem> newItemsByDisposedItems) {
+    int index = fTypeTree.indexOf(oldItem);
+    TreeItem children[] = oldItem.getItems();
+    
+    int direction = up ? -1 : 2;
+    TreeItem newItem = new TreeItem(fTypeTree, SWT.NONE, index + direction);
+    newItem.setChecked(oldItem.getChecked());
+    newItem.setGrayed(oldItem.getGrayed());
+    newItem.setText(oldItem.getText());
+    newItem.setImage(oldItem.getImage());
+    newItem.setExpanded(oldItem.getExpanded());
+    newItem.setData(HANDLER_ID, oldItem.getData(HANDLER_ID));
+
+    for (TreeItem oldChild : children) {
+      TreeItem newChild = new TreeItem(newItem, SWT.NONE);
+      newChild.setChecked(oldChild.getChecked());
+      newChild.setText(oldChild.getText());
+      newChild.setImage(oldChild.getImage());
+      newChild.setData(HANDLER_ID, oldChild.getData(HANDLER_ID));
+      
+      oldChild.dispose();
+      newItemsByDisposedItems.put(oldChild, newChild);
+    }
+    
+    oldItem.dispose();
+    newItemsByDisposedItems.put(oldItem, newItem);
+    
+    return newItem;
+  }
+
   public void removeSelectedTypes() {
     TreeItem[] items = fTypeTree.getSelection();
 
@@ -279,21 +379,6 @@ public class TypeSelector {
       if (item.getParentItem() == null) {
         item.dispose();
       }
-    }
-
-    // Find the keys for the TreeItems that have been disposed and add them to a
-    // list
-    List<String> disposables = new ArrayList<String>();
-    for (String id : fTreeItemsByHandlerId.keySet()) {
-      TreeItem item = fTreeItemsByHandlerId.get(id);
-      if (item.isDisposed()) {
-        disposables.add(id);
-      }
-    }
-
-    // remove the TreeItems that have been disposed
-    for (String id : disposables) {
-      fTreeItemsByHandlerId.remove(id);
     }
   }
 }

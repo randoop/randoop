@@ -221,7 +221,7 @@ public class RandoopLaunchDelegate extends
     RandoopArgumentCollector args = testSetResources.getArguments();
     programArguments.add("gentests"); //$NON-NLS-1$
 
-    for (IType type : args.getCheckedTypes()) {
+    for (IType type : args.getSelectedTypes()) {
       programArguments.add("--testclass=" + type.getFullyQualifiedName()); //$NON-NLS-1$
     }
 
@@ -239,9 +239,7 @@ public class RandoopLaunchDelegate extends
     programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$
     programArguments.add("--outputlimit=" + args.getMaxTestsWritten());//$NON-NLS-1$
     programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
-    // if (testSetResources.getMethodFilePath() != null) // XXX Write the method writing method
-    // programArguments
-    //          .add("--methodlist=" + testSetResources.getMethodFilePath());//$NON-NLS-1$
+    programArguments.add("--methodlist=" + testSetResources.getMethodFile().getAbsolutePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
     //programArguments.add("--noprogressdisplay");
   }

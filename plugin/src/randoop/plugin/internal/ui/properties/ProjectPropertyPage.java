@@ -11,7 +11,7 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
-import org.eclipse.jdt.internal.debug.ui.SWTFactory;
+import org.eclipse.debug.internal.ui.SWTFactory;
 
 import randoop.plugin.RandoopPlugin;
 
