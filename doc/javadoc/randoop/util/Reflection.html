@@ -1,0 +1,1117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Reflection
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Reflection";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../randoop/util/RecordProcessor.html" title="interface in randoop.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../randoop/util/Reflection.Match.html" title="enum in randoop.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?randoop/util/Reflection.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Reflection.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop.util</FONT>
+<BR>
+Class Reflection</H2>
+<PRE>
+Object
+  <IMG SRC="../../resources/inherit.gif" ALT="extended by "><B>Reflection</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>Reflection</B><DT>extends Object</DL>
+</PRE>
+
+<P>
+Utility methods that operate on reflection objects (classes, methods, etc.).
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by methods that that a java.lang.Class<?> object as
+ argument and use it to compute something based on it.</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#num_times_canBeUsedAs_called">num_times_canBeUsedAs_called</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Comparator&lt;Member&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#SORT_MEMBERS_BY_NAME">SORT_MEMBERS_BY_NAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#canBePassedAsArgument(java.lang.Object, java.lang.Class)">canBePassedAsArgument</A></B>(Object&nbsp;inputObject,
+                      Class&lt;?&gt;&nbsp;parameterType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns whether the input can be used as argument for the specified parameter type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#canBeUsedAs(java.lang.Class, java.lang.Class)">canBeUsedAs</A></B>(Class&lt;?&gt;&nbsp;c1,
+            Class&lt;?&gt;&nbsp;c2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks if an object of class c1 can be used as an object of class c2.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#checkArgumentTypes(java.lang.Object[], java.lang.Class[], java.lang.Object)">checkArgumentTypes</A></B>(Object[]&nbsp;inputs,
+                   Class&lt;?&gt;[]&nbsp;paramTypes,
+                   Object&nbsp;errMsgContext)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether the inputs can be used as arguments for the specified parameter types.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;ArrayList&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#classesForNames(java.util.ArrayList)">classesForNames</A></B>(ArrayList&lt;String&gt;&nbsp;l)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Class&lt;?&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#classForName(java.lang.String)">classForName</A></B>(String&nbsp;classname)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the class corresponding to the given string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Class&lt;?&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#classForName(java.lang.String, boolean)">classForName</A></B>(String&nbsp;classname,
+             boolean&nbsp;noerr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the class corresponding to the given string.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getCompilableName(java.lang.Class)">getCompilableName</A></B>(Class&lt;?&gt;&nbsp;cls)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a name that can be used in Java source for the given class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Constructor&lt;?&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getConstructorForSignature(java.lang.String)">getConstructorForSignature</A></B>(String&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Constructor&lt;?&gt;[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getConstructorsOrdered(java.lang.Class)">getConstructorsOrdered</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like Class.getConstructors(), but guarantees always same order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Constructor&lt;?&gt;[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getDeclaredConstructorsOrdered(java.lang.Class)">getDeclaredConstructorsOrdered</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like Class.getDeclaredConstructors(), but guarantees always same order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Method[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getDeclaredMethodsOrdered(java.lang.Class)">getDeclaredMethodsOrdered</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like Class.getDeclaredMethods(), but guarantees always same order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Set&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getDirectSuperTypes(java.lang.Class)">getDirectSuperTypes</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Method</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getMethodForSignature(java.lang.String)">getMethodForSignature</A></B>(String&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Method[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getMethodsOrdered(java.lang.Class)">getMethodsOrdered</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like Class.getMethods(), but guarantees always same order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;ArrayList&lt;String&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getNamesForClasses(java.util.ArrayList)">getNamesForClasses</A></B>(ArrayList&lt;Class&lt;?&gt;&gt;&nbsp;cl)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To deserialize a list serialized with this method, use the
+ method deserializeClassList.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getSignature(java.lang.reflect.Constructor)">getSignature</A></B>(Constructor&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getSignature(java.lang.reflect.Method)">getSignature</A></B>(Method&nbsp;m)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;<A HREF="../../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#getStatements(java.util.Collection, randoop.util.ReflectionFilter)">getStatements</A></B>(Collection&lt;Class&lt;?&gt;&gt;&nbsp;classListing,
+              <A HREF="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</A>&nbsp;filter)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#isAbstract(java.lang.Class)">isAbstract</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#isVisible(java.lang.Class)">isVisible</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#isVisible(int)">isVisible</A></B>(int&nbsp;modifiers)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns true if the the specified modifier is visible to Randoop.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadClassesFromFile(java.io.File)">loadClassesFromFile</A></B>(File&nbsp;classListingFile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadClassesFromFile(java.io.File, boolean)">loadClassesFromFile</A></B>(File&nbsp;classListingFile,
+                    boolean&nbsp;noerr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadClassesFromList(java.util.List, boolean)">loadClassesFromList</A></B>(List&lt;String&gt;&nbsp;classNames,
+                    boolean&nbsp;noerr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a list of classes, given a list of class names.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadClassesFromReader(java.io.BufferedReader, java.lang.String)">loadClassesFromReader</A></B>(BufferedReader&nbsp;reader,
+                      String&nbsp;filename)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadClassesFromReader(java.io.BufferedReader, java.lang.String, boolean)">loadClassesFromReader</A></B>(BufferedReader&nbsp;reader,
+                      String&nbsp;filename,
+                      boolean&nbsp;noerr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadClassesFromStream(java.io.InputStream, java.lang.String)">loadClassesFromStream</A></B>(InputStream&nbsp;in,
+                      String&nbsp;filename)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Member&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadMethodsAndCtorsFromFile(java.io.File)">loadMethodsAndCtorsFromFile</A></B>(File&nbsp;classListingFile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Member&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadMethodsAndCtorsFromLines(java.util.List)">loadMethodsAndCtorsFromLines</A></B>(List&lt;String&gt;&nbsp;lines)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Member&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadMethodsAndCtorsFromReader(java.io.BufferedReader)">loadMethodsAndCtorsFromReader</A></B>(BufferedReader&nbsp;reader)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Member&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#loadMethodsAndCtorsFromStream(java.io.InputStream)">loadMethodsAndCtorsFromStream</A></B>(InputStream&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank lines and lines starting with "#" are ignored.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Set&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#relatedClasses(java.lang.Class, int)">relatedClasses</A></B>(Class&lt;?&gt;&nbsp;clazz,
+               int&nbsp;depth)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the set of classes that appear, recursively, in the interface of
+ the given class, to a given depth.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Set&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#relatedClasses(java.util.Collection, int)">relatedClasses</A></B>(Collection&lt;Class&lt;?&gt;&gt;&nbsp;classes,
+               int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#saveClassesToFile(java.util.List, java.lang.String)">saveClassesToFile</A></B>(List&lt;Class&lt;?&gt;&gt;&nbsp;classes,
+                  String&nbsp;file)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;Method</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#super_get_declared_method(java.lang.Class, java.lang.String, java.lang.Class...)">super_get_declared_method</A></B>(Class&lt;?&gt;&nbsp;c,
+                          String&nbsp;methodname,
+                          Class&lt;?&gt;...&nbsp;parameter_types)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Looks for the specified method name in the specified class and all of its
+ superclasses</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;StackTraceElement</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#throwPointForName(java.lang.String)">throwPointForName</A></B>(String&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/util/Reflection.html#throwPointToString(java.lang.StackTraceElement)">throwPointToString</A></B>(StackTraceElement&nbsp;throwPoint)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SORT_MEMBERS_BY_NAME"><!-- --></A><H3>
+SORT_MEMBERS_BY_NAME</H3>
+<PRE>
+public static final Comparator&lt;Member&gt; <B>SORT_MEMBERS_BY_NAME</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="num_times_canBeUsedAs_called"><!-- --></A><H3>
+num_times_canBeUsedAs_called</H3>
+<PRE>
+public static long <B>num_times_canBeUsedAs_called</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="relatedClasses(java.lang.Class, int)"><!-- --></A><H3>
+relatedClasses</H3>
+<PRE>
+public static Set&lt;Class&lt;?&gt;&gt; <B>relatedClasses</B>(Class&lt;?&gt;&nbsp;clazz,
+                                           int&nbsp;depth)</PRE>
+<DL>
+<DD>Returns the set of classes that appear, recursively, in the interface of
+ the given class, to a given depth. For example, if class C1 declares
+ only method foo(C2)/C3,  and class C2 declares method bar(C4)/C5, then:
+
+ We say that C1, C2 and C3 are related to C1 at depth >= 0.
+ We say that C4 and C5 are related to C1 at depth >= 1.
+
+ We say that a class C2 appears in the interface of C iff:
+ (1) C2 is C
+ (2) C2 is a return value of some method in C.getMethods()
+ (2) C2 is a parameter of some method in C.getMethods() or some
+     constructor in C.getConstructors().
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="relatedClasses(java.util.Collection, int)"><!-- --></A><H3>
+relatedClasses</H3>
+<PRE>
+public static Set&lt;Class&lt;?&gt;&gt; <B>relatedClasses</B>(Collection&lt;Class&lt;?&gt;&gt;&nbsp;classes,
+                                           int&nbsp;i)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMethodsOrdered(java.lang.Class)"><!-- --></A><H3>
+getMethodsOrdered</H3>
+<PRE>
+public static Method[] <B>getMethodsOrdered</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD>Like Class.getMethods(), but guarantees always same order.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDeclaredMethodsOrdered(java.lang.Class)"><!-- --></A><H3>
+getDeclaredMethodsOrdered</H3>
+<PRE>
+public static Method[] <B>getDeclaredMethodsOrdered</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD>Like Class.getDeclaredMethods(), but guarantees always same order.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getConstructorsOrdered(java.lang.Class)"><!-- --></A><H3>
+getConstructorsOrdered</H3>
+<PRE>
+public static Constructor&lt;?&gt;[] <B>getConstructorsOrdered</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD>Like Class.getConstructors(), but guarantees always same order.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDeclaredConstructorsOrdered(java.lang.Class)"><!-- --></A><H3>
+getDeclaredConstructorsOrdered</H3>
+<PRE>
+public static Constructor&lt;?&gt;[] <B>getDeclaredConstructorsOrdered</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD>Like Class.getDeclaredConstructors(), but guarantees always same order.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="classForName(java.lang.String)"><!-- --></A><H3>
+classForName</H3>
+<PRE>
+public static Class&lt;?&gt; <B>classForName</B>(String&nbsp;classname)</PRE>
+<DL>
+<DD>Gets the class corresponding to the given string. Assumes the string is
+ in the format output by the method java.lang.Class.toString().
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="classForName(java.lang.String, boolean)"><!-- --></A><H3>
+classForName</H3>
+<PRE>
+public static Class&lt;?&gt; <B>classForName</B>(String&nbsp;classname,
+                                    boolean&nbsp;noerr)</PRE>
+<DL>
+<DD>Gets the class corresponding to the given string. Assumes the string is
+ in the format output by the method java.lang.Class.toString().
+ 
+ If noerr==true and Class.forName(classname) throws an exception, throws an Error.
+ 
+ If noerr==false and Class.forName(classname) throws an exception, returns null.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDirectSuperTypes(java.lang.Class)"><!-- --></A><H3>
+getDirectSuperTypes</H3>
+<PRE>
+public static Set&lt;Class&lt;?&gt;&gt; <B>getDirectSuperTypes</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="canBeUsedAs(java.lang.Class, java.lang.Class)"><!-- --></A><H3>
+canBeUsedAs</H3>
+<PRE>
+public static boolean <B>canBeUsedAs</B>(Class&lt;?&gt;&nbsp;c1,
+                                  Class&lt;?&gt;&nbsp;c2)</PRE>
+<DL>
+<DD>Checks if an object of class c1 can be used as an object of class c2.
+ This is more than subtyping: for example, int can be used as Integer,
+ but the latter is not a subtype of the former.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="checkArgumentTypes(java.lang.Object[], java.lang.Class[], java.lang.Object)"><!-- --></A><H3>
+checkArgumentTypes</H3>
+<PRE>
+public static String <B>checkArgumentTypes</B>(Object[]&nbsp;inputs,
+                                        Class&lt;?&gt;[]&nbsp;paramTypes,
+                                        Object&nbsp;errMsgContext)</PRE>
+<DL>
+<DD>Checks whether the inputs can be used as arguments for the specified parameter types.
+ This method considers "null" as always being a valid argument.
+ errMsgContext is uninterpreted - just printed in error messages
+ Returns null if inputs are OK wrt paramTypes. Returns error message otherwise.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="canBePassedAsArgument(java.lang.Object, java.lang.Class)"><!-- --></A><H3>
+canBePassedAsArgument</H3>
+<PRE>
+public static boolean <B>canBePassedAsArgument</B>(Object&nbsp;inputObject,
+                                            Class&lt;?&gt;&nbsp;parameterType)</PRE>
+<DL>
+<DD>Returns whether the input can be used as argument for the specified parameter type.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadClassesFromList(java.util.List, boolean)"><!-- --></A><H3>
+loadClassesFromList</H3>
+<PRE>
+public static List&lt;Class&lt;?&gt;&gt; <B>loadClassesFromList</B>(List&lt;String&gt;&nbsp;classNames,
+                                                 boolean&nbsp;noerr)</PRE>
+<DL>
+<DD>Returns a list of classes, given a list of class names.
+ 
+ if noerr=true, any classnames where Class.forName(classname) are ignored
+ and not added to the list. Otherwise, an exception is thrown in this situation.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadClassesFromStream(java.io.InputStream, java.lang.String)"><!-- --></A><H3>
+loadClassesFromStream</H3>
+<PRE>
+public static List&lt;Class&lt;?&gt;&gt; <B>loadClassesFromStream</B>(InputStream&nbsp;in,
+                                                   String&nbsp;filename)</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string such that Class.forName(s) returns a class.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadClassesFromReader(java.io.BufferedReader, java.lang.String)"><!-- --></A><H3>
+loadClassesFromReader</H3>
+<PRE>
+public static List&lt;Class&lt;?&gt;&gt; <B>loadClassesFromReader</B>(BufferedReader&nbsp;reader,
+                                                   String&nbsp;filename)</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string such that Class.forName(s) returns a class.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadClassesFromReader(java.io.BufferedReader, java.lang.String, boolean)"><!-- --></A><H3>
+loadClassesFromReader</H3>
+<PRE>
+public static List&lt;Class&lt;?&gt;&gt; <B>loadClassesFromReader</B>(BufferedReader&nbsp;reader,
+                                                   String&nbsp;filename,
+                                                   boolean&nbsp;noerr)</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string such that Class.forName(s) returns a class.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadClassesFromFile(java.io.File)"><!-- --></A><H3>
+loadClassesFromFile</H3>
+<PRE>
+public static List&lt;Class&lt;?&gt;&gt; <B>loadClassesFromFile</B>(File&nbsp;classListingFile)
+                                          throws IOException</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string such that Class.forName(s) returns a class.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadClassesFromFile(java.io.File, boolean)"><!-- --></A><H3>
+loadClassesFromFile</H3>
+<PRE>
+public static List&lt;Class&lt;?&gt;&gt; <B>loadClassesFromFile</B>(File&nbsp;classListingFile,
+                                                 boolean&nbsp;noerr)
+                                          throws IOException</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string such that Class.forName(s) returns a class.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadMethodsAndCtorsFromStream(java.io.InputStream)"><!-- --></A><H3>
+loadMethodsAndCtorsFromStream</H3>
+<PRE>
+public static List&lt;Member&gt; <B>loadMethodsAndCtorsFromStream</B>(InputStream&nbsp;in)</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string such that Class.forName(s) returns a class.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadMethodsAndCtorsFromReader(java.io.BufferedReader)"><!-- --></A><H3>
+loadMethodsAndCtorsFromReader</H3>
+<PRE>
+public static List&lt;Member&gt; <B>loadMethodsAndCtorsFromReader</B>(BufferedReader&nbsp;reader)</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string such that Class.forName(s) returns a class.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadMethodsAndCtorsFromLines(java.util.List)"><!-- --></A><H3>
+loadMethodsAndCtorsFromLines</H3>
+<PRE>
+public static List&lt;Member&gt; <B>loadMethodsAndCtorsFromLines</B>(List&lt;String&gt;&nbsp;lines)</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string representing a method or constructor signature.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadMethodsAndCtorsFromFile(java.io.File)"><!-- --></A><H3>
+loadMethodsAndCtorsFromFile</H3>
+<PRE>
+public static List&lt;Member&gt; <B>loadMethodsAndCtorsFromFile</B>(File&nbsp;classListingFile)
+                                                throws IOException</PRE>
+<DL>
+<DD>Blank lines and lines starting with "#" are ignored.
+  Other lines must contain string such that Class.forName(s) returns a class.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isVisible(java.lang.Class)"><!-- --></A><H3>
+isVisible</H3>
+<PRE>
+public static boolean <B>isVisible</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isAbstract(java.lang.Class)"><!-- --></A><H3>
+isAbstract</H3>
+<PRE>
+public static boolean <B>isAbstract</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="saveClassesToFile(java.util.List, java.lang.String)"><!-- --></A><H3>
+saveClassesToFile</H3>
+<PRE>
+public static void <B>saveClassesToFile</B>(List&lt;Class&lt;?&gt;&gt;&nbsp;classes,
+                                     String&nbsp;file)
+                              throws IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStatements(java.util.Collection, randoop.util.ReflectionFilter)"><!-- --></A><H3>
+getStatements</H3>
+<PRE>
+public static List&lt;<A HREF="../../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt; <B>getStatements</B>(Collection&lt;Class&lt;?&gt;&gt;&nbsp;classListing,
+                                                <A HREF="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</A>&nbsp;filter)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>classListing</CODE> - <DD><CODE>filter</CODE> - can be null.
+<DT><B>Returns:</B><DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNamesForClasses(java.util.ArrayList)"><!-- --></A><H3>
+getNamesForClasses</H3>
+<PRE>
+public static ArrayList&lt;String&gt; <B>getNamesForClasses</B>(ArrayList&lt;Class&lt;?&gt;&gt;&nbsp;cl)</PRE>
+<DL>
+<DD>To deserialize a list serialized with this method, use the
+ method deserializeClassList.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="classesForNames(java.util.ArrayList)"><!-- --></A><H3>
+classesForNames</H3>
+<PRE>
+public static ArrayList&lt;Class&lt;?&gt;&gt; <B>classesForNames</B>(ArrayList&lt;String&gt;&nbsp;l)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSignature(java.lang.reflect.Constructor)"><!-- --></A><H3>
+getSignature</H3>
+<PRE>
+public static String <B>getSignature</B>(Constructor&lt;?&gt;&nbsp;c)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSignature(java.lang.reflect.Method)"><!-- --></A><H3>
+getSignature</H3>
+<PRE>
+public static String <B>getSignature</B>(Method&nbsp;m)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMethodForSignature(java.lang.String)"><!-- --></A><H3>
+getMethodForSignature</H3>
+<PRE>
+public static Method <B>getMethodForSignature</B>(String&nbsp;s)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getConstructorForSignature(java.lang.String)"><!-- --></A><H3>
+getConstructorForSignature</H3>
+<PRE>
+public static Constructor&lt;?&gt; <B>getConstructorForSignature</B>(String&nbsp;s)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="throwPointToString(java.lang.StackTraceElement)"><!-- --></A><H3>
+throwPointToString</H3>
+<PRE>
+public static String <B>throwPointToString</B>(StackTraceElement&nbsp;throwPoint)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="throwPointForName(java.lang.String)"><!-- --></A><H3>
+throwPointForName</H3>
+<PRE>
+public static StackTraceElement <B>throwPointForName</B>(String&nbsp;s)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCompilableName(java.lang.Class)"><!-- --></A><H3>
+getCompilableName</H3>
+<PRE>
+public static String <B>getCompilableName</B>(Class&lt;?&gt;&nbsp;cls)</PRE>
+<DL>
+<DD>Returns a name that can be used in Java source for the given class.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="super_get_declared_method(java.lang.Class, java.lang.String, java.lang.Class...)"><!-- --></A><H3>
+super_get_declared_method</H3>
+<PRE>
+public static Method <B>super_get_declared_method</B>(Class&lt;?&gt;&nbsp;c,
+                                               String&nbsp;methodname,
+                                               Class&lt;?&gt;...&nbsp;parameter_types)
+                                        throws Exception</PRE>
+<DL>
+<DD>Looks for the specified method name in the specified class and all of its
+ superclasses
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>Exception</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isVisible(int)"><!-- --></A><H3>
+isVisible</H3>
+<PRE>
+public static boolean <B>isVisible</B>(int&nbsp;modifiers)</PRE>
+<DL>
+<DD>Returns true if the the specified modifier is visible to Randoop.
+ If the command line argument public_only is true, only public
+ classes/methods are considered visible.  If public_only is false
+ then any class/method that is not private is considered visible
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../randoop/util/RecordProcessor.html" title="interface in randoop.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../randoop/util/Reflection.Match.html" title="enum in randoop.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?randoop/util/Reflection.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Reflection.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>
