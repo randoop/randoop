@@ -3,6 +3,7 @@ package randoop.plugin.internal.core.launching;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -13,14 +14,13 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 
-import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class RandoopArgumentCollector {
   private String fName;
-  private List<IType> fCheckedTypes;
-  private List<IMethod> fCheckedMethods;
+  private List<IType> fSelectedTypes;
+  private List<IMethod> fSelectedMethods;
   private int fRandomSeed;
   private int fMaxTestSize;
   private boolean fUseThreads;
@@ -39,21 +39,26 @@ public class RandoopArgumentCollector {
   public RandoopArgumentCollector(ILaunchConfiguration config) {
     fName = config.getName();
 
-    fCheckedTypes = new ArrayList<IType>();
-    fCheckedMethods = new ArrayList<IMethod>();
-
-    List<?> checkedElements = getCheckedJavaElements(config);
-    for (Object id : checkedElements) {
-      if (id instanceof String) {
-        IJavaElement element = JavaCore.create((String) id);
-        if (element instanceof IType) {
-          fCheckedTypes.add((IType) element);
-        } else if (element instanceof IMethod) {
-          fCheckedMethods.add((IMethod) element);
-        }
-      }
+    fSelectedTypes = new ArrayList<IType>();
+    List<?> selectedTypes = getSelectedTypes(config);
+    for (Object id : selectedTypes) {
+      Assert.isTrue(id instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
+      
+      IJavaElement element = JavaCore.create((String) id);
+      Assert.isTrue(element instanceof IType, "Handler ID was for for an IType"); //$NON-NLS-1$
+      fSelectedTypes.add((IType) element);
     }
-
+    
+    fSelectedMethods = new ArrayList<IMethod>();
+    List<?> selectedMethods = getSelectedMethods(config);
+    for (Object id : selectedMethods) {
+      Assert.isTrue(id instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
+      
+      IJavaElement element = JavaCore.create((String) id);
+      Assert.isTrue(element instanceof IMethod, "Handler ID was for for an IMethod"); //$NON-NLS-1$
+      fSelectedMethods.add((IMethod) element);
+    }
+    
     fRandomSeed = Integer.parseInt(getRandomSeed(config));
     fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
     fUseThreads = getUseThreads(config);
@@ -91,13 +96,13 @@ public class RandoopArgumentCollector {
     return fName;
   }
 
-  public List<IType> getCheckedTypes() {
-    return fCheckedTypes;
+  public List<IType> getSelectedTypes() {
+    return fSelectedTypes;
   }
 
-  public List<IMethod> getCheckedMethods() {
-    return fCheckedMethods;
-  };
+  public List<IMethod> getSelectedMethods() {
+    return fSelectedMethods;
+  }
 
   public int getRandomSeed() {
     return fRandomSeed;
@@ -160,15 +165,21 @@ public class RandoopArgumentCollector {
         IConstants.INVALID_PORT);
   }
 
-  public static List<String> getAllJavaTypes(ILaunchConfiguration config) {
+  public static List<String> getAvailableTypes(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
+        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES,
         IConstants.EMPTY_STRING_LIST);
   }
 
-  public static List<String> getCheckedJavaElements(ILaunchConfiguration config) {
+  public static List<String> getSelectedTypes(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_JAVA_ELEMENTS,
+        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES,
+        IConstants.EMPTY_STRING_LIST);
+  }
+  
+  public static List<String> getSelectedMethods(ILaunchConfiguration config) {
+    return getAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
         IConstants.EMPTY_STRING_LIST);
   }
 
@@ -267,15 +278,21 @@ public class RandoopArgumentCollector {
     setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_PORT, nullStr);
   }
   
-  public static void restoreAllJavaTypes(ILaunchConfigurationWorkingCopy config) {
+  public static void restoreAvailableTypes(ILaunchConfigurationWorkingCopy config) {
     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
+        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES,
         IConstants.EMPTY_STRING_LIST);
   }
 
-  public static void restoreCheckedJavaElements(ILaunchConfigurationWorkingCopy config) {
+  public static void restoreSelectedTypes(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_JAVA_ELEMENTS,
+        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES,
+        IConstants.EMPTY_STRING_LIST);
+  }
+  
+  public static void restoreSelectedMethods(ILaunchConfigurationWorkingCopy config) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
         IConstants.EMPTY_STRING_LIST);
   }
 
@@ -379,16 +396,22 @@ public class RandoopArgumentCollector {
     setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_PORT, port);
   }
   
-  public static void setAllJavaTypes(ILaunchConfigurationWorkingCopy config, List<String> availableTypes) {
+  public static void setAvailableTypes(ILaunchConfigurationWorkingCopy config, List<String> availableTypes) {
     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_ALL_JAVA_TYPES,
+        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES,
         availableTypes);
   }
 
-  public static void setCheckedJavaElements(ILaunchConfigurationWorkingCopy config, List<String> checkedElements) {
+  public static void setSelectedTypes(ILaunchConfigurationWorkingCopy config, List<String> selectedTypes) {
     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_JAVA_ELEMENTS,
-        checkedElements);
+        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES,
+        selectedTypes);
+  }
+  
+  public static void setSelectedMethods(ILaunchConfigurationWorkingCopy config, List<String> selectedMethods) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
+        selectedMethods);
   }
 
   public static void setRandomSeed(ILaunchConfigurationWorkingCopy config, String seed) {
@@ -533,8 +556,8 @@ public class RandoopArgumentCollector {
       RandoopArgumentCollector other = (RandoopArgumentCollector) obj;
 
       return getName().equals(other.getName())
-          && getCheckedTypes().equals(other.getCheckedTypes())
-          && getCheckedMethods().equals(other.getCheckedMethods())
+          && getSelectedTypes().equals(other.getSelectedTypes())
+          && getSelectedMethods().equals(other.getSelectedMethods())
           && getRandomSeed() == other.getRandomSeed()
           && getMaxTestSize() == other.getMaxTestSize()
           && getUseThreads() == other.getUseThreads()
@@ -556,11 +579,12 @@ public class RandoopArgumentCollector {
   
   @Override
   public int hashCode() {
-    return (getName() + getCheckedTypes().toString()
-        + getCheckedMethods().toString() + getRandomSeed() + getMaxTestSize()
+    return (getName() + getSelectedTypes().toString()
+        + getSelectedMethods().toString() + getRandomSeed() + getMaxTestSize()
         + getUseThreads() + getThreadTimeout() + getUseNull() + getNullRatio()
         + getJUnitTestInputs() + getTimeLimit() + getOutputDirectory()
         + getJUnitPackageName() + getJUnitClassName() + getTestKinds()
         + getMaxTestsWritten() + getMaxTestsPerFile()).hashCode();
   }
+  
 }

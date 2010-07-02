@@ -85,8 +85,8 @@ public class LaunchConfigurationTypeChange extends Change {
     final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration
         .getWorkingCopy();
 
-    allTypes = RandoopArgumentCollector.getAllJavaTypes(wc);
-    checkedElements = RandoopArgumentCollector.getCheckedJavaElements(wc);
+    allTypes = RandoopArgumentCollector.getAvailableTypes(wc);
+    checkedElements = RandoopArgumentCollector.getSelectedTypes(wc);
 
     String oldHandlerId = fOldType.getHandleIdentifier();
     String newHandlerId = fNewType.getHandleIdentifier();

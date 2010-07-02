@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.jdt.internal.debug.ui.SWTFactory;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.ui.ISharedImages;
 
 import randoop.plugin.internal.IConstants;
