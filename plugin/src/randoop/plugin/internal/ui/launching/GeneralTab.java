@@ -1,7 +1,6 @@
 package randoop.plugin.internal.ui.launching;
 
-import static org.junit.Assert.assertTrue;
-
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -88,7 +87,7 @@ public class GeneralTab extends OptionTab {
     fProjectOption = new ProjectOption(getShell(), projectText,
         projectBrowseButton, outputSourceFolderText,
         sourceFolderBrowseButton);
-    assertTrue(addOption(fProjectOption));
+    Assert.isTrue(addOption(fProjectOption));
     
     projectBrowseButton.addSelectionListener(fBasicSelectionListener);
     sourceFolderBrowseButton.addSelectionListener(fBasicSelectionListener);
@@ -105,7 +104,7 @@ public class GeneralTab extends OptionTab {
     
     fJUnitTestClassNameOption = new JUnitTestClassNameOption(
         fullyQualifiedTestName);
-    assertTrue(addOption(fJUnitTestClassNameOption));
+    Assert.isTrue(addOption(fJUnitTestClassNameOption));
 
     fullyQualifiedTestName.addModifyListener(fBasicModifyListener);
   }
@@ -113,7 +112,7 @@ public class GeneralTab extends OptionTab {
   private void createTestInputGroup(Composite parent) {
     fTestInputSelectorOption = new TestInputSelectorOption(parent,
         getLaunchConfigurationDialog(), fBasicSelectionListener);
-    assertTrue(addOption(fTestInputSelectorOption));
+    Assert.isTrue(addOption(fTestInputSelectorOption));
   }
 
   /*
