@@ -17,7 +17,7 @@ import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
-import randoop.plugin.internal.ui.options.TestInputSelectorOption;
+import randoop.plugin.internal.ui.options.ClassSelectorOption;
 
 public class GeneralTab extends OptionTab {
   private IOption fProjectOption;
@@ -110,7 +110,7 @@ public class GeneralTab extends OptionTab {
   }
   
   private void createTestInputGroup(Composite parent) {
-    fTestInputSelectorOption = new TestInputSelectorOption(parent,
+    fTestInputSelectorOption = new ClassSelectorOption(parent,
         getLaunchConfigurationDialog(), fBasicSelectionListener);
     Assert.isTrue(addOption(fTestInputSelectorOption));
   }
