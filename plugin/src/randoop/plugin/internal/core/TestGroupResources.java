@@ -36,6 +36,7 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 public class TestGroupResources {
   public static final IPath TEMP_PATH = RandoopPlugin.getDefault().getStateLocation().append("/temp"); //$NON-NLS-1$
   public static final String METHODS_FILE = "methods"; //$NON-NLS-1$
+  public final IPath fOoutputPath;
 
   private RandoopArgumentCollector fArguments;
   private File fResourceFolder;
@@ -70,6 +71,9 @@ public class TestGroupResources {
     fStatus = findClasspaths(monitor);
     
     writeMethods();
+    
+    String packagePath = args.getJUnitPackageName().replace('.', '/');
+    fOoutputPath = args.getOutputDirectory().append(packagePath);
   }
 
   private void writeMethods() {
@@ -274,6 +278,10 @@ public class TestGroupResources {
 
   public IPath[] getClasspath() {
     return fClasspath;
+  }
+  
+  public IPath getOutputPath() {
+    return fOoutputPath;
   }
 
   public String getId() {
