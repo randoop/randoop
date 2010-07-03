@@ -34,8 +34,9 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
  * generating the test files.
  */
 public class TestGroupResources {
-  public static final IPath TEMP_PATH = RandoopPlugin.getDefault().getStateLocation().append("/temp"); //$NON-NLS-1$
-  public static final String METHODS_FILE = "methods"; //$NON-NLS-1$
+  public static final String TEMP_SEGMENT = "/temp"; //$NON-NLS-1$
+  private static final IPath TEMP_PATH = RandoopPlugin.getDefault().getStateLocation().append(TEMP_SEGMENT);
+  private static final String METHODS_FILE = "methods"; //$NON-NLS-1$
   public final IPath fOoutputPath;
 
   private RandoopArgumentCollector fArguments;
@@ -291,4 +292,37 @@ public class TestGroupResources {
   public IStatus getStatus() {
     return fStatus;
   }
+
+  public static void clearTempLocation() {
+    File f = TEMP_PATH.toFile();
+    if (f.exists()) {
+      Assert.isTrue(delete(f));
+    }
+  }
+
+  /**
+   * Deletes the given <code>File</code>. If the <code>File</code> is a
+   * directory, all subdirectories and contained files are deleted. Returns
+   * <code>true</code> if all files and subdirectories are successfully deleted.
+   * 
+   * @param file
+   *          <code>File</code> to delete
+   * @return <code>true</code> if all files and subdirectories are successfully
+   *         deleted, <code>false</code> otherwise. If the specified
+   *         <code>File</code> does not exist, <code>false</code> is returned.
+   */
+  private static boolean delete(File file) {
+    if(!file.exists())
+      return false;
+    
+    boolean success = true;
+    if (file.isDirectory()) {
+      for (File subdir : file.listFiles()) {
+        success &= delete(subdir);
+      }
+    }
+    
+    return success & file.delete();
+  }
+
 }
