@@ -7,23 +7,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -37,9 +45,9 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.ui.views.MessageViewListener;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
+import randoop.plugin.tests.ui.launching.MutableBoolean;
 
-public class RandoopLaunchDelegate extends
-    AbstractJavaLaunchConfigurationDelegate {
+public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate {
   MessageReceiver fMessageReceiver;
   int fPort;
 
@@ -123,6 +131,45 @@ public class RandoopLaunchDelegate extends
     File workingDir = root.getLocation().toFile();
     String workingDirName = workingDir.getAbsolutePath();
 
+    // Search for similarly named files in the output directory and warn the user
+    // if any are found. Similarly named files match the pattern [ClassName][0-9]*.java
+    IPath outputDirPath = testGroupResources.getOutputPath();
+    IResource outputDirResource = root.findMember(outputDirPath);
+    
+    // Check if the output directory exists
+    if (outputDirResource != null) {
+      Assert.isTrue(outputDirResource instanceof IFolder);
+
+      IFolder outputFolder = (IFolder) outputDirResource;
+
+      int similarlyNamedFiles = 0;
+      for (IResource resource : outputFolder.members()) {
+        if (resource instanceof IFile) {
+          String resourceName = resource.getName();
+          String testName = testGroupResources.getArguments().getJUnitClassName();
+          if (resourceName.matches(testName + "\\p{Digit}*.java")) { //$NON-NLS-1$
+            similarlyNamedFiles++;
+          }
+        }
+      }
+
+      if (similarlyNamedFiles > 0) {
+        final MutableBoolean okToProceed = new MutableBoolean(false);
+        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+          public void run() {
+            okToProceed.setValue(MessageDialog
+                .openQuestion(
+                    PlatformUI.getWorkbench().getDisplay().getActiveShell(),
+                    "Randoop",
+                    "Randoop found similarly named files that may be overwritten by the generated tests.\n\nProceed with test generation?"));
+          }
+        });
+        if (okToProceed.getValue() == false) {
+          return;
+        }
+      }
+    }
+    
     // Environment variables
     String[] envp = getEnvironment(configuration);
 
@@ -212,7 +259,7 @@ public class RandoopLaunchDelegate extends
     String vmArgs = getVMArguments(configuration);
     ExecutionArguments execArgs = new ExecutionArguments(vmArgs, pgmArgs);
     vmArguments.addAll(Arrays.asList(execArgs.getVMArgumentsArray()));
-    vmArguments.add("-ea");
+    vmArguments.add("-ea"); //$NON-NLS-1$
     programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
   }
 
