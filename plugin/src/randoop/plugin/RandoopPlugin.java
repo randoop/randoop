@@ -1,8 +1,14 @@
 package randoop.plugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -16,6 +22,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationStore;
 
 /**
@@ -84,8 +91,12 @@ public class RandoopPlugin extends AbstractUIPlugin {
    */
   @Override
   public void stop(BundleContext context) throws Exception {
+    // Remove all files from the temp folder in the state location
+    TestGroupResources.clearTempLocation();
+    
     plugin = null;
     isStopped = true;
+    
     super.stop(context);
   }
 
