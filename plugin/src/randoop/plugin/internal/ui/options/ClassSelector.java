@@ -1,4 +1,4 @@
-package randoop.plugin.internal.ui.launching;
+package randoop.plugin.internal.ui.options;
 
 import java.util.ArrayList;
 
@@ -10,6 +10,7 @@ import java.util.Map;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -32,7 +33,7 @@ import randoop.plugin.RandoopPlugin;
  * specifically meant for displaying a list of ITypes that can be expanded to
  * show the methods that are contained.
  */
-public class TypeSelector {
+public class ClassSelector {
   private static final String HANDLER_ID = "TypeSelector.HANDLER_ID"; //$NON-NLS-1$
   
   private Tree fTypeTree;
@@ -47,7 +48,7 @@ public class TypeSelector {
    * @param selectedTypes 
    * @param availableTypes 
    */
-  public TypeSelector(Tree typeTree) {
+  public ClassSelector(Tree typeTree) {
     Assert.isNotNull(typeTree);
 
     fTypeTree = typeTree;
@@ -73,7 +74,7 @@ public class TypeSelector {
    * @param emptyTree
    *          empty tree that can be used to add
    */
-  public TypeSelector(Tree emptyTree, Collection<String> availableTypes, Collection<String> selectedTypes, Collection<String> selectedMethods) {
+  public ClassSelector(Tree emptyTree, Collection<String> availableTypes, Collection<String> selectedTypes, Collection<String> selectedMethods) {
     this(emptyTree);
 
     for (String id : availableTypes) {
@@ -94,6 +95,44 @@ public class TypeSelector {
   }
 
   /**
+   * Adds the <code>IPackageFragment</code> to the class tree. If the
+   * <code>IPackageFragment</code> is already contained in the class tree, the
+   * existing <code>TreeItem</code> is returned. Duplicates are not allow.
+   * 
+   * @param packageFragment
+   *          <code>IPackageFragment</code> to add to the class tree
+   * @return a new or pre-existing <code>TreeItem</code> containing to <code>IPackageFragment</code>
+   */
+  public TreeItem addPackage(IPackageFragment packageFragment) {
+    // Search for the item in the class tree
+    String packageHandlerId = packageFragment.getHandleIdentifier(); 
+    for(TreeItem item : fTypeTree.getItems()) {
+      String itemHandlerId = (String) item.getData(HANDLER_ID);
+      
+      if(packageHandlerId.equals(itemHandlerId)) {
+        return item;
+      }
+    }
+    
+    // Add the package to the class tree since it does not already exist
+    TreeItem root = new TreeItem(fTypeTree, SWT.NONE);
+
+    Image image = JavaUI.getSharedImages().getImage(
+        ISharedImages.IMG_OBJS_PACKAGE);
+
+    root.setImage(image);
+
+    String packageName = packageFragment.getElementName();
+    if (packageName.isEmpty()) {
+      packageName = "(default package)";
+    }
+    root.setText(packageName);
+    root.setData(HANDLER_ID, packageFragment.getHandleIdentifier());
+
+    return root;
+  }
+  
+  /**
    * Adds a type to this tree. All of the types methods will also be added as
    * children to this tree.
    * 
@@ -102,23 +141,22 @@ public class TypeSelector {
    *         <code>null</code> if it was not added
    */
   public TreeItem addType(IType type, boolean checked) {
-    // XXX set images for different types and methods
     try {
-      TreeItem root = new TreeItem(fTypeTree, SWT.NONE);
+      TreeItem parent = addPackage(type.getPackageFragment());
+      
+      TreeItem root = new TreeItem(parent, SWT.NONE);
+      
+      Assert.isTrue(!type.isInterface());
+      Assert.isTrue(!Flags.isAbstract(type.getFlags()));
       
       Image image = null;
-      if (type.isInterface()) {
-        image = JavaUI.getSharedImages().getImage(
-            ISharedImages.IMG_OBJS_INTERFACE);
-      } else if (type.isEnum()) {
+      if (type.isEnum()) {
         image = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_ENUM);
       } else if (type.isClass()) {
         image = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
       }
       
-      if (image != null) {
-        root.setImage(image);
-      }
+     root.setImage(image);
 
       root.setText(type.getFullyQualifiedName());
       root.setData(HANDLER_ID, type.getHandleIdentifier());
@@ -161,16 +199,18 @@ public class TypeSelector {
    * 
    * @return list of handlers for types that are fully checked (not grayed)
    */
-  public List<String> getSelectedTypes() {
-    List<String> types = new ArrayList<String>();
+  public List<String> getCheckedClasses() {
+    List<String> classes = new ArrayList<String>();
 
-    for(TreeItem item : fTypeTree.getItems()) {
-      if(item.getChecked() && !item.getGrayed()) {
-        types.add((String) item.getData(HANDLER_ID));
+    for (TreeItem packageItem : fTypeTree.getItems()) {
+      for (TreeItem classItem : packageItem.getItems()) {
+        if (classItem.getChecked() && !classItem.getGrayed()) {
+          classes.add((String) classItem.getData(HANDLER_ID));
+        }
       }
     }
 
-    return types;
+    return classes;
   }
 
   /**
@@ -179,14 +219,20 @@ public class TypeSelector {
    * 
    * @return list
    */
-  public List<String> getSelectedMethods() {
+  public List<String> getCheckedMethods() {
     List<String> types = new ArrayList<String>();
 
-    for(TreeItem item : fTypeTree.getItems()) {
-      for (TreeItem child : item.getItems()) {
-        if (child.getChecked() && !child.getGrayed()) {
-          if (child.getParentItem().getGrayed()) {
-            types.add((String) child.getData(HANDLER_ID));
+    for (TreeItem packageItem : fTypeTree.getItems()) {
+      for (TreeItem classItem : packageItem.getItems()) {
+        for (TreeItem methodItem : classItem.getItems()) {
+          if (methodItem.getChecked() && !methodItem.getGrayed()) {
+            // According to typical tree behavior, the parent item must be checked
+            Assert.isTrue(classItem.getChecked());
+            
+            // Only add the method if its containing class is grayed
+            if (methodItem.getParentItem().getGrayed()) {
+              types.add((String) methodItem.getData(HANDLER_ID));
+            }
           }
         }
       }
@@ -198,8 +244,10 @@ public class TypeSelector {
   public List<String> getAllTypes() {
     List<String> types = new ArrayList<String>();
 
-    for (TreeItem item : fTypeTree.getItems()) {
-      types.add((String) item.getData(HANDLER_ID));
+    for (TreeItem packageItem : fTypeTree.getItems()) {
+      for (TreeItem classItem : packageItem.getItems()) {
+        types.add((String) classItem.getData(HANDLER_ID));
+      }
     }
     
     return types;
@@ -301,7 +349,20 @@ public class TypeSelector {
     }
   }
 
-  private TreeItem[] getSelectedRoots() {
+  TreeItem[] getMoveableSelection() {
+    TreeItem[] roots = getSelectedPackageFragments();
+    TreeItem[] classes = getSelectedClasses();
+    
+    if (roots.length != 0 && classes.length == 0) {
+      return roots;
+    } else if (roots.length == 0 && classes.length != 0) {
+      return classes;
+    } else {
+      return null;
+    }
+  }
+  
+  private TreeItem[] getSelectedPackageFragments() {
     TreeItem[] items = fTypeTree.getSelection();
     List<TreeItem> roots = new ArrayList<TreeItem>();
 
@@ -315,6 +376,19 @@ public class TypeSelector {
     return roots.toArray(new TreeItem[roots.size()]);
   }
   
+  private TreeItem[] getSelectedClasses() {
+    TreeItem[] items = fTypeTree.getSelection();
+    List<TreeItem> classes = new ArrayList<TreeItem>();
+
+    for (TreeItem item : items) {
+      if (item.getParentItem() != null && item.getParentItem().getParentItem() == null) {
+        classes.add(item);
+      }
+    }
+
+    return classes.toArray(new TreeItem[classes.size()]);
+  }
+  
   public void moveSelectedTypesUp() {
     moveSelectedTypes(true);
   }
@@ -324,60 +398,89 @@ public class TypeSelector {
   }
   
   private void moveSelectedTypes(boolean up) {
-    TreeItem[] selectedRoots = getSelectedRoots();
-    Map<TreeItem, TreeItem> newItemsByDisposedItems = new HashMap<TreeItem, TreeItem>();
+    TreeItem[] selectedRoots = getMoveableSelection();
 
-    if (up) {
-      for (int i = 0; i < selectedRoots.length; i++) {
-        moveItem(selectedRoots[i], true, newItemsByDisposedItems);
-      }
-    } else {
-      for (int i = selectedRoots.length - 1; i >= 0; i--) {
-        moveItem(selectedRoots[i], false, newItemsByDisposedItems);
+    if (selectedRoots != null) {
+      if (up) {
+        for (int i = 0; i < selectedRoots.length; i++) {
+          moveItem(selectedRoots[i], true);
+        }
+      } else {
+        for (int i = selectedRoots.length - 1; i >= 0; i--) {
+          moveItem(selectedRoots[i], false);
+        }
       }
     }
-
-    // Update the TreeItems mapped to by the HandlerId map
-    System.out.println("done!!");
   }
   
-  private TreeItem moveItem(TreeItem oldItem, boolean up, Map<TreeItem, TreeItem> newItemsByDisposedItems) {
-    int index = fTypeTree.indexOf(oldItem);
-    TreeItem children[] = oldItem.getItems();
+  private TreeItem moveItem(TreeItem oldItem, boolean up) {
+    TreeItem parent = oldItem.getParentItem();
     
     int direction = up ? -1 : 2;
-    TreeItem newItem = new TreeItem(fTypeTree, SWT.NONE, index + direction);
-    newItem.setChecked(oldItem.getChecked());
-    newItem.setGrayed(oldItem.getGrayed());
-    newItem.setText(oldItem.getText());
-    newItem.setImage(oldItem.getImage());
-    newItem.setExpanded(oldItem.getExpanded());
-    newItem.setData(HANDLER_ID, oldItem.getData(HANDLER_ID));
-
-    for (TreeItem oldChild : children) {
-      TreeItem newChild = new TreeItem(newItem, SWT.NONE);
-      newChild.setChecked(oldChild.getChecked());
-      newChild.setText(oldChild.getText());
-      newChild.setImage(oldChild.getImage());
-      newChild.setData(HANDLER_ID, oldChild.getData(HANDLER_ID));
-      
-      oldChild.dispose();
-      newItemsByDisposedItems.put(oldChild, newChild);
+    TreeItem newItem;
+    if (parent == null) {
+      int index = fTypeTree.indexOf(oldItem);
+      newItem = new TreeItem(fTypeTree, SWT.NONE, index + direction);
+    } else {
+      int index = parent.indexOf(oldItem);
+      newItem = new TreeItem(parent, SWT.NONE, index + direction);
     }
     
-    oldItem.dispose();
-    newItemsByDisposedItems.put(oldItem, newItem);
+    copy(oldItem, newItem);
     
     return newItem;
   }
 
+  private void copy(TreeItem oldItem, TreeItem newItem) {
+    newItem.setChecked(oldItem.getChecked());
+    newItem.setGrayed(oldItem.getGrayed());
+    newItem.setText(oldItem.getText());
+    newItem.setImage(oldItem.getImage());
+    newItem.setData(HANDLER_ID, oldItem.getData(HANDLER_ID));
+
+    TreeItem children[] = oldItem.getItems();
+    for (TreeItem oldChild : children) {
+      TreeItem newChild = new TreeItem(newItem, SWT.NONE);
+      copy(oldChild, newChild);
+      
+      oldChild.dispose();
+    }
+    
+    oldItem.dispose();
+  }
+
+  /**
+   * Returns <code>true</code> if some of the selected <code>TreeItem</code>s
+   * can be removed from the <code>Tree</code>
+   */
+  boolean canRemoveFromSelection() {
+    TreeItem[] items = fTypeTree.getSelection();
+
+    for (TreeItem item : items) {
+      // Only remove package fragments or classes (roots or their children)
+      if (item.getParentItem() == null || item.getParentItem().getParentItem() == null) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
   public void removeSelectedTypes() {
     TreeItem[] items = fTypeTree.getSelection();
 
     for (TreeItem item : items) {
-      // Only remove root elements
+      // Only remove package fragments or classes (roots or their children)
       if (item.getParentItem() == null) {
         item.dispose();
+      } else if (item.getParentItem().getParentItem() == null) {
+        TreeItem parent = item.getParentItem();
+        item.dispose();
+        
+        // If their are not classes left in the package fragment, dispose it
+        if(parent.getItemCount() == 0) {
+          parent.dispose();
+        }
       }
     }
   }
