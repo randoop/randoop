@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -13,10 +14,13 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -40,9 +44,10 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
-public class ClassSelectorOption implements IOption {
+public class ClassSelectorOption extends Option implements IOptionChangeListener {
   private ILaunchConfigurationDialog fDialog;
   private Shell fShell;
   private ClassSelector fTypeSelector;
@@ -53,6 +58,8 @@ public class ClassSelectorOption implements IOption {
   private Button fClassAddFromClasspaths;
   private Button fClassAddFromSystemLibraries;
   private Button fClassRemove;
+  private Button fIgnoreJUnitTestCases;
+  private IJavaProject fProject;
   
   public ClassSelectorOption(Composite parent, ILaunchConfigurationDialog dialog,  
       final SelectionListener listener) {
@@ -134,7 +141,9 @@ public class ClassSelectorOption implements IOption {
     fClassAddFromProject.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-        handleSearchButtonSelected();
+        handleSearchButtonSelected(getClassesFromProject(
+            fDialog, fProject,
+            IPackageFragmentRoot.K_SOURCE, fIgnoreJUnitTestCases.getSelection()));
       }
     });
     fClassAddFromProject.addSelectionListener(listener);
@@ -154,6 +163,12 @@ public class ClassSelectorOption implements IOption {
       }
     });
     fClassAddFromSystemLibraries.addSelectionListener(listener);
+    
+    fIgnoreJUnitTestCases = SWTFactory.createCheckButton(leftcomp,
+        "Ignore JUnit tests cases when searching for Java types", null, true, 2);
+    gd = (GridData) fIgnoreJUnitTestCases.getLayoutData();
+    gd.horizontalIndent = 5;
+    fIgnoreJUnitTestCases.setLayoutData(gd);
   }
 
   @Override
@@ -250,9 +265,9 @@ public class ClassSelectorOption implements IOption {
    * pressing OK, the selected types are added to this tab's SWT
    * <code>Tree</code>.
    */
-  protected void handleSearchButtonSelected() {
+  protected void handleSearchButtonSelected(IType[] types) {
     DebugTypeSelectionDialog mmsd = new DebugTypeSelectionDialog(getShell(),
-        getAllAvailableTypes(fDialog), "Select types to test");
+        types, "Select types to test");
     if (mmsd.open() == Window.CANCEL) {
       return;
     }
@@ -270,6 +285,8 @@ public class ClassSelectorOption implements IOption {
       }
     }
   }
+
+
 
   /**
    * Returns an array of all available <code>IType</code>s in the active
@@ -340,6 +357,81 @@ public class ClassSelectorOption implements IOption {
     return availableTypes.toArray(new IType[availableTypes.size()]);
   }
   
+  /**
+   * Returns an array of available <code>IType</code>s that have been decalred
+   * in the selected project. The specified dialog will be used to display this
+   * operation progress. This method will return <code>null</code> if the dialog
+   * is <code>null</code> or no Java project is selected. If an error occurs, an
+   * empty or partially complete array may be returned.
+   * 
+   * @param dialog
+   *          the <code>ILaunchConfigurationDialog</code> that will be used to
+   *          display the progress of this operation - must not be
+   *          <code>null</code>
+   * @return a complete or partially complete list of <code>IType</code>s in the
+   *         workspace, or <code>null</code>
+   */
+  private static IType[] getClassesFromProject(ILaunchConfigurationDialog dialog,
+      final IJavaProject project, final int kind, final boolean ignoreJUnitTestCases) {
+    if (dialog == null || project == null)
+      return null;
+
+    final List<IType> availableTypes = new ArrayList<IType>();
+
+    // Create a new runnable object that will be used to search for the Java
+    // types in the active workspace.
+    IRunnableWithProgress typeSearcher = new IRunnableWithProgress() {
+      @Override
+      public void run(IProgressMonitor pm) throws InvocationTargetException {
+        pm.beginTask("Searching for Java types...", IProgressMonitor.UNKNOWN);
+
+        // Search each IJavaProject for ITypes and add them to a list.
+        // Each added IType represents one unit of work.
+        try {
+          for (IPackageFragmentRoot pfr : project.getPackageFragmentRoots()) {
+            if(pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
+              for (IJavaElement e : pfr.getChildren()) {
+                Assert.isTrue(e instanceof IPackageFragment);
+                IPackageFragment pf = (IPackageFragment) e;
+                if (pf.getKind() == kind) {
+                  for (ICompilationUnit cu : pf.getCompilationUnits()) {
+                    for (IType t : cu.getAllTypes()) {
+                      if(!t.isInterface() && !Flags.isAbstract(t.getFlags())) {
+                        if (ignoreJUnitTestCases) {
+                          // TODO: make sure this is actually of type
+                          // junit.framework.TestCase
+                          String siName = t.getSuperclassName();
+                          if (siName != null && siName.equals("TestCase")) { //$NON-NLS-1$
+                            continue;
+                          }
+                        }
+                        availableTypes.add(t);
+                        pm.worked(1);
+                    }}
+                  }
+                }
+              }
+          }}
+        } catch (JavaModelException e) {
+          RandoopPlugin.log(e);
+        }
+
+        pm.done();
+      }
+    };
+
+      // Search for available ITypes while displaying progress in the dialog
+      try {
+        dialog.run(true, true, typeSearcher);
+      } catch (InvocationTargetException e) {
+        RandoopPlugin.log(e);
+      } catch (InterruptedException e) {
+        RandoopPlugin.log(e);
+      }
+    
+    return availableTypes.toArray(new IType[availableTypes.size()]);
+  }
+  
   /*
    * Convenience method to get the workspace root.
    */
@@ -349,5 +441,25 @@ public class ClassSelectorOption implements IOption {
   
   public Shell getShell() {
     return fShell;
+  }
+
+  @Override
+  public void handleEvent(IOptionChangeEvent event) {
+    if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT.equals(event.getAttribute())) {
+      if (IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT.equals(event.getValue())) {
+        fProject = null;
+        fClassAddFromProject.setEnabled(false);
+        fClassAddFromClasspaths.setEnabled(false);
+        fClassAddFromSystemLibraries.setEnabled(false);
+      } else {
+        IJavaElement element = JavaCore.create(event.getValue());
+        Assert.isTrue(element instanceof IJavaProject);
+
+        fProject = (IJavaProject) element;
+        fClassAddFromProject.setEnabled(true);
+        fClassAddFromClasspaths.setEnabled(false); // XXX implement this
+        fClassAddFromSystemLibraries.setEnabled(false); // XXX implement this
+      }
+    }
   }
 }

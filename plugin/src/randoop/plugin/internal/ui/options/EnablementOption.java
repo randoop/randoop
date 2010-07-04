@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Button;
 
 import randoop.plugin.internal.core.StatusFactory;
 
-public abstract class EnablementOption implements IOption {
+public abstract class EnablementOption extends Option {
   IEnableableOption fEnabledOption;
   Button fEnablement;
   
