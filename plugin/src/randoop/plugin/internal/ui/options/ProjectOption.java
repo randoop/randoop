@@ -10,7 +10,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -28,10 +27,11 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
-public class ProjectOption implements IOption {
+public class ProjectOption extends Option {
   private Shell fShell;
   
   private Text fProjectText;
@@ -54,6 +54,10 @@ public class ProjectOption implements IOption {
     fProjectBrowseButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent evt) {
         handleProjectBrowseButtonSelected();
+
+        String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT;
+        String handlerId = fProject.getHandleIdentifier();
+        notifyListeners(new OptionChangeEvent(attr, handlerId));
       }
     });
 
@@ -160,6 +164,9 @@ public class ProjectOption implements IOption {
       } else {
         fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
       }
+      
+      String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT;
+      notifyListeners(new OptionChangeEvent(attr, handlerId));
     }
 
     if (fOutputSourceFolderText != null) {

@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Combo;
 
 import randoop.plugin.internal.core.StatusFactory;
 
-public abstract class ComboOption implements IOption {
+public abstract class ComboOption extends Option {
   protected Combo fCombo;
   
   public ComboOption(Combo combo) {
