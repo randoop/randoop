@@ -22,7 +22,7 @@ import randoop.plugin.internal.ui.options.ClassSelectorOption;
 public class GeneralTab extends OptionTab {
   private IOption fProjectOption;
   private IOption fJUnitTestClassNameOption;
-  private IOption fTestInputSelectorOption;
+  private ClassSelectorOption fTestInputSelectorOption;
 
   
   private ModifyListener fBasicModifyListener = new RandoopTabListener();
@@ -51,37 +51,26 @@ public class GeneralTab extends OptionTab {
    */
   @Override
   public void createControl(Composite parent) {
-    Composite comp = SWTFactory.createComposite(parent, 1, 1,
+    Composite tabcomp = SWTFactory.createComposite(parent, 1, 1,
         GridData.FILL_HORIZONTAL);
-    setControl(comp);
+    setControl(tabcomp);
 
-    createProjectGroup(comp);
-    createClassNameOption(comp);
-    createTestInputGroup(comp);
-  }
-
-  private void createProjectGroup(Composite parent) {
-    Text projectText;
-    Button projectBrowseButton;
-
-    Text outputSourceFolderText;
-    Button sourceFolderBrowseButton;
-    
-    Composite comp = SWTFactory.createComposite(parent, 3, 1,
+    // Project group:
+    Composite comp = SWTFactory.createComposite(tabcomp, 3, 1,
         GridData.FILL_HORIZONTAL);
 
     SWTFactory.createLabel(comp, "Project:", 1);
 
-    projectText = new Text(comp, SWT.SINGLE | SWT.BORDER);
+    Text projectText = new Text(comp, SWT.SINGLE | SWT.BORDER);
     projectText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-    projectBrowseButton = SWTFactory.createPushButton(comp, "Browse...", null);
+    Button projectBrowseButton = SWTFactory.createPushButton(comp, "Browse...", null);
     projectBrowseButton.setText("&Browse...");
 
     SWTFactory.createLabel(comp, "Output Folder:", 1);
-    outputSourceFolderText = SWTFactory.createSingleText(comp, 1);
+    Text outputSourceFolderText = SWTFactory.createSingleText(comp, 1);
 
-    sourceFolderBrowseButton = SWTFactory.createPushButton(comp, "Search...",
+    Button sourceFolderBrowseButton = SWTFactory.createPushButton(comp, "Search...",
         null);
 
     fProjectOption = new ProjectOption(getShell(), projectText,
@@ -91,27 +80,25 @@ public class GeneralTab extends OptionTab {
     
     projectBrowseButton.addSelectionListener(fBasicSelectionListener);
     sourceFolderBrowseButton.addSelectionListener(fBasicSelectionListener);
-  }
-
-  private void createClassNameOption(Composite parent) {
-    Text fullyQualifiedTestName;
     
-    Composite comp = SWTFactory.createComposite(parent, 3, 1,
+    // Class name option:
+    comp = SWTFactory.createComposite(tabcomp, 3, 1,
         GridData.FILL_HORIZONTAL);
     
     SWTFactory.createLabel(comp, "JUnit Class Name:", 1);
-    fullyQualifiedTestName = SWTFactory.createSingleText(comp, 2);
+     Text fullyQualifiedTestName = SWTFactory.createSingleText(comp, 2);
     
     fJUnitTestClassNameOption = new JUnitTestClassNameOption(
         fullyQualifiedTestName);
     Assert.isTrue(addOption(fJUnitTestClassNameOption));
 
     fullyQualifiedTestName.addModifyListener(fBasicModifyListener);
-  }
-  
-  private void createTestInputGroup(Composite parent) {
-    fTestInputSelectorOption = new ClassSelectorOption(parent,
+    
+    // Test inputs option:
+    fTestInputSelectorOption = new ClassSelectorOption(tabcomp,
         getLaunchConfigurationDialog(), fBasicSelectionListener);
+    fProjectOption.addChangeListener(fTestInputSelectorOption);
+
     Assert.isTrue(addOption(fTestInputSelectorOption));
   }
 

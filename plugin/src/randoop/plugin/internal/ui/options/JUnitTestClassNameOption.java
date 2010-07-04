@@ -11,7 +11,7 @@ import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
-public class JUnitTestClassNameOption implements IOption {
+public class JUnitTestClassNameOption extends Option {
   private Text fFullyQualifiedTestName;
 
   public JUnitTestClassNameOption(Text fullyQualifiedTestName) {

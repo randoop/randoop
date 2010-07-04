@@ -7,7 +7,7 @@ import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.core.StatusFactory;
 
-public abstract class TextOption implements IOption {
+public abstract class TextOption extends Option {
   protected Text fText;
   
   public TextOption(Text text) {
