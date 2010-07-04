@@ -239,11 +239,10 @@ public abstract class AbstractGenerator {
       System.out.println("Average method execution time (exceptional termination):" + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
 
       if (msgSender != null) {
-	IMessage msg = new PercentDone(1.0, numSequences(), 0);
-	msgSender.send(msg);
+      	IMessage msg = new PercentDone(1.0, numSequences(), 0);
+      	msgSender.send(msg);
         msg = new RandoopFinished();
         msgSender.send(msg);
-        msgSender.close();
       }
     }
 

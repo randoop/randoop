@@ -1,5 +1,6 @@
 package randoop.plugin.tests.core.runtime;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 import junit.framework.TestCase;
@@ -16,6 +17,7 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.tests.ui.launching.ProjectCreator;
+import randoop.runtime.ClosingStream;
 import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.IMessage;
 import randoop.runtime.PercentDone;
@@ -39,10 +41,8 @@ public class MessageReceiverTest extends TestCase {
       System.out.println(m);
       if (m instanceof RandoopStarted) {
     	  fStartMessage = m;
-    	  return;    	  
       } else if (m instanceof RandoopFinished) {
     	  fReceivedLast = true;
-    	  return;    	  
       } else if (m instanceof PercentDone) {
     	  assertNotNull("RandoopStarted message must be received before PercentDone", fStartMessage);
     	  assertFalse("PercentDone message must not be received after RandoopFinished", fReceivedLast);
@@ -53,7 +53,9 @@ public class MessageReceiverTest extends TestCase {
       } else if (m instanceof CreatedJUnitFile) {
         CreatedJUnitFile fileCreatedMsg = (CreatedJUnitFile) m;
         
-        System.out.println(fileCreatedMsg.getFile());
+        System.out.println(fileCreatedMsg.isDriver() + "  " + fileCreatedMsg.getFile());
+      } else if (m instanceof ClosingStream) {
+        fail("ClosingStream messages should not be passed to IMessageListeners");
       }
     }
 
@@ -62,7 +64,7 @@ public class MessageReceiverTest extends TestCase {
       fail("Terminated unexpectedly");
     }
     
-    public boolean hasReceivedLast() {
+    public boolean receivedLast() {
       return fReceivedLast;
     }
   }
@@ -87,6 +89,7 @@ public class MessageReceiverTest extends TestCase {
   public void testStartRandoop(final ILaunchConfigurationWorkingCopy config) throws CoreException, IOException {
     TestMessageListener tml = new TestMessageListener();
     MessageReceiver mr = new MessageReceiver(tml);
+    System.out.println("Using port " + mr.getPort());
     
     RandoopArgumentCollector.setPort(config, mr.getPort());
     
@@ -112,6 +115,6 @@ public class MessageReceiverTest extends TestCase {
       e.printStackTrace();
     }
     
-    assertTrue("DONE message never received", tml.hasReceivedLast());
+    assertTrue("Never received RandoopFinished message", tml.receivedLast());
   }
 }

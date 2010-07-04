@@ -105,9 +105,8 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
             try {
               viewPart = (TestGeneratorViewPart) page
                   .showView(TestGeneratorViewPart.ID);
-              assert viewPart != null; // TODO is this true?
-              fMessageReceiver = new MessageReceiver(new MessageViewListener(
-                  viewPart));
+              Assert.isTrue(viewPart != null); // TODO is this true?
+              fMessageReceiver = new MessageReceiver(new MessageViewListener(viewPart));
               viewPart.setLaunch(theLaunch);
               fPort = fMessageReceiver.getPort();
             } catch (PartInitException e1) {

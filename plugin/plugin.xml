@@ -23,10 +23,6 @@
             id="randoop.plugin.autoTestRunnerActionSet"
             label="Randoop Auto-Test Runner"
             visible="true">
-         <menu
-               id="plugin.menu1"
-               label="label">
-         </menu>
          <action
                class="randoop.plugin.internal.core.autotesting.ToggleAutomatedTestingActionDelegate"
                icon="icons/autorun.png"
@@ -36,10 +32,6 @@
                toolbarPath="Normal"
                tooltip="Automate execution of tests">
          </action>
-         <menu
-               id="plugin.menu1"
-               label="Randoop Auto-Test Runner">
-         </menu>
       </actionSet>
    </extension>
    <extension
