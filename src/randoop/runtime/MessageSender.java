@@ -20,8 +20,13 @@ public class MessageSender {
   public boolean send(IMessage payload) {
     try {
       fObjectOutputStream.writeObject(payload);
+
+      if (payload instanceof ClosingStream) {
+        close();
+      }
       return true;
     } catch (IOException ioe) {
+      System.err.println(ioe);
       close();
       return false;
     }

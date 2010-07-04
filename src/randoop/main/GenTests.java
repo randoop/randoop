@@ -55,8 +55,11 @@ import randoop.Sequence;
 import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
 import randoop.Variable;
+import randoop.runtime.ClosingStream;
 import randoop.runtime.CreatedJUnitFile;
+import randoop.runtime.IMessage;
 import randoop.runtime.MessageSender;
+import randoop.runtime.RandoopFinished;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -560,6 +563,9 @@ public class GenTests extends GenInputsAbstract {
       sequences = seqs;
     }
     write_junit_tests (junit_output_dir, sequences, msgSender);
+    
+    IMessage msg = new ClosingStream();
+    msgSender.send(msg);
 
     return true;
   }
@@ -618,12 +624,15 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.println();
     }
+    
     for (File f : files) {
       if (!GenInputsAbstract.noprogressdisplay) {
         System.out.println("Created file: " + f.getAbsolutePath());
       }
       if (msgSender != null) {
-        msgSender.send(new CreatedJUnitFile(f));
+        // TODO: This is unsafe. I'm just assuming that the list file written is the driver file
+        boolean isDriver = files.lastIndexOf(f) == files.size() - 1;
+        msgSender.send(new CreatedJUnitFile(f, isDriver));
       }
     }
   }
