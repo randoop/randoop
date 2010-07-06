@@ -28,6 +28,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.wizards.RandoopLaunchConfigurationWizard;
 
 public class RandoopLaunchShortcut implements ILaunchShortcut {
@@ -65,20 +66,35 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     
     final IJavaProject javaProject = project;
     
-    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-      @Override
-      public void run() {
-        // The shell is not null
-        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        assertNotNull(shell);
-        
-        RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(javaProject, elements);
-        WizardDialog dialog = new WizardDialog(shell, wizard);
-        
-        dialog.create();
-        dialog.open();
-      }
-    });
+    ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+    ILaunchConfigurationType randoopLaunchType = launchManager.getLaunchConfigurationType(
+        IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
+    try {
+      final ILaunchConfigurationWorkingCopy config = randoopLaunchType.newInstance(null, launchManager.generateLaunchConfigurationName("RandoopTest"));
+      
+      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            // The shell is not null
+            Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+            assertNotNull(shell);
+  
+            RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(javaProject, elements, config);
+            WizardDialog dialog = new WizardDialog(shell, wizard);
+  
+            dialog.create();
+            dialog.open();
+          } catch (CoreException e) {
+            RandoopPlugin.log(e);
+          }
+        }
+      });
+    
+      config.launch("run", null); //$NON-NLS-1$
+    } catch (CoreException ce) {
+      RandoopPlugin.log(ce);
+    }
   }
 
   @Override

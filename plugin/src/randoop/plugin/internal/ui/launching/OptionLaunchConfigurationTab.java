@@ -1,8 +1,6 @@
 package randoop.plugin.internal.ui.launching;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
@@ -12,11 +10,11 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 
 import randoop.plugin.internal.ui.options.IOption;
 
-public abstract class OptionTab extends AbstractLaunchConfigurationTab {
+public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
   private Set<IOption> fProjectOption;
   
-  public OptionTab() {
+  public OptionLaunchConfigurationTab() {
     fProjectOption = new HashSet<IOption>();
   }
 
