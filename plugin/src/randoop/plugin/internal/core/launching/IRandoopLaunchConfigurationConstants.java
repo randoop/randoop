@@ -65,7 +65,7 @@ public class IRandoopLaunchConfigurationConstants {
   
   public static final String DEFAULT_JUNIT_PACKAGE_NAME = ""; //$NON-NLS-1$
   
-  public static final String DEFAULT_JUNIT_FULLY_QUALIFIED_TYPE_NAME = "RandoopTest"; //$NON-NLS-1$
+  public static final String DEFAULT_JUNIT_CLASS_NAME = "RandoopTest"; //$NON-NLS-1$
   
   public static final String DEFAULT_MAXIMUM_TESTS_WRITTEN = "100000000"; //$NON-NLS-1$
   

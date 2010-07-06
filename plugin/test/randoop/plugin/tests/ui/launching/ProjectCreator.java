@@ -234,8 +234,8 @@ public class ProjectCreator extends TestCase {
     RandoopArgumentCollector.setSelectedTypes(config, availableTypes);
     RandoopArgumentCollector.setTimeLimit(config, "" + timelimit);
     RandoopArgumentCollector.setOutputDirectoryHandlerId(config, testFolder.getHandleIdentifier());
-    RandoopArgumentCollector.setJUnitFullyQualifiedTypeName(config, "demo.pathplanning.allTests");
-    RandoopArgumentCollector.setJUnitFullyQualifiedTypeName(config, "AllTypeTest");
+    RandoopArgumentCollector.setJUnitPackageName(config, "demo.pathplanning.allTests");
+    RandoopArgumentCollector.setJUnitClassName(config, "AllTypeTest");
     
     return config;
   }
@@ -279,8 +279,8 @@ public class ProjectCreator extends TestCase {
     RandoopArgumentCollector.setSelectedTypes(config, availableTypes);
     RandoopArgumentCollector.setTimeLimit(config, "" + timelimit);
     RandoopArgumentCollector.setOutputDirectoryHandlerId(config, testFolder.getHandleIdentifier());
-    RandoopArgumentCollector.setJUnitFullyQualifiedTypeName(config, "demo.pathplanning.allTests");
-    RandoopArgumentCollector.setJUnitFullyQualifiedTypeName(config, "AllTypeTest");
+    RandoopArgumentCollector.setJUnitPackageName(config, "demo.pathplanning.allTests");
+    RandoopArgumentCollector.setJUnitClassName(config, "AllTypeTest");
     
     return config;
   }
