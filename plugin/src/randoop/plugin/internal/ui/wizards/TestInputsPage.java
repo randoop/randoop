@@ -1,5 +1,7 @@
 package randoop.plugin.internal.ui.wizards;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -13,7 +15,7 @@ import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
 
-public class TestInputsPage extends WizardPage {
+public class TestInputsPage extends OptionWizardPage {
   
   private final IJavaProject fProject;
   
@@ -21,20 +23,8 @@ public class TestInputsPage extends WizardPage {
 
   private IOption fTestInputSelectorOption;
 
-  private SelectionListener fBasicSelectionListener = new SelectionListener() {
-    @Override
-    public void widgetSelected(SelectionEvent e) {
-      setErrorMessage(null);
-    }
-
-    @Override
-    public void widgetDefaultSelected(SelectionEvent e) {
-      setErrorMessage(null);
-    }
-  };
-  
-  protected TestInputsPage(String pageName, IJavaProject project, IJavaElement[] elements) {
-    super(pageName);
+  protected TestInputsPage(String pageName, IJavaProject project, IJavaElement[] elements, ILaunchConfigurationWorkingCopy config) {
+    super(pageName, config);
     
     setTitle("Test Inputs");
     setPageComplete(false);
@@ -49,17 +39,16 @@ public class TestInputsPage extends WizardPage {
     setControl(comp);
 
     fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard()
-        .getContainer(), fBasicSelectionListener, fProject);
+        .getContainer(), getSelectionListener(), fProject);
+    
+    addOption(fTestInputSelectorOption);
+    
+    super.createControl(parent);
   }
 
   @Override
   public String getName() {
     return "";
-  }
-
-  @Override
-  public boolean isPageComplete() {
-    return false;
   }
 
   @Override

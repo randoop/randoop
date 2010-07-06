@@ -19,7 +19,7 @@ import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
 
-public class GeneralTab extends OptionTab {
+public class GeneralTab extends OptionLaunchConfigurationTab {
   private IOption fProjectOption;
   private IOption fJUnitTestClassNameOption;
   private ClassSelectorOption fTestInputSelectorOption;
