@@ -1,5 +1,7 @@
 package randoop.plugin.internal.ui.wizards;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.junit.ui.JUnitClasspathFixProcessor;
@@ -22,10 +24,10 @@ import randoop.plugin.internal.ui.options.IOptionFactory;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
 
-public class MainPage extends WizardPage {
+public class MainPage extends OptionWizardPage {
   private final IJavaProject fProject;
   
-  private IOption fProjectOption;
+  private IOption fOutputFolderOption;
   private IOption fClassName;
   
   private IOption fRandomSeed;
@@ -42,11 +44,10 @@ public class MainPage extends WizardPage {
   private IOption fMaxTestsWritten;
   private IOption fMaxTestsPerFile;
 
-  protected MainPage(String pageName, IJavaProject project) {
-    super(pageName);
+  protected MainPage(String pageName, IJavaProject project, ILaunchConfigurationWorkingCopy config) {
+    super(pageName, config);
     
     fProject = project;
-    
     setTitle("Randoop Launch Configuration");
   }
   
@@ -62,6 +63,8 @@ public class MainPage extends WizardPage {
     createGenerationLimitComposite(comp);
     createSeperator(comp);
     createOutputRestrictionsComposite(comp);
+    
+    super.createControl(parent);
   }
 
   private void createSeperator(Composite comp) {
@@ -77,7 +80,7 @@ public class MainPage extends WizardPage {
     Button sourceFolderBrowseButton = SWTFactory.createPushButton(comp, "&Browse...",
         null);
 
-    fProjectOption = new ProjectOption(getShell(), fProject,
+    fOutputFolderOption = new ProjectOption(getShell(), fProject,
         outputSourceFolderText, sourceFolderBrowseButton);
     
     SWTFactory.createLabel(comp, "Package:", 1);
@@ -87,6 +90,14 @@ public class MainPage extends WizardPage {
     Text classNameText = SWTFactory.createSingleText(comp, 2);
     
     fClassName = new JUnitTestClassNameOption(packageNameText, classNameText);
+    
+    addOption(fOutputFolderOption);
+    addOption(fClassName);
+    
+    outputSourceFolderText.addModifyListener(getModifyListener());
+    packageNameText.addModifyListener(getModifyListener());
+    classNameText.addModifyListener(getModifyListener());
+    
   }
   
   private void createGeneralComposite(Composite parent) {
@@ -119,6 +130,18 @@ public class MainPage extends WizardPage {
     nullRatio.setEnabled(useNull.getSelection());
     fNullRatio = IOptionFactory.createNullRatioOption(nullRatio);
     fUseNull = IOptionFactory.createUseNull(fNullRatio, useNull);
+    
+    addOption(fRandomSeed);
+    addOption(fMaxTestSize);
+    addOption(fUseThreads);
+    addOption(fUseNull);
+    
+    randomSeed.addModifyListener(getModifyListener());
+    maxTestSize.addModifyListener(getModifyListener());
+    useThreads.addSelectionListener(getSelectionListener());
+    threadTimeout.addModifyListener(getModifyListener());
+    useNull.addSelectionListener(getSelectionListener());
+    nullRatio.addModifyListener(getModifyListener());
   }
 
   private void createGenerationLimitComposite(Composite parent) {
@@ -142,6 +165,12 @@ public class MainPage extends WizardPage {
        false));
     
     fTimeLimit = IOptionFactory.createTimeLimitOption(timeLimit, convertedTimeLimit);
+    
+    addOption(fJUnitTestInputs);
+    addOption(fTimeLimit);
+    
+    junitTestInputs.addModifyListener(getModifyListener());
+    timeLimit.addModifyListener(getModifyListener());
   }
   
   private void createOutputRestrictionsComposite(Composite parent) {
@@ -160,6 +189,14 @@ public class MainPage extends WizardPage {
     SWTFactory.createLabel(comp, "Maximum Tests Per &File:", 1);
     Text maxTestsPerFile = SWTFactory.createSingleText(comp, 2);
     fMaxTestsPerFile = IOptionFactory.createMaximumTestsPerFileOption(maxTestsPerFile);
+    
+    addOption(fTestKinds);
+    addOption(fMaxTestsWritten);
+    addOption(fMaxTestsPerFile);
+    
+    testKinds.addModifyListener(getModifyListener());
+    maxTestsWritten.addModifyListener(getModifyListener());
+    maxTestsPerFile.addModifyListener(getModifyListener());
   }
 
   @Override

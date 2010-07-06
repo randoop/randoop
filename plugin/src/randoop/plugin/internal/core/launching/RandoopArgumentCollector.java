@@ -586,5 +586,5 @@ public class RandoopArgumentCollector {
         + getJUnitPackageName() + getJUnitClassName() + getTestKinds()
         + getMaxTestsWritten() + getMaxTestsPerFile()).hashCode();
   }
-  
+
 }

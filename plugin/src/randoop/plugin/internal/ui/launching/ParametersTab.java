@@ -21,7 +21,7 @@ import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.IOptionFactory;
 
-public class ParametersTab extends OptionTab {
+public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fRandomSeed;
   private IOption fMaxTestSize;
   private IOption fUseThreads;
@@ -169,13 +169,13 @@ public class ParametersTab extends OptionTab {
     Text maxTestsPerFile = SWTFactory.createSingleText(group, 2);
     fMaxTestsPerFile = IOptionFactory.createMaximumTestsPerFileOption(maxTestsPerFile);
 
-    testKinds.addModifyListener(fBasicModifyListener);
-    maxTestsWritten.addModifyListener(fBasicModifyListener);
-    maxTestsPerFile.addModifyListener(fBasicModifyListener);
-
     addOption(fTestKinds);
     addOption(fMaxTestsWritten);
     addOption(fMaxTestsPerFile);
+    
+    testKinds.addModifyListener(fBasicModifyListener);
+    maxTestsWritten.addModifyListener(fBasicModifyListener);
+    maxTestsPerFile.addModifyListener(fBasicModifyListener);
   }
 
   /*
