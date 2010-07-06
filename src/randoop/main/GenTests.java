@@ -563,9 +563,11 @@ public class GenTests extends GenInputsAbstract {
       sequences = seqs;
     }
     write_junit_tests (junit_output_dir, sequences, msgSender);
-    
-    IMessage msg = new ClosingStream();
-    msgSender.send(msg);
+
+    if (msgSender != null) {
+      IMessage msg = new ClosingStream();
+      msgSender.send(msg);
+    }
 
     return true;
   }
