@@ -31,7 +31,6 @@ public class ParametersTab extends OptionTab {
 
   private IOption fJUnitTestInputs;
   private IOption fTimeLimit;
-  private IOption lConvertedTimeLimit;
   
   private IOption fTestKinds;
   private IOption fMaxTestsWritten;
@@ -81,34 +80,32 @@ public class ParametersTab extends OptionTab {
   }
 
   private void createGeneralGroup(Composite parent) {
-    Group group = SWTFactory.createGroup(parent, "General", 1, 1,
+    Group group = SWTFactory.createGroup(parent, "General", 2, 1,
         GridData.FILL_HORIZONTAL);
 
-    Composite comp = SWTFactory
-        .createComposite(group, 2, 1, GridData.FILL_BOTH);
-    GridLayout ld = (GridLayout) comp.getLayout();
+    GridLayout ld = (GridLayout) group.getLayout();
     ld.marginWidth = 1;
     ld.marginHeight = 1;
 
-    SWTFactory.createLabel(comp, "Random &Seed:", 1);
-    Text randomSeed = SWTFactory.createSingleText(comp, 1);
+    SWTFactory.createLabel(group, "Random &Seed:", 1);
+    Text randomSeed = SWTFactory.createSingleText(group, 1);
     fRandomSeed = IOptionFactory.createRandomSeedOption(randomSeed);
 
-    SWTFactory.createLabel(comp, "Maximum Test Si&ze:", 1);
-    Text maxTestSize = SWTFactory.createSingleText(comp, 1);
+    SWTFactory.createLabel(group, "Maximum Test Si&ze:", 1);
+    Text maxTestSize = SWTFactory.createSingleText(group, 1);
     fMaxTestSize = IOptionFactory.createMaximumTestSizeOption(maxTestSize);
 
-    Button useThreads = createCheckButton(comp, "Thread Time&out:");
+    Button useThreads = createCheckButton(group, "Thread Time&out:");
     useThreads.setSelection(true);
     
-    Text threadTimeout = SWTFactory.createSingleText(comp, 1);
+    Text threadTimeout = SWTFactory.createSingleText(group, 1);
     fThreadTimeout = IOptionFactory.createThreadTimeoutOption(threadTimeout);
     fUseThreads = IOptionFactory.createUseThreads(fThreadTimeout, useThreads);
     
-    Button useNull = createCheckButton(comp, "Null R&atio:");
+    Button useNull = createCheckButton(group, "Null R&atio:");
     useNull.setSelection(false);
     
-    Text nullRatio = SWTFactory.createSingleText(comp, 1);
+    Text nullRatio = SWTFactory.createSingleText(group, 1);
     nullRatio.setEnabled(useNull.getSelection());
     fNullRatio = IOptionFactory.createNullRatioOption(nullRatio);
     fUseNull = IOptionFactory.createUseNull(fNullRatio, useNull);
@@ -127,24 +124,22 @@ public class ParametersTab extends OptionTab {
   }
 
   private void createGenerationLimitGroup(Composite parent) {
-    Group group = SWTFactory.createGroup(parent, "Generation Limit", 1, 1,
+    Group group = SWTFactory.createGroup(parent, "Generation Limit", 2, 1,
         GridData.FILL_HORIZONTAL);
 
-    Composite comp = SWTFactory
-        .createComposite(group, 2, 2, GridData.FILL_BOTH);
-    GridLayout ld = (GridLayout) comp.getLayout();
+    GridLayout ld = (GridLayout) group.getLayout();
     ld.marginWidth = 1;
     ld.marginHeight = 1;
 
-    SWTFactory.createLabel(comp, "JUnit Test &Inputs:", 1);
-    Text junitTestInputs = SWTFactory.createSingleText(comp, 1);
+    SWTFactory.createLabel(group, "JUnit Test &Inputs:", 1);
+    Text junitTestInputs = SWTFactory.createSingleText(group, 1);
     fJUnitTestInputs = IOptionFactory.createJUnitTestInputsOption(junitTestInputs);
 
-    SWTFactory.createLabel(comp, "&Time Limit:", 1);
-    Text timeLimit = SWTFactory.createSingleText(comp, 1);
+    SWTFactory.createLabel(group, "&Time Limit:", 1);
+    Text timeLimit = SWTFactory.createSingleText(group, 1);
 
-    SWTFactory.createLabel(comp, IConstants.EMPTY_STRING, 1); // spacer
-    Label convertedTimeLimit = SWTFactory.createLabel(comp, IConstants.EMPTY_STRING, 1);
+    SWTFactory.createLabel(group, IConstants.EMPTY_STRING, 1); // spacer
+    Label convertedTimeLimit = SWTFactory.createLabel(group, IConstants.EMPTY_STRING, 1);
     convertedTimeLimit.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true,
        false));
     

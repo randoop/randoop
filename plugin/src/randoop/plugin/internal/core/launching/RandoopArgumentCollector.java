@@ -77,15 +77,8 @@ public class RandoopArgumentCollector {
       fOutputDirectory = outputDir.getPath().makeRelative();
     }
 
-    String fqName = getJUnitFullyQualifiedTypeName(config);
-    int pIndex = fqName.lastIndexOf('.');
-    if (pIndex == -1) {
-      fJUnitPackageName = IConstants.EMPTY_STRING;
-      fJUnitClassName = fqName;
-    } else {
-      fJUnitPackageName = fqName.substring(0, pIndex);
-      fJUnitClassName = fqName.substring(pIndex + 1);
-    }
+    fJUnitPackageName = getJUnitPackageName(config);
+    fJUnitClassName =  getJUnitClassName(config);
     
     fTestKinds = getTestKinds(config);
     fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
@@ -245,13 +238,20 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY);
   }
 
-  public static String getJUnitFullyQualifiedTypeName(
+  public static String getJUnitPackageName(
       ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_FULLY_QUALIFIED_TYPE_NAME);
+        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME);
   }
 
+  public static String getJUnitClassName(
+      ILaunchConfiguration config) {
+    return getAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
+        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME);
+  }
+  
   public static String getTestKinds(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_TEST_KINDS,
@@ -367,7 +367,7 @@ public class RandoopArgumentCollector {
   public static void restoreJUnitClassName(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_FULLY_QUALIFIED_TYPE_NAME);
+        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME);
   }
 
   public static void restoreTestKinds(ILaunchConfigurationWorkingCopy config) {
@@ -465,7 +465,7 @@ public class RandoopArgumentCollector {
         outputDirectory);
   }
 
-  public static void setJUnitFullyQualifiedTypeName(ILaunchConfigurationWorkingCopy config, String junitPackageName) {
+  public static void setJUnitPackageName(ILaunchConfigurationWorkingCopy config, String junitPackageName) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
         junitPackageName);
