@@ -1,31 +1,55 @@
 package randoop.plugin.internal.ui.wizards;
 
 import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardContainer;
-import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+
+import randoop.plugin.internal.ui.options.ClassSelectorOption;
+import randoop.plugin.internal.ui.options.IOption;
+import randoop.plugin.internal.ui.options.ProjectOption;
 
 public class TestInputsPage extends WizardPage {
+  
+  private final IJavaProject fProject;
+  
+  private final IJavaElement[] fElements;
 
-  protected TestInputsPage(String pageName) {
+  private IOption fTestInputSelectorOption;
+
+  private SelectionListener fBasicSelectionListener = new SelectionListener() {
+    @Override
+    public void widgetSelected(SelectionEvent e) {
+      setErrorMessage(null);
+    }
+
+    @Override
+    public void widgetDefaultSelected(SelectionEvent e) {
+      setErrorMessage(null);
+    }
+  };
+  
+  protected TestInputsPage(String pageName, IJavaProject project, IJavaElement[] elements) {
     super(pageName);
     
     setTitle("Test Inputs");
     setPageComplete(false);
-    // setPreviousPage(page);
+    
+    fProject = project;
+    fElements = elements;
   }
   
   @Override
   public void createControl(Composite parent) {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(comp);
+
+    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard()
+        .getContainer(), fBasicSelectionListener, fProject);
   }
 
   @Override

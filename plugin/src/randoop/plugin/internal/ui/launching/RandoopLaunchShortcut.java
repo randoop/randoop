@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -13,9 +14,11 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -31,7 +34,37 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
 
   @Override
   public void launch(ISelection selection, String mode) {
-    System.out.println(":Launching");
+    Assert.isTrue(selection instanceof IStructuredSelection);
+    final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+    
+    IJavaProject project = null;
+    Object[] selected = structuredSelection.toArray();
+    final IJavaElement[] elements;
+
+    if (selected.length == 1 && selected[0] instanceof IJavaElement) {
+      project = (IJavaProject) selected[0];
+      elements = new IJavaElement[0];
+    } else {
+      // Ensure every selected object is an instance of IJavaElement that is
+      // contained in the same project as the other selected objects
+      elements = new IJavaElement[selected.length];
+
+      for (int i = 0; i < selected.length; i++) {
+        Assert.isTrue(selected[i] instanceof IJavaElement);
+        IJavaElement e = (IJavaElement) selected[i];
+
+        if (project == null) {
+          project = e.getJavaProject();
+        } else {
+          Assert.isTrue(e.getJavaProject().equals(project),
+              "All selected elements must be contained in the same Java project."); //$NON-NLS-1$
+        }
+        elements[i] = e;
+      }
+    }
+    
+    final IJavaProject javaProject = project;
+    
     PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
       @Override
       public void run() {
@@ -39,7 +72,7 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
         assertNotNull(shell);
         
-        RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard();
+        RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(javaProject, elements);
         WizardDialog dialog = new WizardDialog(shell, wizard);
         
         dialog.create();

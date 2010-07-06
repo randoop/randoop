@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -55,7 +56,7 @@ import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstan
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
-  private ILaunchConfigurationDialog fDialog;
+  private IRunnableContext fRunnableContext;
   private Shell fShell;
   private ClassSelector fTypeSelector;
   private Tree fTypeTree;
@@ -68,10 +69,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Button fIgnoreJUnitTestCases;
   private IJavaProject fProject;
   
-  public ClassSelectorOption(Composite parent, ILaunchConfigurationDialog dialog,  
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
+      final SelectionListener listener, IJavaProject project) {
+    this(parent, runnableContext, listener);
+    fProject = project;
+  }
+  
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,  
       final SelectionListener listener) {
-    fDialog = dialog;
-    Group comp = SWTFactory.createGroup(parent, "Test Inputs", 2, 1, GridData.FILL_HORIZONTAL);
+    fRunnableContext = runnableContext;
+    Group comp = SWTFactory.createGroup(parent, "Test Inputs", 2, 1, GridData.FILL_BOTH);
     fShell = comp.getShell();
 
     final Composite leftcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_BOTH);
@@ -185,7 +192,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public IStatus canSave() {
-    if (fDialog == null || fShell == null || fTypeSelector == null
+    if (fRunnableContext == null || fShell == null || fTypeSelector == null
         || fTypeTree == null || fClassUp == null || fClassDown == null
         || fClassDown == null || fClassAddFromProject == null
         || fClassAddFromClasspaths == null
@@ -446,7 +453,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
   private IType[] findClasses(ClassSearcher searcher) {
     try {
-      fDialog.run(true, true, searcher);
+      fRunnableContext.run(true, true, searcher);
     } catch (InvocationTargetException e) {
       RandoopPlugin.log(e);
     } catch (InterruptedException e) {

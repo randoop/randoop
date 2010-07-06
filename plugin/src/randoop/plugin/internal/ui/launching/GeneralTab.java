@@ -86,10 +86,9 @@ public class GeneralTab extends OptionTab {
         GridData.FILL_HORIZONTAL);
     
     SWTFactory.createLabel(comp, "JUnit Class Name:", 1);
-     Text fullyQualifiedTestName = SWTFactory.createSingleText(comp, 2);
+    Text fullyQualifiedTestName = SWTFactory.createSingleText(comp, 2);
     
-    fJUnitTestClassNameOption = new JUnitTestClassNameOption(
-        fullyQualifiedTestName);
+    fJUnitTestClassNameOption = new JUnitTestClassNameOption(fullyQualifiedTestName);
     Assert.isTrue(addOption(fJUnitTestClassNameOption));
 
     fullyQualifiedTestName.addModifyListener(fBasicModifyListener);

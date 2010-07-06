@@ -35,7 +35,7 @@ public class ProjectOption extends Option {
   private Shell fShell;
   
   private Text fProjectText;
-  private IJavaProject fProject;
+  private IJavaProject fJavaProject;
   private Button fProjectBrowseButton;
   
   private Text fOutputSourceFolderText;
@@ -56,7 +56,7 @@ public class ProjectOption extends Option {
         handleProjectBrowseButtonSelected();
 
         String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT;
-        String handlerId = fProject.getHandleIdentifier();
+        String handlerId = fJavaProject.getHandleIdentifier();
         notifyListeners(new OptionChangeEvent(attr, handlerId));
       }
     });
@@ -79,15 +79,39 @@ public class ProjectOption extends Option {
     });
     fSourceFolderBrowseButton.setEnabled(false);
   }
+  
+  public ProjectOption(Shell shell, IJavaProject project,
+      Text outputSourceFolderText, Button sourceFolderBrowseButton) {
+    fShell = shell;
+    
+    fJavaProject = project;
+    
+    fOutputSourceFolderText = outputSourceFolderText;
+    fOutputSourceFolderText.setEditable(false);
+    
+    fSourceFolderBrowseButton = sourceFolderBrowseButton;
+    fSourceFolderBrowseButton.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        IPackageFragmentRoot chosenFolder = chooseSourceFolder();
+
+        if (chosenFolder != null) {
+          fOutputSourceFolder = chosenFolder;
+          fOutputSourceFolderText.setText(fOutputSourceFolder.getPath()
+              .makeRelative().toString());
+        }
+      }
+    });
+    fSourceFolderBrowseButton.setEnabled(true);
+  }
 
   @Override
   public IStatus canSave() {
-    if (fProjectText == null || fProjectBrowseButton == null
-        || fOutputSourceFolderText == null || fSourceFolderBrowseButton == null) {
+    if (fOutputSourceFolderText == null || fSourceFolderBrowseButton == null) {
       return StatusFactory.createErrorStatus("ProjectOption incorrectly initialized");
     }
   
-    if (fProject == null) {
+    if (fJavaProject == null) {
       return StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
     }
     
@@ -95,7 +119,7 @@ public class ProjectOption extends Option {
       return StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
     }
   
-    String projectHandlerId = fProject.getHandleIdentifier();
+    String projectHandlerId = fJavaProject.getHandleIdentifier();
     String outputSourceFolderHandlerId = fOutputSourceFolder.getHandleIdentifier();
   
     return validate(projectHandlerId, outputSourceFolderHandlerId);
@@ -121,8 +145,7 @@ public class ProjectOption extends Option {
       String outputSourceFolderHandlerId) {
     IStatus status;
 
-    IJavaProject project = RandoopLaunchConfigurationUtil
-        .getProject(projectHandlerId);
+    IJavaProject project = RandoopLaunchConfigurationUtil.getProject(projectHandlerId);
     if (project == null) {
       status = StatusFactory
           .createErrorStatus("Project does not exist");
@@ -158,9 +181,9 @@ public class ProjectOption extends Option {
     if (fProjectText != null) {
       String handlerId = RandoopArgumentCollector.getProjectHandlerId(config);
 
-      fProject = RandoopLaunchConfigurationUtil.getProject(handlerId);
-      if (fProject != null) {
-        fProjectText.setText(fProject.getElementName());
+      fJavaProject = RandoopLaunchConfigurationUtil.getProject(handlerId);
+      if (fJavaProject != null) {
+        fProjectText.setText(fJavaProject.getElementName());
       } else {
         fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
       }
@@ -187,9 +210,9 @@ public class ProjectOption extends Option {
   // expects ILaunchConfigurationWorkingCopy
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fProjectText != null && fProject != null)
+    if (fProjectText != null && fJavaProject != null)
       RandoopArgumentCollector.setProjectHandlerId(config,
-          fProject.getHandleIdentifier());
+          fJavaProject.getHandleIdentifier());
   
     if (fOutputSourceFolderText != null && fOutputSourceFolder != null)
       RandoopArgumentCollector.setOutputDirectoryHandlerId(config,
@@ -216,21 +239,13 @@ public class ProjectOption extends Option {
     }
 
     boolean okToProceed = true;
-    
     // TODO: check if test inputs will change
-    
-    System.out.println("okToProceed=" + okToProceed);
 
     // It is okay to proceed if neither the output folder or selected types will
     // change
     if (!okToProceed) {
-      String[] dialogButtonLabels = new String[] { IDialogConstants.YES_LABEL,
-          IDialogConstants.NO_LABEL };
-
-      MessageDialog dialog = new MessageDialog(getShell(), "Change Project", null,
-          "Changing the selected project will change some of the selected test inputs.\n\nOkay to proceed?",
-          MessageDialog.QUESTION, dialogButtonLabels, 0);
-      okToProceed = dialog.open() == 0;
+      okToProceed = MessageDialog.openQuestion(getShell(), "Change Project",
+          "Changing the selected project will change some of the selected test inputs.\n\nOkay to proceed?");
     }
     
     if (okToProceed) {
@@ -246,8 +261,8 @@ public class ProjectOption extends Option {
       
       // TODO update selected test kinds
       
-      fProject = project;
-      String projectName = fProject.getElementName();
+      fJavaProject = project;
+      String projectName = fJavaProject.getElementName();
       fProjectText.setText(projectName);
     }
   }
@@ -327,7 +342,7 @@ public class ProjectOption extends Option {
   private IPackageFragmentRoot chooseSourceFolder() {
     IPackageFragmentRoot pfRoots[];
     try {
-      pfRoots = fProject.getPackageFragmentRoots();
+      pfRoots = fJavaProject.getPackageFragmentRoots();
 
       List<IPackageFragmentRoot> sourceFolders = new ArrayList<IPackageFragmentRoot>();
       for (IPackageFragmentRoot pfRoot : pfRoots) {
@@ -345,16 +360,11 @@ public class ProjectOption extends Option {
       ElementListSelectionDialog dialog = new ElementListSelectionDialog(
           getShell(), labelProvider);
       dialog.setTitle("Project Selection");
-      dialog
-          .setMessage("Choose a project to constrain the search for test classes:");
+      dialog.setMessage("Choose a project to constrain the search for test classes:");
       dialog.setElements(sourceFolders
           .toArray(new IPackageFragmentRoot[sourceFolders.size()]));
       dialog.setHelpAvailable(false);
 
-      IJavaProject javaProject = getJavaProject();
-      if (javaProject != null) {
-        dialog.setInitialSelections(new Object[] { javaProject });
-      }
       if (dialog.open() == Window.OK) {
         Object element = dialog.getFirstResult();
         if (element instanceof IPackageFragmentRoot) {
