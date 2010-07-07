@@ -69,31 +69,59 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
     ILaunchConfigurationType randoopLaunchType = launchManager.getLaunchConfigurationType(
         IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
-    try {
-      final ILaunchConfigurationWorkingCopy config = randoopLaunchType.newInstance(null, launchManager.generateLaunchConfigurationName("RandoopTest"));
-      
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            // The shell is not null
-            Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-            assertNotNull(shell);
-  
-            RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(javaProject, elements, config);
-            WizardDialog dialog = new WizardDialog(shell, wizard);
-  
-            dialog.create();
-            dialog.open();
-          } catch (CoreException e) {
-            RandoopPlugin.log(e);
-          }
-        }
-      });
     
-      config.launch("run", null); //$NON-NLS-1$
+    try {
+      // TODO: Find an original name given the selection
+      ILaunchConfigurationWorkingCopy config = randoopLaunchType.newInstance(
+          null, launchManager.generateLaunchConfigurationName("RandoopTest"));
+
+      RandoopWizardRunner runner = new RandoopWizardRunner(javaProject,
+          elements, config);
+      PlatformUI.getWorkbench().getDisplay().syncExec(runner);
+
+      if (runner.getReturnCode() == WizardDialog.OK) {
+        config.doSave();
+        DebugUITools.launch(config, "run"); //$NON-NLS-1$
+      }
     } catch (CoreException ce) {
       RandoopPlugin.log(ce);
+    }
+  }
+  
+  private class RandoopWizardRunner implements Runnable {
+    
+    IJavaProject fJavaProject;
+    IJavaElement[] fElements;
+    ILaunchConfigurationWorkingCopy fConfig;
+    int fReturnCode;
+
+    public RandoopWizardRunner(IJavaProject javaProject, IJavaElement[] elements,
+        ILaunchConfigurationWorkingCopy config) {
+      fJavaProject = javaProject;
+      fElements = elements;
+      fConfig = config;
+      fReturnCode = -1;
+    }
+
+    @Override
+    public void run() {
+      try {
+        // The shell is not null
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        assertNotNull(shell);
+
+        RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(fJavaProject, fElements, fConfig);
+        WizardDialog dialog = new WizardDialog(shell, wizard);
+
+        dialog.create();
+        fReturnCode = dialog.open();
+      } catch (CoreException e) {
+        RandoopPlugin.log(e);
+      }
+    }
+
+    public int getReturnCode() {
+      return fReturnCode;
     }
   }
 
