@@ -47,6 +47,8 @@ public class IRandoopLaunchConfigurationConstants {
   
   public static final String ATTR_SELECTED_TYPES = RandoopPlugin.getPluginId() + ".SELECTED_TYPES"; //$NON-NLS-1$
   
+  public static final String ATTR_AVAILABLE_METHODS = RandoopPlugin.getPluginId() + ".AVAILABLE_METHODS"; //$NON-NLS-1$
+  
   public static final String ATTR_SELECTED_METHODS = RandoopPlugin.getPluginId() + ".SELECTED_METHODS"; //$NON-NLS-1$
   
   public static final String DEFAULT_RANDOM_SEED = "0"; //$NON-NLS-1$
@@ -80,5 +82,5 @@ public class IRandoopLaunchConfigurationConstants {
   public static final String DEFAULT_OUTPUT_DIRECTORY_NAME = ""; //$NON-NLS-1$
 
   public static final String DEFUALT_USE_LOCAL_TEMP_FOLDER = "false"; //$NON-NLS-1$
-  
+
 }

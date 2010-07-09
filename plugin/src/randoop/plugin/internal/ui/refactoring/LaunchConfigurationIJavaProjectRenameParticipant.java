@@ -13,9 +13,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+
 public class LaunchConfigurationIJavaProjectRenameParticipant extends
     RenameParticipant {
-  private IJavaProject project;
+  private String fOldProjectName;
 
   /*
    * (non-Javadoc)
@@ -34,10 +36,16 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     List<Change> changes = new ArrayList<Change>();
-    ILaunchConfiguration[] configs = getRandoopTypeLaunchConfigurations();
+    ILaunchConfiguration[] configs = RandoopRefactoringUtil.getRandoopTypeLaunchConfigurations();
     
+    for(ILaunchConfiguration config : configs) {
+      if(RandoopArgumentCollector.getProjectName(config).equals(fOldProjectName)) {
+        Change c = new LaunchConfigurationProjectChange(config, getArguments().getNewName());
+        changes.add(c);
+      }
+    }
     
-    return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration change");
+    return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
   /*
@@ -55,8 +63,8 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends
    */
   @Override
   protected boolean initialize(Object element) {
-    if (element instanceof IJavaProject) {
-      project = (IJavaProject) element;
+    if (element != null && element instanceof IJavaProject) {
+      fOldProjectName = ((IJavaProject) element).getElementName();
       return true;
     } else {
       return false;

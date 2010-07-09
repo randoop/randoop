@@ -202,10 +202,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return StatusFactory.createErrorStatus("TestInputOption incorrectly initialized");
     }
     
-    List<String> selectedTypes = fTypeSelector.getCheckedClasses();
-    List<String> selectedMethods = fTypeSelector.getCheckedMethods();
-    
-    return validate(fJavaProject, selectedTypes, selectedMethods);
+    return StatusFactory.createOkStatus();
   }
 
   @Override
@@ -221,9 +218,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     if (fTypeTree != null) {
       List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
       List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
+      List<String> availableMethods = RandoopArgumentCollector.getAvailableMethods(config); 
       List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(config);
 
-      fTypeSelector = new ClassSelector(fTypeTree, fJavaProject, availableTypes, selectedTypes, selectedMethods);
+      fTypeSelector = new ClassSelector(fTypeTree, fJavaProject, availableTypes, selectedTypes, availableMethods, selectedMethods);
     }
   }
 
@@ -232,8 +230,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     if (fTypeSelector == null) {
       setDefaults(config);
     } else {
-      RandoopArgumentCollector.setAvailableTypes(config, fTypeSelector.getAllTypes());
+      RandoopArgumentCollector.setAvailableTypes(config, fTypeSelector.getAllClasses());
       RandoopArgumentCollector.setSelectedTypes(config, fTypeSelector.getCheckedClasses());
+      RandoopArgumentCollector.setAvailableMethods(config, fTypeSelector.getAllMethods());
       RandoopArgumentCollector.setSelectedMethods(config, fTypeSelector.getCheckedMethods());
     }
   }
@@ -282,7 +281,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       }
   
       for (String mnemonic : selectedMethods) {
-        IMethod m = MethodMnemonics.getMethod(javaProject, mnemonic);
+        IMethod m = Mnemonics.getMethod(javaProject, mnemonic);
         
         if (m == null || !m.exists()) {
           return StatusFactory
@@ -541,12 +540,18 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         fClassAddFromJRESystemLibrary.setEnabled(false);
       } else {
         fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(event.getValue());
-        Assert.isNotNull(fJavaProject);
-
-        fClassAddFromProject.setEnabled(true);
-        fClassAddFromClasspaths.setEnabled(false); // XXX implement this
-        fClassAddFromJRESystemLibrary.setEnabled(true);
+        
+        if (fJavaProject != null) {
+          fClassAddFromProject.setEnabled(true);
+          fClassAddFromClasspaths.setEnabled(false); // XXX implement this
+          fClassAddFromJRESystemLibrary.setEnabled(true);
+        } else {
+          fClassAddFromProject.setEnabled(false);
+          fClassAddFromClasspaths.setEnabled(false);
+          fClassAddFromJRESystemLibrary.setEnabled(false);
+        }
       }
+      fTypeSelector.setJavaProject(fJavaProject);
     }
   }
 }

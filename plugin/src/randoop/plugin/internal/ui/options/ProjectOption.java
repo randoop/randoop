@@ -21,6 +21,8 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -45,14 +47,20 @@ public class ProjectOption extends Option {
   private Text fOutputSourceFolderText;
   private IPackageFragmentRoot fOutputSourceFolder;
   private Button fSourceFolderBrowseButton;
-  
-  public ProjectOption(Shell shell, Text projectText,
-      Button projectBrowseButton, Text outputSourceFolderText,
-      Button sourceFolderBrowseButton) {
+
+  public ProjectOption(Shell shell, Text projectText, Button projectBrowseButton,
+      Text outputSourceFolderText, Button sourceFolderBrowseButton) {
     fShell = shell;
     
     fProjectText = projectText;
-    fProjectText.setEditable(true);
+    fProjectText.addModifyListener(new ModifyListener() {
+      
+      @Override
+      public void modifyText(ModifyEvent e) {
+        String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+        notifyListeners(new OptionChangeEvent(attr, fProjectText.getText()));
+      }
+    });
     
     fProjectBrowseButton = projectBrowseButton;
     fProjectBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -62,7 +70,6 @@ public class ProjectOption extends Option {
     });
 
     fOutputSourceFolderText = outputSourceFolderText;
-    fOutputSourceFolderText.setEditable(false);
     
     fSourceFolderBrowseButton = sourceFolderBrowseButton;
     fSourceFolderBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -86,7 +93,6 @@ public class ProjectOption extends Option {
     fJavaProject = project;
     
     fOutputSourceFolderText = outputSourceFolderText;
-    fOutputSourceFolderText.setEditable(false);
     
     fSourceFolderBrowseButton = sourceFolderBrowseButton;
     fSourceFolderBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -109,15 +115,16 @@ public class ProjectOption extends Option {
       return StatusFactory.createErrorStatus("ProjectOption incorrectly initialized");
     }
   
-    if (fJavaProject == null) {
-      return StatusFactory.createErrorStatus("Project is not a valid Java project");
-    }
-    
-    if (fOutputSourceFolder == null) {
-      return StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
-    }
-  
-    return validate(fJavaProject.getElementName(), fOutputSourceFolder.getElementName());
+    return StatusFactory.createOkStatus();
+//    if (fJavaProject == null) {
+//      return StatusFactory.createErrorStatus("Project is not a valid Java project");
+//    }
+//    
+//    if (fOutputSourceFolder == null) {
+//      return StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
+//    }
+//  
+//    return validate(fJavaProject.getElementName(), fOutputSourceFolder.getElementName());
   }
 
   public IStatus isValid(ILaunchConfiguration config) {
@@ -221,18 +228,11 @@ public class ProjectOption extends Option {
   // expects ILaunchConfigurationWorkingCopy
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fProjectText != null && fJavaProject != null)
+    if (fProjectText != null)
       RandoopArgumentCollector.setProjectName(config, fProjectText.getText());
-  
-    if (fOutputSourceFolderText != null) {
-      if (fOutputSourceFolder != null) {
-        RandoopArgumentCollector.setOutputDirectoryName(config,
-            fOutputSourceFolder.getElementName());
-      } else {
-        RandoopArgumentCollector.setOutputDirectoryName(config,
-            IConstants.EMPTY_STRING);
-      }
-    }
+
+    if (fOutputSourceFolderText != null)
+      RandoopArgumentCollector.setOutputDirectoryName(config, fOutputSourceFolderText.getText());
   }
 
   @Override
@@ -253,40 +253,22 @@ public class ProjectOption extends Option {
     if (project == null) {
       return;
     }
-    
 
-    boolean okToProceed = true;
-    // TODO: check if test inputs will change
+    fJavaProject = project;
+    fProjectText.setText(fJavaProject.getElementName());
 
-    // It is okay to proceed if neither the output folder or selected types will
-    // change
-    if (!okToProceed) {
-      okToProceed = MessageDialog.openQuestion(getShell(), "Change Project",
-          "Changing the selected project will change some of the selected test inputs.\n\nOkay to proceed?");
-    }
-    
-    if (okToProceed) {
-      // TODO update selected test kinds
-      
-      fJavaProject = project;
-      fProjectText.setText(fJavaProject.getElementName());
-      
-      fSourceFolderBrowseButton.setEnabled(true);
-      
-      // reset source folder if necessary
-      if (fOutputSourceFolder != null) {
-        String folder = fOutputSourceFolder.getElementName();
-        fOutputSourceFolder = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, folder);
-        if (fOutputSourceFolder == null) {
-          if (fOutputSourceFolderText != null) {
-            fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
-          }
+    fSourceFolderBrowseButton.setEnabled(true);
+
+    // reset source folder if necessary
+    if (fOutputSourceFolder != null) {
+      String folder = fOutputSourceFolder.getElementName();
+      fOutputSourceFolder = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, folder);
+      if (fOutputSourceFolder == null) {
+        if (fOutputSourceFolderText != null) {
+          fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
         }
       }
     }
-    
-    String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-    notifyListeners(new OptionChangeEvent(attr, fProjectText.getText()));
   }
   
   /*

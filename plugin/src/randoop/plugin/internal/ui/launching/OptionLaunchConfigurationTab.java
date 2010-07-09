@@ -7,16 +7,43 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.ui.options.IOption;
 
 public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
-  private List<IOption> fProjectOption;
+  private List<IOption> fOptions;
+  
+  private ModifyListener fBasicModifyListener = new ModifyListener() {
+    
+    @Override
+    public void modifyText(ModifyEvent e) {
+      setErrorMessage(null);
+      updateLaunchConfigurationDialog();
+    }
+  };
+  
+  private SelectionListener fBasicSelectionListener = new SelectionListener() {
+
+    @Override
+    public void widgetSelected(SelectionEvent e) {
+      setErrorMessage(null);
+      updateLaunchConfigurationDialog();
+    }
+    
+    @Override
+    public void widgetDefaultSelected(SelectionEvent e) {
+    }
+  };
   
   public OptionLaunchConfigurationTab() {
-    fProjectOption = new ArrayList<IOption>();
+    fOptions = new ArrayList<IOption>();
   }
 
   /**
@@ -26,7 +53,7 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    *          option to be added to this tab
    */
   protected void addOption(IOption option) {
-    fProjectOption.add(option);
+    fOptions.add(option);
   }
 
   /*
@@ -41,11 +68,11 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
 
     boolean isMessageSet = false;
     
-    for (IOption option : fProjectOption) {
+    for (IOption option : fOptions) {
       IStatus status = option.canSave();
 
       String message = status.getMessage();
-      if (!status.isOK()) {
+      if (status.getSeverity() == IStatus.ERROR) {
         setErrorMessage(message);
         return false;
       } else {
@@ -73,11 +100,11 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
 
     boolean isMessageSet = false;
     
-    for (IOption option : fProjectOption) {
+    for (IOption option : fOptions) {
       IStatus status = option.isValid(config);
 
       String message = status.getMessage();
-      if (!status.isOK()) {
+      if (status.getSeverity() == IStatus.ERROR) {
         setErrorMessage(message);
         return false;
       } else {
@@ -116,7 +143,7 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    */
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    for (IOption option : fProjectOption) {
+    for (IOption option : fOptions) {
       option.performApply(config);
     }
   }
@@ -129,7 +156,7 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    */
   @Override
   public void initializeFrom(ILaunchConfiguration config) {
-    for (IOption option : fProjectOption) {
+    for (IOption option : fOptions) {
       option.initializeFrom(config);
     }
   }
@@ -142,9 +169,17 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    */
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    for (IOption option : fProjectOption) {
+    for (IOption option : fOptions) {
       option.setDefaults(config);
     }
+  }
+  
+  protected ModifyListener getBasicModifyListener() {
+    return fBasicModifyListener;
+  }
+
+  protected SelectionListener getBasicSelectionListener() {
+    return fBasicSelectionListener;
   }
 
 }

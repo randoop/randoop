@@ -19,7 +19,7 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
   @Override
   protected boolean initialize(Object element) {
     method = (IMethod) element;
-    return true;
+    return false;
   }
 
   /*

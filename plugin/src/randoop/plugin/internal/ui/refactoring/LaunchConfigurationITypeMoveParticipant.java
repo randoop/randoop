@@ -23,24 +23,24 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
    *      (java.lang.Object)
    */
   protected boolean initialize(Object element) {
-    fType = (IType) element;
-    try {
-      // check that the type is no a local, and is no declared in a local type
-      IType declaringType = fType;
-      while (declaringType != null) {
-        if (fType.isLocal()) {
-          return false;
-        }
-        declaringType = declaringType.getDeclaringType();
-      }
-    } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
-    }
-    Object destination = getArguments().getDestination();
-    if (destination instanceof IPackageFragment || destination instanceof IType) {
-      fDestination = (IJavaElement) destination;
-      return true;
-    }
+//    fType = (IType) element;
+//    try {
+//      // check that the type is no a local, and is no declared in a local type
+//      IType declaringType = fType;
+//      while (declaringType != null) {
+//        if (fType.isLocal()) {
+//          return false;
+//        }
+//        declaringType = declaringType.getDeclaringType();
+//      }
+//    } catch (JavaModelException e) {
+//      RandoopPlugin.log(e);
+//    }
+//    Object destination = getArguments().getDestination();
+//    if (destination instanceof IPackageFragment || destination instanceof IType) {
+//      fDestination = (IJavaElement) destination;
+//      return true;
+//    }
     return false;
   }
 
