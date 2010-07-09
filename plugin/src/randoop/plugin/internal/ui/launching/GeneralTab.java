@@ -76,7 +76,7 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     fProjectOption = new ProjectOption(getShell(), projectText,
         projectBrowseButton, outputSourceFolderText,
         sourceFolderBrowseButton);
-    Assert.isTrue(addOption(fProjectOption));
+    addOption(fProjectOption);
     
     projectBrowseButton.addSelectionListener(fBasicSelectionListener);
     sourceFolderBrowseButton.addSelectionListener(fBasicSelectionListener);
@@ -89,7 +89,7 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     Text fullyQualifiedTestName = SWTFactory.createSingleText(comp, 2);
     
     fJUnitTestClassNameOption = new JUnitTestClassNameOption(fullyQualifiedTestName);
-    Assert.isTrue(addOption(fJUnitTestClassNameOption));
+    addOption(fJUnitTestClassNameOption);
 
     fullyQualifiedTestName.addModifyListener(fBasicModifyListener);
     
@@ -98,7 +98,7 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
         getLaunchConfigurationDialog(), fBasicSelectionListener);
     fProjectOption.addChangeListener(fTestInputSelectorOption);
 
-    Assert.isTrue(addOption(fTestInputSelectorOption));
+    addOption(fTestInputSelectorOption);
   }
 
   /*

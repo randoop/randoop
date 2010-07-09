@@ -72,7 +72,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use null with the given frequency. [TODO explain]")
   public static Double null_ratio = null;
   
-  @Option("Force Randoop to relay information about the program's execution over "
+  @Option("Causes Randoop to relay information about the program's execution over "
       + "a connection to the specified port on the local machine. Information is "
   		+ "sent using a serialized randoop.runtime.Message object. Printing is also "
       + "suppressed.")

@@ -1,10 +1,15 @@
 package randoop.plugin.internal.ui.options;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -13,7 +18,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
@@ -48,16 +52,12 @@ public class ProjectOption extends Option {
     fShell = shell;
     
     fProjectText = projectText;
-    fProjectText.setEditable(false);
+    fProjectText.setEditable(true);
     
     fProjectBrowseButton = projectBrowseButton;
     fProjectBrowseButton.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent evt) {
         handleProjectBrowseButtonSelected();
-
-        String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT;
-        String handlerId = fJavaProject.getHandleIdentifier();
-        notifyListeners(new OptionChangeEvent(attr, handlerId));
       }
     });
 
@@ -72,8 +72,7 @@ public class ProjectOption extends Option {
 
         if (chosenFolder != null) {
           fOutputSourceFolder = chosenFolder;
-          fOutputSourceFolderText.setText(fOutputSourceFolder.getPath()
-              .makeRelative().toString());
+          fOutputSourceFolderText.setText(fOutputSourceFolder.getElementName());
         }
       }
     });
@@ -97,8 +96,7 @@ public class ProjectOption extends Option {
 
         if (chosenFolder != null) {
           fOutputSourceFolder = chosenFolder;
-          fOutputSourceFolderText.setText(fOutputSourceFolder.getPath()
-              .makeRelative().toString());
+          fOutputSourceFolderText.setText(fOutputSourceFolder.getElementName());
         }
       }
     });
@@ -112,24 +110,21 @@ public class ProjectOption extends Option {
     }
   
     if (fJavaProject == null) {
-      return StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
+      return StatusFactory.createErrorStatus("Project is not a valid Java project");
     }
     
     if (fOutputSourceFolder == null) {
       return StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
     }
   
-    String projectHandlerId = fJavaProject.getHandleIdentifier();
-    String outputSourceFolderHandlerId = fOutputSourceFolder.getHandleIdentifier();
-  
-    return validate(projectHandlerId, outputSourceFolderHandlerId);
+    return validate(fJavaProject.getElementName(), fOutputSourceFolder.getElementName());
   }
 
   public IStatus isValid(ILaunchConfiguration config) {
-    String projectHandlerId = RandoopArgumentCollector.getProjectHandlerId(config);
-    String outputSourceFolderHandlerId = RandoopArgumentCollector.getOutputDirectoryHandlerId(config);
+    String projectName = RandoopArgumentCollector.getProjectName(config);
+    String outputSourceFolderName = RandoopArgumentCollector.getOutputDirectoryName(config);
   
-    return validate(projectHandlerId, outputSourceFolderHandlerId);
+    return validate(projectName, outputSourceFolderName);
   }
 
   /**
@@ -141,23 +136,40 @@ public class ProjectOption extends Option {
    * @param outputSourceFolderHandlerId
    * @return
    */
-  protected IStatus validate(String projectHandlerId,
-      String outputSourceFolderHandlerId) {
-    IStatus status;
+  protected static IStatus validate(String projectName, String outputSourceFolderName) {
+    // see org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab.isValid
+    IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    IStatus status = workspace.validateName(projectName, IResource.PROJECT);
 
-    IJavaProject project = RandoopLaunchConfigurationUtil.getProject(projectHandlerId);
-    if (project == null) {
-      status = StatusFactory
-          .createErrorStatus("Project does not exist");
-      return status;
-    } else if (!project.exists()) {
-      status = StatusFactory.createErrorStatus("Project "
-          + project.getElementName() + " does not exist");
-      return status;
+    IJavaProject javaProject;
+    if (status.isOK()) {
+      IProject project = workspace.getRoot().getProject(projectName);
+      if (!project.exists()) {
+        return StatusFactory.createErrorStatus(MessageFormat.format(
+            "Project {0} does not exist", new String[] { projectName }));
+      }
+      if (!project.isOpen()) {
+        return StatusFactory.createErrorStatus(MessageFormat.format(
+            "Project {0} is closed", new String[] { projectName }));
+      }
+      
+      try {
+        javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
+        if (javaProject == null) {
+          return StatusFactory.createErrorStatus(MessageFormat.format(
+              "Project {0} is not a Java project", new String[] { projectName }));
+        }
+      } catch (CoreException e) {
+        RandoopPlugin.log(e);
+        return StatusFactory.createErrorStatus();
+      }
+    } else {
+      return StatusFactory.createErrorStatus(MessageFormat.format(
+          "Illegal project name: {0}", new String[] { status.getMessage() }));
     }
     
     IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil
-        .getPackageFragmentRoot(outputSourceFolderHandlerId);
+        .getPackageFragmentRoot(javaProject, outputSourceFolderName);
     if (outputDir == null) {
       status = StatusFactory
           .createErrorStatus("Output Directory is not a valid source folder");
@@ -166,10 +178,10 @@ public class ProjectOption extends Option {
       status = StatusFactory.createErrorStatus("Output Directory "
           + outputDir.getElementName() + " does not exist");
       return status;
-    } else if (!outputDir.getJavaProject().equals(project)) {
+    } else if (!outputDir.getJavaProject().equals(javaProject)) {
       status = StatusFactory
           .createErrorStatus("Output Directory does not exist in project "
-              + project.getElementName());
+              + javaProject.getElementName());
       return status;
     }
   
@@ -179,30 +191,29 @@ public class ProjectOption extends Option {
   @Override
   public void initializeFrom(ILaunchConfiguration config) {
     if (fProjectText != null) {
-      String handlerId = RandoopArgumentCollector.getProjectHandlerId(config);
+      String projectName = RandoopArgumentCollector.getProjectName(config);
 
-      fJavaProject = RandoopLaunchConfigurationUtil.getProject(handlerId);
+      fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
       if (fJavaProject != null) {
         fProjectText.setText(fJavaProject.getElementName());
+      }
+      
+      String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+      notifyListeners(new OptionChangeEvent(attr, projectName));
+    }
+
+    if (fOutputSourceFolderText != null) {
+      String folderName = RandoopArgumentCollector.getOutputDirectoryName(config);
+
+      fOutputSourceFolder = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, folderName);
+      if (fOutputSourceFolder != null) {
+        fOutputSourceFolderText.setText(fOutputSourceFolder.getElementName());
       } else {
         fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
       }
       
-      String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT;
-      notifyListeners(new OptionChangeEvent(attr, handlerId));
-    }
-
-    if (fOutputSourceFolderText != null) {
-      String handlerId = RandoopArgumentCollector
-          .getOutputDirectoryHandlerId(config);
-
-      fOutputSourceFolder = RandoopLaunchConfigurationUtil
-          .getPackageFragmentRoot(handlerId);
-      if (fOutputSourceFolder != null) {
-        fOutputSourceFolderText.setText(fOutputSourceFolder.getPath()
-            .makeRelative().toString());
-      } else {
-        fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
+      if (fSourceFolderBrowseButton != null) {
+        fSourceFolderBrowseButton.setEnabled(fJavaProject != null);
       }
     }
   }
@@ -211,18 +222,23 @@ public class ProjectOption extends Option {
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fProjectText != null && fJavaProject != null)
-      RandoopArgumentCollector.setProjectHandlerId(config,
-          fJavaProject.getHandleIdentifier());
+      RandoopArgumentCollector.setProjectName(config, fProjectText.getText());
   
-    if (fOutputSourceFolderText != null && fOutputSourceFolder != null)
-      RandoopArgumentCollector.setOutputDirectoryHandlerId(config,
-          fOutputSourceFolder.getHandleIdentifier());
+    if (fOutputSourceFolderText != null) {
+      if (fOutputSourceFolder != null) {
+        RandoopArgumentCollector.setOutputDirectoryName(config,
+            fOutputSourceFolder.getElementName());
+      } else {
+        RandoopArgumentCollector.setOutputDirectoryName(config,
+            IConstants.EMPTY_STRING);
+      }
+    }
   }
 
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.restoreProjectHandlerId(config);
-    RandoopArgumentCollector.restoreOutputDirectoryHandlerId(config);
+    RandoopArgumentCollector.restoreProjectName(config);
+    RandoopArgumentCollector.restoreOutputDirectoryName(config);
   }
   
   /*
@@ -237,6 +253,7 @@ public class ProjectOption extends Option {
     if (project == null) {
       return;
     }
+    
 
     boolean okToProceed = true;
     // TODO: check if test inputs will change
@@ -249,22 +266,27 @@ public class ProjectOption extends Option {
     }
     
     if (okToProceed) {
+      // TODO update selected test kinds
+      
+      fJavaProject = project;
+      fProjectText.setText(fJavaProject.getElementName());
+      
+      fSourceFolderBrowseButton.setEnabled(true);
+      
       // reset source folder if necessary
       if (fOutputSourceFolder != null) {
-        if (!fOutputSourceFolder.getJavaProject().equals(project)) {
-          fOutputSourceFolder = null;
+        String folder = fOutputSourceFolder.getElementName();
+        fOutputSourceFolder = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, folder);
+        if (fOutputSourceFolder == null) {
           if (fOutputSourceFolderText != null) {
             fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
           }
         }
       }
-      
-      // TODO update selected test kinds
-      
-      fJavaProject = project;
-      String projectName = fJavaProject.getElementName();
-      fProjectText.setText(projectName);
     }
+    
+    String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+    notifyListeners(new OptionChangeEvent(attr, fProjectText.getText()));
   }
   
   /*
@@ -297,8 +319,6 @@ public class ProjectOption extends Option {
     if (dialog.open() == Window.OK) {
       Object element = dialog.getFirstResult();
       if (element instanceof IJavaProject) {
-        fSourceFolderBrowseButton.setEnabled(true);
-        
         return (IJavaProject) element;
       }
     }

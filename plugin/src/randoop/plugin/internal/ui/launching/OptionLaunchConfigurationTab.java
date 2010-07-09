@@ -1,21 +1,22 @@
 package randoop.plugin.internal.ui.launching;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 
+import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.ui.options.IOption;
 
 public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
-  private Set<IOption> fProjectOption;
+  private List<IOption> fProjectOption;
   
   public OptionLaunchConfigurationTab() {
-    fProjectOption = new HashSet<IOption>();
+    fProjectOption = new ArrayList<IOption>();
   }
 
   /**
@@ -23,11 +24,9 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    * 
    * @param option
    *          option to be added to this tab
-   * @return <code>true</code> if this tab did not already contain the specified
-   *         option
    */
-  protected boolean addOption(IOption option) {
-    return fProjectOption.add(option);
+  protected void addOption(IOption option) {
+    fProjectOption.add(option);
   }
 
   /*
@@ -101,7 +100,7 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    */
   protected boolean setReadableMessage(String message) {
     String msg = message;
-    if (msg != null && !msg.equals("")) {
+    if (msg != null && !msg.equals(IConstants.EMPTY_STRING)) {
       setMessage(message);
       return true;
     }
