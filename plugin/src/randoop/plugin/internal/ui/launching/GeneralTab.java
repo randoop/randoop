@@ -1,18 +1,11 @@
 package randoop.plugin.internal.ui.launching;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
@@ -23,25 +16,6 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
   private IOption fProjectOption;
   private IOption fJUnitTestClassNameOption;
   private ClassSelectorOption fTestInputSelectorOption;
-
-  
-  private ModifyListener fBasicModifyListener = new RandoopTabListener();
-  private SelectionListener fBasicSelectionListener = new RandoopTabListener();
-  
-  private class RandoopTabListener extends SelectionAdapter implements
-      ModifyListener {
-    @Override
-    public void widgetSelected(SelectionEvent e) {
-      setErrorMessage(null);
-      updateLaunchConfigurationDialog();
-    }
-
-    @Override
-    public void modifyText(ModifyEvent e) {
-      setErrorMessage(null);
-      updateLaunchConfigurationDialog();
-    }
-  }
 
   /*
    * Implements a method in ILaunchConfigurationTab
@@ -56,8 +30,7 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     setControl(tabcomp);
 
     // Project group:
-    Composite comp = SWTFactory.createComposite(tabcomp, 3, 1,
-        GridData.FILL_HORIZONTAL);
+    Composite comp = SWTFactory.createComposite(tabcomp, 3, 1, GridData.FILL_HORIZONTAL);
 
     SWTFactory.createLabel(comp, "Project:", 1);
 
@@ -70,35 +43,34 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     SWTFactory.createLabel(comp, "Output Folder:", 1);
     Text outputSourceFolderText = SWTFactory.createSingleText(comp, 1);
 
-    Button sourceFolderBrowseButton = SWTFactory.createPushButton(comp, "Search...",
-        null);
+    Button sourceFolderBrowseButton = SWTFactory.createPushButton(comp, "Search...", null);
 
-    fProjectOption = new ProjectOption(getShell(), projectText,
-        projectBrowseButton, outputSourceFolderText,
-        sourceFolderBrowseButton);
-    addOption(fProjectOption);
-    
-    projectBrowseButton.addSelectionListener(fBasicSelectionListener);
-    sourceFolderBrowseButton.addSelectionListener(fBasicSelectionListener);
-    
+    fProjectOption = new ProjectOption(getShell(), projectText, projectBrowseButton,
+        outputSourceFolderText, sourceFolderBrowseButton);
+
     // Class name option:
-    comp = SWTFactory.createComposite(tabcomp, 3, 1,
-        GridData.FILL_HORIZONTAL);
-    
+    comp = SWTFactory.createComposite(tabcomp, 3, 1, GridData.FILL_HORIZONTAL);
+
     SWTFactory.createLabel(comp, "JUnit Class Name:", 1);
     Text fullyQualifiedTestName = SWTFactory.createSingleText(comp, 2);
-    
-    fJUnitTestClassNameOption = new JUnitTestClassNameOption(fullyQualifiedTestName);
-    addOption(fJUnitTestClassNameOption);
 
-    fullyQualifiedTestName.addModifyListener(fBasicModifyListener);
-    
+    fJUnitTestClassNameOption = new JUnitTestClassNameOption(fullyQualifiedTestName);
+
     // Test inputs option:
-    fTestInputSelectorOption = new ClassSelectorOption(tabcomp,
-        getLaunchConfigurationDialog(), fBasicSelectionListener);
+    fTestInputSelectorOption = new ClassSelectorOption(tabcomp, getLaunchConfigurationDialog(),
+        getBasicSelectionListener());
     fProjectOption.addChangeListener(fTestInputSelectorOption);
 
+    addOption(fProjectOption);
+    addOption(fJUnitTestClassNameOption);
     addOption(fTestInputSelectorOption);
+    
+    projectText.addModifyListener(getBasicModifyListener());
+    outputSourceFolderText.addModifyListener(getBasicModifyListener());
+    projectBrowseButton.addSelectionListener(getBasicSelectionListener());
+    sourceFolderBrowseButton.addSelectionListener(getBasicSelectionListener());
+
+    fullyQualifiedTestName.addModifyListener(getBasicModifyListener());
   }
 
   /*

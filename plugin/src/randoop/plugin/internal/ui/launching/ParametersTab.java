@@ -36,24 +36,6 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fMaxTestsWritten;
   private IOption fMaxTestsPerFile;
   
-  private ModifyListener fBasicModifyListener = new RandoopTabListener();
-  private SelectionListener fBasicSelectionListener = new RandoopTabListener();
-  
-  private class RandoopTabListener extends SelectionAdapter implements
-      ModifyListener {
-    @Override
-    public void widgetSelected(SelectionEvent e) {
-      setErrorMessage(null);
-      updateLaunchConfigurationDialog();
-    }
-
-    @Override
-    public void modifyText(ModifyEvent e) {
-      setErrorMessage(null);
-      updateLaunchConfigurationDialog();
-    }
-  }
-  
   /*
    * (non-Javadoc)
    * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -115,12 +97,12 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     addOption(fUseThreads);
     addOption(fUseNull);
     
-    randomSeed.addModifyListener(fBasicModifyListener);
-    maxTestSize.addModifyListener(fBasicModifyListener);
-    useThreads.addSelectionListener(fBasicSelectionListener);
-    threadTimeout.addModifyListener(fBasicModifyListener);
-    useNull.addSelectionListener(fBasicSelectionListener);
-    nullRatio.addModifyListener(fBasicModifyListener);
+    randomSeed.addModifyListener(getBasicModifyListener());
+    maxTestSize.addModifyListener(getBasicModifyListener());
+    useThreads.addSelectionListener(getBasicSelectionListener());
+    threadTimeout.addModifyListener(getBasicModifyListener());
+    useNull.addSelectionListener(getBasicSelectionListener());
+    nullRatio.addModifyListener(getBasicModifyListener());
   }
 
   private void createGenerationLimitGroup(Composite parent) {
@@ -148,8 +130,8 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     addOption(fJUnitTestInputs);
     addOption(fTimeLimit);
     
-    junitTestInputs.addModifyListener(fBasicModifyListener);
-    timeLimit.addModifyListener(fBasicModifyListener);
+    junitTestInputs.addModifyListener(getBasicModifyListener());
+    timeLimit.addModifyListener(getBasicModifyListener());
   }
   
   private void createOutputRestrictionsGroup(Composite parent) {
@@ -173,9 +155,9 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     addOption(fMaxTestsWritten);
     addOption(fMaxTestsPerFile);
     
-    testKinds.addModifyListener(fBasicModifyListener);
-    maxTestsWritten.addModifyListener(fBasicModifyListener);
-    maxTestsPerFile.addModifyListener(fBasicModifyListener);
+    testKinds.addModifyListener(getBasicModifyListener());
+    maxTestsWritten.addModifyListener(getBasicModifyListener());
+    maxTestsPerFile.addModifyListener(getBasicModifyListener());
   }
 
   /*

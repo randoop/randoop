@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
-import randoop.plugin.internal.ui.options.MethodMnemonics;
+import randoop.plugin.internal.ui.options.Mnemonics;
 
 public class RandoopArgumentCollector {
   private String fName;
@@ -71,7 +71,7 @@ public class RandoopArgumentCollector {
       Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
       String mnemonic = (String) o;
       
-      IMethod m = MethodMnemonics.getMethod(fJavaProject, mnemonic);
+      IMethod m = Mnemonics.getMethod(fJavaProject, mnemonic);
       Assert.isNotNull(m, "Stored method does not exist");
       Assert.isNotNull(m.exists(), "Stored method [" + m.getElementName()
           + "] does not exist");
@@ -189,12 +189,18 @@ public class RandoopArgumentCollector {
         IConstants.EMPTY_STRING_LIST);
   }
   
+  public static List<String> getAvailableMethods(ILaunchConfiguration config) {
+    return getAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS,
+        IConstants.EMPTY_STRING_LIST);
+  }
+  
   public static List<String> getSelectedMethods(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
         IConstants.EMPTY_STRING_LIST);
   }
-
+  
   public static String getRandomSeed(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED,
@@ -309,6 +315,12 @@ public class RandoopArgumentCollector {
         IConstants.EMPTY_STRING_LIST);
   }
   
+  public static void restoreAvailableMethods(ILaunchConfigurationWorkingCopy config) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS,
+        IConstants.EMPTY_STRING_LIST);
+  }
+  
   public static void restoreSelectedMethods(ILaunchConfigurationWorkingCopy config) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
@@ -420,11 +432,17 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES,
         availableTypes);
   }
-
+  
   public static void setSelectedTypes(ILaunchConfigurationWorkingCopy config, List<String> selectedTypes) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES,
         selectedTypes);
+  }
+  
+  public static void setAvailableMethods(ILaunchConfigurationWorkingCopy config, List<String> availableMethods) {
+    setAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS,
+        availableMethods);
   }
   
   public static void setSelectedMethods(ILaunchConfigurationWorkingCopy config, List<String> selectedMethods) {
@@ -604,5 +622,5 @@ public class RandoopArgumentCollector {
         + getJUnitPackageName() + getJUnitClassName() + getTestKinds()
         + getMaxTestsWritten() + getMaxTestsPerFile()).hashCode();
   }
-
+  
 }
