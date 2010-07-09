@@ -1,8 +1,12 @@
 package randoop.plugin.internal.ui.refactoring;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -18,8 +22,7 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends
    * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
    */
   @Override
-  public RefactoringStatus checkConditions(IProgressMonitor pm,
-      CheckConditionsContext context) throws OperationCanceledException {
+  public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
     // return OK status
     return new RefactoringStatus();
   }
@@ -29,9 +32,12 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends
    * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
    */
   @Override
-  public Change createChange(IProgressMonitor pm) throws CoreException,
-      OperationCanceledException {
-    return null;
+  public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+    List<Change> changes = new ArrayList<Change>();
+    ILaunchConfiguration[] configs = getRandoopTypeLaunchConfigurations();
+    
+    
+    return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration change");
   }
 
   /*
@@ -49,7 +55,11 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends
    */
   @Override
   protected boolean initialize(Object element) {
-    project = (IJavaProject) element;
-    return true;
+    if (element instanceof IJavaProject) {
+      project = (IJavaProject) element;
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -271,10 +271,12 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       programArguments.add("--testclass=" + type.getFullyQualifiedName()); //$NON-NLS-1$
     }
 
+    // TODO - Fix ERROR: while parsing command-line arguments: unknown option '--comm-port=
+    // TODO - Fix java.lang.Error: Unexpected type long when --timeout is uncommented
     programArguments.add("--randomseed=" + args.getRandomSeed());//$NON-NLS-1$
     programArguments.add("--maxsize=" + args.getMaxTestSize());//$NON-NLS-1$
     programArguments.add("--usethreads=" + args.getUseThreads());//$NON-NLS-1$
-    programArguments.add("--timeout=" + args.getThreadTimeout());//$NON-NLS-1$
+    // programArguments.add("--timeout=" + args.getThreadTimeout());//$NON-NLS-1$
     programArguments.add("--forbid-null=" + !args.getUseNull());//$NON-NLS-1$
     programArguments.add("--null-ratio=" + args.getNullRatio());//$NON-NLS-1$
     programArguments.add("--inputlimit=" + args.getJUnitTestInputs());//$NON-NLS-1$
@@ -287,7 +289,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
     programArguments.add("--methodlist=" + testSetResources.getMethodFile().getAbsolutePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
-    //programArguments.add("--noprogressdisplay");
+//    programArguments.add("--noprogressdisplay");
   }
 
   private void informAndAbort(String message, Throwable exception, int code) throws CoreException {

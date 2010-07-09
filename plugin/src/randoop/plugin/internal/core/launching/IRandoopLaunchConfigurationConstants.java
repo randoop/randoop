@@ -1,5 +1,7 @@
 package randoop.plugin.internal.core.launching;
 
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.TestKinds;
 
@@ -35,9 +37,9 @@ public class IRandoopLaunchConfigurationConstants {
   
   public static final String ATTR_MAXIMUM_TESTS_PER_FILE = RandoopPlugin.getPluginId() + ".MAXIMUM_TESTS_PER_FILE"; //$NON-NLS-1$
   
-  public static final String ATTR_PROJECT = RandoopPlugin.getPluginId() + ".PROJECT"; //$NON-NLS-1$
+  public static final String ATTR_PROJECT_NAME = RandoopPlugin.getPluginId() + ".PROJECT_NAME"; //$NON-NLS-1$
   
-  public static final String ATTR_OUTPUT_DIRECTORY = RandoopPlugin.getPluginId() + ".OUTPUT_DIRECTORY"; //$NON-NLS-1$
+  public static final String ATTR_OUTPUT_DIRECTORY_NAME = RandoopPlugin.getPluginId() + ".OUTPUT_DIRECTORY"; //$NON-NLS-1$
   
   public static final String ATTR_USE_LOCAL_TEMP_FOLDER = RandoopPlugin.getPluginId() +  ".USE_LOCAL_TEMP_FOLDER"; //$NON-NLS-1$
   
@@ -75,7 +77,7 @@ public class IRandoopLaunchConfigurationConstants {
 
   public static final String DEFAULT_PROJECT = ""; //$NON-NLS-1$
   
-  public static final String DEFAULT_OUTPUT_DIRECTORY = ""; //$NON-NLS-1$
+  public static final String DEFAULT_OUTPUT_DIRECTORY_NAME = ""; //$NON-NLS-1$
 
   public static final String DEFUALT_USE_LOCAL_TEMP_FOLDER = "false"; //$NON-NLS-1$
   
