@@ -198,27 +198,6 @@
                </instanceof>
             </with></enablement>
       </moveParticipant>
-      <moveParticipant
-            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationIPackageFragmentMoveParticipant"
-            id="randoop.plugin.refactoring.launching.packageMove"
-            name="Launch configuration participant">
-         <enablement>
-            <with
-                  variable="affectedNatures">
-               <iterate
-                     operator="or">
-                  <equals
-                        value="org.eclipse.jdt.core.javanature">
-                  </equals>
-               </iterate>
-            </with>
-            <with
-                  variable="element">
-               <instanceof
-                     value="org.eclipse.jdt.core.IPackageFragment">
-               </instanceof>
-            </with></enablement>
-      </moveParticipant>
    </extension>
    <extension
          point="org.eclipse.jdt.core.compilationParticipant">

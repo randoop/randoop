@@ -19,7 +19,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import randoop.plugin.internal.ui.options.MethodMnemonics;
+import randoop.plugin.internal.ui.options.Mnemonics;
 import randoop.plugin.tests.ui.launching.ProjectCreator;
 
 @SuppressWarnings("nls")
@@ -48,7 +48,7 @@ public class MethodMnemonicsTest {
       for (ICompilationUnit cu : pf.getCompilationUnits()) {
         for (IType type : cu.getTypes()) {
           for (IMethod m : type.getMethods()) {
-            String mnemonic = MethodMnemonics.getMnemonic(m);
+            String mnemonic = Mnemonics.getMethodMnemonic(m);
 
             methodsByMnemonics.put(mnemonic, m);
           }
@@ -58,7 +58,7 @@ public class MethodMnemonicsTest {
 
     // Check that MethodMnemonics.getMethod reconstructs the methods correctly
     for (String mnemonic : methodsByMnemonics.keySet()) {
-      IMethod m = MethodMnemonics.getMethod(fJavaProject, mnemonic);
+      IMethod m = Mnemonics.getMethod(fJavaProject, mnemonic);
       assertNotNull(m);
       assertEquals(m, methodsByMnemonics.get(mnemonic));
     }

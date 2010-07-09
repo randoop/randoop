@@ -3,6 +3,7 @@ package randoop.plugin.internal.ui.refactoring;
 import java.text.MessageFormat;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -15,41 +16,20 @@ import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.options.Mnemonics;
 
-public class LaunchConfigurationTypeChange extends Change {
+public class LaunchConfigurationPackageFragmentChange extends Change {
   
   private ILaunchConfiguration fLaunchConfiguration;
 
-  private String fPackageName;
-
-  private String fOldName;
-  private String fNewName;
+  private String fOldPackageName;
+  private String fNewPackageName;
   
-  private String fOldFullyQualifiedName;
-  private String fNewFullyQualifiedName;
-
-  public LaunchConfigurationTypeChange(ILaunchConfiguration launchConfiguration,
-      String packageName, String oldName, String newName) throws CoreException {
+  public LaunchConfigurationPackageFragmentChange(ILaunchConfiguration launchConfiguration,
+      String oldPackageName, String newPackageName) throws CoreException {
     
     fLaunchConfiguration = launchConfiguration;
     
-    fPackageName = packageName;
-    
-    fOldName = oldName;
-    fNewName = newName;
-    
-    String prefix = getPackagePrefix(fPackageName);
-    fOldFullyQualifiedName = prefix + fOldName;
-    fNewFullyQualifiedName = prefix + fNewName;
-  }
-  
-  private static String getPackagePrefix(String packageName) {
-    String packagePrefix = packageName;
-    if (packageName.equals(IConstants.EMPTY_STRING)) {
-      packagePrefix = packageName;
-    } else {
-      packagePrefix = packageName + '.';
-    }
-    return packagePrefix;
+    fOldPackageName = oldPackageName;
+    fNewPackageName = newPackageName;
   }
 
   /*
@@ -104,29 +84,33 @@ public class LaunchConfigurationTypeChange extends Change {
 
     for (int i = 0; i < availableTypes.size(); i++) {
       String s = availableTypes.get(i);
-      if (s.equals(fOldFullyQualifiedName)) {
-        availableTypes.set(i, fNewFullyQualifiedName);
+      String[] splitName = Mnemonics.splitFullyQualifiedName(s);
+      
+      if (splitName[0].equals(fOldPackageName)) {
+        splitName[0] = fNewPackageName;
+        availableTypes.set(i, Mnemonics.getFullyQualifiedName(splitName));
       }
     }
 
     for (int i = 0; i < selectedTypes.size(); i++) {
       String s = selectedTypes.get(i);
-      if (s.equals(fOldFullyQualifiedName)) {
-        selectedTypes.set(i, fNewFullyQualifiedName);
+      String[] splitName = Mnemonics.splitFullyQualifiedName(s);
+      
+      if (splitName[0].equals(fOldPackageName)) {
+        splitName[0] = fNewPackageName;
+        selectedTypes.set(i, Mnemonics.getFullyQualifiedName(splitName));
       }
     }
     
     for (int i = 0; i < selectedMethods.size(); i++) {
       String[] methodInfo = Mnemonics.splitMethodMnemonic(selectedMethods.get(i));
       
-      if (methodInfo[0].equals(fOldFullyQualifiedName)) {
-        methodInfo[0] = fNewFullyQualifiedName;
+      String[] splitName = Mnemonics.splitFullyQualifiedName(methodInfo[0]);
+      
+      if (splitName[0].equals(fOldPackageName)) {
+        splitName[0] = fNewPackageName;
+        methodInfo[0] = Mnemonics.getFullyQualifiedName(splitName);
         
-        // Check if this is a constructor, and change its name if it is
-        if (methodInfo[1].equals(fOldName)) {
-          methodInfo[1] = fNewName;
-        }
-
         selectedMethods.set(i, Mnemonics.getMethodMnemonic(methodInfo));
       }
     }
@@ -140,6 +124,6 @@ public class LaunchConfigurationTypeChange extends Change {
     }
     
     // create the undo change
-    return new LaunchConfigurationTypeChange(fLaunchConfiguration, fPackageName, fNewFullyQualifiedName, fOldFullyQualifiedName);
+    return new LaunchConfigurationPackageFragmentChange(fLaunchConfiguration, fNewPackageName, fOldPackageName);
   }
 }
