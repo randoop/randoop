@@ -1,14 +1,8 @@
 package randoop.plugin;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -40,10 +34,10 @@ public class RandoopPlugin extends AbstractUIPlugin {
   
   // TODO: Change these to the local runtime archives
   // Should be: "/randoop.jar"
-  private static final IPath RANDOOP_JAR = new Path("../bin/");//$NON-NLS-1$
+  private static final IPath RANDOOP_JAR = new Path("../bin/"); //$NON-NLS-1$
   
   // Should be: "/plume.jar"
-  private static final IPath PLUME_JAR = new Path("../lib/plume.jar"); //$NON-NLS-1$
+  private static final IPath PLUME_JAR = new Path("../../plume/bin");///lib/plume.jar"); //$NON-NLS-1$
   
   /** The shared instance */
   private static RandoopPlugin plugin = null;

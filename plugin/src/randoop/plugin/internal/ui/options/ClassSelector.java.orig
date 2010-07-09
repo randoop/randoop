@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
@@ -25,8 +24,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import randoop.plugin.RandoopPlugin;
 
@@ -37,13 +34,55 @@ import randoop.plugin.RandoopPlugin;
  * show the methods that are contained.
  */
 public class ClassSelector {
-  private static final String ID_ELEMENT_TYPE = "ClassSelector.ID_ELEMENT_TYPE"; //$NON-NLS-1$
+  private static final String ID_FULLY_QUALIFIED_TYPE_NAME = "ClassSelector.ID_FULLY_QUALIFIED_TYPE_NAME"; //$NON-NLS-1$
   
-  private static final String ID_ELEMENT_HANDLER_ID = "TypeSelector.ID_ELEMENT_HANDLER_ID"; //$NON-NLS-1$
-
   private Tree fTypeTree;
-  private IJavaProject fJavaProject;
+  
+  private static final String ID_JAVA_ELEMENT_KIND = "ClassSelector.ID_JAVA_ELEMENT_TYPE"; //$NON-NLS-1$
+  private static final int PACKAGE_FRAGMENT_KIND = 0;
+  private static final int TYPE_KIND = 1; 
+  private static final int METHOD_KIND = 2;
+  
+  private static final String ID_ELEMENT_NAME = "ClassSelector.ID_ELEMENT_NAME"; //$NON-NLS-1$
+  private static final String ID_TYPE_NAME = "ClassSelector.ID_TYPE_NAME"; //$NON-NLS-1$
+  
+  public void setPackageFragment(TreeItem treeItem, IPackageFragment packageFragment) {
+    
+  }
 
+  public void setType(TreeItem treeItem, IType type) {
+  }
+
+  public void setMethod(TreeItem treeItem, IMethod method) {
+  }
+
+  /**
+   * Returns this TreeItems mnemonic which can be used to store i
+   * @param treeItem
+   * @return
+   */
+  public String getMnemonic(TreeItem treeItem) {
+    int kind = (Integer) treeItem.getData(ID_JAVA_ELEMENT_KIND);
+    switch(kind) {
+    case PACKAGE_FRAGMENT_KIND:
+      return null;
+    case TYPE_KIND:
+    case METHOD_KIND:
+    }
+    return null;
+  }
+  
+  public String getMnemonic(IJavaElement element) {
+    int type = element.getElementType();
+    switch(kind) {
+    case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+      return null;
+    case TYPE_KIND:
+    case METHOD_KIND:
+    }
+    return null;
+  }
+  
   /**
    * 
    * IMPORTANT: emptyTree must use the SWT.CHECK style bit.
@@ -55,13 +94,11 @@ public class ClassSelector {
    * @param availableTypes 
    */
   public ClassSelector(Tree typeTree) {
-    Assert.isLegal(typeTree != null, "The Tree cannot be null");
-    Assert.isLegal((typeTree.getStyle() & SWT.CHECK) != 0, "The Tree must use the SWT.CHECK style");
-    
+    Assert.isNotNull(typeTree);
+
     fTypeTree = typeTree;
     fTypeTree.removeAll();
-    fJavaProject = null;
-    
+
     // Add a selection listener that will check/uncheck descendants of a node
     // when it is checked/unchecked as well as gray some of its ancestors as
     // needed.
@@ -82,45 +119,23 @@ public class ClassSelector {
    * @param emptyTree
    *          empty tree that can be used to add
    */
-  public ClassSelector(Tree emptyTree, IJavaProject javaProject, Collection<String> availableTypes, Collection<String> selectedTypes, Collection<String> selectedMethods) {
+  public ClassSelector(Tree emptyTree, Collection<String> availableTypes, Collection<String> selectedTypes, Collection<String> selectedMethods) {
     this(emptyTree);
-    Assert.isLegal(availableTypes != null);
-    Assert.isLegal(selectedTypes != null);
-    Assert.isLegal(selectedMethods != null);
-    Assert.isLegal(availableTypes.size() >= selectedTypes.size(),
-        "There must be more available types than selected ones");
-    for (String s : selectedTypes) {
-      Assert.isLegal(availableTypes.contains(s),
-          "Each selected type must also be an available one");
-    }
-    if (!availableTypes.isEmpty()) {
-      Assert.isLegal(javaProject != null, "Java project must not be null");
-      Assert.isLegal(javaProject.exists(), "Java project must exist");
-      Assert.isLegal(javaProject.isOpen(), "Java project must be open");
-    }
-    fJavaProject = javaProject;
-    
-    try {
-    for (String fqname : availableTypes) {
-      IProgressMonitor pm = new NullProgressMonitor();
-      IType type = fJavaProject.findType(fqname, pm);
-      Assert.isTrue(type != null, "Available types must exist in the specified Java project");
-      Assert.isTrue(type.exists(), "Available types must exist");
 
-      TreeItem typeItem = addType(type, selectedTypes.contains(type.getFullyQualifiedName('.')));
+    for (String id : availableTypes) {
+      IJavaElement element = JavaCore.create(id);
+      
+      Assert.isTrue(element instanceof IType);
+      IType type = (IType) element;
+
+      TreeItem typeItem = addType(type, selectedTypes.contains(id));
       for (TreeItem methodItem : typeItem.getItems()) {
-          IJavaElement e = getJavaElement(methodItem);
-          IMethod m = (IMethod) e;
-        
-        if (selectedMethods.contains(MethodMnemonics.getMnemonic(m))) {
+        Object methodId = methodItem.getData(HANDLER_ID);
+        if (selectedMethods.contains(methodId)) {
           methodItem.setChecked(true);
           updateTree(methodItem);
         }
       }
-    }
-    } catch (JavaModelException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
   }
 
@@ -137,9 +152,9 @@ public class ClassSelector {
     // Search for the item in the class tree
     String packageHandlerId = packageFragment.getHandleIdentifier(); 
     for(TreeItem item : fTypeTree.getItems()) {
-      String itemHandlerId = (String) item.getData(ID_ELEMENT_HANDLER_ID);
+      String itemHandlerId = (String) item.getData(HANDLER_ID);
       
-      if (packageHandlerId.equals(itemHandlerId)) {
+      if(packageHandlerId.equals(itemHandlerId)) {
         return item;
       }
     }
@@ -147,7 +162,8 @@ public class ClassSelector {
     // Add the package to the class tree since it does not already exist
     TreeItem root = new TreeItem(fTypeTree, SWT.NONE);
 
-    Image image = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+    Image image = JavaUI.getSharedImages().getImage(
+        ISharedImages.IMG_OBJS_PACKAGE);
 
     root.setImage(image);
 
@@ -156,9 +172,7 @@ public class ClassSelector {
       packageName = "(default package)";
     }
     root.setText(packageName);
-    
-    root.setData(ID_ELEMENT_TYPE, IJavaElement.PACKAGE_FRAGMENT);
-    root.setData(ID_ELEMENT_HANDLER_ID, packageFragment.getHandleIdentifier());
+    root.setData(HANDLER_ID, packageFragment.getElementName());
 
     return root;
   }
@@ -190,8 +204,7 @@ public class ClassSelector {
      root.setImage(image);
 
       root.setText(type.getFullyQualifiedName());
-      root.setData(ID_ELEMENT_TYPE, IJavaElement.TYPE);
-      root.setData(ID_ELEMENT_HANDLER_ID, type.getHandleIdentifier());
+      root.setData(HANDLER_ID, type.getFullyQualifiedName());
 
       IMethod[] methods = type.getMethods();
       for (IMethod m : methods) {
@@ -215,8 +228,9 @@ public class ClassSelector {
         }
 
         methodItem.setImage(image);
-        methodItem.setData(ID_ELEMENT_TYPE, IJavaElement.METHOD);
-        methodItem.setData(ID_ELEMENT_HANDLER_ID, m.getHandleIdentifier());
+        methodItem.setData(TREE_ITEM_TYPE, METHOD);
+        methodItem.setData(,m.getDeclaringType());
+        methodItem.setData(METHOD_NAME, m.getE.getDeclaringType().getHandleIdentifier());
       }
 
       setChecked(root, checked);
@@ -238,10 +252,7 @@ public class ClassSelector {
     for (TreeItem packageItem : fTypeTree.getItems()) {
       for (TreeItem classItem : packageItem.getItems()) {
         if (classItem.getChecked() && !classItem.getGrayed()) {
-          Assert.isTrue(getType(classItem) == IJavaElement.TYPE);
-
-          IType type = (IType) getJavaElement(classItem);
-          classes.add(type.getFullyQualifiedName('.'));
+          classes.add((String) classItem.getData(HANDLER_ID));
         }
       }
     }
@@ -267,10 +278,7 @@ public class ClassSelector {
             
             // Only add the method if its containing class is grayed
             if (methodItem.getParentItem().getGrayed()) {
-              Assert.isTrue(getType(methodItem) == IJavaElement.METHOD);
-
-              IMethod m = (IMethod) getJavaElement(methodItem);
-              types.add(MethodMnemonics.getMnemonic(m));
+              types.add((String) methodItem.getData(HANDLER_ID));
             }
           }
         }
@@ -285,30 +293,11 @@ public class ClassSelector {
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
       for (TreeItem classItem : packageItem.getItems()) {
-        Assert.isTrue(getType(classItem) == IJavaElement.TYPE);
-
-        IType type = (IType) getJavaElement(classItem);
-        types.add(type.getFullyQualifiedName('.'));
+        types.add((String) classItem.getData(HANDLER_ID));
       }
     }
     
     return types;
-  }
-  
-  public int getType(TreeItem treeItem) {
-    Object type = treeItem.getData(ID_ELEMENT_TYPE);
-    Assert.isNotNull(type);
-    Assert.isTrue(type instanceof Integer);
-    
-    return (Integer) type;
-  }
-  
-  public IJavaElement getJavaElement(TreeItem treeItem) {
-    Object handlerId = treeItem.getData(ID_ELEMENT_HANDLER_ID);
-    Assert.isNotNull(handlerId);
-    Assert.isTrue(handlerId instanceof String);
-
-    return JavaCore.create((String) handlerId);
   }
 
   /**
@@ -494,8 +483,7 @@ public class ClassSelector {
     newItem.setGrayed(oldItem.getGrayed());
     newItem.setText(oldItem.getText());
     newItem.setImage(oldItem.getImage());
-    newItem.setData(ID_ELEMENT_TYPE, oldItem.getData(ID_ELEMENT_TYPE));
-    newItem.setData(ID_ELEMENT_HANDLER_ID, oldItem.getData(ID_ELEMENT_HANDLER_ID));
+    newItem.setData(HANDLER_ID, oldItem.getData(HANDLER_ID));
 
     TreeItem children[] = oldItem.getItems();
     for (TreeItem oldChild : children) {

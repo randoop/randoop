@@ -25,6 +25,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -54,6 +55,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
   private IRunnableContext fRunnableContext;
@@ -67,12 +69,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Button fClassAddFromJRESystemLibrary;
   private Button fClassRemove;
   private Button fIgnoreJUnitTestCases;
-  private IJavaProject fProject;
+  private IJavaProject fJavaProject;
   
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
       final SelectionListener listener, IJavaProject project) {
     this(parent, runnableContext, listener);
-    fProject = project;
+    fJavaProject = project;
   }
   
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,  
@@ -203,7 +205,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     List<String> selectedTypes = fTypeSelector.getCheckedClasses();
     List<String> selectedMethods = fTypeSelector.getCheckedMethods();
     
-    return validate(selectedTypes, selectedMethods);
+    return validate(fJavaProject, selectedTypes, selectedMethods);
   }
 
   @Override
@@ -211,7 +213,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
     List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(config);
 
-    return validate(selectedTypes, selectedMethods);
+    return validate(fJavaProject, selectedTypes, selectedMethods);
   }
 
   @Override
@@ -221,7 +223,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
       List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(config);
 
-      fTypeSelector = new ClassSelector(fTypeTree, availableTypes, selectedTypes, selectedMethods);
+      fTypeSelector = new ClassSelector(fTypeTree, fJavaProject, availableTypes, selectedTypes, selectedMethods);
     }
   }
 
@@ -252,27 +254,43 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    * @param selectedMethods 
    * @return
    */
-  protected IStatus validate(List<String> selectedTypes, List<String> selectedMethods) {
-    boolean validTypes = selectedTypes == null || !selectedTypes.isEmpty();
-    boolean validMethods = selectedMethods == null || !selectedMethods.isEmpty();
+  protected static IStatus validate(IJavaProject javaProject, List<String> selectedTypes, List<String> selectedMethods) {
+    boolean areTypesSelected = selectedTypes == null || !selectedTypes.isEmpty();
+    boolean areMethodsSelected = selectedMethods == null || !selectedMethods.isEmpty();
 
-    if (!validTypes && !validMethods) {
+    if (!areTypesSelected && !areMethodsSelected) {
       return StatusFactory
           .createErrorStatus("At least one existing type or method must be selected.");
     }
-
-    for (String handlerId : selectedTypes) {
-      if (!JavaCore.create((String) handlerId).exists()) {
+    
+    if (javaProject == null) {
+      if (areTypesSelected || areMethodsSelected) {
         return StatusFactory
-            .createErrorStatus("One of the selected types does not exist.");
+            .createErrorStatus("Types cannot be selected if no Java project is set");
       }
+      return StatusFactory.createOkStatus();
     }
-
-    for (String handlerId : selectedMethods) {
-      if (!JavaCore.create((String) handlerId).exists()) {
-        return StatusFactory
-            .createErrorStatus("One of the selected methods does not exist.");
+    
+    try {
+      for (String fqname : selectedTypes) {
+        IProgressMonitor pm = new NullProgressMonitor();
+        IType type = javaProject.findType(fqname, pm);
+        if (type == null || !type.exists()) {
+          return StatusFactory
+              .createErrorStatus("One of the selected types does not exist.");
+        }
       }
+  
+      for (String mnemonic : selectedMethods) {
+        IMethod m = MethodMnemonics.getMethod(javaProject, mnemonic);
+        
+        if (m == null || !m.exists()) {
+          return StatusFactory
+              .createErrorStatus("One of the selected methods is invalid.");
+        }
+      }
+    } catch (JavaModelException e) {
+      RandoopPlugin.log(e);
     }
 
     return StatusFactory.createOkStatus();
@@ -322,7 +340,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private IType[] getClassesFromProject(final boolean ignoreJUnitTestCases) {
     // Create a new runnable object that will be used to search for the Java
     // types in the active workspace.
-    ClassSearcher typeSearcher = new ClassSearcher(fProject) {
+    ClassSearcher typeSearcher = new ClassSearcher(fJavaProject) {
       @Override
       public void run(IProgressMonitor pm) throws InvocationTargetException {
         pm.beginTask("Searching for Java types...", IProgressMonitor.UNKNOWN);
@@ -355,7 +373,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private IType[] getClassesFromJRE(final boolean ignoreJUnitTestCases) {
     // Create a new runnable object that will be used to search for the Java
     // types in the active workspace.
-    ClassSearcher typeSearcher = new ClassSearcher(fProject) {
+    ClassSearcher typeSearcher = new ClassSearcher(fJavaProject) {
       @Override
       public void run(IProgressMonitor pm) throws InvocationTargetException {
         pm.beginTask("Searching for Java types...", IProgressMonitor.UNKNOWN);
@@ -515,17 +533,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void handleEvent(IOptionChangeEvent event) {
-    if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT.equals(event.getAttribute())) {
+    if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
       if (IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT.equals(event.getValue())) {
-        fProject = null;
+        fJavaProject = null;
         fClassAddFromProject.setEnabled(false);
         fClassAddFromClasspaths.setEnabled(false);
         fClassAddFromJRESystemLibrary.setEnabled(false);
       } else {
-        IJavaElement element = JavaCore.create(event.getValue());
-        Assert.isTrue(element instanceof IJavaProject);
+        fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(event.getValue());
+        Assert.isNotNull(fJavaProject);
 
-        fProject = (IJavaProject) element;
         fClassAddFromProject.setEnabled(true);
         fClassAddFromClasspaths.setEnabled(false); // XXX implement this
         fClassAddFromJRESystemLibrary.setEnabled(true);

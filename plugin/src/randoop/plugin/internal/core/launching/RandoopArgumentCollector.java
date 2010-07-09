@@ -6,16 +6,22 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
+import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
+import randoop.plugin.internal.ui.options.MethodMnemonics;
 
 public class RandoopArgumentCollector {
   private String fName;
@@ -29,6 +35,7 @@ public class RandoopArgumentCollector {
   private double fNullRatio;
   private int fJUnitTestInputs;
   private int fTimeLimit;
+  private IJavaProject fJavaProject;
   private IPath fOutputDirectory;
   private String fJUnitPackageName;
   private String fJUnitClassName;
@@ -39,24 +46,37 @@ public class RandoopArgumentCollector {
   public RandoopArgumentCollector(ILaunchConfiguration config) {
     fName = config.getName();
 
+    String projectName = getProjectName(config);
+    fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
+
     fSelectedTypes = new ArrayList<IType>();
     List<?> selectedTypes = getSelectedTypes(config);
-    for (Object id : selectedTypes) {
-      Assert.isTrue(id instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
+    for (Object o : selectedTypes) {
+      Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
+      String fqname = (String) o;
       
-      IJavaElement element = JavaCore.create((String) id);
-      Assert.isTrue(element instanceof IType, "Handler ID was for for an IType"); //$NON-NLS-1$
-      fSelectedTypes.add((IType) element);
+      IProgressMonitor pm = new NullProgressMonitor();
+      try {
+        IType type = fJavaProject.findType(fqname, pm);
+
+        fSelectedTypes.add(type);
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
     }
     
     fSelectedMethods = new ArrayList<IMethod>();
     List<?> selectedMethods = getSelectedMethods(config);
-    for (Object id : selectedMethods) {
-      Assert.isTrue(id instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
+    for (Object o : selectedMethods) {
+      Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
+      String mnemonic = (String) o;
       
-      IJavaElement element = JavaCore.create((String) id);
-      Assert.isTrue(element instanceof IMethod, "Handler ID was for for an IMethod"); //$NON-NLS-1$
-      fSelectedMethods.add((IMethod) element);
+      IMethod m = MethodMnemonics.getMethod(fJavaProject, mnemonic);
+      Assert.isNotNull(m, "Stored method does not exist");
+      Assert.isNotNull(m.exists(), "Stored method [" + m.getElementName()
+          + "] does not exist");
+      
+      fSelectedMethods.add(m);
     }
     
     fRandomSeed = Integer.parseInt(getRandomSeed(config));
@@ -69,10 +89,9 @@ public class RandoopArgumentCollector {
       fNullRatio = Double.parseDouble(getNullRatio(config));
     fJUnitTestInputs = Integer.parseInt(getJUnitTestInputs(config));
     fTimeLimit = Integer.parseInt(getTimeLimit(config));
-
-    String outputSourceFolderHandlerId = getOutputDirectoryHandlerId(config);
-    IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil
-        .getPackageFragmentRoot(outputSourceFolderHandlerId);
+    
+    String outputSourceFolderName = getOutputDirectoryName(config);
+    IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, outputSourceFolderName);
     if (outputDir != null) {
       fOutputDirectory = outputDir.getPath().makeRelative();
     }
@@ -226,16 +245,16 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
   }
 
-  public static String getProjectHandlerId(ILaunchConfiguration config) {
+  public static String getProjectName(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_PROJECT,
+        IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME,
         IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
   }
   
-  public static String getOutputDirectoryHandlerId(ILaunchConfiguration config) {
+  public static String getOutputDirectoryName(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
-        IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY);
+        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY_NAME,
+        IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY_NAME);
   }
 
   public static String getJUnitPackageName(
@@ -346,16 +365,16 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
   }
 
-  public static void restoreProjectHandlerId(ILaunchConfigurationWorkingCopy config) {
+  public static void restoreProjectName(ILaunchConfigurationWorkingCopy config) {
     setAttribute(config,
-       IRandoopLaunchConfigurationConstants.ATTR_PROJECT,
+       IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME,
        IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
  }
   
-  public static void restoreOutputDirectoryHandlerId(ILaunchConfigurationWorkingCopy config) {
+  public static void restoreOutputDirectoryName(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
-        IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY);
+        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY_NAME,
+        IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY_NAME);
   }
 
   public static void restoreJUnitPackageName(ILaunchConfigurationWorkingCopy config) {
@@ -454,14 +473,13 @@ public class RandoopArgumentCollector {
         timeLimit);
   }
   
-  public static void setProjectHandlerId(ILaunchConfigurationWorkingCopy config, String project) {
-    setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_PROJECT, project);
+  public static void setProjectName(ILaunchConfigurationWorkingCopy config, String projectName) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
   }
   
-  public static void setOutputDirectoryHandlerId(ILaunchConfigurationWorkingCopy config, String outputDirectory) {
+  public static void setOutputDirectoryName(ILaunchConfigurationWorkingCopy config, String outputDirectory) {
     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY,
+        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY_NAME,
         outputDirectory);
   }
 

@@ -173,8 +173,8 @@ public class RandoopErrors implements ITreeContentProvider, IDoubleClickListener
   }
 
   private IJavaProject getJavaProject() {
-    String handlerId = RandoopArgumentCollector.getProjectHandlerId(viewPart.launch.getLaunchConfiguration());
-    return RandoopLaunchConfigurationUtil.getProject(handlerId);
+    String projectName = RandoopArgumentCollector.getProjectName(viewPart.launch.getLaunchConfiguration());
+    return RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
   }
   
   private IPath getOutputDir() {
