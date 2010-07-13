@@ -2,7 +2,6 @@ package randoop.plugin.internal.ui.options;
 
 import java.util.ArrayList;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,11 +21,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.MethodMnemonic;
+import randoop.plugin.internal.core.TypeMnemonic;
 
 /**
  * The TypeSelector class is used to manage a Tree object so that the user can
@@ -62,9 +64,10 @@ public class ClassSelector {
    * @param availableTypes 
    */
   public ClassSelector(Tree typeTree) {
-    Assert.isLegal(typeTree != null, "The Tree cannot be null");
-    Assert.isLegal((typeTree.getStyle() & SWT.CHECK) != 0, "The Tree must use the SWT.CHECK style");
-    
+    Assert.isLegal(typeTree != null, "The Tree cannot be null"); //$NON-NLS-1$
+    Assert.isLegal(typeTree.getItemCount() == 0, "The Tree must be empty"); //$NON-NLS-1$
+    Assert.isLegal((typeTree.getStyle() & SWT.CHECK) != 0, "The Tree must use the SWT.CHECK style"); //$NON-NLS-1$
+
     fTypeTree = typeTree;
     fTypeTree.removeAll();
     fJavaProject = null;
@@ -73,6 +76,8 @@ public class ClassSelector {
     // when it is checked/unchecked as well as gray some of its ancestors as
     // needed.
     fTypeTree.addListener(SWT.Selection, new Listener() {
+      
+      @Override
       public void handleEvent(Event event) {
         if (event.detail == SWT.CHECK) {
           TreeItem item = (TreeItem) event.item;
@@ -97,41 +102,53 @@ public class ClassSelector {
     Assert.isLegal(availableTypes != null);
     Assert.isLegal(selectedTypes != null);
     Assert.isLegal(selectedMethods != null);
-    Assert.isLegal(availableTypes.size() >= selectedTypes.size(), "There must be more available types than selected ones");
+    Assert.isLegal(availableTypes.size() >= selectedTypes.size(), "There must be more available types than selected ones"); //$NON-NLS-1$
     for (String s : selectedTypes) {
-      Assert.isLegal(availableTypes.contains(s), "Each selected type must also be an available one");
+      Assert.isLegal(availableTypes.contains(s), "Each selected type must also be an available one"); //$NON-NLS-1$
     }
-    if (!availableTypes.isEmpty()) {
-      Assert.isLegal(javaProject != null, "Java project must not be null");
-      Assert.isLegal(javaProject.exists(), "Java project must exist");
-      
+    
+    if (javaProject != null) {
+      Assert.isLegal(javaProject.exists(), "Java project must exist"); //$NON-NLS-1$
+
       try {
         javaProject.open(new NullProgressMonitor());
       } catch (JavaModelException e) {
+        Assert.isLegal(javaProject.isOpen(), "Java project could not be opened"); //$NON-NLS-1$
       }
     }
     fJavaProject = javaProject;
 
+    IWorkspaceRoot root = getWorkspaceRoot();
+    
+    // Create a mapping between type mnemonics and method mnemonics. Each type
+    // has a list of methods that is stored in the map.
     HashMap<String, List<String>> methodsByType = new HashMap<String, List<String>>();
     for(String mnemonic : availableMethods) {
-      String[] info = Mnemonics.splitMethodMnemonic(mnemonic);
-     
-      List<String> list = methodsByType.get(info[0]);
+      MethodMnemonic methodMnemonic = new MethodMnemonic(root, mnemonic);
+      
+      String fqtypename = methodMnemonic.getDeclaringTypeMnemonic().getType().getFullyQualifiedName();
+      List<String> list = methodsByType.get(fqtypename);
       if(list == null) {
         list = new ArrayList<String>();
-        methodsByType.put(info[0], list);
+        methodsByType.put(fqtypename, list);
       }
       list.add(mnemonic);
     }
-    
-    for (String typeMnemonic : availableTypes) {
-      IType type = Mnemonics.getType(fJavaProject, typeMnemonic);
+
+    // Add each type and it's methods to the Tree. If the type cannot be found,
+    // then the mapping that was just created, methodsByType, will be used to
+    // add its methods to the Tree
+    for (String typeMnemonicString : availableTypes) {
+      IType type = null;
+
+      TypeMnemonic typeMnemonic = new TypeMnemonic(root, typeMnemonicString);
+      type = typeMnemonic.getType();
 
       if (type == null) {
-        addType(Mnemonics.getFullyQualifiedName(typeMnemonic), selectedTypes.contains(typeMnemonic),
-            methodsByType.get(typeMnemonic), selectedMethods);
+        addClass(typeMnemonic, selectedTypes.contains(typeMnemonicString),
+            methodsByType.get(typeMnemonicString), selectedMethods);
       } else {
-        TreeItem typeItem = addType(type, selectedTypes.contains(typeMnemonic));
+        TreeItem typeItem = addType(type, selectedTypes.contains(typeMnemonicString));
         
         for (TreeItem methodItem : typeItem.getItems()) {
           String methodMnemonic = getMnemonic(methodItem);
@@ -157,7 +174,7 @@ public class ClassSelector {
   public TreeItem addPackage(String packageFragmentName) {
     // Search for the item in the class tree
     for(TreeItem item : fTypeTree.getItems()) {
-      String existingPackageName = (String) item.getData(ID_MNEMONIC);
+      String existingPackageName = getMnemonic(item);
       
       if (packageFragmentName.equals(existingPackageName)) {
         return item;
@@ -191,8 +208,8 @@ public class ClassSelector {
    * @return the <code>TreeItem</code> added to the <code>Tree</code> or
    *         <code>null</code> if it was not added
    */
-  public TreeItem addType(String fqname, boolean checked, List<String> methods, List<String> selectedMethods) {
-    String[] splitName = Mnemonics.splitFullyQualifiedName(fqname);
+  public TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
+    String[] splitName = Mnemonics.splitFullyQualifiedName(typeMnemonic.getfFullyQualifiedTypeName());
     TreeItem parent = addPackage(splitName[0]);
 
     TreeItem classItem = new TreeItem(parent, SWT.NONE);
@@ -200,24 +217,23 @@ public class ClassSelector {
     Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
     classItem.setImage(errorImage);
 
-    classItem.setText(fqname);
-    classItem.setData(ID_ELEMENT_TYPE, IJavaElement.TYPE);
-    classItem.setData(ID_MNEMONIC, fqname);
+    classItem.setText(typeMnemonic.getfFullyQualifiedTypeName());
+    setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
 
-    setChecked(classItem, checked);
+    setChecked(classItem, classIsChecked);
     
     if (methods != null) {
-      for (String methodMnemonic : methods) {
+      for (String methodMnemonicString : methods) {
         TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
-        String[] info = Mnemonics.splitMethodMnemonic(methodMnemonic);
+        MethodMnemonic methodMnemonic = new MethodMnemonic(getWorkspaceRoot(), methodMnemonicString);
 
-        methodItem.setData(ID_ELEMENT_TYPE, IJavaElement.METHOD);
-        methodItem.setData(ID_MNEMONIC, methodMnemonic);
+        setMnemonic(methodItem, IJavaElement.METHOD, methodMnemonicString);
         methodItem.setImage(errorImage);
 
-        methodItem.setText(Signature.toString(info[2], info[1], null, false, true));
+        methodItem.setText(Signature.toString(methodMnemonic.getMethodSignature(),
+            methodMnemonic.getMethodName(), null, false, true));
 
-        if (selectedMethods.contains(methodMnemonic)) {
+        if (classIsChecked || selectedMethods.contains(methodMnemonicString)) {
           methodItem.setChecked(true);
           updateTree(methodItem);
         }
@@ -247,27 +263,28 @@ public class ClassSelector {
       classItem.setImage(getImageForType(type));
 
       classItem.setText(type.getFullyQualifiedName());
-      classItem.setData(ID_ELEMENT_TYPE, IJavaElement.TYPE);
-      classItem.setData(ID_MNEMONIC, type.getFullyQualifiedName());
+      setMnemonic(classItem, IJavaElement.TYPE, new TypeMnemonic(type).toString());
 
-      IMethod[] methods = type.getMethods();
-      for (IMethod m : methods) {
-        TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
-        methodItem.setText(Signature.toString(m.getSignature(),
-            m.getElementName(), null, false, true));
-
-        methodItem.setImage(getImageMethod(m));
-        
-        methodItem.setData(ID_ELEMENT_TYPE, IJavaElement.METHOD);
-        methodItem.setData(ID_MNEMONIC, Mnemonics.getMethodMnemonic(m));
-      }
-
+      addMethods(classItem, type);
+      
       setChecked(classItem, checked);
       return classItem;
       
     } catch (JavaModelException e) {
       RandoopPlugin.log(e);
       return null;
+    }
+  }
+  
+  private static void addMethods(TreeItem classItem, IType type) throws JavaModelException {
+    IMethod[] methods = type.getMethods();
+    for (IMethod m : methods) {
+      TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
+      methodItem.setText(Signature.toString(m.getSignature(), m.getElementName(), null, false, true));
+
+      methodItem.setImage(getImageMethod(m));
+
+      setMnemonic(methodItem, IJavaElement.METHOD, new MethodMnemonic(m).toString());
     }
   }
   
@@ -365,8 +382,8 @@ public class ClassSelector {
   }
 
   /**
-   * Returns a list of <code>IMethod</code>s that are checked, including those
-   * whose containing types are fully checked.
+   * Returns a list of <code>IMethod</code>s that are checked but whose
+   * containing types are not fully checked.
    * 
    * @return list
    */
@@ -377,11 +394,15 @@ public class ClassSelector {
       for (TreeItem classItem : packageItem.getItems()) {
         for (TreeItem methodItem : classItem.getItems()) {
           if (methodItem.getChecked() && !methodItem.getGrayed()) {
-            // According to typical tree behavior, the parent item must be checked
+            // According to typical tree behavior, the parent item must be
+            // checked. (Items that are grayed are also checked)
             Assert.isTrue(classItem.getChecked());
-
-            Assert.isTrue(getType(methodItem) == IJavaElement.METHOD);
-            types.add(getMnemonic(methodItem));
+            
+            // Only add methods whose containing types are grayed
+            if (classItem.getGrayed()) {
+              Assert.isTrue(getType(methodItem) == IJavaElement.METHOD);
+              types.add(getMnemonic(methodItem));
+            }
           }
         }
       }
@@ -390,20 +411,25 @@ public class ClassSelector {
     return types;
   }
   
-  public String getMnemonic(TreeItem treeItem) {
+  private static void setMnemonic(TreeItem treeItem, int type, String mnemonic) {
+    treeItem.setData(ID_ELEMENT_TYPE, type);
+    treeItem.setData(ID_MNEMONIC, mnemonic);
+  }
+
+  private static String getMnemonic(TreeItem treeItem) {
     Object mnemonic = treeItem.getData(ID_MNEMONIC);
     
-    Assert.isNotNull(mnemonic, "Mnemonic must be set");
-    Assert.isTrue(mnemonic instanceof String, "Mnemonics must be instances of String");
+    Assert.isNotNull(mnemonic, "Mnemonic must be set"); //$NON-NLS-1$
+    Assert.isTrue(mnemonic instanceof String, "Mnemonics must be instances of String"); //$NON-NLS-1$
     
     return (String) mnemonic;
   }
   
-  public int getType(TreeItem treeItem) {
+  private static int getType(TreeItem treeItem) {
     Object type = treeItem.getData(ID_ELEMENT_TYPE);
     
-    Assert.isNotNull(type, "Java element type must be set");
-    Assert.isTrue(type instanceof Integer, "Java element types must be instances of Integer");
+    Assert.isNotNull(type, "Java element type must be set"); //$NON-NLS-1$
+    Assert.isTrue(type instanceof Integer, "Java element types must be instances of Integer"); //$NON-NLS-1$
     
     return (Integer) type;
   }
@@ -591,8 +617,7 @@ public class ClassSelector {
     newItem.setGrayed(oldItem.getGrayed());
     newItem.setText(oldItem.getText());
     newItem.setImage(oldItem.getImage());
-    newItem.setData(ID_ELEMENT_TYPE, oldItem.getData(ID_ELEMENT_TYPE));
-    newItem.setData(ID_MNEMONIC, oldItem.getData(ID_MNEMONIC));
+    setMnemonic(newItem, getType(oldItem), getMnemonic(oldItem));
 
     TreeItem children[] = oldItem.getItems();
     for (TreeItem oldChild : children) {
@@ -648,23 +673,60 @@ public class ClassSelector {
     if (fJavaProject == null)
       image = IMG_ERROR;
 
+    IWorkspaceRoot root = getWorkspaceRoot();
+    
     for (TreeItem packageItem : fTypeTree.getItems()) {
       for (TreeItem classItem : packageItem.getItems()) {
+        IType type = null;
         if (fJavaProject != null) {
-          IType type = Mnemonics.getType(fJavaProject, getMnemonic(classItem));
+          TypeMnemonic typeMnemonic = new TypeMnemonic(root, getMnemonic(classItem));
+          type = typeMnemonic.getType();
           image = getImageForType(type);
         }
         classItem.setImage(image);
-
-        for (TreeItem methodItem : classItem.getItems()) {
-          if (fJavaProject != null) {
-            IMethod method = Mnemonics.getMethod(fJavaProject, getMnemonic(methodItem));
-            image = getImageMethod(method);
+        
+        if (type != null) {
+          // Get methods that are checked
+          List<String> checkedMethods = new ArrayList<String>();
+          for (TreeItem methodItem : classItem.getItems()) {
+            if (methodItem.getChecked()) {
+              checkedMethods.add(getMnemonic(methodItem));
+            }
           }
-          methodItem.setImage(image);
+          
+          classItem.removeAll();
+          try {
+            addMethods(classItem, type);
+            
+            for (TreeItem methodItem : classItem.getItems()) {
+              boolean checked = checkedMethods.contains(getMnemonic(methodItem));
+              methodItem.setChecked(checked);
+              updateTree(methodItem);
+            }
+            
+            // TODO: Compare list before to list after, if even necessary
+          } catch (JavaModelException e) {
+            RandoopPlugin.log(e);
+          }
+        } else {
+          for (TreeItem methodItem : classItem.getItems()) {
+            if (fJavaProject != null) {
+              MethodMnemonic methodMnemonic = new MethodMnemonic(root, getMnemonic(methodItem));
+              IMethod method = methodMnemonic.getMethod();
+              image = getImageMethod(method);
+            }
+            methodItem.setImage(image);
+          }
         }
       }
     }
+  }
+  
+  /*
+   * Convenience method to get the workspace root.
+   */
+  private static IWorkspaceRoot getWorkspaceRoot() {
+    return ResourcesPlugin.getWorkspace().getRoot();
   }
   
 }

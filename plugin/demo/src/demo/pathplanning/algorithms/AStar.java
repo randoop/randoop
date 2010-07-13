@@ -16,6 +16,23 @@ public class AStar implements PathPlanner {
     fGraph = graph;
   }
   
+  public void AStar(CartesianGraph graph) {}
+  
+  public AStar() {}
+
+	public void AStar() {
+		new Runnable() {
+			@Override
+			public void run() {
+				new Runnable() {
+					@Override
+					public void run() {
+					}
+				};
+			}
+		};
+	}
+    
   @Override
   public List<Node> getPath(Location startLoc, Location goalLoc) {
     Node start = fGraph.getNode(startLoc);

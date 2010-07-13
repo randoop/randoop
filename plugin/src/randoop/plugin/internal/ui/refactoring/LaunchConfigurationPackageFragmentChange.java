@@ -76,54 +76,55 @@ public class LaunchConfigurationPackageFragmentChange extends Change {
    */
   @Override
   public Change perform(IProgressMonitor pm) throws CoreException {
-    final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
-
-    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(wc);
-    List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(wc);
-    List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(wc);
-
-    for (int i = 0; i < availableTypes.size(); i++) {
-      String s = availableTypes.get(i);
-      String[] splitName = Mnemonics.splitFullyQualifiedName(s);
-      
-      if (splitName[0].equals(fOldPackageName)) {
-        splitName[0] = fNewPackageName;
-        availableTypes.set(i, Mnemonics.getFullyQualifiedName(splitName));
-      }
-    }
-
-    for (int i = 0; i < selectedTypes.size(); i++) {
-      String s = selectedTypes.get(i);
-      String[] splitName = Mnemonics.splitFullyQualifiedName(s);
-      
-      if (splitName[0].equals(fOldPackageName)) {
-        splitName[0] = fNewPackageName;
-        selectedTypes.set(i, Mnemonics.getFullyQualifiedName(splitName));
-      }
-    }
-    
-    for (int i = 0; i < selectedMethods.size(); i++) {
-      String[] methodInfo = Mnemonics.splitMethodMnemonic(selectedMethods.get(i));
-      
-      String[] splitName = Mnemonics.splitFullyQualifiedName(methodInfo[0]);
-      
-      if (splitName[0].equals(fOldPackageName)) {
-        splitName[0] = fNewPackageName;
-        methodInfo[0] = Mnemonics.getFullyQualifiedName(splitName);
-        
-        selectedMethods.set(i, Mnemonics.getMethodMnemonic(methodInfo));
-      }
-    }
-    
-    RandoopArgumentCollector.setAvailableTypes(wc, availableTypes);
-    RandoopArgumentCollector.setSelectedTypes(wc, selectedTypes);
-    RandoopArgumentCollector.setSelectedMethods(wc, selectedMethods);
-
-    if(wc.isDirty()) {
-      wc.doSave();
-    }
-    
-    // create the undo change
-    return new LaunchConfigurationPackageFragmentChange(fLaunchConfiguration, fNewPackageName, fOldPackageName);
+    return null;
+//    final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
+//
+//    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(wc);
+//    List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(wc);
+//    List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(wc);
+//
+//    for (int i = 0; i < availableTypes.size(); i++) {
+//      String s = availableTypes.get(i);
+//      String[] splitName = Mnemonics.splitFullyQualifiedName(s);
+//      
+//      if (splitName[0].equals(fOldPackageName)) {
+//        splitName[0] = fNewPackageName;
+//        availableTypes.set(i, Mnemonics.getFullyQualifiedName(splitName));
+//      }
+//    }
+//
+//    for (int i = 0; i < selectedTypes.size(); i++) {
+//      String s = selectedTypes.get(i);
+//      String[] splitName = Mnemonics.splitFullyQualifiedName(s);
+//      
+//      if (splitName[0].equals(fOldPackageName)) {
+//        splitName[0] = fNewPackageName;
+//        selectedTypes.set(i, Mnemonics.getFullyQualifiedName(splitName));
+//      }
+//    }
+//    
+//    for (int i = 0; i < selectedMethods.size(); i++) {
+//      String[] methodInfo = Mnemonics.splitMethodMnemonic(selectedMethods.get(i));
+//      
+//      String[] splitName = Mnemonics.splitFullyQualifiedName(methodInfo[0]);
+//      
+//      if (splitName[0].equals(fOldPackageName)) {
+//        splitName[0] = fNewPackageName;
+//        methodInfo[0] = Mnemonics.getFullyQualifiedName(splitName);
+//        
+//        selectedMethods.set(i, Mnemonics.getMethodMnemonic(methodInfo));
+//      }
+//    }
+//    
+//    RandoopArgumentCollector.setAvailableTypes(wc, availableTypes);
+//    RandoopArgumentCollector.setSelectedTypes(wc, selectedTypes);
+//    RandoopArgumentCollector.setSelectedMethods(wc, selectedMethods);
+//
+//    if(wc.isDirty()) {
+//      wc.doSave();
+//    }
+//    
+//    // create the undo change
+//    return new LaunchConfigurationPackageFragmentChange(fLaunchConfiguration, fNewPackageName, fOldPackageName);
   }
 }

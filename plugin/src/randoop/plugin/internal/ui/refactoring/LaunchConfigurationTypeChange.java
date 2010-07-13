@@ -96,50 +96,51 @@ public class LaunchConfigurationTypeChange extends Change {
    */
   @Override
   public Change perform(IProgressMonitor pm) throws CoreException {
-    final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
-
-    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(wc);
-    List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(wc);
-    List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(wc);
-
-    for (int i = 0; i < availableTypes.size(); i++) {
-      String s = availableTypes.get(i);
-      if (s.equals(fOldFullyQualifiedName)) {
-        availableTypes.set(i, fNewFullyQualifiedName);
-      }
-    }
-
-    for (int i = 0; i < selectedTypes.size(); i++) {
-      String s = selectedTypes.get(i);
-      if (s.equals(fOldFullyQualifiedName)) {
-        selectedTypes.set(i, fNewFullyQualifiedName);
-      }
-    }
-    
-    for (int i = 0; i < selectedMethods.size(); i++) {
-      String[] methodInfo = Mnemonics.splitMethodMnemonic(selectedMethods.get(i));
-      
-      if (methodInfo[0].equals(fOldFullyQualifiedName)) {
-        methodInfo[0] = fNewFullyQualifiedName;
-        
-        // Check if this is a constructor, and change its name if it is
-        if (methodInfo[1].equals(fOldName)) {
-          methodInfo[1] = fNewName;
-        }
-
-        selectedMethods.set(i, Mnemonics.getMethodMnemonic(methodInfo));
-      }
-    }
-    
-    RandoopArgumentCollector.setAvailableTypes(wc, availableTypes);
-    RandoopArgumentCollector.setSelectedTypes(wc, selectedTypes);
-    RandoopArgumentCollector.setSelectedMethods(wc, selectedMethods);
-
-    if(wc.isDirty()) {
-      wc.doSave();
-    }
-    
-    // create the undo change
-    return new LaunchConfigurationTypeChange(fLaunchConfiguration, fPackageName, fNewFullyQualifiedName, fOldFullyQualifiedName);
+    return null;
+//    final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
+//
+//    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(wc);
+//    List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(wc);
+//    List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(wc);
+//
+//    for (int i = 0; i < availableTypes.size(); i++) {
+//      String s = availableTypes.get(i);
+//      if (s.equals(fOldFullyQualifiedName)) {
+//        availableTypes.set(i, fNewFullyQualifiedName);
+//      }
+//    }
+//
+//    for (int i = 0; i < selectedTypes.size(); i++) {
+//      String s = selectedTypes.get(i);
+//      if (s.equals(fOldFullyQualifiedName)) {
+//        selectedTypes.set(i, fNewFullyQualifiedName);
+//      }
+//    }
+//    
+//    for (int i = 0; i < selectedMethods.size(); i++) {
+//      String[] methodInfo = Mnemonics.splitMethodMnemonic(selectedMethods.get(i));
+//      
+//      if (methodInfo[0].equals(fOldFullyQualifiedName)) {
+//        methodInfo[0] = fNewFullyQualifiedName;
+//        
+//        // Check if this is a constructor, and change its name if it is
+//        if (methodInfo[1].equals(fOldName)) {
+//          methodInfo[1] = fNewName;
+//        }
+//
+//        selectedMethods.set(i, Mnemonics.getMethodMnemonic(methodInfo));
+//      }
+//    }
+//    
+//    RandoopArgumentCollector.setAvailableTypes(wc, availableTypes);
+//    RandoopArgumentCollector.setSelectedTypes(wc, selectedTypes);
+//    RandoopArgumentCollector.setSelectedMethods(wc, selectedMethods);
+//
+//    if(wc.isDirty()) {
+//      wc.doSave();
+//    }
+//    
+//    // create the undo change
+//    return new LaunchConfigurationTypeChange(fLaunchConfiguration, fPackageName, fNewFullyQualifiedName, fOldFullyQualifiedName);
   }
 }

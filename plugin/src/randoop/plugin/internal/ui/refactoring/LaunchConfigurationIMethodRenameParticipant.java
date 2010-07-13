@@ -8,6 +8,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
+import org.eclipse.swtbot.swt.finder.utils.internal.Assert;
 
 public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipant {
   private IMethod method;
@@ -18,6 +19,7 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
    */
   @Override
   protected boolean initialize(Object element) {
+    Assert.isLegal(element instanceof IMethod);
     method = (IMethod) element;
     return false;
   }

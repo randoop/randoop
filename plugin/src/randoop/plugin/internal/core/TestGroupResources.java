@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -108,14 +109,18 @@ public class TestGroupResources {
         for(int i=0;i<parameters.length;i++) {
           String parameter = Signature.toString(parameters[i]);
           IType type = method.getDeclaringType();
+          
           String[][] types = type.resolveType(parameter);
-          Assert.isNotNull(types, parameter + " could not be resolved in type " + type.getElementName());
           
-          // Write the first type that was resolved
-          bw.write(types[0][0]); // the package name
-          bw.write('.');
-          bw.write(types[0][1]); // the class name 
-          
+          if (types != null) {
+            // Write the first type that was resolved
+            bw.write(types[0][0]); // the package name
+            bw.write('.');
+            bw.write(types[0][1]); // the class name
+          } else {
+            // Otherwise this is a primitive type, write it as it is
+            bw.write(parameter);
+          }
           if (i < parameters.length - 1) {
             bw.write(',');
           }

@@ -57,13 +57,23 @@ public class ProjectOption extends Option {
       
       @Override
       public void modifyText(ModifyEvent e) {
+        String projectName = fProjectText.getText();
+        
+        fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
+          
+        if (fSourceFolderBrowseButton != null) {
+          fSourceFolderBrowseButton.setEnabled(fJavaProject != null);
+        }
+        
         String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-        notifyListeners(new OptionChangeEvent(attr, fProjectText.getText()));
+        notifyListeners(new OptionChangeEvent(attr, projectName));
       }
     });
     
     fProjectBrowseButton = projectBrowseButton;
     fProjectBrowseButton.addSelectionListener(new SelectionAdapter() {
+      
+      @Override
       public void widgetSelected(SelectionEvent evt) {
         handleProjectBrowseButtonSelected();
       }
@@ -116,17 +126,9 @@ public class ProjectOption extends Option {
     }
   
     return StatusFactory.createOkStatus();
-//    if (fJavaProject == null) {
-//      return StatusFactory.createErrorStatus("Project is not a valid Java project");
-//    }
-//    
-//    if (fOutputSourceFolder == null) {
-//      return StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
-//    }
-//  
-//    return validate(fJavaProject.getElementName(), fOutputSourceFolder.getElementName());
   }
 
+  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     String projectName = RandoopArgumentCollector.getProjectName(config);
     String outputSourceFolderName = RandoopArgumentCollector.getOutputDirectoryName(config);
@@ -201,10 +203,8 @@ public class ProjectOption extends Option {
       String projectName = RandoopArgumentCollector.getProjectName(config);
 
       fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
-      if (fJavaProject != null) {
-        fProjectText.setText(fJavaProject.getElementName());
-      }
-      
+      fProjectText.setText(projectName);
+        
       String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
       notifyListeners(new OptionChangeEvent(attr, projectName));
     }
@@ -213,11 +213,7 @@ public class ProjectOption extends Option {
       String folderName = RandoopArgumentCollector.getOutputDirectoryName(config);
 
       fOutputSourceFolder = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, folderName);
-      if (fOutputSourceFolder != null) {
-        fOutputSourceFolderText.setText(fOutputSourceFolder.getElementName());
-      } else {
-        fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
-      }
+      fOutputSourceFolderText.setText(folderName);
       
       if (fSourceFolderBrowseButton != null) {
         fSourceFolderBrowseButton.setEnabled(fJavaProject != null);
@@ -258,17 +254,6 @@ public class ProjectOption extends Option {
     fProjectText.setText(fJavaProject.getElementName());
 
     fSourceFolderBrowseButton.setEnabled(true);
-
-    // reset source folder if necessary
-    if (fOutputSourceFolder != null) {
-      String folder = fOutputSourceFolder.getElementName();
-      fOutputSourceFolder = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, folder);
-      if (fOutputSourceFolder == null) {
-        if (fOutputSourceFolderText != null) {
-          fOutputSourceFolderText.setText(IConstants.EMPTY_STRING);
-        }
-      }
-    }
   }
   
   /*
