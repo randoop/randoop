@@ -17,7 +17,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import randoop.plugin.internal.core.TestGroupResources;
-import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationStore;
 
 /**
  * The activator class controls the plug-in life cycle. It stores a shared
@@ -53,8 +52,6 @@ public class RandoopPlugin extends AbstractUIPlugin {
    */
   public RandoopPlugin() {
     plugin = this;
-    
-    RandoopLaunchConfigurationStore.initialize();
   }
   
   /**

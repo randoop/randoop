@@ -27,7 +27,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import randoop.plugin.internal.core.MethodMnemonic;
-import randoop.plugin.tests.ui.launching.ProjectCreator;
+import randoop.plugin.tests.ProjectFactory;
+import randoop.plugin.tests.WorkspaceManager;
 
 @SuppressWarnings("nls")
 public class MethodMnemonicsTest {
@@ -35,7 +36,7 @@ public class MethodMnemonicsTest {
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    fJavaProject = ProjectCreator.createStandardDemoProject();
+    fJavaProject = ProjectFactory.createPathPlannerProject();
     assertNotNull(fJavaProject);
   }
 
@@ -147,14 +148,15 @@ public class MethodMnemonicsTest {
   private void verify(IWorkspaceRoot root, HashMap<String, IMethod> methodsByMnemonics) throws CoreException {
     // Check that MethodMnemonics.getMethod reconstructs the methods correctly
     for (String mnemonic : methodsByMnemonics.keySet()) {
-      IMethod m = new MethodMnemonic(root, mnemonic).getMethod();
-      assertNotNull(m);
+      IMethod m1 = new MethodMnemonic(root, mnemonic).getMethod();
+      assertNotNull(m1);
       methodsByMnemonics.get(mnemonic);
 
       IMethod m2 = methodsByMnemonics.get(mnemonic);
-
-      assertEquals(m, m2);
+      assertEquals(m1, m2);
     }
   }
+  
+  
 
 }
