@@ -31,7 +31,6 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import randoop.ErrorRevealed;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.launching.RandoopLaunchConfiguration;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 import randoop.plugin.util.ReaderInputStream;
 
@@ -179,8 +178,7 @@ public class RandoopErrors implements ITreeContentProvider, IDoubleClickListener
   
   private IPath getOutputDir() {
     ILaunchConfiguration iconfig = viewPart.launch.getLaunchConfiguration();
-    RandoopLaunchConfiguration config = new RandoopLaunchConfiguration(iconfig);
-    RandoopArgumentCollector args = config.getArguments();
+    RandoopArgumentCollector args = new RandoopArgumentCollector(config);
     IPath outputDir = args.getOutputDirectory();
     return outputDir;
   }

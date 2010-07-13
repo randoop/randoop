@@ -9,17 +9,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import randoop.plugin.tests.ProjectFactory;
+import randoop.plugin.tests.WorkspaceManager;
+
 
 @SuppressWarnings("nls")
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class RandoopLauncherTest {
-  private static IJavaProject javaProject;
+  private static IJavaProject fJavaProject;
 
   private static SWTWorkbenchBot bot;
 
   @BeforeClass
   public static void beforeClass() throws Exception {
-    javaProject = ProjectCreator.createStandardDemoProject();
+    fJavaProject = ProjectFactory.createPathPlannerProject();
     
     bot = new SWTWorkbenchBot();
     bot.viewByTitle("Welcome").close();

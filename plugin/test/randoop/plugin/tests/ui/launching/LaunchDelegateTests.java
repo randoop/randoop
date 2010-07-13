@@ -16,6 +16,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.ui.launching.GeneralTab;
 import randoop.plugin.internal.ui.launching.ParametersTab;
+import randoop.plugin.tests.ProjectFactory;
+import randoop.plugin.tests.WorkspaceManager;
 
 @SuppressWarnings("nls")
 public class LaunchDelegateTests extends TestCase {
@@ -23,7 +25,7 @@ public class LaunchDelegateTests extends TestCase {
   
   @Override
   protected void setUp() throws Exception {
-    fJavaProject = ProjectCreator.createStandardDemoProject();
+    fJavaProject = ProjectFactory.createPathPlannerProject();
   }
   
   /**
