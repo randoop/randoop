@@ -3,6 +3,8 @@ package randoop.plugin.internal.core.launching;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -20,6 +22,7 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
+import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 import randoop.plugin.internal.ui.options.Mnemonics;
 
@@ -65,13 +68,16 @@ public class RandoopArgumentCollector {
       }
     }
     
+    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
     fSelectedMethods = new ArrayList<IMethod>();
     List<?> selectedMethods = getSelectedMethods(config);
     for (Object o : selectedMethods) {
       Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
       String mnemonic = (String) o;
       
-      IMethod m = Mnemonics.getMethod(fJavaProject, mnemonic);
+      MethodMnemonic methodMneomic = new MethodMnemonic(root, mnemonic);
+      IMethod m = methodMneomic.getMethod();
       Assert.isNotNull(m, "Stored method does not exist");
       Assert.isNotNull(m.exists(), "Stored method [" + m.getElementName()
           + "] does not exist");
