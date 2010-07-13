@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -15,21 +17,16 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -44,14 +41,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
@@ -258,14 +254,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     boolean areMethodsSelected = selectedMethods == null || !selectedMethods.isEmpty();
 
     if (!areTypesSelected && !areMethodsSelected) {
-      return StatusFactory
-          .createErrorStatus("At least one existing type or method must be selected.");
+      return StatusFactory.createErrorStatus("At least one existing type or method must be selected.");
     }
     
     if (javaProject == null) {
       if (areTypesSelected || areMethodsSelected) {
-        return StatusFactory
-            .createErrorStatus("Types cannot be selected if no Java project is set");
+        return StatusFactory.createErrorStatus("Types cannot be selected if no Java project is set");
       }
       return StatusFactory.createOkStatus();
     }
@@ -275,20 +269,21 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         IProgressMonitor pm = new NullProgressMonitor();
         IType type = javaProject.findType(fqname, pm);
         if (type == null || !type.exists()) {
-          return StatusFactory
-              .createErrorStatus("One of the selected types does not exist.");
+          return StatusFactory.createErrorStatus("One of the selected types does not exist.");
         }
       }
   
       for (String mnemonic : selectedMethods) {
-        IMethod m = Mnemonics.getMethod(javaProject, mnemonic);
+        MethodMnemonic mm = new MethodMnemonic(getWorkspaceRoot(), mnemonic);
+        IMethod m = mm.getMethod();
         
         if (m == null || !m.exists()) {
-          return StatusFactory
-              .createErrorStatus("One of the selected methods is invalid.");
+          return StatusFactory.createErrorStatus("One of the selected methods is invalid.");
         }
       }
     } catch (JavaModelException e) {
+      RandoopPlugin.log(e);
+    } catch (CoreException e) {
       RandoopPlugin.log(e);
     }
 
