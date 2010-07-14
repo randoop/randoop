@@ -1,48 +1,122 @@
 package randoop.util;
 
+import java.util.*;
+import java.io.*;
+
 import org.apache.bcel.classfile.*;
 import org.apache.bcel.generic.*;
 import org.apache.bcel.*;
 
-public class ReadConstants {
+/**
+ * Reads literals from a class file, including from the constant pool and
+ * from bytecodes that take immediate arguments.
+ **/
+public class ClassFileConstants {
 
-  // Some test values when this class file is used as input
+  // Some test values when this class file is used as input.
+  // Byte, int, short, and char values are all stored in the .class file as int.
+  static byte bb = 23;
+  static double d = 35.3;
+  static float f = 3.0f;
   static int ii = 20;
   static long ll = 200000;
-  static float f = 3.0f;
-  static double d = 35.3;
+  static short s = 32000;
+  static char c = 'a';
 
-  public static void main (String args[]) throws java.io.IOException {
+  public static class ConstantSet {
+    public String classname;
+    public Set<Integer> ints = new TreeSet<Integer>();
+    public Set<Long> longs = new TreeSet<Long>();
+    public Set<Float> floats = new TreeSet<Float>();
+    public Set<Double> doubles = new TreeSet<Double>();
+    public Set<String> strings = new TreeSet<String>();
+    public Set<Class<?>> classes = new TreeSet<Class<?>>();
 
-    ClassParser cp = new ClassParser(args[0]);
-    JavaClass jc = cp.parse();
+    public String toString() {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      PrintStream ps = new PrintStream(baos);
+
+      System.out.printf("START CLASSLITERALS%n");
+      System.out.printf("%nCLASSNAME%n%s%n%nLITERALS%n", classname);
+      for (int x : ints) { System.out.printf("int:%d%n", x); }
+      for (long x : longs) { System.out.printf("long:%d%n", x); }
+      for (float x : floats) { System.out.printf("float:%g%n", x); }
+      for (double x : doubles) { System.out.printf("double:%g%n", x); }
+      for (String x : strings) { System.out.printf("String:\"%s\"%n", x); }
+      for (Class<?> x : classes) { System.out.printf("Class:%s%n", x); }
+      System.out.printf("%nEND CLASSLITERALS%n", classname);
+
+      return baos.toString();
+    }
+
+  }
+
+  public static void main (String args[]) throws IOException {
+    for (String classname : args) {
+      System.out.println(getConstants(classname));
+    }
+  }
+
+  /**
+   * Returns all the constants found in the given class.
+   * @see #getConstants(String,ConstantSet)
+   */
+  public static ConstantSet getConstants (String classname) {
+    ConstantSet result = new ConstantSet();
+    getConstants(classname, result);
+    return result;
+  }
+
+  /**
+   * Adds all the constants found in the given class into the given
+   * ConstantSet, and returns it.
+   * @see #getConstants(String)
+   */
+  public static ConstantSet getConstants (String classname, ConstantSet result) {
+
+    ClassParser cp;
+    JavaClass jc;
+    try {
+      cp = new ClassParser(classname);
+      jc = cp.parse();
+    } catch (java.io.IOException e) {
+      throw new Error("IOException while reading " + classname + ":" + e.getMessage());
+    }
+    result.classname = jc.getClassName();
 
     // Get all of the constants from the pool
     ConstantPool constant_pool = jc.getConstantPool();
     for (Constant c : constant_pool.getConstantPool()) {
       // System.out.printf ("*Constant = %s%n", c);
-      if (c instanceof ConstantString) {
-        System.out.printf ("constant string = %s%n", 
-                           constant_pool.constantToString (c));
-      } else if (c instanceof ConstantDouble) {
-        System.out.printf ("constant double = %s%n", 
-                           constant_pool.constantToString (c));
-      } else if (c instanceof ConstantFloat) {
-        System.out.printf ("constant float = %s%n", 
-                           constant_pool.constantToString (c));
-      } else if (c instanceof ConstantInteger) {
-        System.out.printf ("constant Integer = %s%n", 
-                           constant_pool.constantToString (c));
-      } else if (c instanceof ConstantLong) {
-        System.out.printf ("constant long = %s%n", 
-                           constant_pool.constantToString (c));
+      if (c == null
+          || c instanceof ConstantClass
+          || c instanceof ConstantFieldref
+          || c instanceof ConstantInterfaceMethodref
+          || c instanceof ConstantMethodref
+          || c instanceof ConstantNameAndType
+          || c instanceof ConstantUtf8) {
+        continue;
       }
+      if (c instanceof ConstantString) {
+        result.strings.add((String)((ConstantString)c).getConstantValue (constant_pool));
+      } else if (c instanceof ConstantDouble) {
+        result.doubles.add((Double)((ConstantDouble)c).getConstantValue (constant_pool));
+      } else if (c instanceof ConstantFloat) {
+        result.floats.add((Float)((ConstantFloat)c).getConstantValue (constant_pool));
+      } else if (c instanceof ConstantInteger) {
+        result.ints.add((Integer)((ConstantInteger)c).getConstantValue (constant_pool));
+      } else if (c instanceof ConstantLong) {
+        result.longs.add((Long)((ConstantLong)c).getConstantValue (constant_pool));
+      } else {
+        throw new RuntimeException("Unrecognized constant of type " + c.getClass() + ": " + c);
+      }
+
     }
 
     ClassGen gen = new ClassGen (jc);
     ConstantPoolGen pool = gen.getConstantPool();
 
-    // Process the code in each methods looking for literals
+    // Process the code in each method looking for literals
     for (Method m : jc.getMethods()) {
       MethodGen mg = new MethodGen (m, jc.getClassName(), pool);
       InstructionList il = mg.getInstructionList();
@@ -233,7 +307,7 @@ public class ReadConstants {
         case Constants.BIPUSH: 
         case Constants.SIPUSH: {
           ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
-          System.out.printf ("integer constant = %s%n", cpi.getValue());
+          result.ints.add((Integer)cpi.getValue());
           break;
         }
 
@@ -385,5 +459,6 @@ public class ReadConstants {
         }
       }
     }
+    return result;
   }
 }
