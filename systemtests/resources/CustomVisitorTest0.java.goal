@@ -1,0 +1,4740 @@
+
+import junit.framework.*;
+
+public class CustomVisitorTest0 extends TestCase {
+
+
+  public void test1() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    int var8 = var1.a5((-1), 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var8 == 1);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -9);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+
+  }
+
+  public void test2() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    int var6 = var3.a6();
+    randoop.test.A var8 = new randoop.test.A((-1));
+    randoop.test.A var10 = new randoop.test.A((-1));
+    randoop.test.A var11 = var10.a1();
+    randoop.test.A var12 = var8.a1(var10);
+    randoop.test.A var13 = new randoop.test.A();
+    randoop.test.A var14 = var10.a1(var13);
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var19 = var18.a1();
+    randoop.test.A var20 = var16.a1(var18);
+    randoop.test.A var21 = new randoop.test.A();
+    randoop.test.A var22 = var18.a1(var21);
+    randoop.test.A var23 = var13.a1(var21);
+    randoop.test.A var25 = new randoop.test.A((-1));
+    randoop.test.A var27 = new randoop.test.A((-1));
+    randoop.test.A var28 = var27.a1();
+    randoop.test.A var29 = var25.a1(var27);
+    randoop.test.A var30 = var21.a1(var27);
+    randoop.test.A var31 = new randoop.test.A();
+    randoop.test.A var32 = var31.a1();
+    randoop.test.A var33 = var21.a1(var31);
+    randoop.test.A var35 = new randoop.test.A((-1));
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var38 = var37.a1();
+    randoop.test.A var39 = var35.a1(var37);
+    randoop.test.A var41 = new randoop.test.A((-1));
+    randoop.test.A var43 = new randoop.test.A((-1));
+    randoop.test.A var44 = var43.a1();
+    randoop.test.A var45 = var41.a1(var43);
+    randoop.test.A var47 = new randoop.test.A((-1));
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var50 = var49.a1();
+    randoop.test.A var51 = var47.a1(var49);
+    randoop.test.A var52 = new randoop.test.A();
+    randoop.test.A var53 = var49.a1(var52);
+    int var56 = var53.a5(0, 1);
+    randoop.test.A var57 = var43.a1(var53);
+    randoop.test.A var58 = new randoop.test.A();
+    randoop.test.A var59 = var58.a1();
+    randoop.test.B var60 = var43.a2(var58);
+    randoop.test.B var62 = var33.a4(var39, var60, 0);
+    int var63 = var3.a3(var60);
+    randoop.test.A var64 = new randoop.test.A(var60);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var6 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var14);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var20);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var32);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var39);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var53);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var56 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var57);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var59);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var60);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var63 == 3);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -9);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var8.a1(var8); Assert.assertEquals(var8.i, -89);
+    var10.a1(var10); Assert.assertEquals(var10.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, 1);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 11);
+    var14.a1(var14); Assert.assertEquals(var14.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, -89);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var19.a1(var19); Assert.assertEquals(var19.i, 1);
+    var20.a1(var20); Assert.assertEquals(var20.i, 1);
+    var21.a1(var21); Assert.assertEquals(var21.i, 111);
+    var22.a1(var22); Assert.assertEquals(var22.i, 11);
+    var23.a1(var23); Assert.assertEquals(var23.i, 11);
+    var25.a1(var25); Assert.assertEquals(var25.i, -89);
+    var27.a1(var27); Assert.assertEquals(var27.i, -9);
+    var28.a1(var28); Assert.assertEquals(var28.i, 1);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var31.a1(var31); Assert.assertEquals(var31.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, 1);
+    var33.a1(var33); Assert.assertEquals(var33.i, 11);
+    var35.a1(var35); Assert.assertEquals(var35.i, -89);
+    var37.a1(var37); Assert.assertEquals(var37.i, -9);
+    var38.a1(var38); Assert.assertEquals(var38.i, 1);
+    var39.a1(var39); Assert.assertEquals(var39.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, -89);
+    var43.a1(var43); Assert.assertEquals(var43.i, -89);
+    var44.a1(var44); Assert.assertEquals(var44.i, 1);
+    var45.a1(var45); Assert.assertEquals(var45.i, 1);
+    var47.a1(var47); Assert.assertEquals(var47.i, -89);
+    var49.a1(var49); Assert.assertEquals(var49.i, -89);
+    var50.a1(var50); Assert.assertEquals(var50.i, 1);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var52.a1(var52); Assert.assertEquals(var52.i, 1);
+    var53.a1(var53); Assert.assertEquals(var53.i, 11);
+    var57.a1(var57); Assert.assertEquals(var57.i, 21);
+    var58.a1(var58); Assert.assertEquals(var58.i, 1);
+    var59.a1(var59); Assert.assertEquals(var59.i, 1);
+    var64.a1(var64); Assert.assertEquals(var64.i, 1);
+
+  }
+
+  public void test3() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    int var6 = var1.a6();
+    int var9 = var1.a5(1, 100);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var6 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var9 == 1);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -9);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+
+  }
+
+  public void test4() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    int var10 = var7.a5(0, 1);
+    randoop.test.A var12 = new randoop.test.A((-1));
+    randoop.test.A var14 = new randoop.test.A((-1));
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var17 = var16.a1();
+    randoop.test.A var18 = var14.a1(var16);
+    randoop.test.A var19 = var12.a1(var18);
+    randoop.test.A var21 = new randoop.test.A((-1));
+    randoop.test.A var23 = new randoop.test.A((-1));
+    randoop.test.A var24 = var23.a1();
+    randoop.test.A var25 = var21.a1(var23);
+    int var26 = var23.a6();
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var30 = new randoop.test.A((-1));
+    randoop.test.A var31 = var30.a1();
+    randoop.test.A var32 = var28.a1(var30);
+    randoop.test.A var33 = new randoop.test.A();
+    randoop.test.A var34 = var30.a1(var33);
+    randoop.test.A var36 = new randoop.test.A((-1));
+    randoop.test.A var38 = new randoop.test.A((-1));
+    randoop.test.A var39 = var38.a1();
+    randoop.test.A var40 = var36.a1(var38);
+    randoop.test.A var41 = new randoop.test.A();
+    randoop.test.A var42 = var38.a1(var41);
+    randoop.test.A var43 = var33.a1(var41);
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var47 = new randoop.test.A((-1));
+    randoop.test.A var48 = var47.a1();
+    randoop.test.A var49 = var45.a1(var47);
+    randoop.test.A var50 = var41.a1(var47);
+    randoop.test.A var51 = new randoop.test.A();
+    randoop.test.A var52 = var51.a1();
+    randoop.test.A var53 = var41.a1(var51);
+    randoop.test.A var55 = new randoop.test.A((-1));
+    randoop.test.A var57 = new randoop.test.A((-1));
+    randoop.test.A var58 = var57.a1();
+    randoop.test.A var59 = var55.a1(var57);
+    randoop.test.A var61 = new randoop.test.A((-1));
+    randoop.test.A var63 = new randoop.test.A((-1));
+    randoop.test.A var64 = var63.a1();
+    randoop.test.A var65 = var61.a1(var63);
+    randoop.test.A var67 = new randoop.test.A((-1));
+    randoop.test.A var69 = new randoop.test.A((-1));
+    randoop.test.A var70 = var69.a1();
+    randoop.test.A var71 = var67.a1(var69);
+    randoop.test.A var72 = new randoop.test.A();
+    randoop.test.A var73 = var69.a1(var72);
+    int var76 = var73.a5(0, 1);
+    randoop.test.A var77 = var63.a1(var73);
+    randoop.test.A var78 = new randoop.test.A();
+    randoop.test.A var79 = var78.a1();
+    randoop.test.B var80 = var63.a2(var78);
+    randoop.test.B var82 = var53.a4(var59, var80, 0);
+    int var83 = var23.a3(var80);
+    int var84 = var7.a3(var18, var80);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var24);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var25);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var26 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var32);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var39);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var42);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var43);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var49);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var53);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var58);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var59);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var64);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var65);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var70);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var71);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var73);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var76 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var77);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var79);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var80);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var82);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var83 == 3);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var84 == 1);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var12.a1(var12); Assert.assertEquals(var12.i, -89);
+    var14.a1(var14); Assert.assertEquals(var14.i, -89);
+    var16.a1(var16); Assert.assertEquals(var16.i, -9);
+    var17.a1(var17); Assert.assertEquals(var17.i, 1);
+    var18.a1(var18); Assert.assertEquals(var18.i, 1);
+    var19.a1(var19); Assert.assertEquals(var19.i, 11);
+    var21.a1(var21); Assert.assertEquals(var21.i, -89);
+    var23.a1(var23); Assert.assertEquals(var23.i, -9);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1);
+    var25.a1(var25); Assert.assertEquals(var25.i, 1);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var30.a1(var30); Assert.assertEquals(var30.i, -89);
+    var31.a1(var31); Assert.assertEquals(var31.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, 1);
+    var33.a1(var33); Assert.assertEquals(var33.i, 11);
+    var34.a1(var34); Assert.assertEquals(var34.i, 11);
+    var36.a1(var36); Assert.assertEquals(var36.i, -89);
+    var38.a1(var38); Assert.assertEquals(var38.i, -89);
+    var39.a1(var39); Assert.assertEquals(var39.i, 1);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 111);
+    var42.a1(var42); Assert.assertEquals(var42.i, 11);
+    var43.a1(var43); Assert.assertEquals(var43.i, 11);
+    var45.a1(var45); Assert.assertEquals(var45.i, -89);
+    var47.a1(var47); Assert.assertEquals(var47.i, -9);
+    var48.a1(var48); Assert.assertEquals(var48.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, 1);
+    var50.a1(var50); Assert.assertEquals(var50.i, 1);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var52.a1(var52); Assert.assertEquals(var52.i, 1);
+    var53.a1(var53); Assert.assertEquals(var53.i, 11);
+    var55.a1(var55); Assert.assertEquals(var55.i, -89);
+    var57.a1(var57); Assert.assertEquals(var57.i, -9);
+    var58.a1(var58); Assert.assertEquals(var58.i, 1);
+    var59.a1(var59); Assert.assertEquals(var59.i, 1);
+    var61.a1(var61); Assert.assertEquals(var61.i, -89);
+    var63.a1(var63); Assert.assertEquals(var63.i, -89);
+    var64.a1(var64); Assert.assertEquals(var64.i, 1);
+    var65.a1(var65); Assert.assertEquals(var65.i, 1);
+    var67.a1(var67); Assert.assertEquals(var67.i, -89);
+    var69.a1(var69); Assert.assertEquals(var69.i, -89);
+    var70.a1(var70); Assert.assertEquals(var70.i, 1);
+    var71.a1(var71); Assert.assertEquals(var71.i, 1);
+    var72.a1(var72); Assert.assertEquals(var72.i, 1);
+    var73.a1(var73); Assert.assertEquals(var73.i, 11);
+    var77.a1(var77); Assert.assertEquals(var77.i, 21);
+    var78.a1(var78); Assert.assertEquals(var78.i, 1);
+    var79.a1(var79); Assert.assertEquals(var79.i, 1);
+
+  }
+
+  public void test5() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    int var6 = var3.a6();
+    int var7 = var3.a6();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var6 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var7 == 0);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -9);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+
+  }
+
+  public void test6() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var2 = var1.a1();
+    randoop.test.A var3 = var1.a1();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var3);
+    var1.a1(var1); Assert.assertEquals(var1.i, -9);
+    var2.a1(var2); Assert.assertEquals(var2.i, 1);
+    var3.a1(var3); Assert.assertEquals(var3.i, 1);
+
+  }
+
+  public void test7() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var16 = var6.a1(var14);
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var20 = new randoop.test.A((-1));
+    randoop.test.A var21 = var20.a1();
+    randoop.test.A var22 = var18.a1(var20);
+    randoop.test.A var23 = var14.a1(var20);
+    randoop.test.A var24 = new randoop.test.A();
+    randoop.test.A var25 = var24.a1();
+    randoop.test.A var26 = var14.a1(var24);
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var30 = new randoop.test.A((-1));
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var33 = var32.a1();
+    randoop.test.A var34 = var30.a1(var32);
+    randoop.test.A var35 = var28.a1(var34);
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var39 = new randoop.test.A((-1));
+    randoop.test.A var40 = var39.a1();
+    randoop.test.A var41 = var37.a1(var39);
+    randoop.test.A var43 = new randoop.test.A((-1));
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var46 = var45.a1();
+    randoop.test.A var47 = var43.a1(var45);
+    randoop.test.A var48 = new randoop.test.A();
+    randoop.test.A var49 = var45.a1(var48);
+    int var52 = var49.a5(0, 1);
+    randoop.test.A var53 = var39.a1(var49);
+    randoop.test.A var54 = new randoop.test.A();
+    randoop.test.A var55 = var54.a1();
+    randoop.test.B var56 = var39.a2(var54);
+    int var57 = var28.a3(var56);
+    int var58 = var26.a3(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var25);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var46);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var49);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var52 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var53);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var55);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var57 == 3);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var58 == 3);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 111);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, -9);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1);
+    var25.a1(var25); Assert.assertEquals(var25.i, 1);
+    var26.a1(var26); Assert.assertEquals(var26.i, 11);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var30.a1(var30); Assert.assertEquals(var30.i, -89);
+    var32.a1(var32); Assert.assertEquals(var32.i, -9);
+    var33.a1(var33); Assert.assertEquals(var33.i, 1);
+    var34.a1(var34); Assert.assertEquals(var34.i, 1);
+    var35.a1(var35); Assert.assertEquals(var35.i, 11);
+    var37.a1(var37); Assert.assertEquals(var37.i, -89);
+    var39.a1(var39); Assert.assertEquals(var39.i, -89);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 1);
+    var43.a1(var43); Assert.assertEquals(var43.i, -89);
+    var45.a1(var45); Assert.assertEquals(var45.i, -89);
+    var46.a1(var46); Assert.assertEquals(var46.i, 1);
+    var47.a1(var47); Assert.assertEquals(var47.i, 1);
+    var48.a1(var48); Assert.assertEquals(var48.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, 11);
+    var53.a1(var53); Assert.assertEquals(var53.i, 21);
+    var54.a1(var54); Assert.assertEquals(var54.i, 1);
+    var55.a1(var55); Assert.assertEquals(var55.i, 1);
+
+  }
+
+  public void test8() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A(1);
+    randoop.test.A var2 = var1.a1();
+    int var3 = var2.a6();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3 == 0);
+    var1.a1(var1); Assert.assertEquals(var1.i, 11);
+    var2.a1(var2); Assert.assertEquals(var2.i, 1);
+
+  }
+
+  public void test9() throws Throwable {
+
+    randoop.test.A var0 = new randoop.test.A();
+    int var3 = var0.a5(10, (-1));
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var3 == 1);
+    var0.a1(var0); Assert.assertEquals(var0.i, 1);
+
+  }
+
+  public void test10() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    int var10 = var7.a5(0, 1);
+    randoop.test.A var12 = new randoop.test.A((-1));
+    randoop.test.A var14 = new randoop.test.A((-1));
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var17 = var16.a1();
+    randoop.test.A var18 = var14.a1(var16);
+    randoop.test.A var19 = var12.a1(var18);
+    int var20 = var19.a6();
+    randoop.test.A var22 = new randoop.test.A(0);
+    randoop.test.A var24 = new randoop.test.A(100);
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var29 = var28.a1();
+    randoop.test.A var30 = var26.a1(var28);
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var35 = var34.a1();
+    randoop.test.A var36 = var32.a1(var34);
+    randoop.test.A var37 = new randoop.test.A();
+    randoop.test.A var38 = var34.a1(var37);
+    int var41 = var38.a5(0, 1);
+    randoop.test.A var42 = var28.a1(var38);
+    randoop.test.A var43 = new randoop.test.A();
+    randoop.test.A var44 = var43.a1();
+    randoop.test.B var45 = var28.a2(var43);
+    int var46 = var22.a3(var24, var45);
+    randoop.test.B var48 = var7.a4(var19, var45, 10);
+    int var51 = var7.a5(0, 3);
+    int var54 = var7.a5(10, 3);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var42);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var51 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var54 == 1);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var12.a1(var12); Assert.assertEquals(var12.i, -89);
+    var14.a1(var14); Assert.assertEquals(var14.i, -89);
+    var16.a1(var16); Assert.assertEquals(var16.i, -9);
+    var17.a1(var17); Assert.assertEquals(var17.i, 1);
+    var18.a1(var18); Assert.assertEquals(var18.i, 1);
+    var19.a1(var19); Assert.assertEquals(var19.i, 11);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1001);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, -89);
+    var34.a1(var34); Assert.assertEquals(var34.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, 1);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 11);
+    var42.a1(var42); Assert.assertEquals(var42.i, 21);
+    var43.a1(var43); Assert.assertEquals(var43.i, 1);
+    var44.a1(var44); Assert.assertEquals(var44.i, 1);
+
+  }
+
+  public void test11() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    int var10 = var7.a5(0, 1);
+    randoop.test.A var12 = new randoop.test.A((-1));
+    randoop.test.A var14 = new randoop.test.A((-1));
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var17 = var16.a1();
+    randoop.test.A var18 = var14.a1(var16);
+    randoop.test.A var19 = var12.a1(var18);
+    int var20 = var19.a6();
+    randoop.test.A var22 = new randoop.test.A(0);
+    randoop.test.A var24 = new randoop.test.A(100);
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var29 = var28.a1();
+    randoop.test.A var30 = var26.a1(var28);
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var35 = var34.a1();
+    randoop.test.A var36 = var32.a1(var34);
+    randoop.test.A var37 = new randoop.test.A();
+    randoop.test.A var38 = var34.a1(var37);
+    int var41 = var38.a5(0, 1);
+    randoop.test.A var42 = var28.a1(var38);
+    randoop.test.A var43 = new randoop.test.A();
+    randoop.test.A var44 = var43.a1();
+    randoop.test.B var45 = var28.a2(var43);
+    int var46 = var22.a3(var24, var45);
+    randoop.test.B var48 = var7.a4(var19, var45, 10);
+    int var51 = var19.a5((-1), 3);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var42);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var51 == 1);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var12.a1(var12); Assert.assertEquals(var12.i, -89);
+    var14.a1(var14); Assert.assertEquals(var14.i, -89);
+    var16.a1(var16); Assert.assertEquals(var16.i, -9);
+    var17.a1(var17); Assert.assertEquals(var17.i, 1);
+    var18.a1(var18); Assert.assertEquals(var18.i, 1);
+    var19.a1(var19); Assert.assertEquals(var19.i, 11);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1001);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, -89);
+    var34.a1(var34); Assert.assertEquals(var34.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, 1);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 11);
+    var42.a1(var42); Assert.assertEquals(var42.i, 21);
+    var43.a1(var43); Assert.assertEquals(var43.i, 1);
+    var44.a1(var44); Assert.assertEquals(var44.i, 1);
+
+  }
+
+  public void test12() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var16 = var6.a1(var14);
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var20 = new randoop.test.A((-1));
+    randoop.test.A var21 = var20.a1();
+    randoop.test.A var22 = var18.a1(var20);
+    randoop.test.A var23 = var14.a1(var20);
+    int var24 = var23.a6();
+    int var27 = var23.a5(10, (-1));
+    randoop.test.A var29 = new randoop.test.A((-1));
+    randoop.test.A var31 = new randoop.test.A((-1));
+    randoop.test.A var32 = var31.a1();
+    randoop.test.A var33 = var29.a1(var31);
+    randoop.test.A var35 = new randoop.test.A((-1));
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var38 = var37.a1();
+    randoop.test.A var39 = var35.a1(var37);
+    randoop.test.A var40 = new randoop.test.A();
+    randoop.test.A var41 = var37.a1(var40);
+    int var44 = var41.a5(0, 1);
+    randoop.test.A var45 = var31.a1(var41);
+    randoop.test.A var47 = new randoop.test.A((-1));
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var50 = var49.a1();
+    randoop.test.A var51 = var47.a1(var49);
+    int var52 = var47.a6();
+    randoop.test.A var54 = new randoop.test.A(0);
+    randoop.test.A var56 = new randoop.test.A((-1));
+    randoop.test.A var58 = new randoop.test.A((-1));
+    randoop.test.A var60 = new randoop.test.A((-1));
+    randoop.test.A var61 = var60.a1();
+    randoop.test.A var62 = var58.a1(var60);
+    randoop.test.A var63 = var56.a1(var62);
+    randoop.test.A var65 = new randoop.test.A((-1));
+    randoop.test.A var67 = new randoop.test.A((-1));
+    randoop.test.A var68 = var67.a1();
+    randoop.test.A var69 = var65.a1(var67);
+    randoop.test.A var70 = new randoop.test.A();
+    randoop.test.A var71 = var67.a1(var70);
+    randoop.test.A var73 = new randoop.test.A((-1));
+    randoop.test.A var75 = new randoop.test.A((-1));
+    randoop.test.A var77 = new randoop.test.A((-1));
+    randoop.test.A var78 = var77.a1();
+    randoop.test.A var79 = var75.a1(var77);
+    randoop.test.A var80 = var73.a1(var79);
+    int var81 = var80.a6();
+    randoop.test.B var82 = var71.a2(var80);
+    randoop.test.B var84 = var54.a4(var56, var82, 1);
+    int var85 = var45.a3(var47, var82);
+    randoop.test.A var86 = new randoop.test.A(var82);
+    int var87 = var23.a3(var82);
+    randoop.test.A var88 = new randoop.test.A(var82);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var24 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var27 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var32);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var39);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var44 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var52 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var61);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var68);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var69);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var71);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var78);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var79);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var80);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var81 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var82);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var84);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var85 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var87 == 3);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 11);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, -9);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var29.a1(var29); Assert.assertEquals(var29.i, -89);
+    var31.a1(var31); Assert.assertEquals(var31.i, -89);
+    var32.a1(var32); Assert.assertEquals(var32.i, 1);
+    var33.a1(var33); Assert.assertEquals(var33.i, 1);
+    var35.a1(var35); Assert.assertEquals(var35.i, -89);
+    var37.a1(var37); Assert.assertEquals(var37.i, -89);
+    var38.a1(var38); Assert.assertEquals(var38.i, 1);
+    var39.a1(var39); Assert.assertEquals(var39.i, 1);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 11);
+    var45.a1(var45); Assert.assertEquals(var45.i, 21);
+    var47.a1(var47); Assert.assertEquals(var47.i, -89);
+    var49.a1(var49); Assert.assertEquals(var49.i, -9);
+    var50.a1(var50); Assert.assertEquals(var50.i, 1);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var54.a1(var54); Assert.assertEquals(var54.i, 1);
+    var56.a1(var56); Assert.assertEquals(var56.i, -89);
+    var58.a1(var58); Assert.assertEquals(var58.i, -89);
+    var60.a1(var60); Assert.assertEquals(var60.i, -9);
+    var61.a1(var61); Assert.assertEquals(var61.i, 1);
+    var62.a1(var62); Assert.assertEquals(var62.i, 1);
+    var63.a1(var63); Assert.assertEquals(var63.i, 11);
+    var65.a1(var65); Assert.assertEquals(var65.i, -89);
+    var67.a1(var67); Assert.assertEquals(var67.i, -89);
+    var68.a1(var68); Assert.assertEquals(var68.i, 1);
+    var69.a1(var69); Assert.assertEquals(var69.i, 1);
+    var70.a1(var70); Assert.assertEquals(var70.i, 1);
+    var71.a1(var71); Assert.assertEquals(var71.i, 11);
+    var73.a1(var73); Assert.assertEquals(var73.i, -89);
+    var75.a1(var75); Assert.assertEquals(var75.i, -89);
+    var77.a1(var77); Assert.assertEquals(var77.i, -9);
+    var78.a1(var78); Assert.assertEquals(var78.i, 1);
+    var79.a1(var79); Assert.assertEquals(var79.i, 1);
+    var80.a1(var80); Assert.assertEquals(var80.i, 11);
+    var86.a1(var86); Assert.assertEquals(var86.i, 1);
+    var88.a1(var88); Assert.assertEquals(var88.i, 1);
+
+  }
+
+  public void test13() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var7 = new randoop.test.A((-1));
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var10 = var9.a1();
+    randoop.test.A var11 = var7.a1(var9);
+    randoop.test.A var12 = new randoop.test.A();
+    randoop.test.A var13 = var9.a1(var12);
+    int var16 = var13.a5(0, 1);
+    randoop.test.A var17 = var3.a1(var13);
+    randoop.test.A var19 = new randoop.test.A((-1));
+    randoop.test.A var21 = new randoop.test.A((-1));
+    randoop.test.A var22 = var21.a1();
+    randoop.test.A var23 = var19.a1(var21);
+    randoop.test.A var24 = new randoop.test.A();
+    randoop.test.A var25 = var21.a1(var24);
+    int var28 = var25.a5(0, 1);
+    randoop.test.A var30 = new randoop.test.A((-1));
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var35 = var34.a1();
+    randoop.test.A var36 = var32.a1(var34);
+    randoop.test.A var37 = var30.a1(var36);
+    int var38 = var37.a6();
+    randoop.test.A var40 = new randoop.test.A(0);
+    randoop.test.A var42 = new randoop.test.A(100);
+    randoop.test.A var44 = new randoop.test.A((-1));
+    randoop.test.A var46 = new randoop.test.A((-1));
+    randoop.test.A var47 = var46.a1();
+    randoop.test.A var48 = var44.a1(var46);
+    randoop.test.A var50 = new randoop.test.A((-1));
+    randoop.test.A var52 = new randoop.test.A((-1));
+    randoop.test.A var53 = var52.a1();
+    randoop.test.A var54 = var50.a1(var52);
+    randoop.test.A var55 = new randoop.test.A();
+    randoop.test.A var56 = var52.a1(var55);
+    int var59 = var56.a5(0, 1);
+    randoop.test.A var60 = var46.a1(var56);
+    randoop.test.A var61 = new randoop.test.A();
+    randoop.test.A var62 = var61.a1();
+    randoop.test.B var63 = var46.a2(var61);
+    int var64 = var40.a3(var42, var63);
+    randoop.test.B var66 = var25.a4(var37, var63, 10);
+    int var67 = var17.a3(var66);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var16 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var25);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var28 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var37);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var38 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var53);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var54);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var59 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var60);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var64 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var66);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var67 == 3);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, -89);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var10.a1(var10); Assert.assertEquals(var10.i, 1);
+    var11.a1(var11); Assert.assertEquals(var11.i, 1);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 11);
+    var17.a1(var17); Assert.assertEquals(var17.i, 21);
+    var19.a1(var19); Assert.assertEquals(var19.i, -89);
+    var21.a1(var21); Assert.assertEquals(var21.i, -89);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1);
+    var25.a1(var25); Assert.assertEquals(var25.i, 11);
+    var30.a1(var30); Assert.assertEquals(var30.i, -89);
+    var32.a1(var32); Assert.assertEquals(var32.i, -89);
+    var34.a1(var34); Assert.assertEquals(var34.i, -9);
+    var35.a1(var35); Assert.assertEquals(var35.i, 1);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 11);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var42.a1(var42); Assert.assertEquals(var42.i, 1001);
+    var44.a1(var44); Assert.assertEquals(var44.i, -89);
+    var46.a1(var46); Assert.assertEquals(var46.i, -89);
+    var47.a1(var47); Assert.assertEquals(var47.i, 1);
+    var48.a1(var48); Assert.assertEquals(var48.i, 1);
+    var50.a1(var50); Assert.assertEquals(var50.i, -89);
+    var52.a1(var52); Assert.assertEquals(var52.i, -89);
+    var53.a1(var53); Assert.assertEquals(var53.i, 1);
+    var54.a1(var54); Assert.assertEquals(var54.i, 1);
+    var55.a1(var55); Assert.assertEquals(var55.i, 1);
+    var56.a1(var56); Assert.assertEquals(var56.i, 11);
+    var60.a1(var60); Assert.assertEquals(var60.i, 21);
+    var61.a1(var61); Assert.assertEquals(var61.i, 1);
+    var62.a1(var62); Assert.assertEquals(var62.i, 1);
+
+  }
+
+  public void test14() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    int var10 = var7.a5(0, 1);
+    int var13 = var7.a5(0, 10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var13 == 1);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+
+  }
+
+  public void test15() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var2 = var1.a1();
+    randoop.test.A var4 = new randoop.test.A((-1));
+    randoop.test.A var6 = new randoop.test.A((-1));
+    randoop.test.A var7 = var6.a1();
+    randoop.test.A var8 = var4.a1(var6);
+    randoop.test.A var9 = new randoop.test.A();
+    randoop.test.A var10 = var6.a1(var9);
+    int var13 = var10.a5(0, 1);
+    int var14 = var10.a6();
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var19 = var18.a1();
+    randoop.test.A var20 = var16.a1(var18);
+    int var21 = var18.a6();
+    randoop.test.A var23 = new randoop.test.A(100);
+    randoop.test.A var25 = new randoop.test.A((-1));
+    randoop.test.A var27 = new randoop.test.A((-1));
+    randoop.test.A var28 = var27.a1();
+    randoop.test.A var29 = var25.a1(var27);
+    randoop.test.A var30 = new randoop.test.A();
+    randoop.test.A var31 = var27.a1(var30);
+    randoop.test.A var33 = new randoop.test.A((-1));
+    randoop.test.A var35 = new randoop.test.A((-1));
+    randoop.test.A var36 = var35.a1();
+    randoop.test.A var37 = var33.a1(var35);
+    randoop.test.A var38 = new randoop.test.A();
+    randoop.test.A var39 = var35.a1(var38);
+    randoop.test.A var40 = var30.a1(var38);
+    randoop.test.A var42 = new randoop.test.A((-1));
+    randoop.test.A var44 = new randoop.test.A((-1));
+    randoop.test.A var45 = var44.a1();
+    randoop.test.A var46 = var42.a1(var44);
+    randoop.test.A var47 = var38.a1(var44);
+    randoop.test.A var48 = new randoop.test.A();
+    randoop.test.A var49 = var48.a1();
+    randoop.test.A var50 = var38.a1(var48);
+    randoop.test.A var52 = new randoop.test.A((-1));
+    randoop.test.A var54 = new randoop.test.A((-1));
+    randoop.test.A var55 = var54.a1();
+    randoop.test.A var56 = var52.a1(var54);
+    randoop.test.A var58 = new randoop.test.A((-1));
+    randoop.test.A var60 = new randoop.test.A((-1));
+    randoop.test.A var61 = var60.a1();
+    randoop.test.A var62 = var58.a1(var60);
+    randoop.test.A var64 = new randoop.test.A((-1));
+    randoop.test.A var66 = new randoop.test.A((-1));
+    randoop.test.A var67 = var66.a1();
+    randoop.test.A var68 = var64.a1(var66);
+    randoop.test.A var69 = new randoop.test.A();
+    randoop.test.A var70 = var66.a1(var69);
+    int var73 = var70.a5(0, 1);
+    randoop.test.A var74 = var60.a1(var70);
+    randoop.test.A var75 = new randoop.test.A();
+    randoop.test.A var76 = var75.a1();
+    randoop.test.B var77 = var60.a2(var75);
+    randoop.test.B var79 = var50.a4(var56, var77, 0);
+    int var80 = var18.a3(var23, var79);
+    randoop.test.A var82 = new randoop.test.A((-1));
+    int var85 = var82.a5(10, (-1));
+    randoop.test.B var86 = var18.a2(var82);
+    int var87 = var2.a3(var10, var86);
+    int var88 = var2.a6();
+    randoop.test.A var89 = var2.a1();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var8);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var13 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var14 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var20);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var21 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var37);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var39);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var46);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var49);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var55);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var61);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var67);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var68);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var70);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var73 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var74);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var76);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var77);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var79);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var80 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var85 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var86);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var87 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var88 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var89);
+    var1.a1(var1); Assert.assertEquals(var1.i, -9);
+    var2.a1(var2); Assert.assertEquals(var2.i, 1);
+    var4.a1(var4); Assert.assertEquals(var4.i, -89);
+    var6.a1(var6); Assert.assertEquals(var6.i, -89);
+    var7.a1(var7); Assert.assertEquals(var7.i, 1);
+    var8.a1(var8); Assert.assertEquals(var8.i, 1);
+    var9.a1(var9); Assert.assertEquals(var9.i, 1);
+    var10.a1(var10); Assert.assertEquals(var10.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, -89);
+    var18.a1(var18); Assert.assertEquals(var18.i, -9);
+    var19.a1(var19); Assert.assertEquals(var19.i, 1);
+    var20.a1(var20); Assert.assertEquals(var20.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1001);
+    var25.a1(var25); Assert.assertEquals(var25.i, -89);
+    var27.a1(var27); Assert.assertEquals(var27.i, -89);
+    var28.a1(var28); Assert.assertEquals(var28.i, 1);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 11);
+    var31.a1(var31); Assert.assertEquals(var31.i, 11);
+    var33.a1(var33); Assert.assertEquals(var33.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, -89);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 111);
+    var39.a1(var39); Assert.assertEquals(var39.i, 11);
+    var40.a1(var40); Assert.assertEquals(var40.i, 11);
+    var42.a1(var42); Assert.assertEquals(var42.i, -89);
+    var44.a1(var44); Assert.assertEquals(var44.i, -9);
+    var45.a1(var45); Assert.assertEquals(var45.i, 1);
+    var46.a1(var46); Assert.assertEquals(var46.i, 1);
+    var47.a1(var47); Assert.assertEquals(var47.i, 1);
+    var48.a1(var48); Assert.assertEquals(var48.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, 1);
+    var50.a1(var50); Assert.assertEquals(var50.i, 11);
+    var52.a1(var52); Assert.assertEquals(var52.i, -89);
+    var54.a1(var54); Assert.assertEquals(var54.i, -9);
+    var55.a1(var55); Assert.assertEquals(var55.i, 1);
+    var56.a1(var56); Assert.assertEquals(var56.i, 1);
+    var58.a1(var58); Assert.assertEquals(var58.i, -89);
+    var60.a1(var60); Assert.assertEquals(var60.i, -89);
+    var61.a1(var61); Assert.assertEquals(var61.i, 1);
+    var62.a1(var62); Assert.assertEquals(var62.i, 1);
+    var64.a1(var64); Assert.assertEquals(var64.i, -89);
+    var66.a1(var66); Assert.assertEquals(var66.i, -89);
+    var67.a1(var67); Assert.assertEquals(var67.i, 1);
+    var68.a1(var68); Assert.assertEquals(var68.i, 1);
+    var69.a1(var69); Assert.assertEquals(var69.i, 1);
+    var70.a1(var70); Assert.assertEquals(var70.i, 11);
+    var74.a1(var74); Assert.assertEquals(var74.i, 21);
+    var75.a1(var75); Assert.assertEquals(var75.i, 1);
+    var76.a1(var76); Assert.assertEquals(var76.i, 1);
+    var82.a1(var82); Assert.assertEquals(var82.i, -9);
+    var89.a1(var89); Assert.assertEquals(var89.i, 1);
+
+  }
+
+  public void test16() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var7 = new randoop.test.A((-1));
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var10 = var9.a1();
+    randoop.test.A var11 = var7.a1(var9);
+    randoop.test.A var12 = new randoop.test.A();
+    randoop.test.A var13 = var9.a1(var12);
+    int var16 = var13.a5(0, 1);
+    randoop.test.A var17 = var3.a1(var13);
+    int var18 = var17.a6();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var16 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18 == 0);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, -89);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var10.a1(var10); Assert.assertEquals(var10.i, 1);
+    var11.a1(var11); Assert.assertEquals(var11.i, 1);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 11);
+    var17.a1(var17); Assert.assertEquals(var17.i, 21);
+
+  }
+
+  public void test17() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    int var10 = var7.a5(0, 1);
+    randoop.test.A var12 = new randoop.test.A((-1));
+    randoop.test.A var14 = new randoop.test.A((-1));
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var17 = var16.a1();
+    randoop.test.A var18 = var14.a1(var16);
+    randoop.test.A var19 = var12.a1(var18);
+    int var20 = var19.a6();
+    randoop.test.A var22 = new randoop.test.A(0);
+    randoop.test.A var24 = new randoop.test.A(100);
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var29 = var28.a1();
+    randoop.test.A var30 = var26.a1(var28);
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var35 = var34.a1();
+    randoop.test.A var36 = var32.a1(var34);
+    randoop.test.A var37 = new randoop.test.A();
+    randoop.test.A var38 = var34.a1(var37);
+    int var41 = var38.a5(0, 1);
+    randoop.test.A var42 = var28.a1(var38);
+    randoop.test.A var43 = new randoop.test.A();
+    randoop.test.A var44 = var43.a1();
+    randoop.test.B var45 = var28.a2(var43);
+    int var46 = var22.a3(var24, var45);
+    randoop.test.B var48 = var7.a4(var19, var45, 10);
+    randoop.test.A var49 = new randoop.test.A(var48);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var42);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var12.a1(var12); Assert.assertEquals(var12.i, -89);
+    var14.a1(var14); Assert.assertEquals(var14.i, -89);
+    var16.a1(var16); Assert.assertEquals(var16.i, -9);
+    var17.a1(var17); Assert.assertEquals(var17.i, 1);
+    var18.a1(var18); Assert.assertEquals(var18.i, 1);
+    var19.a1(var19); Assert.assertEquals(var19.i, 11);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1001);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, -89);
+    var34.a1(var34); Assert.assertEquals(var34.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, 1);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 11);
+    var42.a1(var42); Assert.assertEquals(var42.i, 21);
+    var43.a1(var43); Assert.assertEquals(var43.i, 1);
+    var44.a1(var44); Assert.assertEquals(var44.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, 1);
+
+  }
+
+  public void test18() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var17 = new randoop.test.A((-1));
+    randoop.test.A var19 = new randoop.test.A((-1));
+    randoop.test.A var20 = var19.a1();
+    randoop.test.A var21 = var17.a1(var19);
+    randoop.test.A var22 = new randoop.test.A();
+    randoop.test.A var23 = var19.a1(var22);
+    randoop.test.A var24 = var14.a1(var22);
+    randoop.test.A var25 = var6.a1(var24);
+    randoop.test.A var27 = new randoop.test.A((-1));
+    randoop.test.A var29 = new randoop.test.A((-1));
+    randoop.test.A var30 = var29.a1();
+    randoop.test.A var31 = var27.a1(var29);
+    randoop.test.A var32 = new randoop.test.A();
+    randoop.test.A var33 = var29.a1(var32);
+    randoop.test.A var35 = new randoop.test.A((-1));
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var38 = var37.a1();
+    randoop.test.A var39 = var35.a1(var37);
+    randoop.test.A var40 = new randoop.test.A();
+    randoop.test.A var41 = var37.a1(var40);
+    randoop.test.A var43 = new randoop.test.A((-1));
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var46 = var45.a1();
+    randoop.test.A var47 = var43.a1(var45);
+    randoop.test.A var48 = new randoop.test.A();
+    randoop.test.A var49 = var45.a1(var48);
+    randoop.test.A var50 = var40.a1(var48);
+    randoop.test.A var51 = var32.a1(var50);
+    randoop.test.A var52 = var25.a1(var32);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var20);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var24);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var25);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var39);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var46);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var49);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 11);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var17.a1(var17); Assert.assertEquals(var17.i, -89);
+    var19.a1(var19); Assert.assertEquals(var19.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, 1);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 11);
+    var24.a1(var24); Assert.assertEquals(var24.i, 11);
+    var25.a1(var25); Assert.assertEquals(var25.i, 211);
+    var27.a1(var27); Assert.assertEquals(var27.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, -89);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var31.a1(var31); Assert.assertEquals(var31.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, 11);
+    var33.a1(var33); Assert.assertEquals(var33.i, 11);
+    var35.a1(var35); Assert.assertEquals(var35.i, -89);
+    var37.a1(var37); Assert.assertEquals(var37.i, -89);
+    var38.a1(var38); Assert.assertEquals(var38.i, 1);
+    var39.a1(var39); Assert.assertEquals(var39.i, 1);
+    var40.a1(var40); Assert.assertEquals(var40.i, 11);
+    var41.a1(var41); Assert.assertEquals(var41.i, 11);
+    var43.a1(var43); Assert.assertEquals(var43.i, -89);
+    var45.a1(var45); Assert.assertEquals(var45.i, -89);
+    var46.a1(var46); Assert.assertEquals(var46.i, 1);
+    var47.a1(var47); Assert.assertEquals(var47.i, 1);
+    var48.a1(var48); Assert.assertEquals(var48.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, 11);
+    var50.a1(var50); Assert.assertEquals(var50.i, 11);
+    var51.a1(var51); Assert.assertEquals(var51.i, 21);
+    var52.a1(var52); Assert.assertEquals(var52.i, 21);
+
+  }
+
+  public void test19() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var5 = new randoop.test.A((-1));
+    randoop.test.A var6 = var5.a1();
+    randoop.test.A var7 = var3.a1(var5);
+    randoop.test.A var8 = var1.a1(var7);
+    int var9 = var8.a6();
+    randoop.test.A var11 = new randoop.test.A((-1));
+    int var14 = var11.a5(10, (-1));
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var19 = var18.a1();
+    randoop.test.A var20 = var16.a1(var18);
+    randoop.test.A var21 = new randoop.test.A();
+    randoop.test.A var22 = var18.a1(var21);
+    randoop.test.A var24 = new randoop.test.A((-1));
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var27 = var26.a1();
+    randoop.test.A var28 = var24.a1(var26);
+    randoop.test.A var29 = new randoop.test.A();
+    randoop.test.A var30 = var26.a1(var29);
+    randoop.test.A var31 = var21.a1(var29);
+    randoop.test.A var33 = new randoop.test.A((-1));
+    randoop.test.A var35 = new randoop.test.A((-1));
+    randoop.test.A var36 = var35.a1();
+    randoop.test.A var37 = var33.a1(var35);
+    randoop.test.A var38 = var29.a1(var35);
+    randoop.test.A var39 = new randoop.test.A();
+    randoop.test.A var40 = var39.a1();
+    randoop.test.A var41 = var29.a1(var39);
+    randoop.test.A var43 = new randoop.test.A((-1));
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var46 = var45.a1();
+    randoop.test.A var47 = var43.a1(var45);
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var51 = new randoop.test.A((-1));
+    randoop.test.A var52 = var51.a1();
+    randoop.test.A var53 = var49.a1(var51);
+    randoop.test.A var55 = new randoop.test.A((-1));
+    randoop.test.A var57 = new randoop.test.A((-1));
+    randoop.test.A var58 = var57.a1();
+    randoop.test.A var59 = var55.a1(var57);
+    randoop.test.A var60 = new randoop.test.A();
+    randoop.test.A var61 = var57.a1(var60);
+    int var64 = var61.a5(0, 1);
+    randoop.test.A var65 = var51.a1(var61);
+    randoop.test.A var66 = new randoop.test.A();
+    randoop.test.A var67 = var66.a1();
+    randoop.test.B var68 = var51.a2(var66);
+    randoop.test.B var70 = var41.a4(var47, var68, 0);
+    int var71 = var8.a3(var11, var68);
+    randoop.test.A var73 = new randoop.test.A((-1));
+    randoop.test.A var75 = new randoop.test.A((-1));
+    randoop.test.A var76 = var75.a1();
+    randoop.test.A var77 = var73.a1(var75);
+    randoop.test.A var78 = var8.a1(var73);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var6);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var8);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var9 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var14 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var20);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var27);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var37);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var46);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var53);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var58);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var59);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var61);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var64 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var65);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var67);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var68);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var70);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var71 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var76);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var77);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var78);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var5.a1(var5); Assert.assertEquals(var5.i, -9);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 1);
+    var8.a1(var8); Assert.assertEquals(var8.i, 111);
+    var11.a1(var11); Assert.assertEquals(var11.i, -9);
+    var16.a1(var16); Assert.assertEquals(var16.i, -89);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var19.a1(var19); Assert.assertEquals(var19.i, 1);
+    var20.a1(var20); Assert.assertEquals(var20.i, 1);
+    var21.a1(var21); Assert.assertEquals(var21.i, 11);
+    var22.a1(var22); Assert.assertEquals(var22.i, 11);
+    var24.a1(var24); Assert.assertEquals(var24.i, -89);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var27.a1(var27); Assert.assertEquals(var27.i, 1);
+    var28.a1(var28); Assert.assertEquals(var28.i, 1);
+    var29.a1(var29); Assert.assertEquals(var29.i, 111);
+    var30.a1(var30); Assert.assertEquals(var30.i, 11);
+    var31.a1(var31); Assert.assertEquals(var31.i, 11);
+    var33.a1(var33); Assert.assertEquals(var33.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, -9);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 1);
+    var39.a1(var39); Assert.assertEquals(var39.i, 1);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 11);
+    var43.a1(var43); Assert.assertEquals(var43.i, -89);
+    var45.a1(var45); Assert.assertEquals(var45.i, -9);
+    var46.a1(var46); Assert.assertEquals(var46.i, 1);
+    var47.a1(var47); Assert.assertEquals(var47.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, -89);
+    var51.a1(var51); Assert.assertEquals(var51.i, -89);
+    var52.a1(var52); Assert.assertEquals(var52.i, 1);
+    var53.a1(var53); Assert.assertEquals(var53.i, 1);
+    var55.a1(var55); Assert.assertEquals(var55.i, -89);
+    var57.a1(var57); Assert.assertEquals(var57.i, -89);
+    var58.a1(var58); Assert.assertEquals(var58.i, 1);
+    var59.a1(var59); Assert.assertEquals(var59.i, 1);
+    var60.a1(var60); Assert.assertEquals(var60.i, 1);
+    var61.a1(var61); Assert.assertEquals(var61.i, 11);
+    var65.a1(var65); Assert.assertEquals(var65.i, 21);
+    var66.a1(var66); Assert.assertEquals(var66.i, 1);
+    var67.a1(var67); Assert.assertEquals(var67.i, 1);
+    var73.a1(var73); Assert.assertEquals(var73.i, -89);
+    var75.a1(var75); Assert.assertEquals(var75.i, -9);
+    var76.a1(var76); Assert.assertEquals(var76.i, 1);
+    var77.a1(var77); Assert.assertEquals(var77.i, 1);
+    var78.a1(var78); Assert.assertEquals(var78.i, -79);
+
+  }
+
+  public void test20() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var7 = new randoop.test.A((-1));
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var10 = var9.a1();
+    randoop.test.A var11 = var7.a1(var9);
+    randoop.test.A var12 = new randoop.test.A();
+    randoop.test.A var13 = var9.a1(var12);
+    int var16 = var13.a5(0, 1);
+    randoop.test.A var17 = var3.a1(var13);
+    randoop.test.A var19 = new randoop.test.A((-1));
+    randoop.test.A var21 = new randoop.test.A((-1));
+    randoop.test.A var22 = var21.a1();
+    randoop.test.A var23 = var19.a1(var21);
+    int var24 = var19.a6();
+    randoop.test.A var26 = new randoop.test.A(0);
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var30 = new randoop.test.A((-1));
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var33 = var32.a1();
+    randoop.test.A var34 = var30.a1(var32);
+    randoop.test.A var35 = var28.a1(var34);
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var39 = new randoop.test.A((-1));
+    randoop.test.A var40 = var39.a1();
+    randoop.test.A var41 = var37.a1(var39);
+    randoop.test.A var42 = new randoop.test.A();
+    randoop.test.A var43 = var39.a1(var42);
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var47 = new randoop.test.A((-1));
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var50 = var49.a1();
+    randoop.test.A var51 = var47.a1(var49);
+    randoop.test.A var52 = var45.a1(var51);
+    int var53 = var52.a6();
+    randoop.test.B var54 = var43.a2(var52);
+    randoop.test.B var56 = var26.a4(var28, var54, 1);
+    int var57 = var17.a3(var19, var54);
+    int var58 = var19.a6();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var16 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var24 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var43);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var53 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var54);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var57 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var58 == 0);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, -89);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var10.a1(var10); Assert.assertEquals(var10.i, 1);
+    var11.a1(var11); Assert.assertEquals(var11.i, 1);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 11);
+    var17.a1(var17); Assert.assertEquals(var17.i, 21);
+    var19.a1(var19); Assert.assertEquals(var19.i, -89);
+    var21.a1(var21); Assert.assertEquals(var21.i, -9);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var26.a1(var26); Assert.assertEquals(var26.i, 1);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var30.a1(var30); Assert.assertEquals(var30.i, -89);
+    var32.a1(var32); Assert.assertEquals(var32.i, -9);
+    var33.a1(var33); Assert.assertEquals(var33.i, 1);
+    var34.a1(var34); Assert.assertEquals(var34.i, 1);
+    var35.a1(var35); Assert.assertEquals(var35.i, 11);
+    var37.a1(var37); Assert.assertEquals(var37.i, -89);
+    var39.a1(var39); Assert.assertEquals(var39.i, -89);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 1);
+    var42.a1(var42); Assert.assertEquals(var42.i, 1);
+    var43.a1(var43); Assert.assertEquals(var43.i, 11);
+    var45.a1(var45); Assert.assertEquals(var45.i, -89);
+    var47.a1(var47); Assert.assertEquals(var47.i, -89);
+    var49.a1(var49); Assert.assertEquals(var49.i, -9);
+    var50.a1(var50); Assert.assertEquals(var50.i, 1);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var52.a1(var52); Assert.assertEquals(var52.i, 11);
+
+  }
+
+  public void test21() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var7 = new randoop.test.A((-1));
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var10 = var9.a1();
+    randoop.test.A var11 = var7.a1(var9);
+    randoop.test.A var12 = new randoop.test.A();
+    randoop.test.A var13 = var9.a1(var12);
+    int var16 = var13.a5(0, 1);
+    randoop.test.A var17 = var3.a1(var13);
+    randoop.test.A var19 = new randoop.test.A((-1));
+    randoop.test.A var21 = new randoop.test.A((-1));
+    randoop.test.A var22 = var21.a1();
+    randoop.test.A var23 = var19.a1(var21);
+    randoop.test.A var24 = new randoop.test.A();
+    randoop.test.A var25 = var21.a1(var24);
+    randoop.test.A var27 = new randoop.test.A((-1));
+    randoop.test.A var29 = new randoop.test.A((-1));
+    randoop.test.A var31 = new randoop.test.A((-1));
+    randoop.test.A var32 = var31.a1();
+    randoop.test.A var33 = var29.a1(var31);
+    randoop.test.A var34 = var27.a1(var33);
+    int var35 = var34.a6();
+    randoop.test.B var36 = var25.a2(var34);
+    randoop.test.B var37 = var13.a2(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var16 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var25);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var32);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var35 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var37);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, -89);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var10.a1(var10); Assert.assertEquals(var10.i, 1);
+    var11.a1(var11); Assert.assertEquals(var11.i, 1);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 11);
+    var17.a1(var17); Assert.assertEquals(var17.i, 21);
+    var19.a1(var19); Assert.assertEquals(var19.i, -89);
+    var21.a1(var21); Assert.assertEquals(var21.i, -89);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1);
+    var25.a1(var25); Assert.assertEquals(var25.i, 11);
+    var27.a1(var27); Assert.assertEquals(var27.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, -89);
+    var31.a1(var31); Assert.assertEquals(var31.i, -9);
+    var32.a1(var32); Assert.assertEquals(var32.i, 1);
+    var33.a1(var33); Assert.assertEquals(var33.i, 1);
+    var34.a1(var34); Assert.assertEquals(var34.i, 11);
+
+  }
+
+  public void test22() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    int var6 = var3.a6();
+    randoop.test.A var8 = new randoop.test.A(100);
+    randoop.test.A var10 = new randoop.test.A((-1));
+    randoop.test.A var12 = new randoop.test.A((-1));
+    randoop.test.A var13 = var12.a1();
+    randoop.test.A var14 = var10.a1(var12);
+    randoop.test.A var15 = new randoop.test.A();
+    randoop.test.A var16 = var12.a1(var15);
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var20 = new randoop.test.A((-1));
+    randoop.test.A var21 = var20.a1();
+    randoop.test.A var22 = var18.a1(var20);
+    randoop.test.A var23 = new randoop.test.A();
+    randoop.test.A var24 = var20.a1(var23);
+    randoop.test.A var25 = var15.a1(var23);
+    randoop.test.A var27 = new randoop.test.A((-1));
+    randoop.test.A var29 = new randoop.test.A((-1));
+    randoop.test.A var30 = var29.a1();
+    randoop.test.A var31 = var27.a1(var29);
+    randoop.test.A var32 = var23.a1(var29);
+    randoop.test.A var33 = new randoop.test.A();
+    randoop.test.A var34 = var33.a1();
+    randoop.test.A var35 = var23.a1(var33);
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var39 = new randoop.test.A((-1));
+    randoop.test.A var40 = var39.a1();
+    randoop.test.A var41 = var37.a1(var39);
+    randoop.test.A var43 = new randoop.test.A((-1));
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var46 = var45.a1();
+    randoop.test.A var47 = var43.a1(var45);
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var51 = new randoop.test.A((-1));
+    randoop.test.A var52 = var51.a1();
+    randoop.test.A var53 = var49.a1(var51);
+    randoop.test.A var54 = new randoop.test.A();
+    randoop.test.A var55 = var51.a1(var54);
+    int var58 = var55.a5(0, 1);
+    randoop.test.A var59 = var45.a1(var55);
+    randoop.test.A var60 = new randoop.test.A();
+    randoop.test.A var61 = var60.a1();
+    randoop.test.B var62 = var45.a2(var60);
+    randoop.test.B var64 = var35.a4(var41, var62, 0);
+    int var65 = var3.a3(var8, var64);
+    randoop.test.A var67 = new randoop.test.A((-1));
+    int var70 = var67.a5(10, (-1));
+    randoop.test.B var71 = var3.a2(var67);
+    randoop.test.A var72 = new randoop.test.A(var71);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var6 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var14);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var24);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var25);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var32);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var46);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var53);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var55);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var58 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var59);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var61);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var64);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var65 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var70 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var71);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -9);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var8.a1(var8); Assert.assertEquals(var8.i, 1001);
+    var10.a1(var10); Assert.assertEquals(var10.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, -89);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 1);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, -89);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 111);
+    var24.a1(var24); Assert.assertEquals(var24.i, 11);
+    var25.a1(var25); Assert.assertEquals(var25.i, 11);
+    var27.a1(var27); Assert.assertEquals(var27.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, -9);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var31.a1(var31); Assert.assertEquals(var31.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, 1);
+    var33.a1(var33); Assert.assertEquals(var33.i, 1);
+    var34.a1(var34); Assert.assertEquals(var34.i, 1);
+    var35.a1(var35); Assert.assertEquals(var35.i, 11);
+    var37.a1(var37); Assert.assertEquals(var37.i, -89);
+    var39.a1(var39); Assert.assertEquals(var39.i, -9);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 1);
+    var43.a1(var43); Assert.assertEquals(var43.i, -89);
+    var45.a1(var45); Assert.assertEquals(var45.i, -89);
+    var46.a1(var46); Assert.assertEquals(var46.i, 1);
+    var47.a1(var47); Assert.assertEquals(var47.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, -89);
+    var51.a1(var51); Assert.assertEquals(var51.i, -89);
+    var52.a1(var52); Assert.assertEquals(var52.i, 1);
+    var53.a1(var53); Assert.assertEquals(var53.i, 1);
+    var54.a1(var54); Assert.assertEquals(var54.i, 1);
+    var55.a1(var55); Assert.assertEquals(var55.i, 11);
+    var59.a1(var59); Assert.assertEquals(var59.i, 21);
+    var60.a1(var60); Assert.assertEquals(var60.i, 1);
+    var61.a1(var61); Assert.assertEquals(var61.i, 1);
+    var67.a1(var67); Assert.assertEquals(var67.i, -9);
+    var72.a1(var72); Assert.assertEquals(var72.i, 1);
+
+  }
+
+  public void test23() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var16 = var6.a1(var14);
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var20 = new randoop.test.A((-1));
+    randoop.test.A var21 = var20.a1();
+    randoop.test.A var22 = var18.a1(var20);
+    randoop.test.A var23 = var14.a1(var20);
+    randoop.test.A var24 = new randoop.test.A();
+    randoop.test.A var25 = var24.a1();
+    randoop.test.A var26 = var14.a1(var24);
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.B var29 = var26.a2(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var25);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 111);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, -9);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1);
+    var25.a1(var25); Assert.assertEquals(var25.i, 1);
+    var26.a1(var26); Assert.assertEquals(var26.i, 11);
+    var28.a1(var28); Assert.assertEquals(var28.i, -9);
+
+  }
+
+  public void test24() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var7 = new randoop.test.A((-1));
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var10 = var9.a1();
+    randoop.test.A var11 = var7.a1(var9);
+    randoop.test.A var12 = new randoop.test.A();
+    randoop.test.A var13 = var9.a1(var12);
+    int var16 = var13.a5(0, 1);
+    randoop.test.A var17 = var3.a1(var13);
+    int var18 = var3.a6();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var16 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var18 == 0);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, -89);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var10.a1(var10); Assert.assertEquals(var10.i, 1);
+    var11.a1(var11); Assert.assertEquals(var11.i, 1);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 11);
+    var17.a1(var17); Assert.assertEquals(var17.i, 21);
+
+  }
+
+  public void test25() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var16 = var6.a1(var14);
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var20 = new randoop.test.A((-1));
+    randoop.test.A var21 = var20.a1();
+    randoop.test.A var22 = var18.a1(var20);
+    randoop.test.A var23 = var14.a1(var20);
+    int var24 = var23.a6();
+    randoop.test.A var26 = new randoop.test.A(0);
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var30 = new randoop.test.A((-1));
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var33 = var32.a1();
+    randoop.test.A var34 = var30.a1(var32);
+    randoop.test.A var35 = var28.a1(var34);
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var39 = new randoop.test.A((-1));
+    randoop.test.A var40 = var39.a1();
+    randoop.test.A var41 = var37.a1(var39);
+    randoop.test.A var42 = new randoop.test.A();
+    randoop.test.A var43 = var39.a1(var42);
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var47 = new randoop.test.A((-1));
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var50 = var49.a1();
+    randoop.test.A var51 = var47.a1(var49);
+    randoop.test.A var52 = var45.a1(var51);
+    int var53 = var52.a6();
+    randoop.test.B var54 = var43.a2(var52);
+    randoop.test.B var56 = var26.a4(var28, var54, 1);
+    randoop.test.B var57 = var23.a2(var28);
+    randoop.test.A var59 = new randoop.test.A((-1));
+    randoop.test.A var61 = new randoop.test.A((-1));
+    randoop.test.A var62 = var61.a1();
+    randoop.test.A var63 = var59.a1(var61);
+    randoop.test.B var64 = var23.a2(var59);
+    randoop.test.A var65 = var59.a1();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var24 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var43);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var53 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var54);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var57);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var64);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var65);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 11);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, -9);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var26.a1(var26); Assert.assertEquals(var26.i, 1);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var30.a1(var30); Assert.assertEquals(var30.i, -89);
+    var32.a1(var32); Assert.assertEquals(var32.i, -9);
+    var33.a1(var33); Assert.assertEquals(var33.i, 1);
+    var34.a1(var34); Assert.assertEquals(var34.i, 1);
+    var35.a1(var35); Assert.assertEquals(var35.i, 11);
+    var37.a1(var37); Assert.assertEquals(var37.i, -89);
+    var39.a1(var39); Assert.assertEquals(var39.i, -89);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 1);
+    var42.a1(var42); Assert.assertEquals(var42.i, 1);
+    var43.a1(var43); Assert.assertEquals(var43.i, 11);
+    var45.a1(var45); Assert.assertEquals(var45.i, -89);
+    var47.a1(var47); Assert.assertEquals(var47.i, -89);
+    var49.a1(var49); Assert.assertEquals(var49.i, -9);
+    var50.a1(var50); Assert.assertEquals(var50.i, 1);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var52.a1(var52); Assert.assertEquals(var52.i, 11);
+    var59.a1(var59); Assert.assertEquals(var59.i, -89);
+    var61.a1(var61); Assert.assertEquals(var61.i, -9);
+    var62.a1(var62); Assert.assertEquals(var62.i, 1);
+    var63.a1(var63); Assert.assertEquals(var63.i, 1);
+    var65.a1(var65); Assert.assertEquals(var65.i, 1);
+
+  }
+
+  public void test26() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var7 = new randoop.test.A((-1));
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var10 = var9.a1();
+    randoop.test.A var11 = var7.a1(var9);
+    randoop.test.A var12 = new randoop.test.A();
+    randoop.test.A var13 = var9.a1(var12);
+    int var16 = var13.a5(0, 1);
+    randoop.test.A var17 = var3.a1(var13);
+    randoop.test.A var19 = new randoop.test.A((-1));
+    randoop.test.A var21 = new randoop.test.A((-1));
+    randoop.test.A var22 = var21.a1();
+    randoop.test.A var23 = var19.a1(var21);
+    randoop.test.A var25 = new randoop.test.A((-1));
+    randoop.test.A var27 = new randoop.test.A((-1));
+    randoop.test.A var28 = var27.a1();
+    randoop.test.A var29 = var25.a1(var27);
+    randoop.test.A var30 = new randoop.test.A();
+    randoop.test.A var31 = var27.a1(var30);
+    int var34 = var31.a5(0, 1);
+    randoop.test.A var35 = var21.a1(var31);
+    randoop.test.B var36 = var3.a2(var35);
+    randoop.test.A var38 = new randoop.test.A(10);
+    randoop.test.B var39 = var3.a2(var38);
+    randoop.test.A var41 = new randoop.test.A(3);
+    randoop.test.A var43 = new randoop.test.A((-1));
+    int var46 = var43.a5(10, (-1));
+    randoop.test.B var47 = var41.a2(var43);
+    int var48 = var3.a3(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var16 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var34 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var39);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var48 == 3);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, -89);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var10.a1(var10); Assert.assertEquals(var10.i, 1);
+    var11.a1(var11); Assert.assertEquals(var11.i, 1);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 11);
+    var17.a1(var17); Assert.assertEquals(var17.i, 21);
+    var19.a1(var19); Assert.assertEquals(var19.i, -89);
+    var21.a1(var21); Assert.assertEquals(var21.i, -89);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var25.a1(var25); Assert.assertEquals(var25.i, -89);
+    var27.a1(var27); Assert.assertEquals(var27.i, -89);
+    var28.a1(var28); Assert.assertEquals(var28.i, 1);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var31.a1(var31); Assert.assertEquals(var31.i, 11);
+    var35.a1(var35); Assert.assertEquals(var35.i, 21);
+    var38.a1(var38); Assert.assertEquals(var38.i, 101);
+    var41.a1(var41); Assert.assertEquals(var41.i, 31);
+    var43.a1(var43); Assert.assertEquals(var43.i, -9);
+
+  }
+
+  public void test27() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var16 = var6.a1(var14);
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var20 = new randoop.test.A((-1));
+    randoop.test.A var21 = var20.a1();
+    randoop.test.A var22 = var18.a1(var20);
+    randoop.test.A var23 = var14.a1(var20);
+    int var24 = var23.a6();
+    randoop.test.A var26 = new randoop.test.A(0);
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var30 = new randoop.test.A((-1));
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var33 = var32.a1();
+    randoop.test.A var34 = var30.a1(var32);
+    randoop.test.A var35 = var28.a1(var34);
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var39 = new randoop.test.A((-1));
+    randoop.test.A var40 = var39.a1();
+    randoop.test.A var41 = var37.a1(var39);
+    randoop.test.A var42 = new randoop.test.A();
+    randoop.test.A var43 = var39.a1(var42);
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var47 = new randoop.test.A((-1));
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var50 = var49.a1();
+    randoop.test.A var51 = var47.a1(var49);
+    randoop.test.A var52 = var45.a1(var51);
+    int var53 = var52.a6();
+    randoop.test.B var54 = var43.a2(var52);
+    randoop.test.B var56 = var26.a4(var28, var54, 1);
+    randoop.test.B var57 = var23.a2(var28);
+    randoop.test.A var59 = new randoop.test.A((-1));
+    randoop.test.A var61 = new randoop.test.A((-1));
+    randoop.test.A var62 = var61.a1();
+    randoop.test.A var63 = var59.a1(var61);
+    randoop.test.B var64 = var23.a2(var59);
+    randoop.test.A var65 = var23.a1();
+    randoop.test.A var67 = new randoop.test.A((-1));
+    randoop.test.A var69 = new randoop.test.A((-1));
+    randoop.test.A var70 = var69.a1();
+    randoop.test.A var71 = var67.a1(var69);
+    randoop.test.A var72 = new randoop.test.A();
+    randoop.test.A var73 = var69.a1(var72);
+    randoop.test.A var75 = new randoop.test.A((-1));
+    randoop.test.A var77 = new randoop.test.A((-1));
+    randoop.test.A var78 = var77.a1();
+    randoop.test.A var79 = var75.a1(var77);
+    randoop.test.A var80 = new randoop.test.A();
+    randoop.test.A var81 = var77.a1(var80);
+    randoop.test.A var82 = var72.a1(var80);
+    randoop.test.A var84 = new randoop.test.A((-1));
+    randoop.test.A var86 = new randoop.test.A((-1));
+    randoop.test.A var87 = var86.a1();
+    randoop.test.A var88 = var84.a1(var86);
+    randoop.test.A var89 = var80.a1(var86);
+    int var90 = var89.a6();
+    randoop.test.A var91 = var23.a1(var89);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var24 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var43);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var53 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var54);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var57);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var64);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var65);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var70);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var71);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var73);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var78);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var79);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var81);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var82);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var87);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var88);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var89);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var90 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var91);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 11);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, -9);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 11);
+    var26.a1(var26); Assert.assertEquals(var26.i, 1);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var30.a1(var30); Assert.assertEquals(var30.i, -89);
+    var32.a1(var32); Assert.assertEquals(var32.i, -9);
+    var33.a1(var33); Assert.assertEquals(var33.i, 1);
+    var34.a1(var34); Assert.assertEquals(var34.i, 1);
+    var35.a1(var35); Assert.assertEquals(var35.i, 11);
+    var37.a1(var37); Assert.assertEquals(var37.i, -89);
+    var39.a1(var39); Assert.assertEquals(var39.i, -89);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 1);
+    var42.a1(var42); Assert.assertEquals(var42.i, 1);
+    var43.a1(var43); Assert.assertEquals(var43.i, 11);
+    var45.a1(var45); Assert.assertEquals(var45.i, -89);
+    var47.a1(var47); Assert.assertEquals(var47.i, -89);
+    var49.a1(var49); Assert.assertEquals(var49.i, -9);
+    var50.a1(var50); Assert.assertEquals(var50.i, 1);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var52.a1(var52); Assert.assertEquals(var52.i, 11);
+    var59.a1(var59); Assert.assertEquals(var59.i, -89);
+    var61.a1(var61); Assert.assertEquals(var61.i, -9);
+    var62.a1(var62); Assert.assertEquals(var62.i, 1);
+    var63.a1(var63); Assert.assertEquals(var63.i, 1);
+    var65.a1(var65); Assert.assertEquals(var65.i, 1);
+    var67.a1(var67); Assert.assertEquals(var67.i, -89);
+    var69.a1(var69); Assert.assertEquals(var69.i, -89);
+    var70.a1(var70); Assert.assertEquals(var70.i, 1);
+    var71.a1(var71); Assert.assertEquals(var71.i, 1);
+    var72.a1(var72); Assert.assertEquals(var72.i, 11);
+    var73.a1(var73); Assert.assertEquals(var73.i, 11);
+    var75.a1(var75); Assert.assertEquals(var75.i, -89);
+    var77.a1(var77); Assert.assertEquals(var77.i, -89);
+    var78.a1(var78); Assert.assertEquals(var78.i, 1);
+    var79.a1(var79); Assert.assertEquals(var79.i, 1);
+    var80.a1(var80); Assert.assertEquals(var80.i, 11);
+    var81.a1(var81); Assert.assertEquals(var81.i, 11);
+    var82.a1(var82); Assert.assertEquals(var82.i, 11);
+    var84.a1(var84); Assert.assertEquals(var84.i, -89);
+    var86.a1(var86); Assert.assertEquals(var86.i, -9);
+    var87.a1(var87); Assert.assertEquals(var87.i, 1);
+    var88.a1(var88); Assert.assertEquals(var88.i, 1);
+    var89.a1(var89); Assert.assertEquals(var89.i, 1);
+    var91.a1(var91); Assert.assertEquals(var91.i, 11);
+
+  }
+
+  public void test28() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    int var10 = var7.a5(0, 1);
+    randoop.test.A var12 = new randoop.test.A((-1));
+    randoop.test.A var14 = new randoop.test.A((-1));
+    randoop.test.A var15 = var14.a1();
+    randoop.test.A var16 = var12.a1(var14);
+    randoop.test.A var17 = new randoop.test.A();
+    randoop.test.A var18 = var14.a1(var17);
+    randoop.test.A var19 = var14.a1();
+    randoop.test.B var20 = var7.a2(var14);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var20);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var12.a1(var12); Assert.assertEquals(var12.i, -89);
+    var14.a1(var14); Assert.assertEquals(var14.i, -89);
+    var15.a1(var15); Assert.assertEquals(var15.i, 1);
+    var16.a1(var16); Assert.assertEquals(var16.i, 1);
+    var17.a1(var17); Assert.assertEquals(var17.i, 1);
+    var18.a1(var18); Assert.assertEquals(var18.i, 11);
+    var19.a1(var19); Assert.assertEquals(var19.i, 1);
+
+  }
+
+  public void test29() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var7 = new randoop.test.A((-1));
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var10 = var9.a1();
+    randoop.test.A var11 = var7.a1(var9);
+    randoop.test.A var12 = new randoop.test.A();
+    randoop.test.A var13 = var9.a1(var12);
+    int var16 = var13.a5(0, 1);
+    randoop.test.A var17 = var3.a1(var13);
+    randoop.test.A var19 = new randoop.test.A((-1));
+    randoop.test.A var20 = var19.a1();
+    randoop.test.B var21 = var17.a2(var20);
+    randoop.test.A var23 = new randoop.test.A((-1));
+    randoop.test.A var25 = new randoop.test.A((-1));
+    randoop.test.A var26 = var25.a1();
+    randoop.test.A var27 = var23.a1(var25);
+    randoop.test.A var29 = new randoop.test.A((-1));
+    randoop.test.A var31 = new randoop.test.A((-1));
+    randoop.test.A var33 = new randoop.test.A((-1));
+    randoop.test.A var34 = var33.a1();
+    randoop.test.A var35 = var31.a1(var33);
+    randoop.test.A var36 = var29.a1(var35);
+    randoop.test.A var38 = new randoop.test.A((-1));
+    randoop.test.A var40 = new randoop.test.A((-1));
+    randoop.test.A var41 = var40.a1();
+    randoop.test.A var42 = var38.a1(var40);
+    randoop.test.A var44 = new randoop.test.A((-1));
+    randoop.test.A var46 = new randoop.test.A((-1));
+    randoop.test.A var47 = var46.a1();
+    randoop.test.A var48 = var44.a1(var46);
+    randoop.test.A var49 = new randoop.test.A();
+    randoop.test.A var50 = var46.a1(var49);
+    int var53 = var50.a5(0, 1);
+    randoop.test.A var54 = var40.a1(var50);
+    randoop.test.A var55 = new randoop.test.A();
+    randoop.test.A var56 = var55.a1();
+    randoop.test.B var57 = var40.a2(var55);
+    int var58 = var29.a3(var57);
+    randoop.test.A var59 = new randoop.test.A(var57);
+    int var62 = var59.a5(1, 10);
+    randoop.test.B var63 = var27.a2(var59);
+    int var64 = var20.a3(var63);
+    randoop.test.A var65 = new randoop.test.A(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var10);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var11);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var16 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var20);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var27);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var42);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var53 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var54);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var57);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var58 == 3);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var62 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var64 == 3);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, -89);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var10.a1(var10); Assert.assertEquals(var10.i, 1);
+    var11.a1(var11); Assert.assertEquals(var11.i, 1);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 11);
+    var17.a1(var17); Assert.assertEquals(var17.i, 21);
+    var19.a1(var19); Assert.assertEquals(var19.i, -9);
+    var20.a1(var20); Assert.assertEquals(var20.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, -89);
+    var25.a1(var25); Assert.assertEquals(var25.i, -9);
+    var26.a1(var26); Assert.assertEquals(var26.i, 1);
+    var27.a1(var27); Assert.assertEquals(var27.i, 1);
+    var29.a1(var29); Assert.assertEquals(var29.i, -89);
+    var31.a1(var31); Assert.assertEquals(var31.i, -89);
+    var33.a1(var33); Assert.assertEquals(var33.i, -9);
+    var34.a1(var34); Assert.assertEquals(var34.i, 1);
+    var35.a1(var35); Assert.assertEquals(var35.i, 1);
+    var36.a1(var36); Assert.assertEquals(var36.i, 11);
+    var38.a1(var38); Assert.assertEquals(var38.i, -89);
+    var40.a1(var40); Assert.assertEquals(var40.i, -89);
+    var41.a1(var41); Assert.assertEquals(var41.i, 1);
+    var42.a1(var42); Assert.assertEquals(var42.i, 1);
+    var44.a1(var44); Assert.assertEquals(var44.i, -89);
+    var46.a1(var46); Assert.assertEquals(var46.i, -89);
+    var47.a1(var47); Assert.assertEquals(var47.i, 1);
+    var48.a1(var48); Assert.assertEquals(var48.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, 1);
+    var50.a1(var50); Assert.assertEquals(var50.i, 11);
+    var54.a1(var54); Assert.assertEquals(var54.i, 21);
+    var55.a1(var55); Assert.assertEquals(var55.i, 1);
+    var56.a1(var56); Assert.assertEquals(var56.i, 1);
+    var59.a1(var59); Assert.assertEquals(var59.i, 1);
+    var65.a1(var65); Assert.assertEquals(var65.i, 1);
+
+  }
+
+  public void test30() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    int var2 = var1.a6();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var2 == 0);
+    var1.a1(var1); Assert.assertEquals(var1.i, -9);
+
+  }
+
+  public void test31() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var8 = var3.a1();
+    int var11 = var8.a5(1, (-1));
+    randoop.test.A var13 = new randoop.test.A(0);
+    randoop.test.A var15 = new randoop.test.A((-1));
+    randoop.test.A var17 = new randoop.test.A((-1));
+    randoop.test.A var19 = new randoop.test.A((-1));
+    randoop.test.A var20 = var19.a1();
+    randoop.test.A var21 = var17.a1(var19);
+    randoop.test.A var22 = var15.a1(var21);
+    randoop.test.A var24 = new randoop.test.A((-1));
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var27 = var26.a1();
+    randoop.test.A var28 = var24.a1(var26);
+    randoop.test.A var29 = new randoop.test.A();
+    randoop.test.A var30 = var26.a1(var29);
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var36 = new randoop.test.A((-1));
+    randoop.test.A var37 = var36.a1();
+    randoop.test.A var38 = var34.a1(var36);
+    randoop.test.A var39 = var32.a1(var38);
+    int var40 = var39.a6();
+    randoop.test.B var41 = var30.a2(var39);
+    randoop.test.B var43 = var13.a4(var15, var41, 1);
+    int var44 = var8.a3(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var8);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var11 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var20);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var27);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var37);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var39);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var40 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var43);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var44 == 3);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var8.a1(var8); Assert.assertEquals(var8.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var15.a1(var15); Assert.assertEquals(var15.i, -89);
+    var17.a1(var17); Assert.assertEquals(var17.i, -89);
+    var19.a1(var19); Assert.assertEquals(var19.i, -9);
+    var20.a1(var20); Assert.assertEquals(var20.i, 1);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 11);
+    var24.a1(var24); Assert.assertEquals(var24.i, -89);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var27.a1(var27); Assert.assertEquals(var27.i, 1);
+    var28.a1(var28); Assert.assertEquals(var28.i, 1);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 11);
+    var32.a1(var32); Assert.assertEquals(var32.i, -89);
+    var34.a1(var34); Assert.assertEquals(var34.i, -89);
+    var36.a1(var36); Assert.assertEquals(var36.i, -9);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 1);
+    var39.a1(var39); Assert.assertEquals(var39.i, 11);
+
+  }
+
+  public void test32() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    int var10 = var7.a5(0, 1);
+    randoop.test.A var12 = new randoop.test.A((-1));
+    randoop.test.A var14 = new randoop.test.A((-1));
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var17 = var16.a1();
+    randoop.test.A var18 = var14.a1(var16);
+    randoop.test.A var19 = var12.a1(var18);
+    int var20 = var19.a6();
+    randoop.test.A var22 = new randoop.test.A(0);
+    randoop.test.A var24 = new randoop.test.A(100);
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var29 = var28.a1();
+    randoop.test.A var30 = var26.a1(var28);
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var35 = var34.a1();
+    randoop.test.A var36 = var32.a1(var34);
+    randoop.test.A var37 = new randoop.test.A();
+    randoop.test.A var38 = var34.a1(var37);
+    int var41 = var38.a5(0, 1);
+    randoop.test.A var42 = var28.a1(var38);
+    randoop.test.A var43 = new randoop.test.A();
+    randoop.test.A var44 = var43.a1();
+    randoop.test.B var45 = var28.a2(var43);
+    int var46 = var22.a3(var24, var45);
+    randoop.test.B var48 = var7.a4(var19, var45, 10);
+    randoop.test.A var50 = new randoop.test.A(1);
+    randoop.test.A var51 = var50.a1();
+    randoop.test.A var53 = new randoop.test.A((-1));
+    randoop.test.A var55 = new randoop.test.A((-1));
+    randoop.test.A var56 = var55.a1();
+    randoop.test.A var57 = var53.a1(var55);
+    randoop.test.A var59 = new randoop.test.A((-1));
+    randoop.test.A var61 = new randoop.test.A((-1));
+    randoop.test.A var62 = var61.a1();
+    randoop.test.A var63 = var59.a1(var61);
+    randoop.test.A var64 = new randoop.test.A();
+    randoop.test.A var65 = var61.a1(var64);
+    int var68 = var65.a5(0, 1);
+    randoop.test.A var69 = var55.a1(var65);
+    randoop.test.A var71 = new randoop.test.A((-1));
+    randoop.test.A var72 = var71.a1();
+    randoop.test.B var73 = var69.a2(var72);
+    int var74 = var19.a3(var50, var73);
+    randoop.test.A var75 = new randoop.test.A(var73);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var42);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var57);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var65);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var68 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var69);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var72);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var73);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var74 == 1);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var12.a1(var12); Assert.assertEquals(var12.i, -89);
+    var14.a1(var14); Assert.assertEquals(var14.i, -89);
+    var16.a1(var16); Assert.assertEquals(var16.i, -9);
+    var17.a1(var17); Assert.assertEquals(var17.i, 1);
+    var18.a1(var18); Assert.assertEquals(var18.i, 1);
+    var19.a1(var19); Assert.assertEquals(var19.i, 11);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1001);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, -89);
+    var34.a1(var34); Assert.assertEquals(var34.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, 1);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 11);
+    var42.a1(var42); Assert.assertEquals(var42.i, 21);
+    var43.a1(var43); Assert.assertEquals(var43.i, 1);
+    var44.a1(var44); Assert.assertEquals(var44.i, 1);
+    var50.a1(var50); Assert.assertEquals(var50.i, 11);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var53.a1(var53); Assert.assertEquals(var53.i, -89);
+    var55.a1(var55); Assert.assertEquals(var55.i, -89);
+    var56.a1(var56); Assert.assertEquals(var56.i, 1);
+    var57.a1(var57); Assert.assertEquals(var57.i, 1);
+    var59.a1(var59); Assert.assertEquals(var59.i, -89);
+    var61.a1(var61); Assert.assertEquals(var61.i, -89);
+    var62.a1(var62); Assert.assertEquals(var62.i, 1);
+    var63.a1(var63); Assert.assertEquals(var63.i, 1);
+    var64.a1(var64); Assert.assertEquals(var64.i, 1);
+    var65.a1(var65); Assert.assertEquals(var65.i, 11);
+    var69.a1(var69); Assert.assertEquals(var69.i, 21);
+    var71.a1(var71); Assert.assertEquals(var71.i, -9);
+    var72.a1(var72); Assert.assertEquals(var72.i, 1);
+    var75.a1(var75); Assert.assertEquals(var75.i, 1);
+
+  }
+
+  public void test33() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var5 = new randoop.test.A((-1));
+    randoop.test.A var6 = var5.a1();
+    randoop.test.A var7 = var3.a1(var5);
+    randoop.test.A var8 = var1.a1(var7);
+    int var9 = var8.a6();
+    randoop.test.A var11 = new randoop.test.A((-1));
+    int var14 = var11.a5(10, (-1));
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var19 = var18.a1();
+    randoop.test.A var20 = var16.a1(var18);
+    randoop.test.A var21 = new randoop.test.A();
+    randoop.test.A var22 = var18.a1(var21);
+    randoop.test.A var24 = new randoop.test.A((-1));
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var27 = var26.a1();
+    randoop.test.A var28 = var24.a1(var26);
+    randoop.test.A var29 = new randoop.test.A();
+    randoop.test.A var30 = var26.a1(var29);
+    randoop.test.A var31 = var21.a1(var29);
+    randoop.test.A var33 = new randoop.test.A((-1));
+    randoop.test.A var35 = new randoop.test.A((-1));
+    randoop.test.A var36 = var35.a1();
+    randoop.test.A var37 = var33.a1(var35);
+    randoop.test.A var38 = var29.a1(var35);
+    randoop.test.A var39 = new randoop.test.A();
+    randoop.test.A var40 = var39.a1();
+    randoop.test.A var41 = var29.a1(var39);
+    randoop.test.A var43 = new randoop.test.A((-1));
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var46 = var45.a1();
+    randoop.test.A var47 = var43.a1(var45);
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var51 = new randoop.test.A((-1));
+    randoop.test.A var52 = var51.a1();
+    randoop.test.A var53 = var49.a1(var51);
+    randoop.test.A var55 = new randoop.test.A((-1));
+    randoop.test.A var57 = new randoop.test.A((-1));
+    randoop.test.A var58 = var57.a1();
+    randoop.test.A var59 = var55.a1(var57);
+    randoop.test.A var60 = new randoop.test.A();
+    randoop.test.A var61 = var57.a1(var60);
+    int var64 = var61.a5(0, 1);
+    randoop.test.A var65 = var51.a1(var61);
+    randoop.test.A var66 = new randoop.test.A();
+    randoop.test.A var67 = var66.a1();
+    randoop.test.B var68 = var51.a2(var66);
+    randoop.test.B var70 = var41.a4(var47, var68, 0);
+    int var71 = var8.a3(var11, var68);
+    randoop.test.A var72 = var11.a1();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var6);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var8);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var9 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var14 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var20);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var27);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var28);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var37);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var46);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var47);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var53);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var58);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var59);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var61);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var64 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var65);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var67);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var68);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var70);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var71 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var72);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var5.a1(var5); Assert.assertEquals(var5.i, -9);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 1);
+    var8.a1(var8); Assert.assertEquals(var8.i, 11);
+    var11.a1(var11); Assert.assertEquals(var11.i, -9);
+    var16.a1(var16); Assert.assertEquals(var16.i, -89);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var19.a1(var19); Assert.assertEquals(var19.i, 1);
+    var20.a1(var20); Assert.assertEquals(var20.i, 1);
+    var21.a1(var21); Assert.assertEquals(var21.i, 11);
+    var22.a1(var22); Assert.assertEquals(var22.i, 11);
+    var24.a1(var24); Assert.assertEquals(var24.i, -89);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var27.a1(var27); Assert.assertEquals(var27.i, 1);
+    var28.a1(var28); Assert.assertEquals(var28.i, 1);
+    var29.a1(var29); Assert.assertEquals(var29.i, 111);
+    var30.a1(var30); Assert.assertEquals(var30.i, 11);
+    var31.a1(var31); Assert.assertEquals(var31.i, 11);
+    var33.a1(var33); Assert.assertEquals(var33.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, -9);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 1);
+    var39.a1(var39); Assert.assertEquals(var39.i, 1);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 11);
+    var43.a1(var43); Assert.assertEquals(var43.i, -89);
+    var45.a1(var45); Assert.assertEquals(var45.i, -9);
+    var46.a1(var46); Assert.assertEquals(var46.i, 1);
+    var47.a1(var47); Assert.assertEquals(var47.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, -89);
+    var51.a1(var51); Assert.assertEquals(var51.i, -89);
+    var52.a1(var52); Assert.assertEquals(var52.i, 1);
+    var53.a1(var53); Assert.assertEquals(var53.i, 1);
+    var55.a1(var55); Assert.assertEquals(var55.i, -89);
+    var57.a1(var57); Assert.assertEquals(var57.i, -89);
+    var58.a1(var58); Assert.assertEquals(var58.i, 1);
+    var59.a1(var59); Assert.assertEquals(var59.i, 1);
+    var60.a1(var60); Assert.assertEquals(var60.i, 1);
+    var61.a1(var61); Assert.assertEquals(var61.i, 11);
+    var65.a1(var65); Assert.assertEquals(var65.i, 21);
+    var66.a1(var66); Assert.assertEquals(var66.i, 1);
+    var67.a1(var67); Assert.assertEquals(var67.i, 1);
+    var72.a1(var72); Assert.assertEquals(var72.i, 1);
+
+  }
+
+  public void test34() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var16 = var6.a1(var14);
+    int var19 = var6.a5(10, 100);
+    randoop.test.A var21 = new randoop.test.A(1);
+    int var24 = var21.a5(1, 1);
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var29 = var28.a1();
+    randoop.test.A var30 = var26.a1(var28);
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var35 = var34.a1();
+    randoop.test.A var36 = var32.a1(var34);
+    randoop.test.A var37 = new randoop.test.A();
+    randoop.test.A var38 = var34.a1(var37);
+    int var41 = var38.a5(0, 1);
+    randoop.test.A var42 = var28.a1(var38);
+    randoop.test.A var44 = new randoop.test.A((-1));
+    randoop.test.A var45 = var44.a1();
+    randoop.test.B var46 = var42.a2(var45);
+    randoop.test.B var48 = var6.a4(var21, var46, 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var19 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var24 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var42);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var46);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 1);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var21.a1(var21); Assert.assertEquals(var21.i, 11);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, -89);
+    var34.a1(var34); Assert.assertEquals(var34.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, 1);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 11);
+    var42.a1(var42); Assert.assertEquals(var42.i, 21);
+    var44.a1(var44); Assert.assertEquals(var44.i, -9);
+    var45.a1(var45); Assert.assertEquals(var45.i, 1);
+
+  }
+
+  public void test35() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var16 = var6.a1(var14);
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var20 = new randoop.test.A((-1));
+    randoop.test.A var21 = var20.a1();
+    randoop.test.A var22 = var18.a1(var20);
+    randoop.test.A var23 = var14.a1(var20);
+    randoop.test.A var24 = new randoop.test.A();
+    randoop.test.A var25 = var24.a1();
+    randoop.test.A var26 = var14.a1(var24);
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var30 = new randoop.test.A((-1));
+    randoop.test.A var31 = var30.a1();
+    randoop.test.A var32 = var28.a1(var30);
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var36 = new randoop.test.A((-1));
+    randoop.test.A var37 = var36.a1();
+    randoop.test.A var38 = var34.a1(var36);
+    randoop.test.A var40 = new randoop.test.A((-1));
+    randoop.test.A var42 = new randoop.test.A((-1));
+    randoop.test.A var43 = var42.a1();
+    randoop.test.A var44 = var40.a1(var42);
+    randoop.test.A var45 = new randoop.test.A();
+    randoop.test.A var46 = var42.a1(var45);
+    int var49 = var46.a5(0, 1);
+    randoop.test.A var50 = var36.a1(var46);
+    randoop.test.A var51 = new randoop.test.A();
+    randoop.test.A var52 = var51.a1();
+    randoop.test.B var53 = var36.a2(var51);
+    randoop.test.B var55 = var26.a4(var32, var53, 0);
+    randoop.test.A var57 = new randoop.test.A((-1));
+    randoop.test.A var59 = new randoop.test.A((-1));
+    randoop.test.A var61 = new randoop.test.A((-1));
+    randoop.test.A var62 = var61.a1();
+    randoop.test.A var63 = var59.a1(var61);
+    randoop.test.A var64 = var57.a1(var63);
+    randoop.test.A var65 = var32.a1(var57);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var25);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var26);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var31);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var32);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var37);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var43);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var46);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var49 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var53);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var55);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var64);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var65);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 111);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, -9);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1);
+    var25.a1(var25); Assert.assertEquals(var25.i, 1);
+    var26.a1(var26); Assert.assertEquals(var26.i, 11);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var30.a1(var30); Assert.assertEquals(var30.i, -9);
+    var31.a1(var31); Assert.assertEquals(var31.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, 11);
+    var34.a1(var34); Assert.assertEquals(var34.i, -89);
+    var36.a1(var36); Assert.assertEquals(var36.i, -89);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 1);
+    var40.a1(var40); Assert.assertEquals(var40.i, -89);
+    var42.a1(var42); Assert.assertEquals(var42.i, -89);
+    var43.a1(var43); Assert.assertEquals(var43.i, 1);
+    var44.a1(var44); Assert.assertEquals(var44.i, 1);
+    var45.a1(var45); Assert.assertEquals(var45.i, 1);
+    var46.a1(var46); Assert.assertEquals(var46.i, 11);
+    var50.a1(var50); Assert.assertEquals(var50.i, 21);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var52.a1(var52); Assert.assertEquals(var52.i, 1);
+    var57.a1(var57); Assert.assertEquals(var57.i, -89);
+    var59.a1(var59); Assert.assertEquals(var59.i, -89);
+    var61.a1(var61); Assert.assertEquals(var61.i, -9);
+    var62.a1(var62); Assert.assertEquals(var62.i, 1);
+    var63.a1(var63); Assert.assertEquals(var63.i, 1);
+    var64.a1(var64); Assert.assertEquals(var64.i, 11);
+    var65.a1(var65); Assert.assertEquals(var65.i, -79);
+
+  }
+
+  public void test36() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var8 = var3.a1();
+    int var11 = var8.a5(1, (-1));
+    int var14 = var8.a5((-1), (-1));
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var8);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var11 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var14 == 1);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var8.a1(var8); Assert.assertEquals(var8.i, 1);
+
+  }
+
+  public void test37() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A(1);
+    randoop.test.A var2 = var1.a1();
+    randoop.test.A var3 = var2.a1();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var2);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var3);
+    var1.a1(var1); Assert.assertEquals(var1.i, 11);
+    var2.a1(var2); Assert.assertEquals(var2.i, 1);
+    var3.a1(var3); Assert.assertEquals(var3.i, 1);
+
+  }
+
+  public void test38() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    randoop.test.A var9 = new randoop.test.A((-1));
+    randoop.test.A var11 = new randoop.test.A((-1));
+    randoop.test.A var12 = var11.a1();
+    randoop.test.A var13 = var9.a1(var11);
+    randoop.test.A var14 = new randoop.test.A();
+    randoop.test.A var15 = var11.a1(var14);
+    randoop.test.A var16 = var6.a1(var14);
+    randoop.test.A var18 = new randoop.test.A((-1));
+    randoop.test.A var20 = new randoop.test.A((-1));
+    randoop.test.A var21 = var20.a1();
+    randoop.test.A var22 = var18.a1(var20);
+    randoop.test.A var23 = var14.a1(var20);
+    int var24 = var23.a6();
+    randoop.test.A var26 = new randoop.test.A(0);
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var30 = new randoop.test.A((-1));
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var33 = var32.a1();
+    randoop.test.A var34 = var30.a1(var32);
+    randoop.test.A var35 = var28.a1(var34);
+    randoop.test.A var37 = new randoop.test.A((-1));
+    randoop.test.A var39 = new randoop.test.A((-1));
+    randoop.test.A var40 = var39.a1();
+    randoop.test.A var41 = var37.a1(var39);
+    randoop.test.A var42 = new randoop.test.A();
+    randoop.test.A var43 = var39.a1(var42);
+    randoop.test.A var45 = new randoop.test.A((-1));
+    randoop.test.A var47 = new randoop.test.A((-1));
+    randoop.test.A var49 = new randoop.test.A((-1));
+    randoop.test.A var50 = var49.a1();
+    randoop.test.A var51 = var47.a1(var49);
+    randoop.test.A var52 = var45.a1(var51);
+    int var53 = var52.a6();
+    randoop.test.B var54 = var43.a2(var52);
+    randoop.test.B var56 = var26.a4(var28, var54, 1);
+    randoop.test.B var57 = var23.a2(var28);
+    randoop.test.A var59 = new randoop.test.A((-1));
+    randoop.test.A var61 = new randoop.test.A((-1));
+    randoop.test.A var62 = var61.a1();
+    randoop.test.A var63 = var59.a1(var61);
+    randoop.test.B var64 = var23.a2(var59);
+    randoop.test.A var65 = var23.a1();
+    randoop.test.A var67 = new randoop.test.A(1);
+    randoop.test.A var68 = var67.a1();
+    randoop.test.B var69 = var23.a2(var67);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var12);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var13);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var15);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var16);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var21);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var22);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var23);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var24 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var33);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var34);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var40);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var41);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var43);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var51);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var52);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var53 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var54);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var56);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var57);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var62);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var63);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var64);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var65);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var68);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var69);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 11);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var9.a1(var9); Assert.assertEquals(var9.i, -89);
+    var11.a1(var11); Assert.assertEquals(var11.i, -89);
+    var12.a1(var12); Assert.assertEquals(var12.i, 1);
+    var13.a1(var13); Assert.assertEquals(var13.i, 1);
+    var14.a1(var14); Assert.assertEquals(var14.i, 11);
+    var15.a1(var15); Assert.assertEquals(var15.i, 11);
+    var16.a1(var16); Assert.assertEquals(var16.i, 11);
+    var18.a1(var18); Assert.assertEquals(var18.i, -89);
+    var20.a1(var20); Assert.assertEquals(var20.i, -9);
+    var21.a1(var21); Assert.assertEquals(var21.i, 1);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var23.a1(var23); Assert.assertEquals(var23.i, 1);
+    var26.a1(var26); Assert.assertEquals(var26.i, 1);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var30.a1(var30); Assert.assertEquals(var30.i, -89);
+    var32.a1(var32); Assert.assertEquals(var32.i, -9);
+    var33.a1(var33); Assert.assertEquals(var33.i, 1);
+    var34.a1(var34); Assert.assertEquals(var34.i, 1);
+    var35.a1(var35); Assert.assertEquals(var35.i, 11);
+    var37.a1(var37); Assert.assertEquals(var37.i, -89);
+    var39.a1(var39); Assert.assertEquals(var39.i, -89);
+    var40.a1(var40); Assert.assertEquals(var40.i, 1);
+    var41.a1(var41); Assert.assertEquals(var41.i, 1);
+    var42.a1(var42); Assert.assertEquals(var42.i, 1);
+    var43.a1(var43); Assert.assertEquals(var43.i, 11);
+    var45.a1(var45); Assert.assertEquals(var45.i, -89);
+    var47.a1(var47); Assert.assertEquals(var47.i, -89);
+    var49.a1(var49); Assert.assertEquals(var49.i, -9);
+    var50.a1(var50); Assert.assertEquals(var50.i, 1);
+    var51.a1(var51); Assert.assertEquals(var51.i, 1);
+    var52.a1(var52); Assert.assertEquals(var52.i, 11);
+    var59.a1(var59); Assert.assertEquals(var59.i, -89);
+    var61.a1(var61); Assert.assertEquals(var61.i, -9);
+    var62.a1(var62); Assert.assertEquals(var62.i, 1);
+    var63.a1(var63); Assert.assertEquals(var63.i, 1);
+    var65.a1(var65); Assert.assertEquals(var65.i, 1);
+    var67.a1(var67); Assert.assertEquals(var67.i, 11);
+    var68.a1(var68); Assert.assertEquals(var68.i, 1);
+
+  }
+
+  public void test39() throws Throwable {
+
+    randoop.test.A var1 = new randoop.test.A((-1));
+    randoop.test.A var3 = new randoop.test.A((-1));
+    randoop.test.A var4 = var3.a1();
+    randoop.test.A var5 = var1.a1(var3);
+    randoop.test.A var6 = new randoop.test.A();
+    randoop.test.A var7 = var3.a1(var6);
+    int var10 = var7.a5(0, 1);
+    randoop.test.A var12 = new randoop.test.A((-1));
+    randoop.test.A var14 = new randoop.test.A((-1));
+    randoop.test.A var16 = new randoop.test.A((-1));
+    randoop.test.A var17 = var16.a1();
+    randoop.test.A var18 = var14.a1(var16);
+    randoop.test.A var19 = var12.a1(var18);
+    int var20 = var19.a6();
+    randoop.test.A var22 = new randoop.test.A(0);
+    randoop.test.A var24 = new randoop.test.A(100);
+    randoop.test.A var26 = new randoop.test.A((-1));
+    randoop.test.A var28 = new randoop.test.A((-1));
+    randoop.test.A var29 = var28.a1();
+    randoop.test.A var30 = var26.a1(var28);
+    randoop.test.A var32 = new randoop.test.A((-1));
+    randoop.test.A var34 = new randoop.test.A((-1));
+    randoop.test.A var35 = var34.a1();
+    randoop.test.A var36 = var32.a1(var34);
+    randoop.test.A var37 = new randoop.test.A();
+    randoop.test.A var38 = var34.a1(var37);
+    int var41 = var38.a5(0, 1);
+    randoop.test.A var42 = var28.a1(var38);
+    randoop.test.A var43 = new randoop.test.A();
+    randoop.test.A var44 = var43.a1();
+    randoop.test.B var45 = var28.a2(var43);
+    int var46 = var22.a3(var24, var45);
+    randoop.test.B var48 = var7.a4(var19, var45, 10);
+    randoop.test.A var49 = var19.a1();
+    randoop.test.A var50 = var19.a1();
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var4);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var5);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var7);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var10 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var17);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var18);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var19);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var20 == 0);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var29);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var30);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var35);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var36);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var38);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var41 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var42);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var44);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var45);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertTrue(var46 == 1);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var48);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var49);
+    
+    // Regression assertion (captures the current behavior of the code)
+    assertNotNull(var50);
+    var1.a1(var1); Assert.assertEquals(var1.i, -89);
+    var3.a1(var3); Assert.assertEquals(var3.i, -89);
+    var4.a1(var4); Assert.assertEquals(var4.i, 1);
+    var5.a1(var5); Assert.assertEquals(var5.i, 1);
+    var6.a1(var6); Assert.assertEquals(var6.i, 1);
+    var7.a1(var7); Assert.assertEquals(var7.i, 11);
+    var12.a1(var12); Assert.assertEquals(var12.i, -89);
+    var14.a1(var14); Assert.assertEquals(var14.i, -89);
+    var16.a1(var16); Assert.assertEquals(var16.i, -9);
+    var17.a1(var17); Assert.assertEquals(var17.i, 1);
+    var18.a1(var18); Assert.assertEquals(var18.i, 1);
+    var19.a1(var19); Assert.assertEquals(var19.i, 11);
+    var22.a1(var22); Assert.assertEquals(var22.i, 1);
+    var24.a1(var24); Assert.assertEquals(var24.i, 1001);
+    var26.a1(var26); Assert.assertEquals(var26.i, -89);
+    var28.a1(var28); Assert.assertEquals(var28.i, -89);
+    var29.a1(var29); Assert.assertEquals(var29.i, 1);
+    var30.a1(var30); Assert.assertEquals(var30.i, 1);
+    var32.a1(var32); Assert.assertEquals(var32.i, -89);
+    var34.a1(var34); Assert.assertEquals(var34.i, -89);
+    var35.a1(var35); Assert.assertEquals(var35.i, 1);
+    var36.a1(var36); Assert.assertEquals(var36.i, 1);
+    var37.a1(var37); Assert.assertEquals(var37.i, 1);
+    var38.a1(var38); Assert.assertEquals(var38.i, 11);
+    var42.a1(var42); Assert.assertEquals(var42.i, 21);
+    var43.a1(var43); Assert.assertEquals(var43.i, 1);
+    var44.a1(var44); Assert.assertEquals(var44.i, 1);
+    var49.a1(var49); Assert.assertEquals(var49.i, 1);
+    var50.a1(var50); Assert.assertEquals(var50.i, 1);
+
+  }
+
+}

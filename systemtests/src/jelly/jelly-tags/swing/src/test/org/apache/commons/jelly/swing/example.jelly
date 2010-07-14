@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly 
+    xmlns:j="jelly:core" 
+    xmlns="jelly:swing" 
+    xmlns:log="jelly:log"
+    xmlns:define="jelly:define">
+
+  <action var="fooAction" name="Foo" tooltip="some text">
+      <log:info>Just evaluated the foo action!</log:info>
+  </action>
+
+  <font var="bigfont" name="helvetica" family="helvetica" size="${20}"/>
+
+    <define:script var="onClosing">
+    <log:info>The frame is closing via event: ${event}</log:info>
+  </define:script>
+  
+  <frame title="This is a frame" var="frame" location="100,100" size="800,400">
+      <font family="helvetica" size="14"/>
+    <menuBar>
+      <menu text="File">
+        <menuItem>
+          <action name="New">
+              <log:info>clicked on the New menu item!</log:info>
+          </action>
+        </menuItem>
+        <menuItem>
+          <action name="Open">
+              <log:info>Popup a file dialog!</log:info>
+          </action>
+        </menuItem>
+        <menuItem text="Save" enabled="false" />
+        <separator/>
+        <menuItem text="Properties" font="${bigfont}"/>
+        <menuItem action="${fooAction}"/>
+      </menu>
+      <menu text="Demo">
+        <menuItem>
+          <action name="GridBagLayout demo">
+              <log:info>about to run the GridBagLayout demo...</log:info>
+              <j:include uri="gridBagDemo.jelly"/>
+          </action>
+        </menuItem>
+      </menu>
+      <menu text="Run">
+        <menuItem>
+          <action name="Run a Jelly script">
+              <log:info>about to open the Jelly script runner...</log:info>
+              <j:include uri="run.jelly"/>
+          </action>
+        </menuItem>
+      </menu>
+      <menu text="Help">
+        <menuItem>
+          <action name="About">
+              <log:info>about to display the about dialog...</log:info>
+              <j:include uri="about.jelly"/>
+          </action>
+        </menuItem>
+      </menu>
+    </menuBar>
+    
+        <splitPane>    
+      <panel>
+          <titledBorder title="Sample Border Title"/>
+          <tableLayout>
+              <tr>
+                  <td>
+                    <label text="Name"/>
+                        </td>                    
+                  <td>
+                    <textField text="James"/>
+                        </td>                    
+              </tr>
+              <tr>
+                  <td>
+                    <label text="Location"/>
+                        </td>                    
+                  <td>
+                    <textField text="London"/>
+                        </td>                    
+              </tr>
+              <tr>
+                  <td colspan="2" align="center">
+                      <panel>
+                        <button>
+                          <action name="OK">
+                              <log:info>Clicked on the OK button</log:info>
+                          </action>
+                        </button>
+                        <button action="${fooAction}"/>
+                            </panel>                        
+                        </td>                    
+            </tr>
+          </tableLayout>
+      </panel>
+      <scrollPane>
+          <!-- this tag can set properties on the bean model too -->
+        <j:useBean var="tableModel" class="org.apache.commons.jelly.swing.MyTableModel"/>
+        <table model="${tableModel}"/>
+      </scrollPane>
+    </splitPane>
+    
+    <windowListener var="event" closing="${onClosing}"/>
+  </frame>
+  
+  ${frame.show()}
+  
+</j:jelly>

@@ -1,0 +1,87 @@
+Tasks for Branch-directed Randoop
+
+  * Task format explanation
+    * The file is best edited in allout mode.  
+        The basic customizations are in the local variables at the bottom
+        of the file.  More work could be done here, but it is usuable now.
+    * Allout commands 
+        basic commands: hide (\C \H) and show (\C \s).  These can also be
+        executed on the bullet character as just 'h' and 's'.
+    * Task format
+        The bullet line has the task name followed by task info in square
+        brackets.  The info includes the milestone, responsible engineer,
+        and days completed/total.  If there is just one number the task
+        has not been started and has that many days of effort.  For
+        example:  
+            my task [PI4:jhp 2/5]
+        The task is 'my task', it is due by milestone PI4 (in this case
+        the July 9 2007 PI meeting), it is assigned to 'jhp', and 2 days
+        of a 5 day task have been completed.
+
+  - Milestones
+    - AI:  Near term action items 
+    - WS:  July workshop and tech report (July 18 2008)
+
+  - Resources
+    - jhp:      Jeff Perkins (MIT)
+    - cp:       Carlos Pacheco (MIT)
+
+  - DataFlow
+    - Fix bugs in array list [WS:jhp 2]
+    - Analyze array list branches [WS:jhp 2]
+        Go through each of the uncovered branches in the arraylist code
+        and determine what changes we need to make to cover them.
+    - Get analysis to run through all the rest of subject programs [WS:jhp 5]
+    - Support JDK summary for simple calls [WS:jhp 3]
+        Change the DF code to read summary information from a file when
+        calling the JDK and make the appropriate DF calls.
+    - Integrate with randoop [WS:jhp 4]
+    - Support JDK summary for complex calls [jhp 5]
+        Support JDK calls that have a more complex dataflow (like List.contains)
+        The idea is to create a new implementation that gets a good data
+        flow and instrument that new implementation.  The new implementation
+        may call the original one or it may re-implement it.
+    - Run experiments / analyze results [jhp 5]
+    - New features [WS:jhp 20]
+
+  - Randoop
+    - Use constants that DF uncovers [WS:cp 3]
+        Determine new generation strategy
+        Implement new generation strategy
+        Integrate with old generation strategy
+    - Use variables in the input sequence that DF finds [WS:cp 3]
+        Determine new generation strategy
+        Implement new generation strategy
+        Integrate with old generation strategy
+    - Integrate with DF [WS:cp 1/4]
+    - Run experiments / analyze results [jhp 5]
+    - New Features [WS:cp 20]
+
+  - Workshop 
+    - Write Technical Report
+      - Intro [WS:cp 1]
+      - Related work [WS:cp 1]
+      - Technique [WS:cp 4]
+      - Evaluation [WS:cp 4]
+    - Write Technical Report
+      - DF [WS:jhp 4]
+      - others [WS:jhp 6]
+    - Create and practice talk [WS:cp 5]
+    - Create and practice talk [WS:jhp 5]
+
+  - Other
+    - Experimental Framework [WS:cp 2/4]
+       done: Put all sources in src dir
+       done: Create scripts to compile and instrument for coverage
+       Create makefile(s)
+       Create scripts to create paper tables and coverage graphs
+
+
+ * locals
+Local Variables:
+mode: text
+allout-primary-bullet: "-"
+allout-header-prefix: " "
+allout-plain-bullets-string: " "
+mode: allout
+End:
