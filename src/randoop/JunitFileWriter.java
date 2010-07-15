@@ -105,6 +105,7 @@ public class JunitFileWriter {
       out.println();
       out.println("public class " + className + " extends TestCase {");
       out.println();
+      out.println("  public static boolean debug = false;");
       out.println();
       int testCounter = 1;
       for (ExecutableSequence fault : sequencesForOneFile) {
@@ -114,6 +115,8 @@ public class JunitFileWriter {
           out.println("*/");
         }
         out.println("  public void test" + testCounter++ + "() throws Throwable {");
+        out.println();
+        out.println(indent("if (debug) System.out.printf(\"%n" + className + ".test" + (testCounter-1) + "\");"));
         out.println();
         out.println(indent(fault.toCodeString()));
         out.println("  }");
