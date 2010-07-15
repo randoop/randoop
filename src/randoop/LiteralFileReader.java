@@ -8,8 +8,8 @@ import randoop.util.RecordProcessor;
 
 
 /**
- * Implements functionality to read a file specifying literal values
- * to use during generation. Method parse(String) takes as input the name
+ * Reads a file specifying literal values to use during generation.
+ * Method parse(String) takes as input the name
  * of a text file. The text file should contain one or more records of the form:
  * 
  * <pre>
