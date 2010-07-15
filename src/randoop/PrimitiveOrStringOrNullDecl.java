@@ -11,6 +11,7 @@ import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
+import randoop.main.GenInputsAbstract;
 
 /**
  * Represents a primitive value (including Strings). This type of statement
@@ -52,9 +53,15 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
         throw new IllegalArgumentException("o.getClass()=" + o.getClass() + ",t=" + t);
       if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
         throw new IllegalArgumentException("o is not a primitive-like value.");
-    } else if (!t.equals(String.class) && o != null) {
+    } else if (t.equals(String.class)) {
+      if (((String) o).length() > GenInputsAbstract.string_maxlen) {
+        throw new IllegalArgumentException("String too long, length = " + ((String) o).length());
+      }
+    } else {
       // if it's not primitive or string then must be null
-      throw new IllegalArgumentException("value must be null for not primitive, not string type " + t + " but was " + o);
+      if (o != null) {
+        throw new IllegalArgumentException("value must be null for non-primitive, non-string type " + t + " but was " + o);
+      }
     }
 
     this.type = t;
@@ -214,6 +221,10 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
     if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(cls)) {
       throw new IllegalArgumentException("o is not a boxed primitive or String");
     }
+    if (cls.equals(String.class) && ((String)o).length() > GenInputsAbstract.string_maxlen) {
+      throw new IllegalArgumentException("o is a string of length > " + GenInputsAbstract.string_maxlen);
+    }
+
     return Sequence.create(new PrimitiveOrStringOrNullDecl(PrimitiveTypes.primitiveType(cls), o));
   }
 
@@ -350,6 +361,9 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
           throw new StatementKindParseException(msg);
         }
         value = UtilMDE.unescapeNonJava(valString.substring(1, valString.length() - 1));
+        if (((String)value).length() > GenInputsAbstract.string_maxlen) {
+          throw new StatementKindParseException("Error when parsing String; length is greater than " + GenInputsAbstract.string_maxlen);
+        }
       }
     } else {
       if (valString.equals("null")) {
