@@ -1,5 +1,7 @@
 package randoop.util;
 
+import randoop.PrimitiveOrStringOrNullDecl;
+
 import java.util.*;
 import java.io.*;
 
@@ -51,6 +53,10 @@ public class ClassFileConstants {
 
   }
 
+  /**
+   * A simple driver program that prints output literals file format.
+   * @see randoop.LiteralFileReader
+   */
   public static void main (String args[]) throws IOException {
     for (String classname : args) {
       System.out.println(getConstants(classname));
@@ -461,4 +467,42 @@ public class ClassFileConstants {
     }
     return result;
   }
+
+
+  /**
+   * Convert a collection of ConstantSets to the format expected by
+   * GenTest.addClassLiterals.
+   */
+  public static MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> toMap(Collection<ConstantSet> constantSets) {
+    final MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> map =
+      new MultiMap<Class<?>, PrimitiveOrStringOrNullDecl>();
+    for (ConstantSet cs : constantSets) {
+      Class<?> clazz;
+      try {
+        clazz = Class.forName(cs.classname);
+      } catch (ClassNotFoundException e) {
+        throw new Error("Class " + cs.classname + " not found on the classpath.");
+      }
+      for (Integer x : cs.ints) {
+        map.add(clazz, new PrimitiveOrStringOrNullDecl(Integer.class, x));
+      }
+      for (Long x : cs.longs) {
+        map.add(clazz, new PrimitiveOrStringOrNullDecl(Long.class, x));
+      }
+      for (Float x : cs.floats) {
+        map.add(clazz, new PrimitiveOrStringOrNullDecl(Float.class, x));
+      }
+      for (Double x : cs.doubles) {
+        map.add(clazz, new PrimitiveOrStringOrNullDecl(Double.class, x));
+      }
+      for (String x : cs.strings) {
+        map.add(clazz, new PrimitiveOrStringOrNullDecl(String.class, x));
+      }
+      for (Class<?> x : cs.classes) {
+        map.add(clazz, new PrimitiveOrStringOrNullDecl(Class.class, x));
+      }
+    }
+    return map;
+  }
+
 }
