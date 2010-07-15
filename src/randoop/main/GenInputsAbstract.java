@@ -296,7 +296,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Specify how to use literal values given in a literals file (see --literals-file). " +
   "Set --literals-level=CLASS if you wish literals for a given class to be used as inputs to methods of only that class. " +
   "Set --literals-level=PACKAGE if you wish literals for a given class to be used as inputs to methods of any classes in the same package. " +
-  "Set --literals-level=ALL if you wish literals for a given class to be used as inputs to any method under test."
+  "Set --literals-level=ALL if you wish literals for a given class to be used as inputs to any method under test." +
   "Set --literals-level=NONE if you wish not to use any literals specified in a literals file."
   )
   public static ClassLiteralsMode literals_level = ClassLiteralsMode.NONE;
