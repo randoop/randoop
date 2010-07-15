@@ -4,8 +4,12 @@ import junit.framework.*;
 
 public class Naive0 extends TestCase {
 
+  public static boolean debug = false;
 
   public void test1() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test1");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.removeAll((java2.util2.Collection)var0);
@@ -113,6 +117,9 @@ public class Naive0 extends TestCase {
 
   public void test2() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test2");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.SortedSet var1 = var0.tailSet((java.lang.Object)var0);
     java.lang.Object var2 = java2.util2.Collections.max((java2.util2.Collection)var1);
@@ -217,6 +224,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test3() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test3");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.Map var1 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)var0);
@@ -324,6 +334,9 @@ public class Naive0 extends TestCase {
 
   public void test4() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test4");
+
+
     java.lang.Integer var0 = new java.lang.Integer(0);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
     int var2 = java2.util2.Collections.binarySearch((java2.util2.List)var1, (java.lang.Object)var1);
@@ -430,6 +443,9 @@ public class Naive0 extends TestCase {
 
   public void test5() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test5");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.isEmpty();
     java2.util2.Comparator var2 = var0.comparator();
@@ -535,6 +551,9 @@ public class Naive0 extends TestCase {
 
   public void test6() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test6");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java2.util2.Comparator var1 = java2.util2.Collections.reverseOrder();
     boolean var2 = var0.remove((java.lang.Object)var0);
@@ -639,6 +658,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test7() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test7");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet((java2.util2.SortedSet)var0);
@@ -746,6 +768,9 @@ public class Naive0 extends TestCase {
 
   public void test8() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test8");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)var0);
     java2.util2.ArrayList var2 = new java2.util2.ArrayList();
@@ -850,6 +875,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test9() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test9");
+
 
     java.lang.Integer var0 = new java.lang.Integer(100);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -956,6 +984,9 @@ public class Naive0 extends TestCase {
 
   public void test10() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test10");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java2.util2.Iterator var1 = var0.iterator();
     java.lang.Integer var2 = new java.lang.Integer(100);
@@ -1061,6 +1092,9 @@ public class Naive0 extends TestCase {
 
   public void test11() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test11");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java.lang.Integer var1 = new java.lang.Integer((-1));
     java2.util2.ListIterator var2 = var0.listIterator((int)var1);
@@ -1165,6 +1199,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test12() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test12");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)var0);
@@ -1272,6 +1309,9 @@ public class Naive0 extends TestCase {
 
   public void test13() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test13");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)var0);
     java2.util2.TreeSet var2 = new java2.util2.TreeSet(var0);
@@ -1376,6 +1416,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test14() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test14");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.ArrayList var1 = new java2.util2.ArrayList();
@@ -1483,6 +1526,9 @@ public class Naive0 extends TestCase {
 
   public void test15() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test15");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java2.util2.ListIterator var1 = var0.listIterator();
     java2.util2.LinkedList var2 = new java2.util2.LinkedList();
@@ -1587,6 +1633,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test16() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test16");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.LinkedList var1 = new java2.util2.LinkedList();
@@ -1693,6 +1742,9 @@ public class Naive0 extends TestCase {
 
   public void test17() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test17");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java2.util2.Map var1 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)var0);
     int var2 = var0.lastIndexOf((java.lang.Object)var0);
@@ -1797,6 +1849,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test18() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test18");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java.lang.Integer var1 = new java.lang.Integer(0);
@@ -1903,6 +1958,9 @@ public class Naive0 extends TestCase {
 
   public void test19() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test19");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Comparator var1 = java2.util2.Collections.reverseOrder();
     java2.util2.Collection var2 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var0);
@@ -2007,6 +2065,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test20() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test20");
+
 
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     var0.addLast((java.lang.Object)var0);
@@ -2115,6 +2176,9 @@ public class Naive0 extends TestCase {
 
   public void test21() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test21");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)var0);
     boolean var2 = var0.addAll((java2.util2.Collection)var1);
@@ -2219,6 +2283,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test22() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test22");
+
 
     java.lang.Integer var0 = new java.lang.Integer(1);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -2325,6 +2392,9 @@ public class Naive0 extends TestCase {
 
   public void test23() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test23");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.ArrayList var1 = new java2.util2.ArrayList();
     int var2 = java2.util2.Collections.indexOfSubList((java2.util2.List)var1, (java2.util2.List)var1);
@@ -2429,6 +2499,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test24() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test24");
+
 
     java.lang.Integer var0 = new java.lang.Integer(10);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -2535,6 +2608,9 @@ public class Naive0 extends TestCase {
 
   public void test25() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test25");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.ArrayList var1 = new java2.util2.ArrayList((java2.util2.Collection)var0);
     var0.clear();
@@ -2639,6 +2715,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test26() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test26");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java2.util2.LinkedList var1 = new java2.util2.LinkedList((java2.util2.Collection)var0);
@@ -2745,6 +2824,9 @@ public class Naive0 extends TestCase {
 
   public void test27() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test27");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)var0);
     java2.util2.Comparator var2 = java2.util2.Collections.reverseOrder();
@@ -2849,6 +2931,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test28() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test28");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     boolean var1 = var0.containsAll((java2.util2.Collection)var0);
@@ -2955,6 +3040,9 @@ public class Naive0 extends TestCase {
 
   public void test29() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test29");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.Set var1 = java2.util2.Collections.singleton(var0);
     java.lang.Integer var2 = new java.lang.Integer(10);
@@ -3059,6 +3147,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test30() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test30");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     boolean var1 = java2.util2.Collections.replaceAll((java2.util2.List)var0, (java.lang.Object)var0, (java.lang.Object)var0);
@@ -3165,6 +3256,9 @@ public class Naive0 extends TestCase {
 
   public void test31() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test31");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)var0);
     java2.util2.Comparator var2 = java2.util2.Collections.reverseOrder();
@@ -3269,6 +3363,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test32() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test32");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
@@ -3375,6 +3472,9 @@ public class Naive0 extends TestCase {
 
   public void test33() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test33");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.Map var1 = java2.util2.Collections.singletonMap(var0, var0);
     java2.util2.Map var2 = java2.util2.Collections.synchronizedMap(var1);
@@ -3479,6 +3579,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test34() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test34");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)var0);
@@ -3585,6 +3688,9 @@ public class Naive0 extends TestCase {
 
   public void test35() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test35");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Comparator var1 = var0.comparator();
     var0.clear();
@@ -3689,6 +3795,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test36() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test36");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)var0);
@@ -3796,6 +3905,9 @@ public class Naive0 extends TestCase {
 
   public void test37() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test37");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     boolean var1 = var0.isEmpty();
     int var2 = java2.util2.Collections.lastIndexOfSubList((java2.util2.List)var0, (java2.util2.List)var0);
@@ -3900,6 +4012,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test38() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test38");
+
 
     java.lang.Integer var0 = new java.lang.Integer(100);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -4007,6 +4122,9 @@ public class Naive0 extends TestCase {
 
   public void test39() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test39");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java2.util2.Iterator var1 = var0.iterator();
     boolean var2 = var0.remove((java.lang.Object)var1);
@@ -4111,6 +4229,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test40() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test40");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java2.util2.LinkedList var1 = new java2.util2.LinkedList((java2.util2.Collection)var0);
@@ -4217,6 +4338,9 @@ public class Naive0 extends TestCase {
 
   public void test41() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test41");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.Map var1 = java2.util2.Collections.singletonMap(var0, var0);
     java.lang.Integer var2 = new java.lang.Integer(1);
@@ -4321,6 +4445,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test42() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test42");
+
 
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.List var1 = java2.util2.Collections.singletonList(var0);
@@ -4427,6 +4554,9 @@ public class Naive0 extends TestCase {
 
   public void test43() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test43");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.LinkedList var1 = new java2.util2.LinkedList();
     java.lang.Object var2 = var1.removeLast();
@@ -4531,6 +4661,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test44() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test44");
+
 
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java.lang.Object var1 = java2.util2.Collections.min((java2.util2.Collection)var0);
@@ -4637,6 +4770,9 @@ public class Naive0 extends TestCase {
 
   public void test45() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test45");
+
+
     java.lang.Integer var0 = new java.lang.Integer(1);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
     java2.util2.Collection var2 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var1);
@@ -4741,6 +4877,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test46() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test46");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java.lang.Integer var1 = new java.lang.Integer(10);
@@ -4847,6 +4986,9 @@ public class Naive0 extends TestCase {
 
   public void test47() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test47");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.removeAll((java2.util2.Collection)var0);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var0);
@@ -4951,6 +5093,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test48() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test48");
+
 
     java.lang.Integer var0 = new java.lang.Integer(1);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -5057,6 +5202,9 @@ public class Naive0 extends TestCase {
 
   public void test49() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test49");
+
+
     java.lang.Integer var0 = new java.lang.Integer(1);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
     int var2 = java2.util2.Collections.indexOfSubList((java2.util2.List)var1, (java2.util2.List)var1);
@@ -5161,6 +5309,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test50() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test50");
+
 
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)var0);
@@ -5267,6 +5418,9 @@ public class Naive0 extends TestCase {
 
   public void test51() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test51");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java.lang.Integer var1 = new java.lang.Integer((-1));
     java2.util2.ArrayList var2 = new java2.util2.ArrayList(var1);
@@ -5371,6 +5525,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test52() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test52");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Enumeration var1 = java2.util2.Collections.enumeration((java2.util2.Collection)var0);
@@ -5477,6 +5634,9 @@ public class Naive0 extends TestCase {
 
   public void test53() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test53");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.List var1 = java2.util2.Collections.singletonList(var0);
     java2.util2.LinkedList var2 = new java2.util2.LinkedList((java2.util2.Collection)var1);
@@ -5581,6 +5741,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test54() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test54");
+
 
     java.lang.Integer var0 = new java.lang.Integer(1);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -5687,6 +5850,9 @@ public class Naive0 extends TestCase {
 
   public void test55() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test55");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.LinkedList var1 = new java2.util2.LinkedList();
     var1.clear();
@@ -5791,6 +5957,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test56() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test56");
+
 
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.ArrayList var1 = new java2.util2.ArrayList();
@@ -5897,6 +6066,9 @@ public class Naive0 extends TestCase {
 
   public void test57() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test57");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java2.util2.Map var1 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)var0);
     java.lang.Object var2 = new java.lang.Object();
@@ -6001,6 +6173,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test58() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test58");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.add((java.lang.Object)var0);
@@ -6107,6 +6282,9 @@ public class Naive0 extends TestCase {
 
   public void test59() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test59");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     boolean var1 = var0.remove((java.lang.Object)var0);
     boolean var2 = var0.remove((java.lang.Object)var0);
@@ -6211,6 +6389,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test60() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test60");
+
 
     java.lang.Integer var0 = new java.lang.Integer(10);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -6317,6 +6498,9 @@ public class Naive0 extends TestCase {
 
   public void test61() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test61");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Iterator var1 = var0.iterator();
     boolean var2 = var0.addAll((java2.util2.Collection)var0);
@@ -6421,6 +6605,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test62() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test62");
+
 
     java.lang.Object var0 = new java.lang.Object();
     java.lang.Integer var1 = new java.lang.Integer(10);
@@ -6527,6 +6714,9 @@ public class Naive0 extends TestCase {
 
   public void test63() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test63");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.List var1 = java2.util2.Collections.singletonList(var0);
     java2.util2.List var2 = java2.util2.Collections.synchronizedList(var1);
@@ -6631,6 +6821,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test64() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test64");
+
 
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     boolean var1 = var0.contains((java.lang.Object)var0);
@@ -6738,6 +6931,9 @@ public class Naive0 extends TestCase {
 
   public void test65() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test65");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java2.util2.Iterator var1 = var0.iterator();
     java.lang.Object var2 = var0.getLast();
@@ -6842,6 +7038,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test66() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test66");
+
 
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.Comparator var1 = java2.util2.Collections.reverseOrder();
@@ -6948,6 +7147,9 @@ public class Naive0 extends TestCase {
 
   public void test67() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test67");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java2.util2.Collections.shuffle((java2.util2.List)var0);
     java2.util2.TreeSet var2 = new java2.util2.TreeSet();
@@ -7052,6 +7254,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test68() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test68");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Comparator var1 = java2.util2.Collections.reverseOrder();
@@ -7158,6 +7363,9 @@ public class Naive0 extends TestCase {
 
   public void test69() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test69");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java.lang.Object var1 = new java.lang.Object();
     java.lang.Integer var2 = new java.lang.Integer((-1));
@@ -7262,6 +7470,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test70() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test70");
+
 
     java.lang.Integer var0 = new java.lang.Integer(10);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -7368,6 +7579,9 @@ public class Naive0 extends TestCase {
 
   public void test71() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test71");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     boolean var1 = var0.remove((java.lang.Object)var0);
     int var2 = java2.util2.Collections.indexOfSubList((java2.util2.List)var0, (java2.util2.List)var0);
@@ -7472,6 +7686,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test72() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test72");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
@@ -7578,6 +7795,9 @@ public class Naive0 extends TestCase {
 
   public void test73() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test73");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     boolean var1 = var0.isEmpty();
     int var2 = java2.util2.Collections.lastIndexOfSubList((java2.util2.List)var0, (java2.util2.List)var0);
@@ -7683,6 +7903,9 @@ public class Naive0 extends TestCase {
 
   public void test74() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test74");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.List var1 = java2.util2.Collections.singletonList(var0);
     java.lang.Integer var2 = new java.lang.Integer(0);
@@ -7787,6 +8010,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test75() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test75");
+
 
     java.lang.Integer var0 = new java.lang.Integer(10);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -7894,6 +8120,9 @@ public class Naive0 extends TestCase {
 
   public void test76() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test76");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java2.util2.Iterator var1 = var0.iterator();
     java2.util2.Iterator var2 = var0.iterator();
@@ -7998,6 +8227,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test77() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test77");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.ArrayList var1 = new java2.util2.ArrayList();
@@ -8104,6 +8336,9 @@ public class Naive0 extends TestCase {
 
   public void test78() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test78");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java.lang.Integer var1 = new java.lang.Integer(1);
     java.lang.Integer var2 = new java.lang.Integer(0);
@@ -8208,6 +8443,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test79() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test79");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.LinkedList var1 = new java2.util2.LinkedList();
@@ -8314,6 +8552,9 @@ public class Naive0 extends TestCase {
 
   public void test80() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test80");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
     java.lang.Object var2 = java2.util2.Collections.min((java2.util2.Collection)var1, var0);
@@ -8418,6 +8659,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test81() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test81");
+
 
     java.lang.Integer var0 = new java.lang.Integer(0);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -8524,6 +8768,9 @@ public class Naive0 extends TestCase {
 
   public void test82() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test82");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.isEmpty();
     java2.util2.SortedSet var2 = var0.tailSet((java.lang.Object)var0);
@@ -8628,6 +8875,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test83() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test83");
+
 
     java.lang.Integer var0 = new java.lang.Integer(0);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
@@ -8734,6 +8984,9 @@ public class Naive0 extends TestCase {
 
   public void test84() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test84");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.remove((java.lang.Object)var0);
     java2.util2.Enumeration var2 = java2.util2.Collections.enumeration((java2.util2.Collection)var0);
@@ -8838,6 +9091,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test85() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test85");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)var0);
@@ -8945,6 +9201,9 @@ public class Naive0 extends TestCase {
 
   public void test86() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test86");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java.lang.Integer var1 = new java.lang.Integer((-1));
     java2.util2.ListIterator var2 = var0.listIterator((int)var1);
@@ -9049,6 +9308,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test87() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test87");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java.lang.String var1 = var0.toString();
@@ -9155,6 +9417,9 @@ public class Naive0 extends TestCase {
 
   public void test88() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test88");
+
+
     java.lang.Integer var0 = new java.lang.Integer(10);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
     java.lang.Object var2 = var1.clone();
@@ -9259,6 +9524,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test89() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test89");
+
 
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
@@ -9365,6 +9633,9 @@ public class Naive0 extends TestCase {
 
   public void test90() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test90");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java.lang.Integer var1 = new java.lang.Integer(0);
     java2.util2.List var2 = java2.util2.Collections.nCopies((int)var1, var0);
@@ -9469,6 +9740,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test91() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test91");
+
 
     java.lang.Object var0 = new java.lang.Object();
     java.lang.Object var1 = new java.lang.Object();
@@ -9575,6 +9849,9 @@ public class Naive0 extends TestCase {
 
   public void test92() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test92");
+
+
     java.lang.Integer var0 = new java.lang.Integer(1);
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
     java2.util2.LinkedList var2 = new java2.util2.LinkedList();
@@ -9679,6 +9956,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test93() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test93");
+
 
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     var0.clear();
@@ -9785,6 +10065,9 @@ public class Naive0 extends TestCase {
 
   public void test94() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test94");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
     java2.util2.SortedSet var2 = var1.tailSet(var0);
@@ -9889,6 +10172,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test95() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test95");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     boolean var1 = var0.equals((java.lang.Object)var0);
@@ -9996,6 +10282,9 @@ public class Naive0 extends TestCase {
 
   public void test96() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test96");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java.lang.Integer var1 = new java.lang.Integer(1);
     java2.util2.ArrayList var2 = new java2.util2.ArrayList(var1);
@@ -10100,6 +10389,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test97() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test97");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)var0);
@@ -10206,6 +10498,9 @@ public class Naive0 extends TestCase {
 
   public void test98() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test98");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.removeAll((java2.util2.Collection)var0);
     java2.util2.SortedSet var2 = var0.subSet((java.lang.Object)var1, (java.lang.Object)var1);
@@ -10310,6 +10605,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test99() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test99");
+
 
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java2.util2.ArrayList var1 = new java2.util2.ArrayList();
@@ -10417,6 +10715,9 @@ public class Naive0 extends TestCase {
 
   public void test100() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test100");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.Comparator var1 = java2.util2.Collections.reverseOrder();
     java2.util2.List var2 = java2.util2.Collections.singletonList(var0);
@@ -10522,6 +10823,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test101() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test101");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.LinkedList var1 = new java2.util2.LinkedList();
@@ -10629,6 +10933,9 @@ public class Naive0 extends TestCase {
 
   public void test102() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test102");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java.lang.Integer var1 = new java.lang.Integer(1);
     java2.util2.ArrayList var2 = new java2.util2.ArrayList(var1);
@@ -10733,6 +11040,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test103() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test103");
+
 
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java.lang.Object var1 = new java.lang.Object();
@@ -10840,6 +11150,9 @@ public class Naive0 extends TestCase {
 
   public void test104() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test104");
+
+
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     java.lang.Integer var1 = new java.lang.Integer(100);
     java2.util2.List var2 = java2.util2.Collections.nCopies((int)var1, (java.lang.Object)var0);
@@ -10944,6 +11257,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test105() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test105");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java.lang.Integer var1 = new java.lang.Integer((-1));
@@ -11051,6 +11367,9 @@ public class Naive0 extends TestCase {
 
   public void test106() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test106");
+
+
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.ArrayList var1 = new java2.util2.ArrayList();
     java.lang.Integer var2 = new java.lang.Integer(1);
@@ -11155,6 +11474,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test107() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test107");
+
 
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     java.lang.Integer var1 = new java.lang.Integer(100);
@@ -11262,6 +11584,9 @@ public class Naive0 extends TestCase {
 
   public void test108() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test108");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.Comparator var1 = java2.util2.Collections.reverseOrder();
     java2.util2.TreeSet var2 = new java2.util2.TreeSet(var1);
@@ -11367,6 +11692,9 @@ public class Naive0 extends TestCase {
 
   public void test109() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test109");
+
+
     java2.util2.LinkedList var0 = new java2.util2.LinkedList();
     var0.clear();
     java.lang.Object var2 = java2.util2.Collections.min((java2.util2.Collection)var0);
@@ -11471,6 +11799,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test110() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test110");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.Map var1 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)var0);
@@ -11578,6 +11909,9 @@ public class Naive0 extends TestCase {
 
   public void test111() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test111");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var1 = java2.util2.Collections.synchronizedSet((java2.util2.Set)var0);
     java.lang.Object var2 = var0.first();
@@ -11682,6 +12016,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test112() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test112");
+
 
     java.lang.Object var0 = new java.lang.Object();
     java2.util2.Set var1 = java2.util2.Collections.singleton(var0);
@@ -11789,6 +12126,9 @@ public class Naive0 extends TestCase {
 
   public void test113() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test113");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.equals((java.lang.Object)var0);
     java2.util2.Enumeration var2 = java2.util2.Collections.enumeration((java2.util2.Collection)var0);
@@ -11893,6 +12233,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test114() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test114");
+
 
     java2.util2.ArrayList var0 = new java2.util2.ArrayList();
     int var1 = var0.size();
@@ -11999,6 +12342,9 @@ public class Naive0 extends TestCase {
 
   public void test115() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test115");
+
+
     java.lang.Object var0 = new java.lang.Object();
     java.lang.Object var1 = new java.lang.Object();
     java2.util2.Map var2 = java2.util2.Collections.singletonMap(var1, var0);
@@ -12104,6 +12450,9 @@ public class Naive0 extends TestCase {
 
   public void test116() throws Throwable {
 
+    if (debug) System.out.printf("%nNaive0.test116");
+
+
     java.lang.Integer var0 = new java.lang.Integer((-1));
     java2.util2.ArrayList var1 = new java2.util2.ArrayList(var0);
     java.lang.Integer var2 = new java.lang.Integer((-1));
@@ -12208,6 +12557,9 @@ public class Naive0 extends TestCase {
   }
 
   public void test117() throws Throwable {
+
+    if (debug) System.out.printf("%nNaive0.test117");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet(var0);

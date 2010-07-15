@@ -12,7 +12,7 @@ default:
 	@echo "Main targets:"
 	@echo ""
 	@echo "all            do everything (build and run test)."
-	@echo "build          compile Randoop."
+	@echo "build          compile Randoop (does NOT make randoop.jar)."
 	@echo "clean          remove build-related auto-generated files."
 	@echo "clean-tests    remove test-related auto-generated files."
 	@echo "results        display results of tests."
@@ -342,10 +342,10 @@ randoop-df: bin
 	   --seqs-per-method=1 \
 	   --print-coderep-comments=true
 	gunzip frontier*.gz
-	cat frontier[123456] \
+	cat frontier[1-9] \
 	  > systemtests/resources/arraylist.dfin.txt
 # Cleanup scratch files
-	rm frontier[123456] test.dftargets.txt
+	rm -f frontier[1-9] test.dftargets.txt
 
 test-constants: bin
 	java -ea randoop.util.ClassFileConstants bin/randoop/util/ClassFileConstants.class

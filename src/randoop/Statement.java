@@ -9,7 +9,7 @@ import randoop.Sequence.RelativeNegativeIndex;
 
 /**
  * The elements of a Sequence. Each of these contains two pieces of information:
- * (1) A statement, and (2) inputs to the statement.
+ * (1) A statement kind, and (2) inputs to the statement.
  */
 final class Statement implements Serializable {
 
