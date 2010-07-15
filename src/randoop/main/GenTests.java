@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -60,6 +61,7 @@ import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.IMessage;
 import randoop.runtime.MessageSender;
 import randoop.runtime.RandoopFinished;
+import randoop.util.ClassFileConstants;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -199,7 +201,7 @@ public class GenTests extends GenInputsAbstract {
     // there is at least one visible constructor/factory in each class as well.
     for (Class<?> c : classes) {
       if (!Reflection.isVisible (c)) {
-        throw new Error ("Specified " + c + " is not visible");
+        throw new Error ("Specified class " + c + " is not visible");
       }
     }
     List<StatementKind> model =
@@ -300,7 +302,7 @@ public class GenTests extends GenInputsAbstract {
       componentMgr = new ComponentManager(components);
     }
     
-    addClassLiterals(componentMgr);
+    addClassLiterals(componentMgr, allClasses);
     
     AbstractGenerator explorer = null;
 
@@ -576,7 +578,7 @@ public class GenTests extends GenInputsAbstract {
    * Adds literals to the component manager, by parsing any literals
    * files specified by the user.
    */
-  private void addClassLiterals(ComponentManager compMgr) {
+  private void addClassLiterals(ComponentManager compMgr, List<Class<?>> allClasses) {
     
     // Parameter check.
     boolean validMode = GenInputsAbstract.literals_level != ClassLiteralsMode.NONE;
@@ -589,7 +591,12 @@ public class GenTests extends GenInputsAbstract {
     for (String filename : GenInputsAbstract.literals_file) {
       MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap;
       if (filename.equals("CLASSES")) {
-        literalmap = null; // TODO!!!
+        Collection<ClassFileConstants.ConstantSet> css
+          = new ArrayList<ClassFileConstants.ConstantSet>(allClasses.size());
+        for (Class<?> clazz : allClasses) {
+          css.add(ClassFileConstants.getConstants(clazz.getName()));
+        }
+        literalmap = ClassFileConstants.toMap(css);
       } else {
         literalmap = LiteralFileReader.parse(filename);
       }
