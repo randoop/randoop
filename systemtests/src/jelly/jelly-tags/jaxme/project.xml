@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright 2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project>
+  <extend>${basedir}/../tag-project.xml</extend>
+  <pomVersion>3</pomVersion>
+  <id>commons-jelly-tags-jaxme</id>
+  <name>commons-jelly-tags-jaxme</name>
+  <currentVersion>1.0</currentVersion>
+  <inceptionYear>2004</inceptionYear>
+  <package>org.apache.commons.jelly.tags.jaxme</package>
+  <logo/>
+  <description>JaxMe Tag Library. Apache JaxMe is an open source generative xml-object binder. Tags are provided that generate java objects from schema using JaxMe and that will marshall and unmarshall any JAXB complient implementations.</description>
+  <shortDescription>JaxMe Tag Library</shortDescription>
+  <versions>
+    <version>
+      <id>1.0</id>
+      <name>1.0</name>
+      <tag>COMMONS-JELLY-JAXME-1_0</tag>
+    </version>
+  </versions>
+  <dependencies>
+    <dependency>
+      <id>commons-logging</id>
+      <version>1.0.3</version>
+    </dependency>
+    <!-- TODO: These versions probably want updating -->
+    <dependency>
+      <artifactId>jaxme</artifactId>
+      <groupId>jaxme</groupId>
+      <version>0.2</version>
+      <properties>
+        <gump.project>ws-jaxme</gump.project>
+        <gump.id>jaxme2</gump.id>
+      </properties>
+    </dependency>
+    <dependency>
+      <artifactId>jaxme-js</artifactId>
+      <groupId>jaxme</groupId>
+      <version>0.2</version>
+      <properties>
+        <gump.project>ws-jaxme</gump.project>
+        <gump.id>js</gump.id>
+      </properties>
+    </dependency>
+    <dependency>
+      <artifactId>jaxme-xs</artifactId>
+      <groupId>jaxme</groupId>
+      <version>0.2</version>
+      <properties>
+        <gump.project>ws-jaxme</gump.project>
+        <gump.id>xs</gump.id>
+      </properties>
+    </dependency>
+    <dependency>
+      <artifactId>jaxme-api</artifactId>
+      <groupId>jaxme</groupId>
+      <version>0.2</version>
+      <properties>
+        <gump.project>ws-jaxme</gump.project>
+        <gump.id>api</gump.id>
+      </properties>
+    </dependency>
+    <dependency>
+      <artifactId>commons-jelly-tags-junit</artifactId>
+      <groupId>commons-jelly</groupId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>commons-jelly-tags-xmlunit</artifactId>
+      <groupId>commons-jelly</groupId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>commons-jelly-tags-xml</artifactId>
+      <groupId>commons-jelly</groupId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <artifactId>xmlunit</artifactId>
+      <groupId>xmlunit</groupId>
+      <version>0.8</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src/java</sourceDirectory>
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*TestCase.java</include>
+      </includes>
+    </unitTest>
+    <resources>
+      <resource>
+        <directory>src/test</directory>
+        <includes>
+          <include>**/*.jelly</include>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+</project>
