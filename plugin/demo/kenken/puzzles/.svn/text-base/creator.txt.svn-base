@@ -1,0 +1,198 @@
+package lpf.helper;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import lpf.model.core.Location;
+import lpf.model.kenken.fileManagement.FileLoader;
+import lpf.model.kenken.preferences.Difficulty;
+import lpf.model.kenken.preferences.InvalidDifficultyException;
+
+/**
+ * A little utility for making the creation of ken-ken puzzle files easier.
+ * 
+ * For a puzzle such as this one:
+ *  ___________
+ * | 1 | 2 | 3 |
+ * | 2 |_3_| 1 |
+ * |_3_|_1_ _2_|
+ * 
+ * The solution grid would be:
+ * 123
+ * 231
+ * 312
+ * 
+ * And the cage grid would be:
+ * 012
+ * 012
+ * 022
+ * 
+ * When prompted for constraints, they should be input with the constraint
+ * immediately followed by the number, for example "*12"
+ *  * 
+ * @author Peter Kalauskas
+ */
+public class XMLCreator {
+	public static void main(String[] args) throws IOException {
+		BufferedReader input = new BufferedReader(new InputStreamReader(
+				System.in));
+
+		File newPuzzleFile = null;
+		do {
+			System.out.print("Puzzle Name: ");
+			String puzzleName = input.readLine();
+
+			if (puzzleName.endsWith(".xml")) {
+				newPuzzleFile = new File("puzzles/" + puzzleName);
+			} else {
+				newPuzzleFile = new File("puzzles/" + puzzleName + ".xml");
+			}
+
+			if (newPuzzleFile.exists()) {
+				System.out.println("Bad puzzle name, file already exists");
+				newPuzzleFile = null;
+			}
+		} while (newPuzzleFile == null);
+
+		int difficulty = 0;
+
+		while (true) {
+			try {
+				System.out.print("Difficulty (1-10): ");
+				difficulty = Integer.parseInt(input.readLine());
+				Difficulty.getDifficulty(difficulty);
+				break;
+			} catch (NumberFormatException e) {
+			} catch (InvalidDifficultyException e) {
+			}
+		}
+
+		String solutionGrid = getGridInput("Solution", 1, input);
+		String cagesGrid = getGridInput("Cage",
+				solutionGrid.split("\n").length, input);
+
+		Map<Character, String> constraintMap = new HashMap<Character, String>();
+		Set<Character> askedCageIdentifiers = new HashSet<Character>();
+		for (int i = 0; i < cagesGrid.length(); i++) {
+			char id = cagesGrid.charAt(i);
+			if (id != '\n' && !askedCageIdentifiers.contains(id)) {
+				System.out.print("Constraint for " + id + ": ");
+				try {
+					String constraint = input.readLine();
+					Integer.parseInt(constraint.substring(1));
+					askedCageIdentifiers.add(id);
+					constraintMap.put(id, constraint);
+				} catch (NumberFormatException e) {
+					System.out
+							.println("               Bad input, try again.\n");
+					i--;
+				}
+			}
+		}
+
+		String xml = getXML(difficulty, solutionGrid, cagesGrid, constraintMap);
+
+		BufferedWriter out = new BufferedWriter(new FileWriter(newPuzzleFile));
+		out.write(xml);
+		out.newLine();
+		out.close();
+		
+		if(new FileLoader(newPuzzleFile).isValid()) {
+			System.out.println("Puzzle is valid.");
+		} else {
+			System.out.println("Puzzle is NOT valid!!");
+		}
+	}
+
+	public static String getXML(int difficulty, String solutionGrid, String cagesGrid,
+			Map<Character, String> constraintMap) {
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+		xml += "<lpf xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.wpi.edu/~heineman/lpf/                        http://www.wpi.edu/~heineman/lpf/lpf.xsd\" xsi:noNamespaceSchemaLocation=\"lpf.xsd\">\n";
+
+		String[] rows = solutionGrid.split("\n");
+		int size = rows.length;
+
+		xml += "<puzzle version=\"1.0\" type=\"kenken(tm)\" difficulty=\""+difficulty+"\" width=\""
+				+ size + "\" height=\"" + size + "\">\n\n";
+		
+		xml += "	<board name=\"initial\"></board>\n";
+
+		xml += "	<board name=\"solution\">\n";
+
+		for (String row : rows) {
+			xml += "		<row contents=\"" + row + "\"/>\n";
+		}
+		xml += "	</board>\n\n";
+
+		cagesGrid = cagesGrid.replaceAll("\n", "");
+
+		xml += "	<cages>\n";
+		for (char id : constraintMap.keySet()) {
+			int value = Integer.parseInt(constraintMap.get(id).substring(1));
+			char operation = constraintMap.get(id).charAt(0);
+			xml += "		<cage value=\"" + value + "\" operation=\"" + operation
+					+ "\">\n";
+			for (int i = 0; i < cagesGrid.length(); i++) {
+				if (cagesGrid.charAt(i) == id) {
+					Location loc = getLoc(i, size);
+					xml += "			<cell column=\"" + loc.column + "\" row=\""
+							+ loc.row + "\"/>\n";
+				}
+			}
+			xml += "		</cage>\n";
+		}
+
+		xml += "	</cages>\n";
+		xml += "</puzzle>\n";
+		xml += "</lpf>\n";
+
+		return xml;
+	}
+
+	public static Location getLoc(int index, int puzzleSize) {
+		return new Location(1 + index / puzzleSize, (char) ('A' + index
+				% puzzleSize));
+	}
+
+	public static String getGridInput(String gridName, int size,
+			BufferedReader input) throws IOException {
+		String whitespace = "       ";
+		for (int i = 0; i < gridName.length(); i++) {
+			whitespace += " ";
+		}
+
+		System.out.print(gridName + " Grid: ");
+		String grid = "";
+		for (int i = 0; i < size; i++) {
+			String textLine = input.readLine();
+
+			if (size == 1) {
+				size = textLine.length();
+			}
+
+			grid += textLine + "\n";
+			if (i + 1 != size) {
+				System.out.print(whitespace);
+			} else {
+				System.out.println();
+			}
+
+			if (textLine.length() != size) {
+				System.out.println("Bad puzzle format, try again.");
+				System.out.print(gridName + " Grid: ");
+				i = -1;
+				grid = "";
+			}
+
+		}
+		return grid;
+	}
+}

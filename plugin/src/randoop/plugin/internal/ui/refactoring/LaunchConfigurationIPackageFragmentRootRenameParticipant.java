@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -19,6 +20,7 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class LaunchConfigurationIPackageFragmentRootRenameParticipant extends RenameParticipant {
   private String fOldSourceFolderName;
+  IPackageFragmentRoot pfr;
 
   /*
    * (non-Javadoc)
@@ -26,8 +28,10 @@ public class LaunchConfigurationIPackageFragmentRootRenameParticipant extends Re
    */
   @Override
   protected boolean initialize(Object element) {
+    
     if (element instanceof IPackageFragmentRoot) {
-      IPackageFragmentRoot pfr = (IPackageFragmentRoot) element;
+      pfr = (IPackageFragmentRoot) element;
+      
       try {
         if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
           fOldSourceFolderName = pfr.getElementName();

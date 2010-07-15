@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -19,13 +18,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
@@ -67,7 +62,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   @Override
   public void launch(ILaunchConfiguration configuration, String mode,
       ILaunch launch, IProgressMonitor monitor) throws CoreException {
-    System.out.println("Begin launch");
+    System.out.println("Begin launch"); //$NON-NLS-1$
     
     final ILaunch theLaunch = launch;
     
@@ -78,11 +73,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     if (monitor.isCanceled())
       return;
 
-    // check for cancellation
-    if (monitor.isCanceled())
-      return;
-
-    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration);
+    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
     TestGroupResources testGroupResources = new TestGroupResources(args, monitor);
 
     IStatus status = testGroupResources.getStatus();
@@ -95,6 +86,8 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     
     if (useDefault) {
       PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+        
+        @Override
         public void run() {
           IWorkbenchWindow window = PlatformUI.getWorkbench()
               .getActiveWorkbenchWindow();
@@ -109,12 +102,12 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
               fMessageReceiver = new MessageReceiver(new MessageViewListener(viewPart));
               viewPart.setLaunch(theLaunch);
               fPort = fMessageReceiver.getPort();
-            } catch (PartInitException e1) {
+            } catch (PartInitException e) {
               fMessageReceiver = null;
-              System.err.println("Randoop view could not be initialized");
+              RandoopPlugin.log(e, "Randoop view could not be initialized"); //$NON-NLS-1$
             } catch (IOException e) {
               fMessageReceiver = null;
-              System.err.println("Could not find free communication port");
+              RandoopPlugin.log(e, "Could not find free communication port"); //$NON-NLS-1$
             }
           }
         }
@@ -250,7 +243,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   protected void collectExecutionArguments(ILaunchConfiguration configuration,
       List<String> vmArguments, List<String> programArguments)
       throws CoreException {
-    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration);
+    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
 
     // add program & VM arguments provided by getProgramArguments and
     // getVMArguments
@@ -337,5 +330,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   @Override
   public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
     return "randoop.main.Main"; //$NON-NLS-1$
+  }
+  
+  private static IWorkspaceRoot getWorkspaceRoot() {
+    return ResourcesPlugin.getWorkspace().getRoot();
   }
 }
