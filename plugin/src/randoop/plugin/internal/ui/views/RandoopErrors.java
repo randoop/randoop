@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -178,7 +179,7 @@ public class RandoopErrors implements ITreeContentProvider, IDoubleClickListener
   
   private IPath getOutputDir() {
     ILaunchConfiguration iconfig = viewPart.launch.getLaunchConfiguration();
-    RandoopArgumentCollector args = new RandoopArgumentCollector(config);
+    RandoopArgumentCollector args = new RandoopArgumentCollector(config, ResourcesPlugin.getWorkspace().getRoot());
     IPath outputDir = args.getOutputDirectory();
     return outputDir;
   }
