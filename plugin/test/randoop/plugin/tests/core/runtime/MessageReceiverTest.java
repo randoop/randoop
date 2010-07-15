@@ -1,6 +1,5 @@
 package randoop.plugin.tests.core.runtime;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 import junit.framework.TestCase;
@@ -11,12 +10,12 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.PlatformUI;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
-import randoop.plugin.tests.ui.launching.ProjectCreator;
+import randoop.plugin.tests.ProjectFactory;
+import randoop.plugin.tests.WorkspaceManager;
 import randoop.runtime.ClosingStream;
 import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.IMessage;
@@ -69,21 +68,10 @@ public class MessageReceiverTest extends TestCase {
     }
   }
   
+  @Override
   @BeforeClass
   protected void setUp() throws Exception {
-    fJavaProject = ProjectCreator.createStandardDemoProject();
-  }
-  
-//  @Test
-//  public void generateTestsForTypesInProject() throws CoreException, IOException {
-//    ILaunchConfigurationWorkingCopy config = ProjectCreator.createNewAllTypeConfig(fJavaProject, 10);
-//    testStartRandoop(config);
-//  }
-  
-  @Test
-  public void testGenerateTestsForTypesArrayList() throws CoreException, IOException {
-    ILaunchConfigurationWorkingCopy config = ProjectCreator.createTestConfigWithSingleClass(fJavaProject, 10);
-    testStartRandoop(config);
+    fJavaProject = ProjectFactory.createPathPlannerProject();
   }
   
   public void testStartRandoop(final ILaunchConfigurationWorkingCopy config) throws CoreException, IOException {

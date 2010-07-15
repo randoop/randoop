@@ -4,15 +4,10 @@
 
    <extension
          point="org.eclipse.ui.views">
-      <category
-            id="randoop"
-            name="Sample Category"
-            parentCategory="org.eclipse.jdt.ui.java">
-      </category>
       <view
             name="Randoop"
             icon="icons/config.png"
-            category="randoop"
+            category="org.eclipse.jdt.ui.java"
             class="randoop.plugin.internal.ui.views.TestGeneratorViewPart"
             id="randoop.plugin.ui.views.TestGeneratorViewPart">
       </view>
@@ -171,6 +166,33 @@
                <instanceof
                      value="org.eclipse.jdt.core.IPackageFragmentRoot">
                </instanceof>
+            </with>
+         </enablement>
+      </renameParticipant>
+      <renameParticipant
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationClasspathEntryRenameParticipant"
+            id="randoop.plugin.refactoring.launching.classpathRename"
+            name="Launch configuration participant">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="org.eclipse.jdt.core.javanature">
+                  </equals>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <or>
+                  <instanceof
+                        value="org.eclipse.core.resources.IFile">
+                  </instanceof>
+                  <instanceof
+                        value="org.eclipse.core.resources.IFolder">
+                  </instanceof>
+               </or>
             </with>
          </enablement>
       </renameParticipant>

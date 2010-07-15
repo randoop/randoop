@@ -3,6 +3,8 @@ package randoop.plugin.internal.core.launching;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -20,6 +22,8 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
+import randoop.plugin.internal.core.MethodMnemonic;
+import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 import randoop.plugin.internal.ui.options.Mnemonics;
 
@@ -43,7 +47,7 @@ public class RandoopArgumentCollector {
   private int fMaxTestsWritten;
   private int fMaxTestsPerFile;
 
-  public RandoopArgumentCollector(ILaunchConfiguration config) {
+  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) {
     fName = config.getName();
 
     String projectName = getProjectName(config);
@@ -53,16 +57,12 @@ public class RandoopArgumentCollector {
     List<?> selectedTypes = getSelectedTypes(config);
     for (Object o : selectedTypes) {
       Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
-      String fqname = (String) o;
+      String mnemonic = (String) o;
       
-      IProgressMonitor pm = new NullProgressMonitor();
-      try {
-        IType type = fJavaProject.findType(fqname, pm);
+      TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic, root);
+      IType type = typeMnemonic.getType();
 
-        fSelectedTypes.add(type);
-      } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
-      }
+      fSelectedTypes.add(type);
     }
     
     fSelectedMethods = new ArrayList<IMethod>();
@@ -71,7 +71,8 @@ public class RandoopArgumentCollector {
       Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
       String mnemonic = (String) o;
       
-      IMethod m = Mnemonics.getMethod(fJavaProject, mnemonic);
+      MethodMnemonic methodMneomic = new MethodMnemonic(mnemonic, root);
+      IMethod m = methodMneomic.getMethod();
       Assert.isNotNull(m, "Stored method does not exist");
       Assert.isNotNull(m.exists(), "Stored method [" + m.getElementName()
           + "] does not exist");
