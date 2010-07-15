@@ -124,9 +124,9 @@ public class ClassSelector {
     // has a list of methods that is stored in the map.
     HashMap<String, List<String>> methodsByType = new HashMap<String, List<String>>();
     for(String mnemonic : availableMethods) {
-      MethodMnemonic methodMnemonic = new MethodMnemonic(root, mnemonic);
+      MethodMnemonic methodMnemonic = new MethodMnemonic(mnemonic);
       
-      String fqtypename = methodMnemonic.getDeclaringTypeMnemonic().getType().getFullyQualifiedName();
+      String fqtypename = methodMnemonic.getDeclaringTypeMnemonic().getFullyQualifiedName();
       List<String> list = methodsByType.get(fqtypename);
       if(list == null) {
         list = new ArrayList<String>();
@@ -141,7 +141,7 @@ public class ClassSelector {
     for (String typeMnemonicString : availableTypes) {
       IType type = null;
 
-      TypeMnemonic typeMnemonic = new TypeMnemonic(root, typeMnemonicString);
+      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, root);
       type = typeMnemonic.getType();
 
       if (type == null) {
@@ -209,7 +209,7 @@ public class ClassSelector {
    *         <code>null</code> if it was not added
    */
   public TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
-    String[] splitName = Mnemonics.splitFullyQualifiedName(typeMnemonic.getfFullyQualifiedTypeName());
+    String[] splitName = Mnemonics.splitFullyQualifiedName(typeMnemonic.getFullyQualifiedName());
     TreeItem parent = addPackage(splitName[0]);
 
     TreeItem classItem = new TreeItem(parent, SWT.NONE);
@@ -217,7 +217,7 @@ public class ClassSelector {
     Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
     classItem.setImage(errorImage);
 
-    classItem.setText(typeMnemonic.getfFullyQualifiedTypeName());
+    classItem.setText(typeMnemonic.getFullyQualifiedName());
     setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
 
     setChecked(classItem, classIsChecked);
@@ -225,7 +225,7 @@ public class ClassSelector {
     if (methods != null) {
       for (String methodMnemonicString : methods) {
         TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
-        MethodMnemonic methodMnemonic = new MethodMnemonic(getWorkspaceRoot(), methodMnemonicString);
+        MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString);
 
         setMnemonic(methodItem, IJavaElement.METHOD, methodMnemonicString);
         methodItem.setImage(errorImage);
@@ -679,7 +679,7 @@ public class ClassSelector {
       for (TreeItem classItem : packageItem.getItems()) {
         IType type = null;
         if (fJavaProject != null) {
-          TypeMnemonic typeMnemonic = new TypeMnemonic(root, getMnemonic(classItem));
+          TypeMnemonic typeMnemonic = new TypeMnemonic(getMnemonic(classItem), root);
           type = typeMnemonic.getType();
           image = getImageForType(type);
         }
@@ -711,7 +711,7 @@ public class ClassSelector {
         } else {
           for (TreeItem methodItem : classItem.getItems()) {
             if (fJavaProject != null) {
-              MethodMnemonic methodMnemonic = new MethodMnemonic(root, getMnemonic(methodItem));
+              MethodMnemonic methodMnemonic = new MethodMnemonic(getMnemonic(methodItem), root);
               IMethod method = methodMnemonic.getMethod();
               image = getImageMethod(method);
             }

@@ -25,7 +25,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
   protected boolean initialize(Object element) {
 //    fType = (IType) element;
 //    try {
-//      // check that the type is no a local, and is no declared in a local type
+//      // check that the type is not a local, and is not declared in a local type
 //      IType declaringType = fType;
 //      while (declaringType != null) {
 //        if (fType.isLocal()) {

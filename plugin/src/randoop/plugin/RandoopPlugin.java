@@ -132,6 +132,10 @@ public class RandoopPlugin extends AbstractUIPlugin {
   public static void log(Throwable e) {
     log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, "Error", e)); //$NON-NLS-1$
   }
+  
+  public static void log(Throwable e, String message) {
+    log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, e));
+  }
 
   /**
    * Logs a status in the shared instance's log

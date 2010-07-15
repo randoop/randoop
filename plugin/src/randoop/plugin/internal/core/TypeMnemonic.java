@@ -5,6 +5,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -25,10 +27,9 @@ public class TypeMnemonic {
   private final IType fType;
   
   private final String fJavaProjectName;
+  private final int fClasspathKind;
   private final IPath fClasspath;
   private final String fFullyQualifiedTypeName;
-
-  private final boolean fExists;
 
   public TypeMnemonic(IType t) throws JavaModelException {
     Assert.isLegal(t != null);
@@ -48,12 +49,26 @@ public class TypeMnemonic {
     Assert.isNotNull(fClasspathEntry);
 
     fJavaProjectName = fJavaProject.getElementName();
+    fClasspathKind = fClasspathEntry.getEntryKind();
     fClasspath = fClasspathEntry.getPath();
     fFullyQualifiedTypeName = fType.getFullyQualifiedName();
-
-    fExists = fJavaProject != null && fClasspathEntry != null && fType != null;
   }
 
+  public TypeMnemonic(String javaProjectName, int classpathKind,IPath classpath, String fullyQualifiedTypeName) {
+    fJavaProjectName=javaProjectName;
+    fClasspathKind=classpathKind;
+    fClasspath=classpath;
+    fFullyQualifiedTypeName=fullyQualifiedTypeName;
+
+    fJavaProject = null;
+    fClasspathEntry = null;
+    fType = null;
+  }
+  
+  public TypeMnemonic(String mnemonic) {
+    this(mnemonic, null);
+  }
+  
   /**
    * 
    * @param mnemonic
@@ -61,47 +76,111 @@ public class TypeMnemonic {
    * @throws IllegalArgumentException
    *           if the mnemonic is incorrectly formatted
    */
-  public TypeMnemonic(IWorkspaceRoot root, String mnemonic) {
+  public TypeMnemonic(String mnemonic, IWorkspaceRoot root) {
+    Assert.isLegal(mnemonic != null);
+    
     String[] s = mnemonic.split(DELIMITER);
-    Assert.isLegal(s.length == 3);
+    Assert.isLegal(s.length == 4);
 
     fJavaProjectName = s[0];
-    fClasspath = new Path(s[1]);
-    fFullyQualifiedTypeName = s[2];
-
-    IProject project = root.getProject(fJavaProjectName);
+    fClasspathKind = Integer.parseInt(s[1]);
+    fClasspath = new Path(s[2]);
+    fFullyQualifiedTypeName = s[3];
     
     IJavaProject javaProject = null;
     IClasspathEntry classpathEntry = null;
     IType type = null;
 
-    try {
-      if (project.exists()) {
-        project.open(null);
+    if (root != null) {
+      try {
+        IProject project = root.getProject(fJavaProjectName);
+        if (project.exists()) {
+          project.open(null);
 
-        javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
-        if (javaProject != null) {
-          // Search for the classpath entry in the project
-          for (IClasspathEntry cpe : javaProject.getRawClasspath()) {
-            if (cpe.getPath().equals(fClasspath)) {
-              classpathEntry = cpe;
-              break;
+          javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
+          if (javaProject != null) {
+            // Search for the classpath entry in the project
+            for (IClasspathEntry cpe : javaProject.getRawClasspath()) {
+              if (cpe.getEntryKind() == fClasspathKind && cpe.getPath().equals(fClasspath)) {
+                classpathEntry = cpe;
+                break;
+              }
+            }
+
+            if (classpathEntry != null) {
+              type = findType(javaProject, classpathEntry, fFullyQualifiedTypeName);
             }
           }
-
-          if (classpathEntry != null) {
-            type = findType(javaProject, classpathEntry, fFullyQualifiedTypeName);
-          }
         }
+      } catch (CoreException e) {
       }
-    } catch (CoreException e) {
     }
 
     fClasspathEntry = classpathEntry;
     fJavaProject = javaProject;
     fType = type;
+  }
+  
+  public TypeMnemonic reassign(IJavaProject javaProject) {
+    // CPE_SOURCE:
+    //   if this is linked:
+    //     check if it's in the javaProject as a classpath entry
+    //       IPath p = classpathEntry.getPath();
+    //       IResource r = kenken.findPackageFragmentRoot(p).getResource();
+    //       p = r.getLocation().makeRelativeTo(getWorkspaceRoot().getLocation());
+    //   check javaProject has this.project in it's classpath
+    //
+    // CPE_VARIABLE:
+    // CPE_CONTAINER:
+    //   check for the exact same variable/container in javaProject's classpath
+    //
+    // CPE_PROJECT:
+    //   check if project is the same as javaProject
+    //   check for the exact same project in javaProject's classpath
+    //
+    // CPE_LIBRARY:
+    //   check for the exact same library in javaProject's classpath
+    //     (this could be absolute to the file system or relative to the workspace)
+    //   if folder:
+    //     check if this is an output folder of something in this project
+    //     somehow find the IPackageFragmentRoot outputting (maybe javaProject.findType is appropriate here)
+    //
+    // Find the type and return it with
+    // return new TypeMnemonic(type);
+    return null;
+  }
+
+  /**
+   * Resolves this type in the within the project defined by
+   * <code>TypeMnemonic.getJavaProject()</code>. If the project is
+   * <code>null</code>, <code>null</code> is returned. Otherwise, the results of
+   * <code>IJavaProject.findType(String)</code> are used to construct and return
+   * a new TypeMnemonic.
+   * 
+   * @return a new TypeMnemonic using the first <code>IType</code> found in the
+   *         project to match the fully-qualified name, or <code>null</code> if
+   *         the project or type could not be found
+   * @throws JavaModelException 
+   */
+  public TypeMnemonic resolve() throws JavaModelException {
+    if (getJavaProject() != null) {
+      return resolve(getJavaProject());
+    }
     
-    fExists = fJavaProject != null && fClasspathEntry != null && fType != null;
+    return null;
+  }
+
+  public TypeMnemonic resolve(IJavaProject javaProject) throws JavaModelException {
+    String fqname = getFullyQualifiedName().replace('$', '.');
+    
+    IProgressMonitor pm = new NullProgressMonitor();
+    IType type = javaProject.findType(fqname, pm);
+    
+    if (type == null) {
+      return null;
+    }
+    
+    return new TypeMnemonic(type);
   }
 
   private static IType findType(IJavaProject javaProject, IClasspathEntry classpathEntry, String fqname) throws JavaModelException {
@@ -180,17 +259,21 @@ public class TypeMnemonic {
   public String getJavaProjectName() {
     return fJavaProjectName;
   }
-
+  
+  public int getClasspathKind() {
+    return fClasspathKind;
+  }
+  
   public IPath getClasspath() {
     return fClasspath;
   }
 
-  public String getfFullyQualifiedTypeName() {
+  public String getFullyQualifiedName() {
     return fFullyQualifiedTypeName;
   }
 
-  public boolean isExists() {
-    return fExists;
+  public boolean exists() {
+    return fJavaProject != null && fClasspathEntry != null && fType != null;
   }
 
   @Override
@@ -199,9 +282,11 @@ public class TypeMnemonic {
 
     mnemonic.append(getJavaProjectName());
     mnemonic.append(DELIMITER);
+    mnemonic.append(getClasspathKind());
+    mnemonic.append(DELIMITER);
     mnemonic.append(getClasspath());
     mnemonic.append(DELIMITER);
-    mnemonic.append(getfFullyQualifiedTypeName());
+    mnemonic.append(getFullyQualifiedName());
 
     return mnemonic.toString();
   }
