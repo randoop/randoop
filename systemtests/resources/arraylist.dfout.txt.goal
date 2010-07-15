@@ -199,3 +199,79 @@ VARS 1
 var31 0
 END DFRESULT
 
+START DFRESULT
+classname=java2.util2.AbstractCollection,methodname=contains,line=94,id=0,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:100 : 
+var2 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var1 
+var3 =  cons : java2.util2.ArrayList.<init>() : 
+var4 =  cons : java2.util2.ArrayList.<init>() : 
+var5 =  cons : java2.util2.ArrayList.<init>() : 
+var6 =  method : java2.util2.ArrayList.toArray() : var5 
+var7 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var4 var6 
+var8 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var3 var6 
+var9 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var6 
+var10 =  method : java2.util2.ArrayList.isEmpty() : var0 
+var11 =  method : java2.util2.AbstractList.listIterator() : var0 
+var12 =  method : java2.util2.ArrayList.trimToSize() : var0 
+var13 =  cons : java2.util2.ArrayList.<init>() : 
+var14 =  prim : short:100 : 
+var15 =  method : java2.util2.ArrayList.add(java.lang.Object) : var13 var14 
+var16 =  cons : java2.util2.ArrayList.<init>() : 
+var17 =  cons : java2.util2.ArrayList.<init>() : 
+var18 =  cons : java2.util2.ArrayList.<init>() : 
+var19 =  method : java2.util2.ArrayList.toArray() : var18 
+var20 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var17 var19 
+var21 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var16 var19 
+var22 =  method : java2.util2.ArrayList.add(java.lang.Object) : var13 var19 
+var23 =  method : java2.util2.ArrayList.isEmpty() : var13 
+var24 =  cons : java2.util2.ArrayList.<init>() : 
+var25 =  cons : java2.util2.ArrayList.<init>() : 
+var26 =  method : java2.util2.ArrayList.toArray() : var25 
+var27 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var24 var26 
+var28 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var13 var27 
+var29 =  prim : int:0 : 
+var30 =  prim : int:0 : 
+var31 =  method : java2.util2.AbstractList.subList(int,int) : var13 var29 var30 
+var32 =  method : java2.util2.AbstractCollection.retainAll(java2.util2.Collection) : var0 var31 
+VARS 0
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.AbstractCollection,methodname=contains,line=99,id=3,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:100 : 
+var2 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var1 
+var3 =  cons : java2.util2.ArrayList.<init>() : 
+var4 =  cons : java2.util2.ArrayList.<init>() : 
+var5 =  cons : java2.util2.ArrayList.<init>() : 
+var6 =  method : java2.util2.ArrayList.toArray() : var5 
+var7 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var4 var6 
+var8 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var3 var6 
+var9 =  method : java2.util2.ArrayList.add(java.lang.Object) : var0 var6 
+var10 =  method : java2.util2.ArrayList.isEmpty() : var0 
+var11 =  method : java2.util2.AbstractList.listIterator() : var0 
+var12 =  method : java2.util2.ArrayList.trimToSize() : var0 
+var13 =  cons : java2.util2.ArrayList.<init>() : 
+var14 =  prim : short:100 : 
+var15 =  method : java2.util2.ArrayList.add(java.lang.Object) : var13 var14 
+var16 =  cons : java2.util2.ArrayList.<init>() : 
+var17 =  cons : java2.util2.ArrayList.<init>() : 
+var18 =  cons : java2.util2.ArrayList.<init>() : 
+var19 =  method : java2.util2.ArrayList.toArray() : var18 
+var20 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var17 var19 
+var21 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var16 var19 
+var22 =  method : java2.util2.ArrayList.add(java.lang.Object) : var13 var19 
+var23 =  method : java2.util2.ArrayList.isEmpty() : var13 
+var24 =  cons : java2.util2.ArrayList.<init>() : 
+var25 =  cons : java2.util2.ArrayList.<init>() : 
+var26 =  method : java2.util2.ArrayList.toArray() : var25 
+var27 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var24 var26 
+var28 =  method : java2.util2.ArrayList.toArray([Ljava.lang.Object;) : var13 var27 
+var29 =  prim : int:0 : 
+var30 =  prim : int:0 : 
+var31 =  method : java2.util2.AbstractList.subList(int,int) : var13 var29 var30 
+var32 =  method : java2.util2.AbstractCollection.retainAll(java2.util2.Collection) : var0 var31 
+VARS 0
+END DFRESULT
+

@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import plume.Unpublicized;
 import plume.Options.ArgException;
 import randoop.AbstractGenerator;
 import randoop.BugInRandoopException;
+import randoop.Check;
 import randoop.CheckRep;
 import randoop.CheckRepContract;
 import randoop.ComponentManager;
@@ -39,6 +41,7 @@ import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
 import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
+import randoop.ExpectedExceptionCheck;
 import randoop.ForwardGenerator;
 import randoop.Globals;
 import randoop.JunitFileWriter;
@@ -60,6 +63,7 @@ import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.IMessage;
 import randoop.runtime.MessageSender;
 import randoop.runtime.RandoopFinished;
+import randoop.util.ClassFileConstants;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -199,7 +203,7 @@ public class GenTests extends GenInputsAbstract {
     // there is at least one visible constructor/factory in each class as well.
     for (Class<?> c : classes) {
       if (!Reflection.isVisible (c)) {
-        throw new Error ("Specified " + c + " is not visible");
+        throw new Error ("Specified class " + c + " is not visible");
       }
     }
     List<StatementKind> model =
@@ -300,7 +304,7 @@ public class GenTests extends GenInputsAbstract {
       componentMgr = new ComponentManager(components);
     }
     
-    addClassLiterals(componentMgr);
+    addClassLiterals(componentMgr, allClasses);
     
     AbstractGenerator explorer = null;
 
@@ -489,6 +493,29 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
+    // Remove any sequences that throw
+    // randoop.util.ReflectionExecutor.TimeoutExceeded.
+    {
+      List<ExecutableSequence> non_timeout_seqs = new ArrayList<ExecutableSequence>();
+      boolean keep = true;
+      for (ExecutableSequence es : sequences) {
+        for (int i = 0 ; i < es.sequence.size() ; i++) {
+          List<Check> exObs = es.getChecks(i, ExpectedExceptionCheck.class);
+          if (!exObs.isEmpty()) {
+            assert exObs.size() == 1 : toString();
+            ExpectedExceptionCheck eec = (ExpectedExceptionCheck) exObs.get(0);
+            if (eec.get_value().equals("randoop.util.ReflectionExecutor.TimeoutExceeded")) {
+              keep = false;
+              break;
+            }
+          }
+        }
+        if (keep)
+          non_timeout_seqs.add (es);
+      }
+      sequences = non_timeout_seqs;
+    }
+
     // If specified, remove any sequences that don't include the target class
     // System.out.printf ("test_classes regex = %s%n",
     //                   GenInputsAbstract.test_classes);
@@ -576,31 +603,46 @@ public class GenTests extends GenInputsAbstract {
    * Adds literals to the component manager, by parsing any literals
    * files specified by the user.
    */
-  private void addClassLiterals(ComponentManager compMgr) {
+  private void addClassLiterals(ComponentManager compMgr, List<Class<?>> allClasses) {
     
     // Parameter check.
     boolean validMode = GenInputsAbstract.literals_level != ClassLiteralsMode.NONE;
     if (GenInputsAbstract.literals_file.size() > 0 && !validMode) {
-      System.out.println("Invalid parameter combination: specified a class literal file but use-class-literals is NONE");
+      System.out.println("Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
       System.exit(1);
     }
 
     // Add a (1-element) sequence corresponding to each literal to the component manager. 
     for (String filename : GenInputsAbstract.literals_file) {
-      MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap = LiteralFileReader.parse(filename);
+      MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap;
+      if (filename.equals("CLASSES")) {
+        Collection<ClassFileConstants.ConstantSet> css
+          = new ArrayList<ClassFileConstants.ConstantSet>(allClasses.size());
+        for (Class<?> clazz : allClasses) {
+          css.add(ClassFileConstants.getConstants(clazz.getName()));
+        }
+        literalmap = ClassFileConstants.toMap(css);
+      } else {
+        literalmap = LiteralFileReader.parse(filename);
+      }
 
       for (Class<?> cls : literalmap.keySet()) {
         Package pkg = (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
         for (PrimitiveOrStringOrNullDecl p : literalmap.getValues(cls)) {
           Sequence seq = Sequence.create(p);
-          if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
+          switch (GenInputsAbstract.literals_level) {
+          case CLASS:
             compMgr.addClassLevelLiteral(cls, seq);
-          } else if (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE) {
+            break;
+          case PACKAGE:
+            assert pkg != null;
             compMgr.addPackageLevelLiteral(pkg, seq);
-          } else {
-            // see parameter check above. 
-            assert GenInputsAbstract.literals_level == ClassLiteralsMode.ALL;
+            break;
+          case ALL:
             compMgr.addGeneratedSequence(seq);
+            break;
+          default:
+            throw new Error("This can't happen");
           }
         }
       }

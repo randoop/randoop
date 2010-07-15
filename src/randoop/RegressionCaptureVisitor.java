@@ -140,10 +140,11 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     for (int i = 0; i < s.sequence.size() ; i++) {
 
       StatementKind st = s.sequence.getStatementKind(i);
+      ExecutionOutcome result = s.getResult(i);
 
-      if (s.getResult(i) instanceof NormalExecution) {
+      if (result instanceof NormalExecution) {
 
-        NormalExecution e = (NormalExecution)s.getResult(i);
+        NormalExecution e = (NormalExecution)result;
         // If value is like x in "int x = 3" don't capture
         // checks (nothing interesting).
         if (st instanceof PrimitiveOrStringOrNullDecl)
@@ -255,9 +256,9 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           }
         }
 
-      } else if (s.getResult(i) instanceof ExceptionalExecution) {
+      } else if (result instanceof ExceptionalExecution) {
 
-        ExceptionalExecution e = (ExceptionalExecution)s.getResult(i);
+        ExceptionalExecution e = (ExceptionalExecution)result;
         s.addCheck(i, new ExpectedExceptionCheck(e.getException(), i), true);
 
       } else {

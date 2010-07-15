@@ -154,7 +154,7 @@ public final class Sequence implements Serializable, WeightedElement {
   // A set of bits, where there is one bit associated with each index.
   // Active flags are used during generation, to determine what values
   // in an existing sequence are useful to be used as inputs when
-  // creating a new sequence out of the existing one. For example,
+  // creating a new sequence out of the existing one.
   public BitSet activeFlags;
 
   public boolean hasActiveFlags() {

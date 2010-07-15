@@ -21,7 +21,7 @@ import randoop.util.Util;
  * and outputs include the new object.
  *
  * The "R" stands for "Randoop", to underline the distinction from
- * java.lang.reflect.Method.
+ * java.lang.reflect.Constructor.
  *
  */
 public final class RConstructor implements StatementKind, Serializable {
