@@ -49,6 +49,7 @@ public class LiteralFileReader {
   private static final String CLASSNAME = "CLASSNAME";
   private static final String LITERALS = "LITERALS";
 
+  /** Returns a map from class to list of constants. */      
   public static MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> parse(String inFile) {
     
     final MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> map =
