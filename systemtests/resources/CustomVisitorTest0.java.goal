@@ -3,8 +3,12 @@ import junit.framework.*;
 
 public class CustomVisitorTest0 extends TestCase {
 
+  public static boolean debug = false;
 
   public void test1() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test1");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -28,6 +32,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test2() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test2");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -209,6 +216,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test3() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test3");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -235,6 +245,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test4() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test4");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -464,6 +477,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test5() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test5");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -491,6 +507,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test6() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test6");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var2 = var1.a1();
     randoop.test.A var3 = var1.a1();
@@ -507,6 +526,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test7() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test7");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -675,6 +697,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test8() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test8");
+
+
     randoop.test.A var1 = new randoop.test.A(1);
     randoop.test.A var2 = var1.a1();
     int var3 = var2.a6();
@@ -691,6 +716,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test9() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test9");
+
+
     randoop.test.A var0 = new randoop.test.A();
     int var3 = var0.a5(10, (-1));
     
@@ -701,6 +729,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test10() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test10");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -832,6 +863,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test11() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test11");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -957,6 +991,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test12() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test12");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -1188,6 +1225,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test13() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test13");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -1358,6 +1398,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test14() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test14");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -1391,6 +1434,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test15() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test15");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var2 = var1.a1();
@@ -1631,6 +1677,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test16() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test16");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -1683,6 +1732,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test17() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test17");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -1807,6 +1859,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test18() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test18");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -1963,6 +2018,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test19() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test19");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -2174,6 +2232,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test20() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test20");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -2326,6 +2387,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test21() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test21");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -2428,6 +2492,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test22() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test22");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -2621,6 +2688,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test23() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test23");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -2710,6 +2780,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test24() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test24");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -2762,6 +2835,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test25() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test25");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -2942,6 +3018,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test26() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test26");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -3060,6 +3139,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test27() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test27");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -3315,6 +3397,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test28() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test28");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -3374,6 +3459,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test29() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test29");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -3545,6 +3633,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test30() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test30");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     int var2 = var1.a6();
     
@@ -3555,6 +3646,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test31() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test31");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -3671,6 +3765,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test32() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test32");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -3861,6 +3958,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test33() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test33");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -4058,6 +4158,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test34() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test34");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -4178,6 +4281,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test35() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test35");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -4361,6 +4467,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test36() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test36");
+
+
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
     randoop.test.A var4 = var3.a1();
@@ -4400,6 +4509,9 @@ public class CustomVisitorTest0 extends TestCase {
 
   public void test37() throws Throwable {
 
+    if (debug) System.out.printf("%nCustomVisitorTest0.test37");
+
+
     randoop.test.A var1 = new randoop.test.A(1);
     randoop.test.A var2 = var1.a1();
     randoop.test.A var3 = var2.a1();
@@ -4416,6 +4528,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test38() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test38");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));
@@ -4606,6 +4721,9 @@ public class CustomVisitorTest0 extends TestCase {
   }
 
   public void test39() throws Throwable {
+
+    if (debug) System.out.printf("%nCustomVisitorTest0.test39");
+
 
     randoop.test.A var1 = new randoop.test.A((-1));
     randoop.test.A var3 = new randoop.test.A((-1));

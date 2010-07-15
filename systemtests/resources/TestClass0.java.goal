@@ -4,8 +4,12 @@ import junit.framework.*;
 
 public class TestClass0 extends TestCase {
 
+  public static boolean debug = false;
 
   public void test1() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test1");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.contains((java.lang.Object)1);
@@ -26,6 +30,9 @@ public class TestClass0 extends TestCase {
 
   public void test2() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test2");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)' ');
     java2.util2.Set var2 = java2.util2.Collections.unmodifiableSet(var1);
     
@@ -38,6 +45,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test3() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test3");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)' ');
@@ -62,6 +72,9 @@ public class TestClass0 extends TestCase {
 
   public void test4() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test4");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.SortedSet var1 = java2.util2.Collections.synchronizedSortedSet((java2.util2.SortedSet)var0);
     
@@ -81,6 +94,9 @@ public class TestClass0 extends TestCase {
 
   public void test5() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test5");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     int var1 = var0.size();
     
@@ -99,6 +115,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test6() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test6");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Map var2 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)(-1));
@@ -123,6 +142,9 @@ public class TestClass0 extends TestCase {
 
   public void test7() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test7");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java.lang.Object var1 = var0.clone();
     
@@ -142,6 +164,9 @@ public class TestClass0 extends TestCase {
 
   public void test8() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test8");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.remove((java.lang.Object)10L);
     
@@ -160,6 +185,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test9() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test9");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet((java2.util2.Collection)var0);
@@ -186,6 +214,9 @@ public class TestClass0 extends TestCase {
 
   public void test10() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test10");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
@@ -210,6 +241,9 @@ public class TestClass0 extends TestCase {
 
   public void test11() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test11");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Comparator var1 = var0.comparator();
     
@@ -228,6 +262,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test12() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test12");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.equals((java.lang.Object)1L);
@@ -248,6 +285,9 @@ public class TestClass0 extends TestCase {
 
   public void test13() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test13");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.remove((java.lang.Object)'4');
     
@@ -267,6 +307,9 @@ public class TestClass0 extends TestCase {
 
   public void test14() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test14");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Iterator var1 = var0.iterator();
     
@@ -285,6 +328,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test15() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test15");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
@@ -313,6 +359,9 @@ public class TestClass0 extends TestCase {
 
   public void test16() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test16");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     var0.clear();
     
@@ -328,6 +377,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test17() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test17");
+
 
     java2.util2.Comparator var0 = java2.util2.Collections.reverseOrder();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet(var0);
@@ -347,6 +399,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test18() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test18");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Map var2 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)(short)0);
@@ -370,6 +425,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test19() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test19");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
@@ -417,6 +475,9 @@ public class TestClass0 extends TestCase {
 
   public void test20() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test20");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
@@ -453,6 +514,9 @@ public class TestClass0 extends TestCase {
 
   public void test21() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test21");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java.lang.String var1 = var0.toString();
     
@@ -471,6 +535,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test22() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test22");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Map var2 = java2.util2.Collections.singletonMap((java.lang.Object)var0, (java.lang.Object)(short)0);
@@ -494,6 +561,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test23() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test23");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet((java2.util2.SortedSet)var0);
@@ -520,6 +590,9 @@ public class TestClass0 extends TestCase {
 
   public void test24() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test24");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)' ');
     java2.util2.Comparator var2 = java2.util2.Collections.reverseOrder();
     java.lang.Object var3 = java2.util2.Collections.max((java2.util2.Collection)var1, var2);
@@ -536,6 +609,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test25() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test25");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var1 = var0.isEmpty();
@@ -555,6 +631,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test26() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test26");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     // The following exception was thrown during execution.
@@ -580,6 +659,9 @@ public class TestClass0 extends TestCase {
 
   public void test27() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test27");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.unmodifiableSet(var1);
     
@@ -592,6 +674,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test28() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test28");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.SortedSet var2 = var0.headSet((java.lang.Object)10.0f);
@@ -612,6 +697,9 @@ public class TestClass0 extends TestCase {
 
   public void test29() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test29");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.contains((java.lang.Object)(short)0);
     
@@ -631,6 +719,9 @@ public class TestClass0 extends TestCase {
 
   public void test30() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test30");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.SortedSet var1 = java2.util2.Collections.unmodifiableSortedSet((java2.util2.SortedSet)var0);
     
@@ -649,6 +740,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test31() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test31");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
@@ -673,6 +767,9 @@ public class TestClass0 extends TestCase {
 
   public void test32() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test32");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java2.util2.Iterator var3 = var0.iterator();
@@ -696,6 +793,9 @@ public class TestClass0 extends TestCase {
 
   public void test33() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test33");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Comparator var2 = java2.util2.Collections.reverseOrder();
     java.lang.Object var3 = java2.util2.Collections.min((java2.util2.Collection)var1, var2);
@@ -712,6 +812,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test34() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test34");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -742,6 +845,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test35() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test35");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
@@ -776,6 +882,9 @@ public class TestClass0 extends TestCase {
 
   public void test36() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test36");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java2.util2.Comparator var3 = var0.comparator();
@@ -799,6 +908,9 @@ public class TestClass0 extends TestCase {
 
   public void test37() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test37");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -820,6 +932,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test38() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test38");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     // The following exception was thrown during execution.
@@ -844,6 +959,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test39() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test39");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
@@ -889,6 +1007,9 @@ public class TestClass0 extends TestCase {
 
   public void test40() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test40");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.Comparator var3 = java2.util2.Collections.reverseOrder();
@@ -909,6 +1030,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test41() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test41");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
@@ -938,6 +1062,9 @@ public class TestClass0 extends TestCase {
 
   public void test42() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test42");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -962,6 +1089,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test43() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test43");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -989,6 +1119,9 @@ public class TestClass0 extends TestCase {
 
   public void test44() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test44");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java.lang.Object var3 = java2.util2.Collections.min((java2.util2.Collection)var0);
@@ -1011,6 +1144,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test45() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test45");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1041,6 +1177,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test46() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test46");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1080,6 +1219,9 @@ public class TestClass0 extends TestCase {
 
   public void test47() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test47");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -1101,6 +1243,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test48() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test48");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Comparator var1 = java2.util2.Collections.reverseOrder();
@@ -1130,6 +1275,9 @@ public class TestClass0 extends TestCase {
 
   public void test49() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test49");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -1155,6 +1303,9 @@ public class TestClass0 extends TestCase {
 
   public void test50() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test50");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.Collection var3 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var1);
@@ -1179,6 +1330,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test51() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test51");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1214,6 +1368,9 @@ public class TestClass0 extends TestCase {
 
   public void test52() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test52");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -1243,6 +1400,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test53() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test53");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
@@ -1284,6 +1444,9 @@ public class TestClass0 extends TestCase {
 
   public void test54() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test54");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -1308,6 +1471,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test55() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test55");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1343,6 +1509,9 @@ public class TestClass0 extends TestCase {
 
   public void test56() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test56");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java.lang.Object var3 = var0.last();
@@ -1366,6 +1535,9 @@ public class TestClass0 extends TestCase {
 
   public void test57() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test57");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java.lang.Object var3 = var0.first();
@@ -1388,6 +1560,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test58() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test58");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1423,6 +1598,9 @@ public class TestClass0 extends TestCase {
 
   public void test59() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test59");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
@@ -1457,6 +1635,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test60() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test60");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1500,6 +1681,9 @@ public class TestClass0 extends TestCase {
 
   public void test61() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test61");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     int var3 = var0.size();
@@ -1523,6 +1707,9 @@ public class TestClass0 extends TestCase {
 
   public void test62() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test62");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java.lang.Object var3 = java2.util2.Collections.min((java2.util2.Collection)var1);
@@ -1539,6 +1726,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test63() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test63");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
@@ -1568,6 +1758,9 @@ public class TestClass0 extends TestCase {
 
   public void test64() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test64");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)' ');
     java2.util2.Set var2 = java2.util2.Collections.synchronizedSet(var1);
     
@@ -1580,6 +1773,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test65() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test65");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1631,6 +1827,9 @@ public class TestClass0 extends TestCase {
 
   public void test66() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test66");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     // The following exception was thrown during execution.
@@ -1658,6 +1857,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test67() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test67");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1738,6 +1940,9 @@ public class TestClass0 extends TestCase {
 
   public void test68() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test68");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -1784,6 +1989,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test69() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test69");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1872,6 +2080,9 @@ public class TestClass0 extends TestCase {
 
   public void test70() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test70");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java2.util2.Set var3 = java2.util2.Collections.unmodifiableSet((java2.util2.Set)var0);
@@ -1894,6 +2105,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test71() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test71");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -1933,6 +2147,9 @@ public class TestClass0 extends TestCase {
 
   public void test72() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test72");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     boolean var3 = var0.isEmpty();
@@ -1955,6 +2172,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test73() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test73");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
@@ -2003,6 +2223,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test74() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test74");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -2065,6 +2288,9 @@ public class TestClass0 extends TestCase {
 
   public void test75() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test75");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java.lang.String var3 = var0.toString();
@@ -2087,6 +2313,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test76() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test76");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -2129,6 +2358,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test77() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test77");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -2173,6 +2405,9 @@ public class TestClass0 extends TestCase {
 
   public void test78() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test78");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java2.util2.SortedSet var4 = var0.headSet((java.lang.Object)'a');
@@ -2195,6 +2430,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test79() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test79");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -2261,6 +2499,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test80() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test80");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -2331,6 +2572,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test81() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test81");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -2455,6 +2699,9 @@ public class TestClass0 extends TestCase {
 
   public void test82() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test82");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -2481,6 +2728,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test83() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test83");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
@@ -2567,6 +2817,9 @@ public class TestClass0 extends TestCase {
 
   public void test84() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test84");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -2624,6 +2877,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test85() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test85");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -2712,6 +2968,9 @@ public class TestClass0 extends TestCase {
 
   public void test86() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test86");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -2737,6 +2996,9 @@ public class TestClass0 extends TestCase {
 
   public void test87() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test87");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java2.util2.SortedSet var4 = var0.headSet((java.lang.Object)(short)0);
@@ -2759,6 +3021,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test88() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test88");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -2798,6 +3063,9 @@ public class TestClass0 extends TestCase {
 
   public void test89() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test89");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     // The following exception was thrown during execution.
@@ -2825,6 +3093,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test90() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test90");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -2864,6 +3135,9 @@ public class TestClass0 extends TestCase {
 
   public void test91() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test91");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java2.util2.SortedSet var3 = java2.util2.Collections.synchronizedSortedSet((java2.util2.SortedSet)var0);
@@ -2886,6 +3160,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test92() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test92");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -3028,6 +3305,9 @@ public class TestClass0 extends TestCase {
 
   public void test93() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test93");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     // The following exception was thrown during execution.
@@ -3055,6 +3335,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test94() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test94");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -3126,6 +3409,9 @@ public class TestClass0 extends TestCase {
 
   public void test95() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test95");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -3147,6 +3433,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test96() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test96");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -3254,6 +3543,9 @@ public class TestClass0 extends TestCase {
 
   public void test97() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test97");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -3278,6 +3570,9 @@ public class TestClass0 extends TestCase {
 
   public void test98() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test98");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.Set var3 = java2.util2.Collections.synchronizedSet(var1);
@@ -3294,6 +3589,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test99() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test99");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -3324,6 +3622,9 @@ public class TestClass0 extends TestCase {
 
   public void test100() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test100");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java2.util2.Comparator var3 = java2.util2.Collections.reverseOrder();
@@ -3351,6 +3652,9 @@ public class TestClass0 extends TestCase {
 
   public void test101() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test101");
+
+
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var4 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var3);
     java2.util2.Collection var5 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var3);
@@ -3376,6 +3680,9 @@ public class TestClass0 extends TestCase {
 
   public void test102() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test102");
+
+
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -3388,6 +3695,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test103() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test103");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -3481,6 +3791,9 @@ public class TestClass0 extends TestCase {
 
   public void test104() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test104");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -3547,6 +3860,9 @@ public class TestClass0 extends TestCase {
 
   public void test105() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test105");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -3601,6 +3917,9 @@ public class TestClass0 extends TestCase {
 
   public void test106() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test106");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -3643,6 +3962,9 @@ public class TestClass0 extends TestCase {
 
   public void test107() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test107");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -3671,6 +3993,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test108() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test108");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
@@ -3715,6 +4040,9 @@ public class TestClass0 extends TestCase {
 
   public void test109() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test109");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Comparator var3 = java2.util2.Collections.reverseOrder();
@@ -3748,6 +4076,9 @@ public class TestClass0 extends TestCase {
 
   public void test110() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test110");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)var2);
     java2.util2.Enumeration var4 = java2.util2.Collections.enumeration((java2.util2.Collection)var2);
@@ -3773,6 +4104,9 @@ public class TestClass0 extends TestCase {
 
   public void test111() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test111");
+
+
     java2.util2.Map var2 = java2.util2.Collections.singletonMap((java.lang.Object)(byte)1, (java.lang.Object)'4');
     java2.util2.Map var3 = java2.util2.Collections.unmodifiableMap(var2);
     
@@ -3785,6 +4119,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test112() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test112");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -3839,6 +4176,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test113() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test113");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -3940,6 +4280,9 @@ public class TestClass0 extends TestCase {
 
   public void test114() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test114");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -4012,6 +4355,9 @@ public class TestClass0 extends TestCase {
 
   public void test115() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test115");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -4053,6 +4399,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test116() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test116");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -4120,6 +4469,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test117() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test117");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
@@ -4239,6 +4591,9 @@ public class TestClass0 extends TestCase {
 
   public void test118() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test118");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -4339,6 +4694,9 @@ public class TestClass0 extends TestCase {
 
   public void test119() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test119");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -4366,6 +4724,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test120() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test120");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -4396,6 +4757,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test121() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test121");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -4450,6 +4814,9 @@ public class TestClass0 extends TestCase {
 
   public void test122() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test122");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -4475,6 +4842,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test123() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test123");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -4521,6 +4891,9 @@ public class TestClass0 extends TestCase {
 
   public void test124() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test124");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -4563,6 +4936,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test125() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test125");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -4712,6 +5088,9 @@ public class TestClass0 extends TestCase {
 
   public void test126() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test126");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -4845,6 +5224,9 @@ public class TestClass0 extends TestCase {
 
   public void test127() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test127");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -4957,6 +5339,9 @@ public class TestClass0 extends TestCase {
 
   public void test128() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test128");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -5062,6 +5447,9 @@ public class TestClass0 extends TestCase {
 
   public void test129() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test129");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -5159,6 +5547,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test130() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test130");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -5348,6 +5739,9 @@ public class TestClass0 extends TestCase {
 
   public void test131() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test131");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -5439,6 +5833,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test132() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test132");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -5588,6 +5985,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test133() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test133");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -5770,6 +6170,9 @@ public class TestClass0 extends TestCase {
 
   public void test134() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test134");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -5896,6 +6299,9 @@ public class TestClass0 extends TestCase {
 
   public void test135() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test135");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -5943,6 +6349,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test136() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test136");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -6035,6 +6444,9 @@ public class TestClass0 extends TestCase {
 
   public void test137() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test137");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -6099,6 +6511,9 @@ public class TestClass0 extends TestCase {
 
   public void test138() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test138");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -6149,6 +6564,9 @@ public class TestClass0 extends TestCase {
 
   public void test139() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test139");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -6182,6 +6600,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test140() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test140");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -6288,6 +6709,9 @@ public class TestClass0 extends TestCase {
 
   public void test141() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test141");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -6328,6 +6752,9 @@ public class TestClass0 extends TestCase {
 
   public void test142() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test142");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)' ');
     java2.util2.List var3 = java2.util2.Collections.nCopies(100, (java.lang.Object)var2);
     // The following exception was thrown during execution.
@@ -6349,6 +6776,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test143() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test143");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -6420,6 +6850,9 @@ public class TestClass0 extends TestCase {
 
   public void test144() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test144");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)' ');
     java2.util2.List var3 = java2.util2.Collections.nCopies(100, (java.lang.Object)var2);
     java2.util2.List var4 = java2.util2.Collections.synchronizedList(var3);
@@ -6436,6 +6869,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test145() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test145");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -6512,6 +6948,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test146() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test146");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -6695,6 +7134,9 @@ public class TestClass0 extends TestCase {
 
   public void test147() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test147");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -6760,6 +7202,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test148() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test148");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -6904,6 +7349,9 @@ public class TestClass0 extends TestCase {
 
   public void test149() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test149");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -7013,6 +7461,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test150() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test150");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -7167,6 +7618,9 @@ public class TestClass0 extends TestCase {
 
   public void test151() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test151");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -7259,6 +7713,9 @@ public class TestClass0 extends TestCase {
 
   public void test152() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test152");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -7333,6 +7790,9 @@ public class TestClass0 extends TestCase {
 
   public void test153() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test153");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -7398,6 +7858,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test154() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test154");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -7623,6 +8086,9 @@ public class TestClass0 extends TestCase {
 
   public void test155() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test155");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -7703,6 +8169,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test156() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test156");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -7820,6 +8289,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test157() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test157");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -7958,6 +8430,9 @@ public class TestClass0 extends TestCase {
 
   public void test158() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test158");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -8006,6 +8481,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test159() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test159");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -8097,6 +8575,9 @@ public class TestClass0 extends TestCase {
 
   public void test160() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test160");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -8160,6 +8641,9 @@ public class TestClass0 extends TestCase {
 
   public void test161() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test161");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Enumeration var4 = java2.util2.Collections.enumeration((java2.util2.Collection)var2);
@@ -8189,6 +8673,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test162() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test162");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -8256,6 +8743,9 @@ public class TestClass0 extends TestCase {
 
   public void test163() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test163");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -8281,6 +8771,9 @@ public class TestClass0 extends TestCase {
 
   public void test164() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test164");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)' ');
     java2.util2.List var3 = java2.util2.Collections.nCopies(100, (java.lang.Object)var2);
     // The following exception was thrown during execution.
@@ -8302,6 +8795,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test165() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test165");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -8341,6 +8837,9 @@ public class TestClass0 extends TestCase {
 
   public void test166() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test166");
+
+
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -8353,6 +8852,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test167() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test167");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -8391,6 +8893,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test168() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test168");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -8449,6 +8954,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test169() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test169");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -8627,6 +9135,9 @@ public class TestClass0 extends TestCase {
 
   public void test170() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test170");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -8761,6 +9272,9 @@ public class TestClass0 extends TestCase {
 
   public void test171() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test171");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -8863,6 +9377,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test172() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test172");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -9005,6 +9522,9 @@ public class TestClass0 extends TestCase {
 
   public void test173() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test173");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.TreeSet var1 = new java2.util2.TreeSet();
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)10L);
@@ -9061,6 +9581,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test174() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test174");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -9162,6 +9685,9 @@ public class TestClass0 extends TestCase {
 
   public void test175() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test175");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -9223,6 +9749,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test176() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test176");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -9488,6 +10017,9 @@ public class TestClass0 extends TestCase {
 
   public void test177() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test177");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -9538,6 +10070,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test178() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test178");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -9678,6 +10213,9 @@ public class TestClass0 extends TestCase {
 
   public void test179() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test179");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -9719,6 +10257,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test180() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test180");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -9826,6 +10367,9 @@ public class TestClass0 extends TestCase {
 
   public void test181() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test181");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var4 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var3);
@@ -9869,6 +10413,9 @@ public class TestClass0 extends TestCase {
 
   public void test182() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test182");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -9903,6 +10450,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test183() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test183");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -9974,6 +10524,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test184() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test184");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -10094,6 +10647,9 @@ public class TestClass0 extends TestCase {
 
   public void test185() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test185");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     boolean var2 = var0.add((java.lang.Object)1L);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.SortedSet)var0);
@@ -10122,6 +10678,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test186() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test186");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -10201,6 +10760,9 @@ public class TestClass0 extends TestCase {
 
   public void test187() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test187");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)(short)10);
     java2.util2.Set var2 = java2.util2.Collections.unmodifiableSet(var1);
     
@@ -10213,6 +10775,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test188() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test188");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -10402,6 +10967,9 @@ public class TestClass0 extends TestCase {
 
   public void test189() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test189");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
@@ -10441,6 +11009,9 @@ public class TestClass0 extends TestCase {
 
   public void test190() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test190");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Collection var4 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var2);
@@ -10469,6 +11040,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test191() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test191");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -10650,6 +11224,9 @@ public class TestClass0 extends TestCase {
 
   public void test192() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test192");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -10794,6 +11371,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test193() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test193");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -10980,6 +11560,9 @@ public class TestClass0 extends TestCase {
 
   public void test194() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test194");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -11015,6 +11598,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test195() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test195");
+
 
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)var2);
@@ -11103,6 +11689,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test196() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test196");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -11208,6 +11797,9 @@ public class TestClass0 extends TestCase {
 
   public void test197() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test197");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -11273,6 +11865,9 @@ public class TestClass0 extends TestCase {
 
   public void test198() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test198");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -11314,6 +11909,9 @@ public class TestClass0 extends TestCase {
 
   public void test199() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test199");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -11335,6 +11933,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test200() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test200");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -11439,6 +12040,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test201() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test201");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -11747,6 +12351,9 @@ public class TestClass0 extends TestCase {
 
   public void test202() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test202");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -11792,6 +12399,9 @@ public class TestClass0 extends TestCase {
 
   public void test203() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test203");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Collection var4 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var2);
@@ -11824,6 +12434,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test204() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test204");
+
 
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)var2);
@@ -11897,6 +12510,9 @@ public class TestClass0 extends TestCase {
 
   public void test205() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test205");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -11942,6 +12558,9 @@ public class TestClass0 extends TestCase {
 
   public void test206() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test206");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)(short)10);
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
@@ -11959,6 +12578,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test207() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test207");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -12159,6 +12781,9 @@ public class TestClass0 extends TestCase {
 
   public void test208() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test208");
+
+
     java2.util2.List var1 = java2.util2.Collections.singletonList((java.lang.Object)10.0d);
     
     // Regression assertion (captures the current behavior of the code)
@@ -12167,6 +12792,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test209() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test209");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -12232,6 +12860,9 @@ public class TestClass0 extends TestCase {
 
   public void test210() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test210");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -12267,6 +12898,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test211() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test211");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -12379,6 +13013,9 @@ public class TestClass0 extends TestCase {
 
   public void test212() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test212");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -12419,6 +13056,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test213() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test213");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -12563,6 +13203,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test214() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test214");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -12716,6 +13359,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test215() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test215");
+
 
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)var2);
@@ -13062,6 +13708,9 @@ public class TestClass0 extends TestCase {
 
   public void test216() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test216");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -13112,6 +13761,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test217() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test217");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -13204,6 +13856,9 @@ public class TestClass0 extends TestCase {
 
   public void test218() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test218");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -13261,6 +13916,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test219() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test219");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -13394,6 +14052,9 @@ public class TestClass0 extends TestCase {
 
   public void test220() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test220");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -13489,6 +14150,9 @@ public class TestClass0 extends TestCase {
 
   public void test221() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test221");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -13579,6 +14243,9 @@ public class TestClass0 extends TestCase {
 
   public void test222() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test222");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -13646,6 +14313,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test223() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test223");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -13742,6 +14412,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test224() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test224");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -13866,6 +14539,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test225() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test225");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -14145,6 +14821,9 @@ public class TestClass0 extends TestCase {
 
   public void test226() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test226");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -14285,6 +14964,9 @@ public class TestClass0 extends TestCase {
 
   public void test227() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test227");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -14374,6 +15056,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test228() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test228");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -14601,6 +15286,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test229() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test229");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -14846,6 +15534,9 @@ public class TestClass0 extends TestCase {
 
   public void test230() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test230");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -14960,6 +15651,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test231() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test231");
+
 
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
@@ -15141,6 +15835,9 @@ public class TestClass0 extends TestCase {
 
   public void test232() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test232");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -15199,6 +15896,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test233() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test233");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -15306,6 +16006,9 @@ public class TestClass0 extends TestCase {
 
   public void test234() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test234");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -15411,6 +16114,9 @@ public class TestClass0 extends TestCase {
 
   public void test235() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test235");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -15478,6 +16184,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test236() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test236");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -15559,6 +16268,9 @@ public class TestClass0 extends TestCase {
 
   public void test237() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test237");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -15625,6 +16337,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test238() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test238");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -15795,6 +16510,9 @@ public class TestClass0 extends TestCase {
 
   public void test239() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test239");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -15850,6 +16568,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test240() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test240");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -15976,6 +16697,9 @@ public class TestClass0 extends TestCase {
 
   public void test241() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test241");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -16016,6 +16740,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test242() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test242");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -16100,6 +16827,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test243() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test243");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -16331,6 +17061,9 @@ public class TestClass0 extends TestCase {
 
   public void test244() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test244");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -16406,6 +17139,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test245() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test245");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -16627,6 +17363,9 @@ public class TestClass0 extends TestCase {
 
   public void test246() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test246");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -16770,6 +17509,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test247() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test247");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -17120,6 +17862,9 @@ public class TestClass0 extends TestCase {
 
   public void test248() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test248");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -17187,6 +17932,9 @@ public class TestClass0 extends TestCase {
 
   public void test249() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test249");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -17222,6 +17970,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test250() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test250");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -17324,6 +18075,9 @@ public class TestClass0 extends TestCase {
 
   public void test251() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test251");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -17366,6 +18120,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test252() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test252");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -17444,6 +18201,9 @@ public class TestClass0 extends TestCase {
 
   public void test253() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test253");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -17515,6 +18275,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test254() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test254");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -17654,6 +18417,9 @@ public class TestClass0 extends TestCase {
 
   public void test255() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test255");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -17778,6 +18544,9 @@ public class TestClass0 extends TestCase {
 
   public void test256() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test256");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -17836,6 +18605,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test257() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test257");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -17927,6 +18699,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test258() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test258");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -18034,6 +18809,9 @@ public class TestClass0 extends TestCase {
 
   public void test259() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test259");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Enumeration var4 = java2.util2.Collections.enumeration((java2.util2.Collection)var2);
@@ -18135,6 +18913,9 @@ public class TestClass0 extends TestCase {
 
   public void test260() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test260");
+
+
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var4 = java2.util2.Collections.singleton((java.lang.Object)var3);
     java2.util2.Enumeration var5 = java2.util2.Collections.enumeration((java2.util2.Collection)var3);
@@ -18168,6 +18949,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test261() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test261");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -18218,6 +19002,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test262() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test262");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -18556,6 +19343,9 @@ public class TestClass0 extends TestCase {
 
   public void test263() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test263");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -18606,6 +19396,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test264() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test264");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -18686,6 +19479,9 @@ public class TestClass0 extends TestCase {
 
   public void test265() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test265");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -18726,6 +19522,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test266() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test266");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -18967,6 +19766,9 @@ public class TestClass0 extends TestCase {
 
   public void test267() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test267");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -19144,6 +19946,9 @@ public class TestClass0 extends TestCase {
 
   public void test268() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test268");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -19208,6 +20013,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test269() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test269");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -19347,6 +20155,9 @@ public class TestClass0 extends TestCase {
 
   public void test270() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test270");
+
+
     java2.util2.List var2 = java2.util2.Collections.nCopies(100, (java.lang.Object)10L);
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
@@ -19364,6 +20175,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test271() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test271");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -19439,6 +20253,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test272() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test272");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -19523,6 +20340,9 @@ public class TestClass0 extends TestCase {
 
   public void test273() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test273");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -19577,6 +20397,9 @@ public class TestClass0 extends TestCase {
 
   public void test274() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test274");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var1);
     
@@ -19589,6 +20412,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test275() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test275");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -19833,6 +20659,9 @@ public class TestClass0 extends TestCase {
 
   public void test276() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test276");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Collection var4 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var2);
@@ -19861,6 +20690,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test277() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test277");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -20150,6 +20982,9 @@ public class TestClass0 extends TestCase {
 
   public void test278() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test278");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -20204,6 +21039,9 @@ public class TestClass0 extends TestCase {
 
   public void test279() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test279");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -20244,6 +21082,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test280() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test280");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -20299,6 +21140,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test281() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test281");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -20369,6 +21213,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test282() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test282");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -20498,6 +21345,9 @@ public class TestClass0 extends TestCase {
 
   public void test283() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test283");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -20548,6 +21398,9 @@ public class TestClass0 extends TestCase {
 
   public void test284() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test284");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -20578,6 +21431,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test285() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test285");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -20641,6 +21497,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test286() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test286");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -20829,6 +21688,9 @@ public class TestClass0 extends TestCase {
 
   public void test287() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test287");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -20931,6 +21793,9 @@ public class TestClass0 extends TestCase {
 
   public void test288() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test288");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -20957,6 +21822,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test289() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test289");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -21017,6 +21885,9 @@ public class TestClass0 extends TestCase {
 
   public void test290() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test290");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -21075,6 +21946,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test291() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test291");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -21217,6 +22091,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test292() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test292");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -21442,6 +22319,9 @@ public class TestClass0 extends TestCase {
 
   public void test293() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test293");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Collection var4 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var2);
@@ -21525,6 +22405,9 @@ public class TestClass0 extends TestCase {
 
   public void test294() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test294");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Collection var4 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var2);
@@ -21557,6 +22440,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test295() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test295");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -21865,6 +22751,9 @@ public class TestClass0 extends TestCase {
 
   public void test296() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test296");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -21938,6 +22827,9 @@ public class TestClass0 extends TestCase {
 
   public void test297() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test297");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)var2);
     java2.util2.TreeSet var4 = new java2.util2.TreeSet((java2.util2.Collection)var3);
@@ -22001,6 +22893,9 @@ public class TestClass0 extends TestCase {
 
   public void test298() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test298");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
     java2.util2.Enumeration var3 = java2.util2.Collections.enumeration((java2.util2.Collection)var1);
@@ -22053,6 +22948,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test299() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test299");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
@@ -22116,6 +23014,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test300() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test300");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -22393,6 +23294,9 @@ public class TestClass0 extends TestCase {
 
   public void test301() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test301");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -22458,6 +23362,9 @@ public class TestClass0 extends TestCase {
 
   public void test302() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test302");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -22516,6 +23423,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test303() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test303");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -22622,6 +23532,9 @@ public class TestClass0 extends TestCase {
 
   public void test304() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test304");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -22674,6 +23587,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test305() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test305");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -22779,6 +23695,9 @@ public class TestClass0 extends TestCase {
 
   public void test306() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test306");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -22857,6 +23776,9 @@ public class TestClass0 extends TestCase {
 
   public void test307() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test307");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -22921,6 +23843,9 @@ public class TestClass0 extends TestCase {
 
   public void test308() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test308");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -22982,6 +23907,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test309() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test309");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -23084,6 +24012,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test310() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test310");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -23294,6 +24225,9 @@ public class TestClass0 extends TestCase {
 
   public void test311() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test311");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Enumeration var4 = java2.util2.Collections.enumeration((java2.util2.Collection)var2);
@@ -23398,6 +24332,9 @@ public class TestClass0 extends TestCase {
 
   public void test312() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test312");
+
+
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
@@ -23429,6 +24366,9 @@ public class TestClass0 extends TestCase {
 
   public void test313() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test313");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var3 = java2.util2.Collections.singleton((java.lang.Object)var2);
     java2.util2.Enumeration var4 = java2.util2.Collections.enumeration((java2.util2.Collection)var2);
@@ -23453,6 +24393,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test314() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test314");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -23614,6 +24557,9 @@ public class TestClass0 extends TestCase {
 
   public void test315() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test315");
+
+
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var3 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var2);
     java2.util2.Collection var4 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)var2);
@@ -23642,6 +24588,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test316() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test316");
+
 
     java2.util2.TreeSet var0 = new java2.util2.TreeSet();
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)10L);
@@ -23731,6 +24680,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test317() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test317");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -24027,6 +24979,9 @@ public class TestClass0 extends TestCase {
 
   public void test318() throws Throwable {
 
+    if (debug) System.out.printf("%nTestClass0.test318");
+
+
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set var2 = java2.util2.Collections.singleton((java.lang.Object)var1);
     java2.util2.TreeSet var3 = new java2.util2.TreeSet((java2.util2.Collection)var2);
@@ -24105,6 +25060,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test319() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test319");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
@@ -24307,6 +25265,9 @@ public class TestClass0 extends TestCase {
   }
 
   public void test320() throws Throwable {
+
+    if (debug) System.out.printf("%nTestClass0.test320");
+
 
     java2.util2.Set var1 = java2.util2.Collections.singleton((java.lang.Object)10L);
     java2.util2.Collection var2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)var1);
