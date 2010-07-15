@@ -12,7 +12,7 @@ default:
 	@echo "Main targets:"
 	@echo ""
 	@echo "all            do everything (build and run test)."
-	@echo "build          compile Randoop."
+	@echo "build          compile Randoop (does NOT make randoop.jar)."
 	@echo "clean          remove build-related auto-generated files."
 	@echo "clean-tests    remove test-related auto-generated files."
 	@echo "results        display results of tests."
