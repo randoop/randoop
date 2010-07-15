@@ -231,7 +231,7 @@ public class JunitFileWriter {
       Log.out.println("Exception thrown while creating text print stream:" + file.getName());
       e.printStackTrace();
       System.exit(1);
-      return null;// make compiler happy
+      throw new Exception("This can't happen");
     }
   }
 }
