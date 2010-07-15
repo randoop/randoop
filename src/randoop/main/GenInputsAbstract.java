@@ -289,6 +289,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
       + "may be rejected, according to the Java Virtual Machine specification.")
   public static int assertion_string_maxlen = 10000;
 
+  public static int string_maxlen = 10000;
+
   public static enum ClassLiteralsMode {
     NONE, CLASS, PACKAGE, ALL;
   }
