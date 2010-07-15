@@ -12,32 +12,36 @@ import randoop.util.RecordProcessor;
  * to use during generation. Method parse(String) takes as input the name
  * of a text file. The text file should contain one or more records of the form:
  * 
+ * <pre>
  * START CLASSLITERALS
  * CLASSNAME
- * <classname>
+ * classname
  * LITERALS
- * <type>:<value>
+ * type:value
  * ...
- * <type>:<value>
+ * type:value
  * END CLASSLITERALS
+ * </pre>
  *
- * Where:
- *
- * <classname> is the fully-qualified name of a valid class.
+ * Capitalized text must appear literally.  Lowercase text is as follows:
+ * <ul>
+ * <li>classname is the fully-qualified name of a valid class.
  * More specifically, Class.forName(classname) must return a valid Class object.
- *
- * Blank lines and comment lines (lines starting with "#") between records, as
- * well as inside records, are ignored.
+ * <li>Each type:value pair describes the type and value of a literal (for
+ * example, <tt>int:3</tt>).  For the exact format, see
+ * {@link randoop.PrimitiveOrStringOrNullDecl#parse(String)}.
+ * </ul>
+ * Blank lines and comment lines (lines starting with "#") are ignored, both
+ * between records and inside records.
+ * </p>
  * 
- * Each <type>:<value> pair describes the type and value of a literal (for
- * example, "int:3").
+ * LIMITATIONS:</p>
  * 
- * LIMITATIONS:
+ * Error messages do not include line numbers pointing to location of the error.</p>
  * 
- * Error messages do not include line numbers pointing to location of the error.
- * 
- * There is no way to specify literals that are not related to any class in particular,
- * or literals that are related to only specific methods within a class.
+ * There is no way to specify literals that are not related to any class in
+ * particular, or literals that are related to only specific methods within
+ * a class.
  */
 public class LiteralFileReader {
 
