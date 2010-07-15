@@ -587,20 +587,26 @@ public class GenTests extends GenInputsAbstract {
 
     // Add a (1-element) sequence corresponding to each literal to the component manager. 
     for (String filename : GenInputsAbstract.literals_file) {
-      MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap = LiteralFileReader.parse(filename);
+      MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap;
+      literalmap = LiteralFileReader.parse(filename);
 
       for (Class<?> cls : literalmap.keySet()) {
         Package pkg = (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
         for (PrimitiveOrStringOrNullDecl p : literalmap.getValues(cls)) {
           Sequence seq = Sequence.create(p);
-          if (GenInputsAbstract.literals_level == ClassLiteralsMode.CLASS) {
+          switch (GenInputsAbstract.literals_level) {
+          case ClassLiteralsMode.CLASS:
             compMgr.addClassLevelLiteral(cls, seq);
-          } else if (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE) {
+            break;
+          case ClassLiteralsMode.PACKAGE:
+            assert pkg != null;
             compMgr.addPackageLevelLiteral(pkg, seq);
-          } else {
-            // see parameter check above. 
-            assert GenInputsAbstract.literals_level == ClassLiteralsMode.ALL;
+            break;
+          case ClassLiteralsMode.ALL:
             compMgr.addGeneratedSequence(seq);
+            break;
+          default:
+            throw new Error("This can't happen");
           }
         }
       }
