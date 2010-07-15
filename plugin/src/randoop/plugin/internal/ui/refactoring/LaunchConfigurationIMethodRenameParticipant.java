@@ -1,17 +1,29 @@
 package randoop.plugin.internal.ui.refactoring;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.swtbot.swt.finder.utils.internal.Assert;
 
+import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.MethodMnemonic;
+import randoop.plugin.internal.core.TypeMnemonic;
+import randoop.plugin.internal.ui.options.Mnemonics;
+
 public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipant {
-  private IMethod method;
+  private MethodMnemonic fMethodMnemonic;
 
   /*
    * (non-Javadoc)
@@ -20,7 +32,13 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
   @Override
   protected boolean initialize(Object element) {
     Assert.isLegal(element instanceof IMethod);
-    method = (IMethod) element;
+    try {
+      fMethodMnemonic = new MethodMnemonic((IMethod) element);
+
+      return true;
+    } catch (JavaModelException e) {
+      RandoopPlugin.log(e);
+    }
     return false;
   }
 
@@ -29,9 +47,24 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
    * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
    */
   @Override
-  public Change createChange(IProgressMonitor pm) throws CoreException,
-      OperationCanceledException {
-    return null;
+  public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+    List<Change> changes = new ArrayList<Change>();
+    ILaunchConfiguration[] configs = RandoopRefactoringUtil.getRandoopTypeLaunchConfigurations();
+    String newMethodName = getArguments().getNewName();
+    
+    String typeMnemonic = fMethodMnemonic.getDeclaringTypeMnemonic().toString();
+    boolean isConstructor = fMethodMnemonic.isConstructor();
+    String methodSignature = fMethodMnemonic.getMethodSignature();
+    
+    MethodMnemonic newMethodMnemonic = new MethodMnemonic(typeMnemonic, newMethodName, isConstructor, methodSignature);
+    
+    for(ILaunchConfiguration config : configs) {
+      // TODO: Check if change is needed first
+      Change c = new LaunchConfigurationMethodChange(config, fMethodMnemonic.toString(), newMethodMnemonic.toString());
+      changes.add(c);
+    }
+    
+    return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
   /*
@@ -53,5 +86,5 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
   public String getName() {
     return "Launch configuration participant";
   }
-
+  
 }

@@ -35,14 +35,11 @@ public class TypeMnemonic {
     Assert.isLegal(t != null);
 
     fType = t;
-
     fJavaProject = fType.getJavaProject();
 
-    IJavaElement pfr = fType.getParent();
-    while (pfr != null && pfr.getElementType() != IJavaElement.PACKAGE_FRAGMENT_ROOT) {
-      pfr = pfr.getParent();
-    }
+    IJavaElement pfr = fType.getPackageFragment().getParent();
     Assert.isNotNull(pfr);
+    Assert.isTrue(pfr.getElementType() == IJavaElement.PACKAGE_FRAGMENT_ROOT);
     fClasspathEntry = ((IPackageFragmentRoot) pfr).getRawClasspathEntry();
 
     Assert.isNotNull(fJavaProject);
