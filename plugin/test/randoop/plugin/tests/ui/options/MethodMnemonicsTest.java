@@ -148,7 +148,7 @@ public class MethodMnemonicsTest {
   private void verify(IWorkspaceRoot root, HashMap<String, IMethod> methodsByMnemonics) throws CoreException {
     // Check that MethodMnemonics.getMethod reconstructs the methods correctly
     for (String mnemonic : methodsByMnemonics.keySet()) {
-      IMethod m1 = new MethodMnemonic(root, mnemonic).getMethod();
+      IMethod m1 = new MethodMnemonic(mnemonic, root).getMethod();
       assertNotNull(m1);
       methodsByMnemonics.get(mnemonic);
 

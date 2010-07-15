@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
+import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 import randoop.plugin.internal.ui.options.Mnemonics;
 
@@ -46,7 +47,7 @@ public class RandoopArgumentCollector {
   private int fMaxTestsWritten;
   private int fMaxTestsPerFile;
 
-  public RandoopArgumentCollector(ILaunchConfiguration config) {
+  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) {
     fName = config.getName();
 
     String projectName = getProjectName(config);
@@ -56,27 +57,21 @@ public class RandoopArgumentCollector {
     List<?> selectedTypes = getSelectedTypes(config);
     for (Object o : selectedTypes) {
       Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
-      String fqname = (String) o;
+      String mnemonic = (String) o;
       
-      IProgressMonitor pm = new NullProgressMonitor();
-      try {
-        IType type = fJavaProject.findType(fqname, pm);
+      TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic, root);
+      IType type = typeMnemonic.getType();
 
-        fSelectedTypes.add(type);
-      } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
-      }
+      fSelectedTypes.add(type);
     }
     
-    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-
     fSelectedMethods = new ArrayList<IMethod>();
     List<?> selectedMethods = getSelectedMethods(config);
     for (Object o : selectedMethods) {
       Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
       String mnemonic = (String) o;
       
-      MethodMnemonic methodMneomic = new MethodMnemonic(root, mnemonic);
+      MethodMnemonic methodMneomic = new MethodMnemonic(mnemonic, root);
       IMethod m = methodMneomic.getMethod();
       Assert.isNotNull(m, "Stored method does not exist");
       Assert.isNotNull(m.exists(), "Stored method [" + m.getElementName()

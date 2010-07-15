@@ -27,16 +27,25 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathLabelProvider;
 import org.eclipse.jdt.internal.debug.ui.launcher.DebugTypeSelectionDialog;
+import org.eclipse.jdt.internal.debug.ui.launcher.LauncherMessages;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -45,10 +54,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
@@ -165,6 +176,17 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fClassAddFromClasspaths.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
+        try {
+          IClasspathEntry classpathEntry = chooseClasspathEntry();
+          if(classpathEntry != null) {
+            IType[] classes = getClassesFromClasspath(classpathEntry, fIgnoreJUnitTestCases.getSelection());
+            if (classes != null) {
+              handleSearchButtonSelected(classes);
+            }
+          }
+        } catch (JavaModelException jme) {
+          RandoopPlugin.log(jme);
+        }
       }
     });
     fClassAddFromClasspaths.addSelectionListener(listener);
@@ -264,30 +286,40 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return StatusFactory.createOkStatus();
     }
     
-    try {
-      for (String fqname : selectedTypes) {
-        IProgressMonitor pm = new NullProgressMonitor();
-        IType type = javaProject.findType(fqname, pm);
-        if (type == null || !type.exists()) {
-          return StatusFactory.createErrorStatus("One of the selected types does not exist.");
-        }
+    for (String typeMnemonicString : selectedTypes) {
+      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
+      IType type = typeMnemonic.getType();
+      if (type == null || !type.exists()) {
+        return StatusFactory.createErrorStatus("One of the selected types does not exist.");
       }
-  
-      for (String mnemonic : selectedMethods) {
-        MethodMnemonic mm = new MethodMnemonic(getWorkspaceRoot(), mnemonic);
-        IMethod m = mm.getMethod();
-        
-        if (m == null || !m.exists()) {
-          return StatusFactory.createErrorStatus("One of the selected methods is invalid.");
-        }
+    }
+
+    for (String mnemonic : selectedMethods) {
+      MethodMnemonic methodMnemonic = new MethodMnemonic(mnemonic, getWorkspaceRoot());
+      IMethod m = methodMnemonic.getMethod();
+
+      if (m == null || !m.exists()) {
+        return StatusFactory.createErrorStatus("One of the selected methods is invalid.");
       }
-    } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
-    } catch (CoreException e) {
-      RandoopPlugin.log(e);
     }
 
     return StatusFactory.createOkStatus();
+  }
+
+  private IClasspathEntry chooseClasspathEntry() throws JavaModelException {
+    // TODO: Create a better classpath label provider that shows the appropriate icons, and better names
+    ILabelProvider labelProvider = new ClasspathLabelProvider();
+    ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
+    dialog.setTitle("Project Selection");
+    dialog.setMessage("Select a classpath to constrain your search.");
+
+    IClasspathEntry[] classpaths = fJavaProject.getRawClasspath();
+    dialog.setElements(classpaths);
+
+    if (dialog.open() == Window.OK) {
+      return (IClasspathEntry) dialog.getFirstResult();
+    }
+    return null;
   }
 
   /**
@@ -364,7 +396,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return findClasses(typeSearcher);
   }
   
-  private IType[] getClassesFromJRE(final boolean ignoreJUnitTestCases) {
+  private IType[] getClassesFromClasspath(final IClasspathEntry classpathEntry, final boolean ignoreJUnitTestCases) {
     // Create a new runnable object that will be used to search for the Java
     // types in the active workspace.
     ClassSearcher typeSearcher = new ClassSearcher(fJavaProject) {
@@ -375,20 +407,13 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         // Search each IJavaProject for ITypes and add them to a list.
         // Each added IType represents one unit of work.
         try {
-          for (IClasspathEntry cpentry : getJavaProject().getRawClasspath()) {
-            IPath path = cpentry.getPath();
-            if (path.segmentCount() > 0) {
-              if (path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-                for (IPackageFragmentRoot pfr : getJavaProject().findPackageFragmentRoots(cpentry)) {
-                  // TODO: It takes a VERY long time to search rt.jar
-                  addTypes(findTypes(pfr, ignoreJUnitTestCases, pm));
-                  
-                  if (pm.isCanceled()) {
-                    cancel();
-                    break;
-                  }
-                }
-              }
+          for (IPackageFragmentRoot pfr : getJavaProject().findPackageFragmentRoots(classpathEntry)) {
+            // TODO: It takes a VERY long time to search rt.jar
+            addTypes(findTypes(pfr, ignoreJUnitTestCases, pm));
+
+            if (pm.isCanceled()) {
+              cancel();
+              break;
             }
           }
         } catch (JavaModelException e) {
@@ -401,6 +426,27 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     // Search for available ITypes while displaying progress in the dialog
     return findClasses(typeSearcher);
+  }
+  
+  private IType[] getClassesFromJRE(final boolean ignoreJUnitTestCases) {
+    // TODO: Why doesn't JavaRuntime.getDefaultJREContainerEntry() work here?
+    
+    // Search each IJavaProject for ITypes and add them to a list.
+    // Each added IType represents one unit of work.
+    try {
+      for (IClasspathEntry cpentry : fJavaProject.getRawClasspath()) {
+        IPath path = cpentry.getPath();
+        if (path.segmentCount() > 0) {
+          if (path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+            return getClassesFromClasspath(cpentry, ignoreJUnitTestCases);
+          }
+        }
+      }
+    } catch (JavaModelException e) {
+      RandoopPlugin.log(e);
+    }
+    
+    return null;
   }
   
   public static List<IType> findTypes(IPackageFragmentRoot pfr, boolean ignoreJUnitTestCases, IProgressMonitor pm) throws JavaModelException {
@@ -538,7 +584,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         
         if (fJavaProject != null) {
           fClassAddFromProject.setEnabled(true);
-          fClassAddFromClasspaths.setEnabled(false); // XXX implement this
+          fClassAddFromClasspaths.setEnabled(true);
           fClassAddFromJRESystemLibrary.setEnabled(true);
         } else {
           fClassAddFromProject.setEnabled(false);

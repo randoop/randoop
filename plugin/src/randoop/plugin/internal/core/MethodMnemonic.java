@@ -16,13 +16,12 @@ import randoop.plugin.RandoopPlugin;
 public class MethodMnemonic {
   private final static String DELIMITER = "%"; //$NON-NLS-1$
 
-  private final TypeMnemonic fDeclaringTypeMnemonic;
   private final IMethod fMethod;
 
+  private final TypeMnemonic fDeclaringTypeMnemonic;
   private final String fMethodName;
   private final boolean fIsConstructor;
   private final String fMethodSignature;
-  private final boolean fExists;
 
   public MethodMnemonic(IMethod m) throws JavaModelException {
     Assert.isLegal(m != null);
@@ -37,10 +36,29 @@ public class MethodMnemonic {
     fMethodName = fMethod.getElementName();
     fIsConstructor = fMethod.isConstructor();
     fMethodSignature = fMethod.getSignature();
-
-    fExists = fMethod != null;
   }
 
+  public MethodMnemonic(String typeMnemonic, String methodName, boolean isConstructor, String methodSignature) {
+    fDeclaringTypeMnemonic = new TypeMnemonic(typeMnemonic);
+    fMethodName = methodName;
+    fIsConstructor = isConstructor;
+    fMethodSignature = methodSignature;
+
+    fMethod = null;
+  }
+  
+  public MethodMnemonic(String mnemonic) {
+    String[] s = mnemonic.split(DELIMITER);
+    Assert.isLegal(s.length == 4);
+
+    fDeclaringTypeMnemonic = new TypeMnemonic(s[0]);
+    fMethodName = s[1];
+    fIsConstructor = Boolean.parseBoolean(s[2]);
+    fMethodSignature = s[3];
+
+    fMethod = null;
+  }
+  
   /**
    * 
    * @param mnemonic
@@ -48,7 +66,7 @@ public class MethodMnemonic {
    * @throws IllegalArgumentException
    *           if the mnemonic is incorrectly formatted
    */
-  public MethodMnemonic(IWorkspaceRoot root, String mnemonic) {
+  public MethodMnemonic(String mnemonic, IWorkspaceRoot root) {
     String[] s = mnemonic.split(DELIMITER);
     Assert.isLegal(s.length == 4);
 
@@ -59,10 +77,9 @@ public class MethodMnemonic {
 
     TypeMnemonic declaringTypeMnemonic = null;
     IMethod method = null;
-    declaringTypeMnemonic = new TypeMnemonic(root, declaringTypeMnemonicString);
+    declaringTypeMnemonic = new TypeMnemonic(declaringTypeMnemonicString, root);
     
     method = findMethod(declaringTypeMnemonic.getType(), fMethodName, fIsConstructor, fMethodSignature);
-    fExists = method != null;
 
     fDeclaringTypeMnemonic = declaringTypeMnemonic;
     fMethod = method;
@@ -108,7 +125,7 @@ public class MethodMnemonic {
   }
 
   public boolean exists() {
-    return fExists;
+    return fMethod != null;
   }
 
   @Override
