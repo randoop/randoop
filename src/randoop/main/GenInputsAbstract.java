@@ -304,7 +304,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Specifies a file containing literal values to be used as inputs to methods under test. " +
       "These literals are used in addition to all other constants in the pool. " +
       "May be specified multiple times. " +
-      "For the format of this file, see documentation in class randoop.LiteralFileReader.")
+      "For the format of this file, see documentation in class randoop.LiteralFileReader. " +
+      "The special value \"CLASSES\" (with no quotes) means to read literals from all classes under test.")
   public static List<String> literals_file = new ArrayList<String>(); 
 
   public GenInputsAbstract(String command, String pitch,
