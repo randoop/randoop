@@ -17,7 +17,7 @@ import randoop.util.Util;
  * doesn't actually transform any state, but it works out
  * nicely to represent primitives as statements.
  *
- * This decl info is for primitives, strings and nulls (of any type)
+ * This decl info is for primitives, strings and nulls (of any type).
  */
 public final class PrimitiveOrStringOrNullDecl implements StatementKind, Serializable {
 
