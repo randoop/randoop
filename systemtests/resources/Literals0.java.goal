@@ -3,8 +3,12 @@ import junit.framework.*;
 
 public class Literals0 extends TestCase {
 
+  public static boolean debug = false;
 
   public void test1() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test1");
+
 
     randoop.literals.A var1 = new randoop.literals.A(100);
 
@@ -12,11 +16,17 @@ public class Literals0 extends TestCase {
 
   public void test2() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test2");
+
+
     randoop.literals.A var1 = new randoop.literals.A("111");
 
   }
 
   public void test3() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test3");
+
 
     randoop.literals.A var1 = new randoop.literals.A((-1));
 
@@ -24,17 +34,26 @@ public class Literals0 extends TestCase {
 
   public void test4() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test4");
+
+
     randoop.literals.A var1 = new randoop.literals.A("");
 
   }
 
   public void test5() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test5");
+
+
     randoop.literals.A var1 = new randoop.literals.A("hi!");
 
   }
 
   public void test6() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test6");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(100.0f);
@@ -43,6 +62,9 @@ public class Literals0 extends TestCase {
 
   public void test7() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test7");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test(111);
 
@@ -50,11 +72,17 @@ public class Literals0 extends TestCase {
 
   public void test8() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test8");
+
+
     randoop.literals.A var1 = new randoop.literals.A(1);
 
   }
 
   public void test9() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test9");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -66,6 +94,9 @@ public class Literals0 extends TestCase {
 
   public void test10() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test10");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -76,11 +107,17 @@ public class Literals0 extends TestCase {
 
   public void test11() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test11");
+
+
     randoop.literals.A var1 = new randoop.literals.A(111);
 
   }
 
   public void test12() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test12");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -91,6 +128,9 @@ public class Literals0 extends TestCase {
 
   public void test13() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test13");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("");
     var0.test(1);
@@ -98,6 +138,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test14() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test14");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -111,6 +154,9 @@ public class Literals0 extends TestCase {
 
   public void test15() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test15");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test('#');
     var1.test(1.0f);
@@ -118,6 +164,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test16() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test16");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -131,6 +180,9 @@ public class Literals0 extends TestCase {
 
   public void test17() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test17");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("hi!");
@@ -139,6 +191,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test18() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test18");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -149,6 +204,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test19() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test19");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
@@ -161,6 +219,9 @@ public class Literals0 extends TestCase {
 
   public void test20() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test20");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test("111");
@@ -172,6 +233,9 @@ public class Literals0 extends TestCase {
 
   public void test21() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test21");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
     var1.test((short)222);
@@ -181,6 +245,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test22() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test22");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -195,6 +262,9 @@ public class Literals0 extends TestCase {
 
   public void test23() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test23");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -208,6 +278,9 @@ public class Literals0 extends TestCase {
 
   public void test24() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test24");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -220,11 +293,17 @@ public class Literals0 extends TestCase {
 
   public void test25() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test25");
+
+
     randoop.literals.A var1 = new randoop.literals.A(10);
 
   }
 
   public void test26() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test26");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -238,6 +317,9 @@ public class Literals0 extends TestCase {
 
   public void test27() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test27");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("333");
@@ -250,6 +332,9 @@ public class Literals0 extends TestCase {
 
   public void test28() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test28");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("");
@@ -259,6 +344,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test29() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test29");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -271,6 +359,9 @@ public class Literals0 extends TestCase {
 
   public void test30() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test30");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
     var0.test((-1));
@@ -278,6 +369,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test31() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test31");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -290,6 +384,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test32() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test32");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -305,6 +402,9 @@ public class Literals0 extends TestCase {
 
   public void test33() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test33");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test((-1));
     var0.test("hi!");
@@ -313,6 +413,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test34() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test34");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -324,6 +427,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test35() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test35");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -339,6 +445,9 @@ public class Literals0 extends TestCase {
 
   public void test36() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test36");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(1L);
@@ -347,6 +456,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test37() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test37");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -360,6 +472,9 @@ public class Literals0 extends TestCase {
 
   public void test38() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test38");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -372,6 +487,9 @@ public class Literals0 extends TestCase {
 
   public void test39() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test39");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
     var1.test((short)222);
@@ -380,6 +498,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test40() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test40");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -394,6 +515,9 @@ public class Literals0 extends TestCase {
 
   public void test41() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test41");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(111);
     var1.test("222");
@@ -402,6 +526,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test42() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test42");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -413,6 +540,9 @@ public class Literals0 extends TestCase {
 
   public void test43() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test43");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test("111");
@@ -423,6 +553,9 @@ public class Literals0 extends TestCase {
 
   public void test44() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test44");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -432,6 +565,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test45() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test45");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -444,6 +580,9 @@ public class Literals0 extends TestCase {
 
   public void test46() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test46");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test(333);
@@ -454,6 +593,9 @@ public class Literals0 extends TestCase {
 
   public void test47() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test47");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test("111");
@@ -462,6 +604,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test48() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test48");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -475,6 +620,9 @@ public class Literals0 extends TestCase {
 
   public void test49() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test49");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -483,6 +631,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test50() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test50");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -493,6 +644,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test51() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test51");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -506,6 +660,9 @@ public class Literals0 extends TestCase {
 
   public void test52() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test52");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -517,6 +674,9 @@ public class Literals0 extends TestCase {
 
   public void test53() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test53");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
     var1.test((-1.0d));
@@ -525,6 +685,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test54() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test54");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -540,6 +703,9 @@ public class Literals0 extends TestCase {
 
   public void test55() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test55");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -552,11 +718,17 @@ public class Literals0 extends TestCase {
 
   public void test56() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test56");
+
+
     randoop.literals.A var1 = new randoop.literals.A(0);
 
   }
 
   public void test57() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test57");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -570,6 +742,9 @@ public class Literals0 extends TestCase {
 
   public void test58() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test58");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test((byte)0);
@@ -582,6 +757,9 @@ public class Literals0 extends TestCase {
 
   public void test59() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test59");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
     var1.test((short)222);
@@ -592,6 +770,9 @@ public class Literals0 extends TestCase {
 
   public void test60() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test60");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("");
@@ -601,6 +782,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test61() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test61");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -613,6 +797,9 @@ public class Literals0 extends TestCase {
 
   public void test62() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test62");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test(333);
@@ -622,6 +809,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test63() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test63");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -636,6 +826,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test64() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test64");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -653,6 +846,9 @@ public class Literals0 extends TestCase {
 
   public void test65() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test65");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -666,6 +862,9 @@ public class Literals0 extends TestCase {
 
   public void test66() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test66");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(222.0f);
@@ -673,6 +872,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test67() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test67");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -684,6 +886,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test68() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test68");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -697,6 +902,9 @@ public class Literals0 extends TestCase {
 
   public void test69() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test69");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test('a');
@@ -706,6 +914,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test70() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test70");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -722,6 +933,9 @@ public class Literals0 extends TestCase {
 
   public void test71() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test71");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
     var1.test((short)222);
@@ -730,6 +944,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test72() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test72");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -743,6 +960,9 @@ public class Literals0 extends TestCase {
 
   public void test73() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test73");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -754,6 +974,9 @@ public class Literals0 extends TestCase {
 
   public void test74() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test74");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
     var1.test((-1.0d));
@@ -764,6 +987,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test75() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test75");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -777,6 +1003,9 @@ public class Literals0 extends TestCase {
 
   public void test76() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test76");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -788,6 +1017,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test77() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test77");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -801,6 +1033,9 @@ public class Literals0 extends TestCase {
 
   public void test78() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test78");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
     var1.test((short)100);
@@ -809,6 +1044,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test79() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test79");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -823,6 +1061,9 @@ public class Literals0 extends TestCase {
 
   public void test80() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test80");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -834,6 +1075,9 @@ public class Literals0 extends TestCase {
 
   public void test81() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test81");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -844,6 +1088,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test82() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test82");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -858,6 +1105,9 @@ public class Literals0 extends TestCase {
 
   public void test83() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test83");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test((-1L));
@@ -866,6 +1116,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test84() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test84");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
@@ -878,6 +1131,9 @@ public class Literals0 extends TestCase {
 
   public void test85() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test85");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test(1.0d);
     var1.test((-1.0d));
@@ -885,6 +1141,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test86() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test86");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -899,6 +1158,9 @@ public class Literals0 extends TestCase {
 
   public void test87() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test87");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test(100);
@@ -909,12 +1171,18 @@ public class Literals0 extends TestCase {
 
   public void test88() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test88");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test((short)222);
 
   }
 
   public void test89() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test89");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test((-1));
@@ -923,6 +1191,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test90() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test90");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -934,6 +1205,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test91() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test91");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -948,6 +1222,9 @@ public class Literals0 extends TestCase {
 
   public void test92() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test92");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
     var1.test((short)222);
@@ -957,6 +1234,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test93() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test93");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -973,6 +1253,9 @@ public class Literals0 extends TestCase {
 
   public void test94() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test94");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -983,6 +1266,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test95() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test95");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -996,6 +1282,9 @@ public class Literals0 extends TestCase {
 
   public void test96() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test96");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -1008,6 +1297,9 @@ public class Literals0 extends TestCase {
 
   public void test97() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test97");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -1016,6 +1308,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test98() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test98");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1032,6 +1327,9 @@ public class Literals0 extends TestCase {
 
   public void test99() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test99");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test('4');
@@ -1043,6 +1341,9 @@ public class Literals0 extends TestCase {
 
   public void test100() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test100");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)222);
@@ -1051,6 +1352,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test101() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test101");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1065,6 +1369,9 @@ public class Literals0 extends TestCase {
 
   public void test102() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test102");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -1076,6 +1383,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test103() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test103");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1091,6 +1401,9 @@ public class Literals0 extends TestCase {
 
   public void test104() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test104");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -1103,6 +1416,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test105() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test105");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1117,6 +1433,9 @@ public class Literals0 extends TestCase {
 
   public void test106() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test106");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)222);
@@ -1126,6 +1445,9 @@ public class Literals0 extends TestCase {
 
   public void test107() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test107");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test("111");
@@ -1134,6 +1456,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test108() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test108");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1147,6 +1472,9 @@ public class Literals0 extends TestCase {
 
   public void test109() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test109");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(100.0f);
@@ -1154,6 +1482,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test110() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test110");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1166,6 +1497,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test111() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test111");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1180,6 +1514,9 @@ public class Literals0 extends TestCase {
 
   public void test112() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test112");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -1193,6 +1530,9 @@ public class Literals0 extends TestCase {
 
   public void test113() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test113");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -1202,6 +1542,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test114() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test114");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
@@ -1213,6 +1556,9 @@ public class Literals0 extends TestCase {
 
   public void test115() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test115");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test(1.0d);
     var1.test((byte)10);
@@ -1221,6 +1567,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test116() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test116");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1232,12 +1581,18 @@ public class Literals0 extends TestCase {
 
   public void test117() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test117");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test((byte)0);
 
   }
 
   public void test118() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test118");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
@@ -1248,6 +1603,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test119() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test119");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1261,6 +1619,9 @@ public class Literals0 extends TestCase {
 
   public void test120() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test120");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -1273,6 +1634,9 @@ public class Literals0 extends TestCase {
 
   public void test121() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test121");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(111);
     var1.test((short)1);
@@ -1280,6 +1644,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test122() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test122");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -1290,6 +1657,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test123() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test123");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1304,6 +1674,9 @@ public class Literals0 extends TestCase {
 
   public void test124() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test124");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test(100L);
@@ -1314,6 +1687,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test125() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test125");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1327,6 +1703,9 @@ public class Literals0 extends TestCase {
 
   public void test126() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test126");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test(100L);
@@ -1338,6 +1717,9 @@ public class Literals0 extends TestCase {
 
   public void test127() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test127");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
     var0.test("hi!");
@@ -1347,6 +1729,9 @@ public class Literals0 extends TestCase {
 
   public void test128() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test128");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((-1));
@@ -1355,6 +1740,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test129() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test129");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1370,6 +1758,9 @@ public class Literals0 extends TestCase {
 
   public void test130() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test130");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test(100.0d);
     var1.test("");
@@ -1379,6 +1770,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test131() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test131");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1397,6 +1791,9 @@ public class Literals0 extends TestCase {
 
   public void test132() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test132");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -1411,6 +1808,9 @@ public class Literals0 extends TestCase {
 
   public void test133() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test133");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("333");
@@ -1423,6 +1823,9 @@ public class Literals0 extends TestCase {
 
   public void test134() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test134");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test((byte)0);
@@ -1433,6 +1836,9 @@ public class Literals0 extends TestCase {
 
   public void test135() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test135");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test(100.0d);
     var1.test("");
@@ -1441,6 +1847,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test136() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test136");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -1451,6 +1860,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test137() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test137");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -1463,6 +1875,9 @@ public class Literals0 extends TestCase {
 
   public void test138() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test138");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
     var0.test("hi!");
@@ -1474,6 +1889,9 @@ public class Literals0 extends TestCase {
 
   public void test139() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test139");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test("111");
@@ -1483,6 +1901,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test140() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test140");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1494,6 +1915,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test141() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test141");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -1508,6 +1932,9 @@ public class Literals0 extends TestCase {
 
   public void test142() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test142");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test(333);
@@ -1518,6 +1945,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test143() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test143");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -1530,6 +1960,9 @@ public class Literals0 extends TestCase {
 
   public void test144() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test144");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test('4');
@@ -1539,6 +1972,9 @@ public class Literals0 extends TestCase {
 
   public void test145() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test145");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test((short)1);
     var1.test((byte)1);
@@ -1546,6 +1982,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test146() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test146");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1560,6 +1999,9 @@ public class Literals0 extends TestCase {
 
   public void test147() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test147");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -1571,6 +2013,9 @@ public class Literals0 extends TestCase {
 
   public void test148() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test148");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test(100.0d);
@@ -1580,6 +2025,9 @@ public class Literals0 extends TestCase {
 
   public void test149() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test149");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test(1.0d);
     var1.test((byte)10);
@@ -1588,6 +2036,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test150() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test150");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(111);
@@ -1599,6 +2050,9 @@ public class Literals0 extends TestCase {
 
   public void test151() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test151");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("333");
@@ -1608,6 +2062,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test152() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test152");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
@@ -1621,6 +2078,9 @@ public class Literals0 extends TestCase {
 
   public void test153() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test153");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -1631,6 +2091,9 @@ public class Literals0 extends TestCase {
 
   public void test154() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test154");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test(100.0d);
     var1.test("222");
@@ -1640,6 +2103,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test155() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test155");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -1653,6 +2119,9 @@ public class Literals0 extends TestCase {
 
   public void test156() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test156");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
     var1.test((-1.0d));
@@ -1662,6 +2131,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test157() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test157");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1677,6 +2149,9 @@ public class Literals0 extends TestCase {
 
   public void test158() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test158");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("111");
     var1.test((short)1);
@@ -1684,6 +2159,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test159() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test159");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -1695,6 +2173,9 @@ public class Literals0 extends TestCase {
 
   public void test160() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test160");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test(100L);
     var1.test(10.0d);
@@ -1702,6 +2183,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test161() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test161");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test(100L);
@@ -1711,6 +2195,9 @@ public class Literals0 extends TestCase {
 
   public void test162() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test162");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test(10.0d);
     var1.test(1L);
@@ -1718,6 +2205,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test163() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test163");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -1728,6 +2218,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test164() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test164");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
@@ -1740,6 +2233,9 @@ public class Literals0 extends TestCase {
 
   public void test165() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test165");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test('a');
@@ -1750,6 +2246,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test166() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test166");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
@@ -1762,6 +2261,9 @@ public class Literals0 extends TestCase {
 
   public void test167() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test167");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(1);
@@ -1773,6 +2275,9 @@ public class Literals0 extends TestCase {
 
   public void test168() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test168");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("333");
@@ -1782,6 +2287,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test169() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test169");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1799,6 +2307,9 @@ public class Literals0 extends TestCase {
 
   public void test170() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test170");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -1811,6 +2322,9 @@ public class Literals0 extends TestCase {
 
   public void test171() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test171");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test(1.0d);
     var1.test((byte)10);
@@ -1821,6 +2335,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test172() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test172");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1835,6 +2352,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test173() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test173");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1851,6 +2371,9 @@ public class Literals0 extends TestCase {
 
   public void test174() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test174");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -1862,6 +2385,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test175() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test175");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1877,6 +2403,9 @@ public class Literals0 extends TestCase {
 
   public void test176() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test176");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -1891,6 +2420,9 @@ public class Literals0 extends TestCase {
 
   public void test177() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test177");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
     var1.test((-1.0d));
@@ -1900,6 +2432,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test178() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test178");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -1913,6 +2448,9 @@ public class Literals0 extends TestCase {
 
   public void test179() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test179");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test("hi!");
@@ -1921,6 +2459,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test180() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test180");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -1935,6 +2476,9 @@ public class Literals0 extends TestCase {
 
   public void test181() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test181");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test((-1));
     var0.test("");
@@ -1947,6 +2491,9 @@ public class Literals0 extends TestCase {
 
   public void test182() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test182");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
     var1.test((short)222);
@@ -1956,6 +2503,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test183() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test183");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -1968,6 +2518,9 @@ public class Literals0 extends TestCase {
 
   public void test184() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test184");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -1978,6 +2531,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test185() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test185");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
@@ -1990,6 +2546,9 @@ public class Literals0 extends TestCase {
 
   public void test186() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test186");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -2000,6 +2559,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test187() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test187");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2013,6 +2575,9 @@ public class Literals0 extends TestCase {
 
   public void test188() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test188");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -2023,6 +2588,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test189() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test189");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2039,6 +2607,9 @@ public class Literals0 extends TestCase {
 
   public void test190() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test190");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(1);
@@ -2050,6 +2621,9 @@ public class Literals0 extends TestCase {
 
   public void test191() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test191");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test(100.0d);
     var1.test("222");
@@ -2058,6 +2632,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test192() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test192");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2073,6 +2650,9 @@ public class Literals0 extends TestCase {
 
   public void test193() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test193");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
     var1.test((short)100);
@@ -2081,6 +2661,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test194() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test194");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2091,6 +2674,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test195() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test195");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2108,12 +2694,18 @@ public class Literals0 extends TestCase {
 
   public void test196() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test196");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("");
 
   }
 
   public void test197() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test197");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2125,6 +2717,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test198() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test198");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -2138,6 +2733,9 @@ public class Literals0 extends TestCase {
 
   public void test199() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test199");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test('#');
@@ -2147,6 +2745,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test200() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test200");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2160,6 +2761,9 @@ public class Literals0 extends TestCase {
 
   public void test201() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test201");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -2171,6 +2775,9 @@ public class Literals0 extends TestCase {
 
   public void test202() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test202");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test((-1));
     var0.test(0);
@@ -2179,6 +2786,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test203() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test203");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -2192,6 +2802,9 @@ public class Literals0 extends TestCase {
 
   public void test204() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test204");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("");
@@ -2202,6 +2815,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test205() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test205");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -2215,6 +2831,9 @@ public class Literals0 extends TestCase {
 
   public void test206() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test206");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
     var0.test("");
@@ -2224,6 +2843,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test207() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test207");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2238,6 +2860,9 @@ public class Literals0 extends TestCase {
 
   public void test208() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test208");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -2249,6 +2874,9 @@ public class Literals0 extends TestCase {
 
   public void test209() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test209");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -2259,6 +2887,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test210() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test210");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2272,6 +2903,9 @@ public class Literals0 extends TestCase {
 
   public void test211() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test211");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(1);
@@ -2280,6 +2914,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test212() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test212");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2297,6 +2934,9 @@ public class Literals0 extends TestCase {
 
   public void test213() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test213");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -2307,6 +2947,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test214() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test214");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -2319,6 +2962,9 @@ public class Literals0 extends TestCase {
 
   public void test215() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test215");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test('#');
     var1.test('4');
@@ -2327,6 +2973,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test216() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test216");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2338,6 +2987,9 @@ public class Literals0 extends TestCase {
 
   public void test217() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test217");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -2347,6 +2999,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test218() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test218");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -2358,6 +3013,9 @@ public class Literals0 extends TestCase {
 
   public void test219() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test219");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test(100);
@@ -2367,6 +3025,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test220() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test220");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -2380,6 +3041,9 @@ public class Literals0 extends TestCase {
 
   public void test221() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test221");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test(100.0d);
     var1.test("");
@@ -2389,6 +3053,9 @@ public class Literals0 extends TestCase {
 
   public void test222() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test222");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test((-1L));
     var1.test((-1.0f));
@@ -2396,6 +3063,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test223() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test223");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2408,6 +3078,9 @@ public class Literals0 extends TestCase {
 
   public void test224() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test224");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(111);
     var1.test("222");
@@ -2418,6 +3091,9 @@ public class Literals0 extends TestCase {
 
   public void test225() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test225");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
     var1.test((-1L));
@@ -2426,6 +3102,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test226() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test226");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
@@ -2436,6 +3115,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test227() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test227");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -2450,6 +3132,9 @@ public class Literals0 extends TestCase {
 
   public void test228() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test228");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test('a');
@@ -2461,6 +3146,9 @@ public class Literals0 extends TestCase {
 
   public void test229() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test229");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
     var0.test(0);
@@ -2468,6 +3156,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test230() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test230");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
@@ -2478,6 +3169,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test231() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test231");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -2493,6 +3187,9 @@ public class Literals0 extends TestCase {
 
   public void test232() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test232");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
     var1.test("hi!");
@@ -2500,6 +3197,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test233() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test233");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -2514,6 +3214,9 @@ public class Literals0 extends TestCase {
 
   public void test234() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test234");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -2526,6 +3229,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test235() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test235");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -2540,6 +3246,9 @@ public class Literals0 extends TestCase {
 
   public void test236() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test236");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -2551,6 +3260,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test237() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test237");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2565,6 +3277,9 @@ public class Literals0 extends TestCase {
 
   public void test238() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test238");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test(10.0d);
     var1.test(10.0d);
@@ -2572,6 +3287,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test239() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test239");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2588,6 +3306,9 @@ public class Literals0 extends TestCase {
 
   public void test240() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test240");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -2600,6 +3321,9 @@ public class Literals0 extends TestCase {
 
   public void test241() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test241");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("");
@@ -2611,6 +3335,9 @@ public class Literals0 extends TestCase {
 
   public void test242() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test242");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
     var1.test('a');
@@ -2618,6 +3345,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test243() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test243");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -2628,6 +3358,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test244() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test244");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2643,6 +3376,9 @@ public class Literals0 extends TestCase {
 
   public void test245() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test245");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(1);
@@ -2655,6 +3391,9 @@ public class Literals0 extends TestCase {
 
   public void test246() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test246");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test('4');
@@ -2665,6 +3404,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test247() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test247");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2681,6 +3423,9 @@ public class Literals0 extends TestCase {
 
   public void test248() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test248");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -2694,6 +3439,9 @@ public class Literals0 extends TestCase {
 
   public void test249() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test249");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
     var0.test("hi!");
@@ -2705,6 +3453,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test250() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test250");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
@@ -2718,6 +3469,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test251() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test251");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2735,6 +3489,9 @@ public class Literals0 extends TestCase {
 
   public void test252() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test252");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test('#');
     var1.test((-1.0d));
@@ -2743,6 +3500,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test253() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test253");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -2754,6 +3514,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test254() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test254");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -2768,6 +3531,9 @@ public class Literals0 extends TestCase {
 
   public void test255() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test255");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -2779,6 +3545,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test256() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test256");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2795,6 +3564,9 @@ public class Literals0 extends TestCase {
 
   public void test257() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test257");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("");
@@ -2805,6 +3577,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test258() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test258");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2821,6 +3596,9 @@ public class Literals0 extends TestCase {
 
   public void test259() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test259");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
     var0.test("");
@@ -2832,6 +3610,9 @@ public class Literals0 extends TestCase {
 
   public void test260() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test260");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("hi!");
@@ -2841,6 +3622,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test261() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test261");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2858,6 +3642,9 @@ public class Literals0 extends TestCase {
 
   public void test262() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test262");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
     var1.test((-1.0d));
@@ -2870,6 +3657,9 @@ public class Literals0 extends TestCase {
 
   public void test263() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test263");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test('\"');
     var1.test((short)(-1));
@@ -2879,6 +3669,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test264() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test264");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2892,6 +3685,9 @@ public class Literals0 extends TestCase {
 
   public void test265() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test265");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -2904,6 +3700,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test266() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test266");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -2920,6 +3719,9 @@ public class Literals0 extends TestCase {
 
   public void test267() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test267");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(1);
@@ -2931,6 +3733,9 @@ public class Literals0 extends TestCase {
 
   public void test268() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test268");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(100L);
     var1.test('a');
@@ -2938,6 +3743,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test269() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test269");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test((short)1);
@@ -2947,6 +3755,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test270() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test270");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -2959,6 +3770,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test271() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test271");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -2973,6 +3787,9 @@ public class Literals0 extends TestCase {
 
   public void test272() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test272");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -2982,6 +3799,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test273() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test273");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
@@ -2993,6 +3813,9 @@ public class Literals0 extends TestCase {
 
   public void test274() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test274");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test(333);
@@ -3003,6 +3826,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test275() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test275");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3021,6 +3847,9 @@ public class Literals0 extends TestCase {
 
   public void test276() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test276");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
     var0.test("");
@@ -3031,6 +3860,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test277() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test277");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3048,6 +3880,9 @@ public class Literals0 extends TestCase {
 
   public void test278() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test278");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -3062,6 +3897,9 @@ public class Literals0 extends TestCase {
 
   public void test279() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test279");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test('#');
     var1.test('4');
@@ -3070,6 +3908,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test280() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test280");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3084,6 +3925,9 @@ public class Literals0 extends TestCase {
 
   public void test281() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test281");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(333);
     var0.test("");
@@ -3093,6 +3937,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test282() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test282");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
@@ -3105,6 +3952,9 @@ public class Literals0 extends TestCase {
 
   public void test283() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test283");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("");
     var0.test("");
@@ -3112,6 +3962,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test284() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test284");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -3121,6 +3974,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test285() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test285");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3137,6 +3993,9 @@ public class Literals0 extends TestCase {
 
   public void test286() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test286");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(1);
@@ -3145,6 +4004,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test287() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test287");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3158,12 +4020,18 @@ public class Literals0 extends TestCase {
 
   public void test288() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test288");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test("111");
 
   }
 
   public void test289() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test289");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3180,6 +4048,9 @@ public class Literals0 extends TestCase {
 
   public void test290() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test290");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
     var1.test('#');
@@ -3188,6 +4059,9 @@ public class Literals0 extends TestCase {
 
   public void test291() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test291");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test(0);
     var1.test(1.0d);
@@ -3195,6 +4069,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test292() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test292");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -3208,6 +4085,9 @@ public class Literals0 extends TestCase {
 
   public void test293() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test293");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
     var1.test((short)222);
@@ -3218,6 +4098,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test294() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test294");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3231,6 +4114,9 @@ public class Literals0 extends TestCase {
 
   public void test295() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test295");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -3242,6 +4128,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test296() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test296");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3259,6 +4148,9 @@ public class Literals0 extends TestCase {
 
   public void test297() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test297");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test('a');
@@ -3268,6 +4160,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test298() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test298");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3282,6 +4177,9 @@ public class Literals0 extends TestCase {
 
   public void test299() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test299");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test('4');
@@ -3291,6 +4189,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test300() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test300");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3302,6 +4203,9 @@ public class Literals0 extends TestCase {
 
   public void test301() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test301");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -3311,6 +4215,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test302() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test302");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3328,6 +4235,9 @@ public class Literals0 extends TestCase {
 
   public void test303() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test303");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -3340,6 +4250,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test304() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test304");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3355,6 +4268,9 @@ public class Literals0 extends TestCase {
 
   public void test305() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test305");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test("111");
@@ -3368,6 +4284,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test306() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test306");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
@@ -3384,12 +4303,18 @@ public class Literals0 extends TestCase {
 
   public void test307() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test307");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test('a');
 
   }
 
   public void test308() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test308");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3406,6 +4331,9 @@ public class Literals0 extends TestCase {
 
   public void test309() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test309");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test(100.0d);
     var1.test(100.0d);
@@ -3413,6 +4341,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test310() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test310");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3428,6 +4359,9 @@ public class Literals0 extends TestCase {
 
   public void test311() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test311");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test("111");
@@ -3436,6 +4370,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test312() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test312");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3447,6 +4384,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test313() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test313");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3464,6 +4404,9 @@ public class Literals0 extends TestCase {
 
   public void test314() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test314");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -3478,6 +4421,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test315() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test315");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3495,6 +4441,9 @@ public class Literals0 extends TestCase {
 
   public void test316() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test316");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -3504,6 +4453,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test317() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test317");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3517,6 +4469,9 @@ public class Literals0 extends TestCase {
 
   public void test318() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test318");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -3527,6 +4482,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test319() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test319");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -3540,6 +4498,9 @@ public class Literals0 extends TestCase {
 
   public void test320() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test320");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(1.0d);
     var1.test((short)0);
@@ -3547,6 +4508,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test321() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test321");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3560,6 +4524,9 @@ public class Literals0 extends TestCase {
 
   public void test322() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test322");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10L);
@@ -3570,6 +4537,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test323() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test323");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -3582,6 +4552,9 @@ public class Literals0 extends TestCase {
 
   public void test324() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test324");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
     var0.test("");
@@ -3593,6 +4566,9 @@ public class Literals0 extends TestCase {
 
   public void test325() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test325");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test('a');
@@ -3602,6 +4578,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test326() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test326");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3615,6 +4594,9 @@ public class Literals0 extends TestCase {
 
   public void test327() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test327");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -3626,6 +4608,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test328() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test328");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3641,6 +4626,9 @@ public class Literals0 extends TestCase {
 
   public void test329() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test329");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test("111");
@@ -3653,6 +4641,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test330() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test330");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -3667,6 +4658,9 @@ public class Literals0 extends TestCase {
 
   public void test331() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test331");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("");
@@ -3679,6 +4673,9 @@ public class Literals0 extends TestCase {
 
   public void test332() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test332");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -3689,6 +4686,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test333() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test333");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3705,6 +4705,9 @@ public class Literals0 extends TestCase {
 
   public void test334() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test334");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test((short)1);
     var1.test(10.0d);
@@ -3712,6 +4715,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test335() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test335");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
@@ -3723,6 +4729,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test336() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test336");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3736,6 +4745,9 @@ public class Literals0 extends TestCase {
 
   public void test337() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test337");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -3746,6 +4758,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test338() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test338");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -3759,6 +4774,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test339() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test339");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3775,6 +4793,9 @@ public class Literals0 extends TestCase {
 
   public void test340() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test340");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test((-1L));
     var1.test(10L);
@@ -3782,6 +4803,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test341() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test341");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3794,6 +4818,9 @@ public class Literals0 extends TestCase {
 
   public void test342() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test342");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -3805,6 +4832,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test343() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test343");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3819,6 +4849,9 @@ public class Literals0 extends TestCase {
 
   public void test344() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test344");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -3830,6 +4863,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test345() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test345");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3844,12 +4880,18 @@ public class Literals0 extends TestCase {
 
   public void test346() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test346");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(10L);
 
   }
 
   public void test347() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test347");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3866,6 +4908,9 @@ public class Literals0 extends TestCase {
 
   public void test348() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test348");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -3881,6 +4926,9 @@ public class Literals0 extends TestCase {
 
   public void test349() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test349");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
     var1.test((short)222);
@@ -3891,6 +4939,9 @@ public class Literals0 extends TestCase {
 
   public void test350() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test350");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test(0);
     var1.test(1L);
@@ -3898,6 +4949,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test351() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test351");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3911,6 +4965,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test352() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test352");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -3928,6 +4985,9 @@ public class Literals0 extends TestCase {
 
   public void test353() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test353");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test(100L);
     var1.test("hi!");
@@ -3935,6 +4995,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test354() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test354");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(111);
@@ -3944,6 +5007,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test355() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test355");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -3956,6 +5022,9 @@ public class Literals0 extends TestCase {
 
   public void test356() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test356");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -3967,6 +5036,9 @@ public class Literals0 extends TestCase {
 
   public void test357() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test357");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test('4');
@@ -3976,6 +5048,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test358() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test358");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -3989,6 +5064,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test359() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test359");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4006,6 +5084,9 @@ public class Literals0 extends TestCase {
 
   public void test360() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test360");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((short)1);
@@ -4018,6 +5099,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test361() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test361");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4034,6 +5118,9 @@ public class Literals0 extends TestCase {
 
   public void test362() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test362");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -4047,6 +5134,9 @@ public class Literals0 extends TestCase {
 
   public void test363() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test363");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(111);
     var1.test(1);
@@ -4054,6 +5144,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test364() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test364");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4067,6 +5160,9 @@ public class Literals0 extends TestCase {
 
   public void test365() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test365");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test("111");
@@ -4078,6 +5174,9 @@ public class Literals0 extends TestCase {
 
   public void test366() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test366");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
     var1.test((short)222);
@@ -4087,6 +5186,9 @@ public class Literals0 extends TestCase {
 
   public void test367() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test367");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("");
     var0.test(10);
@@ -4094,6 +5196,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test368() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test368");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -4107,6 +5212,9 @@ public class Literals0 extends TestCase {
 
   public void test369() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test369");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test((-1));
@@ -4116,6 +5224,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test370() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test370");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -4127,6 +5238,9 @@ public class Literals0 extends TestCase {
 
   public void test371() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test371");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test('#');
     var1.test(222L);
@@ -4134,6 +5248,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test372() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test372");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4149,6 +5266,9 @@ public class Literals0 extends TestCase {
 
   public void test373() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test373");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test(100.0d);
     var1.test("");
@@ -4160,6 +5280,9 @@ public class Literals0 extends TestCase {
 
   public void test374() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test374");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("111");
     var1.test('\"');
@@ -4169,6 +5292,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test375() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test375");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4181,6 +5307,9 @@ public class Literals0 extends TestCase {
 
   public void test376() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test376");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -4192,6 +5321,9 @@ public class Literals0 extends TestCase {
 
   public void test377() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test377");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test((-1));
     var0.test("");
@@ -4202,6 +5334,9 @@ public class Literals0 extends TestCase {
 
   public void test378() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test378");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test((byte)1);
     var1.test(0.0d);
@@ -4209,6 +5344,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test379() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test379");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4222,6 +5360,9 @@ public class Literals0 extends TestCase {
 
   public void test380() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test380");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -4233,6 +5374,9 @@ public class Literals0 extends TestCase {
 
   public void test381() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test381");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -4243,6 +5387,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test382() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test382");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4256,6 +5403,9 @@ public class Literals0 extends TestCase {
 
   public void test383() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test383");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(333);
     var0.test("");
@@ -4266,6 +5416,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test384() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test384");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -4278,6 +5431,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test385() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test385");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4294,6 +5450,9 @@ public class Literals0 extends TestCase {
 
   public void test386() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test386");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -4309,6 +5468,9 @@ public class Literals0 extends TestCase {
 
   public void test387() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test387");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
     var0.test("hi!");
@@ -4319,6 +5481,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test388() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test388");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -4333,6 +5498,9 @@ public class Literals0 extends TestCase {
 
   public void test389() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test389");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -4343,6 +5511,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test390() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test390");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -4356,6 +5527,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test391() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test391");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4372,6 +5546,9 @@ public class Literals0 extends TestCase {
 
   public void test392() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test392");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(111);
     var1.test("222");
@@ -4381,6 +5558,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test393() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test393");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -4395,6 +5575,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test394() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test394");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4411,6 +5594,9 @@ public class Literals0 extends TestCase {
 
   public void test395() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test395");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(100L);
     var1.test((byte)22);
@@ -4420,6 +5606,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test396() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test396");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4435,6 +5624,9 @@ public class Literals0 extends TestCase {
 
   public void test397() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test397");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test('4');
     var1.test(222L);
@@ -4444,6 +5636,9 @@ public class Literals0 extends TestCase {
 
   public void test398() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test398");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test(10.0d);
     var1.test((byte)10);
@@ -4451,6 +5646,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test399() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test399");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4467,6 +5665,9 @@ public class Literals0 extends TestCase {
 
   public void test400() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test400");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test((byte)0);
@@ -4480,6 +5681,9 @@ public class Literals0 extends TestCase {
 
   public void test401() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test401");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("333");
@@ -4491,6 +5695,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test402() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test402");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4508,6 +5715,9 @@ public class Literals0 extends TestCase {
 
   public void test403() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test403");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -4518,6 +5728,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test404() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test404");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4535,6 +5748,9 @@ public class Literals0 extends TestCase {
 
   public void test405() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test405");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test(333);
@@ -4545,6 +5761,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test406() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test406");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
@@ -4557,6 +5776,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test407() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test407");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4571,6 +5793,9 @@ public class Literals0 extends TestCase {
 
   public void test408() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test408");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test('\"');
@@ -4579,6 +5804,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test409() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test409");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4592,6 +5820,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test410() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test410");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4608,6 +5839,9 @@ public class Literals0 extends TestCase {
 
   public void test411() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test411");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -4622,6 +5856,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test412() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test412");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4638,6 +5875,9 @@ public class Literals0 extends TestCase {
 
   public void test413() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test413");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test("111");
@@ -4651,6 +5891,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test414() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test414");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4667,6 +5910,9 @@ public class Literals0 extends TestCase {
 
   public void test415() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test415");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -4680,6 +5926,9 @@ public class Literals0 extends TestCase {
 
   public void test416() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test416");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -4688,6 +5937,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test417() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test417");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4699,6 +5951,9 @@ public class Literals0 extends TestCase {
 
   public void test418() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test418");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
     var0.test("");
@@ -4709,6 +5964,9 @@ public class Literals0 extends TestCase {
 
   public void test419() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test419");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test(100L);
     var1.test("hi!");
@@ -4718,6 +5976,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test420() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test420");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -4730,6 +5991,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test421() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test421");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4744,6 +6008,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test422() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test422");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4760,6 +6027,9 @@ public class Literals0 extends TestCase {
 
   public void test423() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test423");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test('a');
@@ -4771,6 +6041,9 @@ public class Literals0 extends TestCase {
 
   public void test424() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test424");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test("hi!");
     var0.test("hi!");
@@ -4781,6 +6054,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test425() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test425");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4794,6 +6070,9 @@ public class Literals0 extends TestCase {
 
   public void test426() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test426");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(0);
     var1.test('\"');
     var1.test("222");
@@ -4801,6 +6080,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test427() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test427");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4815,6 +6097,9 @@ public class Literals0 extends TestCase {
 
   public void test428() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test428");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
     var1.test((byte)0);
@@ -4828,6 +6113,9 @@ public class Literals0 extends TestCase {
 
   public void test429() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test429");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
     var1.test(0);
@@ -4836,6 +6124,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test430() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test430");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4847,6 +6138,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test431() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test431");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4860,6 +6154,9 @@ public class Literals0 extends TestCase {
 
   public void test432() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test432");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("");
@@ -4869,6 +6166,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test433() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test433");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4885,6 +6185,9 @@ public class Literals0 extends TestCase {
 
   public void test434() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test434");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("hi!");
@@ -4896,6 +6199,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test435() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test435");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4911,6 +6217,9 @@ public class Literals0 extends TestCase {
 
   public void test436() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test436");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test(1.0f);
     var1.test((short)222);
@@ -4923,6 +6232,9 @@ public class Literals0 extends TestCase {
 
   public void test437() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test437");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test((-1.0d));
@@ -4931,6 +6243,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test438() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test438");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -4943,6 +6258,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test439() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test439");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4959,6 +6277,9 @@ public class Literals0 extends TestCase {
 
   public void test440() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test440");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('4');
     var1.test('#');
@@ -4967,6 +6288,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test441() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test441");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -4984,6 +6308,9 @@ public class Literals0 extends TestCase {
 
   public void test442() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test442");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -4997,6 +6324,9 @@ public class Literals0 extends TestCase {
 
   public void test443() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test443");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(1);
@@ -5007,6 +6337,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test444() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test444");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
@@ -5021,6 +6354,9 @@ public class Literals0 extends TestCase {
 
   public void test445() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test445");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(100);
     var1.test(111);
     var1.test("222");
@@ -5030,6 +6366,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test446() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test446");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -5041,6 +6380,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test447() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test447");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(1);
@@ -5055,6 +6397,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test448() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test448");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5071,6 +6416,9 @@ public class Literals0 extends TestCase {
 
   public void test449() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test449");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -5081,6 +6429,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test450() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test450");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5094,6 +6445,9 @@ public class Literals0 extends TestCase {
 
   public void test451() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test451");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(10.0d);
@@ -5106,6 +6460,9 @@ public class Literals0 extends TestCase {
 
   public void test452() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test452");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test("hi!");
     var1.test(1);
@@ -5116,6 +6473,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test453() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test453");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -5131,6 +6491,9 @@ public class Literals0 extends TestCase {
 
   public void test454() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test454");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -5145,6 +6508,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test455() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test455");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5163,6 +6529,9 @@ public class Literals0 extends TestCase {
 
   public void test456() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test456");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(1);
     var1.test(1.0d);
     var1.test(0);
@@ -5170,6 +6539,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test457() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test457");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5187,6 +6559,9 @@ public class Literals0 extends TestCase {
 
   public void test458() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test458");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("333");
@@ -5200,6 +6575,9 @@ public class Literals0 extends TestCase {
 
   public void test459() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test459");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test((-1));
     var0.test("");
@@ -5209,6 +6587,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test460() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test460");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -5220,6 +6601,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test461() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test461");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5236,6 +6620,9 @@ public class Literals0 extends TestCase {
 
   public void test462() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test462");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -5251,6 +6638,9 @@ public class Literals0 extends TestCase {
 
   public void test463() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test463");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -5265,6 +6655,9 @@ public class Literals0 extends TestCase {
 
   public void test464() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test464");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(333);
     var0.test(0);
@@ -5274,6 +6667,9 @@ public class Literals0 extends TestCase {
 
   public void test465() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test465");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(222);
     var1.test("111");
     var1.test(0);
@@ -5282,6 +6678,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test466() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test466");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -5297,6 +6696,9 @@ public class Literals0 extends TestCase {
 
   public void test467() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test467");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -5309,6 +6711,9 @@ public class Literals0 extends TestCase {
 
   public void test468() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test468");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)100);
     var1.test((-1.0d));
@@ -5319,6 +6724,9 @@ public class Literals0 extends TestCase {
 
   public void test469() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test469");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test(0);
     var1.test(100);
@@ -5327,6 +6735,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test470() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test470");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5339,6 +6750,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test471() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test471");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5355,6 +6769,9 @@ public class Literals0 extends TestCase {
 
   public void test472() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test472");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((short)0);
     var1.test(100.0d);
@@ -5368,6 +6785,9 @@ public class Literals0 extends TestCase {
 
   public void test473() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test473");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test(333);
@@ -5379,6 +6799,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test474() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test474");
+
 
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
@@ -5393,6 +6816,9 @@ public class Literals0 extends TestCase {
 
   public void test475() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test475");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test('4');
@@ -5403,6 +6829,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test476() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test476");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5417,6 +6846,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test477() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test477");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5434,6 +6866,9 @@ public class Literals0 extends TestCase {
 
   public void test478() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test478");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(1L);
@@ -5444,6 +6879,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test479() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test479");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5458,6 +6896,9 @@ public class Literals0 extends TestCase {
 
   public void test480() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test480");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -5469,6 +6910,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test481() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test481");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(111);
     var1.test('#');
@@ -5484,6 +6928,9 @@ public class Literals0 extends TestCase {
 
   public void test482() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test482");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -5495,6 +6942,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test483() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test483");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5512,6 +6962,9 @@ public class Literals0 extends TestCase {
 
   public void test484() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test484");
+
+
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
     var1.test(' ');
@@ -5523,6 +6976,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test485() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test485");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2((-1));
     var1.test((byte)22);
@@ -5536,6 +6992,9 @@ public class Literals0 extends TestCase {
 
   public void test486() throws Throwable {
 
+    if (debug) System.out.printf("%nLiterals0.test486");
+
+
     randoop.literals.B var0 = new randoop.literals.B();
     var0.test(100);
     var0.test("hi!");
@@ -5546,6 +7005,9 @@ public class Literals0 extends TestCase {
   }
 
   public void test487() throws Throwable {
+
+    if (debug) System.out.printf("%nLiterals0.test487");
+
 
     randoop.literals.A2 var1 = new randoop.literals.A2(10);
     var1.test('#');
