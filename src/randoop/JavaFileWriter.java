@@ -85,7 +85,7 @@ public class JavaFileWriter {
       Log.out.println("Exception thrown while creating text print stream:" + fileName);
       e.printStackTrace();
       System.exit(1);
-      throw new Exception("This can't happen");
+      throw new Error("This can't happen");
     }
   }
 }
