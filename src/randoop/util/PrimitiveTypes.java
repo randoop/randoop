@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import randoop.main.GenInputsAbstract;
+
 public final class PrimitiveTypes {
   private PrimitiveTypes() {
     throw new IllegalStateException("no instances");
@@ -150,7 +152,11 @@ public final class PrimitiveTypes {
     assert valueClass != null : value + " "  + value.getClass();
 
     if (String.class.equals(valueClass)) {
-      return "\"" + StringEscapeUtils.escapeJava(value.toString()) + "\"";
+      String escaped = StringEscapeUtils.escapeJava(value.toString());
+      if (escaped.length() > GenInputsAbstract.string_maxlen) {
+        throw new Error("String too long, length = " + escaped.length());
+      }
+      return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
     } else if (char.class.equals(valueClass)) {
       // XXX This won't always work!
       if (value.equals(' '))
