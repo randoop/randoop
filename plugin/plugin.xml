@@ -126,7 +126,7 @@
          </enablement>
       </renameParticipant>
       <renameParticipant
-            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationITypeRenameParticipant"
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationIMethodRenameParticipant"
             id="randoop.plugin.refactoring.launching.methodRename"
             name="Launch configuration participant">
          <enablement>
@@ -217,6 +217,27 @@
                   variable="element">
                <instanceof
                      value="org.eclipse.jdt.core.IType">
+               </instanceof>
+            </with></enablement>
+      </moveParticipant>
+      <moveParticipant
+            class="randoop.plugin.internal.ui.refactoring.LaunchConfigurationIPackageFragmentMoveParticipant"
+            id="randoop.plugin.refactoring.launching.packageFragmentMove"
+            name="Launch configuration participant">
+         <enablement>
+            <with
+                  variable="affectedNatures">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="org.eclipse.jdt.core.javanature">
+                  </equals>
+               </iterate>
+            </with>
+            <with
+                  variable="element">
+               <instanceof
+                     value="org.eclipse.jdt.core.IPackageFragment">
                </instanceof>
             </with></enablement>
       </moveParticipant>
