@@ -62,10 +62,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Tree fTypeTree;
   private Button fClassUp;
   private Button fClassDown;
+  private Button fClassRemove;
   private Button fClassAddFromProject;
   private Button fClassAddFromClasspaths;
   private Button fClassAddFromJRESystemLibrary;
-  private Button fClassRemove;
+  private Button fSelectAll;
+  private Button fSelectNone;
   private Button fIgnoreJUnitTestCases;
   private IJavaProject fJavaProject;
   
@@ -194,6 +196,26 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     });
     fClassAddFromJRESystemLibrary.addSelectionListener(listener);
     
+    // Create a spacer
+    SWTFactory.createLabel(rightcomp, "", 1);
+    fSelectAll = SWTFactory.createPushButton(rightcomp, "Select All", null);
+    fSelectAll.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        fTypeSelector.checkAll();
+      }
+    });
+    fSelectAll.addSelectionListener(listener);
+    
+    fSelectNone = SWTFactory.createPushButton(rightcomp, "Select None", null);
+    fSelectNone.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        fTypeSelector.uncheckAll();
+      }
+    });
+    fSelectNone.addSelectionListener(listener);
+    
     fIgnoreJUnitTestCases = SWTFactory.createCheckButton(leftcomp,
         "Ignore JUnit tests cases when searching for Java types", null, true, 2);
     gd = (GridData) fIgnoreJUnitTestCases.getLayoutData();
@@ -203,11 +225,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public IStatus canSave() {
-    if (fRunnableContext == null || fShell == null || fTypeSelector == null
-        || fTypeTree == null || fClassUp == null || fClassDown == null
-        || fClassDown == null || fClassAddFromProject == null
-        || fClassAddFromClasspaths == null
-        || fClassAddFromJRESystemLibrary == null || fClassRemove == null) {
+    if (fRunnableContext == null || fShell == null || fTypeSelector == null || fTypeTree == null
+        || fClassUp == null || fClassDown == null || fClassRemove == null || fClassAddFromProject == null
+        || fClassAddFromClasspaths == null || fClassAddFromJRESystemLibrary == null || fSelectAll == null
+        || fSelectNone == null) {
       return StatusFactory.createErrorStatus("TestInputOption incorrectly initialized");
     }
     
@@ -586,4 +607,5 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       fTypeSelector.setJavaProject(fJavaProject);
     }
   }
+  
 }

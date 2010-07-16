@@ -17,6 +17,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -666,6 +667,31 @@ public class ClassSelector {
     }
   }
 
+  public void checkAll() {
+    for(TreeItem rootItem : fTypeTree.getItems()) {
+      checkRootItem(rootItem, true);
+    }
+  }
+
+  public void uncheckAll() {
+    for(TreeItem rootItem : fTypeTree.getItems()) {
+      checkRootItem(rootItem, false);
+    }
+  }
+  
+  
+  private void checkRootItem(TreeItem parentItem, boolean isChecked) {
+    if (parentItem == null)
+      return;
+    
+    for(TreeItem item : parentItem.getItems()) {
+      checkRootItem(item, isChecked);
+    }
+    
+    parentItem.setChecked(isChecked);
+    parentItem.setGrayed(false);
+  }
+  
   public void setJavaProject(IJavaProject javaProject) {
     fJavaProject = javaProject;
     
