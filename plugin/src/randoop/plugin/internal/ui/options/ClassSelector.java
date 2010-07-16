@@ -17,7 +17,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -195,8 +194,7 @@ public class ClassSelector {
     }
     root.setText(text);
     
-    root.setData(ID_ELEMENT_TYPE, IJavaElement.PACKAGE_FRAGMENT);
-    root.setData(ID_MNEMONIC, packageFragmentName);
+    setMnemonic(root, IJavaElement.PACKAGE_FRAGMENT, packageFragmentName);
     
     return root;
   }
@@ -254,17 +252,24 @@ public class ClassSelector {
    */
   public TreeItem addType(IType type, boolean checked) {
     try {
+      if (type == null || type.isInterface() || Flags.isAbstract(type.getFlags())) {
+        return null;
+      }
+      
+      TypeMnemonic typeMnemonic = new TypeMnemonic(type);
+      String fqname = typeMnemonic.getFullyQualifiedName();
+      if (getClassItem(fqname) != null) {
+        return null;
+      }
+      
       TreeItem parent = addPackage(type.getPackageFragment().getElementName());
 
       TreeItem classItem = new TreeItem(parent, SWT.NONE);
 
-      Assert.isTrue(!type.isInterface());
-      Assert.isTrue(!Flags.isAbstract(type.getFlags()));
-
       classItem.setImage(getImageForType(type));
 
       classItem.setText(type.getFullyQualifiedName());
-      setMnemonic(classItem, IJavaElement.TYPE, new TypeMnemonic(type).toString());
+      setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
 
       addMethods(classItem, type);
       
@@ -678,7 +683,31 @@ public class ClassSelector {
       checkRootItem(rootItem, false);
     }
   }
+
+  private TreeItem getClassItem(String fullyQualifiedClassName) throws JavaModelException {
+    String packageName = Mnemonics.getPackageName(fullyQualifiedClassName);
+    String className = Mnemonics.getClassName(fullyQualifiedClassName);
+
+    return getClassItem(packageName, className);
+  }
   
+  private TreeItem getClassItem(String packageName, String className) throws JavaModelException {
+    String fqname = Mnemonics.getFullyQualifiedName(packageName, className);
+    
+    for(TreeItem packageItem : fTypeTree.getItems()) {
+      if (getMnemonic(packageItem).equals(packageName)) {
+        for (TreeItem classItem : packageItem.getItems()) {
+          String otherFqname = new TypeMnemonic(getMnemonic(classItem)).getFullyQualifiedName();
+          
+          if (fqname.equals(otherFqname)) {
+            return classItem;
+          }
+        }
+      }
+    }
+    
+    return null;
+  }
   
   private void checkRootItem(TreeItem parentItem, boolean isChecked) {
     if (parentItem == null)
