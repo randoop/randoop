@@ -230,7 +230,7 @@ java.util.TreeSet</pre><p>After 60 seconds, Randoop stops generating tests. The 
 
 <pre class="code">Created file: my/home/directory/RandoopTest0.java
 Created file: my/home/directory/RandoopTest.java
-done.</pre><p>The main test driver is in class <tt>RandoopTest</tt>. You can now compile and run the tests. Don't forget to include randoop.jar in the classpath when you compile and run the tests. In this example, you should also add the current directory (&quot;.&quot;) when you run the tests. </p>
+done.</pre><p>The main test driver is in class <tt>RandoopTest</tt>. You can now compile and run the tests. Don't forget to include junit.jar in the classpath when you compile and run the tests. In this example, you should also add the current directory (&quot;.&quot;) when you run the tests. </p>
 
 <pre class="code">javac -classpath randoop.jar RandoopTest*.java
 java -classpath .:randoop.jar junit.textui.TestRunner RandoopTest</pre><p>JUnit will execute the generated tests. Most will pass, and some will fail. The next section describes the kinds of tests that Randoop generates, and the reason why they may fail. </p>
