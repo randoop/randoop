@@ -36,7 +36,7 @@ public abstract class BoundedDoubleOption extends TextOption {
         return StatusFactory.createErrorStatus(fOutOfBoundsMsg);
       }
 
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     } catch (NumberFormatException nfe) {
       return StatusFactory.createErrorStatus(fInvalidErrorMsg);
     }

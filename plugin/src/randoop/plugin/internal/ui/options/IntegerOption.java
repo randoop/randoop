@@ -20,7 +20,7 @@ public abstract class IntegerOption extends TextOption {
     try {
       Integer.parseInt(text);
       
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     } catch (NumberFormatException nfe) {
       return StatusFactory.createErrorStatus(fInvalidErrorMsg);
     }
