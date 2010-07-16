@@ -349,7 +349,10 @@ option to <tt>java</tt> when running Randoop:
 </pre>
 <p>
 You need to supply the <tt>map_calls.txt</tt> file, and also a definition
-of the replacement methods.
+of the replacement methods.  When you run the generated tests, you will
+also need to supply the same <tt>-javaagent:...</tt> argument.  (In the
+future, Randoop may provide a way to generate standalone tests even when
+generating tests using the <tt>-javaagent:...</tt> argument.)
 </p>
 
 <p>
