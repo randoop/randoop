@@ -35,12 +35,12 @@ import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
+import randoop.plugin.internal.core.MutableBoolean;
 import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.ui.views.MessageViewListener;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
-import randoop.plugin.tests.ui.launching.MutableBoolean;
 
 public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate {
   MessageReceiver fMessageReceiver;

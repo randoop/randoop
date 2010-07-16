@@ -1,4 +1,4 @@
-package randoop.plugin.tests.ui.launching;
+package randoop.plugin.internal.core;
 
 public class MutableBoolean {
   boolean fValue;
