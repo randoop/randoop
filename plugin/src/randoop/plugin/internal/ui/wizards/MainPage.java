@@ -63,6 +63,22 @@ public class MainPage extends OptionWizardPage {
     createGenerationLimitComposite(comp);
     createSeperator(comp);
     createOutputRestrictionsComposite(comp);
+
+    fClassName.restoreDefaults();
+
+    fRandomSeed.restoreDefaults();
+    fMaxTestSize.restoreDefaults();
+    fUseThreads.restoreDefaults();
+    fThreadTimeout.restoreDefaults();
+    fUseNull.restoreDefaults();
+    fNullRatio.restoreDefaults();
+
+    fJUnitTestInputs.restoreDefaults();
+    fTimeLimit.restoreDefaults();
+
+    fTestKinds.restoreDefaults();
+    fMaxTestsWritten.restoreDefaults();
+    fMaxTestsPerFile.restoreDefaults();
     
     super.createControl(parent);
   }
