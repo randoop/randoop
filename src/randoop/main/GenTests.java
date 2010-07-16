@@ -856,8 +856,7 @@ public class GenTests extends GenInputsAbstract {
     System.out.print ("ERROR: ");
     System.out.printf (format, args);
     System.out.println();
-    for (String use_str : options.usage())
-      System.out.println (use_str);
+    System.out.println (options.usage());
     if (t != null)
       t.printStackTrace();
     System.exit(-1);

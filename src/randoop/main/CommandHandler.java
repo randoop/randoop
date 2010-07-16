@@ -170,13 +170,7 @@ public abstract class CommandHandler {
     if (foptions != null) {
       out.println("OPTIONS:");
       out.println();
-      for (String use : foptions.usage()) {
-        if (!use.trim().equals("")) {
- 
-          out.print(Util.hangingParagraph(use, Globals.COLWIDTH, Globals.INDENTWIDTH));
-          out.println();
-        }
-      }
+      out.println(foptions.usage());
     }
   }
 
