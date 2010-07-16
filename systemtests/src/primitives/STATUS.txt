@@ -1,0 +1,60 @@
+Commons Primitives Status
+$Revision: 1.1 $ $Date: 2003/12/04 23:31:42 $
+http://jakarta.apache.org/commons/primitives/
+
+Summary:
+
+  Commons Primitives is a set of collection and utility classes for primitive types.
+  The Java language has a clear distinction between Object and primitive types.
+  A lot of functionality is provided for Object types, including the Java Collection Framework.
+  Relatively little functionality is provided by the JDK for primitives.
+  This package addresses this by providing a set of utility and collection classes for primitives.
+
+  Commons Primitives is a component developed by Jakarta Commons, 
+  a subproject of the Apache Jakarta project.
+ 
+Releases:
+
+  Stable:
+    1.0.
+      CVS Tag: PRIMITIVES_1_0
+      Binaries: http://jakarta.apache.org/site/binindex.cgi#commons-primitives
+      Source: http://jakarta.apache.org/site/sourceindex.cgi#commons-primitives
+
+  Development:
+    1.1-dev 
+      CVS Tag: HEAD
+      Binaries: http://cvs.apache.org/builds/jakarta-commons/nightly/commons-primitives/
+      Source: http://cvs.apache.org/builds/jakarta-commons/nightly/commons-primitives/
+
+Assets:
+
+  Web site:         http://jakarta.apache.org/commons/primitives
+
+  Mailing lists:    commons-dev@jakarta.apache.org  (developers)
+                    commons-user@jakarta.apache.org (users)
+
+  Repositories:     jakarta-commons/primitives
+                    http://cvs.apache.org/viewcvs.cgi/jakarta-commons/primitives/
+                    Also see http://jakarta.apache.org/commons/primitives/cvs-usage.html
+
+Committers:
+
+  Stephen Colebourne (scolebourne AT apache DOT org) [PMC]
+  Matthew Hawthorne (matth AT apache DOT org)
+  Rodney Waldhoff (rwaldhoff AT apache DOT org) [PMC]
+    
+Contributors:
+
+  Currently no non-committers.
+
+                
+Pending Issues:
+
+  None.
+
+Resolved Issues:
+
+  None.
+
+    

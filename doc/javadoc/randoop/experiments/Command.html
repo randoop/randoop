@@ -1,0 +1,572 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Command
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Command";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../randoop/experiments/CombinedStats.html" title="class in randoop.experiments"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../randoop/experiments/Command.KillBecauseTimeLimitExceed.html" title="class in randoop.experiments"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?randoop/experiments/Command.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Command.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop.experiments</FONT>
+<BR>
+Class Command</H2>
+<PRE>
+Object
+  <IMG SRC="../../resources/inherit.gif" ALT="extended by "><B>Command</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>Command</B><DT>extends Object</DL>
+</PRE>
+
+<P>
+The important method in this class is <code>exec(String)</code>. It
+ executes its argument and pipes both stdout and stderr to System.out. Each
+ line in the piped output from stdout is prefixed with "OUT>" and the output
+ from stderr is prefixed with "ERR>"
+
+ <p>
+ Credit: Producer code modified (and augmented) from Michael Daconta's "Java
+ Traps" column ("When Runtime.exec() won't"), found at
+ http://www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.KillBecauseTimeLimitExceed.html" title="class in randoop.experiments">Command.KillBecauseTimeLimitExceed</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.StreamGobbler.html" title="class in randoop.experiments">Command.StreamGobbler</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Helper class for Command.</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#javaHeapSize">javaHeapSize</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Argument to java command to set heap size</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#no_execute">no_execute</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If true, commands will be printed, but not executed</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#Command()">Command</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#exec(java.lang.String[])">exec</A></B>(String[]&nbsp;cmd)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs cmd, redirecting stdout and stderr to System.out.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream)">exec</A></B>(String[]&nbsp;cmd,
+     PrintStream&nbsp;out,
+     PrintStream&nbsp;err)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs cmd, redirecting stdout and stderr to `out' and prefixing the output
+ from stout with "OUT>" and the output from stderr with "ERR>".</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream, java.lang.String)">exec</A></B>(String[]&nbsp;cmd,
+     PrintStream&nbsp;out,
+     PrintStream&nbsp;err,
+     String&nbsp;prompt)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream, java.lang.String, boolean)">exec</A></B>(String[]&nbsp;cmd,
+     PrintStream&nbsp;out,
+     PrintStream&nbsp;err,
+     String&nbsp;prompt,
+     boolean&nbsp;gobbleChars)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream, java.lang.String, boolean, java.io.File)">exec</A></B>(String[]&nbsp;cmd,
+     PrintStream&nbsp;out,
+     PrintStream&nbsp;err,
+     String&nbsp;prompt,
+     boolean&nbsp;gobbleChars,
+     File&nbsp;f)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream, java.lang.String, boolean, int, java.io.File)">exec</A></B>(String[]&nbsp;cmd,
+     PrintStream&nbsp;out,
+     PrintStream&nbsp;err,
+     String&nbsp;prompt,
+     boolean&nbsp;gobbleChars,
+     int&nbsp;killAfterMillisPassed,
+     File&nbsp;workingDir)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#runCommand(java.lang.String[], java.lang.String, boolean, java.lang.String, boolean)">runCommand</A></B>(String[]&nbsp;command,
+           String&nbsp;prompt,
+           boolean&nbsp;verbose,
+           String&nbsp;nonVerboseMessage,
+           boolean&nbsp;gobbleChars)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#runCommand(java.lang.String[], java.lang.String, boolean, java.lang.String, boolean, boolean)">runCommand</A></B>(String[]&nbsp;command,
+           String&nbsp;prompt,
+           boolean&nbsp;verbose,
+           String&nbsp;nonVerboseMessage,
+           boolean&nbsp;okToFail,
+           boolean&nbsp;gobbleChars)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../randoop/experiments/Command.html#runCommandOKToFail(java.lang.String[], java.lang.String, boolean, java.lang.String, boolean)">runCommandOKToFail</A></B>(String[]&nbsp;command,
+                   String&nbsp;prompt,
+                   boolean&nbsp;verbose,
+                   String&nbsp;nonVerboseMessage,
+                   boolean&nbsp;gobbleChars)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="no_execute"><!-- --></A><H3>
+no_execute</H3>
+<PRE>
+public static boolean <B>no_execute</B></PRE>
+<DL>
+<DD>If true, commands will be printed, but not executed
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="javaHeapSize"><!-- --></A><H3>
+javaHeapSize</H3>
+<PRE>
+public static String <B>javaHeapSize</B></PRE>
+<DL>
+<DD>Argument to java command to set heap size
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Command()"><!-- --></A><H3>
+Command</H3>
+<PRE>
+public <B>Command</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="runCommand(java.lang.String[], java.lang.String, boolean, java.lang.String, boolean)"><!-- --></A><H3>
+runCommand</H3>
+<PRE>
+public static void <B>runCommand</B>(String[]&nbsp;command,
+                              String&nbsp;prompt,
+                              boolean&nbsp;verbose,
+                              String&nbsp;nonVerboseMessage,
+                              boolean&nbsp;gobbleChars)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="runCommandOKToFail(java.lang.String[], java.lang.String, boolean, java.lang.String, boolean)"><!-- --></A><H3>
+runCommandOKToFail</H3>
+<PRE>
+public static void <B>runCommandOKToFail</B>(String[]&nbsp;command,
+                                      String&nbsp;prompt,
+                                      boolean&nbsp;verbose,
+                                      String&nbsp;nonVerboseMessage,
+                                      boolean&nbsp;gobbleChars)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="runCommand(java.lang.String[], java.lang.String, boolean, java.lang.String, boolean, boolean)"><!-- --></A><H3>
+runCommand</H3>
+<PRE>
+public static void <B>runCommand</B>(String[]&nbsp;command,
+                              String&nbsp;prompt,
+                              boolean&nbsp;verbose,
+                              String&nbsp;nonVerboseMessage,
+                              boolean&nbsp;okToFail,
+                              boolean&nbsp;gobbleChars)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exec(java.lang.String[])"><!-- --></A><H3>
+exec</H3>
+<PRE>
+public static int <B>exec</B>(String[]&nbsp;cmd)</PRE>
+<DL>
+<DD>Runs cmd, redirecting stdout and stderr to System.out.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream)"><!-- --></A><H3>
+exec</H3>
+<PRE>
+public static int <B>exec</B>(String[]&nbsp;cmd,
+                       PrintStream&nbsp;out,
+                       PrintStream&nbsp;err)</PRE>
+<DL>
+<DD>Runs cmd, redirecting stdout and stderr to `out' and prefixing the output
+ from stout with "OUT>" and the output from stderr with "ERR>".
+
+ Returns whatever exit number is returned by the subprocess invoking the
+ command.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream, java.lang.String)"><!-- --></A><H3>
+exec</H3>
+<PRE>
+public static int <B>exec</B>(String[]&nbsp;cmd,
+                       PrintStream&nbsp;out,
+                       PrintStream&nbsp;err,
+                       String&nbsp;prompt)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream, java.lang.String, boolean)"><!-- --></A><H3>
+exec</H3>
+<PRE>
+public static int <B>exec</B>(String[]&nbsp;cmd,
+                       PrintStream&nbsp;out,
+                       PrintStream&nbsp;err,
+                       String&nbsp;prompt,
+                       boolean&nbsp;gobbleChars)</PRE>
+<DL>
+<DD>Convenience method. Equivalent to exec(cmd, out, err, prompt, gobbleChars, null).
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream, java.lang.String, boolean, java.io.File)"><!-- --></A><H3>
+exec</H3>
+<PRE>
+public static int <B>exec</B>(String[]&nbsp;cmd,
+                       PrintStream&nbsp;out,
+                       PrintStream&nbsp;err,
+                       String&nbsp;prompt,
+                       boolean&nbsp;gobbleChars,
+                       File&nbsp;f)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exec(java.lang.String[], java.io.PrintStream, java.io.PrintStream, java.lang.String, boolean, int, java.io.File)"><!-- --></A><H3>
+exec</H3>
+<PRE>
+public static int <B>exec</B>(String[]&nbsp;cmd,
+                       PrintStream&nbsp;out,
+                       PrintStream&nbsp;err,
+                       String&nbsp;prompt,
+                       boolean&nbsp;gobbleChars,
+                       int&nbsp;killAfterMillisPassed,
+                       File&nbsp;workingDir)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../randoop/experiments/CombinedStats.html" title="class in randoop.experiments"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../randoop/experiments/Command.KillBecauseTimeLimitExceed.html" title="class in randoop.experiments"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?randoop/experiments/Command.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Command.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

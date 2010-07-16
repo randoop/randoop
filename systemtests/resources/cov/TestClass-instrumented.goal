@@ -1,0 +1,115 @@
+package cov;
+
+import java.util.List;
+
+/**
+ * A class used to test the coverage instrumenter.
+ */
+public class TestClass {
+
+  public static final String sourceFileName = "TestClass.java";
+	public static final boolean simplecov_instrumented = true;
+	public static int[] trueBranches = new int[5];
+	public static int[] falseBranches = new int[5];
+	public static java.util.Map<String, int[]> methodIdToBranches = new java.util.LinkedHashMap<String, int[]>();
+	public static java.util.Map<String, int[]> methodLineSpans = new java.util.LinkedHashMap<String, int[]>();
+
+
+	static {
+		methodIdToBranches.put("0", new int[] { 0 });
+		methodIdToBranches.put("1", new int[] { 1 });
+		methodIdToBranches.put("2", new int[] { 2 });
+		methodIdToBranches.put("3", new int[] { 3 });
+		methodLineSpans.put("0", new int[] { 11, 14 });
+		methodLineSpans.put("1", new int[] { 18, 21 });
+		methodLineSpans.put("2", new int[] { 24, 33 });
+		methodLineSpans.put("3", new int[] { 37, 42 });
+	}
+
+
+	public static int branchLines[] = new int[] { 12, 19, 28, 38, 46 };
+
+
+	@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+	@java.lang.annotation.Target( { java.lang.annotation.ElementType.METHOD,
+			java.lang.annotation.ElementType.CONSTRUCTOR })
+	public static @interface SimpleCovMethodId {
+		String value();
+	}
+
+
+public class InnerStatic {
+    @SimpleCovMethodId("0") public int foo2(int x) {
+      if ((((x < 0) && ++cov.TestClass.trueBranches[0] != 0) || ++cov.TestClass.falseBranches[0] == 0)) return 1;
+      else return 2;
+    }
+  }
+
+  public class InnerNonStatic {
+    @SimpleCovMethodId("1") public int foo2(int x) {
+      if ((((x < 0) && ++cov.TestClass.trueBranches[1] != 0) || ++cov.TestClass.falseBranches[1] == 0)) return 1;
+      else return 2;
+    }
+  }
+  
+  @SimpleCovMethodId("2") @Foobar("hi") private void bar() {
+
+    Comparable<Integer> c = new Comparable<Integer>() {
+      public int compareTo(Integer o) {
+        if ((((o == null) && ++cov.TestClass.trueBranches[2] != 0) || ++cov.TestClass.falseBranches[2] == 0)) throw new RuntimeException();
+        return 0;
+      }
+
+    };
+  }
+
+  private List<String> l;
+
+  @SimpleCovMethodId("3") public int foo(int x) {
+    if ((((x < 0) && ++cov.TestClass.trueBranches[3] != 0) || ++cov.TestClass.falseBranches[3] == 0))
+      return 1;
+    else
+      return 2;
+  }
+
+  static public class Foo {
+    static boolean b = false;
+    static { if ((((b) && ++cov.TestClass.trueBranches[4] != 0) || ++cov.TestClass.falseBranches[4] == 0)) b = true; else b = false; }
+  }
+
+
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+  @java.lang.annotation.Target(java.lang.annotation.ElementType.METHOD)
+  public static @interface Foobar {
+    String value();
+  }
+}
+
+class TestClass2  {
+  public static final String sourceFileName = "TestClass.java";
+	public static final boolean simplecov_instrumented = true;
+	public static int[] trueBranches = new int[1];
+	public static int[] falseBranches = new int[1];
+	public static java.util.Map<String, int[]> methodIdToBranches = new java.util.LinkedHashMap<String, int[]>();
+	public static java.util.Map<String, int[]> methodLineSpans = new java.util.LinkedHashMap<String, int[]>();
+
+	static {
+		methodIdToBranches.put("0", new int[] { 0 });
+		methodLineSpans.put("0", new int[] { 58, 62 });
+	}
+
+	public static int branchLines[] = new int[] { 60 };
+
+	@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
+	@java.lang.annotation.Target( { java.lang.annotation.ElementType.METHOD,
+			java.lang.annotation.ElementType.CONSTRUCTOR })
+	public static @interface SimpleCovMethodId {
+		String value();
+	}
+
+@SimpleCovMethodId("0") public int m(int x) {
+    int y = 1;
+    if ((((x == 0) && ++cov.TestClass2.trueBranches[0] != 0) || ++cov.TestClass2.falseBranches[0] == 0)) y++; 
+    return x = x>0 ? 1 : -1;
+  } 
+}

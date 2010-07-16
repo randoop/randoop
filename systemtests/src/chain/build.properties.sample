@@ -1,0 +1,59 @@
+#   Copyright 2003-2004 The Apache Software Foundation
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+# The directory containing your binary distribution of JUnit, 
+# version 3.8.1 or later
+junit.home = /usr/local/junit3.8.1
+
+# The pathname of the "junit.jar" JAR file
+junit.jar = ${junit.home}/junit.jar
+
+# (OPTIONAL) The pathname of the "faces-api.jar" file
+# To disable, set to a non-existant path (e.g. /absent.jar)
+jsf-api.jar=${user.home}/jwsdp-1.2/jsf/lib/jsf-api.jar
+
+# (OPTIONAL) The pathname of the "portlet-api.jar" file
+# To disable, set to a non-existant path (e.g. /absent.jar)
+portlet-api.jar=../../jakarta-jetspeed-2/portlet-api/target/portlet-api-0.6.6.jar
+
+# (OPTIONAL) The pathname of the "servlet-api.jar" file
+# Version 2.2 or later required, version 2.4 is supported
+# To disable, set to a non-existant path (e.g. /absent.jar)
+servlet-api.jar = /usr/local/jwsdp-1.2/common/lib/servlet-api.jar
+
+# (OPTIONAL) The pathname of the "commons-beanutils.jar" file
+# required only if you are using the org.apache.commons.chain.config package
+# To disable, set to a non-existant path (e.g. /absent.jar)
+commons-beanutils.jar = ../../jakarta-commons/beanutils/dist/commons-beanutils.jar
+
+# (OPTIONAL) The pathname of the "commons-collections.jar" file
+# required only if you are using the org.apache.commons.chain.config package
+# To disable, set to a non-existant path (e.g. /absent.jar)
+commons-collections.jar = ../../jakarta-commons/collections/dist/commons-collections.jar
+
+# (OPTIONAL) The pathname of the "commons-digester.jar" file
+# required only if you are using the org.apache.commons.chain.config package
+# To disable, set to a non-existant path (e.g. /absent.jar)
+commons-digester.jar = ../../jakarta-commons/digester/dist/commons-digester.jar
+
+# (OPTIONAL) The pathname of the "commons-logging.jar" file
+# required only if you are using or compiling the org.apache.commons.config package
+# To disable, set to a non-existant path (e.g. /absent.jar)
+commons-logging.jar = ../../jakarta-commons/logging/dist/commons-logging.jar
+
+# (OPTIONAL) The pathname of the shared JAR repository
+# required only if you are using the install-jar target
+# To disable, set to a non-existant path (e.g. /absent.jar)
+lib.repo = /usr/local/common/lib
+

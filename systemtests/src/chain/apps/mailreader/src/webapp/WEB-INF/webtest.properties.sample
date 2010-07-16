@@ -1,0 +1,11 @@
+# -----------------------------------------------------------------------------
+# webtest.properties.sample
+#
+# This is an example "webtest.properties" file, used to customize building Struts
+# for your local environment.  Make any changes you need, and rename this file
+# to "webtest.properties" in the same directory that contains the Struts
+# "webtest.xml" file.
+#
+# $Id: webtest.properties.sample,v 1.1 2004/03/25 12:36:49 husted Exp $
+# -----------------------------------------------------------------------------
+webtest.home = /opt/Canoo/build_379
