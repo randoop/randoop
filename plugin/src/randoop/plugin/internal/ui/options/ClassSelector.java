@@ -57,18 +57,18 @@ public class ClassSelector {
    * 
    * IMPORTANT: emptyTree must use the SWT.CHECK style bit.
    * 
-   * @param typeTree
+   * @param classTree
    *          tree that can be used to display elements
    * @param selectedMethods 
    * @param selectedTypes 
    * @param availableTypes 
    */
-  public ClassSelector(Tree typeTree) {
-    Assert.isLegal(typeTree != null, "The Tree cannot be null"); //$NON-NLS-1$
-    Assert.isLegal(typeTree.getItemCount() == 0, "The Tree must be empty"); //$NON-NLS-1$
-    Assert.isLegal((typeTree.getStyle() & SWT.CHECK) != 0, "The Tree must use the SWT.CHECK style"); //$NON-NLS-1$
+  public ClassSelector(Tree classTree) {
+    Assert.isLegal(classTree != null, "The Tree cannot be null"); //$NON-NLS-1$
+//    Assert.isLegal(classTree.getItemCount() == 0, "The Tree must be empty"); //$NON-NLS-1$
+    Assert.isLegal((classTree.getStyle() & SWT.CHECK) != 0, "The Tree must use the SWT.CHECK style"); //$NON-NLS-1$
 
-    fTypeTree = typeTree;
+    fTypeTree = classTree;
     fTypeTree.removeAll();
     fJavaProject = null;
     
@@ -91,13 +91,13 @@ public class ClassSelector {
    * 
    * IMPORTANT: emptyTree must use the SWT.CHECK style bit.
    * 
-   * @param emptyTree
+   * @param classTree
    *          empty tree that can be used to add
    */
-  public ClassSelector(Tree emptyTree, IJavaProject javaProject, List<String> availableTypes,
+  public ClassSelector(Tree classTree, IJavaProject javaProject, List<String> availableTypes,
       List<String> selectedTypes, List<String> availableMethods, List<String> selectedMethods) {
 
-    this(emptyTree);
+    this(classTree);
 
     Assert.isLegal(availableTypes != null);
     Assert.isLegal(selectedTypes != null);
@@ -116,6 +116,7 @@ public class ClassSelector {
         Assert.isLegal(javaProject.isOpen(), "Java project could not be opened"); //$NON-NLS-1$
       }
     }
+    
     fJavaProject = javaProject;
 
     IWorkspaceRoot root = getWorkspaceRoot();
@@ -258,13 +259,15 @@ public class ClassSelector {
       
       TypeMnemonic typeMnemonic = new TypeMnemonic(type);
       String fqname = typeMnemonic.getFullyQualifiedName();
-      if (getClassItem(fqname) != null) {
-        return null;
+      
+      TreeItem classItem = getClassItem(fqname);
+      if (classItem != null) {
+        return classItem;
       }
       
       TreeItem parent = addPackage(type.getPackageFragment().getElementName());
 
-      TreeItem classItem = new TreeItem(parent, SWT.NONE);
+      classItem = new TreeItem(parent, SWT.NONE);
 
       classItem.setImage(getImageForType(type));
 
