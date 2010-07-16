@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.internal.ui.text.correction.proposals.AddTypeParameterProposal;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -42,6 +43,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -82,14 +84,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Button fIgnoreJUnitTestCases;
   private IJavaProject fJavaProject;
   
-  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, IJavaProject project) {
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext, final SelectionListener listener, IJavaProject project) {
     this(parent, runnableContext, listener);
     fJavaProject = project;
   }
   
-  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,  
-      final SelectionListener listener) {
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext, final SelectionListener listener) {
     fRunnableContext = runnableContext;
     Group comp = SWTFactory.createGroup(parent, "Test Inputs", 2, 1, GridData.FILL_BOTH);
     fShell = comp.getShell();
@@ -231,6 +231,36 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fIgnoreJUnitTestCases.setLayoutData(gd);
   }
 
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
+      final SelectionListener listener, IJavaProject javaProject, IJavaElement[] elements) {
+
+    this(parent, runnableContext, listener);
+
+    fJavaProject = javaProject;
+    
+    fTypeSelector.setJavaProject(fJavaProject);
+
+    for (IJavaElement element : elements) {
+      switch (element.getElementType()) {
+      case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+      case IJavaElement.PACKAGE_FRAGMENT:
+        for (IType type : RandoopLaunchConfigurationUtil.findTypes(element, false, null)) {
+          fTypeSelector.addType(type, false);
+        }
+        break;
+      case IJavaElement.COMPILATION_UNIT:
+        for (IType type : RandoopLaunchConfigurationUtil.findTypes(element, false, null)) {
+          fTypeSelector.addType(type, true);
+        }
+        break;
+      default:
+        RandoopPlugin.log(StatusFactory.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
+            + element.getElementType()));
+        return;
+      }
+    }
+  }
+
   private void handleSearchButtonSelected(IJavaSearchScope searchScope) {
     try {
       IJavaSearchScope junitSearchScope = new FilterJUnitSearchScope(searchScope, fIgnoreJUnitTestCases.getSelection());
@@ -280,6 +310,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   @Override
   public void initializeFrom(ILaunchConfiguration config) {
     if (fTypeTree != null) {
+      String projectName = RandoopArgumentCollector.getProjectName(config);
+      fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
+      
       List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
       List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
       List<String> availableMethods = RandoopArgumentCollector.getAvailableMethods(config); 
@@ -353,7 +386,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
 
   private IClasspathEntry chooseClasspathEntry() throws JavaModelException {
-    // TODO: Create a better classpath label provider that shows the appropriate icons, and better names
     ILabelProvider labelProvider = new ClasspathLabelProvider();
     ElementListSelectionDialog dialog = new ElementListSelectionDialog(fShell, labelProvider);
     dialog.setTitle("Classpath Selection");
@@ -384,66 +416,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
     
     return null;
-  }
-  
-  public static List<IType> findTypes(IPackageFragmentRoot pfr, boolean ignoreJUnitTestCases, IProgressMonitor pm) throws JavaModelException {
-    if (pm == null) {
-      pm = new NullProgressMonitor();
-    }
-    
-    List<IType> types = new ArrayList<IType>();
-    if (pfr.getKind() == IPackageFragmentRoot.K_BINARY) {
-      for (IJavaElement e : pfr.getChildren()) {
-        Assert.isTrue(e instanceof IPackageFragment);
-        IPackageFragment pf = (IPackageFragment) e;
-        for (IClassFile cf : pf.getClassFiles()) {
-          IType t = cf.getType();
-          if (isValid(t, ignoreJUnitTestCases)) {
-            types.add(t);
-            
-            pm.worked(1);
-            if (pm.isCanceled()) {
-              return types;
-            }
-          }
-        }
-      }
-    } else if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
-      for (IJavaElement e : pfr.getChildren()) {
-        Assert.isTrue(e instanceof IPackageFragment);
-        IPackageFragment pf = (IPackageFragment) e;
-        for (ICompilationUnit cu : pf.getCompilationUnits()) {
-          for (IType t : cu.getAllTypes()) {
-            if (isValid(t, ignoreJUnitTestCases)) {
-              types.add(t);
-              
-              pm.worked(1);
-              if (pm.isCanceled()) {
-                return types;
-              }
-            }
-          }
-        }
-      }
-    }
-    
-    return types;
-  }
-  
-  public static boolean isValid(IType t, boolean ignoreJUnitTestCases) throws JavaModelException {
-    if (t.isInterface() || Flags.isAbstract(t.getFlags())) {
-      return false;
-    }
-    if (ignoreJUnitTestCases) {
-      // TODO: make sure this is actually of type
-      // junit.framework.TestCase
-      String siName = t.getSuperclassName();
-      if (siName != null && siName.equals("TestCase")) { //$NON-NLS-1$
-        return false;
-      }
-    }
-    
-    return true;
   }
   
   private IType[] findClasses(ClassSearcher searcher) {
@@ -509,34 +481,32 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     @Override
     public boolean encloses(String resourcePath) {
       if (fSearchScope.encloses(resourcePath)) {
-        if (fIgnoreJUnit) {
-          IWorkspaceRoot root = getWorkspaceRoot();
-          URI fileURI = root.getLocation().append(new Path(resourcePath)).toFile().toURI();
-          IFile[] files = root.findFilesForLocationURI(fileURI);
-          for (IFile file : files) {
-            IJavaElement element = JavaCore.create(file);
-            if (element != null) {
-              ArrayList<IType> types = new ArrayList<IType>();
-              if (element instanceof ICompilationUnit) {
-                try {
-                  ICompilationUnit cu = (ICompilationUnit) element;
-                  for (IType type : cu.getAllTypes()) {
-                    types.add(type);
-                  }
-                } catch (JavaModelException e) {
-                  RandoopPlugin.log(e);
+        IWorkspaceRoot root = getWorkspaceRoot();
+        URI fileURI = root.getLocation().append(new Path(resourcePath)).toFile().toURI();
+        IFile[] files = root.findFilesForLocationURI(fileURI);
+        for (IFile file : files) {
+          IJavaElement element = JavaCore.create(file);
+          if (element != null) {
+            ArrayList<IType> types = new ArrayList<IType>();
+            if (element instanceof ICompilationUnit) {
+              try {
+                ICompilationUnit cu = (ICompilationUnit) element;
+                for (IType type : cu.getAllTypes()) {
+                  types.add(type);
                 }
-              } else if (element instanceof IClassFile) {
-                IClassFile cf = (IClassFile) element;
-                types.add(cf.getType());
+              } catch (JavaModelException e) {
+                RandoopPlugin.log(e);
               }
-              
-              boolean doesEnclose = true;
-              for(IType type : types) {
-                doesEnclose &= !isJUnitTest(type);
-              }
-              return doesEnclose;
+            } else if (element instanceof IClassFile) {
+              IClassFile cf = (IClassFile) element;
+              types.add(cf.getType());
             }
+
+            boolean doesEnclose = true;
+            for (IType type : types) {
+              doesEnclose &= RandoopLaunchConfigurationUtil.isValidTestInput(type, fIgnoreJUnit);
+            }
+            return doesEnclose;
           }
         }
 
@@ -549,10 +519,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     public boolean encloses(IJavaElement element) {
       if (fSearchScope.encloses(element)) {
         if (element instanceof IType) {
-          if (fIgnoreJUnit) {
-            IType type = (IType) element;
-            return !isJUnitTest(type);
-          }
+          IType type = (IType) element;
+          return RandoopLaunchConfigurationUtil.isValidTestInput(type, fIgnoreJUnit);
         }
         return true;
       }
@@ -587,21 +555,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     public void setIncludesClasspaths(boolean includesClasspaths) {
       fSearchScope.setIncludesClasspaths(includesClasspaths);
     }
-  }
-  
-  private static boolean isJUnitTest(IType type) {
-    // TODO: make sure this is actually of type junit.framework.TestCase
-    String siName;
-    try {
-      siName = type.getSuperclassName();
-      if (siName != null && siName.equals("TestCase")) { //$NON-NLS-1$
-        return true;
-      }
-    } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
-    }
-    return false;
-
   }
   
   private class RandoopTestInputSelectionExtension extends TypeSelectionExtension {
@@ -655,6 +608,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    */
   private static IWorkspaceRoot getWorkspaceRoot() {
     return ResourcesPlugin.getWorkspace().getRoot();
+  }
+
+  @Override
+  public void restoreDefaults() {
+    // do nothing
   }
   
 }

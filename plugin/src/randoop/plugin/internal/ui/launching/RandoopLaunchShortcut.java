@@ -42,7 +42,7 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     Object[] selected = structuredSelection.toArray();
     final IJavaElement[] elements;
 
-    if (selected.length == 1 && selected[0] instanceof IJavaElement) {
+    if (selected.length == 1 && selected[0] instanceof IJavaProject) {
       project = (IJavaProject) selected[0];
       elements = new IJavaElement[0];
     } else {
@@ -67,20 +67,23 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     final IJavaProject javaProject = project;
     
     ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-    ILaunchConfigurationType randoopLaunchType = launchManager.getLaunchConfigurationType(
-        IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
-    
-    try {
-      // TODO: Find an original name given the selection
-      ILaunchConfigurationWorkingCopy config = randoopLaunchType.newInstance(
-          null, launchManager.generateLaunchConfigurationName("RandoopTest"));
 
-      RandoopWizardRunner runner = new RandoopWizardRunner(javaProject,
-          elements, config);
+    ILaunchConfigurationType randoopLaunchType = launchManager
+        .getLaunchConfigurationType(IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
+
+    ILaunchConfigurationWorkingCopy config = null;
+    try {
+      config = randoopLaunchType.newInstance(null,
+          launchManager.generateLaunchConfigurationName("RandoopTest")); //$NON-NLS-1$
+
+      RandoopWizardRunner runner = new RandoopWizardRunner(javaProject, elements, config);
       PlatformUI.getWorkbench().getDisplay().syncExec(runner);
 
       if (runner.getReturnCode() == WizardDialog.OK) {
+        RandoopArgumentCollector args = new RandoopArgumentCollector(config, RandoopPlugin.getWorkspaceRoot());
+        config.rename(launchManager.generateLaunchConfigurationName(args.getJUnitClassName()));
         config.doSave();
+        
         DebugUITools.launch(config, "run"); //$NON-NLS-1$
       }
     } catch (CoreException ce) {
@@ -95,8 +98,7 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     ILaunchConfigurationWorkingCopy fConfig;
     int fReturnCode;
 
-    public RandoopWizardRunner(IJavaProject javaProject, IJavaElement[] elements,
-        ILaunchConfigurationWorkingCopy config) {
+    public RandoopWizardRunner(IJavaProject javaProject, IJavaElement[] elements, ILaunchConfigurationWorkingCopy config) {
       fJavaProject = javaProject;
       fElements = elements;
       fConfig = config;
@@ -196,8 +198,7 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
   private ILaunchConfiguration newConfiguration(/* test inputs */) {
     ILaunchConfigurationType type = getLaunchType();
     try {
-      ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null,
-          "Name");
+      ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, "Name");
       
       // Set attributes
       

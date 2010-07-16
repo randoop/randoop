@@ -17,4 +17,7 @@ public interface IOption {
   void setDefaults(ILaunchConfigurationWorkingCopy config);
 
   void addChangeListener(IOptionChangeListener listener);
+
+  void restoreDefaults();
+  
 }

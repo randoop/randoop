@@ -17,19 +17,18 @@ import randoop.plugin.internal.ui.options.ProjectOption;
 
 public class TestInputsPage extends OptionWizardPage {
   
-  private final IJavaProject fProject;
-  
-  private final IJavaElement[] fElements;
-
   private IOption fTestInputSelectorOption;
+  
+  private IJavaProject fJavaProject;
+  private IJavaElement[] fElements;
 
   protected TestInputsPage(String pageName, IJavaProject project, IJavaElement[] elements, ILaunchConfigurationWorkingCopy config) {
     super(pageName, config);
     
     setTitle("Test Inputs");
     setPageComplete(false);
-    
-    fProject = project;
+
+    fJavaProject = project;
     fElements = elements;
   }
   
@@ -38,8 +37,7 @@ public class TestInputsPage extends OptionWizardPage {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(comp);
 
-    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard()
-        .getContainer(), getSelectionListener(), fProject);
+    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard().getContainer(), getSelectionListener(), fJavaProject, fElements);
     
     addOption(fTestInputSelectorOption);
     
