@@ -66,11 +66,9 @@ public class UniversalDriverHandler extends CommandHandler {
   throws IOException {
     List<Class<?>> classes = new ArrayList<Class<?>>();
     if (classlist == null && test_class.size() == 0) {
-      Object[] args = {};
-      System.out.printf ("You must specify some classes to test! Use the `classlist' or `testclass' options.", args);
-      for (String use : printUsageTo.usage()) {
-        System.out.printf ("  %s%n", use);
-      }
+      
+      System.out.println ("You must specify some classes to test! Use the `classlist' or `testclass' options.");
+      System.out.println(printUsageTo.usage());
       System.exit(1);
     }
     if (classlist != null) {
