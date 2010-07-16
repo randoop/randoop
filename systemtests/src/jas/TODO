@@ -1,0 +1,120 @@
+List of things to be resolved or accomplished:
+
+issues to consider:
+
+- implement polynomial factorization
+
+- implement matrices to vector
+
+- check for safe publication idiom in polynomial construction
+
+- make hashCode to reuse computed value --> not immutable
+
+- make polynomial chinese remainder generic (?)
+
+- check the 187 exceptions (170 runtime exceptions) that are thrown
+
+- implement parallel proxys for GB computation
+
+- check solvable polynomials with integral domain coefficients
+
+- use further util.concurrent algorithms where possible, e.g. in DHT
+
+- refactor from BasicLinAlg to GenMatrix and GenVector 
+
+- test caching results of gcd computation
+
+- rework parallel GB algorithms
+
+- refactor method names for groovy operator overloading, make examples for usage
+
+- let arith implementations extend Power as abstract class
+  add divide, subtract, abs, remainder to Power, 
+  name e.g RingElemAbstract
+  clean structure of compareTo, signum and equals
+  - is not possible
+
+- make final variables public (?)
+
+- define divideAndRemainder in RingElem interface and implement
+- rename divideAndRemainder to quotientRemainder
+
+- make use of gcd in pseudo reduction, needs other coefficient type
+
+- implement power series composition and power
+
+
+partially resolved and completed issues:
+
+- implement power series
+
+- refactor ExpVector for different array element types
+
+- implement comprehensive GB
+
+- add product category to applications
+- implement direct products of ring elements
+
+- implement d- and e-reductions and d-/e-Groebner bases
+
+- implement Groebner bases for regular rings
+
+- implement term order optimization from MAS, also for coefficients 
+  and solvable polynomials
+
+- define power(n) in RingElem and implement in edu.jas.structure.Power 
+  and classes, done
+
+- define FieldElem and Field factory interfaces and use them for GB coefficients
+
+- refactor Hensel lifting to ufd package, not possible because of 
+  coefficient replacement trick
+
+- check correct term order in recursive algorithms,
+  in GCD ModEval only univariate cases are used, so term order is not a problem
+
+- add assertions to check for number of polynomial variables and term order,
+  nvar in GenPolynomial and GenSolvablePolynomial done
+
+- make examples with rational function field coefficients, 
+  e.g. raksanyi example
+
+- incorporate gcd() in the Quotient class in edu.jas.application
+
+- rework junit tests to stop failing in case of zero polynomials
+
+- add version information in jas jar-file names
+
+- develop modifiable polynomial constructor or put method and iterators
+
+
+
+resolved and completed issues:
+
+- refactor univPoly in solvable implementations, done
+
+- add missing comments in edu.jas.Algebra*, done
+
+- let inverse() throw a runtime exception, done; throw a checked exception (?)
+
+- split ModInteger to ModIntegerRing factory, done
+
+- make logger variables also final, done
+
+- rename getval() to getVal() in ExpVector, done
+
+- implement BigDecimal with RingElem interface, done
+
+- replace thread-and-network-programming algorithms with 
+  util.concurrent, done
+
+- implement multivariate gcd, done
+
+- add methods to GenPolynomialRing to construct x_i polynomials, done
+
+- split RingFactory to ElemFactory, done
+
+- split AlgebraicNumber to AlgebraicNumberRing factory, done
+
+
+$Id: TODO 2172 2008-10-04 10:28:37Z kredel $

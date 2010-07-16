@@ -1,0 +1,1872 @@
+------------------------------------------------------------------------
+r2225 | kredel | 2008-11-17 21:45:12 +0100 (Mo, 17. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/examples/polynomial.py
+
+fixed element() method
+------------------------------------------------------------------------
+r2224 | kredel | 2008-11-16 20:30:06 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   A /trunk/examples/solvablepolynomial.py
+   M /trunk/src/edu/jas/poly/GenSolvablePolynomialRing.java
+
+solvable expression example
+------------------------------------------------------------------------
+r2223 | kredel | 2008-11-16 19:01:43 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/src/edu/jas/util/ListUtil.java
+
+cosmetic
+------------------------------------------------------------------------
+r2222 | kredel | 2008-11-16 18:34:45 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/examples/polynomial.py
+
+improved polynomial coercion
+------------------------------------------------------------------------
+r2220 | kredel | 2008-11-16 15:01:29 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/util/ListUtil.java
+
+cosmetic
+------------------------------------------------------------------------
+r2219 | kredel | 2008-11-16 14:52:02 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/PolyUtil.java
+   M /trunk/src/edu/jas/util/ListUtil.java
+
+cosmetic
+------------------------------------------------------------------------
+r2218 | kredel | 2008-11-16 14:47:25 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/PolyUtil.java
+   M /trunk/src/edu/jas/poly/PolyUtilTest.java
+   M /trunk/src/edu/jas/util/ListUtil.java
+   M /trunk/src/edu/jas/util/ListUtilTest.java
+
+refactored for poly map and list map
+------------------------------------------------------------------------
+r2217 | kredel | 2008-11-16 12:52:58 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/PolyUtilTest.java
+
+more tests
+------------------------------------------------------------------------
+r2216 | kredel | 2008-11-16 12:44:46 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/PolyUtilTest.java
+
+debug cosmetic
+------------------------------------------------------------------------
+r2215 | kredel | 2008-11-16 12:42:46 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/BigRational.java
+   M /trunk/src/edu/jas/arith/ModInteger.java
+   M /trunk/src/edu/jas/poly/PolyUtil.java
+   M /trunk/src/edu/jas/poly/PolyUtilTest.java
+
+map for polynomial coefficient conversion
+------------------------------------------------------------------------
+r2214 | kredel | 2008-11-16 11:34:11 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+fixed for each
+------------------------------------------------------------------------
+r2213 | kredel | 2008-11-16 11:33:30 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+fixed import after refactoring
+------------------------------------------------------------------------
+r2212 | kredel | 2008-11-16 11:28:03 +0100 (So, 16. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+
+fixed import after refactoring
+------------------------------------------------------------------------
+r2211 | kredel | 2008-11-15 23:38:14 +0100 (Sa, 15. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/PolyUtil.java
+   M /trunk/src/edu/jas/poly/PolyUtilTest.java
+   A /trunk/src/edu/jas/util/ListUtil.java
+   A /trunk/src/edu/jas/util/ListUtilTest.java
+
+refactored to util package
+------------------------------------------------------------------------
+r2210 | kredel | 2008-11-15 21:12:16 +0100 (Sa, 15. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/GenPolynomial.java
+
+implement Iterable and cosmetic
+------------------------------------------------------------------------
+r2209 | kredel | 2008-11-15 21:08:23 +0100 (Sa, 15. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/GenPolynomial.java
+   M /trunk/src/edu/jas/poly/GenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/Monomial.java
+
+added map to polynomial and tests
+------------------------------------------------------------------------
+r2208 | kredel | 2008-11-15 19:47:54 +0100 (Sa, 15. Nov 2008) | 1 line
+Geänderte Pfade:
+   D /trunk/src/edu/jas/ps/BinaryFunctor.java
+   M /trunk/src/edu/jas/ps/Coefficients.java
+   M /trunk/src/edu/jas/ps/PowerSeries.java
+   D /trunk/src/edu/jas/ps/Selector.java
+   D /trunk/src/edu/jas/ps/UnaryFunctor.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   A /trunk/src/edu/jas/structure/BinaryFunctor.java (von /trunk/src/edu/jas/ps/BinaryFunctor.java:2123)
+   A /trunk/src/edu/jas/structure/Selector.java (von /trunk/src/edu/jas/ps/Selector.java:2123)
+   A /trunk/src/edu/jas/structure/UnaryFunctor.java (von /trunk/src/edu/jas/ps/UnaryFunctor.java:2140)
+
+refactored to structure package
+------------------------------------------------------------------------
+r2206 | kredel | 2008-11-12 22:53:24 +0100 (Mi, 12. Nov 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/ring/GBDistSP.java
+   M /trunk/src/edu/jas/ring/RunGB.java
+
+changes for bwgrid
+------------------------------------------------------------------------
+r2204 | kredel | 2008-11-09 19:34:00 +0100 (So, 09. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ArithTest.java
+
+fixed test
+------------------------------------------------------------------------
+r2203 | kredel | 2008-11-09 19:23:20 +0100 (So, 09. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/PowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+tab cosmetic
+------------------------------------------------------------------------
+r2202 | kredel | 2008-11-07 21:05:30 +0100 (Fr, 07. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+added isONE isZERO
+------------------------------------------------------------------------
+r2200 | kredel | 2008-11-05 22:48:08 +0100 (Mi, 05. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/Combinatoric.java
+
+cosmetic
+------------------------------------------------------------------------
+r2199 | kredel | 2008-11-05 22:46:41 +0100 (Mi, 05. Nov 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/powerseries.py
+
+one more test
+------------------------------------------------------------------------
+r2198 | kredel | 2008-11-05 22:45:48 +0100 (Mi, 05. Nov 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/examples/exterior.py
+
+exterior algebra example
+------------------------------------------------------------------------
+r2197 | kredel | 2008-10-19 19:31:54 +0200 (So, 19. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ArithTest.java
+   M /trunk/src/edu/jas/arith/Roots.java
+
+fixed precision
+------------------------------------------------------------------------
+r2196 | kredel | 2008-10-19 19:08:02 +0200 (So, 19. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ArithTest.java
+   M /trunk/src/edu/jas/arith/Combinatoric.java
+   A /trunk/src/edu/jas/arith/Roots.java
+
+refactored roots to separate class
+------------------------------------------------------------------------
+r2195 | kredel | 2008-10-19 14:32:03 +0200 (So, 19. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/Combinatoric.java
+
+comment cosmetic
+------------------------------------------------------------------------
+r2194 | kredel | 2008-10-19 14:26:47 +0200 (So, 19. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/BigDecimalTest.java
+
+not associative
+------------------------------------------------------------------------
+r2193 | kredel | 2008-10-19 14:09:30 +0200 (So, 19. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ArithTest.java
+   M /trunk/src/edu/jas/arith/Combinatoric.java
+
+n-th roots using newton
+------------------------------------------------------------------------
+r2192 | kredel | 2008-10-19 14:09:09 +0200 (So, 19. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/BigDecimal.java
+
+more constructors
+------------------------------------------------------------------------
+r2191 | kredel | 2008-10-17 22:30:26 +0200 (Fr, 17. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ArithTest.java
+   M /trunk/src/edu/jas/arith/Combinatoric.java
+
+fixed square root
+------------------------------------------------------------------------
+r2190 | kredel | 2008-10-16 23:05:17 +0200 (Do, 16. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ArithTest.java
+
+more tests
+------------------------------------------------------------------------
+r2189 | kredel | 2008-10-16 22:59:41 +0200 (Do, 16. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ArithTest.java
+   A /trunk/src/edu/jas/arith/Combinatoric.java
+
+binomial coefficients and tests
+------------------------------------------------------------------------
+r2188 | kredel | 2008-10-12 21:06:21 +0200 (So, 12. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorHensel.java
+
+cosmetic
+------------------------------------------------------------------------
+r2187 | kredel | 2008-10-12 20:46:57 +0200 (So, 12. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ModIntegerTest.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorHensel.java
+
+PrimeList changes
+------------------------------------------------------------------------
+r2186 | kredel | 2008-10-12 20:43:34 +0200 (So, 12. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+
+fixed get to generate
+------------------------------------------------------------------------
+r2185 | kredel | 2008-10-12 19:57:41 +0200 (So, 12. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/PrimeList.java
+   M /trunk/src/edu/jas/poly/GenPolynomial.java
+   M /trunk/src/edu/jas/ufd/GCDHenselTest.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorHensel.java
+   M /trunk/src/edu/jas/ufd/PolyUfdUtil.java
+
+fixed common gcd problem
+------------------------------------------------------------------------
+r2184 | kredel | 2008-10-12 14:39:37 +0200 (So, 12. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ufd/GCDHenselTest.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorHensel.java
+
+fixed gcd not 1 case
+------------------------------------------------------------------------
+r2183 | kredel | 2008-10-11 21:37:16 +0200 (Sa, 11. Okt 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/ufd/GCDHenselTest.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorHensel.java
+
+first running version and new test
+------------------------------------------------------------------------
+r2182 | kredel | 2008-10-11 12:44:00 +0200 (Sa, 11. Okt 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/ufd/GreatestCommonDivisorHensel.java
+
+first version of univariate Hensel
+------------------------------------------------------------------------
+r2181 | kredel | 2008-10-11 12:03:06 +0200 (Sa, 11. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ufd/PolyUfdUtil.java
+
+cosmetic
+------------------------------------------------------------------------
+r2180 | kredel | 2008-10-09 23:06:22 +0200 (Do, 09. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/src/edu/jas/ps/Coefficients.java
+
+fixes and improvements
+------------------------------------------------------------------------
+r2179 | kredel | 2008-10-09 22:57:16 +0200 (Do, 09. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/powerseries.py
+   M /trunk/guide.html
+   M /trunk/src/edu/jas/ps/Coefficients.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+refactored Coefficient to abstract class
+------------------------------------------------------------------------
+r2178 | kredel | 2008-10-06 23:31:31 +0200 (Mo, 06. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/examples/powerseries.py
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+added fromPolynomial and examples
+------------------------------------------------------------------------
+r2177 | kredel | 2008-10-05 20:40:44 +0200 (So, 05. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/powerseries.py
+   M /trunk/guide.html
+
+updated guide to power series
+------------------------------------------------------------------------
+r2176 | kredel | 2008-10-05 20:02:03 +0200 (So, 05. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   A /trunk/examples/polynomial.py
+
+new example with gcds
+------------------------------------------------------------------------
+r2175 | kredel | 2008-10-05 09:27:36 +0200 (So, 05. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/powerseries.py
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+relaxed caching in random
+------------------------------------------------------------------------
+r2174 | kredel | 2008-10-04 19:21:25 +0200 (Sa, 04. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/hawes2_int.py
+
+fixed pseudo GB call
+------------------------------------------------------------------------
+r2173 | kredel | 2008-10-04 12:28:48 +0200 (Sa, 04. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+
+cosmetic
+------------------------------------------------------------------------
+r2171 | kredel | 2008-10-03 23:50:35 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/nabeshima_cgbF4.py
+
+short cut to run time
+------------------------------------------------------------------------
+r2170 | kredel | 2008-10-03 23:50:07 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/nabeshima_cgbF3.py
+
+cosmetic
+------------------------------------------------------------------------
+r2169 | kredel | 2008-10-03 23:49:16 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/rose_fac.py
+
+fixed name
+------------------------------------------------------------------------
+r2168 | kredel | 2008-10-03 23:49:00 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/powerseries.py
+
+cosmetic
+------------------------------------------------------------------------
+r2167 | kredel | 2008-10-03 23:48:26 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/lewis.py
+
+short cut to run time
+------------------------------------------------------------------------
+r2166 | kredel | 2008-10-03 23:48:09 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/cgb_3.py
+
+short cut to run time
+------------------------------------------------------------------------
+r2165 | kredel | 2008-10-03 23:47:42 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+changed * imports to names
+------------------------------------------------------------------------
+r2164 | kredel | 2008-10-03 17:11:38 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/examples/powerseries.py
+
+add fixPoint method in power series
+------------------------------------------------------------------------
+r2163 | kredel | 2008-10-03 16:57:55 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/examples/powerseries.py
+
+use closure from jython in poer series
+------------------------------------------------------------------------
+r2162 | kredel | 2008-10-03 14:50:42 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/powerseries.py
+
+added more examples
+------------------------------------------------------------------------
+r2161 | kredel | 2008-10-03 14:50:24 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+improved power series handling
+------------------------------------------------------------------------
+r2160 | kredel | 2008-10-03 14:05:47 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+
+example for numerical evaluation
+------------------------------------------------------------------------
+r2159 | kredel | 2008-10-03 14:05:15 +0200 (Fr, 03. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+added getEXP() and others for sample power series
+------------------------------------------------------------------------
+r2157 | kredel | 2008-10-02 22:03:39 +0200 (Do, 02. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/package.html
+
+update
+------------------------------------------------------------------------
+r2155 | kredel | 2008-10-02 21:31:07 +0200 (Do, 02. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+cosmetic and minor changes
+------------------------------------------------------------------------
+r2154 | kredel | 2008-10-02 21:30:34 +0200 (Do, 02. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesTest.java
+
+more tests
+------------------------------------------------------------------------
+r2153 | kredel | 2008-10-02 21:30:16 +0200 (Do, 02. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/PowerSeriesMap.java
+
+rename to Univ...
+------------------------------------------------------------------------
+r2152 | kredel | 2008-10-02 21:29:53 +0200 (Do, 02. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+
+sin, cos and sinh, cosh examples
+------------------------------------------------------------------------
+r2151 | kredel | 2008-10-02 19:43:58 +0200 (Do, 02. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+more caching and fixes
+------------------------------------------------------------------------
+r2150 | kredel | 2008-10-02 19:06:50 +0200 (Do, 02. Okt 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+   M /trunk/src/edu/jas/ps/PowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+minor fixes and improvements
+------------------------------------------------------------------------
+r2149 | kredel | 2008-09-28 20:39:48 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+
+removed unused class selector
+------------------------------------------------------------------------
+r2148 | kredel | 2008-09-28 20:31:43 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+
+checked cases
+------------------------------------------------------------------------
+r2147 | kredel | 2008-09-28 20:22:51 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+cosmetic
+------------------------------------------------------------------------
+r2146 | kredel | 2008-09-28 20:17:38 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+cosmetic
+------------------------------------------------------------------------
+r2145 | kredel | 2008-09-28 19:52:45 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+   A /trunk/src/edu/jas/ps/UnivPowerSeriesTest.java
+
+unit tests for power series
+------------------------------------------------------------------------
+r2141 | kredel | 2008-09-28 19:10:09 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   A /trunk/examples/powerseries.py
+
+new power series ring
+------------------------------------------------------------------------
+r2140 | kredel | 2008-09-28 14:39:44 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+   M /trunk/src/edu/jas/ps/UnaryFunctor.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+
+implemented gcd
+------------------------------------------------------------------------
+r2139 | kredel | 2008-09-28 14:16:25 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+
+improved implementation of divide and implementation of remainder
+------------------------------------------------------------------------
+r2138 | kredel | 2008-09-28 13:12:41 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/ps/package.html
+
+javadoc description
+------------------------------------------------------------------------
+r2136 | kredel | 2008-09-28 13:05:53 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/Examples.java
+
+fix names
+------------------------------------------------------------------------
+r2135 | kredel | 2008-09-28 12:57:07 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/ps/Examples.java (von /trunk/src/edu/jas/ps/UnivPowerSeriesTest.java:2129)
+   D /trunk/src/edu/jas/ps/UnivPowerSeriesTest.java
+
+rename to examples
+------------------------------------------------------------------------
+r2134 | kredel | 2008-09-28 12:55:45 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+introduced order and truncate methods
+------------------------------------------------------------------------
+r2133 | kredel | 2008-09-28 12:43:27 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+
+rename order to truncate
+------------------------------------------------------------------------
+r2132 | kredel | 2008-09-28 09:21:24 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/PowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+implemented RingElem and RingFactory
+------------------------------------------------------------------------
+r2131 | kredel | 2008-09-28 08:48:29 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+coments improved
+------------------------------------------------------------------------
+r2130 | kredel | 2008-09-28 08:25:43 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+
+improved toString
+------------------------------------------------------------------------
+r2129 | kredel | 2008-09-28 08:19:51 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesTest.java
+
+refactored for ring factory
+------------------------------------------------------------------------
+r2128 | kredel | 2008-09-28 08:19:11 +0200 (So, 28. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/PowerSeries.java
+
+removed independent return type
+------------------------------------------------------------------------
+r2127 | kredel | 2008-09-27 12:26:15 +0200 (Sa, 27. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesTest.java
+
+moved interface to separate file
+------------------------------------------------------------------------
+r2126 | kredel | 2008-09-27 12:23:11 +0200 (Sa, 27. Sep 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/ps/Coefficients.java
+   M /trunk/src/edu/jas/ps/UnivPowerSeries.java
+
+moved interface to separate file
+------------------------------------------------------------------------
+r2125 | kredel | 2008-09-27 12:22:42 +0200 (Sa, 27. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ps/UnivPowerSeriesTest.java
+
+update
+------------------------------------------------------------------------
+r2121 | kredel | 2008-09-27 11:52:06 +0200 (Sa, 27. Sep 2008) | 1 line
+Geänderte Pfade:
+   D /trunk/src/edu/jas/ps/ArrayPowerSeries.java
+   D /trunk/src/edu/jas/ps/LinkedPowerSeries.java
+   D /trunk/src/edu/jas/ps/PowerSeriesTest.java
+
+old versions removed
+------------------------------------------------------------------------
+r2120 | kredel | 2008-09-27 09:48:44 +0200 (Sa, 27. Sep 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/ps
+   A /trunk/src/edu/jas/ps/ArrayPowerSeries.java
+   A /trunk/src/edu/jas/ps/BinaryFunctor.java
+   A /trunk/src/edu/jas/ps/LinkedPowerSeries.java
+   A /trunk/src/edu/jas/ps/PowerSeries.java
+   A /trunk/src/edu/jas/ps/PowerSeriesMap.java
+   A /trunk/src/edu/jas/ps/PowerSeriesTest.java
+   A /trunk/src/edu/jas/ps/Selector.java
+   A /trunk/src/edu/jas/ps/UnaryFunctor.java
+   A /trunk/src/edu/jas/ps/UnivPowerSeries.java
+   A /trunk/src/edu/jas/ps/UnivPowerSeriesRing.java
+   A /trunk/src/edu/jas/ps/UnivPowerSeriesTest.java
+
+power series module done at adg2008
+------------------------------------------------------------------------
+r2119 | kredel | 2008-09-27 09:47:42 +0200 (Sa, 27. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/arith/ArithTest.java
+   M /trunk/src/edu/jas/structure/Power.java
+
+power with log_2 n algorithm
+------------------------------------------------------------------------
+r2118 | kredel | 2008-09-13 19:57:44 +0200 (Sa, 13. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/arith.py
+
+cosmetic
+------------------------------------------------------------------------
+r2117 | kredel | 2008-09-13 13:28:59 +0200 (Sa, 13. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/arith.py
+   M /trunk/examples/jas.py
+
+improved QQ and CC
+------------------------------------------------------------------------
+r2116 | kredel | 2008-09-13 12:40:38 +0200 (Sa, 13. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/arith.py
+   M /trunk/examples/jas.py
+
+added rational functions RF
+------------------------------------------------------------------------
+r2114 | kredel | 2008-09-11 22:37:16 +0200 (Do, 11. Sep 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/examples/arith.py
+   M /trunk/examples/trinks_s.py
+
+moved to new file
+------------------------------------------------------------------------
+r2113 | kredel | 2008-09-11 22:31:56 +0200 (Do, 11. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/examples/trinks_s.py
+
+added QQ and CC as ring elements
+------------------------------------------------------------------------
+r2112 | kredel | 2008-09-06 21:53:48 +0200 (Sa, 06. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/examples/legendre.py
+   M /trunk/examples/trinks_s.py
+
+left operation of coefficient
+------------------------------------------------------------------------
+r2111 | kredel | 2008-09-06 21:32:49 +0200 (Sa, 06. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/hermite.py
+
+updated
+------------------------------------------------------------------------
+r2110 | kredel | 2008-09-06 21:28:31 +0200 (Sa, 06. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/GenPolynomial.java
+
+added sum and subtract for coefficients
+------------------------------------------------------------------------
+r2107 | kredel | 2008-09-06 14:42:10 +0200 (Sa, 06. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/examples/legendre.py
+
+examples updated
+------------------------------------------------------------------------
+r2106 | kredel | 2008-09-06 13:13:23 +0200 (Sa, 06. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/chebyshev.py
+   M /trunk/examples/hermite.py
+   M /trunk/examples/legendre.py
+   M /trunk/examples/nabeshima_cgbF0.py
+   M /trunk/examples/trinks.py
+   M /trunk/examples/trinks_s.py
+
+examples updated
+------------------------------------------------------------------------
+r2105 | kredel | 2008-09-06 13:12:55 +0200 (Sa, 06. Sep 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+work around for rational and complex number literals
+------------------------------------------------------------------------
+r2096 | kredel | 2008-08-31 21:06:57 +0200 (So, 31. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ufd/GCDFactory.java
+   M /trunk/src/edu/jas/ufd/GCDProxy.java
+
+cosmetic
+------------------------------------------------------------------------
+r2092 | kredel | 2008-08-26 22:07:10 +0200 (Di, 26. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+fixed indentation
+------------------------------------------------------------------------
+r2090 | kredel | 2008-08-20 21:59:46 +0200 (Mi, 20. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+missing coercions
+------------------------------------------------------------------------
+r2089 | kredel | 2008-08-18 21:47:24 +0200 (Mo, 18. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   M /trunk/guide.html
+
+typos and cosmetic
+------------------------------------------------------------------------
+r2086 | kredel | 2008-08-17 20:54:36 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ufd/GCDModularTest.java
+   M /trunk/src/edu/jas/ufd/GCDPrimitiveTest.java
+   M /trunk/src/edu/jas/ufd/GCDSimpleTest.java
+   M /trunk/src/edu/jas/ufd/GCDSubresTest.java
+
+added recursiveGcd tests
+------------------------------------------------------------------------
+r2085 | kredel | 2008-08-17 19:53:37 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/GroebnerBasePseudoRecSeq.java
+   M /trunk/src/edu/jas/ufd/GCDModularTest.java
+   M /trunk/src/edu/jas/ufd/GCDPrimitiveTest.java
+   M /trunk/src/edu/jas/ufd/GCDProxy.java
+   M /trunk/src/edu/jas/ufd/GCDSimpleTest.java
+   M /trunk/src/edu/jas/ufd/GCDSubresTest.java
+   M /trunk/src/edu/jas/ufd/GCDTimingTest.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorAbstract.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorModEval.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorModular.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorPrimitive.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorSimple.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorSubres.java
+
+renamed to recursiveUnivariateGcd, implemented new general case recursiveGcd
+------------------------------------------------------------------------
+r2084 | kredel | 2008-08-17 19:13:29 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+added pylist2arraylist conversion
+------------------------------------------------------------------------
+r2083 | kredel | 2008-08-17 19:12:43 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/trinks_s.py
+
+update
+------------------------------------------------------------------------
+r2082 | kredel | 2008-08-17 13:02:19 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/trinks_s.py
+
+test float support
+------------------------------------------------------------------------
+r2081 | kredel | 2008-08-17 13:01:32 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+added some float support
+------------------------------------------------------------------------
+r2080 | kredel | 2008-08-17 13:01:04 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/examples/chebyshev.py
+   A /trunk/examples/hermite.py
+   A /trunk/examples/legendre.py
+
+new examples
+------------------------------------------------------------------------
+r2078 | kredel | 2008-08-17 11:53:21 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/examples/lewis.py
+
+new example
+------------------------------------------------------------------------
+r2077 | kredel | 2008-08-17 11:52:59 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+allow power to 0
+------------------------------------------------------------------------
+r2076 | kredel | 2008-08-17 11:52:31 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/trinks_s.py
+
+allow power to 0
+------------------------------------------------------------------------
+r2075 | kredel | 2008-08-17 08:46:03 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/trinks_s.py
+
+more test examples
+------------------------------------------------------------------------
+r2074 | kredel | 2008-08-17 08:45:46 +0200 (So, 17. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+removed not working methods
+------------------------------------------------------------------------
+r2073 | kredel | 2008-08-16 22:08:03 +0200 (Sa, 16. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/trinks_s.py
+
+cosmetic
+------------------------------------------------------------------------
+r2072 | kredel | 2008-08-16 22:06:07 +0200 (Sa, 16. Aug 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/examples/trinks_s.py
+
+example with sage like setup
+------------------------------------------------------------------------
+r2071 | kredel | 2008-08-16 22:05:38 +0200 (Sa, 16. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+cosmetic
+------------------------------------------------------------------------
+r2070 | kredel | 2008-08-16 21:04:40 +0200 (Sa, 16. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+changed coercion system
+------------------------------------------------------------------------
+r2069 | kredel | 2008-08-16 13:22:20 +0200 (Sa, 16. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+builtin methods and coercions implemented
+------------------------------------------------------------------------
+r2068 | kredel | 2008-08-15 22:01:54 +0200 (Fr, 15. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+added more comments
+------------------------------------------------------------------------
+r2067 | kredel | 2008-08-15 22:01:18 +0200 (Fr, 15. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/GenPolynomialRing.java
+
+reverted univariate generators list
+------------------------------------------------------------------------
+r2066 | kredel | 2008-08-15 21:14:36 +0200 (Fr, 15. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+added gens() method
+------------------------------------------------------------------------
+r2065 | kredel | 2008-08-15 21:06:59 +0200 (Fr, 15. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/raksanyi_int.py
+
+added test for GB
+------------------------------------------------------------------------
+r2064 | kredel | 2008-08-15 21:06:09 +0200 (Fr, 15. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+improved parametic coefficient coefficients
+------------------------------------------------------------------------
+r2063 | kredel | 2008-08-15 21:05:30 +0200 (Fr, 15. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/GroebnerBasePseudoRecSeq.java
+
+cosmetic
+------------------------------------------------------------------------
+r2062 | kredel | 2008-08-14 22:40:28 +0200 (Do, 14. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/raksanyi_int.py
+
+using GB for recursive polynomials
+------------------------------------------------------------------------
+r2061 | kredel | 2008-08-14 22:40:05 +0200 (Do, 14. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+GB for recursive polynomials
+------------------------------------------------------------------------
+r2060 | kredel | 2008-08-14 22:39:30 +0200 (Do, 14. Aug 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/ring/GroebnerBasePseudoRecSeq.java (von /trunk/src/edu/jas/ring/GroebnerBasePseudoSeq.java:2059)
+
+for recursive polynomials
+------------------------------------------------------------------------
+r2057 | kredel | 2008-08-11 22:53:56 +0200 (Mo, 11. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+added more docstrings
+------------------------------------------------------------------------
+r2056 | kredel | 2008-08-11 22:34:05 +0200 (Mo, 11. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/hawes2mod.py
+   M /trunk/examples/hawes2opt.py
+
+changed ideal to paramideal
+------------------------------------------------------------------------
+r2055 | kredel | 2008-08-11 22:33:26 +0200 (Mo, 11. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+copied GB and isGB to paramideal
+------------------------------------------------------------------------
+r2053 | kredel | 2008-08-11 22:15:02 +0200 (Mo, 11. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+adding docstrings
+------------------------------------------------------------------------
+r2050 | kredel | 2008-08-11 21:47:44 +0200 (Mo, 11. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples
+
+changed svn properties
+------------------------------------------------------------------------
+r2043 | kredel | 2008-08-10 18:22:19 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ColorPolynomial.java
+
+fixed comment
+------------------------------------------------------------------------
+r2042 | kredel | 2008-08-10 15:08:26 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+changes for Groebner system
+------------------------------------------------------------------------
+r2041 | kredel | 2008-08-10 15:07:40 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/GroebnerSystem.java
+
+toString cosmetic
+------------------------------------------------------------------------
+r2040 | kredel | 2008-08-10 15:07:23 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+tests for Groebner system container
+------------------------------------------------------------------------
+r2039 | kredel | 2008-08-10 14:11:37 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ReductionTest.java
+
+removed nonsense test
+------------------------------------------------------------------------
+r2038 | kredel | 2008-08-10 14:05:28 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+
+fixed NF test for top reduction
+------------------------------------------------------------------------
+r2037 | kredel | 2008-08-10 14:05:03 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ColorPolynomial.java
+
+modified debug code
+------------------------------------------------------------------------
+r2036 | kredel | 2008-08-10 14:04:43 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ReductionTest.java
+
+removed wrong test
+------------------------------------------------------------------------
+r2035 | kredel | 2008-08-10 13:38:26 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+refactored for GroebnerSystem
+------------------------------------------------------------------------
+r2034 | kredel | 2008-08-10 13:38:18 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/PolyUtilApp.java
+
+refactored for GroebnerSystem
+------------------------------------------------------------------------
+r2033 | kredel | 2008-08-10 13:37:41 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CGBSeqTest.java
+
+removed unused code and activated tests
+------------------------------------------------------------------------
+r2032 | kredel | 2008-08-10 13:37:07 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ReductionTest.java
+
+removed unused code
+------------------------------------------------------------------------
+r2031 | kredel | 2008-08-10 13:36:38 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+
+cosmetic
+------------------------------------------------------------------------
+r2030 | kredel | 2008-08-10 13:36:01 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/GroebnerSystem.java
+
+compute conditions also
+------------------------------------------------------------------------
+r2029 | kredel | 2008-08-10 13:04:27 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/GroebnerSystem.java
+
+added get* methods
+------------------------------------------------------------------------
+r2028 | kredel | 2008-08-10 12:31:17 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/application/GroebnerSystem.java
+
+initial version
+------------------------------------------------------------------------
+r2027 | kredel | 2008-08-10 12:16:01 +0200 (So, 10. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/ExpVector.java
+
+dafault must be long EVs
+------------------------------------------------------------------------
+r2012 | kredel | 2008-08-09 15:27:39 +0200 (Sa, 09. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+fixed imports
+------------------------------------------------------------------------
+r2006 | kredel | 2008-08-09 13:33:11 +0200 (Sa, 09. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/structure/package.html
+
+doc updates
+------------------------------------------------------------------------
+r2005 | kredel | 2008-08-09 13:23:58 +0200 (Sa, 09. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/package.html
+   M /trunk/src/edu/jas/ring/package.html
+
+doc updates
+------------------------------------------------------------------------
+r2002 | kredel | 2008-08-08 00:21:58 +0200 (Fr, 08. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/mas/kern/package.html
+
+properties change
+------------------------------------------------------------------------
+r2001 | kredel | 2008-08-08 00:19:52 +0200 (Fr, 08. Aug 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/mas/kern/package.html
+
+new package description
+------------------------------------------------------------------------
+r1991 | kredel | 2008-08-07 22:43:49 +0200 (Do, 07. Aug 2008) | 1 line
+Geänderte Pfade:
+   D /trunk/examples/raksanyi_rr.py
+
+removed from distribution
+------------------------------------------------------------------------
+r1990 | kredel | 2008-08-07 22:18:13 +0200 (Do, 07. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+added some pydoc comments
+------------------------------------------------------------------------
+r1988 | kredel | 2008-08-03 21:55:42 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+update
+------------------------------------------------------------------------
+r1987 | kredel | 2008-08-03 18:21:38 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+corrected coefficient factory parameter
+------------------------------------------------------------------------
+r1986 | kredel | 2008-08-03 18:20:57 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/raksanyi_cr.py
+
+new method for product slices to string
+------------------------------------------------------------------------
+r1985 | kredel | 2008-08-03 18:20:24 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/PolyUtilApp.java
+
+new method for product slices
+------------------------------------------------------------------------
+r1984 | kredel | 2008-08-03 18:20:04 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+static via class name
+------------------------------------------------------------------------
+r1983 | kredel | 2008-08-03 14:44:59 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+   A /trunk/examples/raksanyi_cr.py
+
+new methods for regular rings
+------------------------------------------------------------------------
+r1982 | kredel | 2008-08-03 14:44:29 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/PolyUtilApp.java
+
+conversion to regular ring coefficients
+------------------------------------------------------------------------
+r1981 | kredel | 2008-08-03 14:44:01 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+refactored GB system
+------------------------------------------------------------------------
+r1980 | kredel | 2008-08-03 13:13:01 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+print conditions for cgb
+------------------------------------------------------------------------
+r1979 | kredel | 2008-08-03 13:00:53 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+fixed to string of gb sys
+------------------------------------------------------------------------
+r1978 | kredel | 2008-08-03 12:40:45 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Condition.java
+
+debug cosmetic
+------------------------------------------------------------------------
+r1977 | kredel | 2008-08-03 12:40:23 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/cgb_0.py
+   M /trunk/examples/cgb_2.py
+   M /trunk/examples/cgb_3.py
+   M /trunk/examples/cgbmmn15.py
+   M /trunk/examples/hawes2_c.py
+   M /trunk/examples/nabeshima_cgbF0.py
+   M /trunk/examples/nabeshima_cgbF00.py
+   M /trunk/examples/nabeshima_cgbF01.py
+   M /trunk/examples/nabeshima_cgbF1.py
+   M /trunk/examples/nabeshima_cgbF2.py
+   M /trunk/examples/nabeshima_cgbF3.py
+   M /trunk/examples/nabeshima_cgbF4.py
+   M /trunk/examples/nabeshima_cgbF5.py
+   M /trunk/examples/nabeshima_cgbF6.py
+   M /trunk/examples/nabeshima_cgbF7.py
+   M /trunk/examples/nabeshima_cgbF8.py
+   M /trunk/examples/raksanyi_c.py
+
+cosmetic
+------------------------------------------------------------------------
+r1976 | kredel | 2008-08-03 11:56:01 +0200 (So, 03. Aug 2008) | 1 line
+Geänderte Pfade:
+   D /trunk/examples/PPPJ2006.java
+   M /trunk/src/edu/jas/poly/Examples.java
+
+coe moved to Examples
+------------------------------------------------------------------------
+r1975 | kredel | 2008-08-02 20:06:18 +0200 (Sa, 02. Aug 2008) | 1 line
+Geänderte Pfade:
+   D /trunk/src/edu/jas/application/PolyUtilComp.java
+
+removed from distribution
+------------------------------------------------------------------------
+r1974 | kredel | 2008-08-02 20:04:19 +0200 (Sa, 02. Aug 2008) | 1 line
+Geänderte Pfade:
+   D /trunk/src/edu/jas/application/RComprehensivePseudoReductionSeq.java
+
+removed from distribution
+------------------------------------------------------------------------
+r1973 | kredel | 2008-08-02 20:02:13 +0200 (Sa, 02. Aug 2008) | 1 line
+Geänderte Pfade:
+   D /trunk/src/edu/jas/application/CompRegGroebnerBaseSeq.java
+
+removed from distribution
+------------------------------------------------------------------------
+r1972 | kredel | 2008-08-02 19:57:13 +0200 (Sa, 02. Aug 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/examples/nabeshima_cgbF2.py
+   A /trunk/examples/nabeshima_cgbF3.py
+   A /trunk/examples/nabeshima_cgbF4.py
+   A /trunk/examples/nabeshima_cgbF5.py
+
+new examples
+------------------------------------------------------------------------
+r1971 | kredel | 2008-08-02 12:41:10 +0200 (Sa, 02. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/RGroebnerBasePseudoSeq.java
+   M /trunk/src/edu/jas/ring/RGroebnerBasePseudoSeqTest.java
+   M /trunk/src/edu/jas/ring/RGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/ring/RGroebnerBaseSeqTest.java
+   M /trunk/src/edu/jas/ring/RPseudoReduction.java
+   M /trunk/src/edu/jas/ring/RPseudoReductionSeq.java
+   M /trunk/src/edu/jas/ring/RReduction.java
+   M /trunk/src/edu/jas/ring/RReductionSeq.java
+
+code cosmetic by eclipse
+------------------------------------------------------------------------
+r1970 | kredel | 2008-08-02 12:04:41 +0200 (Sa, 02. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CPair.java
+   M /trunk/src/edu/jas/application/ColorPolynomial.java
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+   M /trunk/src/edu/jas/application/OrderedCPairlist.java
+
+code cosmetic by eclipse
+------------------------------------------------------------------------
+r1969 | kredel | 2008-08-02 11:51:17 +0200 (Sa, 02. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+
+improved detection of contradictions
+------------------------------------------------------------------------
+r1968 | kredel | 2008-08-02 11:10:19 +0200 (Sa, 02. Aug 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/GroebnerBaseAbstract.java
+
+debug improved
+------------------------------------------------------------------------
+r1967 | kredel | 2008-07-29 00:00:49 +0200 (Di, 29. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+
+debug cosmetic
+------------------------------------------------------------------------
+r1965 | kredel | 2008-07-28 23:14:35 +0200 (Mo, 28. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/nabeshima_cgbF8.py
+
+modified example
+------------------------------------------------------------------------
+r1964 | kredel | 2008-07-28 23:14:17 +0200 (Mo, 28. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorSubres.java
+
+uninitialized variable
+------------------------------------------------------------------------
+r1963 | kredel | 2008-07-28 23:13:39 +0200 (Mo, 28. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/ExpVector.java
+   M /trunk/src/edu/jas/poly/ExpVectorByte.java
+   M /trunk/src/edu/jas/poly/ExpVectorInteger.java
+   M /trunk/src/edu/jas/poly/ExpVectorShort.java
+   M /trunk/src/edu/jas/poly/PolyUtil.java
+
+tried to fix and detect exponent overflow
+------------------------------------------------------------------------
+r1962 | kredel | 2008-07-27 20:44:50 +0200 (So, 27. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/hawes2_c.py
+   M /trunk/examples/nabeshima_cgbF0.py
+   M /trunk/examples/nabeshima_cgbF00.py
+   M /trunk/examples/nabeshima_cgbF01.py
+   M /trunk/examples/nabeshima_cgbF1.py
+   M /trunk/examples/nabeshima_cgbF7.py
+   M /trunk/examples/nabeshima_cgbF8.py
+
+test also comprehensive GB
+------------------------------------------------------------------------
+r1961 | kredel | 2008-07-27 20:44:01 +0200 (So, 27. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Condition.java
+
+fixed bug in nonZero detection, debug cosemtic
+------------------------------------------------------------------------
+r1960 | kredel | 2008-07-27 20:43:01 +0200 (So, 27. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+debug cosmetic
+------------------------------------------------------------------------
+r1959 | kredel | 2008-07-27 20:42:33 +0200 (So, 27. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+
+debug cosmetic
+------------------------------------------------------------------------
+r1958 | kredel | 2008-07-26 21:16:09 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CGBSeqTest.java
+
+new test cases for CGB
+------------------------------------------------------------------------
+r1957 | kredel | 2008-07-26 21:15:38 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Condition.java
+
+added test for contradictory condition
+------------------------------------------------------------------------
+r1956 | kredel | 2008-07-26 21:15:09 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+debug cosmetic
+------------------------------------------------------------------------
+r1955 | kredel | 2008-07-26 21:14:51 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+
+improved checks
+------------------------------------------------------------------------
+r1954 | kredel | 2008-07-26 19:18:16 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CGBSeqTest.java
+
+update
+------------------------------------------------------------------------
+r1953 | kredel | 2008-07-26 19:18:01 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Examples.java
+
+example for comprehensive GB
+------------------------------------------------------------------------
+r1952 | kredel | 2008-07-26 19:17:25 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+improved tests
+------------------------------------------------------------------------
+r1951 | kredel | 2008-07-26 17:59:15 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/application/CGBSeqTest.java
+
+tests for cgb
+------------------------------------------------------------------------
+r1950 | kredel | 2008-07-26 17:30:24 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CPair.java
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ColorPolynomial.java
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+   M /trunk/src/edu/jas/application/OrderedCPairlist.java
+
+cosmetic and small improvements and fixes
+------------------------------------------------------------------------
+r1949 | kredel | 2008-07-26 14:27:19 +0200 (Sa, 26. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CPair.java
+   M /trunk/src/edu/jas/application/ColorPolynomial.java
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+   M /trunk/src/edu/jas/application/Condition.java
+   M /trunk/src/edu/jas/application/OrderedCPairlist.java
+
+added hashCode method
+------------------------------------------------------------------------
+r1948 | kredel | 2008-07-23 23:35:10 +0200 (Mi, 23. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/ReductionTest.java
+
+removed import
+------------------------------------------------------------------------
+r1947 | kredel | 2008-07-23 23:34:50 +0200 (Mi, 23. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CPair.java
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ColorPolynomial.java
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+   M /trunk/src/edu/jas/application/OrderedCPairlist.java
+   M /trunk/src/edu/jas/application/ReductionTest.java
+
+fixes for moved class to application package
+------------------------------------------------------------------------
+r1946 | kredel | 2008-07-23 23:20:53 +0200 (Mi, 23. Jul 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/src/edu/jas/application/ColorPolynomial.java (von /trunk/src/edu/jas/poly/ColorPolynomial.java:1900)
+   D /trunk/src/edu/jas/poly/ColorPolynomial.java
+
+moved class to application package
+------------------------------------------------------------------------
+r1945 | kredel | 2008-07-23 23:19:17 +0200 (Mi, 23. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+   M /trunk/src/edu/jas/application/Ideal.java
+   M /trunk/src/edu/jas/application/ReductionTest.java
+
+cosmetic and code moved between clases
+------------------------------------------------------------------------
+r1944 | kredel | 2008-07-21 23:53:06 +0200 (Mo, 21. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+improved random ideal check
+------------------------------------------------------------------------
+r1943 | kredel | 2008-07-21 23:45:49 +0200 (Mo, 21. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+improved random ideal check
+------------------------------------------------------------------------
+r1942 | kredel | 2008-07-21 23:17:57 +0200 (Mo, 21. Jul 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/examples/cgbmmn15.py
+
+new example
+------------------------------------------------------------------------
+r1941 | kredel | 2008-07-21 23:17:47 +0200 (Mo, 21. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/hawes2_c.py
+
+update
+------------------------------------------------------------------------
+r1940 | kredel | 2008-07-21 23:17:30 +0200 (Mo, 21. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/raksanyi_c.py
+
+update
+------------------------------------------------------------------------
+r1939 | kredel | 2008-07-21 23:17:03 +0200 (Mo, 21. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+added random ideal substitution is GB test
+------------------------------------------------------------------------
+r1938 | kredel | 2008-07-21 23:15:25 +0200 (Mo, 21. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+
+fixxed odd case in reduction
+------------------------------------------------------------------------
+r1937 | kredel | 2008-07-21 23:15:00 +0200 (Mo, 21. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+
+comment and debug cosmetic
+------------------------------------------------------------------------
+r1935 | kredel | 2008-07-20 19:21:34 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+added is CGB test via substitution and cosmetic
+------------------------------------------------------------------------
+r1934 | kredel | 2008-07-20 19:20:48 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Condition.java
+
+cosmetic and code reorganisation
+------------------------------------------------------------------------
+r1933 | kredel | 2008-07-20 19:20:31 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+
+cosmetic
+------------------------------------------------------------------------
+r1932 | kredel | 2008-07-20 19:20:04 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+
+cosmetic and code reorganisation
+------------------------------------------------------------------------
+r1931 | kredel | 2008-07-20 13:53:42 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ReductionTest.java
+
+fixes for refactorings
+------------------------------------------------------------------------
+r1930 | kredel | 2008-07-20 13:45:29 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+comment cosmetic
+------------------------------------------------------------------------
+r1929 | kredel | 2008-07-20 13:45:08 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/cgb_0.py
+   M /trunk/examples/cgb_2.py
+   M /trunk/examples/cgb_3.py
+
+updated execution flow
+------------------------------------------------------------------------
+r1928 | kredel | 2008-07-20 13:37:05 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   A /trunk/examples/cgb_3.py
+
+simple cgb examples
+------------------------------------------------------------------------
+r1927 | kredel | 2008-07-20 13:35:15 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/hawes2_c.py
+
+compatible execution steps for all examples
+------------------------------------------------------------------------
+r1926 | kredel | 2008-07-20 13:35:00 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/hawes2.py
+
+timing with warm-up
+------------------------------------------------------------------------
+r1925 | kredel | 2008-07-20 13:34:45 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/nabeshima_cgbF00.py
+   M /trunk/examples/nabeshima_cgbF01.py
+   M /trunk/examples/nabeshima_cgbF1.py
+   M /trunk/examples/nabeshima_cgbF6.py
+   M /trunk/examples/nabeshima_cgbF7.py
+   M /trunk/examples/nabeshima_cgbF8.py
+   M /trunk/examples/raksanyi_c.py
+
+compatible execution steps for all examples
+------------------------------------------------------------------------
+r1924 | kredel | 2008-07-20 13:33:50 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/raksanyi.py
+
+timing with warm-up
+------------------------------------------------------------------------
+r1923 | kredel | 2008-07-20 13:32:53 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/examples/jas.py
+
+output cosmetic
+------------------------------------------------------------------------
+r1922 | kredel | 2008-07-20 13:32:10 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+changed flow of main branch, now successful Gb systems
+------------------------------------------------------------------------
+r1921 | kredel | 2008-07-20 13:31:09 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Ideal.java
+
+debug cosmetic
+------------------------------------------------------------------------
+r1919 | kredel | 2008-07-20 09:22:17 +0200 (So, 20. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+
+debug cosmetic
+------------------------------------------------------------------------
+r1918 | kredel | 2008-07-19 21:21:42 +0200 (Sa, 19. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+moved method determineAddPairs from red to gb
+------------------------------------------------------------------------
+r1917 | kredel | 2008-07-18 23:20:18 +0200 (Fr, 18. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+
+made nonZero multiplicative set
+------------------------------------------------------------------------
+r1916 | kredel | 2008-07-17 23:17:09 +0200 (Do, 17. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+   M /trunk/src/edu/jas/application/Ideal.java
+
+use gcd also in s-pol
+------------------------------------------------------------------------
+r1915 | kredel | 2008-07-17 22:30:33 +0200 (Do, 17. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+   M /trunk/src/edu/jas/application/OrderedCPairlist.java
+
+reduction using ufd gcd engine
+------------------------------------------------------------------------
+r1914 | kredel | 2008-07-15 00:01:54 +0200 (Di, 15. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+
+improved tests and cosmetic
+------------------------------------------------------------------------
+r1913 | kredel | 2008-07-13 21:50:17 +0200 (So, 13. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+
+improved program flow
+------------------------------------------------------------------------
+r1912 | kredel | 2008-07-13 19:25:26 +0200 (So, 13. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+
+reduction of nonZero wrt zero required changes
+------------------------------------------------------------------------
+r1911 | kredel | 2008-07-13 19:24:37 +0200 (So, 13. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Condition.java
+
+reduction of nonZero wrt zero
+------------------------------------------------------------------------
+r1910 | kredel | 2008-07-13 19:24:03 +0200 (So, 13. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Ideal.java
+
+added normalform for lists
+------------------------------------------------------------------------
+r1909 | kredel | 2008-07-13 19:23:39 +0200 (So, 13. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/Examples.java
+
+more testing
+------------------------------------------------------------------------
+r1905 | kredel | 2008-07-12 21:51:32 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+
+refactored conditions
+------------------------------------------------------------------------
+r1904 | kredel | 2008-07-12 21:50:52 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorAbstract.java
+
+fixed squarefree factors of content
+------------------------------------------------------------------------
+r1902 | kredel | 2008-07-12 16:10:02 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/ReductionAbstract.java
+
+cosmetic
+------------------------------------------------------------------------
+r1901 | kredel | 2008-07-12 16:05:14 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Ideal.java
+   M /trunk/src/edu/jas/application/IdealTest.java
+
+cosmetic
+------------------------------------------------------------------------
+r1900 | kredel | 2008-07-12 16:04:58 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/ColoredSystem.java
+   M /trunk/src/edu/jas/application/ComprehensiveGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/application/Condition.java
+   M /trunk/src/edu/jas/application/Examples.java
+   M /trunk/src/edu/jas/application/OrderedCPairlist.java
+   M /trunk/src/edu/jas/poly/ColorPolynomial.java
+
+updated CGB implementation
+------------------------------------------------------------------------
+r1899 | kredel | 2008-07-12 16:04:08 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/mas/kern/LIST.java
+   M /trunk/src/edu/mas/kern/LISTTest.java
+
+cosmetic
+------------------------------------------------------------------------
+r1898 | kredel | 2008-07-12 16:03:42 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/CriticalPairList.java
+
+cosmetic
+------------------------------------------------------------------------
+r1897 | kredel | 2008-07-12 16:03:03 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/Examples.java
+   M /trunk/src/edu/jas/poly/ExpVector.java
+   A /trunk/src/edu/jas/poly/ExpVectorByte.java
+   A /trunk/src/edu/jas/poly/ExpVectorInteger.java
+   A /trunk/src/edu/jas/poly/ExpVectorLong.java
+   A /trunk/src/edu/jas/poly/ExpVectorShort.java
+   M /trunk/src/edu/jas/poly/ExpVectorTest.java
+   M /trunk/src/edu/jas/poly/PolyUtil.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1896 | kredel | 2008-07-12 15:50:53 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/OrderedPairlist.java
+   M /trunk/src/edu/jas/ring/Reduction.java
+   M /trunk/src/edu/jas/ring/ReductionAbstract.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1895 | kredel | 2008-07-12 15:50:40 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/CriticalPairList.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1894 | kredel | 2008-07-12 15:50:23 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/ExpVector.java
+   M /trunk/src/edu/jas/poly/ExpVectorTest.java
+   M /trunk/src/edu/jas/poly/GenPolynomialRing.java
+   M /trunk/src/edu/jas/poly/GenPolynomialTokenizer.java
+   M /trunk/src/edu/jas/poly/GenSolvablePolynomialRing.java
+   M /trunk/src/edu/jas/poly/PolyUtil.java
+   M /trunk/src/edu/jas/poly/RelationTableTest.java
+   M /trunk/src/edu/jas/poly/TermOrderOptimization.java
+   M /trunk/src/edu/jas/poly/WeylRelations.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1893 | kredel | 2008-07-12 15:49:45 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/OrderedCPairlist.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1892 | kredel | 2008-07-12 15:49:31 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Ideal.java
+   M /trunk/src/edu/jas/application/IdealTest.java
+
+term order optimization and test cases
+------------------------------------------------------------------------
+r1891 | kredel | 2008-07-12 15:38:47 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/vector/ModuleListTest.java
+   M /trunk/src/edu/jas/vector/SolvableModuleListTest.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1890 | kredel | 2008-07-12 15:38:24 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorModEval.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorModular.java
+   M /trunk/src/edu/jas/ufd/GreatestCommonDivisorSubres.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1889 | kredel | 2008-07-12 15:38:05 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/ring/CriticalPairList.java
+   M /trunk/src/edu/jas/ring/DReductionSeq.java
+   M /trunk/src/edu/jas/ring/EReductionSeq.java
+   M /trunk/src/edu/jas/ring/GroebnerBaseDistributed.java
+   M /trunk/src/edu/jas/ring/GroebnerBaseParallel.java
+   M /trunk/src/edu/jas/ring/GroebnerBaseSeqPairDistributed.java
+   M /trunk/src/edu/jas/ring/GroebnerBaseSeqPairParallel.java
+   M /trunk/src/edu/jas/ring/GroebnerBaseSeqPairSeq.java
+   M /trunk/src/edu/jas/ring/OrderedDPairlist.java
+   M /trunk/src/edu/jas/ring/OrderedPairlist.java
+   M /trunk/src/edu/jas/ring/OrderedRPairlist.java
+   M /trunk/src/edu/jas/ring/PseudoReductionSeq.java
+   M /trunk/src/edu/jas/ring/RPseudoReductionSeq.java
+   M /trunk/src/edu/jas/ring/RReductionSeq.java
+   M /trunk/src/edu/jas/ring/ReductionAbstract.java
+   M /trunk/src/edu/jas/ring/ReductionPar.java
+   M /trunk/src/edu/jas/ring/ReductionSeq.java
+   M /trunk/src/edu/jas/ring/ReductionTest.java
+   M /trunk/src/edu/jas/ring/SolvableGroebnerBaseAbstract.java
+   M /trunk/src/edu/jas/ring/SolvableGroebnerBaseParTest.java
+   M /trunk/src/edu/jas/ring/SolvableGroebnerBaseParallel.java
+   M /trunk/src/edu/jas/ring/SolvableGroebnerBaseSeq.java
+   M /trunk/src/edu/jas/ring/SolvableGroebnerBaseSeqPairSeqTest.java
+   M /trunk/src/edu/jas/ring/SolvableGroebnerBaseTest.java
+   M /trunk/src/edu/jas/ring/SolvableReductionAbstract.java
+   M /trunk/src/edu/jas/ring/SolvableReductionPar.java
+   M /trunk/src/edu/jas/ring/SolvableReductionSeq.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1888 | kredel | 2008-07-12 15:37:34 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/poly/ANumGenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/ComplexGenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/Examples.java
+   M /trunk/src/edu/jas/poly/ExpVector.java
+   M /trunk/src/edu/jas/poly/ExpVectorPair.java
+   M /trunk/src/edu/jas/poly/ExpVectorTest.java
+   M /trunk/src/edu/jas/poly/GFGenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/GenGcdPolynomial.java
+   M /trunk/src/edu/jas/poly/GenPolynomial.java
+   M /trunk/src/edu/jas/poly/GenSolvablePolynomial.java
+   M /trunk/src/edu/jas/poly/IntGenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/ModGenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/PolyUtil.java
+   M /trunk/src/edu/jas/poly/QuatGenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/RatGenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/RatPolyGenPolynomialTest.java
+   M /trunk/src/edu/jas/poly/RelationTable.java
+   M /trunk/src/edu/jas/poly/RelationTableTest.java
+   M /trunk/src/edu/jas/poly/TermOrderTest.java
+   M /trunk/src/edu/jas/poly/WeylRelations.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1887 | kredel | 2008-07-12 15:37:07 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/module/ModGroebnerBaseTest.java
+   M /trunk/src/edu/jas/module/ModSolvableGroebnerBaseTest.java
+   M /trunk/src/edu/jas/module/SolvableSyzygyTest.java
+   M /trunk/src/edu/jas/module/SyzygyTest.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1886 | kredel | 2008-07-12 15:36:42 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/CReductionSeq.java
+   M /trunk/src/edu/jas/application/Examples.java
+   M /trunk/src/edu/jas/application/OrderedCPairlist.java
+   M /trunk/src/edu/jas/application/QuotientIntTest.java
+   M /trunk/src/edu/jas/application/RComprehensivePseudoReductionSeq.java
+
+refactored for ExpVector storage units
+------------------------------------------------------------------------
+r1885 | kredel | 2008-07-12 15:24:10 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Ideal.java
+   M /trunk/src/edu/jas/application/IdealTest.java
+
+added ideal dimension and test cases
+------------------------------------------------------------------------
+r1884 | kredel | 2008-07-12 15:21:30 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/jas/application/Ideal.java
+   M /trunk/src/edu/jas/application/IdealTest.java
+
+common zero tests and test cases
+------------------------------------------------------------------------
+r1883 | kredel | 2008-07-12 15:20:38 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/mas/kern/LISTTest.java
+
+new tests
+------------------------------------------------------------------------
+r1882 | kredel | 2008-07-12 15:20:09 +0200 (Sa, 12. Jul 2008) | 1 line
+Geänderte Pfade:
+   M /trunk/src/edu/mas/kern/LIST.java
+
+changed RED to iterator
+------------------------------------------------------------------------
