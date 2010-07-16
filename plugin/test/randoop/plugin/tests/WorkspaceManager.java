@@ -14,7 +14,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import randoop.plugin.tests.ui.launching.MutableBoolean;
+import randoop.plugin.internal.core.MutableBoolean;
 
 public class WorkspaceManager extends TestCase {
   private static HashMap<String, Boolean> okToDeleteByWorkspace = new HashMap<String, Boolean>();
