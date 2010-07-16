@@ -367,7 +367,7 @@ public class IOptionFactory {
         validKind |= kindCandidate.getArgumentName().equals(testKinds);
       }
       if (validKind) {
-        return StatusFactory.createOkStatus();
+        return StatusFactory.OK_STATUS;
       } else {
         return StatusFactory
             .createErrorStatus("Test Kinds must be of type All, Pass, or Fail.");

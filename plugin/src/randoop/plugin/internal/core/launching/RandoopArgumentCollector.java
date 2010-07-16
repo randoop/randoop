@@ -108,8 +108,12 @@ public class RandoopArgumentCollector {
     fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
   }
 
-  public Object getName() {
+  public String getName() {
     return fName;
+  }
+  
+  public IJavaProject getJavaProject() {
+    return fJavaProject;
   }
 
   public List<IType> getSelectedTypes() {

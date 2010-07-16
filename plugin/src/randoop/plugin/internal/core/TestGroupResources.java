@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -56,10 +58,15 @@ public class TestGroupResources {
    *          a name for this set of resources
    */
   public TestGroupResources(RandoopArgumentCollector args, IProgressMonitor monitor) {
+    
+    Assert.isLegal(args != null);
+    
     if (monitor == null)
       monitor = new NullProgressMonitor();
-
+    
     fArguments = args;
+
+    Assert.isLegal(fArguments.getJavaProject() != null);
 
     // Create a unique name from the name and time stamp
     fId = IConstants.EMPTY_STRING + Math.abs(args.getName().hashCode()) + '.'
@@ -176,7 +183,7 @@ public class TestGroupResources {
 
       fClasspath = classpath.toArray(new IPath[classpath.size()]);
 
-      return errorStatus == null ? StatusFactory.createOkStatus() : errorStatus;
+      return errorStatus == null ? StatusFactory.OK_STATUS : errorStatus;
     } catch (JavaModelException e) {
       return StatusFactory
           .createErrorStatus("Output location does not exist for Java project");
@@ -207,10 +214,10 @@ public class TestGroupResources {
           errorStatus = status;
       }
 
-      return errorStatus == null ? StatusFactory.createOkStatus() : errorStatus;
+      return errorStatus == null ? StatusFactory.OK_STATUS : errorStatus;
     } catch (JavaModelException e) {
       return StatusFactory.createErrorStatus("Output location or raw classpath does not exist for Java project: "
-          + javaProject.getElementName());
+              + javaProject.getElementName());
     }
   }
 
@@ -236,35 +243,45 @@ public class TestGroupResources {
       if (outputLocation != null) {
         classpaths.add(outputLocation);
       }
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     case IClasspathEntry.CPE_LIBRARY:
       classpaths.add(entry.getPath());
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     case IClasspathEntry.CPE_PROJECT:
       try {
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         IProject resource = root.getProject(entry.getPath().toString());
-        IJavaProject referencedProject = (IJavaProject) resource
-            .getNature(JavaCore.NATURE_ID);
+        IJavaProject referencedProject = (IJavaProject) resource.getNature(JavaCore.NATURE_ID);
 
         if (referencedProject != null)
           return findClasspaths(referencedProject, classpaths);
 
       } catch (CoreException e) {
-        return StatusFactory.createErrorStatus("Project could not be found: "
-            + entry.getPath());
+        return StatusFactory.createErrorStatus(MessageFormat.format("Project {0} could not be found", entry.getPath()));
       }
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     case IClasspathEntry.CPE_VARIABLE:
       IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(entry);
       if (resolved == null) {
-        return StatusFactory
-            .createErrorStatus("Variable classpath entry could not be resolved.");
+        return StatusFactory.createErrorStatus("Variable classpath entry could not be resolved.");
       }
       return findClasspaths(resolved, classpaths);
     case IClasspathEntry.CPE_CONTAINER:
-      // TODO: Implement this
-      return StatusFactory.createOkStatus();
+      IStatus returnStatus = StatusFactory.OK_STATUS;
+      try {
+        IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), fArguments.getJavaProject());
+        Assert.isNotNull(container);
+        
+        for (IClasspathEntry cpentry : container.getClasspathEntries()) {
+          IStatus status = findClasspaths(cpentry, classpaths);
+          if (status.getSeverity() == IStatus.ERROR) {
+            returnStatus = status;
+          }
+        }
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
+      return returnStatus;
     default:
       return StatusFactory.createErrorStatus("Unknown entry kind");
     }
