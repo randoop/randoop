@@ -2,18 +2,19 @@ package randoop.plugin.tests.core.runtime;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.ui.PlatformUI;
+import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
+import randoop.plugin.tests.LaunchConfigurationFactory;
 import randoop.plugin.tests.ProjectFactory;
 import randoop.plugin.tests.WorkspaceManager;
 import randoop.runtime.ClosingStream;
@@ -27,10 +28,10 @@ import randoop.runtime.RandoopStarted;
  * Do not run this test in the UI thread
  */
 @SuppressWarnings("nls")
-public class MessageReceiverTest extends TestCase {
-  IJavaProject fJavaProject;
+public class MessageReceiverTest {
+  static IJavaProject javaProject;
   
-  private class TestMessageListener implements IMessageListener {
+  private static class TestMessageListener implements IMessageListener {
     IMessage fStartMessage = null;
     boolean fReceivedLast = false;
     double fLastPercentDone = 0.0;
@@ -43,24 +44,24 @@ public class MessageReceiverTest extends TestCase {
       } else if (m instanceof RandoopFinished) {
     	  fReceivedLast = true;
       } else if (m instanceof PercentDone) {
-    	  assertNotNull("RandoopStarted message must be received before PercentDone", fStartMessage);
-    	  assertFalse("PercentDone message must not be received after RandoopFinished", fReceivedLast);
+        Assert.assertNotNull("RandoopStarted message must be received before PercentDone", fStartMessage);
+        Assert.assertFalse("PercentDone message must not be received after RandoopFinished", fReceivedLast);
     	  
     	  double pDone = ((PercentDone)m).getPercentDone();
-    	  assertTrue("Percent done cannot decrease", fLastPercentDone < pDone);
+    	  Assert.assertTrue("Percent done cannot decrease", fLastPercentDone < pDone);
     	  fLastPercentDone = pDone;
       } else if (m instanceof CreatedJUnitFile) {
         CreatedJUnitFile fileCreatedMsg = (CreatedJUnitFile) m;
         
         System.out.println(fileCreatedMsg.isDriver() + "  " + fileCreatedMsg.getFile());
       } else if (m instanceof ClosingStream) {
-        fail("ClosingStream messages should not be passed to IMessageListeners");
+        Assert.fail("ClosingStream messages should not be passed to IMessageListeners");
       }
     }
 
     @Override
     public void handleTermination() {
-      fail("Terminated unexpectedly");
+      Assert.fail("Stream terminated unexpectedly");
     }
     
     public boolean receivedLast() {
@@ -68,13 +69,27 @@ public class MessageReceiverTest extends TestCase {
     }
   }
   
-  @Override
   @BeforeClass
-  protected void setUp() throws Exception {
-    fJavaProject = ProjectFactory.createPathPlannerProject();
+  public static void beforeClass() {
+    WorkspaceManager.clearActiveWorkspace();
+    javaProject = ProjectFactory.createPathPlannerProject();
   }
   
-  public void testStartRandoop(final ILaunchConfigurationWorkingCopy config) throws CoreException, IOException {
+  @Test
+  public void testStartRandoop() throws CoreException, IOException {
+    ILaunchConfigurationWorkingCopy config = LaunchConfigurationFactory.createConfig(javaProject, "ReceiverTest", 20, true, false);
+
+    RandoopArgumentCollector.setTimeLimit(config, "10");
+
+    RandoopArgumentCollector.setProjectName(config, javaProject.getElementName());
+    RandoopArgumentCollector.setOutputDirectoryName(config, "test");
+    RandoopArgumentCollector.setJUnitPackageName(config, "demo.pathplanning.receiver");
+    RandoopArgumentCollector.setJUnitClassName(config, "ReceiverTest");
+
+    testReceiver(config);
+  }
+  
+  public static void testReceiver(final ILaunchConfigurationWorkingCopy config) throws CoreException, IOException {
     TestMessageListener tml = new TestMessageListener();
     MessageReceiver mr = new MessageReceiver(tml);
     System.out.println("Using port " + mr.getPort());
@@ -92,7 +107,7 @@ public class MessageReceiverTest extends TestCase {
           config.launch(ILaunchManager.RUN_MODE, null, true);
         } catch (CoreException e) {
           e.printStackTrace();
-          fail();
+          Assert.fail();
         }
       }
     });
@@ -103,6 +118,6 @@ public class MessageReceiverTest extends TestCase {
       e.printStackTrace();
     }
     
-    assertTrue("Never received RandoopFinished message", tml.receivedLast());
+    Assert.assertTrue("Never received RandoopFinished message", tml.receivedLast());
   }
 }
