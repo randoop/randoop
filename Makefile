@@ -28,6 +28,9 @@ default:
 
 RANDOOP_HOME ?= $(shell pwd)
 
+# Is set in common.mk, though this form might be preferable, since it keeps .classpath in sync.
+# CLASSPATH ?= $(RANDOOP_EXTRA_CLASSPATH):$(RANDOOP_HOME)/bin:$(shell perl -n -e 'if (/kind="lib" path="(.*)"\/>/) { print ":$(RANDOOP_HOME)/$$1"; }' .classpath)
+
 # Sets common variables.
 include common.mk
 
@@ -585,5 +588,7 @@ distribution-files: manual
 # Remove scratch directory.
 	rm -r randoop
 
+showvars:
+	@echo "CLASSPATH = $(CLASSPATH)"
 
 .FORCE:
