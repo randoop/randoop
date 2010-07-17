@@ -2,19 +2,16 @@ package randoop.plugin.internal.ui;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
-import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -22,8 +19,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE.SharedImages;
 
-public class ClasspathLabelProvider extends LabelProvider {
+import randoop.plugin.RandoopPlugin;
 
+public class ClasspathLabelProvider extends LabelProvider {
+  private IJavaProject fJavaProject;
+  
+  public ClasspathLabelProvider(IJavaProject javaProject) {
+    fJavaProject = javaProject;
+  }
   /**
    * The <code>LabelProvider</code> implementation of this
    * <code>ILabelProvider</code> method returns <code>null</code>. Subclasses
@@ -83,16 +86,23 @@ public class ClasspathLabelProvider extends LabelProvider {
   @Override
   public String getText(Object element) {
     if (element instanceof IClasspathEntry) {
-      IClasspathEntry entry = (IClasspathEntry) element;
+      IClasspathEntry cpentry = (IClasspathEntry) element;
 
-      switch (entry.getEntryKind()) {
+      switch (cpentry.getEntryKind()) {
       case IClasspathEntry.CPE_SOURCE:
       case IClasspathEntry.CPE_LIBRARY:
       case IClasspathEntry.CPE_PROJECT:
-        return entry.getPath().lastSegment();
+        return cpentry.getPath().lastSegment();
       case IClasspathEntry.CPE_VARIABLE:
+        return getText(JavaCore.getResolvedClasspathEntry(cpentry));
       case IClasspathEntry.CPE_CONTAINER:
-        return entry.getPath().toString();
+        try {
+          IClasspathContainer cpcontainer = JavaCore.getClasspathContainer(cpentry.getPath(), fJavaProject);
+          return cpcontainer.getDescription();
+        } catch (JavaModelException e) {
+          RandoopPlugin.log(e);
+          return cpentry.getPath().toString();
+        }
       }
     }
     return super.getText(element);
