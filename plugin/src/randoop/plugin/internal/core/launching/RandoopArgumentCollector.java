@@ -10,8 +10,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -586,7 +589,7 @@ public class RandoopArgumentCollector {
       String attributeName, List<String> value) {
     config.setAttribute(attributeName, value);
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof RandoopArgumentCollector) {
@@ -623,5 +626,5 @@ public class RandoopArgumentCollector {
         + getJUnitPackageName() + getJUnitClassName() + getTestKinds()
         + getMaxTestsWritten() + getMaxTestsPerFile()).hashCode();
   }
-  
+
 }

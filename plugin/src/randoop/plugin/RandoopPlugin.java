@@ -3,6 +3,8 @@ package randoop.plugin;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -225,5 +227,9 @@ public class RandoopPlugin extends AbstractUIPlugin {
     if (display == null)
       display = Display.getDefault();
     return display;
+  }
+
+  public static IWorkspaceRoot getWorkspaceRoot() {
+    return ResourcesPlugin.getWorkspace().getRoot();
   }
 }

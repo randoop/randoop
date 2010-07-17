@@ -1,9 +1,7 @@
 package randoop.plugin.internal.ui.wizards;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -47,6 +45,12 @@ public abstract class OptionWizardPage extends WizardPage {
     }
   };
   
+  protected OptionWizardPage(String pageName, ILaunchConfigurationWorkingCopy config) {
+    super(pageName);
+    fOptions = new ArrayList<IOption>();
+    fConfig = config;
+  }
+  
   protected void update() {
     performApply(fConfig);
     if (isCurrentPage()) {
@@ -59,36 +63,23 @@ public abstract class OptionWizardPage extends WizardPage {
     return isValid(fConfig);
   }
   
-  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    for (IOption option : fOptions) {
-      option.setDefaults(config);
-    }
-  }
+  // public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+  // for (IOption option : fOptions) {
+  // option.setDefaults(config);
+  // }
+  // }
   
-  public void initializeFrom(ILaunchConfiguration config) {
-    for (IOption option : fOptions) {
-      option.initializeFrom(config);
-    }
-  }
-
+  // public void initializeFrom(ILaunchConfiguration config) {
+  // for (IOption option : fOptions) {
+  // option.initializeFrom(config);
+  // }
+  // }
+  
   @Override
   public void createControl(Composite parent) {
-    try {
-      update();
-      ILaunchConfigurationWorkingCopy wc = fConfig.getWorkingCopy();
-      setDefaults(wc);
-      initializeFrom(wc);
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
+    update();
   }
   
-  protected OptionWizardPage(String pageName, ILaunchConfigurationWorkingCopy config) {
-    super(pageName);
-    fOptions = new ArrayList<IOption>();
-    fConfig = config;
-  }
-
   protected OptionWizardPage(String pageName, String title, ImageDescriptor titleImage, ILaunchConfigurationWorkingCopy config) {
     super(pageName, title, titleImage);
     fOptions = new ArrayList<IOption>();

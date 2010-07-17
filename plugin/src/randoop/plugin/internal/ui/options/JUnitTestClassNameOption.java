@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class JUnitTestClassNameOption extends Option {
@@ -135,6 +136,18 @@ public class JUnitTestClassNameOption extends Option {
 
       String[] result = { packageName, className };
       return result;
+    }
+  }
+
+  @Override
+  public void restoreDefaults() {
+    String packageName = IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME;
+    String className = IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME;
+    if (fFullyQualifiedTestName != null && fPackageName == null && fClassName == null) {
+      fFullyQualifiedTestName.setText(Mnemonics.getFullyQualifiedName(packageName, className));
+    } else if (fFullyQualifiedTestName == null && fPackageName != null && fClassName != null) {
+      fPackageName.setText(packageName);
+      fClassName.setText(className);
     }
   }
 }

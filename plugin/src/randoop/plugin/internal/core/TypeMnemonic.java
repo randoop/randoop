@@ -228,7 +228,7 @@ public class TypeMnemonic {
           }
         } else if (IPackageFragmentRoot.K_SOURCE == packageFragment.getKind()) {
           for (ICompilationUnit compilationUnit : packageFragment.getCompilationUnits()) {
-            for (IType type : compilationUnit.getTypes()) {
+            for (IType type : compilationUnit.getAllTypes()) {
               if (type.getElementName().equals(typeName)) {
                 return type;
               }
