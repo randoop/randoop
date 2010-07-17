@@ -20,7 +20,7 @@ import plume.Options.ArgException;
  */
 public class PreDF {
 
-  @Option("(CAN REPEAT) Skip the given step.")
+  @Option("(CAN REPEAT) Skip the given step")
   public static List<Integer> skip = new ArrayList<Integer>();
 
   private static ExperimentBase exp;

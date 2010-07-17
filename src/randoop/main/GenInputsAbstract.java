@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import plume.Option;
+import plume.OptionGroup;
 import plume.Options;
 import plume.Unpublicized;
 import randoop.util.Randomness;
@@ -19,19 +20,62 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public final static String fail = "fail";
   public final static String pass = "pass";
 
-  @Option("The fully-qualified name of a class under test.")
+
+  /** Each element is the fully-qualified name of a class under test. */
+  @OptionGroup ("Code under test")
+  @Option("The fully-qualified name of a class under test")
   public static List<String> testclass = new ArrayList<String>();
 
-  @Option("The name of a file that lists classes under test. Each "
-          + "class is specified by its fully qualified name on a separate line.")
+  /**
+   * In the file, each class under test is specified by its fully
+   * qualified name on a separate line.
+   */
+  @Option("The name of a file that lists classes under test")
   public static String classlist = null;
 
-  @Option("The name of a file that lists methods under test. Each "
-          + "method is specified on a separate line.")
+  // TODO: what is the format of this file?  Does this only restrict?
+  /**
+   * In the file, each each method under test is specified on a separate
+   * line.
+   */
+  @Option("The name of a file that lists methods under test")
   public static String methodlist = null;
+
+  @Option("specifies initialization routine (class.method)")
+  public static String init_routine = null;
+
+  public static enum ClassLiteralsMode {
+    NONE, CLASS, PACKAGE, ALL;
+  }
   
-  @Option("What kinds of tests to output: pass, fail, or all")
-  public static String output_tests = "all";
+  /** 
+   * <ul>
+   * <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
+   * <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.</li>
+   * <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.</li>
+   * <li> --literals-level=NONE means do not use literals specified in a literals file.</li>
+   * </ul>
+   */
+  @Option("How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE")
+  public static ClassLiteralsMode literals_level = ClassLiteralsMode.NONE;
+  
+  /**
+   * Literals in these files are used in addition to all other constants in the pool.
+   * May be specified multiple times.
+   * For the format of this file, see documentation in class {@link randoop.LiteralFileReader}.
+   * The special value "CLASSES" (with no quotes) means to read literals from all classes under test.
+   */
+  @Option("A file containing literal values to be used as inputs to methods under test")
+  public static List<String> literals_file = new ArrayList<String>(); 
+
+
+  /**
+   * Used to determine when to stop test generation. Generation stops when
+   * either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached.
+   */
+  @OptionGroup("Limiting test generation")
+  @Option("Maximum number of seconds to spend generating tests")
+  public static int timelimit = 100;
 
   /**
    * Used to determine when to stop test generation. Generation stops when
@@ -43,31 +87,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Maximum number of tests generated")
   public static int inputlimit = 100000000;
 
-  @Option ("Maximum number of tests to ouput.  Allows a more exact number than inputlimit.")
+  /**
+   * Determines the maximum number of tests to output, no matter how many
+   * are generated.  Contrast to --inputlimit.
+   */
+  @Option ("Maximum number of tests to ouput; contrast to --inputlimit")
   public static int outputlimit = 100000000;
 
-  /**
-   * Used to determine when to stop test generation. Generation stops when
-   * either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached.
-   */
-  @Option("Maximum number of seconds to spend generating tests")
-  public static int timelimit = 100;
-
-  @Option("Maximum number of tests to write to each JUnit file.")
-  public static int testsperfile = 500;
-
-  @Option("Name of the JUnit file containing Randoop-generated tests.")
-  public static String junit_classname = "RandoopTest";
-
-  @Option("Name of the package that the generated JUnit files should have.")
-  public static String junit_package_name = "";
-
-  @Option("Name of the directory to which JUnit files should be written.")
-  public static String junit_output_dir = null;
-
-  @Option("The random seed to use in the generation process")
-  public static int randomseed = (int) Randomness.SEED;
-
+  /** Do not generate tests with more than this many statements */
   @Option("Do not generate tests with more than <int> statements")
   public static int maxsize = 100;
 
@@ -77,22 +104,57 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * abandon the method call rather than providing null, when no non-null
    * value is available.
    */
-  @Option("Forbids Randoop to use null as input to methods.")
+  @Option("Forbids Randoop to use null as input to methods")
   public static boolean forbid_null = true;
 
   @Option("Use null with the given frequency. [TODO explain]")
   public static Double null_ratio = null;
   
   /**
-   * Randoop relays information about the program's execution over a
-   * connection to the specified port on the local machine. Information is
-   * sent using a serialized randoop.runtime.Message object. Printing is
-   * also suppressed.
+   * Don't set this greater than 65KB, because strings longer than that may
+   * be rejected, according to the Java Virtual Machine specification.
    */
-  @Option("Randoop uses the specified port for output")
+  @Option("Maximum length of strings in generated tests")
+  public static int string_maxlen = 10000;
+
+
+  /** What kinds of tests to output: pass, fail, or all */
+  @OptionGroup ("Outputting the JUnit tests")
+  @Option("What kinds of tests to output: pass, fail, or all")
+  public static String output_tests = "all";
+
+  /** Maximum number of tests to write to each JUnit file */
+  @Option("Maximum number of tests to write to each JUnit file")
+  public static int testsperfile = 500;
+
+  /** Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests */
+  @Option("Base name of the JUnit file containing Randoop-generated tests")
+  public static String junit_classname = "RandoopTest";
+
+  /** Name of the package for the generated JUnit files */
+  @Option("Name of the package for the generated JUnit files")
+  public static String junit_package_name = "";
+
+  /** Name of the directory to which JUnit files should be written */
+  @Option("Name of the directory to which JUnit files should be written")
+  public static String junit_output_dir = null;
+
+  /** The random seed to use in the generation process */
+  @Option("The random seed to use in the generation process")
+  public static int randomseed = (int) Randomness.SEED;
+
+  /**
+   * If this value is not -1, Randoop relays information about the
+   * program's execution over a connection to the specified port on the
+   * local machine. Information is sent using a serialized
+   * randoop.runtime.Message object. Printing is also suppressed.
+   */
+  @Option("Randoop uses the specified port for output, in serialized form")
   public static int comm_port = -1;
   
-  @Unpublicized @Option("Use long format for outputting JUnit tests. The long format" +
+  @OptionGroup(value="GenInputsAbstract unpublicized options", unpublicized=true)
+  @Unpublicized
+  @Option("Use long format for outputting JUnit tests. The long format" +
   "emits exactly one line per statement, including primitive declarations, and" +
   "uses boxed primitives. This option is used in the branch-directed generation project.")
   public static boolean long_format = false; 
@@ -102,15 +164,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean size_equalizer = false;
   
   @Unpublicized
-  @Option("Write experiment results file.")
+  @Option("Write experiment results file")
   public static FileWriter expfile = null;
 
   @Unpublicized
   @Option("Works only with naive offline. ")
   public static Integer filter_short_dep = null;
-
-  @Option("specifies initialization routine (class.method)")
-  public static String init_routine = null;
 
   @Unpublicized
   @Option("specifies regex of classes that must be in any regression tests")
@@ -125,7 +184,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean public_only = true;
 
   @Unpublicized  
-  @Option("Install the given runtime visitor.")
+  @Option("Install the given runtime visitor")
   public static List<String> visitor = new ArrayList<String>();
 
   @Unpublicized  
@@ -163,31 +222,31 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<String> system_props = new ArrayList<String>();
 
   @Unpublicized
-  @Option("Output sequences that do not complete execution.")
+  @Option("Output sequences that do not complete execution")
   public static boolean output_nonexec = false;
 
   @Unpublicized
-  @Option("Output coverage plot (percent cov. vs. secs.) to the given file.")
+  @Option("Output coverage plot (percent cov. vs. secs.) to the given file")
   public static String output_coverage_plot = null;
 
   @Unpublicized
-  @Option("Use object cache.")
+  @Option("Use object cache")
   public static boolean use_object_cache = false;
 
   @Unpublicized
-  @Option("Aliasing factor.")
+  @Option("Aliasing factor")
   public static Double alias_ratio = null;
 
   @Unpublicized
-  @Option("Call checkRep methods when executing (for Randoop development).")
+  @Option("Call checkRep methods when executing (for Randoop development)")
   public static boolean check_reps = false;
 
   @Unpublicized
-  @Option("Use component-based generation.")
+  @Option("Use component-based generation")
   public static boolean component_based = true;
 
   @Unpublicized
-  @Option("Output witness sequences for coverage branches.")
+  @Option("Output witness sequences for coverage branches")
   public static boolean output_cov_witnesses = false;
 
   @Unpublicized
@@ -195,79 +254,79 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean check_object_contracts = true;
 
   @Unpublicized
-  @Option("Whenever an object is called for, use an integer.")
+  @Option("Whenever an object is called for, use an integer")
   public static boolean always_use_ints_as_objects = false;
 
   @Unpublicized
-  @Option("Create helper sequences.")
+  @Option("Create helper sequences")
   public static boolean helpers = false;
 
   @Unpublicized
-  @Option("Name of a file containing a serialized list of sequences.")
+  @Option("Name of a file containing a serialized list of sequences")
   public static List<String> componentfile_ser = new ArrayList<String>();
 
   @Unpublicized
-  @Option("Name of a file containing a textual list of sequences.")
+  @Option("Name of a file containing a textual list of sequences")
   public static List<String> componentfile_txt = new ArrayList<String>();
 
   @Unpublicized
-  @Option("Print to the given file source files annotated with coverage information.")
+  @Option("Print to the given file source files annotated with coverage information")
   public static String covreport = null;
 
   @Unpublicized
-  @Option("Output components (serialized, GZIPPED) to the given file. Suggestion: use a .gz suffix in file name.")
+  @Option("Output components (serialized, GZIPPED) to the given file. Suggestion: use a .gz suffix in file name")
   public static String output_components = null;
 
   @Unpublicized
-  @Option("Output tests (sequences plus checkers) in serialized form to the given file. Suggestion: use a .gz suffix in file name.")
+  @Option("Output tests (sequences plus checkers) in serialized form to the given file. Suggestion: use a .gz suffix in file name")
   public static String output_tests_serialized = null;
 
   @Unpublicized
-  @Option("Output covered branches to the given text file.")
+  @Option("Output covered branches to the given text file")
   public static String output_branches = null;
 
   @Unpublicized
-  @Option("Output branch->witness-sequences map.")
+  @Option("Output branch->witness-sequences map")
   public static String output_covmap = null;
 
   @Unpublicized
-  @Option("Output a SequenceGenerationStats object to the given file.")
+  @Option("Output a SequenceGenerationStats object to the given file")
   public static String output_stats = null;
 
   @Unpublicized
-  @Option("The name of a file containing the list of coverage-instrumented classes.")
+  @Option("The name of a file containing the list of coverage-instrumented classes")
   public static String coverage_instrumented_classes = null;
  
   @Unpublicized
-  @Option("Display progress every <int> seconds.")
+  @Option("Display progress every <int> seconds")
   public static int progressinterval = 1;
 
   @Unpublicized
-  @Option("Do not display progress.")
+  @Option("Do not display progress")
   public static boolean noprogressdisplay = false;
 
   @Unpublicized
-  @Option("Minimize testclasses cases.")
+  @Option("Minimize testclasses cases")
   public static boolean minimize = true;
 
   @Unpublicized
-  @Option("Create a file containing experiment results.")
+  @Option("Create a file containing experiment results")
   public static String experiment = null;
 
   @Unpublicized
-  @Option("Do not do online redundancy checks.")
+  @Option("Do not do online redundancy checks")
   public static boolean noredundancychecks = false;
 
   @Unpublicized
-  @Option("Create sequences but never execute them.")
+  @Option("Create sequences but never execute them")
   public static boolean dontexecute = false;
 
   @Unpublicized
-  @Option("Clear the component set when it reaches <int> inputs.")
+  @Option("Clear the component set when it reaches <int> inputs")
   public static int clear = Integer.MAX_VALUE;
 
   @Unpublicized
-  @Option("Do not do online illegal.")
+  @Option("Do not do online illegal")
   public static boolean offline = false;
 
   @Unpublicized
@@ -279,53 +338,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean dont_check_contracts = false;
 
   @Unpublicized
-  @Option("TODO document.")
+  @Option("TODO document")
   public static boolean weighted_inputs = false;
 
   @Unpublicized
-  @Option("TODO document.")
+  @Option("TODO document")
   public static boolean no_args_statement_heuristic = true;
 
   @Unpublicized
-  @Option("Use heuristic that may randomly repeat a method call several times.")
+  @Option("Use heuristic that may randomly repeat a method call several times")
   public static boolean repeat_heuristic = false;
 
   @Unpublicized
-  @Option("Run Randoop but do not create JUnit tests (used in research experiments).")
+  @Option("Run Randoop but do not create JUnit tests (used in research experiments)")
   public static boolean dont_output_tests = false;
 
   @Unpublicized
-  @Option("Silently ignore any class names specified by the user that cannot be found by Randoop at runtime.")
+  @Option("Silently ignore any class names specified by the user that cannot be found by Randoop at runtime")
   public static boolean silently_ignore_bad_class_names = false;
   
-  /**
-   * Don't set this greater than 65KB, because strings longer than that may
-   * be rejected, according to the Java Virtual Machine specification.
-   */
-  @Option("Maximum length of strings in generated tests")
-  public static int string_maxlen = 10000;
 
-  public static enum ClassLiteralsMode {
-    NONE, CLASS, PACKAGE, ALL;
-  }
-  
-  /** 
-   * <li> --literals-level=ALL means each literal is used as input to any method under test.
-   * <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.
-   * <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.
-   * <li> --literals-level=NONE means do not use literals specified in a literals file.
-   */
-  @Option("How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE")
-  public static ClassLiteralsMode literals_level = ClassLiteralsMode.NONE;
-  
-  /**
-   * Literals in these files are used in addition to all other constants in the pool.
-   * May be specified multiple times.
-   * For the format of this file, see documentation in class {@link randoop.LiteralFileReader}.
-   * The special value "CLASSES" (with no quotes) means to read literals from all classes under test.
-   */
-  @Option("A file containing literal values to be used as inputs to methods under test")
-  public static List<String> literals_file = new ArrayList<String>(); 
 
   public GenInputsAbstract(String command, String pitch,
       String commandGrammar, String where, String summary, List<String> notes, String input,

@@ -27,16 +27,16 @@ import cov.CoverageAtom;
 
 public class ComputeFrontierBranches {
 
-  @Option("Name of a covmap file.")
+  @Option("Name of a covmap file")
   public static String input_map = null;
 
-  @Option("If true, prints code representation of frontier sequences as comments in output file.")
+  @Option("If true, prints code representation of frontier sequences as comments in output file")
   public static boolean print_coderep_comments = false;
 
-  @Option("For each frontier branch / reaching method, output at most N sequences.")
+  @Option("For each frontier branch / reaching method, output at most N sequences")
   public static int seqs_per_method = 1000000;
 
-  @Option("Print strings used by parallel DF execution.")
+  @Option("Print strings used by parallel DF execution")
   public static String experiment = null;
 
   @SuppressWarnings("unchecked")

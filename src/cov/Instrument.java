@@ -71,13 +71,13 @@ import plume.Options.ArgException;
 @SuppressWarnings("unchecked")
 public class Instrument extends ASTVisitor {
 
-  @Option("Destination directory for instrumented files (REQUIRED OPTION).")
+  @Option("Destination directory for instrumented files (REQUIRED OPTION)")
   public static String destination = null;
 
-  @Option("Overwrite contents of instrumented directory, if present.")
+  @Option("Overwrite contents of instrumented directory, if present")
   public static boolean overwrite = false;
 
-  @Option("Specify instrumentation type.")
+  @Option("Specify instrumentation type")
   public static boolean printout = false;
 
   @Option("The name of a file containing a list of source files to instrument")

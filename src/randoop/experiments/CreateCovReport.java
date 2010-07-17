@@ -28,13 +28,13 @@ import cov.CoverageAtom;
  */
 public class CreateCovReport {
   
-  @Option("Input coverage map.")
+  @Option("Input coverage map")
   public static String input_map = null;
   
-  @Option("File with list of coverage-instrumented classes.")
+  @Option("File with list of coverage-instrumented classes")
   public static String input_cov_class_list = null;
   
-  @Option("Output file (will output a text file).")
+  @Option("Output file (will output a text file)")
   public static String output_report = null;
   
   @SuppressWarnings("unchecked")

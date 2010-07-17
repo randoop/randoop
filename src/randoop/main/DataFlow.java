@@ -47,13 +47,13 @@ import cov.Branch;
  */
 public class DataFlow {
 
-  @Option("Scratch directory for intermediate files (REQUIRED OPTION).")
+  @Option("Scratch directory for intermediate files (REQUIRED OPTION)")
   public static String scratchdir = null;
 
-  @Option("Overwrite contents of scratch directory, if present.")
+  @Option("Overwrite contents of scratch directory, if present")
   public static boolean overwrite = false;
 
-  @Option("(REQUIRED) Name of the file where results will be written.")
+  @Option("(REQUIRED) Name of the file where results will be written")
   public static String outputfile = null;
 
   @Option ("Dump instrumented files and other debug information for dataflow")

@@ -24,6 +24,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import plume.Option;
+import plume.OptionGroup;
 import plume.Options;
 import plume.SimpleLog;
 import plume.Unpublicized;
@@ -109,6 +110,7 @@ public class GenTests extends GenInputsAbstract {
 
   }
 
+  @OptionGroup(value="GenTests unpublicized options", unpublicized=true)
   @Unpublicized
   @Option("Signals that this is a run in the context of a system test. (Slower)")
   public static boolean system_test_run = false;

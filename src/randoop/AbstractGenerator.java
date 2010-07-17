@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import plume.Option;
+import plume.OptionGroup;
 import plume.Pair;
 import plume.Unpublicized;
 import randoop.FailureAnalyzer.Failure;
@@ -33,11 +34,12 @@ import cov.CoverageAtom;
 
 public abstract class AbstractGenerator {
 
+  @OptionGroup(value="AbstractGenerator unpublicized options", unpublicized=true)
   @Unpublicized
-  @Option("Print detailed statistics after generation.")
+  @Option("Print detailed statistics after generation")
   public static boolean print_stats = false;
   @Unpublicized
-  @Option("When branch coverage fails to increase for the given number of seconds (>0), stop generation.")
+  @Option("When branch coverage fails to increase for the given number of seconds (>0), stop generation; -1 to disable")
   public static int stop_when_plateau = -1;
   @Unpublicized
   @Option("Dump each sequence to the log file")

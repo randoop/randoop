@@ -10,10 +10,16 @@ import randoop.Globals;
 import randoop.Sequence;
 import randoop.StatementKind;
 import plume.Option;
+import plume.OptionGroup;
 
 public final class Log {
 
-  @Option("Log lots of information to a given file name (`filewriter' is the name of a file).")
+  /**
+   * Name of a file to which to log lots of information.
+   * If not specified, no logging is done.
+   */
+  @OptionGroup("Logging")
+  @Option("Name of a file to which to log lots of information")
   public static FileWriter log = null;
 
   private Log() {

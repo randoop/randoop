@@ -17,7 +17,10 @@
           <li><a href="#vision">Vision, successes and challenges</a></li>
         </ul></li>
       <li><a href="#getting_randoop">Getting Randoop</a></li>
-      <li><a href="#running_randoop">Running Randoop</a></li>
+      <li><a href="#running_randoop">Running Randoop</a>
+        <ul>
+          <li><a href="#command-line-options">Command-line options</a></li>
+        </ul></li>
       <li><a href="#getting_help">Getting help</a></li>
       <li><a href="#generating_tests">Generating tests</a>
         <ul>
@@ -125,31 +128,33 @@ repository. </li>
 
 <h2 id="running_randoop">Running Randoop</h2>
 
-<p>The easiest way to run Randoop is by adding to your
-classpath the file <tt>randoop.jar</tt> provided with the Randoop
-distribution. Run Randoop by invoking its main
-class <tt>randoop.main.Main</tt>. Randoop's interface is
-command-based: it expects a specific command as the first argument,
-followed by command arguments. (Currently, Randoop includes only two
-commands, <tt>help</tt> and <tt>gentests</tt>.) If you run Randoop
-without any arguments, you will get an informational
-screen: </p>
+<p>
+Run Randoop by invoking its main class <tt>randoop.main.Main</tt>:
+</p>
 
 <pre class="code">
-% java -ea -classpath randoop.jar randoop.main.Main help
+java -ea -classpath randoop.jar randoop.main.Main <em>command</em> <em>args...</em>
+</pre>
 
-Randoop for Java version 1.3.
+<p>
+Currently, Randoop supports only two commands, <tt>help</tt> and
+<tt>gentests</tt>.  To get help, you can run, for example, one of these
+commands:
+</p>
 
-Randoop  is a command-line tool that creates unit tests for Java.
-It accepts one of the commands listed below. For more information,
-please visit http://code.google.com/p/randoop/
+<pre class="code">
+java -ea -classpath randoop.jar randoop.main.Main help
+java -ea -classpath randoop.jar randoop.main.Main help gentest
+</pre>
 
-Type 'help' followed by a command name to see documentation.
+<p>
+You don't need the <code>-classpath</code> argument if you add
+<tt>randoop.jar</tt> to your classpath.
+We recommend using the <tt>-ea</tt> (enable assertions)
+option to java when running Randoop: if something goes wrong and you
+send us an error report, we will be able better to help you diagnose
+the cause of the problem.</p>
 
-Commands:
-
-gentests -- Generates unit tests for a set of classes.
-help -- Displays a help message for a given command.</pre>
 
 <!-- <h2 id="cutomize">Key command-line options</h2> -->
 
@@ -171,10 +176,86 @@ help -- Displays a help message for a given command.</pre>
 <!-- By default, Randoop runs with the option <tt>usethreads</tt> set -->
 <!-- to <tt>true</tt>. This means -->
 
-<p>We recommend always giving the <tt>-ea</tt> (enable assertions)
-option to java when running Randoop: if something goes wrong and you
-send us an error report, we will be able better to help you diagnose
-the cause of the problem.</p>
+<h3 id="command-line-options">Command-line options</h3>
+
+<!-- start options doc (DO NOT EDIT BY HAND) -->
+<ul>
+  <li>Code under test
+    <ul>
+      <li> <b>--testclass=&lt;string[]&gt;</b>. Each element is the fully-qualified name of a class under test. [default []]</li>
+      <li> <b>--classlist=&lt;string&gt;</b>. In the file, each class under test is specified by its fully
+ qualified name on a separate line. [no default]</li>
+      <li> <b>--methodlist=&lt;string&gt;</b>. In the file, each each method under test is specified on a separate
+ line. [no default]</li>
+      <li> <b>--init-routine=&lt;string&gt;</b>.  [no default]</li>
+      <li> <b>--literals-level=&lt;enum&gt;</b>. <ul>
+ <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
+ <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.</li>
+ <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.</li>
+ <li> --literals-level=NONE means do not use literals specified in a literals file.</li>
+ </ul> [default NONE]</li>
+      <li> <b>--literals-file=&lt;string[]&gt;</b>. Literals in these files are used in addition to all other constants in the pool.
+ May be specified multiple times.
+ For the format of this file, see documentation in class <code>randoop.LiteralFileReader</code>.
+ The special value "CLASSES" (with no quotes) means to read literals from all classes under test. [default []]</li>
+    </ul>
+  </li>
+  <li>Limiting test generation
+    <ul>
+      <li> <b>--timelimit=&lt;int&gt;</b>. Used to determine when to stop test generation. Generation stops when
+ either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached. [default 100]</li>
+      <li> <b>--inputlimit=&lt;int&gt;</b>. Used to determine when to stop test generation. Generation stops when
+ either the time limit (--timelimit=int) OR the input limit
+ (--inputlimit=int) is reached.  Note that the number of tests output
+ may be smaller than then number of inputs created, because redundant
+ and illegal inputs may be discarded.  Also see --outputlimit. [default 100000000]</li>
+      <li> <b>--outputlimit=&lt;int&gt;</b>. Determines the maximum number of tests to output, no matter how many
+ are generated.  Contrast to --inputlimit. [default 100000000]</li>
+      <li> <b>--maxsize=&lt;int&gt;</b>. Do not generate tests with more than this many statements [default 100]</li>
+      <li> <b>--forbid-null=&lt;boolean&gt;</b>. Even when this option is set to true, Randoop uses null only when
+ there is no non-null value available.  This option causes Randoop to
+ abandon the method call rather than providing null, when no non-null
+ value is available. [default true]</li>
+      <li> <b>--null-ratio=&lt;double&gt;</b>.  [no default]</li>
+      <li> <b>--string-maxlen=&lt;int&gt;</b>. Don't set this greater than 65KB, because strings longer than that may
+ be rejected, according to the Java Virtual Machine specification. [default 10000]</li>
+    </ul>
+  </li>
+  <li>Outputting the JUnit tests
+    <ul>
+      <li> <b>--output-tests=&lt;string&gt;</b>. What kinds of tests to output: pass, fail, or all [default all]</li>
+      <li> <b>--testsperfile=&lt;int&gt;</b>. Maximum number of tests to write to each JUnit file [default 500]</li>
+      <li> <b>--junit-classname=&lt;string&gt;</b>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
+      <li> <b>--junit-package-name=&lt;string&gt;</b>. Name of the package for the generated JUnit files [default ]</li>
+      <li> <b>--junit-output-dir=&lt;string&gt;</b>. Name of the directory to which JUnit files should be written [no default]</li>
+      <li> <b>--randomseed=&lt;int&gt;</b>. The random seed to use in the generation process [default 0]</li>
+      <li> <b>--comm-port=&lt;int&gt;</b>. If this value is not -1, Randoop relays information about the
+ program's execution over a connection to the specified port on the
+ local machine. Information is sent using a serialized
+ randoop.runtime.Message object. Printing is also suppressed. [default -1]</li>
+    </ul>
+  </li>
+  <li>Logging
+    <ul>
+      <li> <b>--log=&lt;filewriter&gt;</b>. Name of a file to which to log lots of information.
+ If not specified, no logging is done. [no default]</li>
+    </ul>
+  </li>
+  <li>Threading and timeouts
+    <ul>
+      <li> <b>--usethreads=&lt;boolean&gt;</b>. Use if Randoop is exhibiting nonterminating behavior: this is usually
+ due to execution of code under test that results in an infinite
+ loop. With this option, Randoop executes each test in a separate
+ thread and kills tests that take too long to finish. Tests killed in
+ this manner are not reported to the user. The downside is a BIG
+ (order-of-magnitude) decrease in generation speed. [default true]</li>
+      <li> <b>--timeout=&lt;int&gt;</b>. After this many milliseconds, a non-returning method call, and its
+ associated test, are stopped forcefully.
+ Only meaningful if --usethreads is also specified. [default 5000]</li>
+    </ul>
+  </li>
+</ul>
+<!-- end options doc -->
 
 
 <h2 id="getting_help">Getting help</h2>
