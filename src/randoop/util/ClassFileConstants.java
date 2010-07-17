@@ -86,7 +86,7 @@ public class ClassFileConstants {
       cp = new ClassParser(classname);
       jc = cp.parse();
     } catch (java.io.IOException e) {
-      throw new Error("IOException while reading " + classname + ":" + e.getMessage());
+      throw new Error("IOException while reading '" + classname + "': " + e.getMessage());
     }
     result.classname = jc.getClassName();
 
