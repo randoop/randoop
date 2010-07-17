@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import plume.Option;
+import plume.OptionGroup;
 import plume.Unpublicized;
 import plume.UtilMDE;
 import randoop.main.GenInputsAbstract;
@@ -22,16 +23,17 @@ import cov.CoverageAtom;
 
 public class SequenceGeneratorStats {
 
+  @OptionGroup(value="SequenceGeneratorStats unpublicized options", unpublicized=true)
   @Unpublicized
-  @Option("Output sequence generation stats during generation.")
+  @Option("Output sequence generation stats during generation")
   public static boolean stats_generation = false;
 
   @Unpublicized
-  @Option("Output coverage stats during generation.")
+  @Option("Output coverage stats during generation")
   public static boolean stats_coverage = false;
 
   @Unpublicized
-  @Option("Outputs extra information for Randoop experiments.")
+  @Option("Outputs extra information for Randoop experiments")
   public static boolean randoop_exp = false;
 
   public static long steps = 0;

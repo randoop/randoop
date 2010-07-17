@@ -29,7 +29,7 @@ public class MultiMachineRunner {
 
   protected ArrayList<String> targetsEndedWithError = new ArrayList<String>();
 
-  @Option("Output stdout of each command to <target>.output file.")
+  @Option("Output stdout of each command to <target>.output file")
   public static boolean stdout_to_file = false;
 
   protected static List<String> machines;

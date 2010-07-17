@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 import plume.Option;
+import plume.OptionGroup;
 import plume.Unpublicized;
 
 public class Globals {
@@ -13,16 +14,17 @@ public class Globals {
 
   public static final String lineSep = System.getProperty("line.separator");
 
+  @OptionGroup(value="Globals unpublicized options", unpublicized=true)
   @Unpublicized
-  @Option("Disable assertions and checkRep methods.")
+  @Option("Disable assertions and checkRep methods")
   public static boolean nochecks = true;
 
   @Unpublicized
-  @Option("Perform (expensive) checks that tests Randoop (for Randoop developers).")
+  @Option("Perform (expensive) checks that tests Randoop (for Randoop developers)")
   public static boolean randooptestrun = false;
 
   @Unpublicized
-  @Option("Pipe stderr to the given file.")
+  @Option("Pipe stderr to the given file")
   public static ErrorStreamAssigner senderr;
 
   public static PrintStream blackHole;
