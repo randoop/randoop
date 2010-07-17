@@ -3,6 +3,7 @@ package randoop.plugin.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -15,7 +16,6 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
-import org.eclipse.swtbot.swt.finder.utils.internal.Assert;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MethodMnemonic;
