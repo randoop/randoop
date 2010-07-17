@@ -504,6 +504,8 @@ public class GenTests extends GenInputsAbstract {
           if (!exObs.isEmpty()) {
             assert exObs.size() == 1 : toString();
             ExpectedExceptionCheck eec = (ExpectedExceptionCheck) exObs.get(0);
+            // Some TimeoutExceeded exceptions seem to be slipping through. -MDE
+            // System.out.println("ExpectedExceptionCheck: " + eec.get_value());
             if (eec.get_value().equals("randoop.util.ReflectionExecutor.TimeoutExceeded")) {
               keep = false;
               break;
