@@ -69,6 +69,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static List<String> literals_file = new ArrayList<String>(); 
 
 
+  /** The random seed to use in the generation process */
+  @OptionGroup("Controlling randomness")
+  @Option("The random seed to use in the generation process")
+  public static int randomseed = (int) Randomness.SEED;
+
+
   /**
    * Used to determine when to stop test generation. Generation stops when
    * either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached.
@@ -138,10 +144,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** Name of the directory to which JUnit files should be written */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
-
-  /** The random seed to use in the generation process */
-  @Option("The random seed to use in the generation process")
-  public static int randomseed = (int) Randomness.SEED;
 
   /**
    * If this value is not -1, Randoop relays information about the
