@@ -99,7 +99,7 @@ public class ICSE07ContainersTest extends TestCase {
       }
     };
     runRandoop("TreeMap", classList, Pattern.compile("toString|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"), stopper);
-    assertEquals(106, randoop.test.issta2006.TreeMap.tests.size());
+    assertEquals(106, TreeMap.tests.size());
   }
 
   public static void testBinomialHeap() {
