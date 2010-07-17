@@ -78,7 +78,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Button fClassRemove;
   private Button fClassAddFromSources;
   private Button fClassAddFromClasspaths;
-  private Button fClassAddFromJRESystemLibrary;
   private Button fSelectAll;
   private Button fSelectNone;
   private Button fIgnoreJUnitTestCases;
@@ -193,17 +192,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     });
     fClassAddFromClasspaths.addSelectionListener(listener);
     
-    fClassAddFromJRESystemLibrary = SWTFactory.createPushButton(rightcomp, "JRE System Library...", null);
-    fClassAddFromJRESystemLibrary.addSelectionListener(new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        IJavaElement[] elements = getJREPackgeFragmentRoots();
-        IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements);
-        handleSearchButtonSelected(searchScope);
-      }
-    });
-    fClassAddFromJRESystemLibrary.addSelectionListener(listener);
-    
     // Create a spacer
     SWTFactory.createLabel(rightcomp, "", 1);
     fSelectAll = SWTFactory.createPushButton(rightcomp, "Select All", null);
@@ -291,7 +279,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   public IStatus canSave() {
     if (fRunnableContext == null || fShell == null || fTypeSelector == null || fTypeTree == null
         || fClassUp == null || fClassDown == null || fClassRemove == null || fClassAddFromSources == null
-        || fClassAddFromClasspaths == null || fClassAddFromJRESystemLibrary == null || fSelectAll == null
+        || fClassAddFromClasspaths == null || fSelectAll == null
         || fSelectNone == null) {
       return StatusFactory.createErrorStatus("TestInputOption incorrectly initialized");
     }
@@ -386,7 +374,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
 
   private IClasspathEntry chooseClasspathEntry() throws JavaModelException {
-    ILabelProvider labelProvider = new ClasspathLabelProvider();
+    ILabelProvider labelProvider = new ClasspathLabelProvider(fJavaProject);
     ElementListSelectionDialog dialog = new ElementListSelectionDialog(fShell, labelProvider);
     dialog.setTitle("Classpath Selection");
     dialog.setMessage("Select a classpath to constrain your search.");
@@ -400,38 +388,38 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return null;
   }
   
-  private IPackageFragmentRoot[] getJREPackgeFragmentRoots() {
-    // TODO: Why doesn't JavaRuntime.getDefaultJREContainerEntry() work here?
-    try {
-      for (IClasspathEntry cpentry : fJavaProject.getRawClasspath()) {
-        IPath path = cpentry.getPath();
-        if (path.segmentCount() > 0) {
-          if (path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-            return fJavaProject.findPackageFragmentRoots(cpentry);
-          }
-        }
-      }
-    } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
-    }
-    
-    return null;
-  }
-  
-  private IType[] findClasses(ClassSearcher searcher) {
-    try {
-      fRunnableContext.run(true, true, searcher);
-    } catch (InvocationTargetException e) {
-      RandoopPlugin.log(e);
-    } catch (InterruptedException e) {
-      RandoopPlugin.log(e);
-    }
-    
-    if (searcher.wasCancelled()) {
-      return null;
-    }
-    return searcher.getTypes();
-  }
+  // private IPackageFragmentRoot[] getJREPackgeFragmentRoots() {
+  // // TODO: Why doesn't JavaRuntime.getDefaultJREContainerEntry() work here?
+  // try {
+  // for (IClasspathEntry cpentry : fJavaProject.getRawClasspath()) {
+  // IPath path = cpentry.getPath();
+  // if (path.segmentCount() > 0) {
+  // if (path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
+  // return fJavaProject.findPackageFragmentRoots(cpentry);
+  // }
+  // }
+  // }
+  // } catch (JavaModelException e) {
+  // RandoopPlugin.log(e);
+  // }
+  //
+  // return null;
+  // }
+  //
+  // private IType[] findClasses(ClassSearcher searcher) {
+  // try {
+  // fRunnableContext.run(true, true, searcher);
+  // } catch (InvocationTargetException e) {
+  // RandoopPlugin.log(e);
+  // } catch (InterruptedException e) {
+  // RandoopPlugin.log(e);
+  // }
+  //
+  // if (searcher.wasCancelled()) {
+  // return null;
+  // }
+  // return searcher.getTypes();
+  // }
   
   private abstract class ClassSearcher implements IRunnableWithProgress {
     private IJavaProject fJavaProject;
@@ -585,18 +573,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         fJavaProject = null;
         fClassAddFromSources.setEnabled(false);
         fClassAddFromClasspaths.setEnabled(false);
-        fClassAddFromJRESystemLibrary.setEnabled(false);
       } else {
         fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(event.getValue());
         
         if (fJavaProject != null) {
           fClassAddFromSources.setEnabled(true);
           fClassAddFromClasspaths.setEnabled(true);
-          fClassAddFromJRESystemLibrary.setEnabled(true);
         } else {
           fClassAddFromSources.setEnabled(false);
           fClassAddFromClasspaths.setEnabled(false);
-          fClassAddFromJRESystemLibrary.setEnabled(false);
         }
       }
       fTypeSelector.setJavaProject(fJavaProject);
