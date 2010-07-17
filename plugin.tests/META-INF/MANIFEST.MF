@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Randoop
+Bundle-Name: Randoop Tests
 Bundle-SymbolicName: randoop.tests;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: randoop.plugin.tests.Activator
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: randoop.plugin.tests.RandoopPluginTests
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core;bundle-version="3.5.1",
@@ -20,7 +20,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.junit;bundle-version="3.5.1",
  org.eclipse.jdt.junit.runtime;bundle-version="3.4.100",
  org.eclipse.core.expressions;bundle-version="3.4.100",
- randoop;bundle-version="1.0.0"
+ randoop;bundle-version="0.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: ../bin,

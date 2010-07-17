@@ -50,19 +50,14 @@ public class ResourcesTest {
 
   @Test
   public void testProjects() throws JavaModelException {
-    List<String> mnemonics = getTypeMnemonics(pathplanner);
+    System.out.println("Classpaths for pathplanner:");
+    printClasspaths(pathplanner);
     
-    Set<IPath> classpaths = new HashSet<IPath>();
-    for (String mnemonic : mnemonics) {
-      TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic, getWorkspaceRoot());
-      classpaths.add(typeMnemonic.getClasspath());
-      System.out.println(typeMnemonic.getClasspath());
-    }
+    System.out.println("Classpaths for kenken:");
+    printClasspaths(kenken);
   }
   
   private static void printClasspaths(IJavaProject javaProject) throws JavaModelException {
-    System.out.println("===========================================================");
-    
     for(IClasspathEntry ce : javaProject.getRawClasspath()) {
       System.out.println(ce);
     }
@@ -70,8 +65,6 @@ public class ResourcesTest {
     for(IClasspathEntry ce : javaProject.getRawClasspath()) {
       System.out.println(ce.getPath());
     }
-    
-    System.out.println("-----------------------------------------------------------");
   }
 
   private static List<String> getTypeMnemonics(IJavaProject javaproject) throws JavaModelException {

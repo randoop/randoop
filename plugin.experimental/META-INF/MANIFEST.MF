@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Randoop
+Bundle-Name: Randoop Experiments
 Bundle-SymbolicName: randoop.experimental;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: randoop.plugin.RandoopPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
