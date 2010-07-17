@@ -125,7 +125,7 @@ public class ProjectOption extends Option {
       return StatusFactory.createErrorStatus("ProjectOption incorrectly initialized");
     }
   
-    return StatusFactory.createOkStatus();
+    return StatusFactory.OK_STATUS;
   }
 
   @Override
@@ -170,31 +170,29 @@ public class ProjectOption extends Option {
         }
       } catch (CoreException e) {
         RandoopPlugin.log(e);
-        return StatusFactory.createErrorStatus();
+        return StatusFactory.ERROR_STATUS;
       }
     } else {
       return StatusFactory.createErrorStatus(MessageFormat.format(
           "Illegal project name: {0}", new String[] { status.getMessage() }));
     }
     
-    IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil
-        .getPackageFragmentRoot(javaProject, outputSourceFolderName);
+    IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(javaProject,
+        outputSourceFolderName);
     if (outputDir == null) {
-      status = StatusFactory
-          .createErrorStatus("Output Directory is not a valid source folder");
+      status = StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
       return status;
     } else if (!outputDir.exists()) {
-      status = StatusFactory.createErrorStatus("Output Directory "
-          + outputDir.getElementName() + " does not exist");
+      status = StatusFactory.createErrorStatus("Output Directory " + outputDir.getElementName()
+          + " does not exist");
       return status;
     } else if (!outputDir.getJavaProject().equals(javaProject)) {
-      status = StatusFactory
-          .createErrorStatus("Output Directory does not exist in project "
-              + javaProject.getElementName());
+      status = StatusFactory.createErrorStatus("Output Directory does not exist in project "
+          + javaProject.getElementName());
       return status;
     }
-  
-    return StatusFactory.createOkStatus();
+
+    return StatusFactory.OK_STATUS;
   }
 
   @Override

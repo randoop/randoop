@@ -44,7 +44,7 @@ public abstract class EnablementOption extends Option {
     if (isEnabled()) {
       return fEnabledOption.canSave();
     } else {
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     }
   }
 
@@ -58,7 +58,7 @@ public abstract class EnablementOption extends Option {
     if (isEnabled()) {
       return fEnabledOption.isValid(config);
     } else {
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     }
   }
 

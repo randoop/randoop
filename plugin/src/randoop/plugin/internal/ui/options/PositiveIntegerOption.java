@@ -22,7 +22,7 @@ public abstract class PositiveIntegerOption extends IntegerOption {
         return StatusFactory.createErrorStatus(fNonPosErrorMsg);
       }
       
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     } catch (NumberFormatException nfe) {
       return StatusFactory.createErrorStatus(fInvalidErrorMsg);
     }

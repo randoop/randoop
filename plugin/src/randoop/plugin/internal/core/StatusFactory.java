@@ -14,11 +14,14 @@ import randoop.plugin.internal.IConstants;
 public class StatusFactory {
 
   /**
-   * Returns an OK status with an empty message.
+   * An OK status with an empty message.
    */
-  public static IStatus createOkStatus() {
-    return createOkStatus(IConstants.EMPTY_STRING);
-  }
+  public static final IStatus OK_STATUS =  createOkStatus(IConstants.EMPTY_STRING);
+
+  /**
+   * An ERROR status with an empty message.
+   */
+  public static final IStatus ERROR_STATUS = createErrorStatus(IConstants.EMPTY_STRING);
 
   /**
    * An OK status with the specified message.
@@ -32,13 +35,6 @@ public class StatusFactory {
   }
 
   /**
-   * Returns an ERROR status with an empty message.
-   */
-  public static IStatus createErrorStatus() {
-    return createErrorStatus(IConstants.EMPTY_STRING);
-  }
-
-  /**
    * 
    * @param message
    *          message to be used for the returned <code>IStatus</code>
@@ -47,4 +43,5 @@ public class StatusFactory {
   public static IStatus createErrorStatus(String message) {
     return new Status(IStatus.ERROR, RandoopPlugin.getPluginId(), message);
   }
+  
 }

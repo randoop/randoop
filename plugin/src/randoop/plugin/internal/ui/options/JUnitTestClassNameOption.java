@@ -58,7 +58,7 @@ public class JUnitTestClassNameOption extends Option {
   }
   
   protected IStatus validate(String packageName, String className) {
-    IStatus packageStatus = StatusFactory.createOkStatus();
+    IStatus packageStatus = StatusFactory.OK_STATUS;
     if (!packageName.isEmpty()) {
       packageStatus = JavaConventions.validatePackageName(packageName,
           IConstants.EMPTY_STRING, IConstants.EMPTY_STRING);
@@ -74,7 +74,7 @@ public class JUnitTestClassNameOption extends Option {
     }
     
     if (packageStatus.isOK() && classStatus.isOK()) {
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     } else if (packageStatus.isOK()) {
       return classStatus;
     } else {

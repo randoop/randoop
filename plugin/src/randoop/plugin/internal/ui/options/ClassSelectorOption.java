@@ -296,7 +296,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return StatusFactory.createErrorStatus("TestInputOption incorrectly initialized");
     }
     
-    return StatusFactory.createOkStatus();
+    return StatusFactory.OK_STATUS;
   }
 
   @Override
@@ -362,7 +362,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       if (areTypesSelected || areMethodsSelected) {
         return StatusFactory.createErrorStatus("Types cannot be selected if no Java project is set");
       }
-      return StatusFactory.createOkStatus();
+      return StatusFactory.OK_STATUS;
     }
     
     for (String typeMnemonicString : selectedTypes) {
@@ -382,7 +382,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       }
     }
 
-    return StatusFactory.createOkStatus();
+    return StatusFactory.OK_STATUS;
   }
 
   private IClasspathEntry chooseClasspathEntry() throws JavaModelException {
