@@ -19,31 +19,38 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public final static String fail = "fail";
   public final static String pass = "pass";
 
-  @Option("Specify the fully-qualified name of a class under test.")
+  @Option("The fully-qualified name of a class under test.")
   public static List<String> testclass = new ArrayList<String>();
 
-  @Option("Specify the name of a file that contains a list of classes under test. Each"
-      + "class is specified by its fully qualified name on a separate line.")
-      public static String classlist = null;
+  @Option("The name of a file that lists classes under test. Each "
+          + "class is specified by its fully qualified name on a separate line.")
+  public static String classlist = null;
 
-  @Option("Specify the name of a file that contains a list of methods under test. Each "
-      + "method is specified on a separate line.")
-      public static String methodlist = null;
+  @Option("The name of a file that lists methods under test. Each "
+          + "method is specified on a separate line.")
+  public static String methodlist = null;
   
-  @Option("Tells Randoop what kinds of tests to output. Use \"" + fail + "\" to output only test that fail, \"" + pass + "\" to output only tests that pass (regressions), and \"" + all + "\" to output both kinds.")
+  @Option("What kinds of tests to output: pass, fail, or all")
   public static String output_tests = "all";
 
-  @Option("Used to determine when to stop test generation. Generation stops when " +
-      "either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached. " +
-      "Note that the number of tests output may be smaller than then number of inputs " +
-  "created, because redundant and illegal inputs may be discarded.")
+  /**
+   * Used to determine when to stop test generation. Generation stops when
+   * either the time limit (--timelimit=int) OR the input limit
+   * (--inputlimit=int) is reached.  Note that the number of tests output
+   * may be smaller than then number of inputs created, because redundant
+   * and illegal inputs may be discarded.  Also see --outputlimit.
+   */
+  @Option("Maximum number of tests generated")
   public static int inputlimit = 100000000;
 
-  @Option ("Maximum number of tests to ouput.  Allows a more exact number than inputlimit")
+  @Option ("Maximum number of tests to ouput.  Allows a more exact number than inputlimit.")
   public static int outputlimit = 100000000;
 
-  @Option("Used to determine when to stop test generation. Generation stops when " +
-  "either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached.")
+  /**
+   * Used to determine when to stop test generation. Generation stops when
+   * either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached.
+   */
+  @Option("Maximum number of seconds to spend generating tests")
   public static int timelimit = 100;
 
   @Option("Maximum number of tests to write to each JUnit file.")
@@ -64,18 +71,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Do not generate tests with more than <int> statements")
   public static int maxsize = 100;
 
-  @Option("Forbid Randoop to use null as input to methods. IMPORTANT: even if "
-      + "this option is set to true, null is only used if there is no non-null values "
-      + "available.")
+  /**
+   * Even when this option is set to true, Randoop uses null only when
+   * there is no non-null value available.  This option causes Randoop to
+   * abandon the method call rather than providing null, when no non-null
+   * value is available.
+   */
+  @Option("Forbids Randoop to use null as input to methods.")
   public static boolean forbid_null = true;
 
   @Option("Use null with the given frequency. [TODO explain]")
   public static Double null_ratio = null;
   
-  @Option("Causes Randoop to relay information about the program's execution over "
-      + "a connection to the specified port on the local machine. Information is "
-  		+ "sent using a serialized randoop.runtime.Message object. Printing is also "
-      + "suppressed.")
+  /**
+   * Randoop relays information about the program's execution over a
+   * connection to the specified port on the local machine. Information is
+   * sent using a serialized randoop.runtime.Message object. Printing is
+   * also suppressed.
+   */
+  @Option("Randoop uses the specified port for output")
   public static int comm_port = -1;
   
   @Unpublicized @Option("Use long format for outputting JUnit tests. The long format" +
@@ -284,30 +298,33 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Silently ignore any class names specified by the user that cannot be found by Randoop at runtime.")
   public static boolean silently_ignore_bad_class_names = false;
   
-  @Option("Maximum length of strings allowed in assertions. "
-      + "Note that String constants of length greater than 65KB "
-      + "may be rejected, according to the Java Virtual Machine specification.")
-  public static int assertion_string_maxlen = 10000;
-
+  /**
+   * Don't set this greater than 65KB, because strings longer than that may
+   * be rejected, according to the Java Virtual Machine specification.
+   */
+  @Option("Maximum length of strings in generated tests")
   public static int string_maxlen = 10000;
 
   public static enum ClassLiteralsMode {
     NONE, CLASS, PACKAGE, ALL;
   }
   
-  @Option("Specify how to use literal values given in a literals file (see --literals-file). " +
-  "Set --literals-level=CLASS if you wish literals for a given class to be used as inputs to methods of only that class. " +
-  "Set --literals-level=PACKAGE if you wish literals for a given class to be used as inputs to methods of any classes in the same package. " +
-  "Set --literals-level=ALL if you wish literals for a given class to be used as inputs to any method under test." +
-  "Set --literals-level=NONE if you wish not to use any literals specified in a literals file."
-  )
+  /** 
+   * <li> --literals-level=ALL means each literal is used as input to any method under test.
+   * <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.
+   * <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.
+   * <li> --literals-level=NONE means do not use literals specified in a literals file.
+   */
+  @Option("How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE")
   public static ClassLiteralsMode literals_level = ClassLiteralsMode.NONE;
   
-  @Option("Specifies a file containing literal values to be used as inputs to methods under test. " +
-      "These literals are used in addition to all other constants in the pool. " +
-      "May be specified multiple times. " +
-      "For the format of this file, see documentation in class randoop.LiteralFileReader. " +
-      "The special value \"CLASSES\" (with no quotes) means to read literals from all classes under test.")
+  /**
+   * Literals in these files are used in addition to all other constants in the pool.
+   * May be specified multiple times.
+   * For the format of this file, see documentation in class {@link randoop.LiteralFileReader}.
+   * The special value "CLASSES" (with no quotes) means to read literals from all classes under test.
+   */
+  @Option("A file containing literal values to be used as inputs to methods under test")
   public static List<String> literals_file = new ArrayList<String>(); 
 
   public GenInputsAbstract(String command, String pitch,
