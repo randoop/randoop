@@ -33,12 +33,9 @@ public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
   
-  // TODO: Change these to the local runtime archives
-  // Should be: "/randoop.jar"
-  private static final IPath RANDOOP_JAR = new Path("../bin/"); //$NON-NLS-1$
+  private static final IPath RANDOOP_JAR = new Path("/randoop.jar"); // ../bin/"); //$NON-NLS-1$
   
-  // Should be: "/plume.jar"
-  private static final IPath PLUME_JAR = new Path("../../plume/bin");///lib/plume.jar"); //$NON-NLS-1$
+  private static final IPath PLUME_JAR = new Path("/plume.jar");// lib/plume.jar"); //$NON-NLS-1$
   
   /** The shared instance */
   private static RandoopPlugin plugin = null;
