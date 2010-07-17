@@ -16,10 +16,23 @@ import plume.Option;
  */
 public final class ReflectionExecutor {
 
-  @Option("Use if Randoop is exhibiting nonterminating behavior: this is usually due to execution of code under test that results in an infinite loop. With this option, Randoop execute each test in a separate thread and kills tests that take too long to finish. Tests killed in this manner are not reported to the user. Downside is a BIG (order-of-magnitude) decrease in generation speed.")
+  /**
+   * "Use if Randoop is exhibiting nonterminating behavior: this is usually
+   * due to execution of code under test that results in an infinite
+   * loop. With this option, Randoop executes each test in a separate
+   * thread and kills tests that take too long to finish. Tests killed in
+   * this manner are not reported to the user. Downside is a BIG
+   * (order-of-magnitude) decrease in generation speed.
+   */
+  @Option("Execute each test in a separate thread, with timeout")
   public static boolean usethreads = true;
   
-  @Option("See \"usethreads\" option. This option specificies the number of milliseconds after which a non-returning method call, and its associated test, are stopped forcefully. Only meaningfull with --usethreads.")
+  /**
+   * See "usethreads" option. This option specificies the number of
+   * milliseconds after which a non-returning method call, and its
+   * associated test, are stopped forcefully.
+   */
+  @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads.")
   public static int timeout = 5000;
 
 

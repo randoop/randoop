@@ -77,10 +77,11 @@ temp:  covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual re
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
-randoop_agent.jar : $(AGENT_JAVA_FILES) src/randoop/instrument/manifest.txt
+bin/randoop/instrument/Premain.class: bin $(AGENT_JAVA_FILES)
 	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(AGENT_JAVA_FILES)
-	jar cfm randoop_agent.jar src/randoop/instrument/manifest.txt \
-	  bin/randoop/instrument/Premain.class
+randoop_agent.jar : bin/randoop/instrument/Premain.class src/randoop/instrument/manifest.txt
+	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/instrument/manifest.txt \
+	  randoop/instrument/Premain.class
 
 jdoc:
 	mkdir -p doc/javadoc
@@ -528,7 +529,7 @@ validate-manual:
 # Targets for updating Randoop's distribution.
 
 # Creates the zip file for other people to download.
-distribution-files: manual
+distribution-files: manual randoop_agent.jar
 	rm -rf randoop dist
 	mkdir randoop
 	mkdir randoop/bin

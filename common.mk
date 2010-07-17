@@ -11,7 +11,7 @@ CLASS_DIRS := $(RANDOOP_HOME)/bin $(RANDOOP_HOME)/tests
 # order of the files.
 
 # Use the same order of jar files as in .classpath
-CLASSPATH_WITH_SPACES := $(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS):$(shell perl -n -e 'if (/kind="lib" path="(.*)"\/>/) { print ":$(RANDOOP_HOME)/$$1"; }' .classpath)
+CLASSPATH_WITH_SPACES := $(RANDOOP_EXTRA_CLASSPATH):$(CLASS_DIRS):$(shell perl -n -e 'if (/kind="lib" path="(.*)"\/>/) { print ":$(RANDOOP_HOME)/$$1"; }' $(RANDOOP_HOME)/.classpath)
 
 # Convert to a standard classpath
 empty:=
