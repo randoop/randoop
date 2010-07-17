@@ -30,10 +30,10 @@ public class RandoopAllClasses {
 
   public static String seed;
 
-  @Option("If true, Randoop uses object-cache (together with component-based).")
+  @Option("If true, Randoop uses object-cache (together with component-based)")
   public static Boolean objectcache = null;
 
-  @Option("If true, Randoop uses component-based generation.")
+  @Option("If true, Randoop uses component-based generation")
   public static Boolean component_based = null;
 
   private static ExperimentBase exp;

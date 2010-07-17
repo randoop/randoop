@@ -72,46 +72,46 @@ public class GenBranchDir {
   private static int nonRepro = 0;
   private static int numSeqs = 0;
 
-  @Option("Input file can have different branches.")
+  @Option("Input file can have different branches")
   public static boolean many_branches = false;
 
-  @Option("Name of a file containing a list of classes that are coverage-instrumented.")
+  @Option("Name of a file containing a list of classes that are coverage-instrumented")
   public static String input_covinst_classes = null;
 
-  @Option("Name of a file containing a serialized list of sequences.")
+  @Option("Name of a file containing a serialized list of sequences")
   public static List<String> input_components_ser = new ArrayList<String>();
 
-  @Option("Name of a file containing a textual list of sequences.")
+  @Option("Name of a file containing a textual list of sequences")
   public static List<String> input_components_txt = new ArrayList<String>();
 
-  @Option("Name of input file containing the output of DataFlow.")
+  @Option("Name of input file containing the output of DataFlow")
   public static String input_df_results = null;
 
-  @Option("Name of an input file containing branches covered by Randoop.")
+  @Option("Name of an input file containing branches covered by Randoop")
   public static String input_covmap = null;
 
-  @Option("If given, prints all the branches newly covered to the given file.")
+  @Option("If given, prints all the branches newly covered to the given file")
   public static String output_new_branches;
 
-  @Option("If given and --print-branches also given, prints branches sorted.")
+  @Option("If given and --print-branches also given, prints branches sorted")
   public static boolean output_new_branches_sorted;
 
-  @Option("(REQUIRED) Name of the file where results will be written.")
+  @Option("(REQUIRED) Name of the file where results will be written")
   public static String output_new_sequences = null;
 
-  @Option("Output summary to the given file.")
+  @Option("Output summary to the given file")
   public static String output_summary = null;
 
-  @Option("Output failures to the given file.")
+  @Option("Output failures to the given file")
   public static String output_failures = null;
 
-  @Option("Output the components that were used to the given file.")
+  @Option("Output the components that were used to the given file")
   public static String output_components_used = null;
 
-  @Option("Ouput the sequences that were successfully modified to the given file.")
+  @Option("Ouput the sequences that were successfully modified to the given file")
   public static String output_success_seqs = null;
 
-  @Option("Name of a file where detailed logging information will be written.")
+  @Option("Name of a file where detailed logging information will be written")
   public static String logfile = null;
 
   private static PrintStream output = null;

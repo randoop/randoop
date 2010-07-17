@@ -516,7 +516,23 @@ utils/plume-lib:
 	mkdir -p utils
 	cd utils && hg clone https://plume-lib.googlecode.com/hg/ plume-lib
 
-manual: utils/plume-lib
+# List of .java files is from GenTests.java's "new Options" expression.
+GENTESTS_OPTIONS_JAVA = \
+      src/randoop/Globals.java \
+      src/randoop/main/GenTests.java \
+      src/randoop/main/GenInputsAbstract.java \
+      src/randoop/util/Log.java \
+      src/randoop/util/ReflectionExecutor.java \
+      src/randoop/ForwardGenerator.java \
+      src/randoop/AbstractGenerator.java \
+      src/randoop/SequenceGeneratorStats.java
+
+# "build" is a prerequisite because javadoc reads .class files to determine
+# annotations.
+manual: utils/plume-lib build
+	cp -pf doc/index.html doc/index.html-old
+	javadoc -quiet -doclet plume.OptionsDoclet -docfile doc/index.html-old -outfile doc/index.html -quiet ${GENTESTS_OPTIONS_JAVA}
+	rm -f doc/index.html-old
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
 

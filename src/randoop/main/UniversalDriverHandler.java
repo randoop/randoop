@@ -19,7 +19,7 @@ public class UniversalDriverHandler extends CommandHandler {
   @Option("Specify a class under test")
   public static List<String> test_class = new ArrayList<String>();
 
-  @Option("The given file contains the list of target classes.")
+  @Option("The given file contains the list of target classes")
   public static String classlist = null;
 
   public UniversalDriverHandler() {

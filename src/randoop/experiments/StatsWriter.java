@@ -19,7 +19,7 @@ public class StatsWriter {
   private static int recordsread = 0;
   private static int lines = 0;
 
-  @Option("Write failing tests to file.")
+  @Option("Write failing tests to file")
   public static boolean writefailures = false;
 
   public BufferedWriter failureswriter = null;

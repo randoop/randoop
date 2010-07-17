@@ -35,13 +35,13 @@ import cov.Coverage;
  */
 public class PrintStats {
   
-  @Option("If given, prints all the branches to the given file.")
+  @Option("If given, prints all the branches to the given file")
   public static String print_branches;
 
-  @Option("(REQUIRED) Name of file containg a list of coverage-instrumented classes.")
+  @Option("(REQUIRED) Name of file containg a list of coverage-instrumented classes")
   public static String cov_classes;
 
-  @Option("(AT LEAST ONCE REQUIRED) Name of file containg a serialized SequenceGeneratorStats object.")
+  @Option("(AT LEAST ONCE REQUIRED) Name of file containg a serialized SequenceGeneratorStats object")
   public static List<String> stats_file = new ArrayList<String>();
   
   public static void main(String[] args) throws IOException {
