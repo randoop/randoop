@@ -28,29 +28,25 @@ import randoop.plugin.tests.resources.FileResources;
 @SuppressWarnings("nls")
 public class ProjectFactory {
   
-  static ProjectModel PP_PROJECT_MODEL = new ProjectModel("Path Planner", getFileInTestBundle("/demo/pp"));
-  
-  static {
-    PP_PROJECT_MODEL.addSourceFolder("src");
-    PP_PROJECT_MODEL.addSourceFolder("test");
-  }
-  
-  static ProjectModel KENKEN_PROJECT_MODEL = new ProjectModel("KenKen", getFileInTestBundle("/demo/kenken"));
-  static {
-    KENKEN_PROJECT_MODEL.addSourceFolder("src");
-    KENKEN_PROJECT_MODEL.addSourceFolder("test");
-  }
-
   public static IJavaProject createPathPlannerProject() {
     IWorkspaceRoot root = getWorkspaceRoot();
 
-    return create(root, PP_PROJECT_MODEL);
+    ProjectModel ppModel = new ProjectModel("Path Planner", getFileInTestBundle("/demo/pp"));
+
+    ppModel.addSourceFolder("src");
+    ppModel.addSourceFolder("test");
+
+    return create(root, ppModel);
   }
   
   public static IJavaProject createKenKenProject() {
     IWorkspaceRoot root = getWorkspaceRoot();
 
-    return create(root, KENKEN_PROJECT_MODEL);
+    ProjectModel kenkenModel = new ProjectModel("KenKen", getFileInTestBundle("/demo/kenken"));
+    kenkenModel.addSourceFolder("src");
+    kenkenModel.addSourceFolder("test");
+
+    return create(root, kenkenModel);
   }
   
   private static IJavaProject create(IWorkspaceRoot root, ProjectModel projectModel) {
@@ -120,14 +116,15 @@ public class ProjectFactory {
   private static File getFileInTestBundle(String localPathName) {
     IPath localPath = new Path(localPathName);
 
-    URL url = FileLocator.find(RandoopPlugin.getDefault().getBundle(),
-        localPath, null);
+    URL url = FileLocator.find(RandoopPluginTests.getDefault().getBundle(), localPath, null);
     try {
-      url = FileLocator.toFileURL(url);
+      if (url != null) {
+        url = FileLocator.toFileURL(url);
+        return new Path(url.getPath()).toFile();
+      }
     } catch (IOException e) {
-      return null;
     }
-    return new Path(url.getPath()).toFile();
+    return null;
   }
   
   private static IWorkspaceRoot getWorkspaceRoot() {

@@ -21,6 +21,8 @@ public class ProjectModel {
    *          relative path in test bundle
    */
   public ProjectModel(String name, File projectDirectory) {
+    Assert.isLegal(name != null);
+    Assert.isLegal(projectDirectory != null);
     Assert.isLegal(projectDirectory.exists());
     Assert.isLegal(projectDirectory.isDirectory());
 

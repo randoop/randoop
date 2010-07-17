@@ -25,23 +25,6 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            id="randoop.plugin.autoTestRunnerActionSet"
-            label="Randoop Auto-Test Runner"
-            visible="true">
-         <action
-               class="randoop.plugin.internal.core.autotesting.ToggleAutomatedTestingActionDelegate"
-               icon="icons/autorun.png"
-               id="randoop.plugin.toggleAutoTestRunner"
-               label="Randoop Auto-Test Runner"
-               style="toggle"
-               toolbarPath="Normal"
-               tooltip="Automate execution of tests">
-         </action>
-      </actionSet>
-   </extension>
-   <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
             class="randoop.plugin.ui.AdaptablePropertyTester"
@@ -141,6 +124,12 @@
                id="randoop.plugin.core.launching.gentestsType">
          </configurationType>
       </shortcut>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml">
+      </contexts>
    </extension>
    <extension
          point="org.eclipse.jdt.ui.classpathFixProcessors">
@@ -336,10 +325,21 @@
       </moveParticipant>
    </extension>
    <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="randoop.plugin.autoTestRunnerActionSet"
+            label="Randoop Auto-Test Runner"
+            visible="true">
+         <action
+               class="randoop.plugin.internal.core.autotesting.ToggleAutomatedTestingActionDelegate"
+               icon="icons/autorun.png"
+               id="randoop.plugin.toggleAutoTestRunner"
+               label="Randoop Auto-Test Runner"
+               style="toggle"
+               toolbarPath="Normal"
+               tooltip="Automate execution of tests">
+         </action>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
