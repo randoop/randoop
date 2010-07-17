@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project>
+  <extend>parent-project.xml</extend>
+  <pomVersion>3</pomVersion>
+  <name>commons-jelly</name>
+  <id>commons-jelly</id>
+  <currentVersion>1.0-RC2-SNAPSHOT</currentVersion>
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://jakarta.apache.org</url>
+    <logo>http://jakarta.apache.org/images/original-jakarta-logo.gif</logo>
+  </organization>
+  <logo>/images/logo.jpg</logo>
+  <package>org.apache.commons.*</package>
+  <gumpRepositoryId>jakarta</gumpRepositoryId>
+  <inceptionYear>2002</inceptionYear>
+  <package>org.apache.commons.jelly</package>
+  <packageGroups>
+    <packageGroup>
+      <title>Core Public API</title>
+      <packages>org.apache.commons.jelly</packages>
+    </packageGroup>
+    <packageGroup>
+      <title>Utility classes for using Jelly from Ant</title>
+      <packages>org.apache.commons.jelly.task</packages>
+    </packageGroup>
+    <packageGroup>
+      <title>Utility classes for using Jelly from Servlets</title>
+      <packages>org.apache.commons.jelly.servlet</packages>
+    </packageGroup>
+    <packageGroup>
+      <title>Classes used by Tag Implementors</title>
+      <packages>org.apache.commons.jelly.impl,org.apache.commons.jelly.tags,org.apache.commons.jelly.expression</packages>
+    </packageGroup>
+    <packageGroup>
+      <title>Tag Implementations</title>
+      <packages>org.apache.commons.jelly.tags.*</packages>
+    </packageGroup>
+  </packageGroups>
+  <shortDescription>Commons Jelly</shortDescription>
+  <description>Jelly is a Java and XML based scripting engine. Jelly combines the best ideas from JSTL, Velocity, DVSL, Ant and Cocoon all together in a simple yet powerful scripting engine.</description>
+  <url>http://jakarta.apache.org/commons/jelly/</url>
+  <issueTrackingUrl>http://issues.apache.org/jira/secure/BrowseProject.jspa?id=10012</issueTrackingUrl>
+  <siteAddress>jakarta.apache.org</siteAddress>
+  <siteDirectory>/www/jakarta.apache.org/commons/${pom.artifactId.substring(8)}/</siteDirectory>
+  <distributionDirectory>/www/jakarta.apache.org/builds/jakarta-commons/${pom.artifactId.substring(8)}/</distributionDirectory>
+  <repository>
+    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:jakarta-commons/jelly</connection>
+    <developerConnection>scm:cvs:ext:${maven.username}@cvs.apache.org:/home/cvs:jakarta-commons/jelly</developerConnection>
+    <url>http://cvs.apache.org/viewcvs/jakarta-commons/${pom.artifactId.substring(8)}/</url>
+  </repository>
+  <mailingLists>
+    <mailingList>
+      <name>Commons Dev List</name>
+      <subscribe>commons-dev-subscribe@jakarta.apache.org</subscribe>
+      <unsubscribe>commons-dev-unsubscribe@jakarta.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=commons-dev@jakarta.apache.org</archive>
+    </mailingList>
+    <mailingList>
+      <name>Commons User List</name>
+      <subscribe>commons-user-subscribe@jakarta.apache.org</subscribe>
+      <unsubscribe>commons-user-unsubscribe@jakarta.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=commons-user@jakarta.apache.org</archive>
+    </mailingList>
+  </mailingLists>
+  <versions>
+    <version>
+      <id>1.0-beta-1</id>
+      <name>1.0-beta-1</name>
+      <tag>1.0-beta-1</tag>
+    </version>
+    <version>
+      <id>1.0-beta-4</id>
+      <name>1.0-beta-4</name>
+      <tag>COMMONS-JELLY-1_0-beta-4</tag>
+    </version>
+    <version>
+      <id>1.0-RC1</id>
+      <name>1.0-RC1</name>
+      <tag>COMMONS_JELLY-1_0_RC1</tag>
+    </version>
+  </versions>
+  <branches/>
+  <developers>
+    <developer>
+      <name>James Strachan</name>
+      <id>jstrachan</id>
+      <email>jstrachan@apache.org</email>
+      <organization>SpiritSoft, Inc.</organization>
+    </developer>
+    <developer>
+      <name>Geir Magnusson Jr.</name>
+      <id>geirm</id>
+      <email>geirm@adeptra.com</email>
+      <organization>Adeptra, Inc.</organization>
+    </developer>
+    <developer>
+      <name>Bob McWhirter</name>
+      <id>werken</id>
+      <email>bob@eng.werken.com</email>
+      <organization>The Werken Company</organization>
+    </developer>
+    <developer>
+      <name>dIon Gillard</name>
+      <id>dion</id>
+      <email>dion@multitask.com.au</email>
+      <organization>Multitask Consulting</organization>
+      <roles>
+        <role>Interested party</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Morgan Delagrange</name>
+      <id>morgand</id>
+      <email>morgand@apache.org</email>
+    </developer>
+    <developer>
+      <name>Rodney Waldhoff</name>
+      <id>rwaldhoff</id>
+      <email>rwaldhoff@apache.org</email>
+    </developer>
+    <developer>
+      <name>Peter Royal</name>
+      <id>proyal</id>
+      <email>proyal@apache.org</email>
+    </developer>
+    <developer>
+      <name>Martin van den Bemt</name>
+      <id>mvdb</id>
+      <email>martin@mvdb.net</email>
+    </developer>
+    <developer>
+      <name>Paul Libbrecht</name>
+      <email>paul@activemath.org</email>
+    </developer>
+    <developer>
+      <name>Robert Burrell Donkin</name>
+      <id>rdonkin</id>
+      <email>rdonkin@apache.org</email>
+    </developer>
+    <developer>
+      <name>Daniel F. Savarese</name>
+      <id>dfs</id>
+      <email>dfs -&gt; apache.org</email>
+    </developer>
+    <developer>
+      <name>Brett Porter</name>
+      <id>brett</id>
+      <email>brett@apache.org</email>
+    </developer>
+    <developer>
+      <name>Hans Gilde</name>
+      <id>hgilde</id>
+      <email>hgilde@apache.org</email>
+    </developer>
+  </developers>
+  <contributors>
+    <contributor>
+      <name>Erik Fransen</name>
+      <email>erik167@xs4all.nl</email>
+      <roles>
+        <role>Logo designer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Calvin Yu</name>
+    </contributor>
+    <contributor>
+      <name>Stephen Haberman</name>
+      <email>stephenh@chase3000.com</email>
+    </contributor>
+    <contributor>
+      <name>Vinay Chandran</name>
+      <email>sahilvinay@yahoo.com</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Theo Niemeijer</name>
+    </contributor>
+    <contributor>
+      <name>Joe Walnes</name>
+      <email>joew@thoughtworks.com</email>
+      <organization>ThoughtWorks, Inc.</organization>
+      <roles>
+        <role>Inventor of Mock Tags</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Otto von Wachter</name>
+      <email>vonwao@yahoo.com</email>
+      <organization/>
+      <roles>
+        <role>Author of the tutorials</role>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Robert Leftwich</name>
+      <email>robert@leftwich.info</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Jim Birchfield</name>
+      <email>jim.birchfield@genscape.com</email>
+      <organization>Genscape, Inc.</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Jason Horman</name>
+      <email>jhorman@musicmatch.com</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Tim Anderson</name>
+      <email>tima@intalio.com</email>
+      <organization>Intalio, Inc.</organization>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Theo Niemeijer</name>
+      <email>theo.niemeijer@getthere.nl</email>
+      <organization/>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>J. Matthew Pryor</name>
+      <email>matthew_pryor@versata.com</email>
+      <organization/>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Knut Wannheden</name>
+      <email/>
+      <organization/>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Kelvin Tan</name>
+      <email/>
+      <organization/>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Todd Jonker</name>
+      <email/>
+      <organization/>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Christiaan ten Klooster</name>
+      <email/>
+      <organization/>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Pete Kazmier</name>
+      <email>kaz@apache.org</email>
+      <organization/>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </contributor>
+  </contributors>
+  <dependencies>
+    <!-- for servlet support -->
+    <dependency>
+      <id>servletapi</id>
+      <version>2.3</version>
+      <properties>
+        <gump.project>jakarta-servletapi-5-servlet</gump.project>
+      </properties>
+    </dependency>
+
+    <!-- for command line interface support -->
+    <dependency>
+      <id>commons-cli</id>
+      <version>1.0</version>
+    </dependency>
+
+    <!-- this is brought in by the commons-cli dependency -->
+    <dependency>
+      <id>commons-lang</id>
+      <version>2.0</version>
+      <properties>
+        <gump.runtime>true</gump.runtime>
+      </properties>
+    </dependency>
+    <dependency>
+      <id>commons-discovery</id>
+      <version>20030211.213356</version>
+    </dependency>
+
+    <!-- for the jelly startup scripts -->
+    <dependency>
+      <id>forehead</id>
+      <version>1.0-beta-5</version>
+      <url>http://forehead.werken.com/</url>
+    </dependency>
+
+    <!-- for the jstl interfaces -->
+    <dependency>
+      <groupId>jstl</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.0.6</version>
+      <url>http://jakarta.apache.org/taglibs/doc/standard-1.0-doc/intro.html</url>
+      <properties>
+        <gump.project>jakarta-taglibs-standard</gump.project>
+        <gump.id>jstl</gump.id>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <url>http://junit.org</url>
+    </dependency>
+  </dependencies>
+  <build>
+    <nagEmailAddress>commons-dev@jakarta.apache.org</nagEmailAddress>
+    <sourceDirectory>${basedir}/src/java</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+    </resources>
+    <unitTestSourceDirectory>${basedir}/src/test</unitTestSourceDirectory>
+    <!-- Unit test classes -->
+
+    <unitTest>
+      <includes>
+        <include>**/Test*.java</include>
+      </includes>
+      <excludes>
+        <exclude>**/TestCoreMemoryLeak.java</exclude>
+      </excludes>
+      <resources>
+        <resource>
+          <directory>src/test</directory>
+          <includes>
+            <include>META-INF/services/*</include>
+            <include>**/*.jelly</include>
+            <include>**/*.xml</include>
+            <include>**/*.xsl</include>
+            <include>**/*.rng</include>
+            <include>**/*.dtd</include>
+            <include>**/*.properties</include>
+            <include>**/*.html</include>
+          </includes>
+        </resource>
+      </resources>
+    </unitTest>
+  </build>
+  <reports>
+    <report>maven-changelog-plugin</report>
+    <report>maven-changes-plugin</report>
+    <report>maven-checkstyle-plugin</report>
+    <report>maven-developer-activity-plugin</report>
+    <report>maven-file-activity-plugin</report>
+    <report>maven-javadoc-plugin</report>
+    <report>maven-jcoverage-plugin</report>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-junit-report-plugin</report>
+    <report>maven-jxr-plugin</report>
+    <report>maven-license-plugin</report>
+    <report>maven-pmd-plugin</report>
+    <report>maven-tasklist-plugin</report>
+  </reports>
+</project>

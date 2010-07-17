@@ -1,0 +1,81 @@
+/*
+ * Copyright 2002,2004 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jelly;
+
+import java.io.ByteArrayOutputStream;
+
+import org.apache.commons.jelly.Script;
+import org.apache.commons.jelly.XMLOutput;
+import org.apache.commons.jelly.test.BaseJellyTest;
+
+/**
+ * @author Hans Gilde
+ *
+ */
+public class TestXMLOutput extends BaseJellyTest {
+
+    /** JUnit constructor
+     * @param name
+     */
+    public TestXMLOutput(String name) {
+        super(name);
+    }
+    
+    public void testOutputGood() throws Exception {
+        setUpScript("outputGood.jelly");
+        Script script = getJelly().compileScript();
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        
+        script.run(getJellyContext(),XMLOutput.createXMLOutput(bos));
+        assertEquals("<html></html>x",bos.toString());
+    }
+    
+    public void testOutputBad() throws Exception {
+        setUpScript("outputBad.jelly");
+        Script script = getJelly().compileScript();
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        
+        script.run(getJellyContext(),XMLOutput.createXMLOutput(bos));
+        assertEquals("<html></html>",bos.toString());
+    }
+    
+    public void testOutputBadGood() throws Exception {
+        setUpScript("outputBad.jelly");
+        Script script = getJelly().compileScript();
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        
+        XMLOutput ouput = XMLOutput.createXMLOutput(bos);
+        
+        script.run(getJellyContext(),ouput);
+        ouput.flush();
+        assertEquals("<html></html>",bos.toString());
+    }
+    
+    public void testOutputData() throws Exception {
+        setUpScript("outputData.jelly");
+        Script script = getJelly().compileScript();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        XMLOutput ouput = XMLOutput.createXMLOutput(bos);
+
+        script.run(getJellyContext(),ouput);
+        ouput.flush();
+        assertEquals("[string]",bos.toString().trim());
+	}
+}
