@@ -48,8 +48,8 @@ public class ProjectOption extends Option {
   private IPackageFragmentRoot fOutputSourceFolder;
   private Button fSourceFolderBrowseButton;
 
-  public ProjectOption(Shell shell, Text projectText, Button projectBrowseButton,
-      Text outputSourceFolderText, Button sourceFolderBrowseButton) {
+  public ProjectOption(Shell shell, Text projectText, Button projectBrowseButton, Text outputSourceFolderText, Button sourceFolderBrowseButton) {
+    
     fShell = shell;
     
     fProjectText = projectText;
@@ -95,9 +95,9 @@ public class ProjectOption extends Option {
     });
     fSourceFolderBrowseButton.setEnabled(false);
   }
-  
-  public ProjectOption(Shell shell, IJavaProject project,
-      Text outputSourceFolderText, Button sourceFolderBrowseButton) {
+
+  public ProjectOption(Shell shell, IJavaProject project, Text outputSourceFolderText, Button sourceFolderBrowseButton) {
+    
     fShell = shell;
     
     fJavaProject = project;
@@ -211,7 +211,7 @@ public class ProjectOption extends Option {
 
     if (fOutputSourceFolderText != null) {
       String folderName = RandoopArgumentCollector.getOutputDirectoryName(config);
-
+      
       fOutputSourceFolder = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, folderName);
       fOutputSourceFolderText.setText(folderName);
       
@@ -226,6 +226,8 @@ public class ProjectOption extends Option {
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fProjectText != null)
       RandoopArgumentCollector.setProjectName(config, fProjectText.getText());
+    else if (fJavaProject != null)
+      RandoopArgumentCollector.setProjectName(config, fJavaProject.getElementName());
 
     if (fOutputSourceFolderText != null)
       RandoopArgumentCollector.setOutputDirectoryName(config, fOutputSourceFolderText.getText());
@@ -366,5 +368,23 @@ public class ProjectOption extends Option {
 
   private Shell getShell() {
     return fShell;
+  }
+
+  @Override
+  public void restoreDefaults() {
+    if (fProjectText != null) {
+      fProjectText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
+
+      String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
+      notifyListeners(new OptionChangeEvent(attr, IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT));
+    }
+
+    if (fOutputSourceFolderText != null) {
+      fOutputSourceFolderText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY_NAME);
+      
+      if (fSourceFolderBrowseButton != null) {
+        fSourceFolderBrowseButton.setEnabled(fJavaProject != null);
+      }
+    }
   }
 }

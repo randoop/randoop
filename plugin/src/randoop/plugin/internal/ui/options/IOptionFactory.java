@@ -10,12 +10,12 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TestKinds;
+import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class IOptionFactory {
@@ -91,6 +91,11 @@ public class IOptionFactory {
     protected void setValue(ILaunchConfigurationWorkingCopy config, String value) {
       RandoopArgumentCollector.setRandomSeed(config, value);
     }
+
+    @Override
+    public void restoreDefaults() {
+      fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
+    }
     
   }
   
@@ -116,6 +121,12 @@ public class IOptionFactory {
     protected void setValue(ILaunchConfigurationWorkingCopy config, String value) {
       RandoopArgumentCollector.setMaxTestSize(config, value);    
     }
+    
+    @Override
+    public void restoreDefaults() {
+      fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TEST_SIZE);
+    }
+    
   }
   
   private static class UseThreadsOption extends EnablementOption {
@@ -128,6 +139,12 @@ public class IOptionFactory {
     protected void setDefaultEnablement(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreUseThreads(config);
     }
+    
+    @Override
+    public void restoreDefaults() {
+      fEnablement.setSelection(Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
+    }
+    
   }
   
   private static class ThreadTimeoutOption extends PositiveIntegerOption implements IEnableableOption {
@@ -157,6 +174,12 @@ public class IOptionFactory {
     public void setEnabled(boolean enabled) {
       fText.setEnabled(enabled);
     }
+    
+    @Override
+    public void restoreDefaults() {
+      fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_THREAD_TIMEOUT);
+    }
+    
   }
   
   private static class UseNullOption extends EnablementOption {
@@ -169,6 +192,12 @@ public class IOptionFactory {
     protected void setDefaultEnablement(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreUseNull(config);
     }
+    
+    @Override
+    public void restoreDefaults() {
+      fEnablement.setSelection(Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+    }
+    
   }
   
   private static class NullRatioOption extends BoundedDoubleOption implements IEnableableOption {
@@ -197,6 +226,11 @@ public class IOptionFactory {
     public void setEnabled(boolean enabled) {
       fText.setEnabled(enabled);
     }
+    
+    @Override
+    public void restoreDefaults() {
+      fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
+    }
 
   }
   
@@ -221,6 +255,11 @@ public class IOptionFactory {
     @Override
     protected String getValue(ILaunchConfiguration config) {
       return RandoopArgumentCollector.getJUnitTestInputs(config);
+    }
+    
+    @Override
+    public void restoreDefaults() {
+      fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
     }
   };
   
@@ -255,6 +294,11 @@ public class IOptionFactory {
     @Override
     protected String getValue(ILaunchConfiguration config) {
       return RandoopArgumentCollector.getTimeLimit(config);
+    }
+    
+    @Override
+    public void restoreDefaults() {
+      fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
     }
 
     private void setConvertedTime() {
@@ -345,6 +389,12 @@ public class IOptionFactory {
       return TestKinds.getTestKind(fCombo.getSelectionIndex()).getArgumentName();
     }
 
+    @Override
+    public void restoreDefaults() {
+      int commandId = Integer.parseInt(IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
+      fCombo.select(commandId);
+    }
+    
   }
   
   private static class MaximumTestsWrittenOption extends PositiveIntegerOption {
@@ -369,6 +419,11 @@ public class IOptionFactory {
     protected String getValue(ILaunchConfiguration config) {
       return RandoopArgumentCollector.getMaxTestsWritten(config);
     }
+    
+    @Override
+    public void restoreDefaults() {
+      fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_WRITTEN);
+    }
   };
   
   private static class MaximumTestsPerFileOption extends PositiveIntegerOption {
@@ -392,6 +447,11 @@ public class IOptionFactory {
     @Override
     protected String getValue(ILaunchConfiguration config) {
       return RandoopArgumentCollector.getMaxTestsPerFile(config);
+    }
+    
+    @Override
+    public void restoreDefaults() {
+      fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
     }
   }
 
