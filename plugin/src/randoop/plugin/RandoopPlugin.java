@@ -32,14 +32,15 @@ import randoop.plugin.internal.core.TestGroupResources;
 public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
-  
-  private static final IPath RANDOOP_JAR = new Path("/randoop.jar"); //$NON-NLS-1$
-  
-  private static final IPath PLUME_JAR = new Path("/plume.jar"); //$NON-NLS-1$
-  
-  //  private static final IPath RANDOOP_JAR = new Path("../bin/"); //$NON-NLS-1$
+
+  // TODO: Use archives when building update site
+  //  private static final IPath RANDOOP_JAR = new Path("/randoop.jar"); //$NON-NLS-1$
   //
-  //  private static final IPath PLUME_JAR = new Path("../lib/plume.jar"); //$NON-NLS-1$
+  //  private static final IPath PLUME_JAR = new Path("/plume.jar"); //$NON-NLS-1$
+
+  private static final IPath RANDOOP_JAR = new Path("../bin/"); //$NON-NLS-1$
+
+  private static final IPath PLUME_JAR = new Path("../lib/plume.jar"); //$NON-NLS-1$
   
   /** The shared instance */
   private static RandoopPlugin plugin = null;
