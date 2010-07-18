@@ -116,7 +116,7 @@ public class ProjectFactory {
   private static File getFileInTestBundle(String localPathName) {
     IPath localPath = new Path(localPathName);
 
-    URL url = FileLocator.find(RandoopPluginTests.getDefault().getBundle(), localPath, null);
+    URL url = FileLocator.find(RandoopPlugin.getDefault().getBundle(), localPath, null);
     try {
       if (url != null) {
         url = FileLocator.toFileURL(url);
