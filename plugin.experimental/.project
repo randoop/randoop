@@ -25,11 +25,4 @@
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src</name>
-			<type>2</type>
-			<locationURI>WORKSPACE_LOC/randoop/plugin/src</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
