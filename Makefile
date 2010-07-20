@@ -220,6 +220,8 @@ randoop-checkrep: bin
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopCheckRepTest
 
+# Reads file systemtests/resources/literalsfile.txt.
+# Creates file randoop/systemtests/randoop-scratch/Literals0.java.
 randoop-literals: bin
 	rm -rf systemtests/randoop-scratch
 	java -ea -classpath $(CLASSPATH) \

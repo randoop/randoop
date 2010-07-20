@@ -10,6 +10,15 @@ import org.apache.bcel.generic.*;
 import org.apache.bcel.util.ClassPath;
 import org.apache.bcel.*;
 
+
+// Implementation notes:  All string, float, and double constants are in the
+// the constant table.  Integer constants less that 64K are in the code.
+// There are also special opcodes to push values from -1 to 5.  This code
+// does not include them, but it would be easy to add them.  This code also
+// does not include class literals as constants.
+// It would be possible to determine the method with the constant if you
+// wanted finer-grained information about where the constants were used.
+
 /**
  * Reads literals from a class file, including from the constant pool and
  * from bytecodes that take immediate arguments.

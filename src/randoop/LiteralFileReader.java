@@ -35,6 +35,9 @@ import randoop.util.RecordProcessor;
  * between records and inside records.
  * </p>
  * 
+ * An example literals file appears in file
+ * randoop/systemtests/resources/literalsfile.txt.</p>
+ * 
  * LIMITATIONS:</p>
  * 
  * Error messages do not include line numbers pointing to location of the error.</p>
