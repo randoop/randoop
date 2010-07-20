@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><lpf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wpi.edu/~heineman/lpf/                        http://www.wpi.edu/~heineman/lpf/lpf.xsd" xsi:noNamespaceSchemaLocation="lpf.xsd">
+<puzzle version="1.0" type="kenken(tm)" difficulty="5" width="4" height="4">
+
+	<board name="initial"></board>
+	<board name="solution">
+		<row contents="1324"></row>
+		<row contents="341"/>
+		<row contents="4231"/>
+		<row contents="2143"/>
+	</board>
+
+	<cages>
+		<cage value="1" operation="+">
+			<cell column="C" row="2"/>
+		</cage>
+		<cage value="2" operation="/">
+			<cell column="C" row="1"/>
+			<cell column="D" row="1"/>
+		</cage>
+		<cage value="12" operation="*">
+			<cell column="B" row="1"/>
+			<cell column="B" row="2"/>
+		</cage>
+		<cage value="2" operation="-">
+			<cell column="A" row="1"/>
+			<cell column="A" row="2"/>
+		</cage>
+		<cage value="3" operation="-">
+			<cell column="B" row="4"/>
+			<cell column="C" row="4"/>
+		</cage>
+		<cage value="6" operation="*">
+			<cell column="B" row="3"/>
+			<cell column="C" row="3"/>
+		</cage>
+		<cage value="2" operation="/">
+			<cell column="A" row="3"/>
+			<cell column="A" row="4"/>
+		</cage>
+		<cage value="3" operation="+">
+			<cell column="D" row="2"/>
+			<cell column="D" row="3"/>
+		</cage>
+		<cage value="3" operation="+">
+			<cell column="D" row="4"/>
+		</cage>
+	</cages>
+</puzzle>
+</lpf>
+
