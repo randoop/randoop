@@ -4,31 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
+import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
-import randoop.plugin.internal.ui.options.Mnemonics;
 
 public class RandoopArgumentCollector {
   private String fName;
@@ -49,7 +43,7 @@ public class RandoopArgumentCollector {
   private String fTestKinds;
   private int fMaxTestsWritten;
   private int fMaxTestsPerFile;
-
+  
   public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) {
     fName = config.getName();
 
@@ -106,6 +100,54 @@ public class RandoopArgumentCollector {
     fTestKinds = getTestKinds(config);
     fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
     fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
+  }
+  
+  public IStatus getStatus() {
+    if (getName() == null) {
+      return StatusFactory.createErrorStatus("Configuration name not given");
+    } else if (getJavaProject() == null) {
+      return StatusFactory.createErrorStatus("Java project not specified");
+    } else if (getSelectedTypes() == null) {
+      return StatusFactory.createErrorStatus("Selected types not specified");
+    } else if (getSelectedMethods() == null) {
+      return StatusFactory.createErrorStatus("Selected methods not specified");
+    } else if (getOutputDirectory() == null) {
+      return StatusFactory.createErrorStatus("Output directory not specified");
+    } else if (getJUnitPackageName() == null) {
+      return StatusFactory.createErrorStatus("JUnit package name not given");
+    } else if (getJUnitClassName() == null) {
+      return StatusFactory.createErrorStatus("JUnit class name not given");
+    } else if (getTestKinds() == null) {
+      return StatusFactory.createErrorStatus("Test kinds not specified");
+    }
+    
+    IJavaProject javaProject = getJavaProject();
+    for (IType type : getSelectedTypes()) {
+      String fqname = type.getFullyQualifiedName().replace('$', '.');
+      
+      try {
+        if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
+          return StatusFactory.createWarningStatus("One of the selected classes has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
+        }
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
+    }
+    
+    for (IMethod m : getSelectedMethods()) {
+      IType type = m.getDeclaringType();
+      String fqname = type.getFullyQualifiedName().replace('$', '.');
+      
+      try {
+        if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
+          return StatusFactory.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
+        }
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
+    }
+    
+    return StatusFactory.OK_STATUS;
   }
 
   public String getName() {

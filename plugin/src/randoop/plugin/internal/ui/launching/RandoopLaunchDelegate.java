@@ -74,10 +74,19 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       return;
 
     RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
+    IStatus status = args.getStatus();
+    if (status.getSeverity() == IStatus.ERROR) {
+      informAndAbort(status);
+    } else if (status.getSeverity() == IStatus.WARNING) {
+      if (!openQuestion(status.getMessage() + "\n\n" + "Proceed with test generations?")) { //$NON-NLS-1$
+        return;
+      }
+    }
+    
     TestGroupResources testGroupResources = new TestGroupResources(args, monitor);
 
-    IStatus status = testGroupResources.getStatus();
-    if (!status.isOK()) {
+    status = testGroupResources.getStatus();
+    if (status.getSeverity() == IStatus.ERROR) {
       informAndAbort(status);
     }
 
@@ -89,15 +98,13 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
         
         @Override
         public void run() {
-          IWorkbenchWindow window = PlatformUI.getWorkbench()
-              .getActiveWorkbenchWindow();
+          IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
           IWorkbenchPage page = window.getActivePage();
 
           if (page != null) {
             TestGeneratorViewPart viewPart;
             try {
-              viewPart = (TestGeneratorViewPart) page
-                  .showView(TestGeneratorViewPart.ID);
+              viewPart = (TestGeneratorViewPart) page.showView(TestGeneratorViewPart.ID);
               Assert.isTrue(viewPart != null); // TODO is this true?
               fMessageReceiver = new MessageReceiver(new MessageViewListener(viewPart));
               viewPart.setLaunch(theLaunch);
@@ -146,17 +153,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       }
 
       if (similarlyNamedFiles > 0) {
-        final MutableBoolean okToProceed = new MutableBoolean(false);
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-          public void run() {
-            okToProceed.setValue(MessageDialog
-                .openQuestion(
-                    PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-                    "Randoop",
-                    "Randoop found similarly named files that may be overwritten by the generated tests.\n\nProceed with test generation?"));
-          }
-        });
-        if (okToProceed.getValue() == false) {
+        if (!openQuestion("Randoop found similarly named files that may be overwritten by the generated tests.\n\nProceed with test generation?")) {
           return;
         }
       }
@@ -330,6 +327,19 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   @Override
   public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
     return "randoop.main.Main"; //$NON-NLS-1$
+  }
+  
+  private static boolean openQuestion(final String message) {
+    final MutableBoolean okToProceed = new MutableBoolean(false);
+    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      public void run() {
+        okToProceed.setValue(
+            MessageDialog.openQuestion(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
+            "Randoop", message));
+      }
+    });
+    
+    return okToProceed.getValue();
   }
   
   private static IWorkspaceRoot getWorkspaceRoot() {

@@ -35,6 +35,7 @@ public class StatusFactory {
   }
 
   /**
+   * An ERROR status with the specified message.
    * 
    * @param message
    *          message to be used for the returned <code>IStatus</code>
@@ -42,6 +43,17 @@ public class StatusFactory {
    */
   public static IStatus createErrorStatus(String message) {
     return new Status(IStatus.ERROR, RandoopPlugin.getPluginId(), message);
+  }
+  
+  /**
+   * A WARNING status with the specified message.
+   * 
+   * @param message
+   *          message to be used for the returned <code>IStatus</code>
+   * @return
+   */
+  public static IStatus createWarningStatus(String message) {
+    return new Status(IStatus.WARNING, RandoopPlugin.getPluginId(), message);
   }
   
 }
