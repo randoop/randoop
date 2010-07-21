@@ -1,41 +1,11 @@
 package randoop.plugin.internal.ui.wizards;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.Flags;
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWizard;
-
-import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.core.StatusFactory;
-import randoop.plugin.internal.core.TypeMnemonic;
-import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class RandoopLaunchConfigurationWizard extends Wizard {
   protected static final String DIALOG_SETTINGS_KEY = "RandoopWizard"; //$NON-NLS-1$

@@ -1,6 +1,5 @@
 package randoop.plugin.internal.ui.options;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,11 +8,8 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -25,15 +21,11 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.internal.ui.text.correction.proposals.AddTypeParameterProposal;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.dialogs.ITypeInfoFilterExtension;
@@ -43,7 +35,6 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -66,6 +57,7 @@ import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.ClasspathLabelProvider;
+import randoop.plugin.internal.ui.MessageUtil;
 import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
@@ -78,6 +70,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Button fClassRemove;
   private Button fClassAddFromSources;
   private Button fClassAddFromClasspaths;
+  private Button fResolveClasses;
   private Button fSelectAll;
   private Button fSelectNone;
   private Button fIgnoreJUnitTestCases;
@@ -217,6 +210,25 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     gd = (GridData) fIgnoreJUnitTestCases.getLayoutData();
     gd.horizontalIndent = 5;
     fIgnoreJUnitTestCases.setLayoutData(gd);
+    
+    // Create a spacer
+    SWTFactory.createLabel(rightcomp, "", 1);
+    fResolveClasses = SWTFactory.createPushButton(rightcomp, "Resolve Classes", null);
+    fResolveClasses.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        String message = "This will attempt to find classes in the project's classpath with fully-qualified names identical to those that are missing. The classes found may differ from those originally inteted to be tested.";
+        String question = "Proceed with operation?";
+        if (MessageUtil.openQuestion(message + "\n\n" + question)) { //$NON-NLS-1$
+          try {
+            fTypeSelector.resolveMissingClasses();
+          } catch (JavaModelException jme) {
+            RandoopPlugin.log(jme);
+          }
+        }
+      }
+    });
+    fResolveClasses.addSelectionListener(listener);
   }
 
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
@@ -569,23 +581,19 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   @Override
   public void handleEvent(IOptionChangeEvent event) {
     if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
-      if (IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT.equals(event.getValue())) {
-        fJavaProject = null;
+      fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(event.getValue());
+
+      if (fJavaProject != null) {
+        fClassAddFromSources.setEnabled(true);
+        fClassAddFromClasspaths.setEnabled(true);
+        fResolveClasses.setEnabled(true);
+      } else {
         fClassAddFromSources.setEnabled(false);
         fClassAddFromClasspaths.setEnabled(false);
-      } else {
-        fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(event.getValue());
-        
-        if (fJavaProject != null) {
-          fClassAddFromSources.setEnabled(true);
-          fClassAddFromClasspaths.setEnabled(true);
-        } else {
-          fClassAddFromSources.setEnabled(false);
-          fClassAddFromClasspaths.setEnabled(false);
-        }
+        fResolveClasses.setEnabled(false);
       }
-      fTypeSelector.setJavaProject(fJavaProject);
     }
+    fTypeSelector.setJavaProject(fJavaProject);
   }
   
   /*
@@ -597,7 +605,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void restoreDefaults() {
-    // do nothing
+    // TODO - do something
   }
   
 }
