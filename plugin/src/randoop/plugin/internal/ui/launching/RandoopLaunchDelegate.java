@@ -39,6 +39,7 @@ import randoop.plugin.internal.core.MutableBoolean;
 import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
+import randoop.plugin.internal.ui.MessageUtil;
 import randoop.plugin.internal.ui.views.MessageViewListener;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 
@@ -78,7 +79,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     if (status.getSeverity() == IStatus.ERROR) {
       informAndAbort(status);
     } else if (status.getSeverity() == IStatus.WARNING) {
-      if (!openQuestion(status.getMessage() + "\n\n" + "Proceed with test generations?")) { //$NON-NLS-1$
+      if (!MessageUtil.openQuestion(status.getMessage() + "\n\n" + "Proceed with test generations?")) { //$NON-NLS-1$
         return;
       }
     }
@@ -153,7 +154,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       }
 
       if (similarlyNamedFiles > 0) {
-        if (!openQuestion("Randoop found similarly named files that may be overwritten by the generated tests.\n\nProceed with test generation?")) {
+        if (!MessageUtil.openQuestion("Randoop found similarly named files that may be overwritten by the generated tests.\n\nProceed with test generation?")) {
           return;
         }
       }
@@ -327,19 +328,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   @Override
   public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
     return "randoop.main.Main"; //$NON-NLS-1$
-  }
-  
-  private static boolean openQuestion(final String message) {
-    final MutableBoolean okToProceed = new MutableBoolean(false);
-    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-      public void run() {
-        okToProceed.setValue(
-            MessageDialog.openQuestion(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-            "Randoop", message));
-      }
-    });
-    
-    return okToProceed.getValue();
   }
   
   private static IWorkspaceRoot getWorkspaceRoot() {

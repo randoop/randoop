@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
@@ -24,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import randoop.plugin.RandoopPlugin;
@@ -274,7 +276,7 @@ public class ClassSelector {
       classItem.setText(type.getFullyQualifiedName());
       setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
 
-      addMethods(classItem, type);
+      setMethods(classItem, type);
       
       setChecked(classItem, checked);
       return classItem;
@@ -285,7 +287,8 @@ public class ClassSelector {
     }
   }
   
-  private static void addMethods(TreeItem classItem, IType type) throws JavaModelException {
+  private static void setMethods(TreeItem classItem, IType type) throws JavaModelException {
+    classItem.removeAll();
     IMethod[] methods = type.getMethods();
     for (IMethod m : methods) {
       TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
@@ -724,6 +727,68 @@ public class ClassSelector {
     parentItem.setGrayed(false);
   }
   
+  public void resolveMissingClasses() throws JavaModelException {
+    Assert.isNotNull(fJavaProject);
+
+    Map<String, List<MethodMnemonic>> checkedMethodsByFQTypeName = new HashMap<String, List<MethodMnemonic>>();
+    List<String> methodMnemonics = getCheckedMethods();
+    for (String methodMnemonicString : methodMnemonics) {
+      MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString, getWorkspaceRoot());
+
+      String fqname = methodMnemonic.getDeclaringTypeMnemonic().toString();
+      List<MethodMnemonic> methods = checkedMethodsByFQTypeName.get(fqname);
+      if (methods == null) {
+        methods = new ArrayList<MethodMnemonic>();
+        checkedMethodsByFQTypeName.put(fqname, methods);
+      }
+      methods.add(methodMnemonic);
+    }
+
+    for (TreeItem packageItem : fTypeTree.getItems()) {
+      for (TreeItem classItem : packageItem.getItems()) {
+        Assert.isTrue(getType(classItem) == IJavaElement.TYPE);
+
+        TypeMnemonic typeMnemonic = new TypeMnemonic(getMnemonic(classItem), getWorkspaceRoot());
+        IType type = typeMnemonic.getType();
+        if (type == null) {
+          type = fJavaProject.findType(type.getFullyQualifiedName(), (IProgressMonitor) null);
+          if (type != null) {
+            typeMnemonic = new TypeMnemonic(type);
+
+            setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
+            setMethods(classItem, type);
+          }
+          
+          boolean hasIndividuallyCheckedMethods = classItem.getGrayed();
+          if (classItem.getGrayed()) {
+            classItem.setGrayed(false);
+          }
+          updateTree(classItem);
+          
+          if(hasIndividuallyCheckedMethods) {
+            String fqname = new TypeMnemonic(getMnemonic(classItem)).getFullyQualifiedName();
+            List<MethodMnemonic> checkedMethods = checkedMethodsByFQTypeName.get(fqname);
+            
+            for (TreeItem methodItem : classItem.getItems()) {
+              MethodMnemonic candidateMethodMneomnic = new MethodMnemonic(getMnemonic(methodItem));
+              
+              for (MethodMnemonic checkedMethod : checkedMethods) {
+                // Check the method if the name and signature match
+                if (candidateMethodMneomnic.getMethodName().equals(checkedMethod.getMethodName())
+                    && candidateMethodMneomnic.getMethodSignature().equals(
+                        checkedMethod.getMethodSignature())) {
+                  methodItem.setChecked(true);
+                  updateTree(methodItem);
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
   public void setJavaProject(IJavaProject javaProject) {
     fJavaProject = javaProject;
     
@@ -754,7 +819,7 @@ public class ClassSelector {
           
           classItem.removeAll();
           try {
-            addMethods(classItem, type);
+            setMethods(classItem, type);
             
             for (TreeItem methodItem : classItem.getItems()) {
               boolean checked = checkedMethods.contains(getMnemonic(methodItem));

@@ -40,6 +40,7 @@ public class TypeMnemonic {
     IJavaElement pfr = fType.getPackageFragment().getParent();
     Assert.isNotNull(pfr);
     Assert.isTrue(pfr.getElementType() == IJavaElement.PACKAGE_FRAGMENT_ROOT);
+    Assert.isTrue(pfr.exists());
     fClasspathEntry = ((IPackageFragmentRoot) pfr).getRawClasspathEntry();
 
     Assert.isNotNull(fJavaProject);

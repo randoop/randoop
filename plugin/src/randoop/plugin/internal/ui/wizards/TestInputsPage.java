@@ -1,19 +1,14 @@
 package randoop.plugin.internal.ui.wizards;
 
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
-import randoop.plugin.internal.ui.options.ProjectOption;
 
 public class TestInputsPage extends OptionWizardPage {
   
