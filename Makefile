@@ -72,7 +72,7 @@ tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bd
 # Runs pure Randoop-related tests.
 randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
-temp:  covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
+temp: randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
 
 # build pre-agent instrumentation jar
@@ -220,6 +220,8 @@ randoop-checkrep: bin
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopCheckRepTest
 
+# Reads file systemtests/resources/literalsfile.txt.
+# Creates file randoop/systemtests/randoop-scratch/Literals0.java.
 randoop-literals: bin
 	rm -rf systemtests/randoop-scratch
 	java -ea -classpath $(CLASSPATH) \
