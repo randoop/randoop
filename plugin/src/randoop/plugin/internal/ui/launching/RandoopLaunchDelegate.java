@@ -107,6 +107,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
             try {
               viewPart = (TestGeneratorViewPart) page.showView(TestGeneratorViewPart.ID);
               Assert.isTrue(viewPart != null); // TODO is this true?
+              
+              viewPart.relaunchAction.setEnabled(true);
+              
               fMessageReceiver = new MessageReceiver(new MessageViewListener(viewPart));
               viewPart.setLaunch(theLaunch);
               fPort = fMessageReceiver.getPort();
@@ -219,7 +222,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     if (monitor.isCanceled()) {
       return;
     }
-    
+
     System.out.println("Launching complete");
   }
 
@@ -281,6 +284,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.add("--methodlist=" + testSetResources.getMethodFile().getAbsolutePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
     programArguments.add("--noprogressdisplay"); //$NON-NLS-1$
+    programArguments.add("--log=randooplog.txt"); // XXX remove
   }
 
   private void informAndAbort(String message, Throwable exception, int code) throws CoreException {

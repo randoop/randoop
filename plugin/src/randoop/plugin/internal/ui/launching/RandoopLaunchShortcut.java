@@ -74,14 +74,14 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     ILaunchConfigurationWorkingCopy config = null;
     try {
       config = randoopLaunchType.newInstance(null,
-          launchManager.generateLaunchConfigurationName("RandoopTest")); //$NON-NLS-1$
+          launchManager.generateUniqueLaunchConfigurationNameFrom("RandoopTest")); //$NON-NLS-1$
 
       RandoopWizardRunner runner = new RandoopWizardRunner(javaProject, elements, config);
       PlatformUI.getWorkbench().getDisplay().syncExec(runner);
 
       if (runner.getReturnCode() == WizardDialog.OK) {
         RandoopArgumentCollector args = new RandoopArgumentCollector(config, RandoopPlugin.getWorkspaceRoot());
-        config.rename(launchManager.generateLaunchConfigurationName(args.getJUnitClassName()));
+        config.rename(launchManager.generateUniqueLaunchConfigurationNameFrom(args.getJUnitClassName()));
         config.doSave();
         
         DebugUITools.launch(config, "run"); //$NON-NLS-1$
