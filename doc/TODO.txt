@@ -7,6 +7,13 @@ enhancements.  See doc/projects.txt and the Wiki projects page
 (http://code.google.com/p/randoop/wiki/ProjectIdeas) for
 larger potential projects.
 
+* Bug fixes:
+
+assertions not tested for when forbidnull==false
+
+are we removing checkrep methods from statements? (we should)
+
+
 * Reinstate HTML validation for manual pages. Perhaps
 
   http://www.w3.org/QA/Tools/LogValidator/
