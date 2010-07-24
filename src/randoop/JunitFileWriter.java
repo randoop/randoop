@@ -39,7 +39,14 @@ public class JunitFileWriter {
     this.junitDriverClassName = junitDriverClassName;
     this.testsPerFile = testsPerFile;
   }
+  
 
+  public static File createJunitTestFile(String junitOutputDir, String packageName, ExecutableSequence es, String className) {
+    JunitFileWriter writer = new JunitFileWriter(junitOutputDir, packageName, "dummy", 1);
+    writer.createOutputDir();
+    return writer.writeSubSuite(Collections.singletonList(es), className);
+  }
+  
   /** Creates Junit tests for the faults.
    * Output is a set of .java files.
    */
@@ -49,7 +56,18 @@ public class JunitFileWriter {
       return new ArrayList<File>();
     }
 
-    // Create the output directory.
+    createOutputDir();
+
+    List<File> ret = new ArrayList<File>();
+    List<List<ExecutableSequence>> subSuites = CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (sequences), testsPerFile);
+    for (int i = 0 ; i < subSuites.size() ; i++) {
+      ret.add(writeSubSuite(subSuites.get(i), junitTestsClassName + i));
+    }
+    createdSequencesAndClasses.put(junitTestsClassName, subSuites);
+    return ret;
+  }
+
+  private void createOutputDir() {
     File dir = getDir();
     if (!dir.exists()) {
       boolean success = dir.mkdirs();
@@ -57,14 +75,6 @@ public class JunitFileWriter {
         throw new Error("Unable to create directory: " + dir.getAbsolutePath());
       }
     }
-
-    List<File> ret = new ArrayList<File>();
-    List<List<ExecutableSequence>> subSuites = CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (sequences), testsPerFile);
-    for (int i = 0 ; i < subSuites.size() ; i++) {
-      ret.add(writeSubSuite(subSuites.get(i), i, junitTestsClassName));
-    }
-    createdSequencesAndClasses.put(junitTestsClassName, subSuites);
-    return ret;
   }
 
   /** Creates Junit tests for the faults.
@@ -76,7 +86,7 @@ public class JunitFileWriter {
     return createJunitTestFiles(sequences, junitDriverClassName);
   }
 
-  /** create both the test files and the drivers for convinience **/
+  /** create both the test files and the drivers for convenience **/
   public List<File> createJunitFiles(List<ExecutableSequence> sequences, List<Class<?>> allClasses) {
     List<File> ret = new ArrayList<File>();
     ret.addAll(createJunitTestFiles(sequences));
@@ -93,8 +103,8 @@ public class JunitFileWriter {
   }
 
 
-  private File writeSubSuite(List<ExecutableSequence> sequencesForOneFile, int i, String junitTestsClassName) {
-    String className = junitTestsClassName + i;
+  private File writeSubSuite(List<ExecutableSequence> sequencesForOneFile, String junitTestsClassName) {
+    String className = junitTestsClassName;
     File file = new File(getDir(), className + ".java");
     PrintStream out = createTextOutputStream(file);
 
@@ -234,4 +244,5 @@ public class JunitFileWriter {
       throw new Error("This can't happen");
     }
   }
+
 }
