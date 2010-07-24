@@ -96,9 +96,11 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
           if (page != null) {
             TestGeneratorViewPart viewPart;
             try {
-              viewPart = (TestGeneratorViewPart) page
-                  .showView(TestGeneratorViewPart.ID);
+              viewPart = (TestGeneratorViewPart) page.showView(TestGeneratorViewPart.ID);
               Assert.isTrue(viewPart != null); // TODO is this true?
+              
+              viewPart.relaunchAction.setEnabled(true);
+              
               fMessageReceiver = new MessageReceiver(new MessageViewListener(viewPart));
               viewPart.setLaunch(theLaunch);
               fPort = fMessageReceiver.getPort();
@@ -153,7 +155,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
                 .openQuestion(
                     PlatformUI.getWorkbench().getDisplay().getActiveShell(),
                     "Randoop",
-                    "Randoop found similarly named files that may be overwritten by the generated tests.\n\nProceed with test generation?"));
+                    "Randoop found previously generated files that may be overwritten by the generated tests.\n\nProceed with test generation?"));
           }
         });
         if (okToProceed.getValue() == false) {
@@ -221,7 +223,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     if (monitor.isCanceled()) {
       return;
     }
-    
+
     System.out.println("Launching complete");
   }
 
@@ -283,6 +285,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.add("--methodlist=" + testSetResources.getMethodFile().getAbsolutePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
     programArguments.add("--noprogressdisplay"); //$NON-NLS-1$
+    programArguments.add("--log=randooplog.txt"); // XXX remove
   }
 
   private void informAndAbort(String message, Throwable exception, int code) throws CoreException {

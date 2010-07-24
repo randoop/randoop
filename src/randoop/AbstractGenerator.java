@@ -1,5 +1,6 @@
 package randoop;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
@@ -7,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,10 +17,10 @@ import plume.Option;
 import plume.OptionGroup;
 import plume.Pair;
 import plume.Unpublicized;
-import randoop.FailureAnalyzer.Failure;
 import randoop.experiments.SizeEqualizer;
 import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
+import randoop.runtime.ErrorRevealed;
 import randoop.runtime.IMessage;
 import randoop.runtime.MessageSender;
 import randoop.runtime.PercentDone;
@@ -254,7 +256,7 @@ public abstract class AbstractGenerator {
   // public Set<FailureAnalyzer.Failure> errors = new LinkedHashSet<FailureAnalyzer.Failure>();
 
   public List<ExecutableSequence> outSeqs = new ArrayList<ExecutableSequence>();
-
+  
   // TODO: This method is doing two things: (1) maintaining the list
   // of sequences generated that will ultimately be output to the user, and (2) updating
   // statistics regarding the generation process. The first thing does not belong in this class/method,
@@ -266,39 +268,41 @@ public abstract class AbstractGenerator {
         && (GenInputsAbstract.output_tests.equals(GenInputsAbstract.pass)
             || GenInputsAbstract.output_tests.equals(GenInputsAbstract.all))) {
       outSeqs.add(es);
-      addedToOutSeqs = true;
-    }
-
-    if (msgSender != null) {
-      if (fa.getFailures().size() > 0) {
-        for (Failure f : fa.getFailures()) {
-          int fidx = es.getFailureIndex();
-          assert fidx >= 0;
-          Check failure = es.getFailures(fidx).get(0);
-          String description = failure.getClass().toString();
-          if (failure instanceof ObjectCheck) {
-            ObjectCheck objCheck = (ObjectCheck)failure;
-            description = objCheck.contract.getClass().toString();
-          }
-          ErrorRevealed msg = new ErrorRevealed(es.toCodeString(), description);
-          msgSender.send(msg);
-        }
+      
+      if (msgSender == null) {
+        addedToOutSeqs = true;
       }
     }
 
-    boolean counted = false;
     for (FailureAnalyzer.Failure failure : fa.getFailures()) {
-
-      if (!counted) {
-        stats.globalStats.addToCount(SequenceGeneratorStats.STAT_SEQUENCE_RAW_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT, 1);
-        counted = true;
-      }
-
+      
       if (errors.add(new Pair<StatementKind, Class<?>>(failure.st, failure.viocls))) {
 
         if (!addedToOutSeqs && (GenInputsAbstract.output_nonexec || !es.hasNonExecutedStatements())
             && (GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail) || GenInputsAbstract.output_tests.equals(GenInputsAbstract.all))) {
-          outSeqs.add(es);
+
+          if (msgSender != null) {
+            
+            String description = failure.viocls.toString();
+            if (failure.viocls.equals(NoExceptionCheck.class)) {
+              description = "NPEs / Assertion violations";
+            }
+            List<String> failureClassList = new LinkedList<String>();
+            failureClassList.add(failure.st.toString());
+
+            List<ExecutableSequence> singleSequenceList = new LinkedList<ExecutableSequence>();
+            singleSequenceList.add(es);
+            File junitFile = JunitFileWriter.createJunitTestFile(GenInputsAbstract.junit_output_dir, "randoopFailures", es, GenInputsAbstract.junit_classname + "_failure_" + errors.size());
+            
+            ErrorRevealed msg = new ErrorRevealed(es.toCodeString(), description, failureClassList, junitFile);
+            msgSender.send(msg);
+            
+          } else {
+            
+            outSeqs.add(es);
+            
+          }
+          
         }
 
         stats.globalStats.addToCount(SequenceGeneratorStats.STAT_SEQUENCE_OBJECT_CONTRACT_VIOLATED_LAST_STATEMENT, 1);
