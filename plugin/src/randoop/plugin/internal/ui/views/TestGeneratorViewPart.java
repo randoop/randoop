@@ -1,38 +1,18 @@
 package randoop.plugin.internal.ui.views;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.junit.ui.JUnitPlugin;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -40,13 +20,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import randoop.ErrorRevealed;
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+import randoop.plugin.model.resultstree.RunResultsTree;
 
 public class TestGeneratorViewPart extends ViewPart {
   /**
@@ -59,19 +36,17 @@ public class TestGeneratorViewPart extends ViewPart {
   private CounterPanel fCounterPanel;
   private RandoopProgressBar fProgressBar;
 
-  Map<String, Set<ErrorRevealed>> errors;
-
-  RandoopErrors randoopErrors;
+  RunResultsTree randoopErrors;
 
   ICompilationUnit junitDriver;
   
   ILaunch launch;
   
-  Action debugWithJUnitAction;
+  public Action debugWithJUnitAction;
   
-  Action runWithJUnitAction;
+  public Action runWithJUnitAction;
   
-  Action relaunchAction;
+  public Action relaunchAction;
 
   /**
    * The constructor.
@@ -79,10 +54,6 @@ public class TestGeneratorViewPart extends ViewPart {
   public TestGeneratorViewPart() {
   }
 
-  /**
-   * This is a callback that will allow us to create the viewer and initialize
-   * it.
-   */
   @Override
   public void createPartControl(Composite parent) {
     fParent = parent;
@@ -99,24 +70,26 @@ public class TestGeneratorViewPart extends ViewPart {
     fProgressBar = new RandoopProgressBar(parent);
     fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
-    errors = new LinkedHashMap<String, Set<ErrorRevealed>>();
-
     Label errTitle = new Label(fParent, SWT.NONE);
-    errTitle.setText("Errors:");
+    errTitle.setText("Failures:");
     
     viewer = new TreeViewer(parent);
-    randoopErrors = new RandoopErrors(errors);
-    randoopErrors.viewPart = this;
-    viewer.setContentProvider(randoopErrors);
+    randoopErrors = new RunResultsTree();
+    randoopErrors.viewer = viewer;
+    RandoopContentProvider prov = new RandoopContentProvider(randoopErrors);
+    viewer.setContentProvider(prov);
+    prov.viewer = viewer;
     viewer.setLabelProvider(new RandoopLabelProvider());
-    viewer.setInput(errors);
+    viewer.setInput(randoopErrors);
     GridData gd = new GridData();
     gd.grabExcessHorizontalSpace = true;
     gd.grabExcessVerticalSpace = true;
     gd.horizontalAlignment = SWT.FILL;
     gd.verticalAlignment = SWT.FILL;
     viewer.getControl().setLayoutData(gd);
-    viewer.addDoubleClickListener(randoopErrors);
+    FailureItemDoubleClickListener doubleClickListener = new FailureItemDoubleClickListener();
+    viewer.addDoubleClickListener(doubleClickListener);
+    doubleClickListener.viewPart = this;
 
     createActions();
     createToolBar();
@@ -140,6 +113,8 @@ public class TestGeneratorViewPart extends ViewPart {
     ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/bug.png");
     debugWithJUnitAction.setImageDescriptor(desc);
     
+    debugWithJUnitAction.setEnabled(false);
+    
     runWithJUnitAction = new Action("Run tests with JUnit") {
       @Override
       public void run() {
@@ -154,10 +129,13 @@ public class TestGeneratorViewPart extends ViewPart {
         }
       }
     };
+    
+    runWithJUnitAction.setEnabled(false);
+    
     desc = RandoopPlugin.getImageDescriptor("icons/run_junit.png");
     runWithJUnitAction.setImageDescriptor(desc);
     
-    relaunchAction = new Action("Rerun last launch") {
+    relaunchAction = new Action("Regenerate tests") {
       public void run() {
         ILaunchConfiguration config = launch.getLaunchConfiguration();
         assert config != null; // TODO right?
@@ -166,6 +144,8 @@ public class TestGeneratorViewPart extends ViewPart {
         DebugUITools.launch(config, mode);
       }
     };
+    
+    relaunchAction.setEnabled(false);
 
     // TODO dispose?
     desc = RandoopPlugin.getImageDescriptor("icons/arrow_redo.png");

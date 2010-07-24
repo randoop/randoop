@@ -72,7 +72,7 @@ tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bd
 # Runs pure Randoop-related tests.
 randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
-temp:  covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
+temp: randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
 
 # build pre-agent instrumentation jar
