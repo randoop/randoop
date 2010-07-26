@@ -159,6 +159,11 @@ public class TypeMnemonic {
               if (newCpe != null)
                 break;
             }
+          } else {
+            // Check if javaProject links to the same source folder
+            newCpe = findLinkedFolder(javaProject, cpe.getPath());
+            if (newCpe != null)
+              break;
           }
           
           // check javaProject has this.project in it's classpath
@@ -212,13 +217,14 @@ public class TypeMnemonic {
   
   private IClasspathEntry findLinkedFolder(IJavaProject javaProject, IPath actualPath) throws JavaModelException {
     IWorkspaceRoot root = getJavaProject().getCorrespondingResource().getWorkspace().getRoot();
+    actualPath = actualPath.makeAbsolute();
 
     for (IClasspathEntry cpe : javaProject.getRawClasspath()) {
       if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
         IPath path = cpe.getPath().makeRelativeTo(javaProject.getProject().getFullPath());
         IFolder cpeFolder = javaProject.getProject().getFolder(path);
         if (cpeFolder.isLinked()) {
-          path = cpeFolder.getLocation().makeRelativeTo(root.getLocation());
+          path = cpeFolder.getLocation().makeRelativeTo(root.getLocation()).makeAbsolute();
 
           if (actualPath.equals(path)) {
             return cpe;
