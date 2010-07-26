@@ -1,4 +1,4 @@
-package randoop.plugin.tests.ui.options;
+package randoop.plugin.tests.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
