@@ -11,21 +11,18 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.jdt.core.IJavaProject;
 
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.ui.launching.GeneralTab;
 import randoop.plugin.internal.ui.launching.ParametersTab;
-import randoop.plugin.tests.ProjectFactory;
 import randoop.plugin.tests.WorkspaceManager;
 
 @SuppressWarnings("nls")
 public class LaunchDelegateTests extends TestCase {
-  private IJavaProject fJavaProject;
   
   @Override
   protected void setUp() throws Exception {
-    fJavaProject = ProjectFactory.createPathPlannerProject();
+    WorkspaceManager.setupDemoWorkspace();
   }
   
   /**
@@ -62,7 +59,7 @@ public class LaunchDelegateTests extends TestCase {
     ILaunchConfigurationType type = manager.getLaunchConfigurationType(IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
     assertNotNull("Missing java application launch config type", type); //$NON-NLS-1$
 
-    HashSet modes = new HashSet();
+    HashSet<String> modes = new HashSet<String>();
     modes.add(ILaunchManager.RUN_MODE);
     assertTrue("Should support mode (run)", type.supportsMode(ILaunchManager.RUN_MODE)); //$NON-NLS-1$
     ILaunchDelegate[] delegates = type.getDelegates(modes);
