@@ -1,49 +1,46 @@
 package randoop.plugin.tests;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.TypeMnemonic;
 
+@SuppressWarnings("nls")
 public class ResourcesTest {
   static IJavaProject pathplanner;
   static IJavaProject kenken;
 
   @BeforeClass
-  public static void setUp() {
-    WorkspaceManager.clearActiveWorkspace();
-
-    pathplanner = ProjectFactory.createPathPlannerProject();
+  public static void setUp() throws IOException, CoreException {
+    WorkspaceManager.setupDemoWorkspace();
+    
+    assertNull(WorkspaceManager.getJavaProject("Jf9jf23v55b4338cJR83"));
+    
+    pathplanner = WorkspaceManager.getJavaProject(WorkspaceManager.PATH_PLANNER);
     assertNotNull(pathplanner);
     assertTrue(pathplanner.exists());
 
-    kenken = ProjectFactory.createKenKenProject();
+    kenken =  WorkspaceManager.getJavaProject(WorkspaceManager.KENKEN);
     assertNotNull(kenken);
     assertTrue(kenken.exists());
   }

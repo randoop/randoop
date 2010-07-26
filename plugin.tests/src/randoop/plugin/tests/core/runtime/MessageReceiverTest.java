@@ -15,7 +15,6 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.tests.LaunchConfigurationFactory;
-import randoop.plugin.tests.ProjectFactory;
 import randoop.plugin.tests.WorkspaceManager;
 import randoop.runtime.ClosingStream;
 import randoop.runtime.CreatedJUnitFile;
@@ -70,9 +69,9 @@ public class MessageReceiverTest {
   }
   
   @BeforeClass
-  public static void beforeClass() {
-    WorkspaceManager.clearActiveWorkspace();
-    javaProject = ProjectFactory.createPathPlannerProject();
+  public static void beforeClass() throws IOException, CoreException {
+    WorkspaceManager.setupDemoWorkspace();
+    javaProject = WorkspaceManager.getJavaProject(WorkspaceManager.PATH_PLANNER);
   }
   
   @Test
