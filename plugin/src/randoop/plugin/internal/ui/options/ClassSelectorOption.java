@@ -370,6 +370,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       IType type = typeMnemonic.getType();
       if (type == null || !type.exists()) {
         return StatusFactory.createErrorStatus("One of the selected types does not exist.");
+      } else if (!javaProject.equals(type.getJavaProject())) {
+        return StatusFactory.createErrorStatus("One of the selected types does not exist in the selected project.");
       }
     }
 
@@ -432,42 +434,42 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   // }
   // return searcher.getTypes();
   // }
-  
-  private abstract class ClassSearcher implements IRunnableWithProgress {
-    private IJavaProject fJavaProject;
-    private List<IType> fAvailableTypes;
-    private boolean fCancelled;
-
-    public ClassSearcher(IJavaProject project) {
-      fJavaProject = project;
-      fAvailableTypes = new ArrayList<IType>();
-      fCancelled = false;
-    }
-
-    protected void addType(IType type) {
-      fAvailableTypes.add(type);
-    }
-    
-    protected void addTypes(Collection<? extends IType> types) {
-      fAvailableTypes.addAll(types);
-    }
-
-    public IType[] getTypes() {
-      return fAvailableTypes.toArray(new IType[fAvailableTypes.size()]);
-    }
-
-    protected IJavaProject getJavaProject() {
-      return fJavaProject;
-    }
-    
-    public boolean wasCancelled() {
-      return fCancelled;
-    }
-    
-    protected void cancel() {
-      fCancelled = true;
-    }
-  }
+  //
+  // private abstract class ClassSearcher implements IRunnableWithProgress {
+  // private IJavaProject fJavaProject;
+  // private List<IType> fAvailableTypes;
+  // private boolean fCancelled;
+  //
+  // public ClassSearcher(IJavaProject project) {
+  // fJavaProject = project;
+  // fAvailableTypes = new ArrayList<IType>();
+  // fCancelled = false;
+  // }
+  //
+  // protected void addType(IType type) {
+  // fAvailableTypes.add(type);
+  // }
+  //
+  // protected void addTypes(Collection<? extends IType> types) {
+  // fAvailableTypes.addAll(types);
+  // }
+  //
+  // public IType[] getTypes() {
+  // return fAvailableTypes.toArray(new IType[fAvailableTypes.size()]);
+  // }
+  //
+  // protected IJavaProject getJavaProject() {
+  // return fJavaProject;
+  // }
+  //
+  // public boolean wasCancelled() {
+  // return fCancelled;
+  // }
+  //
+  // protected void cancel() {
+  // fCancelled = true;
+  // }
+  // }
   
   private class FilterJUnitSearchScope implements IJavaSearchScope {
     IJavaSearchScope fSearchScope;
@@ -583,15 +585,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
       fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(event.getValue());
 
-      if (fJavaProject != null) {
-        fClassAddFromSources.setEnabled(true);
-        fClassAddFromClasspaths.setEnabled(true);
-        fResolveClasses.setEnabled(true);
-      } else {
-        fClassAddFromSources.setEnabled(false);
-        fClassAddFromClasspaths.setEnabled(false);
-        fResolveClasses.setEnabled(false);
-      }
+      boolean enabled = fJavaProject != null;
+      fClassAddFromSources.setEnabled(enabled);
+      fClassAddFromClasspaths.setEnabled(enabled);
+      fResolveClasses.setEnabled(enabled);
     }
     fTypeSelector.setJavaProject(fJavaProject);
   }
