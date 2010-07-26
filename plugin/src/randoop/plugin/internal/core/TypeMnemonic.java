@@ -1,7 +1,10 @@
 package randoop.plugin.internal.core;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -18,6 +21,8 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+
+import randoop.plugin.RandoopPlugin;
 
 public class TypeMnemonic {
   private final static String DELIMITER = "#"; //$NON-NLS-1$
@@ -52,11 +57,11 @@ public class TypeMnemonic {
     fFullyQualifiedTypeName = fType.getFullyQualifiedName();
   }
 
-  public TypeMnemonic(String javaProjectName, int classpathKind,IPath classpath, String fullyQualifiedTypeName) {
-    fJavaProjectName=javaProjectName;
-    fClasspathKind=classpathKind;
-    fClasspath=classpath;
-    fFullyQualifiedTypeName=fullyQualifiedTypeName;
+  public TypeMnemonic(String javaProjectName, int classpathKind, IPath classpath, String fullyQualifiedTypeName) {
+    fJavaProjectName = javaProjectName;
+    fClasspathKind = classpathKind;
+    fClasspath = classpath;
+    fFullyQualifiedTypeName = fullyQualifiedTypeName;
 
     fJavaProject = null;
     fClasspathEntry = null;
@@ -120,31 +125,117 @@ public class TypeMnemonic {
   }
   
   public TypeMnemonic reassign(IJavaProject javaProject) {
-    // CPE_SOURCE:
-    //   if this is linked:
-    //     check if it's in the javaProject as a classpath entry
-    //       IPath p = classpathEntry.getPath();
-    //       IResource r = kenken.findPackageFragmentRoot(p).getResource();
-    //       p = r.getLocation().makeRelativeTo(getWorkspaceRoot().getLocation());
-    //   check javaProject has this.project in it's classpath
-    //
-    // CPE_VARIABLE:
-    // CPE_CONTAINER:
-    //   check for the exact same variable/container in javaProject's classpath
-    //
-    // CPE_PROJECT:
-    //   check if project is the same as javaProject
-    //   check for the exact same project in javaProject's classpath
-    //
-    // CPE_LIBRARY:
-    //   check for the exact same library in javaProject's classpath
-    //     (this could be absolute to the file system or relative to the workspace)
-    //   if folder:
-    //     check if this is an output folder of something in this project
-    //     somehow find the IPackageFragmentRoot outputting (maybe javaProject.findType is appropriate here)
-    //
-    // Find the type and return it with
-    // return new TypeMnemonic(type);
+    if (javaProject != null && exists()) {
+      try {
+        IWorkspaceRoot root = getJavaProject().getCorrespondingResource().getWorkspace().getRoot();
+
+        // Ensure both this java project and the one we are switching to are in
+        // the same workspace
+        Assert.isTrue(root.equals(javaProject.getCorrespondingResource().getWorkspace().getRoot()));
+
+        IClasspathEntry cpe = getClasspathEntry();
+        IClasspathEntry newCpe = null;
+        switch (cpe.getEntryKind()) {
+        case IClasspathEntry.CPE_SOURCE:
+          // this entry describes a source root (linked or otherwise) in its project
+          IPath cpePath = cpe.getPath().makeRelativeTo(getJavaProject().getPath());
+          IFolder cpeFolder = getJavaProject().getProject().getFolder(cpePath);
+
+          if (cpeFolder.isLinked()) {
+            IPath actualPath = cpeFolder.getLocation().makeRelativeTo(root.getLocation());
+            IFolder linkedFolder = root.getFolder(actualPath);
+            Assert.isTrue(linkedFolder.exists());
+            
+            // Check if javaProject also links to the same source folder
+            newCpe = findLinkedFolder(javaProject, actualPath);
+            if (newCpe != null)
+              break;
+              
+            // Check if javaProject contains the source folder
+            if (linkedFolder.getProject().equals(javaProject.getProject())) {
+              IPath path = linkedFolder.getFullPath();
+              newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_SOURCE, path);
+
+              if (newCpe != null)
+                break;
+            }
+          }
+          
+          // check javaProject has this.project in it's classpath
+          IPath projectPath = getJavaProject().getProject().getFullPath();
+          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, projectPath);
+          break;
+        case IClasspathEntry.CPE_LIBRARY:
+          // this entry describes a folder or JAR containing binaries
+          break;
+        case IClasspathEntry.CPE_PROJECT:
+          // this entry describes another project
+          break;
+        case IClasspathEntry.CPE_VARIABLE:
+          // this entry describes a project or library indirectly via a
+          // classpath
+          // variable in the first segment of the path *
+          break;
+        case IClasspathEntry.CPE_CONTAINER:
+          // this entry describes set of entries referenced indirectly via a
+          // classpath
+          break;
+        }
+        // CPE_VARIABLE:
+        // CPE_CONTAINER:
+        //   check for the exact same variable/container in javaProject's classpath
+        //
+        // CPE_PROJECT:
+        //   check if project is the same as javaProject
+        //   check for the exact same project in javaProject's classpath
+        //
+        // CPE_LIBRARY:
+        //   check for the exact same library in javaProject's classpath
+        //     (this could be absolute to the file system or relative to the workspace)
+        //   if folder:
+        //     check if this is an output folder of something in this project
+        //     somehow find the IPackageFragmentRoot outputting (maybe javaProject.findType is appropriate here)
+        //
+        // Find the type and return it with
+        // return new TypeMnemonic(type);
+
+        if (newCpe != null) {
+          TypeMnemonic tmp = new TypeMnemonic(javaProject.getElementName(), newCpe.getEntryKind(), newCpe.getPath(), getFullyQualifiedName());
+          return new TypeMnemonic(tmp.toString(), root);
+        }
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
+    }
+    return null;
+  }
+  
+  private IClasspathEntry findLinkedFolder(IJavaProject javaProject, IPath actualPath) throws JavaModelException {
+    IWorkspaceRoot root = getJavaProject().getCorrespondingResource().getWorkspace().getRoot();
+
+    for (IClasspathEntry cpe : javaProject.getRawClasspath()) {
+      if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+        IPath path = cpe.getPath().makeRelativeTo(javaProject.getProject().getFullPath());
+        IFolder cpeFolder = javaProject.getProject().getFolder(path);
+        if (cpeFolder.isLinked()) {
+          path = cpeFolder.getLocation().makeRelativeTo(root.getLocation());
+
+          if (actualPath.equals(path)) {
+            return cpe;
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+  
+  private IClasspathEntry findClasspathEntry(IJavaProject javaProject, int entryKind, IPath path) throws JavaModelException {
+    for (IClasspathEntry cpe : javaProject.getRawClasspath()) {
+      if (cpe.getEntryKind() == entryKind && cpe.getPath().equals(path)) {
+        return cpe;
+      }
+    }
     return null;
   }
 
@@ -182,6 +273,30 @@ public class TypeMnemonic {
   }
 
   private static IType findType(IJavaProject javaProject, IClasspathEntry classpathEntry, String fqname) throws JavaModelException {
+    // TODO: Problem with classpath entries of type CPE_PROJECT
+    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
+    //    cpe.toString();
+    //        (java.lang.String) /Some Project[CPE_PROJECT][K_SOURCE][isExported:false][combine access rules:false]
+    //     
+    //    // Show that the referenced project exists and has a root containing source
+    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
+    //    IProject someProject = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().toString());
+    //    IJavaProject someJavaProject = (IJavaProject) someProject.getNature(JavaCore.NATURE_ID);
+    //    IPackageFragmentRoot pfr = someJavaProject.getPackageFragmentRoots()[0];
+    //    new Boolean(pfr.getKind() == IPackageFragmentRoot.K_SOURCE).toString();
+    //        (java.lang.String) true
+    //     
+    //    // From http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/IJavaProject.html
+    //    // "Returns the existing package fragment roots identified by the
+    //    // given entry. Note that a classpath entry that refers to another
+    //    // project may have more than one root (if that project has more
+    //    // than on root containing source), and classpath entries within
+    //    // the current project identify a single root."
+    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
+    //    javaProject.findPackageFragmentRoots(cpe);
+    //        (org.eclipse.jdt.core.IPackageFragmentRoot[]) []
+
+    
     IPackageFragmentRoot[] packageFragmentRoots = javaProject.findPackageFragmentRoots(classpathEntry);
 
     int lastDelimiter = fqname.lastIndexOf('.');
