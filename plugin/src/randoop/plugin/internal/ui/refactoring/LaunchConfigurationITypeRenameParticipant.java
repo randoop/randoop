@@ -46,10 +46,11 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
     int classpathKind = fTypeMnemonic.getClasspathKind();
     IPath classpath = fTypeMnemonic.getClasspath();
     
-    String[] splitName = Mnemonics.splitFullyQualifiedName(fTypeMnemonic.getFullyQualifiedName());
-    splitName[1] = newName; 
-    String fullyQualifiedTypeName = Mnemonics.getFullyQualifiedName(splitName);
-    TypeMnemonic newTypeMnemonic = new TypeMnemonic(javaProjectName, classpathKind, classpath, fullyQualifiedTypeName);
+    String oldFullyQualifiedName = fTypeMnemonic.getFullyQualifiedName();
+    String packageName = Mnemonics.getPackageName(oldFullyQualifiedName);
+    String newFullyQualifiedName = Mnemonics.getFullyQualifiedName(packageName, newName);
+    
+    TypeMnemonic newTypeMnemonic = new TypeMnemonic(javaProjectName, classpathKind, classpath, newFullyQualifiedName);
 
     for(ILaunchConfiguration config : configs) {
       // TODO: Check if change is needed first

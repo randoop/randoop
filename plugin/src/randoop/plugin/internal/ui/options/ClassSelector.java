@@ -211,8 +211,8 @@ public class ClassSelector {
    *         <code>null</code> if it was not added
    */
   public TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
-    String[] splitName = Mnemonics.splitFullyQualifiedName(typeMnemonic.getFullyQualifiedName());
-    TreeItem parent = addPackage(splitName[0]);
+    String packageName = Mnemonics.getPackageName(typeMnemonic.getFullyQualifiedName());
+    TreeItem parent = addPackage(packageName);
 
     TreeItem classItem = new TreeItem(parent, SWT.NONE);
 

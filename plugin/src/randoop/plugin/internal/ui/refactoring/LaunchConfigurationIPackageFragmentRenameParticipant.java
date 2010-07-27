@@ -60,12 +60,13 @@ public class LaunchConfigurationIPackageFragmentRenameParticipant extends Rename
 
     for (IType type : affectedTypes) {
       TypeMnemonic oldTypeMnemonic = new TypeMnemonic(type);
-      String[] splitName = Mnemonics.splitFullyQualifiedName(oldTypeMnemonic.getFullyQualifiedName());
-      splitName[0] = newPackageName;
-      String fqname = Mnemonics.getFullyQualifiedName(splitName);
+      
+      String oldFullyQualifiedName = oldTypeMnemonic.getFullyQualifiedName();
+      String className = Mnemonics.getClassName(oldFullyQualifiedName);
+      String newFullyQualifiedName = Mnemonics.getFullyQualifiedName(newPackageName, className);
 
       TypeMnemonic newTypeMnemonic = new TypeMnemonic(oldTypeMnemonic.getJavaProjectName(),
-          oldTypeMnemonic.getClasspathKind(), oldTypeMnemonic.getClasspath(), fqname);
+          oldTypeMnemonic.getClasspathKind(), oldTypeMnemonic.getClasspath(), newFullyQualifiedName);
 
       newTypeMnemonicByOldTypeMnemonic.put(oldTypeMnemonic.toString(), newTypeMnemonic.toString());
     }
