@@ -21,10 +21,6 @@ import randoop.plugin.internal.core.MethodMnemonic;
 public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipant {
   private MethodMnemonic fMethodMnemonic;
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-   */
   @Override
   protected boolean initialize(Object element) {
     Assert.isLegal(element instanceof IMethod);
@@ -38,10 +34,6 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-   */
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     List<Change> changes = new ArrayList<Change>();
@@ -63,10 +55,6 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
     return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-   */
   @Override
   public RefactoringStatus checkConditions(IProgressMonitor pm,
       CheckConditionsContext context) throws OperationCanceledException {
@@ -74,10 +62,6 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
     return new RefactoringStatus();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
-   */
   @Override
   public String getName() {
     return "Launch configuration participant";

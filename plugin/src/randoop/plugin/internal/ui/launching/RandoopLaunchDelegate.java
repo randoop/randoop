@@ -51,10 +51,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     fMessageReceiver = null;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-   */
   @Override
   public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
     System.out.println("Begin launch"); //$NON-NLS-1$
@@ -311,12 +307,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     return success[0];
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#
-   * verifyMainTypeName(org.eclipse.debug.core.ILaunchConfiguration)
-   */
   @Override
   public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
     return "randoop.main.Main"; //$NON-NLS-1$
@@ -325,4 +315,5 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   private static IWorkspaceRoot getWorkspaceRoot() {
     return ResourcesPlugin.getWorkspace().getRoot();
   }
+  
 }

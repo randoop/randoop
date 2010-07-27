@@ -14,4 +14,5 @@ public class MutableBoolean {
   public void setValue(boolean value) {
     fValue = value;
   }
+  
 }

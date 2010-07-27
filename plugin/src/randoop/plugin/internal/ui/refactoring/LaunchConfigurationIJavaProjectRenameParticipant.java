@@ -22,56 +22,52 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 public class LaunchConfigurationIJavaProjectRenameParticipant extends RenameParticipant {
   private String fOldProjectName;
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-   */
   @Override
-  public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
-    // return OK status
-    return new RefactoringStatus();
+  protected boolean initialize(Object element) {
+    if (element != null && element instanceof IJavaProject) {
+      fOldProjectName = ((IJavaProject) element).getElementName();
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-   */
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     List<Change> changes = new ArrayList<Change>();
     ILaunchConfiguration[] configs = RandoopRefactoringUtil.getRandoopTypeLaunchConfigurations();
-
+  
     boolean selectedProjectChangeNeeded = false;
     boolean typeChangeNeeded = false;
     boolean methodChangeNeeded = false;
-
+  
     for (ILaunchConfiguration config : configs) {
       if (RandoopArgumentCollector.getProjectName(config).equals(fOldProjectName)) {
         selectedProjectChangeNeeded = true;
       }
-
+  
       List<String> typeMnemonics = RandoopArgumentCollector.getAvailableTypes(config);
       for (String mnemonic : typeMnemonics) {
         TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic);
         String projectName = typeMnemonic.getJavaProjectName();
-
+  
         if (projectName.equals(fOldProjectName)) {
           typeChangeNeeded = true;
           break;
         }
       }
-
+  
       List<String> methodMnemonics = RandoopArgumentCollector.getAvailableMethods(config);
       for (String mnemonic : methodMnemonics) {
         MethodMnemonic methodMnemonic = new MethodMnemonic(mnemonic);
         String projectName = methodMnemonic.getDeclaringTypeMnemonic().getJavaProjectName();
-
+  
         if (projectName.equals(fOldProjectName)) {
           methodChangeNeeded = true;
           break;
         }
       }
-
+  
       if (selectedProjectChangeNeeded || typeChangeNeeded || methodChangeNeeded) {
         String newProjectName = getArguments().getNewName();
         IPath oldPath = new Path(fOldProjectName).makeAbsolute();
@@ -86,26 +82,15 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
     return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
-   */
+  @Override
+  public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
+    // return OK status
+    return new RefactoringStatus();
+  }
+
   @Override
   public String getName() {
     return "Launch configuration participant";
   }
-
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-   */
-  @Override
-  protected boolean initialize(Object element) {
-    if (element != null && element instanceof IJavaProject) {
-      fOldProjectName = ((IJavaProject) element).getElementName();
-      return true;
-    } else {
-      return false;
-    }
-  }
+  
 }

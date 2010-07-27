@@ -46,13 +46,6 @@ public class LaunchConfigurationMethodChange  extends Change  {
   public void initializeValidationData(IProgressMonitor pm) {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime
-   * .IProgressMonitor)
-   */
   @Override
   public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException,
       OperationCanceledException {
@@ -62,13 +55,6 @@ public class LaunchConfigurationMethodChange  extends Change  {
     return RefactoringStatus.createFatalErrorStatus(MessageFormat.format("The launch configuration \"{0}\" no longer exists.", fLaunchConfiguration.getName()));
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime
-   * .IProgressMonitor)
-   */
   @Override
   public Change perform(IProgressMonitor pm) throws CoreException {
     final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();

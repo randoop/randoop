@@ -316,29 +316,8 @@ public class TypeMnemonic {
   }
 
   private static IType findType(IJavaProject javaProject, IClasspathEntry classpathEntry, String fqname) throws JavaModelException {
-    // TODO: Problem with classpath entries of type CPE_PROJECT
-    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
-    //    cpe.toString();
-    //        (java.lang.String) /Some Project[CPE_PROJECT][K_SOURCE][isExported:false][combine access rules:false]
-    //     
-    //    // Show that the referenced project exists and has a root containing source
-    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
-    //    IProject someProject = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().toString());
-    //    IJavaProject someJavaProject = (IJavaProject) someProject.getNature(JavaCore.NATURE_ID);
-    //    IPackageFragmentRoot pfr = someJavaProject.getPackageFragmentRoots()[0];
-    //    new Boolean(pfr.getKind() == IPackageFragmentRoot.K_SOURCE).toString();
-    //        (java.lang.String) true
-    //     
-    //    // From http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/IJavaProject.html
-    //    // "Returns the existing package fragment roots identified by the
-    //    // given entry. Note that a classpath entry that refers to another
-    //    // project may have more than one root (if that project has more
-    //    // than on root containing source), and classpath entries within
-    //    // the current project identify a single root."
-    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
-    //    javaProject.findPackageFragmentRoots(cpe);
-    //        (org.eclipse.jdt.core.IPackageFragmentRoot[]) []
-
+    // TODO - Fix problem with classpath entries of type CPE_PROJECT:
+    // IJavaProject.findClasspathEntries() returns []
     
     IPackageFragmentRoot[] packageFragmentRoots = javaProject.findPackageFragmentRoots(classpathEntry);
 
@@ -353,28 +332,6 @@ public class TypeMnemonic {
       typeName = classFileName;
     }
     classFileName += ".class"; //$NON-NLS-1$
-
-    // TODO: In this one case, a 1 prefixed the fully qualified name, but not
-    // the element name even though
-    // the type was not anonymous:
-    //
-    // type.isAnonymous()
-    // (boolean) false
-    // type.getElementName()
-    // (java.lang.String) NullInputStream
-    // type.getFullyQualifiedName()
-    // (java.lang.String)
-    // com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility$1NullInputStream
-    // int i = 0;
-    // while (i <= typeName.length()) {
-    // String prefix = typeName.substring(0, i + 1);
-    //      if (prefix.matches("\\p{Digit}*")) { //$NON-NLS-1$
-    // i++;
-    // } else {
-    // break;
-    // }
-    // }
-    // typeName = typeName.substring(i < 0 ? 0 : i);
 
     for (IPackageFragmentRoot packageFragmentRoot : packageFragmentRoots) {
       IPackageFragment packageFragment = packageFragmentRoot.getPackageFragment(packageName);

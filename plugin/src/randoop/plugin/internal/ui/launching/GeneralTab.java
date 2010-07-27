@@ -17,12 +17,6 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
   private IOption fJUnitTestClassNameOption;
   private ClassSelectorOption fTestInputSelectorOption;
 
-  /*
-   * Implements a method in ILaunchConfigurationTab
-   * 
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-   */
   @Override
   public void createControl(Composite parent) {
     Composite tabcomp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
@@ -72,23 +66,11 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     fullyQualifiedTestName.addModifyListener(getBasicModifyListener());
   }
 
-  /*
-   * Implements a method in ILaunchConfigurationTab
-   * 
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-   */
   @Override
   public String getName() {
     return "General";
   }
   
-  /*
-   * Implements a method in ILaunchConfigurationTab
-   * 
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-   */
   @Override
   public String getId() {
     return "randoop.plugin.ui.launching.generalrTab"; //$NON-NLS-1$
