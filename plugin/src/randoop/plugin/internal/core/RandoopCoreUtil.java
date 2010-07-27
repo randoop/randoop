@@ -1,4 +1,4 @@
-package randoop.plugin.internal.ui.launching;
+package randoop.plugin.internal.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,39 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 
-public class RandoopLaunchConfigurationUtil {
+public class RandoopCoreUtil {
+
+  // expects use of $
+  public static String getPackageName(String fullyQualifiedName) {
+    int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
+    
+    if (lastDelimiter == -1) {
+      return IConstants.EMPTY_STRING;
+    } else {
+      return fullyQualifiedName.substring(0, lastDelimiter);
+    }
+  }
+
+  public static String getClassName(String fullyQualifiedName) {
+    int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
+    
+    if (lastDelimiter == -1) {
+      return fullyQualifiedName;
+    } else {
+      return fullyQualifiedName.substring(lastDelimiter + 1);
+    }
+  }
+
+  public static String getFullyQualifiedName(String packageName, String className) {
+    if (packageName.equals(IConstants.EMPTY_STRING)) {
+      return className;
+    } else {
+      return packageName + '.' + className;
+    }
+  }
 
   public static IPackageFragmentRoot getPackageFragmentRoot(IJavaProject javaProject, String folder) {
     if (javaProject != null && javaProject.exists() && javaProject.isOpen()) {
@@ -47,7 +77,7 @@ public class RandoopLaunchConfigurationUtil {
   /**
    * 
    * @param projectName
-   * @return the Java project by the sepcific name in the workspace, or
+   * @return the Java project by the specific name in the workspace, or
    *         <code>null</code> if no Java project by the specified name was
    *         found
    */

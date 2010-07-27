@@ -20,9 +20,9 @@ import org.eclipse.jdt.core.JavaModelException;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TypeMnemonic;
-import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class RandoopArgumentCollector {
   private String fName;
@@ -49,7 +49,7 @@ public class RandoopArgumentCollector {
     Assert.isNotNull(fName, "Configuration name not given"); //$NON-NLS-1$
     
     String projectName = getProjectName(config);
-    fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
+    fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
     Assert.isNotNull(fJavaProject, "Java project not specified"); //$NON-NLS-1$
 
     fSelectedTypes = new ArrayList<IType>();
@@ -96,7 +96,7 @@ public class RandoopArgumentCollector {
     fTimeLimit = Integer.parseInt(getTimeLimit(config));
 
     String outputSourceFolderName = getOutputDirectoryName(config);
-    IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, outputSourceFolderName);
+    IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(fJavaProject, outputSourceFolderName);
     if (outputDir != null) {
       fOutputDirectory = outputDir.getPath().makeRelative();
     }

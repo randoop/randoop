@@ -18,8 +18,8 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.TypeMnemonic;
-import randoop.plugin.internal.ui.options.Mnemonics;
 
 public class LaunchConfigurationIPackageFragmentRenameParticipant extends RenameParticipant {
   private IPackageFragment fPackageFragment;
@@ -62,8 +62,8 @@ public class LaunchConfigurationIPackageFragmentRenameParticipant extends Rename
       TypeMnemonic oldTypeMnemonic = new TypeMnemonic(type);
       
       String oldFullyQualifiedName = oldTypeMnemonic.getFullyQualifiedName();
-      String className = Mnemonics.getClassName(oldFullyQualifiedName);
-      String newFullyQualifiedName = Mnemonics.getFullyQualifiedName(newPackageName, className);
+      String className = RandoopCoreUtil.getClassName(oldFullyQualifiedName);
+      String newFullyQualifiedName = RandoopCoreUtil.getFullyQualifiedName(newPackageName, className);
 
       TypeMnemonic newTypeMnemonic = new TypeMnemonic(oldTypeMnemonic.getJavaProjectName(),
           oldTypeMnemonic.getClasspathKind(), oldTypeMnemonic.getClasspath(), newFullyQualifiedName);
