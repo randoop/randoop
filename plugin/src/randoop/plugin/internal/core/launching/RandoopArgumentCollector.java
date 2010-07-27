@@ -46,18 +46,22 @@ public class RandoopArgumentCollector {
   
   public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) {
     fName = config.getName();
-
+    Assert.isNotNull(fName, "Configuration name not given"); //$NON-NLS-1$
+    
     String projectName = getProjectName(config);
     fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
+    Assert.isNotNull(fJavaProject, "Java project not specified"); //$NON-NLS-1$
 
     fSelectedTypes = new ArrayList<IType>();
     List<?> selectedTypes = getSelectedTypes(config);
     for (Object o : selectedTypes) {
-      Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
+      Assert.isTrue(o instanceof String, "Non-String arguments stored in class input list"); //$NON-NLS-1$
       String mnemonic = (String) o;
       
       TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic, root);
       IType type = typeMnemonic.getType();
+      
+      Assert.isTrue(fJavaProject.equals(type.getJavaProject()), "One of the selected class inputs is not associated with the selected project"); //$NON-NLS-1$
 
       fSelectedTypes.add(type);
     }
@@ -65,16 +69,20 @@ public class RandoopArgumentCollector {
     fSelectedMethods = new ArrayList<IMethod>();
     List<?> selectedMethods = getSelectedMethods(config);
     for (Object o : selectedMethods) {
-      Assert.isTrue(o instanceof String, "Non-String arguments stored in List"); //$NON-NLS-1$
+      Assert.isTrue(o instanceof String, "Non-String arguments stored in method input list"); //$NON-NLS-1$
       String mnemonic = (String) o;
 
       MethodMnemonic methodMneomic = new MethodMnemonic(mnemonic, root);
-      IMethod m = methodMneomic.getMethod();
-      Assert.isNotNull(m, "Stored method does not exist"); //$NON-NLS-1$
-      Assert.isNotNull(m.exists(), "Stored method [" + m.getElementName() + "] does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
+      IMethod method = methodMneomic.getMethod();
+      Assert.isNotNull(method, "Stored method does not exist"); //$NON-NLS-1$
+      Assert.isNotNull(method.exists(), "Stored method [" + method.getElementName() + "] does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 
-      fSelectedMethods.add(m);
+      Assert.isTrue(fJavaProject.equals(method.getJavaProject()), "One of the selected method input's declaring type is not associated with the selected project"); //$NON-NLS-1$
+      
+      fSelectedMethods.add(method);
     }
+    
+    Assert.isTrue(!fSelectedTypes.isEmpty() || !fSelectedMethods.isEmpty(), "No class input or method input given"); //$NON-NLS-1$
 
     fRandomSeed = Integer.parseInt(getRandomSeed(config));
     fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
@@ -92,35 +100,24 @@ public class RandoopArgumentCollector {
     if (outputDir != null) {
       fOutputDirectory = outputDir.getPath().makeRelative();
     }
+    Assert.isNotNull(fOutputDirectory, "Output directory not specified"); //$NON-NLS-1$
 
     fJUnitPackageName = getJUnitPackageName(config);
+    Assert.isNotNull(fJUnitPackageName, "JUnit package name not given"); //$NON-NLS-1$
+
     fJUnitClassName = getJUnitClassName(config);
+    Assert.isNotNull(fJUnitClassName, "JUnit class name not given"); //$NON-NLS-1$
 
     fTestKinds = getTestKinds(config);
+    Assert.isNotNull(fTestKinds, "Test kinds not specified"); //$NON-NLS-1$
+
     fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
     fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
   }
   
-  public IStatus getStatus() {
-    if (getName() == null) {
-      return StatusFactory.createErrorStatus("Configuration name not given");
-    } else if (getJavaProject() == null) {
-      return StatusFactory.createErrorStatus("Java project not specified");
-    } else if (getSelectedTypes() == null) {
-      return StatusFactory.createErrorStatus("Selected types not specified");
-    } else if (getSelectedMethods() == null) {
-      return StatusFactory.createErrorStatus("Selected methods not specified");
-    } else if (getOutputDirectory() == null) {
-      return StatusFactory.createErrorStatus("Output directory not specified");
-    } else if (getJUnitPackageName() == null) {
-      return StatusFactory.createErrorStatus("JUnit package name not given");
-    } else if (getJUnitClassName() == null) {
-      return StatusFactory.createErrorStatus("JUnit class name not given");
-    } else if (getTestKinds() == null) {
-      return StatusFactory.createErrorStatus("Test kinds not specified");
-    }
-    
+  public IStatus checkForConflicts() {
     IJavaProject javaProject = getJavaProject();
+    
     for (IType type : getSelectedTypes()) {
       String fqname = type.getFullyQualifiedName().replace('$', '.');
       
@@ -139,7 +136,7 @@ public class RandoopArgumentCollector {
       
       try {
         if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return StatusFactory.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
+          return StatusFactory.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class.");
         }
       } catch (JavaModelException e) {
         RandoopPlugin.log(e);
