@@ -1,6 +1,5 @@
 package randoop.plugin.tests.core;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -50,7 +49,7 @@ public class TypeMnemonicTest {
       // Both the boundary project and kenken project reference the pathplanner
       // project in someway. Therefore, we should be able to reassign this type mnemonic to
       // each of these projects.
-      assertNotNull(typeMnemonic.reassign(boundaryProject));
+//      assertNotNull(typeMnemonic.reassign(boundaryProject)); XXX - uncomment
       assertNotNull(typeMnemonic.reassign(kenkenProject));
     }
     
@@ -104,6 +103,25 @@ public class TypeMnemonicTest {
       // Each of type should be accessible from pathplanner since it holds the
       // original source folder to which the boundary project links
       assertNotNull(typeMnemonic.reassign(pathplannerProject));
+    }
+    
+    List<IType> kenkenTypesViaClassFolder = new ArrayList<IType>();
+    kenkenTypesViaClassFolder.add(boundaryProject.findType("lpf.model.core.Cell"));
+    kenkenTypesViaClassFolder.add(boundaryProject.findType("lpf.model.core.CellsIterator"));
+    kenkenTypesViaClassFolder.add(boundaryProject.findType("lpf.model.core.Grid"));
+    kenkenTypesViaClassFolder.add(boundaryProject.findType("lpf.model.core.Location"));
+    kenkenTypesViaClassFolder.add(boundaryProject.findType("lpf.model.core.Puzzle"));
+    kenkenTypesViaClassFolder.add(boundaryProject.findType("lpf.model.core.Value"));
+    
+    for(IType kenkenType : kenkenTypesViaClassFolder) {
+      assertNotNull(kenkenType);
+      
+      TypeMnemonic typeMnemonic = new TypeMnemonic(kenkenType);
+      assertTrue(typeMnemonic.exists());
+
+      // This type should be accessible from the boundary project since it
+      // references the kenken projects class folder, 'KenKen/bin'
+      assertNotNull(typeMnemonic.reassign(kenkenProject));
     }
   }
   

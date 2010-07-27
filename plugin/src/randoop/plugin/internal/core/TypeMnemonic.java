@@ -1,5 +1,7 @@
 package randoop.plugin.internal.core;
 
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -42,7 +44,7 @@ public class TypeMnemonic {
     fType = t;
     fJavaProject = fType.getJavaProject();
 
-    IJavaElement pfr = fType.getPackageFragment().getParent();
+    IJavaElement pfr = fType.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
     Assert.isNotNull(pfr);
     Assert.isTrue(pfr.getElementType() == IJavaElement.PACKAGE_FRAGMENT_ROOT);
     Assert.isTrue(pfr.exists());
@@ -167,42 +169,82 @@ public class TypeMnemonic {
           }
           
           // check javaProject has this.project in it's classpath
-          IPath projectPath = getJavaProject().getProject().getFullPath();
+          IPath projectPath = getJavaProject().getPath();
           newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, projectPath);
+          if (newCpe != null)
+            break;
+          
+          // Check if javaProject references the classpaths output location
+          IPath outputLocation = cpe.getOutputLocation();
+          if (cpe.getOutputLocation() == null)
+            outputLocation = getJavaProject().getOutputLocation();
+          
+          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_LIBRARY, outputLocation);
+          
           break;
         case IClasspathEntry.CPE_LIBRARY:
           // this entry describes a folder or JAR containing binaries
+          
+          if (cpe.isExported()) {
+            projectPath = getJavaProject().getPath();
+            newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, projectPath);
+            if (newCpe != null)
+              break;
+          }
+                  
+          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_LIBRARY, cpe.getPath());
+          if (newCpe != null)
+            break;
+          
+          // If this is a folder
+          IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+          if (workspaceLocation.append(cpe.getPath()).toFile().isDirectory()) {
+            
+            // check if this is an output folder of something in this project
+            for(IClasspathEntry classpathEntry : javaProject.getRawClasspath()) {
+              if (cpe.getPath().equals(classpathEntry.getOutputLocation())) {
+                TypeMnemonic tmp = new TypeMnemonic(javaProject.getElementName(), classpathEntry.getEntryKind(), classpathEntry.getPath(), getFullyQualifiedName());
+
+                if (tmp.getType() != null) {
+                  newCpe = classpathEntry;
+                  break;
+                }
+              }
+            }
+            
+            if (javaProject.getOutputLocation().equals(cpe.getPath())) {
+              String fqname = getFullyQualifiedName().replace('$', '.');
+              IType type = javaProject.findType(fqname, (IProgressMonitor) null);
+              IJavaElement pfr = type.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+              
+              newCpe = ((IPackageFragmentRoot) pfr).getRawClasspathEntry();
+              break;
+            }
+          }
           break;
         case IClasspathEntry.CPE_PROJECT:
           // this entry describes another project
+          
+          // check if project is the same as javaProject
+          if (getJavaProject().equals(javaProject)) {
+            // Nothing should change, return this
+            return this;
+          }
+          
+          // check for the exact same project in javaProject's classpath
+          projectPath = getJavaProject().getPath();
+          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, projectPath);
           break;
         case IClasspathEntry.CPE_VARIABLE:
           // this entry describes a project or library indirectly via a
-          // classpath
-          // variable in the first segment of the path *
-          break;
+          // classpath variable in the first segment of the path *
         case IClasspathEntry.CPE_CONTAINER:
           // this entry describes set of entries referenced indirectly via a
-          // classpath
+          // classpath. Check for the exact same variable/container in
+          // javaProject's classpath
+          newCpe = findClasspathEntry(javaProject, cpe.getEntryKind(), cpe.getPath());
           break;
         }
-        // CPE_VARIABLE:
-        // CPE_CONTAINER:
-        //   check for the exact same variable/container in javaProject's classpath
-        //
-        // CPE_PROJECT:
-        //   check if project is the same as javaProject
-        //   check for the exact same project in javaProject's classpath
-        //
-        // CPE_LIBRARY:
-        //   check for the exact same library in javaProject's classpath
-        //     (this could be absolute to the file system or relative to the workspace)
-        //   if folder:
-        //     check if this is an output folder of something in this project
-        //     somehow find the IPackageFragmentRoot outputting (maybe javaProject.findType is appropriate here)
-        //
-        // Find the type and return it with
-        // return new TypeMnemonic(type);
 
         if (newCpe != null) {
           TypeMnemonic tmp = new TypeMnemonic(javaProject.getElementName(), newCpe.getEntryKind(), newCpe.getPath(), getFullyQualifiedName());
@@ -268,8 +310,7 @@ public class TypeMnemonic {
   public TypeMnemonic resolve(IJavaProject javaProject) throws JavaModelException {
     String fqname = getFullyQualifiedName().replace('$', '.');
     
-    IProgressMonitor pm = new NullProgressMonitor();
-    IType type = javaProject.findType(fqname, pm);
+    IType type = javaProject.findType(fqname, (IProgressMonitor) null);
     
     if (type == null) {
       return null;
