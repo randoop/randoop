@@ -19,42 +19,6 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
     
     fConfig = config;
     
-    // Set the project in the configuration
-    // RandoopArgumentCollector.setProjectName(fConfig,
-    // project.getElementName());
-    //
-    // // Set the available and selected types in the configurations
-    // List<String> availableTypes = new ArrayList<String>();
-    // List<String> selectedTypes = new ArrayList<String>();
-    //
-    // for (IJavaElement element : elements) {
-    // switch (element.getElementType()) {
-    // case IJavaElement.PACKAGE_FRAGMENT_ROOT:
-    // case IJavaElement.PACKAGE_FRAGMENT:
-    // for (IType type : RandoopLaunchConfigurationUtil.findTypes(element,
-    // false, null)) {
-    // TypeMnemonic mnemonic = new TypeMnemonic(type);
-    // availableTypes.add(mnemonic.toString());
-    // }
-    // break;
-    // case IJavaElement.COMPILATION_UNIT:
-    // for (IType type : RandoopLaunchConfigurationUtil.findTypes(element,
-    // false, null)) {
-    // TypeMnemonic mnemonic = new TypeMnemonic(type);
-    // availableTypes.add(mnemonic.toString());
-    // selectedTypes.add(mnemonic.toString());
-    // }
-    // break;
-    // default:
-    //        RandoopPlugin.log(StatusFactory.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
-    // + element.getElementType()));
-    // return;
-    // }
-    // }
-    //
-    // RandoopArgumentCollector.setAvailableTypes(fConfig, availableTypes);
-    // RandoopArgumentCollector.setSelectedMethods(fConfig, selectedTypes);
-    
     fMainPage = new MainPage("Main", project, fConfig);
     fTestInputsPage = new TestInputsPage("Test Inputs", project, elements, fConfig);
     fTestInputsPage.setPreviousPage(fMainPage);
