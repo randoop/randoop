@@ -773,9 +773,7 @@ public final class Reflection {
 
   /**
    * Returns true if the the specified modifier is visible to Randoop.
-   * If the command line argument public_only is true, only public
-   * classes/methods are considered visible.  If public_only is false
-   * then any class/method that is not private is considered visible
+   * @see GenInputsAbstract.public_only
    */
   public static boolean isVisible (int modifiers) {
     // System.out.printf ("isVisible public_only=%b, modifiers = %s%n",

@@ -154,11 +154,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Randoop uses the specified port for output, in serialized form")
   public static int comm_port = -1;
   
+  /**
+   * Whether to use the long format for outputting JUnit tests.
+   * The long format emits exactly one line per statement, including
+   * primitive declarations, and uses boxed primitives. This option is used
+   * in the branch-directed generation project.
+   */
   @OptionGroup(value="GenInputsAbstract unpublicized options", unpublicized=true)
   @Unpublicized
-  @Option("Use long format for outputting JUnit tests. The long format" +
-  "emits exactly one line per statement, including primitive declarations, and" +
-  "uses boxed primitives. This option is used in the branch-directed generation project.")
+  @Option("Use long format for outputting JUnit tests.")
   public static boolean long_format = false; 
 
   @Unpublicized
@@ -181,8 +185,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("File containing observer functions")
   public static File observers = null;
 
+  /**
+   * If the command line argument public_only is true, only public
+   * classes/methods are considered visible.  If public_only is false
+   * then any class/method that is not private is considered visible.
+   */
   @Unpublicized  
-  @Option("Use only public classes/methods")
+  @Option("Whether to use only public classes/methods, or also protected and package; private are never used")
   public static boolean public_only = true;
 
   @Unpublicized  
