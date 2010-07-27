@@ -1,0 +1,378 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<document>
+
+  <properties>
+    <title>Jelly FAQ</title>
+    <author email="jstrachan@apache.org">James Strachan</author>
+  </properties>
+
+  <body>
+
+  <section name="Frequently Asked Questions">
+    <p>
+      This document attempts to answer some of the more frequently asked
+      questions regarding various aspects of Jelly.  These questions are
+      typically asked over and over again on the mailing lists, as a
+      courtesy to the developers, we ask that you read this document
+      before posting to the mailing lists.
+    </p>
+    <p><strong>General</strong></p>
+    <ol>
+      <li>
+        <a href="#what-is-jelly">
+          What is Jelly?
+        </a>
+      </li>
+      <li>
+        <a href="#why-called-jelly">
+          Why is this called Jelly?
+        </a>
+      </li>
+    </ol>
+    <p><strong>Using Jelly</strong></p>
+    <ol>
+      <li>
+        <a href="#calling-jelly">
+          How do I call Jelly from Java code?
+        </a>
+      </li>
+      <li>
+        <a href="#command-line">
+          How do I invoke Jelly from the command line?
+        </a>
+      </li>
+      <li>
+        <a href="#invoke-ant">
+          How do I invoke Jelly from inside Ant?
+        </a>
+      </li>
+      <li>
+        <a href="#invoke-maven">
+          How do I invoke Jelly from inside Maven?
+        </a>
+      </li>
+      <li>
+        <a href="#adding-taglibs">
+          How do I add my own tag libraries to Jelly?
+        </a>
+      </li>
+      <li>
+        <a href="#tag-attributes">
+          How do I use expressions and tag attributes?
+        </a>
+      </li>
+      <li>
+        <a href="#cdata">
+          How do Jelly scripts handle CDATA sections?
+        </a>
+      </li>
+    </ol>
+    <p><strong>Building Jelly</strong></p>
+    <ol>
+      <li>
+        <a href="#how-to-build">
+          How do I build Jelly?
+        </a>
+      </li>
+    </ol>
+
+    <section name="General">
+      <dl>
+        <dt>
+          <a name="what-is-jelly">
+            What is Jelly?
+          </a>
+        </dt>
+        <dd>
+          Jelly is an open and customizable XML processing engine.
+          Please see the <a href="index.html">Home page</a> and <a
+          href="overview.html">Overview</a> documents for more detail.
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+          <a name="why-called-jelly">
+            Why is this called Jelly?
+          </a>
+        </dt>
+        <dd>
+          The name started out as 'Jele' as in Java ELEments but then I thought Jelly was a nicer spelling :-).
+          The basic idea behind Jelly that Java code is bound on to XML elements.
+        </dd>
+        <dd>
+          Also Jelly (in British or Jello in American) can be molded to fit any shape required which kinda fits
+          with Jelly's main aim to be a flexible Java and XML based scripting engine that can do anything.
+        </dd>
+        <dd>
+          There are many different specific frameworks that take an XML document, bind it to some kind of bean or object
+          and then evaluate it in some kind of script or process, so Jelly was an attempt at a generic engine
+          using ideas from JSP, JSTL, Velocity, Cocoon and Ant.
+        </dd>
+      </dl>
+
+
+    </section>
+    <section name="Using Jelly">
+      <dl>
+        <dt>
+                    <a name="calling-jelly">
+                        How do I call Jelly from Java code?
+                    </a>
+        </dt>
+        <dd>
+            Try the following code. Note that the runScript() method below is overloaded and can take a File, URL etc.
+<code>
+<source>
+// pass the output of the script somewhere
+Writer someWriter = new FileWriter( "output.xml" );
+XMLOutput output = XMLOutput.createXMLOutput( someWriter );
+
+// now run a script using a URL
+JellyContext context = new JellyContext();
+context.runScript( "foo.jelly", output );</source>
+</code>
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+                    <a name="command-line">
+                        How do I invoke Jelly from the command line?
+                    </a>
+        </dt>
+        <dd>
+            When you build a binary disitribution of Jelly, 
+            there is a jelly script which works on Windows and Unixes to run Jelly.
+            You can create a binary distribution of Jelly via
+            <code>
+                maven dist
+            </code>
+        </dd>
+        <dd>
+            All you really need to do is to invoke the 
+            <i>org.apache.commons.jelly.Jelly</i> class from the command line
+            with a correct classpath.
+        </dd>
+      </dl>
+      <dl>
+        <dt>
+                    <a name="invoke-ant">
+                        How do I invoke Jelly from inside Ant?
+                    </a>
+        </dt>
+        <dd>
+            There is an Ant task that comes with the Ant library called
+            <i>org.apache.commons.task.JellyTask</i> which can be taskdef'd in any Ant script.
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+                    <a name="invoke-maven">
+                        How do I invoke Jelly from inside Maven?
+                    </a>
+        </dt>
+        <dd>
+            Maven's maven.xml file is actually a Jelly script; so you can include any Jelly script
+            inside any of the Maven goals. So if you want to execute a specific Jelly script you can
+            just &lt;j:include uri="foo.jelly" &gt; it inside the maven.xml.
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+          <a name="adding-taglibs">
+            How do I add my own tag libraries to Jelly?
+          </a>
+        </dt>
+        <dd>
+          Firstly you need to create one or more tags, by deriving from TagSupport.
+          Then create a TagLibrary class for your tags; typically all this does
+          is register all the tags in your tag library and give them names.
+          Then you can use your new tag library by specifying the classname in
+          a namespace URI. For example
+        </dd>
+        <dd>
+<code>
+<source>
+&lt;j:jelly xmlns:j="jelly:core" xmlns:foo="jelly:com.acme.something.MyTagLibrary"&gt;
+
+  &lt;foo:bar x="12&gt;
+    something goes here
+  &lt;/foo:bar&gt;
+
+&lt;/j:jelly&gt;
+</source>
+</code>
+        </dd>
+        <dd>
+          Going forward we hope to provide an alias mechanism using the jar-extension
+          mechanism used by JAXP so that a file could be placed on the classpath
+          called <code>META-INF/services/org.apache.commons.jelly.foo</code> which
+          would contain the class name of the tag library (com.acme.something.MyTagLibrary)
+          then you could use it as follows, which would avoid using the class name in your scripts.
+        </dd>
+        <dd>
+<code>
+<source>
+&lt;j:jelly xmlns:j="jelly:core" xmlns:foo="jelly:foo"&gt;
+
+  &lt;foo:bar x="12&gt;
+    something goes here
+  &lt;/foo:bar&gt;
+
+&lt;/j:jelly&gt;
+</source>
+</code>
+        </dd>
+      </dl>
+
+      <dl>
+        <dt>
+          <a name="tag-attributes">
+            How do I use expressions and tag attributes?
+          </a>
+        </dt>
+        <dd>
+          Jelly uses introspection to set the properties on a Tag from the XML attribute
+          values. If the attribute value in XML uses an expression, it will be evaluated
+          and the result of the expression will be passed into your Tag's setter method.
+          For example if you had the following Tag...
+        </dd>
+        <dd>
+<code>
+<source>
+public class FooTag extends TagSupport {
+  private String value;
+
+  public void setValue(String value) {
+    this.value = value;
+
+
+  .
+}</source>
+</code>
+                </dd>
+        <dd>
+        Then if you were to use it like this...
+<code>
+<source>
+  &lt;my:foo value="${customer.fullName}"/&gt;
+</source>
+</code>
+        Then this would be equivalent in pseudocode to
+<code>
+<source>
+FooTag tag = FooTag();
+...
+tag.setValue( ((Customer) context.getVariable("customer")).getFullName() );
+...
+tag.doTag(output);
+</source>
+</code>
+             </dd>
+        <dd>
+            If ever you find that your Tag's bean property is not being set it could be that your Tag is
+            not properly following the bean introspection naming conventions.
+            For example do you have a method called getValue() or isValue() with the wrong return type?
+            (In this discussion substitute 'value' for the name of your own property, it doesn't have to be called 'value' :).
+            For more details of the introspection rules, please checkout the Java Bean specification.
+             </dd>
+        <dd>
+          It could be that you want to coerce the value of an expression to some special type.
+          For example if you want to evaluate the expression as an Iterator you can use a property
+          on your Tag of type Expression so that in your Tag you can use the Expression.evaluateAsIterator()
+          method. This is how the &lt;x:forEach&gt; tag currently is implemented for example.
+<source>
+public class FooTag extends TagSupport {
+  private Expression value;
+
+  public void setValue(Expression value) {
+    this.value = value;
+  }
+
+  public void doTag(XMLOutput output) {
+    Iterator iter = expression.evaluateAsIterator();
+            ...
+  }
+}</source>
+        </dd>
+      </dl>
+            <dl>
+        <dt>
+          <a name="cdata">
+            How do Jelly scripts handle CDATA sections?
+          </a>
+        </dt>
+        <dd>
+          Jelly outputs the <i>content</i> of a CDATA section directly.  You can use CDATA sections
+          to create output that otherwise cannot be described in XML.  For example, you can use
+          a CDATA section to create a DTD.  The following Jelly script:
+        </dd>
+                <dd>
+
+<source>
+&lt;?xml version="1.0"?>
+
+&lt;j:file xmlns:j="jelly:core" var="foo" escapeText="false">
+    
+    &lt;![CDATA[
+        &lt;!DOCTYPE foo [
+            &lt;!ELEMENT foo (#PCDATA)>
+        ]>
+    ]]&gt;
+    
+    &lt;foo/>
+    
+&lt;/j:file>
+</source>
+</dd>
+<dd>
+   will produce this output:
+        </dd>
+<dd>
+<source>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;!DOCTYPE foo [
+    &lt;!ELEMENT foo (#PCDATA)>
+]>
+
+&lt;foo/>
+</source>
+</dd>
+      </dl>
+    </section>
+    <section name="Building Jelly">
+      <dl>
+        <dt>
+          <a name="how-to-build">
+            How do I build Jelly?
+          </a>
+        </dt>
+        <dd>
+          Jelly uses Maven for its build system. So you should be able to build Jelly just like
+          any other Maven enabled project. Please see the
+          <a href="http://maven.apache.org/start/index.html">Maven</a>
+          documentation for details.
+        </dd>
+      </dl>
+    </section>
+  </section>
+</body>
+</document>

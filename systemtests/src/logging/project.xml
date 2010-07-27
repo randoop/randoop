@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Copyright 2001-2004 The Apache Software Foundation.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+<project>
+  <pomVersion>3</pomVersion>
+  
+  <name>Logging</name>
+  <id>commons-logging</id>
+  <currentVersion>1.0.5-dev</currentVersion>
+  <inceptionYear>2001</inceptionYear>
+  <shortDescription>Commons Logging</shortDescription>
+  <description>
+    Commons Logging is a thin adapter allowing configurable bridging to other,
+    well known logging systems.
+  </description>
+  <logo>/images/logo.png</logo>
+  
+  <url>http://jakarta.apache.org/commons/${pom.artifactId.substring(8)}/</url>
+  <package>org.apache.commons.${pom.artifactId.substring(8)}</package>
+
+  <organization>
+    <name>The Apache Software Foundation</name>
+    <url>http://jakarta.apache.org</url>
+    <logo>http://jakarta.apache.org/images/original-jakarta-logo.gif</logo>
+  </organization>
+
+  <licenses>
+	<license>
+    	<name>The Apache Software License, Version 2.0</name>
+    	<url>/LICENSE.txt</url>
+    	<distribution>repo</distribution>
+	</license>
+  </licenses>
+  
+  <gumpRepositoryId>jakarta</gumpRepositoryId>
+  <issueTrackingUrl>http://issues.apache.org/bugzilla/</issueTrackingUrl>
+  <siteAddress>jakarta.apache.org</siteAddress>
+  <siteDirectory>/www/jakarta.apache.org/commons/${pom.artifactId.substring(8)}/</siteDirectory>
+  <distributionDirectory>/www/jakarta.apache.org/builds/jakarta-commons/${pom.artifactId.substring(8)}/</distributionDirectory>
+  
+  <repository>
+    <!--<connection>scm:cvs:${logging.cvs}:jakarta-commons/logging/</connection>-->
+    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:jakarta-commons/${pom.artifactId.substring(8)}</connection>
+    <url>http://cvs.apache.org/viewcvs/jakarta-commons/${pom.artifactId.substring(8)}/</url>
+  </repository>
+  
+  <mailingLists>
+    <mailingList>
+      <name>Commons Dev List</name>
+      <subscribe>commons-dev-subscribe@jakarta.apache.org</subscribe>
+      <unsubscribe>commons-dev-unsubscribe@jakarta.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=commons-dev@jakarta.apache.org</archive>
+    </mailingList>
+    <mailingList>
+      <name>Commons User List</name>
+      <subscribe>commons-user-subscribe@jakarta.apache.org</subscribe>
+      <unsubscribe>commons-user-unsubscribe@jakarta.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/eyebrowse/SummarizeList?listName=commons-user@jakarta.apache.org</archive>
+    </mailingList>
+  </mailingLists>
+
+  <developers>
+    <developer>
+      <name>Morgan Delagrange</name>
+      <id>morgand</id>
+      <email>morgand at apache dot org</email>
+      <organization>Apache</organization>
+      <roles><role>Java Developer</role></roles>
+    </developer>
+    <developer>
+      <name>Rodney Waldhoff</name>
+      <id>rwaldhoff</id>
+      <email>rwaldhoff at apache org</email>
+      <organization>Apache Software Foundation</organization>
+    </developer>
+    <developer>
+      <name>Craig McClanahan</name>
+      <id>craigmcc</id>
+      <email>craigmcc at apache org</email>
+      <organization>Apache Software Foundation</organization>
+    </developer>
+    <developer>
+      <name>Scott Sanders</name>
+      <id>sanders</id>
+      <email>sanders at apache dot org</email>
+      <organization>Apache Software Foundation</organization>
+    </developer>
+    <developer>
+      <name>Robert Burrell Donkin</name>
+      <id>rdonkin</id>
+      <email>rdonkin at apache dot org</email>
+      <organization>Apache Software Foundation</organization>
+    </developer>
+    <developer>
+      <name>Peter Donald</name>
+      <id>donaldp</id>
+      <email>donaldp at apache dot org</email>
+      <organization></organization>
+    </developer>
+    <developer>
+      <name>Costin Manolache</name>
+      <id>costin</id>
+      <email>costin at apache dot org</email>
+      <organization>Apache Software Foundation</organization>
+    </developer>
+    <developer>
+      <name>Richard Sitze</name>
+      <id>rsitze</id>
+      <email>rsitze at apache dot org</email>
+      <organization>Apache Software Foundation</organization>
+    </developer>
+    <developer>
+      <name>Juozas Baliuka</name>
+      <id>baliuka</id>
+      <email>baliuka@apache.org</email>
+      <organization></organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+  
+  <dependencies>
+    
+    <dependency>
+      <id>log4j</id>
+      <version>1.2.6</version>
+    </dependency>
+    
+    <dependency>
+      <id>logkit</id>
+      <version>1.0.1</version>
+    </dependency>
+
+    <dependency>
+      <id>junit</id>
+      <version>3.7</version>
+    </dependency>
+    
+    <dependency>
+      <id>avalon-framework</id>
+      <version>4.1.3</version>
+    </dependency>
+    
+  </dependencies>
+  <build>
+     <nagEmailAddress>commons-dev@jakarta.apache.org</nagEmailAddress>
+    <sourceDirectory>src/java</sourceDirectory>
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+    <sourceModifications>
+      <sourceModification>
+        <className>java.util.logging.Logger</className>
+        <excludes>
+          <exclude>**/Jdk14Logger.java</exclude>
+        </excludes>
+      </sourceModification>
+    </sourceModifications>
+    <unitTest>
+        <!--
+At the moment there are problems running the unit tests under maven.
+the unit tests run by custom ant target which perform configuration
+before the tests are run.
+There is no easy way to run these under maven at the moment.
+        -->
+        <directory>${pom.build.unitTestSourceDirectory}</directory>
+        <includes>
+            <include>**/AvalonLoggerTest.java</include>
+        </includes>
+        <resources>
+            <resource>**/*.properties</resource>
+        </resources>
+    </unitTest>
+  </build>
+
+  <reports>
+    <report>maven-javadoc-plugin</report>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-junit-report-plugin</report>
+    <report>maven-jxr-plugin</report>
+    <report>maven-license-plugin</report>
+    <report>maven-tasklist-plugin</report>
+  </reports>
+  
+</project>

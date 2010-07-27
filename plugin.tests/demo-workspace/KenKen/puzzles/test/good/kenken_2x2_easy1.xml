@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><lpf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.wpi.edu/~heineman/lpf/                        http://www.wpi.edu/~heineman/lpf/lpf.xsd" xsi:noNamespaceSchemaLocation="lpf.xsd">
+<puzzle version="1.0" type="kenken(tm)" difficulty="1" width="2" height="2">
+
+	<board name="initial"></board>
+	<board name="solution">
+		<row contents="12"/>
+		<row contents="21"/>
+	</board>
+
+	<cages>
+		<cage value="1" operation="+">
+			<cell column="A" row="1"/>
+		</cage>
+		<cage value="3" operation="+">
+			<cell column="B" row="1"/>
+			<cell column="B" row="2"/>
+		</cage>
+		<cage value="2" operation="+">
+			<cell column="A" row="2"/>
+		</cage>
+	</cages>
+</puzzle>
+</lpf>
+
