@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -39,14 +38,13 @@ public class TestGroupResources {
   public static final String TEMP_SEGMENT = "/temp"; //$NON-NLS-1$
   private static final IPath TEMP_PATH = RandoopPlugin.getDefault().getStateLocation().append(TEMP_SEGMENT);
   private static final String METHODS_FILE = "methods"; //$NON-NLS-1$
-  public final IPath fOoutputPath;
-
+  
+  public final IPath fOoutputLocation;
   private RandoopArgumentCollector fArguments;
   private File fResourceFolder;
   private File fMethodsFile;
   private String fId;
   private IPath[] fClasspath;
-  private IStatus fStatus;
 
   /**
    * 
@@ -55,9 +53,10 @@ public class TestGroupResources {
    *          the arguments from which Java resources will be extracted
    * @param name
    *          a name for this set of resources
+   * @throws CoreException
    */
-  public TestGroupResources(RandoopArgumentCollector args, IProgressMonitor monitor) {
-    
+  public TestGroupResources(RandoopArgumentCollector args, IProgressMonitor monitor) throws CoreException {
+
     Assert.isLegal(args != null);
     
     if (monitor == null)
@@ -76,12 +75,12 @@ public class TestGroupResources {
     fResourceFolder.mkdirs();
     
     // Search the arguments for all necessary classpaths in the workspace
-    fStatus = findClasspaths(monitor);
+    fClasspath = findClasspathLocations(args.getJavaProject());
     
     writeMethods();
     
     String packagePath = args.getJUnitPackageName().replace('.', '/');
-    fOoutputPath = args.getOutputDirectory().append(packagePath);
+    fOoutputLocation = args.getOutputDirectory().append(packagePath);
   }
 
   private void writeMethods() {
@@ -146,49 +145,6 @@ public class TestGroupResources {
   }
 
   /**
-   * Finds all the classpaths used by each java project that contains a java
-   * type and methods specified by the user to be used as test input. If an
-   * error is encountered, the search operation will not halt; the error status
-   * will be returned once finished.
-   * 
-   * @param monitor
-   * @return the status of this search operation
-   */
-  // XXX make this use the monitor
-  private IStatus findClasspaths(IProgressMonitor monitor) {
-    HashSet<IPath> classpath = new HashSet<IPath>();
-    // copying class files to the temporary folder
-
-    IStatus errorStatus = null;
-    try {
-      HashSet<IJavaProject> usedProjects = new HashSet<IJavaProject>();
-
-      // Find projects containing the types and methods to be tested
-      for (IType type : fArguments.getSelectedTypes()) {
-        usedProjects.add(type.getJavaProject());
-      }
-      for (IMethod method : fArguments.getSelectedMethods()) {
-        usedProjects.add(method.getJavaProject());
-      }
-
-      // Find all the classpaths required by each project
-      for (IJavaProject javaProject : usedProjects) {
-        classpath.add(javaProject.getOutputLocation());
-
-        IStatus status = findClasspaths(javaProject, classpath);
-        if (status.getSeverity() == IStatus.ERROR)
-          errorStatus = status;
-      }
-
-      fClasspath = classpath.toArray(new IPath[classpath.size()]);
-
-      return errorStatus == null ? StatusFactory.OK_STATUS : errorStatus;
-    } catch (JavaModelException e) {
-      return StatusFactory.createErrorStatus("Output location does not exist for Java project");
-    }
-  }
-
-  /**
    * Searches the specified Java project for the classpaths it uses and adds
    * each to <code>classpaths</code>. This method will recursively call itself
    * if <code>javaProject</code> references other Java projects. If an error is
@@ -200,23 +156,17 @@ public class TestGroupResources {
    * @param classpaths
    *          the <code>Collection</code> to add classpaths to
    * @return the status of this search operation
+   * @throws CoreException
    */
-  private IStatus findClasspaths(IJavaProject javaProject, HashSet<IPath> classpaths) {
-    IStatus errorStatus = null;
-    try {
-      classpaths.add(javaProject.getOutputLocation());
-      
-      for (IClasspathEntry entry : javaProject.getRawClasspath()) {
-        IStatus status = findClasspaths(entry, classpaths);
-        if (status.getSeverity() == IStatus.ERROR)
-          errorStatus = status;
-      }
+  private IPath[] findClasspathLocations(IJavaProject javaProject) throws CoreException {
+    List<IPath> classpaths = new ArrayList<IPath>();
+    classpaths.add(javaProject.getOutputLocation());
 
-      return errorStatus == null ? StatusFactory.OK_STATUS : errorStatus;
-    } catch (JavaModelException e) {
-      return StatusFactory.createErrorStatus("Output location or raw classpath does not exist for Java project: "
-              + javaProject.getElementName());
+    for (IClasspathEntry entry : javaProject.getRawClasspath()) {
+      classpaths.addAll(Arrays.asList(findClasspathLocations(entry)));
     }
+
+    return classpaths.toArray(new IPath[classpaths.size()]);
   }
 
   /**
@@ -233,84 +183,62 @@ public class TestGroupResources {
    * @param entry
    * @param classpaths
    * @return
+   * @throws CoreException
    */
-  private IStatus findClasspaths(IClasspathEntry entry, HashSet<IPath> classpaths) {
+  private IPath[] findClasspathLocations(IClasspathEntry entry) throws CoreException {
+    List<IPath> classpaths = new ArrayList<IPath>();
+
     switch (entry.getEntryKind()) {
     case IClasspathEntry.CPE_SOURCE:
       IPath outputLocation = entry.getOutputLocation();
       if (outputLocation != null) {
         classpaths.add(outputLocation);
       }
-      return StatusFactory.OK_STATUS;
+      break;
     case IClasspathEntry.CPE_LIBRARY:
       classpaths.add(entry.getPath());
-      return StatusFactory.OK_STATUS;
+      break;
     case IClasspathEntry.CPE_PROJECT:
-      try {
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        IProject resource = root.getProject(entry.getPath().toString());
-        IJavaProject referencedProject = (IJavaProject) resource.getNature(JavaCore.NATURE_ID);
+      IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+      IProject resource = root.getProject(entry.getPath().toString());
+      IJavaProject referencedProject = (IJavaProject) resource.getNature(JavaCore.NATURE_ID);
 
-        if (referencedProject != null)
-          return findClasspaths(referencedProject, classpaths);
-
-      } catch (CoreException e) {
-        return StatusFactory.createErrorStatus(MessageFormat.format("Project {0} could not be found", entry.getPath()));
-      }
-      return StatusFactory.OK_STATUS;
+      if (referencedProject != null)
+        classpaths.addAll(Arrays.asList(findClasspathLocations(referencedProject)));
+      break;
     case IClasspathEntry.CPE_VARIABLE:
       IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(entry);
-      if (resolved == null) {
-        return StatusFactory.createErrorStatus("Variable classpath entry could not be resolved.");
-      }
-      return findClasspaths(resolved, classpaths);
+      if (resolved != null)
+        classpaths.addAll(Arrays.asList(findClasspathLocations(resolved)));
+      break;
     case IClasspathEntry.CPE_CONTAINER:
-      IStatus returnStatus = StatusFactory.OK_STATUS;
-      try {
-        IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(), fArguments.getJavaProject());
-        Assert.isNotNull(container);
-        
-        for (IClasspathEntry cpentry : container.getClasspathEntries()) {
-          IStatus status = findClasspaths(cpentry, classpaths);
-          if (status.getSeverity() == IStatus.ERROR) {
-            returnStatus = status;
-          }
-        }
-      } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+      IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(),
+          fArguments.getJavaProject());
+      Assert.isNotNull(container);
+
+      for (IClasspathEntry cpentry : container.getClasspathEntries()) {
+        classpaths.addAll(Arrays.asList(findClasspathLocations(cpentry)));
       }
-      return returnStatus;
-    default:
-      return StatusFactory.createErrorStatus("Unknown entry kind");
+      break;
     }
+
+    return classpaths.toArray(new IPath[classpaths.size()]);
   }
 
   public RandoopArgumentCollector getArguments() {
     return fArguments;
   }
 
-  public File getFolder() {
-    return fResourceFolder;
-  }
-  
   public File getMethodFile() {
     return fMethodsFile;
   }
 
-  public IPath[] getClasspath() {
+  public IPath[] getClasspathLocations() {
     return fClasspath;
   }
   
-  public IPath getOutputPath() {
-    return fOoutputPath;
-  }
-
-  public String getId() {
-    return fId;
-  }
-
-  public IStatus getStatus() {
-    return fStatus;
+  public IPath getOutputLocation() {
+    return fOoutputLocation;
   }
 
   public static void clearTempLocation() {

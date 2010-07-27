@@ -53,15 +53,10 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
   /*
    * (non-Javadoc)
-   * 
-   * @see
-   * org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse
-   * .debug.core.ILaunchConfiguration, java.lang.String,
-   * org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
+   * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
    */
   @Override
-  public void launch(ILaunchConfiguration configuration, String mode,
-      ILaunch launch, IProgressMonitor monitor) throws CoreException {
+  public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
     System.out.println("Begin launch"); //$NON-NLS-1$
     
     final ILaunch theLaunch = launch;
@@ -84,11 +79,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     }
     
     TestGroupResources testGroupResources = new TestGroupResources(args, monitor);
-
-    status = testGroupResources.getStatus();
-    if (status.getSeverity() == IStatus.ERROR) {
-      informAndAbort(status);
-    }
 
     fPort = RandoopArgumentCollector.getPort(configuration);
     boolean useDefault = (fPort == IConstants.INVALID_PORT);
@@ -135,7 +125,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     // Search for similarly named files in the output directory and warn the user
     // if any are found. Similarly named files match the pattern <ClassName>[0-9]*.java
-    IPath outputDirPath = testGroupResources.getOutputPath();
+    IPath outputDirPath = testGroupResources.getOutputLocation();
     IResource outputDirResource = root.findMember(outputDirPath);
     
     // Check if the output directory exists
@@ -180,7 +170,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     cpList.add(RandoopPlugin.getRandoopJar().toOSString());
     cpList.add(RandoopPlugin.getPlumeJar().toOSString());
     
-    for (IPath path : testGroupResources.getClasspath()) {
+    for (IPath path : testGroupResources.getClasspathLocations()) {
       cpList.add(path.makeRelative().toOSString());
     }
     String[] classpath = cpList.toArray(new String[0]);
