@@ -173,6 +173,12 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     }
   }
   
+  protected void restoreDefaults() {
+    for (IOption option : fOptions) {
+      option.restoreDefaults();
+    }
+  }
+  
   protected ModifyListener getBasicModifyListener() {
     return fBasicModifyListener;
   }
