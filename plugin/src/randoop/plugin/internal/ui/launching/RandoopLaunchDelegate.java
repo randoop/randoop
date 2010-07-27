@@ -69,7 +69,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       return;
 
     RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
-    IStatus status = args.getStatus();
+    IStatus status = args.checkForConflicts();
     if (status.getSeverity() == IStatus.ERROR) {
       informAndAbort(status);
     } else if (status.getSeverity() == IStatus.WARNING) {
