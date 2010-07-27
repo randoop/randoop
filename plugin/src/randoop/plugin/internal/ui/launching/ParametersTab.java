@@ -33,10 +33,6 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fMaxTestsWritten;
   private IOption fMaxTestsPerFile;
   
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-   */
   @Override
   public void createControl(Composite parent) {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
@@ -157,19 +153,11 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     maxTestsPerFile.addModifyListener(getBasicModifyListener());
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-   */
   @Override
   public String getName() {
     return "Parameters";
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-   */
   @Override
   public String getId() {
     return "randoop.plugin.ui.launching.parametersTab"; //$NON-NLS-1$

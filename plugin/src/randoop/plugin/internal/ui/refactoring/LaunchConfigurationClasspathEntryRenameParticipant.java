@@ -28,10 +28,20 @@ public class LaunchConfigurationClasspathEntryRenameParticipant extends RenamePa
     
     return false;
   }
-  
+
   @Override
-  public String getName() {
-    return "Launch configuration participant";
+  public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+    List<Change> changes = new ArrayList<Change>();
+    ILaunchConfiguration[] configs = RandoopRefactoringUtil.getRandoopTypeLaunchConfigurations();
+  
+    for (ILaunchConfiguration config : configs) {
+      String newFileName = getArguments().getNewName();
+      IPath newPath = fOldPath.removeLastSegments(1).append(newFileName);
+      Change c = new LaunchConfigurationClasspathEntryChange(config, fOldPath, newPath);
+      changes.add(c);
+    }
+    
+    return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
   @Override
@@ -41,18 +51,8 @@ public class LaunchConfigurationClasspathEntryRenameParticipant extends RenamePa
   }
 
   @Override
-  public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-    List<Change> changes = new ArrayList<Change>();
-    ILaunchConfiguration[] configs = RandoopRefactoringUtil.getRandoopTypeLaunchConfigurations();
-
-    for (ILaunchConfiguration config : configs) {
-      String newFileName = getArguments().getNewName();
-      IPath newPath = fOldPath.removeLastSegments(1).append(newFileName);
-      Change c = new LaunchConfigurationClasspathEntryChange(config, fOldPath, newPath);
-      changes.add(c);
-    }
-    
-    return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
+  public String getName() {
+    return "Launch configuration participant";
   }
 
 }

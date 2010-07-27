@@ -234,4 +234,5 @@ public class RandoopPlugin extends AbstractUIPlugin {
   public static IWorkspaceRoot getWorkspaceRoot() {
     return ResourcesPlugin.getWorkspace().getRoot();
   }
+  
 }

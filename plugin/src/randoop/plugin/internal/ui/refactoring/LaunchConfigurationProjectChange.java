@@ -55,13 +55,6 @@ public class LaunchConfigurationProjectChange extends Change {
   public void initializeValidationData(IProgressMonitor pm) {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime
-   * .IProgressMonitor)
-   */
   @Override
   public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException,
       OperationCanceledException {
@@ -79,13 +72,6 @@ public class LaunchConfigurationProjectChange extends Change {
     return RefactoringStatus.createFatalErrorStatus(MessageFormat.format("The launch configuration \"{0}\" no longer exists.", new String[] { fLaunchConfiguration.getName() }));
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime
-   * .IProgressMonitor)
-   */
   @Override
   public Change perform(IProgressMonitor pm) throws CoreException {
     final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
@@ -132,7 +118,7 @@ public class LaunchConfigurationProjectChange extends Change {
     return new LaunchConfigurationProjectChange(fLaunchConfiguration, fOldProjectName, fSelectedProjectChange, fTypeChange, fMethodChange);
   }
   
-  public void createNewMnemonicsFromTypes(HashMap<String, String> newTypeMnemonicByOldTypeMnemonic, List<String> typeMnemonics) {
+  protected void createNewMnemonicsFromTypes(HashMap<String, String> newTypeMnemonicByOldTypeMnemonic, List<String> typeMnemonics) {
     for (String oldMnemonic : typeMnemonics) {
       if (!newTypeMnemonicByOldTypeMnemonic.containsKey(oldMnemonic)) {
         TypeMnemonic oldTypeMnemonic = new TypeMnemonic(oldMnemonic);
@@ -151,7 +137,7 @@ public class LaunchConfigurationProjectChange extends Change {
     }
   }
 
-  public void createNewMnemonicsFromMethods(HashMap<String, String> newTypeMnemonicByOldTypeMnemonic, List<String> methodMnemonics) {
+  protected void createNewMnemonicsFromMethods(HashMap<String, String> newTypeMnemonicByOldTypeMnemonic, List<String> methodMnemonics) {
     for (String mnemonic : methodMnemonics) {
       MethodMnemonic methodMnemonic = new MethodMnemonic(mnemonic);
       TypeMnemonic oldTypeMnemonic = methodMnemonic.getDeclaringTypeMnemonic();

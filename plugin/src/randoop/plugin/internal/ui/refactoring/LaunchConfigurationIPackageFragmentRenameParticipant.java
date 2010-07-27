@@ -24,10 +24,15 @@ import randoop.plugin.internal.ui.options.Mnemonics;
 public class LaunchConfigurationIPackageFragmentRenameParticipant extends RenameParticipant {
   private IPackageFragment fPackageFragment;
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-   */
+  @Override
+  protected boolean initialize(Object element) {
+    if (element instanceof IPackageFragment) {
+      fPackageFragment = (IPackageFragment) element;
+      return true;
+    }
+    return false;
+  }
+
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     List<Change> changes = new ArrayList<Change>();
@@ -75,23 +80,6 @@ public class LaunchConfigurationIPackageFragmentRenameParticipant extends Rename
     return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
   
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-   */
-  @Override
-  protected boolean initialize(Object element) {
-    if (element instanceof IPackageFragment) {
-      fPackageFragment = (IPackageFragment) element;
-      return true;
-    }
-    return false;
-  }
-
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-   */
   @Override
   public RefactoringStatus checkConditions(IProgressMonitor pm,
       CheckConditionsContext context) throws OperationCanceledException {
@@ -99,12 +87,9 @@ public class LaunchConfigurationIPackageFragmentRenameParticipant extends Rename
     return new RefactoringStatus();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
-   */
   @Override
   public String getName() {
     return "Launch configuration participant";
   }
+  
 }
