@@ -30,10 +30,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class ProjectOption extends Option {
   private Shell fShell;
@@ -57,7 +57,7 @@ public class ProjectOption extends Option {
       public void modifyText(ModifyEvent e) {
         String projectName = fProjectText.getText();
         
-        fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
+        fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
           
         if (fSourceFolderBrowseButton != null) {
           fSourceFolderBrowseButton.setEnabled(fJavaProject != null);
@@ -175,7 +175,7 @@ public class ProjectOption extends Option {
           "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
     
-    IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(javaProject, outputSourceFolderName);
+    IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputSourceFolderName);
     if (outputDir == null) {
       status = StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
       return status;
@@ -198,7 +198,7 @@ public class ProjectOption extends Option {
     if (fProjectText != null) {
       String projectName = RandoopArgumentCollector.getProjectName(config);
 
-      fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
+      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
       fProjectText.setText(projectName);
         
       String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
@@ -208,7 +208,7 @@ public class ProjectOption extends Option {
     if (fOutputSourceFolderText != null) {
       String folderName = RandoopArgumentCollector.getOutputDirectoryName(config);
       
-      fOutputSourceFolder = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(fJavaProject, folderName);
+      fOutputSourceFolder = RandoopCoreUtil.getPackageFragmentRoot(fJavaProject, folderName);
       fOutputSourceFolderText.setText(folderName);
       
       if (fSourceFolderBrowseButton != null) {
