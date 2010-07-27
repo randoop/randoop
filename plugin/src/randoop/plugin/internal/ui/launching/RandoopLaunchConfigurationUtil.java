@@ -70,7 +70,6 @@ public class RandoopLaunchConfigurationUtil {
     return null;
   }
   
-
   public static List<IType> findTypes(IJavaElement element, boolean ignoreJUnitTestCases, IProgressMonitor pm) {
     switch (element.getElementType()) {
     case IJavaElement.PACKAGE_FRAGMENT_ROOT:

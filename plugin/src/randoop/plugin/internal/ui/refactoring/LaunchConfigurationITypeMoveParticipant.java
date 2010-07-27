@@ -53,12 +53,12 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
       Assert.isTrue(pfr instanceof IPackageFragmentRoot);
       IClasspathEntry newClasspathEntry = ((IPackageFragmentRoot) pfr).getRawClasspathEntry();
       
-      String[] splitName = Mnemonics.splitFullyQualifiedName(fTypeMnemonic.getFullyQualifiedName());
-      splitName[0] = newPackageFragment.getElementName();
-      String fqname = Mnemonics.getFullyQualifiedName(splitName);
+      String oldFullyQualifiedName = fTypeMnemonic.getFullyQualifiedName();
+      String className = Mnemonics.getClassName(oldFullyQualifiedName);
+      String newFullyQualifiedName = Mnemonics.getFullyQualifiedName(newPackageFragment.getElementName(), className);
       
       TypeMnemonic newTypeMnemonic = new TypeMnemonic(fTypeMnemonic.getJavaProjectName(),
-          newClasspathEntry.getEntryKind(), newClasspathEntry.getPath(), fqname);
+          newClasspathEntry.getEntryKind(), newClasspathEntry.getPath(), newFullyQualifiedName);
       
       for(ILaunchConfiguration config : configs) {
         // TODO: Check if change is needed first

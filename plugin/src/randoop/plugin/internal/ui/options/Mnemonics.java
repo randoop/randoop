@@ -1,31 +1,9 @@
 package randoop.plugin.internal.ui.options;
 
-import org.eclipse.core.runtime.Assert;
 import randoop.plugin.internal.IConstants;
 
 public class Mnemonics {
-  final static char TYPE_NAME_END = '#';
-  final static char METHOD_NAME_END = '%';
-  
   // expects use of $
-  public static String[] splitFullyQualifiedName(String fqname) {
-    int seperator = fqname.lastIndexOf('.');
-    if (seperator == -1) {
-      String[] packageAndName = { IConstants.EMPTY_STRING, fqname };
-      return packageAndName;
-    } else {
-      String[] packageAndName = { fqname.substring(0, seperator),
-          fqname.substring(seperator + 1) };
-      return packageAndName;
-    }
-  }
-  
-  public static String getFullyQualifiedName(String[] packageAndName) {
-    Assert.isLegal(packageAndName.length == 2);
-    
-    return getFullyQualifiedName(packageAndName[0], packageAndName[1]);
-  }
-  
   public static String getPackageName(String fullyQualifiedName) {
     int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
     
