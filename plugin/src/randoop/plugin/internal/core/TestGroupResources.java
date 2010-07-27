@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
@@ -159,11 +158,11 @@ public class TestGroupResources {
   private IStatus findClasspaths(IProgressMonitor monitor) {
     HashSet<IPath> classpath = new HashSet<IPath>();
     // copying class files to the temporary folder
-    
+
     IStatus errorStatus = null;
     try {
       HashSet<IJavaProject> usedProjects = new HashSet<IJavaProject>();
-      
+
       // Find projects containing the types and methods to be tested
       for (IType type : fArguments.getSelectedTypes()) {
         usedProjects.add(type.getJavaProject());
@@ -171,11 +170,11 @@ public class TestGroupResources {
       for (IMethod method : fArguments.getSelectedMethods()) {
         usedProjects.add(method.getJavaProject());
       }
-      
+
       // Find all the classpaths required by each project
       for (IJavaProject javaProject : usedProjects) {
         classpath.add(javaProject.getOutputLocation());
-        
+
         IStatus status = findClasspaths(javaProject, classpath);
         if (status.getSeverity() == IStatus.ERROR)
           errorStatus = status;
@@ -185,8 +184,7 @@ public class TestGroupResources {
 
       return errorStatus == null ? StatusFactory.OK_STATUS : errorStatus;
     } catch (JavaModelException e) {
-      return StatusFactory
-          .createErrorStatus("Output location does not exist for Java project");
+      return StatusFactory.createErrorStatus("Output location does not exist for Java project");
     }
   }
 

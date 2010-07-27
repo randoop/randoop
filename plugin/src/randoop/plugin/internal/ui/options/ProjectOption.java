@@ -18,7 +18,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.events.ModifyEvent;
@@ -31,7 +30,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
@@ -122,7 +120,7 @@ public class ProjectOption extends Option {
   @Override
   public IStatus canSave() {
     if (fOutputSourceFolderText == null || fSourceFolderBrowseButton == null) {
-      return StatusFactory.createErrorStatus("ProjectOption incorrectly initialized");
+      return StatusFactory.ERROR_STATUS;
     }
   
     return StatusFactory.OK_STATUS;
@@ -155,18 +153,18 @@ public class ProjectOption extends Option {
       IProject project = workspace.getRoot().getProject(projectName);
       if (!project.exists()) {
         return StatusFactory.createErrorStatus(MessageFormat.format(
-            "Project {0} does not exist", new String[] { projectName }));
+            "Project {0} does not exist", new Object[] { projectName }));
       }
       if (!project.isOpen()) {
         return StatusFactory.createErrorStatus(MessageFormat.format(
-            "Project {0} is closed", new String[] { projectName }));
+            "Project {0} is closed", new Object[] { projectName }));
       }
       
       try {
         javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
         if (javaProject == null) {
           return StatusFactory.createErrorStatus(MessageFormat.format(
-              "Project {0} is not a Java project", new String[] { projectName }));
+              "Project {0} is not a Java project", new Object[] { projectName }));
         }
       } catch (CoreException e) {
         RandoopPlugin.log(e);
@@ -174,21 +172,21 @@ public class ProjectOption extends Option {
       }
     } else {
       return StatusFactory.createErrorStatus(MessageFormat.format(
-          "Illegal project name: {0}", new String[] { status.getMessage() }));
+          "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
     
-    IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(javaProject,
-        outputSourceFolderName);
+    IPackageFragmentRoot outputDir = RandoopLaunchConfigurationUtil.getPackageFragmentRoot(javaProject, outputSourceFolderName);
     if (outputDir == null) {
       status = StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
       return status;
     } else if (!outputDir.exists()) {
-      status = StatusFactory.createErrorStatus("Output Directory " + outputDir.getElementName()
-          + " does not exist");
+      status = StatusFactory.createErrorStatus(MessageFormat.format(
+          "Output Directory {0} does not exist", new Object[] { outputDir.getElementName() }));
       return status;
     } else if (!outputDir.getJavaProject().equals(javaProject)) {
-      status = StatusFactory.createErrorStatus("Output Directory does not exist in project "
-          + javaProject.getElementName());
+      status = StatusFactory.createErrorStatus(MessageFormat.format(
+          "Output Directory does not exist in project {0}",
+          new Object[] { javaProject.getElementName() }));
       return status;
     }
 
@@ -346,8 +344,8 @@ public class ProjectOption extends Option {
           JavaElementLabelProvider.SHOW_DEFAULT);
       ElementListSelectionDialog dialog = new ElementListSelectionDialog(
           getShell(), labelProvider);
-      dialog.setTitle("Project Selection");
-      dialog.setMessage("Choose a project to constrain the search for test classes:");
+      dialog.setTitle("Source Folder Selection");
+      dialog.setMessage("Choose a source folder to use for output of generated test classes:");
       dialog.setElements(sourceFolders
           .toArray(new IPackageFragmentRoot[sourceFolders.size()]));
       dialog.setHelpAvailable(false);

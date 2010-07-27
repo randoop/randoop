@@ -25,8 +25,7 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
    */
   @Override
   public void createControl(Composite parent) {
-    Composite tabcomp = SWTFactory.createComposite(parent, 1, 1,
-        GridData.FILL_HORIZONTAL);
+    Composite tabcomp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(tabcomp);
 
     // Project group:

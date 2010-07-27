@@ -1,7 +1,5 @@
 package randoop.plugin.internal.core.launching;
 
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.TestKinds;
 
