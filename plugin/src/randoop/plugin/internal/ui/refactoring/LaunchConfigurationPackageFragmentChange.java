@@ -1,20 +1,13 @@
 package randoop.plugin.internal.ui.refactoring;
 
 import java.text.MessageFormat;
-import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import randoop.plugin.internal.IConstants;
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.options.Mnemonics;
 
 public class LaunchConfigurationPackageFragmentChange extends Change {
   

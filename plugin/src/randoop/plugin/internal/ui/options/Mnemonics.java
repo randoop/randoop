@@ -1,14 +1,6 @@
 package randoop.plugin.internal.ui.options;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
-
-import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 
 public class Mnemonics {

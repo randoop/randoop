@@ -1,9 +1,6 @@
 package randoop.plugin.internal.ui.options;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.core.StatusFactory;
@@ -28,6 +25,7 @@ public abstract class BoundedDoubleOption extends TextOption {
     fOutOfBoundsMsg = outOfBoundsMsg;
   }
 
+  @Override
   protected IStatus validate(String text) {
     try {
       double d = Double.parseDouble(text);

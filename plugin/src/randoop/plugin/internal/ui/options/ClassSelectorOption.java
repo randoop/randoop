@@ -2,7 +2,6 @@ package randoop.plugin.internal.ui.options;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -32,7 +31,6 @@ import org.eclipse.jdt.ui.dialogs.ITypeInfoFilterExtension;
 import org.eclipse.jdt.ui.dialogs.ITypeInfoRequestor;
 import org.eclipse.jdt.ui.dialogs.TypeSelectionExtension;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -289,13 +287,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
   @Override
   public IStatus canSave() {
-    if (fRunnableContext == null || fShell == null || fTypeSelector == null || fTypeTree == null
-        || fClassUp == null || fClassDown == null || fClassRemove == null || fClassAddFromSources == null
+    if (fRunnableContext == null || fShell == null || fTypeSelector == null
+        || fTypeTree == null || fClassUp == null || fClassDown == null
+        || fClassRemove == null || fClassAddFromSources == null
         || fClassAddFromClasspaths == null || fSelectAll == null
         || fSelectNone == null) {
-      return StatusFactory.createErrorStatus("TestInputOption incorrectly initialized");
+      
+      return StatusFactory.ERROR_STATUS;
     }
-    
+
     return StatusFactory.OK_STATUS;
   }
 

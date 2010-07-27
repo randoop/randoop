@@ -130,12 +130,10 @@ public class RandoopLaunchConfigurationUtil {
         break;
       case IPackageFragmentRoot.K_SOURCE:
         for (ICompilationUnit cu : pf.getCompilationUnits()) {
-          for (IType t : cu.getAllTypes()) {
-            types.addAll(findTypes(cu, ignoreJUnitTestCases, pm));
+          types.addAll(findTypes(cu, ignoreJUnitTestCases, pm));
 
-            if (pm.isCanceled()) {
-              return types;
-            }
+          if (pm.isCanceled()) {
+            return types;
           }
         }
         break;
@@ -204,8 +202,7 @@ public class RandoopLaunchConfigurationUtil {
         return false;
       }
       if (ignoreJUnitTestCases) {
-        // TODO: make sure this is actually of type
-        // junit.framework.TestCase
+        // TODO: make sure this is actually of type junit.framework.TestCase
         String siName = type.getSuperclassName();
         if (siName != null && siName.equals("TestCase")) { //$NON-NLS-1$
           return false;

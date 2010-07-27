@@ -751,7 +751,7 @@ public class ClassSelector {
         TypeMnemonic typeMnemonic = new TypeMnemonic(getMnemonicString(classItem), getWorkspaceRoot());
         IType type = typeMnemonic.getType();
         if (type == null) {
-          type = fJavaProject.findType(type.getFullyQualifiedName(), (IProgressMonitor) null);
+          type = fJavaProject.findType(typeMnemonic.getFullyQualifiedName(), (IProgressMonitor) null);
           if (type != null) {
             typeMnemonic = new TypeMnemonic(type);
 

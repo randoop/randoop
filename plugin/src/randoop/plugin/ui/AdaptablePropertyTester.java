@@ -2,19 +2,9 @@ package randoop.plugin.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 
 public class AdaptablePropertyTester extends PropertyTester {
   private static final String PROPERTY_IS_TESTABLE = "isTestable"; //$NON-NLS-1$

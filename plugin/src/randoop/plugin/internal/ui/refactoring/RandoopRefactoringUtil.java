@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -25,8 +24,6 @@ public class RandoopRefactoringUtil {
   
   /**
    * Take a list of Changes, and return a unique Change, a CompositeChange, or null.
-   * 
-   * @see org.eclipse.jdt.internal.debug.core.refactoring.JDTDebugRefactoringUtil
    */
   public static Change createChangeFromList(List<Change> changes, String changeLabel) {
     int nbChanges = changes.size();

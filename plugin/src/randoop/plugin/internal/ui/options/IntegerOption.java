@@ -16,6 +16,7 @@ public abstract class IntegerOption extends TextOption {
     fInvalidErrorMsg = invalidIntErrorMsg;
   }
   
+  @Override
   protected IStatus validate(String text) {
     try {
       Integer.parseInt(text);

@@ -35,7 +35,6 @@ import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
-import randoop.plugin.internal.core.MutableBoolean;
 import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
@@ -172,6 +171,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     collectProgramArguments(testGroupResources, programArguments);
 
     // VM-specific attributes
+    @SuppressWarnings("rawtypes")
     Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
     // Classpath
@@ -244,8 +244,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   protected void collectExecutionArguments(ILaunchConfiguration configuration,
       List<String> vmArguments, List<String> programArguments)
       throws CoreException {
-    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
-
     // add program & VM arguments provided by getProgramArguments and
     // getVMArguments
     String pgmArgs = getProgramArguments(configuration);
@@ -309,13 +307,13 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   private boolean showStatusMessage(final IStatus status) {
     final boolean[] success = new boolean[] { false };
     RandoopPlugin.getDisplay().syncExec(new Runnable() {
+      @Override
       public void run() {
         Shell shell = RandoopPlugin.getActiveWorkbenchShell();
         if (shell == null)
           shell = RandoopPlugin.getDisplay().getActiveShell();
         if (shell != null) {
-          MessageDialog.openInformation(shell, "Problems Launching Randoop",
-              status.getMessage());
+          MessageDialog.openInformation(shell, "Problems Launching Randoop", status.getMessage());
           success[0] = true;
         }
       }
