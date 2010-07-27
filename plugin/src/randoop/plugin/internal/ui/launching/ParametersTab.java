@@ -52,7 +52,7 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     restoreDefaults.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-        
+        restoreDefaults();
       }
     });
     restoreDefaults.setEnabled(true);
