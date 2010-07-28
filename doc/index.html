@@ -181,19 +181,19 @@ the cause of the problem.</p>
 <ul>
   <li>Code under test
     <ul>
-      <li> <b>--testclass=&lt;string[]&gt;</b>. Each element is the fully-qualified name of a class under test. [default []]</li>
-      <li> <b>--classlist=&lt;string&gt;</b>. In the file, each class under test is specified by its fully
+      <li><b>--testclass=</b><i>string[]</i>. Each element is the fully-qualified name of a class under test. [default []]</li>
+      <li><b>--classlist=</b><i>string</i>. In the file, each class under test is specified by its fully
  qualified name on a separate line. [no default]</li>
-      <li> <b>--methodlist=&lt;string&gt;</b>. In the file, each each method under test is specified on a separate
+      <li><b>--methodlist=</b><i>string</i>. In the file, each each method under test is specified on a separate
  line. [no default]</li>
-      <li> <b>--init-routine=&lt;string&gt;</b>.  [no default]</li>
-      <li> <b>--literals-level=&lt;enum&gt;</b>. <ul>
+      <li><b>--init-routine=</b><i>string</i>. specifies initialization routine (class.method) [no default]</li>
+      <li><b>--literals-level=</b><i>enum</i>. <ul>
  <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
  <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.</li>
  <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.</li>
  <li> --literals-level=NONE means do not use literals specified in a literals file.</li>
  </ul> [default NONE]</li>
-      <li> <b>--literals-file=&lt;string[]&gt;</b>. Literals in these files are used in addition to all other constants in the pool.
+      <li><b>--literals-file=</b><i>string[]</i>. Literals in these files are used in addition to all other constants in the pool.
  May be specified multiple times.
  For the format of this file, see documentation in class <code>randoop.LiteralFileReader</code>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under test. [default []]</li>
@@ -201,38 +201,38 @@ the cause of the problem.</p>
   </li>
   <li>Controlling randomness
     <ul>
-      <li> <b>--randomseed=&lt;int&gt;</b>. The random seed to use in the generation process [default 0]</li>
+      <li><b>--randomseed=</b><i>int</i>. The random seed to use in the generation process [default 0]</li>
     </ul>
   </li>
   <li>Limiting test generation
     <ul>
-      <li> <b>--timelimit=&lt;int&gt;</b>. Used to determine when to stop test generation. Generation stops when
+      <li><b>--timelimit=</b><i>int</i>. Used to determine when to stop test generation. Generation stops when
  either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached. [default 100]</li>
-      <li> <b>--inputlimit=&lt;int&gt;</b>. Used to determine when to stop test generation. Generation stops when
+      <li><b>--inputlimit=</b><i>int</i>. Used to determine when to stop test generation. Generation stops when
  either the time limit (--timelimit=int) OR the input limit
  (--inputlimit=int) is reached.  Note that the number of tests output
  may be smaller than then number of inputs created, because redundant
  and illegal inputs may be discarded.  Also see --outputlimit. [default 100000000]</li>
-      <li> <b>--outputlimit=&lt;int&gt;</b>. Determines the maximum number of tests to output, no matter how many
+      <li><b>--outputlimit=</b><i>int</i>. Determines the maximum number of tests to output, no matter how many
  are generated.  Contrast to --inputlimit. [default 100000000]</li>
-      <li> <b>--maxsize=&lt;int&gt;</b>. Do not generate tests with more than this many statements [default 100]</li>
-      <li> <b>--forbid-null=&lt;boolean&gt;</b>. Even when this option is set to true, Randoop uses null only when
+      <li><b>--maxsize=</b><i>int</i>. Do not generate tests with more than this many statements [default 100]</li>
+      <li><b>--forbid-null=</b><i>boolean</i>. Even when this option is set to true, Randoop uses null only when
  there is no non-null value available.  This option causes Randoop to
  abandon the method call rather than providing null, when no non-null
  value is available. [default true]</li>
-      <li> <b>--null-ratio=&lt;double&gt;</b>.  [no default]</li>
-      <li> <b>--string-maxlen=&lt;int&gt;</b>. Don't set this greater than 65KB, because strings longer than that may
+      <li><b>--null-ratio=</b><i>double</i>. Use null with the given frequency. [TODO explain] [no default]</li>
+      <li><b>--string-maxlen=</b><i>int</i>. Don't set this greater than 65KB, because strings longer than that may
  be rejected, according to the Java Virtual Machine specification. [default 10000]</li>
     </ul>
   </li>
   <li>Outputting the JUnit tests
     <ul>
-      <li> <b>--output-tests=&lt;string&gt;</b>. What kinds of tests to output: pass, fail, or all [default all]</li>
-      <li> <b>--testsperfile=&lt;int&gt;</b>. Maximum number of tests to write to each JUnit file [default 500]</li>
-      <li> <b>--junit-classname=&lt;string&gt;</b>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
-      <li> <b>--junit-package-name=&lt;string&gt;</b>. Name of the package for the generated JUnit files [default ]</li>
-      <li> <b>--junit-output-dir=&lt;string&gt;</b>. Name of the directory to which JUnit files should be written [no default]</li>
-      <li> <b>--comm-port=&lt;int&gt;</b>. If this value is not -1, Randoop relays information about the
+      <li><b>--output-tests=</b><i>string</i>. What kinds of tests to output: pass, fail, or all [default all]</li>
+      <li><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
+      <li><b>--junit-classname=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
+      <li><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files [default ]</li>
+      <li><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written [no default]</li>
+      <li><b>--comm-port=</b><i>int</i>. If this value is not -1, Randoop relays information about the
  program's execution over a connection to the specified port on the
  local machine. Information is sent using a serialized
  randoop.runtime.Message object. Printing is also suppressed. [default -1]</li>
@@ -240,19 +240,19 @@ the cause of the problem.</p>
   </li>
   <li>Logging
     <ul>
-      <li> <b>--log=&lt;filewriter&gt;</b>. Name of a file to which to log lots of information.
+      <li><b>--log=</b><i>filewriter</i>. Name of a file to which to log lots of information.
  If not specified, no logging is done. [no default]</li>
     </ul>
   </li>
   <li>Threading and timeouts
     <ul>
-      <li> <b>--usethreads=&lt;boolean&gt;</b>. Use if Randoop is exhibiting nonterminating behavior: this is usually
+      <li><b>--usethreads=</b><i>boolean</i>. Use if Randoop is exhibiting nonterminating behavior: this is usually
  due to execution of code under test that results in an infinite
  loop. With this option, Randoop executes each test in a separate
  thread and kills tests that take too long to finish. Tests killed in
  this manner are not reported to the user. The downside is a BIG
  (order-of-magnitude) decrease in generation speed. [default true]</li>
-      <li> <b>--timeout=&lt;int&gt;</b>. After this many milliseconds, a non-returning method call, and its
+      <li><b>--timeout=</b><i>int</i>. After this many milliseconds, a non-returning method call, and its
  associated test, are stopped forcefully.
  Only meaningful if --usethreads is also specified. [default 5000]</li>
     </ul>
