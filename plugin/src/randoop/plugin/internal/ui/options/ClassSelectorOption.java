@@ -218,12 +218,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       case IJavaElement.PACKAGE_FRAGMENT_ROOT:
       case IJavaElement.PACKAGE_FRAGMENT:
         for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addType(type, false);
+          fTypeSelector.addClass(type, false);
         }
         break;
       case IJavaElement.COMPILATION_UNIT:
         for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addType(type, true);
+          fTypeSelector.addClass(type, true);
         }
         break;
       default:
@@ -250,7 +250,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           if (element instanceof IType) {
             IType type = (IType) element;
             if (type != null) {
-              fTypeSelector.addType(type, true);
+              fTypeSelector.addClass(type, true);
             }
           }
         }
