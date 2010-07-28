@@ -159,6 +159,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     if (hasResolveButton) {
       fResolveClasses = SWTFactory.createPushButton(rightcomp, "Resolve Classes", null);
+      
       fResolveClasses.addSelectionListener(new SelectionAdapter() {
         @Override
         public void widgetSelected(SelectionEvent e) {

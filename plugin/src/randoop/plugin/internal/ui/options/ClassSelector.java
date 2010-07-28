@@ -69,7 +69,7 @@ public class ClassSelector {
    * @param selectedTypes 
    * @param availableTypes 
    */
-  public ClassSelector(Tree classTree) {
+  ClassSelector(Tree classTree) {
     Assert.isLegal(classTree != null, "The Tree cannot be null"); //$NON-NLS-1$
 //    Assert.isLegal(classTree.getItemCount() == 0, "The Tree must be empty"); //$NON-NLS-1$
     Assert.isLegal((classTree.getStyle() & SWT.CHECK) != 0, "The Tree must use the SWT.CHECK style"); //$NON-NLS-1$
@@ -100,7 +100,7 @@ public class ClassSelector {
    * @param classTree
    *          empty tree that can be used to add
    */
-  public ClassSelector(Tree classTree, IJavaProject javaProject, List<String> availableTypes,
+  ClassSelector(Tree classTree, IJavaProject javaProject, List<String> availableTypes,
       List<String> selectedTypes, List<String> availableMethods, List<String> selectedMethods) {
 
     this(classTree);
@@ -179,7 +179,7 @@ public class ClassSelector {
    * @return a new or pre-existing <code>TreeItem</code> containing to <code>IPackageFragment</code>
    * @throws JavaModelException 
    */
-  public TreeItem addPackage(String packageFragmentName) {
+  TreeItem addPackage(String packageFragmentName) {
     if (packageFragmentName == null)
       return null;
     
@@ -215,7 +215,7 @@ public class ClassSelector {
    * @return the <code>TreeItem</code> added to the <code>Tree</code> or
    *         <code>null</code> if it was not added
    */
-  public TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
+  TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
     // First, check if the class item already exists in the tree
     TreeItem classItem = getClassItem(typeMnemonic);
     if (classItem != null) {
@@ -267,7 +267,7 @@ public class ClassSelector {
    *         <code>Tree</code> for this class, or <code>null</code> if the class
    *         was not added
    */
-  public TreeItem addClass(IType type, boolean checked) {
+  TreeItem addClass(IType type, boolean checked) {
     try {
       if (type == null || type.isInterface() || Flags.isAbstract(type.getFlags())) {
         return null;
@@ -363,7 +363,7 @@ public class ClassSelector {
     return null;
   }
 
-  public List<String> getAllClasses() {
+  List<String> getAllClasses() {
     List<String> types = new ArrayList<String>();
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -381,7 +381,7 @@ public class ClassSelector {
    * 
    * @return list of handlers for types that are fully checked (not grayed)
    */
-  public List<String> getCheckedClasses() {
+  List<String> getCheckedClasses() {
     List<String> classes = new ArrayList<String>();
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -403,7 +403,7 @@ public class ClassSelector {
    * 
    * @return list
    */
-  public List<String> getAllMethods() {
+  List<String> getAllMethods() {
     List<String> types = new ArrayList<String>();
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -425,7 +425,7 @@ public class ClassSelector {
    * 
    * @return list
    */
-  public List<String> getCheckedMethods() {
+  List<String> getCheckedMethods() {
     List<String> types = new ArrayList<String>();
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -573,44 +573,68 @@ public class ClassSelector {
    * can be removed from the <code>Tree</code>
    */
   boolean canRemoveFromSelection() {
-    TreeItem[] items = fTypeTree.getSelection();
+    TreeItem[] packages = getSelectedPackageFragments();
+    TreeItem[] classes = getSelectedClasses();
 
-    for (TreeItem item : items) {
-      // Only remove package fragments or classes (roots or their children)
-      if (item.getParentItem() == null || item.getParentItem().getParentItem() == null) {
-        return true;
-      }
-    }
-    
-    return false;
+    return packages.length != 0 || classes.length != 0;
   }
   
-  public void removeSelectedTypes() {
-    TreeItem[] items = fTypeTree.getSelection();
+  void removeSelectedTypes() {
+    TreeItem[] packages = getSelectedPackageFragments();
+    TreeItem[] classes = getSelectedClasses();
 
-    for (TreeItem item : items) {
-      // Only remove package fragments or classes (roots or their children)
-      if (item.getParentItem() == null) {
-        item.dispose();
-      } else if (item.getParentItem().getParentItem() == null) {
-        TreeItem parent = item.getParentItem();
-        item.dispose();
-        
-        // If their are not classes left in the package fragment, dispose it
-        if(parent.getItemCount() == 0) {
-          parent.dispose();
+    for (TreeItem packageItem : packages) {
+      packageItem.removeAll();
+      packageItem.dispose();
+    }
+    
+    for (TreeItem classItem : classes) {
+      if (!classItem.isDisposed()) {
+        classItem.removeAll();
+        TreeItem packageItem = classItem.getParentItem();
+        classItem.dispose();
+
+        if (packageItem.getItemCount() == 0) {
+          packageItem.dispose();
         }
       }
     }
   }
+  
+  private TreeItem[] getSelectedPackageFragments() {
+    TreeItem[] items = fTypeTree.getSelection();
+    List<TreeItem> roots = new ArrayList<TreeItem>();
 
-  public void checkAll() {
+    for (TreeItem item : items) {
+      // Only move root elements
+      if (item.getParentItem() == null) {
+        roots.add(item);
+      }
+    }
+
+    return roots.toArray(new TreeItem[roots.size()]);
+  }
+  
+  private TreeItem[] getSelectedClasses() {
+    TreeItem[] items = fTypeTree.getSelection();
+    List<TreeItem> classes = new ArrayList<TreeItem>();
+
+    for (TreeItem item : items) {
+      if (item.getParentItem() != null && item.getParentItem().getParentItem() == null) {
+        classes.add(item);
+      }
+    }
+
+    return classes.toArray(new TreeItem[classes.size()]);
+  }
+
+  void checkAll() {
     for(TreeItem rootItem : fTypeTree.getItems()) {
       checkRootItem(rootItem, true);
     }
   }
 
-  public void uncheckAll() {
+  void uncheckAll() {
     for(TreeItem rootItem : fTypeTree.getItems()) {
       checkRootItem(rootItem, false);
     }
@@ -655,7 +679,7 @@ public class ClassSelector {
     parentItem.setGrayed(false);
   }
   
-  public void resolveMissingClasses() throws JavaModelException {
+  void resolveMissingClasses() throws JavaModelException {
     Assert.isNotNull(fJavaProject);
 
     Map<String, List<MethodMnemonic>> checkedMethodsByFQTypeName = new HashMap<String, List<MethodMnemonic>>();
@@ -725,7 +749,7 @@ public class ClassSelector {
    * 
    * @param javaProject
    */
-  public void setJavaProject(IJavaProject javaProject) {
+  void setJavaProject(IJavaProject javaProject) {
     fJavaProject = javaProject;
     
     if (fJavaProject == null) {
