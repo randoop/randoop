@@ -35,8 +35,11 @@ public class JUnitTestClassNameOption extends Option {
   public IStatus canSave() {
     if (fFullyQualifiedTestName != null && fPackageName == null && fClassName == null) {
       // fFullyQualifiedTestName can be null if fPackageName and fClassName are not null
-      String[] typeName = seperateTypeName(fFullyQualifiedTestName.getText());
-      return validate(typeName[0], typeName[1]);
+      String fqname = fFullyQualifiedTestName.getText();
+      String packageName = RandoopCoreUtil.getPackageName(fqname);
+      String className = RandoopCoreUtil.getClassName(fqname);
+      
+      return validate(packageName, className);
     } else if (fFullyQualifiedTestName == null && fPackageName != null && fClassName != null) {
       // fPackageName and fClassName can be null if fFullyQualifiedTestName is not null
       
@@ -58,6 +61,9 @@ public class JUnitTestClassNameOption extends Option {
   }
   
   protected IStatus validate(String packageName, String className) {
+    if (packageName.contains("$") || className.contains("$")) {  //$NON-NLS-1$//$NON-NLS-2$
+      return StatusFactory.createErrorStatus("JUnit class name cannot use secondary types");
+    }
     IStatus packageStatus = StatusFactory.OK_STATUS;
     if (!packageName.isEmpty()) {
       packageStatus = JavaConventions.validatePackageName(packageName,
@@ -102,9 +108,12 @@ public class JUnitTestClassNameOption extends Option {
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fFullyQualifiedTestName != null) {
-      String[] typeName = seperateTypeName(fFullyQualifiedTestName.getText());
-      RandoopArgumentCollector.setJUnitPackageName(config, typeName[0]);
-      RandoopArgumentCollector.setJUnitClassName(config, typeName[1]);
+      String fqname = fFullyQualifiedTestName.getText();
+      String packageName = RandoopCoreUtil.getPackageName(fqname);
+      String className = RandoopCoreUtil.getClassName(fqname);
+      
+      RandoopArgumentCollector.setJUnitPackageName(config, packageName);
+      RandoopArgumentCollector.setJUnitClassName(config, className);
     } else if (fPackageName != null && fClassName != null) {
       RandoopArgumentCollector.setJUnitPackageName(config, fPackageName.getText());
       RandoopArgumentCollector.setJUnitClassName(config, fClassName.getText());
@@ -115,28 +124,6 @@ public class JUnitTestClassNameOption extends Option {
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     RandoopArgumentCollector.restoreJUnitPackageName(config);
     RandoopArgumentCollector.restoreJUnitClassName(config);
-  }
-
-  /**
-   * Converts the fully qualified name of a Java type into a package name and
-   * class name.
-   * 
-   * @param javaTypeName
-   * @return <code>String</code> array with 2 indices - first index is the
-   *         package name, second is the class name
-   */
-  private String[] seperateTypeName(String javaTypeName) {
-    int seperator = javaTypeName.lastIndexOf('.');
-    if (seperator == -1) {
-      String[] result = { IConstants.EMPTY_STRING, javaTypeName };
-      return result;
-    } else {
-      String packageName = javaTypeName.substring(0, seperator);
-      String className = javaTypeName.substring(seperator + 2);
-
-      String[] result = { packageName, className };
-      return result;
-    }
   }
 
   @Override
