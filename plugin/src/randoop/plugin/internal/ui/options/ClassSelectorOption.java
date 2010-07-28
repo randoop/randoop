@@ -158,7 +158,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fClassAddFromClasspaths.addSelectionListener(listener);
     
     if (hasResolveButton) {
-      fResolveClasses = SWTFactory.createPushButton(rightcomp, "Resolve Classes", null);
+      fResolveClasses = SWTFactory.createPushButton(rightcomp, "Resolve Missing Classes", null);
+      fResolveClasses.setToolTipText("Finds classes in the project's classpath\nthat match those that are missing");
       
       fResolveClasses.addSelectionListener(new SelectionAdapter() {
         @Override
