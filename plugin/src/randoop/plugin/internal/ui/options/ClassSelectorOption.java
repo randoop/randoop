@@ -63,8 +63,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Shell fShell;
   private ClassSelector fTypeSelector;
   private Tree fTypeTree;
-  private Button fClassUp;
-  private Button fClassDown;
   private Button fClassRemove;
   private Button fClassAddFromSources;
   private Button fClassAddFromClasspaths;
@@ -109,11 +107,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       
       @Override
       public void widgetSelected(SelectionEvent e) {
-        TreeItem[] moveables = fTypeSelector.getMoveableSelection();
-        boolean enabled = moveables != null;
-        fClassUp.setEnabled(enabled);
-        fClassDown.setEnabled(enabled);
-        
         fClassRemove.setEnabled(fTypeSelector.canRemoveFromSelection());
       }
 
@@ -123,24 +116,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       }
     });
     fTypeTree.addSelectionListener(listener);
-    
-    fClassUp = SWTFactory.createPushButton(rightcomp, "Up", null);
-    fClassUp.addSelectionListener(new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.moveSelectedTypesUp();
-      }
-    });
-    fClassUp.addSelectionListener(listener);
-    
-    fClassDown = SWTFactory.createPushButton(rightcomp, "Down", null);
-    fClassDown.addSelectionListener(new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.moveSelectedTypesDown();
-      }
-    });
-    fClassDown.addSelectionListener(listener);
     
     fClassRemove = SWTFactory.createPushButton(rightcomp, "Remove", null);
     fClassRemove.addSelectionListener(new SelectionAdapter() {
@@ -288,10 +263,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   @Override
   public IStatus canSave() {
     if (fRunnableContext == null || fShell == null || fTypeSelector == null
-        || fTypeTree == null || fClassUp == null || fClassDown == null
-        || fClassRemove == null || fClassAddFromSources == null
-        || fClassAddFromClasspaths == null || fSelectAll == null
-        || fSelectNone == null) {
+        || fTypeTree == null || fClassRemove == null || fClassAddFromSources == null
+        || fClassAddFromClasspaths == null || fSelectAll == null || fSelectNone == null) {
       
       return StatusFactory.ERROR_STATUS;
     }
