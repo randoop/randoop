@@ -124,7 +124,6 @@ public class TestGeneratorViewPart extends ViewPart {
           list.add(junitDriver);
           IStructuredSelection selection = new StructuredSelection(list);
           
-          // TODO: Is there a shared instance of JUnitLaunchShortcut?
           new JUnitLaunchShortcut().launch(selection, "run");
         }
       }
@@ -136,6 +135,7 @@ public class TestGeneratorViewPart extends ViewPart {
     runWithJUnitAction.setImageDescriptor(desc);
     
     relaunchAction = new Action("Regenerate tests") {
+      @Override
       public void run() {
         ILaunchConfiguration config = launch.getLaunchConfiguration();
         assert config != null; // TODO right?

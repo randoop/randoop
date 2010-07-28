@@ -602,7 +602,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void restoreDefaults() {
-    // TODO - do something
+    fTypeTree.removeAll();
   }
   
 }

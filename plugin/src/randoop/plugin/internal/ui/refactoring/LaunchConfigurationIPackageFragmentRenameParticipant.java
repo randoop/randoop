@@ -73,7 +73,6 @@ public class LaunchConfigurationIPackageFragmentRenameParticipant extends Rename
     
     for(ILaunchConfiguration config : configs) {
       // TODO: Check if change is needed first
-      
       Change c = new LaunchConfigurationTypeChange(config, newTypeMnemonicByOldTypeMnemonic);
       changes.add(c);
     }
