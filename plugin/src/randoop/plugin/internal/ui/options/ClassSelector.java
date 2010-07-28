@@ -152,7 +152,7 @@ public class ClassSelector {
         addClass(typeMnemonic, selectedTypes.contains(typeMnemonicString),
             methodsByType.get(typeMnemonicString), selectedMethods);
       } else {
-        TreeItem typeItem = addType(type, selectedTypes.contains(typeMnemonicString));
+        TreeItem typeItem = addClass(type, selectedTypes.contains(typeMnemonicString));
         
         for (TreeItem methodItem : typeItem.getItems()) {
           String methodMnemonic = getMnemonicString(methodItem);
@@ -245,25 +245,26 @@ public class ClassSelector {
     
     return classItem;
   }
-  
+
   /**
    * Adds a type to this tree. All of the types methods will also be added as
    * children to this tree.
    * 
    * @param type
-   * @return the <code>TreeItem</code> added to the <code>Tree</code> or
-   *         <code>null</code> if it was not added
+   * @return the <code>TreeItem</code> that already exists or was added to the
+   *         <code>Tree</code> for this class, or <code>null</code> if the class
+   *         was not added
    */
-  public TreeItem addType(IType type, boolean checked) {
+  public TreeItem addClass(IType type, boolean checked) {
     try {
       if (type == null || type.isInterface() || Flags.isAbstract(type.getFlags())) {
         return null;
       }
       
       TypeMnemonic typeMnemonic = new TypeMnemonic(type);
-      String fqname = typeMnemonic.getFullyQualifiedName();
       
-      TreeItem classItem = getClassItem(fqname);
+      // First, check if the class item already exists in the tree
+      TreeItem classItem = getClassItem(typeMnemonic);
       if (classItem != null) {
         return classItem;
       }
@@ -591,22 +592,14 @@ public class ClassSelector {
     }
   }
 
-  private TreeItem getClassItem(String fullyQualifiedClassName) throws JavaModelException {
-    String packageName = RandoopCoreUtil.getPackageName(fullyQualifiedClassName);
-    String className = RandoopCoreUtil.getClassName(fullyQualifiedClassName);
+  private TreeItem getClassItem(TypeMnemonic typeMnemonic) throws JavaModelException {
+    String fqname = typeMnemonic.getFullyQualifiedName();
+    String packageName = RandoopCoreUtil.getPackageName(fqname);
 
-    return getClassItem(packageName, className);
-  }
-  
-  private TreeItem getClassItem(String packageName, String className) throws JavaModelException {
-    String fqname = RandoopCoreUtil.getFullyQualifiedName(packageName, className);
-    
     for(TreeItem packageItem : fTypeTree.getItems()) {
       if (getMnemonicString(packageItem).equals(packageName)) {
         for (TreeItem classItem : packageItem.getItems()) {
-          String otherFqname = new TypeMnemonic(getMnemonicString(classItem)).getFullyQualifiedName();
-          
-          if (fqname.equals(otherFqname)) {
+          if (typeMnemonic.toString().equals(getMnemonicString(classItem))) {
             return classItem;
           }
         }
