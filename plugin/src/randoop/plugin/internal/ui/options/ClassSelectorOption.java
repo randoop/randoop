@@ -88,7 +88,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       final SelectionListener listener, boolean hasResolveButton) {
     
     fRunnableContext = runnableContext;
-    Group comp = SWTFactory.createGroup(parent, "Test Inputs", 2, 1, GridData.FILL_BOTH);
+    Group comp = SWTFactory.createGroup(parent, "Classes/Methods Under Test", 2, 1, GridData.FILL_BOTH);
     fShell = comp.getShell();
 
     final Composite leftcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_BOTH);
