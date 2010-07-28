@@ -96,7 +96,6 @@ public class TestGroupResources {
       if (!file.exists() || !file.isDirectory()) {
         // On some systems files and directories cannot be named the same
         // XXX - Handle this situation more elegantly
-        // XXX - Check if the folder name is valid (has no ':' etc.)
         Assert.isTrue(file.mkdirs());
       }
       
