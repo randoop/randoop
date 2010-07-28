@@ -174,8 +174,15 @@ public class ProjectOption extends Option {
       return StatusFactory.createErrorStatus(MessageFormat.format(
           "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
-    
-    // TODO: Check if the folder name is valid (has no ':' etc.)
+
+    final char[] ILLEGAL_CHARACTERS = { '\\', ':', '*', '`', '?', '"', '<', '>', '|' };
+    for (char c : ILLEGAL_CHARACTERS) {
+      if (outputSourceFolderName.contains(new Character(c).toString())) {
+        status = StatusFactory
+            .createErrorStatus("Output folder cannot contain any of the following characters: \\ : * ` ? \" < > |");
+        return status;
+      }
+    }
     IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputSourceFolderName);
     if (outputDir == null) {
       status = StatusFactory.createOkStatus("Output folder will be created on launch");
