@@ -96,10 +96,7 @@ public class RandoopArgumentCollector {
     fTimeLimit = Integer.parseInt(getTimeLimit(config));
 
     String outputSourceFolderName = getOutputDirectoryName(config);
-    IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(fJavaProject, outputSourceFolderName);
-    if (outputDir != null) {
-      fOutputDirectory = outputDir.getPath().makeRelative();
-    }
+    fOutputDirectory = fJavaProject.getPath().append(outputSourceFolderName).makeAbsolute();
     Assert.isNotNull(fOutputDirectory, "Output directory not specified"); //$NON-NLS-1$
 
     fJUnitPackageName = getJUnitPackageName(config);

@@ -175,20 +175,20 @@ public class ProjectOption extends Option {
           "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
     
-    IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputSourceFolderName);
-    if (outputDir == null) {
-      status = StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
-      return status;
-    } else if (!outputDir.exists()) {
-      status = StatusFactory.createErrorStatus(MessageFormat.format(
-          "Output Directory {0} does not exist", new Object[] { outputDir.getElementName() }));
-      return status;
-    } else if (!outputDir.getJavaProject().equals(javaProject)) {
-      status = StatusFactory.createErrorStatus(MessageFormat.format(
-          "Output Directory does not exist in project {0}",
-          new Object[] { javaProject.getElementName() }));
-      return status;
-    }
+//    IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputSourceFolderName);
+//    if (outputDir == null) {
+//      status = StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
+//      return status;
+//    } else if (!outputDir.exists()) {
+//      status = StatusFactory.createErrorStatus(MessageFormat.format(
+//          "Output Directory {0} does not exist", new Object[] { outputDir.getElementName() }));
+//      return status;
+//    } else if (!outputDir.getJavaProject().equals(javaProject)) {
+//      status = StatusFactory.createErrorStatus(MessageFormat.format(
+//          "Output Directory does not exist in project {0}",
+//          new Object[] { javaProject.getElementName() }));
+//      return status;
+//    }
 
     return StatusFactory.OK_STATUS;
   }
