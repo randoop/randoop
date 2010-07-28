@@ -77,7 +77,7 @@ public class IRandoopLaunchConfigurationConstants {
 
   public static final String DEFAULT_PROJECT = ""; //$NON-NLS-1$
   
-  public static final String DEFAULT_OUTPUT_DIRECTORY_NAME = ""; //$NON-NLS-1$
+  public static final String DEFAULT_OUTPUT_DIRECTORY_NAME = "test"; //$NON-NLS-1$
 
   public static final String DEFUALT_USE_LOCAL_TEMP_FOLDER = "false"; //$NON-NLS-1$
 
