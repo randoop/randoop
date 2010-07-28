@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.TypeMnemonic;
@@ -51,8 +52,10 @@ public class ClassSelector {
   
   private static final String ID_ELEMENT_TYPE = "ClassSelector.ID_ELEMENT_TYPE"; //$NON-NLS-1$
   
-  private static final String ID_MNEMONIC = "TypeSelector.ID_MNEMONIC"; //$NON-NLS-1$
+  private static final String ID_MNEMONIC = "ClassSelector.ID_MNEMONIC"; //$NON-NLS-1$
 
+  private static final String DEFAULT_PACKAGE_DISPLAY_NAME = "(default package)";
+  
   private Tree fTypeTree;
   private IJavaProject fJavaProject;
 
@@ -174,28 +177,29 @@ public class ClassSelector {
    * @param packageFragment
    *          <code>IPackageFragment</code> to add to the class tree
    * @return a new or pre-existing <code>TreeItem</code> containing to <code>IPackageFragment</code>
+   * @throws JavaModelException 
    */
   public TreeItem addPackage(String packageFragmentName) {
-    // Search for the item in the class tree
-    for(TreeItem item : fTypeTree.getItems()) {
-      String existingPackageName = getMnemonicString(item);
-      
-      if (packageFragmentName.equals(existingPackageName)) {
-        return item;
-      }
+    if (packageFragmentName == null)
+      return null;
+    
+    TreeItem packageItem = getPackageItem(packageFragmentName);
+    if(packageItem != null) {
+      return packageItem;
     }
     
+    // Search for the item in the class tree
+    String text = packageFragmentName;
+    if (text.isEmpty()) {
+      text = DEFAULT_PACKAGE_DISPLAY_NAME;
+    }
+    int insertionIndex = getInsertionIndex(fTypeTree.getItems(), text);
+    
     // Add the package to the class tree since it does not already exist
-    TreeItem root = new TreeItem(fTypeTree, SWT.NONE);
-
+    TreeItem root = new TreeItem(fTypeTree, SWT.NONE, insertionIndex);
     Image image = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 
     root.setImage(image);
-
-    String text = packageFragmentName;
-    if (text.isEmpty()) {
-      text = "(default package)";
-    }
     root.setText(text);
     
     setMnemonic(root, IJavaElement.PACKAGE_FRAGMENT, packageFragmentName);
@@ -212,15 +216,23 @@ public class ClassSelector {
    *         <code>null</code> if it was not added
    */
   public TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
+    // First, check if the class item already exists in the tree
+    TreeItem classItem = getClassItem(typeMnemonic);
+    if (classItem != null) {
+      return classItem;
+    }
+    
     String packageName = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
     TreeItem parent = addPackage(packageName);
-
-    TreeItem classItem = new TreeItem(parent, SWT.NONE);
+    
+    String text = typeMnemonic.getFullyQualifiedName();
+    int insertionIndex = getInsertionIndex(parent.getItems(), text);
+    classItem = new TreeItem(parent, SWT.NONE, insertionIndex);
 
     Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
     classItem.setImage(errorImage);
 
-    classItem.setText(typeMnemonic.getFullyQualifiedName());
+    classItem.setText(text);
     setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
 
     setChecked(classItem, classIsChecked);
@@ -245,7 +257,7 @@ public class ClassSelector {
     
     return classItem;
   }
-
+  
   /**
    * Adds a type to this tree. All of the types methods will also be added as
    * children to this tree.
@@ -271,13 +283,14 @@ public class ClassSelector {
       
       TreeItem parent = addPackage(type.getPackageFragment().getElementName());
 
-      classItem = new TreeItem(parent, SWT.NONE);
+      String text = typeMnemonic.getFullyQualifiedName();
+      int insertionIndex = getInsertionIndex(parent.getItems(), text);
+      classItem = new TreeItem(parent, SWT.NONE, insertionIndex);
 
       classItem.setImage(getImageForType(type));
-
-      classItem.setText(type.getFullyQualifiedName());
+      classItem.setText(text);
+      
       setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
-
       setMethods(classItem, type);
       
       setChecked(classItem, checked);
@@ -287,6 +300,17 @@ public class ClassSelector {
       RandoopPlugin.log(e);
       return null;
     }
+  }
+  
+  private int getInsertionIndex(TreeItem[] items, String text) {
+    int insertionIndex = 0;
+    for (TreeItem item : items) {
+      String otherText = item.getText();
+      if (text.compareToIgnoreCase(otherText) > 0) {
+        insertionIndex++;
+      }
+    }
+    return insertionIndex;
   }
   
   private static void setMethods(TreeItem classItem, IType type) throws JavaModelException {
@@ -592,7 +616,17 @@ public class ClassSelector {
     }
   }
 
-  private TreeItem getClassItem(TypeMnemonic typeMnemonic) throws JavaModelException {
+  private TreeItem getPackageItem(String packageFragmentName) {
+    for (TreeItem packageItem : fTypeTree.getItems()) {
+      if (getMnemonicString(packageItem).equals(packageFragmentName)) {
+        return packageItem;
+      }
+    }
+
+    return null;
+  }
+  
+  private TreeItem getClassItem(TypeMnemonic typeMnemonic) {
     String fqname = typeMnemonic.getFullyQualifiedName();
     String packageName = RandoopCoreUtil.getPackageName(fqname);
 
