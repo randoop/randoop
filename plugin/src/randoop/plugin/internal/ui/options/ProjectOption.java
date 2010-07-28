@@ -274,7 +274,7 @@ public class ProjectOption extends Option {
     ElementListSelectionDialog dialog = new ElementListSelectionDialog(
         getShell(), labelProvider);
     dialog.setTitle("Project Selection");
-    dialog.setMessage("Choose a project to constrain the search for test classes:");
+    dialog.setMessage("Choose a project to constrain the search for classes to test:");
     dialog.setElements(projects);
 
     IJavaProject javaProject = getJavaProject();
@@ -345,7 +345,7 @@ public class ProjectOption extends Option {
       ElementListSelectionDialog dialog = new ElementListSelectionDialog(
           getShell(), labelProvider);
       dialog.setTitle("Source Folder Selection");
-      dialog.setMessage("Choose a source folder to use for output of generated test classes:");
+      dialog.setMessage("Choose a source folder for the generated tests:");
       dialog.setElements(sourceFolders
           .toArray(new IPackageFragmentRoot[sourceFolders.size()]));
       dialog.setHelpAvailable(false);

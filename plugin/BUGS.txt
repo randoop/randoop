@@ -1,10 +1,6 @@
 
 PLUGIN BUGS
 
-* Run Configuration Tab: "Test Inputs" should be changed to "Classes under test"
-
-* [Usability] what do the Up/Down buttons do? Order shouldn't matter...
-
 * "Project Sources" dialog: When I first press "Project Sources", user
   presented with an empty window and no classes, and no indication of
   what user is to do. Should show a list of classes for the selected
@@ -23,9 +19,6 @@ PLUGIN BUGS
 * Run config, parameters tab: Thread Timeout, Null Ratio not working,
   I couldn't get Randoop to run without threads, and when changing the
   values for these fields, the "Apply" button stays greyed out.
-
-* RUn config: Incorrect window title and dialog in Output Folder ->
-  Search.
 
 * Plugin should use a default output folder ("tests") and package
   ("randoop" or some such). Default package is bad usage.
