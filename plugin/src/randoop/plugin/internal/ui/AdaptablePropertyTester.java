@@ -9,10 +9,6 @@ import org.eclipse.jdt.core.IJavaElement;
 public class AdaptablePropertyTester extends PropertyTester {
   private static final String PROPERTY_IS_TESTABLE = "isTestable"; //$NON-NLS-1$
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-   */
   @Override
   public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
     if (!(receiver instanceof IAdaptable)) {
@@ -32,7 +28,7 @@ public class AdaptablePropertyTester extends PropertyTester {
     throw new IllegalArgumentException("Unknown test property '" + property + "'"); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
-  private boolean isTestable(IJavaElement element) {
+  private static boolean isTestable(IJavaElement element) {
     switch (element.getElementType()) {
     case IJavaElement.PACKAGE_FRAGMENT_ROOT:
     case IJavaElement.PACKAGE_FRAGMENT:

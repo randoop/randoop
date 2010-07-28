@@ -30,7 +30,7 @@ public class ArrayListPropertyTester extends PropertyTester {
     throw new IllegalArgumentException("Unknown test property '" + property + "'"); //$NON-NLS-1$ //$NON-NLS-2$
   }
   
-  private boolean isAllInSameProject(ArrayList<IJavaElement> elements) {
+  private static boolean isAllInSameProject(ArrayList<IJavaElement> elements) {
     if(elements.isEmpty()) {
       return false;
     }
