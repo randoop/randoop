@@ -1,4 +1,4 @@
-package randoop.plugin.ui;
+package randoop.plugin.internal.ui;
 
 import java.util.ArrayList;
 
