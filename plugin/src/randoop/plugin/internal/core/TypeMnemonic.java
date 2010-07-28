@@ -21,10 +21,11 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 
 public class TypeMnemonic {
-  private final static String DELIMITER = "#"; //$NON-NLS-1$
-
+  public static final int LENGTH = 4;
+  
   private final IJavaProject fJavaProject;
   private final IClasspathEntry fClasspathEntry;
   private final IType fType;
@@ -80,8 +81,8 @@ public class TypeMnemonic {
   public TypeMnemonic(String mnemonic, IWorkspaceRoot root) {
     Assert.isLegal(mnemonic != null);
     
-    String[] s = mnemonic.split(DELIMITER);
-    Assert.isLegal(s.length == 4);
+    String[] s = mnemonic.split(IConstants.MNEMONIC_DELIMITER);
+    Assert.isLegal(s.length == LENGTH);
 
     fJavaProjectName = s[0];
     fClasspathKind = Integer.parseInt(s[1]);
@@ -394,11 +395,11 @@ public class TypeMnemonic {
     StringBuilder mnemonic = new StringBuilder();
 
     mnemonic.append(getJavaProjectName());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(getClasspathKind());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(getClasspath());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(getFullyQualifiedName());
 
     return mnemonic.toString();
