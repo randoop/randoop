@@ -4,7 +4,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.TestKinds;
 
 public class IRandoopLaunchConfigurationConstants {
-  // XXX should agree with plugin.xml
+  
   public static final String ID_RANDOOP_TEST_GENERATION = "randoop.plugin.core.launching.gentestsType"; //$NON-NLS-1$
   
   public static final String ATTR_PORT = RandoopPlugin.getPluginId() + ".PORT"; //$NON-NLS-1$

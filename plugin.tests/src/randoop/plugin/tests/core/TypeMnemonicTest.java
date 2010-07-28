@@ -49,7 +49,7 @@ public class TypeMnemonicTest {
       // Both the boundary project and kenken project reference the pathplanner
       // project in someway. Therefore, we should be able to reassign this type mnemonic to
       // each of these projects.
-//      assertNotNull(typeMnemonic.reassign(boundaryProject)); XXX - uncomment
+      assertNotNull(typeMnemonic.reassign(boundaryProject));
       assertNotNull(typeMnemonic.reassign(kenkenProject));
     }
     
