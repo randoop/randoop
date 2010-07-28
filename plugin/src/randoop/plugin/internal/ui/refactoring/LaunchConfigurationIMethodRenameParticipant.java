@@ -5,12 +5,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -19,16 +17,10 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MethodMnemonic;
-import randoop.plugin.internal.core.TypeMnemonic;
-import randoop.plugin.internal.ui.options.Mnemonics;
 
 public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipant {
   private MethodMnemonic fMethodMnemonic;
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-   */
   @Override
   protected boolean initialize(Object element) {
     Assert.isLegal(element instanceof IMethod);
@@ -42,10 +34,6 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-   */
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     List<Change> changes = new ArrayList<Change>();
@@ -67,10 +55,6 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
     return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-   */
   @Override
   public RefactoringStatus checkConditions(IProgressMonitor pm,
       CheckConditionsContext context) throws OperationCanceledException {
@@ -78,10 +62,6 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
     return new RefactoringStatus();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
-   */
   @Override
   public String getName() {
     return "Launch configuration participant";

@@ -1,8 +1,5 @@
 package randoop.plugin.internal.core;
 
-import java.util.HashSet;
-
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -11,7 +8,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -25,10 +21,11 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 
 public class TypeMnemonic {
-  private final static String DELIMITER = "#"; //$NON-NLS-1$
-
+  public static final int LENGTH = 4;
+  
   private final IJavaProject fJavaProject;
   private final IClasspathEntry fClasspathEntry;
   private final IType fType;
@@ -84,8 +81,8 @@ public class TypeMnemonic {
   public TypeMnemonic(String mnemonic, IWorkspaceRoot root) {
     Assert.isLegal(mnemonic != null);
     
-    String[] s = mnemonic.split(DELIMITER);
-    Assert.isLegal(s.length == 4);
+    String[] s = mnemonic.split(IConstants.MNEMONIC_DELIMITER);
+    Assert.isLegal(s.length == LENGTH);
 
     fJavaProjectName = s[0];
     fClasspathKind = Integer.parseInt(s[1]);
@@ -320,29 +317,8 @@ public class TypeMnemonic {
   }
 
   private static IType findType(IJavaProject javaProject, IClasspathEntry classpathEntry, String fqname) throws JavaModelException {
-    // TODO: Problem with classpath entries of type CPE_PROJECT
-    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
-    //    cpe.toString();
-    //        (java.lang.String) /Some Project[CPE_PROJECT][K_SOURCE][isExported:false][combine access rules:false]
-    //     
-    //    // Show that the referenced project exists and has a root containing source
-    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
-    //    IProject someProject = ResourcesPlugin.getWorkspace().getRoot().getProject(cpe.getPath().toString());
-    //    IJavaProject someJavaProject = (IJavaProject) someProject.getNature(JavaCore.NATURE_ID);
-    //    IPackageFragmentRoot pfr = someJavaProject.getPackageFragmentRoots()[0];
-    //    new Boolean(pfr.getKind() == IPackageFragmentRoot.K_SOURCE).toString();
-    //        (java.lang.String) true
-    //     
-    //    // From http://help.eclipse.org/helios/index.jsp?topic=/org.eclipse.jdt.doc.isv/reference/api/org/eclipse/jdt/core/IJavaProject.html
-    //    // "Returns the existing package fragment roots identified by the
-    //    // given entry. Note that a classpath entry that refers to another
-    //    // project may have more than one root (if that project has more
-    //    // than on root containing source), and classpath entries within
-    //    // the current project identify a single root."
-    //    IClasspathEntry cpe = javaProject.getRawClasspath()[8];
-    //    javaProject.findPackageFragmentRoots(cpe);
-    //        (org.eclipse.jdt.core.IPackageFragmentRoot[]) []
-
+    // TODO - Fix problem with classpath entries of type CPE_PROJECT:
+    // IJavaProject.findClasspathEntries() returns []
     
     IPackageFragmentRoot[] packageFragmentRoots = javaProject.findPackageFragmentRoots(classpathEntry);
 
@@ -357,28 +333,6 @@ public class TypeMnemonic {
       typeName = classFileName;
     }
     classFileName += ".class"; //$NON-NLS-1$
-
-    // TODO: In this one case, a 1 prefixed the fully qualified name, but not
-    // the element name even though
-    // the type was not anonymous:
-    //
-    // type.isAnonymous()
-    // (boolean) false
-    // type.getElementName()
-    // (java.lang.String) NullInputStream
-    // type.getFullyQualifiedName()
-    // (java.lang.String)
-    // com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility$1NullInputStream
-    // int i = 0;
-    // while (i <= typeName.length()) {
-    // String prefix = typeName.substring(0, i + 1);
-    //      if (prefix.matches("\\p{Digit}*")) { //$NON-NLS-1$
-    // i++;
-    // } else {
-    // break;
-    // }
-    // }
-    // typeName = typeName.substring(i < 0 ? 0 : i);
 
     for (IPackageFragmentRoot packageFragmentRoot : packageFragmentRoots) {
       IPackageFragment packageFragment = packageFragmentRoot.getPackageFragment(packageName);
@@ -441,11 +395,11 @@ public class TypeMnemonic {
     StringBuilder mnemonic = new StringBuilder();
 
     mnemonic.append(getJavaProjectName());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(getClasspathKind());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(getClasspath());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(getFullyQualifiedName());
 
     return mnemonic.toString();

@@ -11,11 +11,11 @@ public class RunResultsTree implements IRandoopTreeElement {
 
   private Failures failures;
   public TreeViewer viewer;
-  
+
   public RunResultsTree() {
     this.failures = new Failures();
   }
-  
+
   public void setFailures(Failures f) {
     this.failures = f;
     f.owner = this;
@@ -34,10 +34,10 @@ public class RunResultsTree implements IRandoopTreeElement {
   public IRandoopTreeElement getParent() {
     return null;
   }
-  
+
   public void add(ErrorRevealed err) {
     if (err == null) {
-      throw new IllegalArgumentException("err is null");
+      throw new IllegalArgumentException("err is null"); //$NON-NLS-1$
     }
     failures.add(err);
     if (viewer != null) {
@@ -45,7 +45,7 @@ public class RunResultsTree implements IRandoopTreeElement {
       viewer.expandAll();
     }
   }
-  
+
   public void reset() {
     failures = new Failures();
     if (viewer != null) {

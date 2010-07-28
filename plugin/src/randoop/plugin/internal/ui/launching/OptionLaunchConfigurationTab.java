@@ -9,7 +9,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
@@ -56,12 +55,6 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     fOptions.add(option);
   }
 
-  /*
-   * Implements a method in ILaunchConfigurationTab
-   * 
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#canSave()
-   */
   @Override
   public boolean canSave() {
     setErrorMessage(null);
@@ -88,12 +81,6 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     return true;
   }
 
-  /*
-   * Implements a method in ILaunchConfigurationTab
-   * 
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
-   */
   @Override
   public boolean isValid(ILaunchConfiguration config) {
     setErrorMessage(null);
@@ -135,12 +122,6 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     return false;
   }
 
-  /*
-   * Implements a method in ILaunchConfigurationTab
-   * 
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
-   */
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     for (IOption option : fOptions) {
@@ -148,12 +129,6 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     }
   }
 
-  /*
-   * Implements a method in ILaunchConfigurationTab
-   * 
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
-   */
   @Override
   public void initializeFrom(ILaunchConfiguration config) {
     for (IOption option : fOptions) {
@@ -161,16 +136,16 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     }
   }
 
-  /*
-   * Implements a method in ILaunchConfigurationTab
-   * 
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
-   */
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     for (IOption option : fOptions) {
       option.setDefaults(config);
+    }
+  }
+  
+  protected void restoreDefaults() {
+    for (IOption option : fOptions) {
+      option.restoreDefaults();
     }
   }
   

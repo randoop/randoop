@@ -16,6 +16,7 @@ public abstract class PositiveIntegerOption extends IntegerOption {
     fNonPosErrorMsg = nonPositiveIntErrorMsg;
   }
   
+  @Override
   protected IStatus validate(String text) {
     try {
       if (Integer.parseInt(text) < 1) {

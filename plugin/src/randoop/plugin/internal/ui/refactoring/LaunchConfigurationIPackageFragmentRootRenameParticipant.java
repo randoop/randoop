@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -22,10 +21,6 @@ public class LaunchConfigurationIPackageFragmentRootRenameParticipant extends Re
   private String fOldSourceFolderName;
   IPackageFragmentRoot pfr;
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-   */
   @Override
   protected boolean initialize(Object element) {
     
@@ -44,10 +39,6 @@ public class LaunchConfigurationIPackageFragmentRootRenameParticipant extends Re
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-   */
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     List<Change> changes = new ArrayList<Change>();
@@ -63,10 +54,6 @@ public class LaunchConfigurationIPackageFragmentRootRenameParticipant extends Re
     return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-   */
   @Override
   public RefactoringStatus checkConditions(IProgressMonitor pm,
       CheckConditionsContext context) throws OperationCanceledException {
@@ -74,12 +61,9 @@ public class LaunchConfigurationIPackageFragmentRootRenameParticipant extends Re
     return new RefactoringStatus();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
-   */
   @Override
   public String getName() {
     return "Launch configuration participant";
   }
+  
 }

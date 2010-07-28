@@ -1,4 +1,4 @@
-package randoop.plugin.internal.ui.launching;
+package randoop.plugin.internal.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,39 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 
-public class RandoopLaunchConfigurationUtil {
+public class RandoopCoreUtil {
+
+  // expects use of $
+  public static String getPackageName(String fullyQualifiedName) {
+    int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
+    
+    if (lastDelimiter == -1) {
+      return IConstants.EMPTY_STRING;
+    } else {
+      return fullyQualifiedName.substring(0, lastDelimiter);
+    }
+  }
+
+  public static String getClassName(String fullyQualifiedName) {
+    int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
+    
+    if (lastDelimiter == -1) {
+      return fullyQualifiedName;
+    } else {
+      return fullyQualifiedName.substring(lastDelimiter + 1);
+    }
+  }
+
+  public static String getFullyQualifiedName(String packageName, String className) {
+    if (packageName.equals(IConstants.EMPTY_STRING)) {
+      return className;
+    } else {
+      return packageName + '.' + className;
+    }
+  }
 
   public static IPackageFragmentRoot getPackageFragmentRoot(IJavaProject javaProject, String folder) {
     if (javaProject != null && javaProject.exists() && javaProject.isOpen()) {
@@ -47,7 +77,7 @@ public class RandoopLaunchConfigurationUtil {
   /**
    * 
    * @param projectName
-   * @return the Java project by the sepcific name in the workspace, or
+   * @return the Java project by the specific name in the workspace, or
    *         <code>null</code> if no Java project by the specified name was
    *         found
    */
@@ -70,7 +100,6 @@ public class RandoopLaunchConfigurationUtil {
     return null;
   }
   
-
   public static List<IType> findTypes(IJavaElement element, boolean ignoreJUnitTestCases, IProgressMonitor pm) {
     switch (element.getElementType()) {
     case IJavaElement.PACKAGE_FRAGMENT_ROOT:
@@ -130,12 +159,10 @@ public class RandoopLaunchConfigurationUtil {
         break;
       case IPackageFragmentRoot.K_SOURCE:
         for (ICompilationUnit cu : pf.getCompilationUnits()) {
-          for (IType t : cu.getAllTypes()) {
-            types.addAll(findTypes(cu, ignoreJUnitTestCases, pm));
+          types.addAll(findTypes(cu, ignoreJUnitTestCases, pm));
 
-            if (pm.isCanceled()) {
-              return types;
-            }
+          if (pm.isCanceled()) {
+            return types;
           }
         }
         break;
@@ -204,8 +231,7 @@ public class RandoopLaunchConfigurationUtil {
         return false;
       }
       if (ignoreJUnitTestCases) {
-        // TODO: make sure this is actually of type
-        // junit.framework.TestCase
+        // TODO: make sure this is actually of type junit.framework.TestCase
         String siName = type.getSuperclassName();
         if (siName != null && siName.equals("TestCase")) { //$NON-NLS-1$
           return false;

@@ -6,9 +6,12 @@ import org.eclipse.ui.PlatformUI;
 import randoop.plugin.internal.core.MutableBoolean;
 
 public class MessageUtil {
+  
   public static boolean openQuestion(final String message) {
     final MutableBoolean okToProceed = new MutableBoolean(false);
+    
     PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      @Override
       public void run() {
         okToProceed.setValue(MessageDialog.openQuestion(
             PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Randoop", message));
@@ -17,4 +20,5 @@ public class MessageUtil {
 
     return okToProceed.getValue();
   }
+  
 }

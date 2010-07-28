@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MethodMnemonic;
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.TypeMnemonic;
 
 /**
@@ -211,8 +212,8 @@ public class ClassSelector {
    *         <code>null</code> if it was not added
    */
   public TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
-    String[] splitName = Mnemonics.splitFullyQualifiedName(typeMnemonic.getFullyQualifiedName());
-    TreeItem parent = addPackage(splitName[0]);
+    String packageName = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
+    TreeItem parent = addPackage(packageName);
 
     TreeItem classItem = new TreeItem(parent, SWT.NONE);
 
@@ -691,14 +692,14 @@ public class ClassSelector {
   }
 
   private TreeItem getClassItem(String fullyQualifiedClassName) throws JavaModelException {
-    String packageName = Mnemonics.getPackageName(fullyQualifiedClassName);
-    String className = Mnemonics.getClassName(fullyQualifiedClassName);
+    String packageName = RandoopCoreUtil.getPackageName(fullyQualifiedClassName);
+    String className = RandoopCoreUtil.getClassName(fullyQualifiedClassName);
 
     return getClassItem(packageName, className);
   }
   
   private TreeItem getClassItem(String packageName, String className) throws JavaModelException {
-    String fqname = Mnemonics.getFullyQualifiedName(packageName, className);
+    String fqname = RandoopCoreUtil.getFullyQualifiedName(packageName, className);
     
     for(TreeItem packageItem : fTypeTree.getItems()) {
       if (getMnemonicString(packageItem).equals(packageName)) {
@@ -751,7 +752,7 @@ public class ClassSelector {
         TypeMnemonic typeMnemonic = new TypeMnemonic(getMnemonicString(classItem), getWorkspaceRoot());
         IType type = typeMnemonic.getType();
         if (type == null) {
-          type = fJavaProject.findType(type.getFullyQualifiedName(), (IProgressMonitor) null);
+          type = fJavaProject.findType(typeMnemonic.getFullyQualifiedName(), (IProgressMonitor) null);
           if (type != null) {
             typeMnemonic = new TypeMnemonic(type);
 

@@ -1,22 +1,22 @@
-package randoop.plugin.ui;
+package randoop.plugin.internal.ui;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 
-public class ArrayListPropertyTester extends PropertyTester {
+public class ListPropertyTester extends PropertyTester {
   private static final String PROPERTY_IS_ALL_IN_SAME_PROJECT = "isAllInSameProject"; //$NON-NLS-1$
   
   @SuppressWarnings("unchecked")
   @Override
   public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-    if (!(receiver instanceof ArrayList<?>)) {
+    if (!(receiver instanceof List<?>)) {
       throw new IllegalArgumentException(
           "Element must be of type 'ArrayList', is " + receiver == null ? "null" : receiver.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    ArrayList<?> receiverList = (ArrayList<?>) receiver;
+    List<?> receiverList = (List<?>) receiver;
 
     if (PROPERTY_IS_ALL_IN_SAME_PROJECT.equals(property)) {
       for (Object o : receiverList) {
@@ -24,13 +24,13 @@ public class ArrayListPropertyTester extends PropertyTester {
           return false;
         }
       }
-      return isAllInSameProject((ArrayList<IJavaElement>) receiverList);
+      return isAllInSameProject((List<IJavaElement>) receiverList);
     }
     
     throw new IllegalArgumentException("Unknown test property '" + property + "'"); //$NON-NLS-1$ //$NON-NLS-2$
   }
   
-  private boolean isAllInSameProject(ArrayList<IJavaElement> elements) {
+  private static boolean isAllInSameProject(List<IJavaElement> elements) {
     if(elements.isEmpty()) {
       return false;
     }

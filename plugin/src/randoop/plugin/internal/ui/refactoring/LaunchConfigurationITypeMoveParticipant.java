@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
@@ -20,16 +19,12 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.MoveParticipant;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.TypeMnemonic;
-import randoop.plugin.internal.ui.options.Mnemonics;
 
 public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
   private TypeMnemonic fTypeMnemonic;
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-   */
   @Override
   protected boolean initialize(Object element) {
     if (element instanceof IType) {
@@ -44,10 +39,6 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
     return false;
   }
 
-  /**
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
-   *      createChange(org.eclipse.core.runtime.IProgressMonitor)
-   */
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException {
     List<Change> changes = new ArrayList<Change>();
@@ -62,12 +53,12 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
       Assert.isTrue(pfr instanceof IPackageFragmentRoot);
       IClasspathEntry newClasspathEntry = ((IPackageFragmentRoot) pfr).getRawClasspathEntry();
       
-      String[] splitName = Mnemonics.splitFullyQualifiedName(fTypeMnemonic.getFullyQualifiedName());
-      splitName[0] = newPackageFragment.getElementName();
-      String fqname = Mnemonics.getFullyQualifiedName(splitName);
+      String oldFullyQualifiedName = fTypeMnemonic.getFullyQualifiedName();
+      String className = RandoopCoreUtil.getClassName(oldFullyQualifiedName);
+      String newFullyQualifiedName = RandoopCoreUtil.getFullyQualifiedName(newPackageFragment.getElementName(), className);
       
       TypeMnemonic newTypeMnemonic = new TypeMnemonic(fTypeMnemonic.getJavaProjectName(),
-          newClasspathEntry.getEntryKind(), newClasspathEntry.getPath(), fqname);
+          newClasspathEntry.getEntryKind(), newClasspathEntry.getPath(), newFullyQualifiedName);
       
       for(ILaunchConfiguration config : configs) {
         // TODO: Check if change is needed first
@@ -79,22 +70,15 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
     return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
-  /**
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
-   *      checkConditions(org.eclipse.core.runtime.IProgressMonitor,
-   *      org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-   */
   @Override
   public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) {
     // return OK status
     return new RefactoringStatus();
   }
 
-  /**
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName
-   *      ()
-   */
+  @Override
   public String getName() {
     return "Launch configuration participant";
   }
+  
 }

@@ -1,14 +1,8 @@
 package randoop.plugin.internal.ui.launching;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -16,16 +10,12 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
@@ -38,12 +28,12 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     Assert.isTrue(selection instanceof IStructuredSelection);
     final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
     
-    IJavaProject project = null;
+    IJavaProject javaProject = null;
     Object[] selected = structuredSelection.toArray();
     final IJavaElement[] elements;
 
     if (selected.length == 1 && selected[0] instanceof IJavaProject) {
-      project = (IJavaProject) selected[0];
+      javaProject = (IJavaProject) selected[0];
       elements = new IJavaElement[0];
     } else {
       // Ensure every selected object is an instance of IJavaElement that is
@@ -54,36 +44,31 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
         Assert.isTrue(selected[i] instanceof IJavaElement);
         IJavaElement e = (IJavaElement) selected[i];
 
-        if (project == null) {
-          project = e.getJavaProject();
+        if (javaProject == null) {
+          javaProject = e.getJavaProject();
         } else {
-          Assert.isTrue(e.getJavaProject().equals(project),
+          Assert.isTrue(e.getJavaProject().equals(javaProject),
               "All selected elements must be contained in the same Java project."); //$NON-NLS-1$
         }
         elements[i] = e;
       }
     }
-    
-    final IJavaProject javaProject = project;
-    
-    ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 
-    ILaunchConfigurationType randoopLaunchType = launchManager
-        .getLaunchConfigurationType(IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
-
-    ILaunchConfigurationWorkingCopy config = null;
     try {
-      config = randoopLaunchType.newInstance(null,
-          launchManager.generateUniqueLaunchConfigurationNameFrom("RandoopTest")); //$NON-NLS-1$
+      ILaunchConfigurationType randoopLaunchType = getLaunchType();
+      ILaunchManager launchManager = getLaunchManager();
+
+      ILaunchConfigurationWorkingCopy config = randoopLaunchType.newInstance(null,
+          launchManager.generateLaunchConfigurationName("RandoopTest")); //$NON-NLS-1$
 
       RandoopWizardRunner runner = new RandoopWizardRunner(javaProject, elements, config);
       PlatformUI.getWorkbench().getDisplay().syncExec(runner);
 
       if (runner.getReturnCode() == WizardDialog.OK) {
         RandoopArgumentCollector args = new RandoopArgumentCollector(config, RandoopPlugin.getWorkspaceRoot());
-        config.rename(launchManager.generateUniqueLaunchConfigurationNameFrom(args.getJUnitClassName()));
+        config.rename(launchManager.generateLaunchConfigurationName(args.getJUnitClassName()));
         config.doSave();
-        
+
         DebugUITools.launch(config, "run"); //$NON-NLS-1$
       }
     } catch (CoreException ce) {
@@ -92,7 +77,6 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
   }
   
   private class RandoopWizardRunner implements Runnable {
-    
     IJavaProject fJavaProject;
     IJavaElement[] fElements;
     ILaunchConfigurationWorkingCopy fConfig;
@@ -110,7 +94,7 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
       try {
         // The shell is not null
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        assertNotNull(shell);
+        Assert.isNotNull(shell);
 
         RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(fJavaProject, fElements, fConfig);
         WizardDialog dialog = new WizardDialog(shell, wizard);
@@ -129,88 +113,8 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
 
   @Override
   public void launch(IEditorPart editor, String mode) {
-    System.out.println(":Launching2");
   }
 
-  /**
-   * Returns a listing of <code>ILaunchConfiguration</code>s that correspond to
-   * the specified test inputs.
-   */
-  protected List<ILaunchConfiguration> collectConfigurations(/* test inputs */) {
-    ILaunchManager manager = getLaunchManager();
-    ILaunchConfigurationType type = getLaunchType();
-    if (type != null) {
-      try {
-        ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-        ArrayList<ILaunchConfiguration> list = new ArrayList<ILaunchConfiguration>();
-        
-        for (ILaunchConfiguration config : configs) {
-          if (config.exists()) {
-            // Check if this matches
-
-            // list.add(configs[i]);
-          }
-        }
-        return list;
-      } catch (CoreException e) {
-      }
-    }
-    return new ArrayList<ILaunchConfiguration>();
-  }
-
-  /**
-   * Prompts the user to choose a launch configuration to run from the given
-   * list and returns the chosen configuration or <code>null</code> if the given
-   * list is empty or Cancel was pressed
-   * 
-   * @param configs
-   *          list of configurations to choose from
-   * 
-   * @return the chosen configuration or <code>null</code>
-   */
-  public static ILaunchConfiguration chooseConfig(
-      List<ILaunchConfiguration> configs) {
-    if (configs.isEmpty()) {
-      return null;
-    }
-    ILabelProvider labelProvider = DebugUITools.newDebugModelPresentation();
-    ElementListSelectionDialog dialog = new ElementListSelectionDialog(RandoopPlugin.getDisplay().getActiveShell(), labelProvider);
-    dialog.setElements(configs.toArray(new ILaunchConfiguration[configs.size()]));
-    dialog.setTitle("Randoop Configuration Selection");
-    dialog.setMessage("&Choose an Randoop configuration to run:");
-    dialog.setMultipleSelection(false);
-    
-    int result = dialog.open();
-    labelProvider.dispose();
-    
-    if (result == Window.OK) {
-      return (ILaunchConfiguration) dialog.getFirstResult();
-    }
-    return null;
-  }
-
-  /**
-   * Creates and returns a new Randoop launch configuration for the given test
-   * inputs.
-   * 
-   * @return new launch configuration
-   */
-  private ILaunchConfiguration newConfiguration(/* test inputs */) {
-    ILaunchConfigurationType type = getLaunchType();
-    try {
-      ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, "Name");
-      
-      // Set attributes
-      
-      
-      // Set mapped attributes
-      return workingCopy.doSave();
-    } catch (CoreException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-  
   /**
    * Returns the Randoop launch configuration type.
    * 
@@ -231,4 +135,5 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
     return manager;
   }
+  
 }

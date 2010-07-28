@@ -1,11 +1,8 @@
 package randoop.plugin.internal.ui.launching;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,29 +33,25 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fMaxTestsWritten;
   private IOption fMaxTestsPerFile;
   
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-   */
+  @Override
   public void createControl(Composite parent) {
-    Composite comp = SWTFactory.createComposite(parent, 1, 1,
-        GridData.FILL_HORIZONTAL);
+    Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(comp);
 
     createGeneralGroup(comp);
     createGenerationLimitGroup(comp);
     createOutputRestrictionsGroup(comp);
 
-    Button bRestoreDefaults = new Button(comp, 0);
-    bRestoreDefaults.setText("Restore Defaults");
-    bRestoreDefaults.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
-    bRestoreDefaults.addSelectionListener(new SelectionAdapter() {
+    Button restoreDefaults = new Button(comp, 0);
+    restoreDefaults.setText("Restore Defaults");
+    restoreDefaults.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+    restoreDefaults.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-
+        restoreDefaults();
       }
     });
-    bRestoreDefaults.setEnabled(true);
+    restoreDefaults.setEnabled(true);
   }
 
   private void createGeneralGroup(Composite parent) {
@@ -106,8 +99,8 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   }
 
   private void createGenerationLimitGroup(Composite parent) {
-    Group group = SWTFactory.createGroup(parent, "Generation Limit", 2, 1,
-        GridData.FILL_HORIZONTAL);
+    Group group = SWTFactory
+        .createGroup(parent, "Generation Limit", 2, 1, GridData.FILL_HORIZONTAL);
 
     GridLayout ld = (GridLayout) group.getLayout();
     ld.marginWidth = 1;
@@ -160,19 +153,11 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     maxTestsPerFile.addModifyListener(getBasicModifyListener());
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-   */
   @Override
   public String getName() {
     return "Parameters";
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-   */
   @Override
   public String getId() {
     return "randoop.plugin.ui.launching.parametersTab"; //$NON-NLS-1$

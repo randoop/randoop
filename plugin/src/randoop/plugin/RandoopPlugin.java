@@ -26,8 +26,6 @@ import randoop.plugin.internal.core.TestGroupResources;
  * <code>RandoopActivator</code> also provides static convenience methods for
  * logging statuses and exceptions and for accessing the <code>Shell</code> that
  * the shared instance is running in.
- * 
- * TODO: The UI and core plug-ins should be separate.
  */
 public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
@@ -204,9 +202,8 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * 
    * @return local path to the , or <code>null</code> if no the
    *         <code>IPath</code> could not be created
-   * TODO: Make private
    */
-  public static IPath getFullPath(IPath localPath) {
+  private static IPath getFullPath(IPath localPath) {
     URL url = FileLocator.find(getDefault().getBundle(), localPath, null);
     try {
       url = FileLocator.toFileURL(url);
@@ -234,4 +231,5 @@ public class RandoopPlugin extends AbstractUIPlugin {
   public static IWorkspaceRoot getWorkspaceRoot() {
     return ResourcesPlugin.getWorkspace().getRoot();
   }
+  
 }

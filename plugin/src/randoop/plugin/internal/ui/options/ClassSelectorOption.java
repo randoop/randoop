@@ -2,7 +2,6 @@ package randoop.plugin.internal.ui.options;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -32,7 +31,6 @@ import org.eclipse.jdt.ui.dialogs.ITypeInfoFilterExtension;
 import org.eclipse.jdt.ui.dialogs.ITypeInfoRequestor;
 import org.eclipse.jdt.ui.dialogs.TypeSelectionExtension;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -52,13 +50,13 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MethodMnemonic;
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.ClasspathLabelProvider;
 import randoop.plugin.internal.ui.MessageUtil;
-import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
   private IRunnableContext fRunnableContext;
@@ -244,12 +242,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       switch (element.getElementType()) {
       case IJavaElement.PACKAGE_FRAGMENT_ROOT:
       case IJavaElement.PACKAGE_FRAGMENT:
-        for (IType type : RandoopLaunchConfigurationUtil.findTypes(element, false, null)) {
+        for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
           fTypeSelector.addType(type, false);
         }
         break;
       case IJavaElement.COMPILATION_UNIT:
-        for (IType type : RandoopLaunchConfigurationUtil.findTypes(element, false, null)) {
+        for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
           fTypeSelector.addType(type, true);
         }
         break;
@@ -289,13 +287,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
   @Override
   public IStatus canSave() {
-    if (fRunnableContext == null || fShell == null || fTypeSelector == null || fTypeTree == null
-        || fClassUp == null || fClassDown == null || fClassRemove == null || fClassAddFromSources == null
+    if (fRunnableContext == null || fShell == null || fTypeSelector == null
+        || fTypeTree == null || fClassUp == null || fClassDown == null
+        || fClassRemove == null || fClassAddFromSources == null
         || fClassAddFromClasspaths == null || fSelectAll == null
         || fSelectNone == null) {
-      return StatusFactory.createErrorStatus("TestInputOption incorrectly initialized");
+      
+      return StatusFactory.ERROR_STATUS;
     }
-    
+
     return StatusFactory.OK_STATUS;
   }
 
@@ -311,7 +311,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   public void initializeFrom(ILaunchConfiguration config) {
     if (fTypeTree != null) {
       String projectName = RandoopArgumentCollector.getProjectName(config);
-      fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(projectName);
+      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
       
       List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
       List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
@@ -506,7 +506,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
             boolean doesEnclose = true;
             for (IType type : types) {
-              doesEnclose &= RandoopLaunchConfigurationUtil.isValidTestInput(type, fIgnoreJUnit);
+              doesEnclose &= RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit);
             }
             return doesEnclose;
           }
@@ -522,7 +522,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       if (fSearchScope.encloses(element)) {
         if (element instanceof IType) {
           IType type = (IType) element;
-          return RandoopLaunchConfigurationUtil.isValidTestInput(type, fIgnoreJUnit);
+          return RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit);
         }
         return true;
       }
@@ -583,7 +583,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   @Override
   public void handleEvent(IOptionChangeEvent event) {
     if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
-      fJavaProject = RandoopLaunchConfigurationUtil.getProjectFromName(event.getValue());
+      fJavaProject = RandoopCoreUtil.getProjectFromName(event.getValue());
 
       boolean enabled = fJavaProject != null;
       fClassAddFromSources.setEnabled(enabled);
@@ -602,7 +602,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void restoreDefaults() {
-    // TODO - do something
+    fTypeTree.removeAll();
   }
   
 }

@@ -8,13 +8,14 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 
 /**
  * Returns a mnemonic for this method. The mnemonic can be used to reconstruct
  * information about the <code>IMethod</code>
  */
 public class MethodMnemonic {
-  private final static String DELIMITER = "%"; //$NON-NLS-1$
+  public final static int LENGTH = 3;
 
   private final IMethod fMethod;
 
@@ -48,15 +49,7 @@ public class MethodMnemonic {
   }
   
   public MethodMnemonic(String mnemonic) {
-    String[] s = mnemonic.split(DELIMITER);
-    Assert.isLegal(s.length == 4);
-
-    fDeclaringTypeMnemonic = new TypeMnemonic(s[0]);
-    fMethodName = s[1];
-    fIsConstructor = Boolean.parseBoolean(s[2]);
-    fMethodSignature = s[3];
-
-    fMethod = null;
+    this(mnemonic, null);
   }
   
   /**
@@ -67,22 +60,17 @@ public class MethodMnemonic {
    *           if the mnemonic is incorrectly formatted
    */
   public MethodMnemonic(String mnemonic, IWorkspaceRoot root) {
-    String[] s = mnemonic.split(DELIMITER);
-    Assert.isLegal(s.length == 4);
+    String[] s = mnemonic.split(IConstants.MNEMONIC_DELIMITER);
+    Assert.isLegal(s.length == TypeMnemonic.LENGTH + LENGTH);
 
-    String declaringTypeMnemonicString = s[0];
-    fMethodName = s[1];
-    fIsConstructor = Boolean.parseBoolean(s[2]);
-    fMethodSignature = s[3];
+    int typeMnemonicEnd = mnemonic .lastIndexOf(s[TypeMnemonic.LENGTH - 1]) + s[TypeMnemonic.LENGTH - 1].length();
+    TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic.substring(0, typeMnemonicEnd));
+    fMethodName = s[TypeMnemonic.LENGTH];
+    fIsConstructor = Boolean.parseBoolean(s[TypeMnemonic.LENGTH + 1]);
+    fMethodSignature = s[TypeMnemonic.LENGTH + 2];
 
-    TypeMnemonic declaringTypeMnemonic = null;
-    IMethod method = null;
-    declaringTypeMnemonic = new TypeMnemonic(declaringTypeMnemonicString, root);
-    
-    method = findMethod(declaringTypeMnemonic.getType(), fMethodName, fIsConstructor, fMethodSignature);
-
-    fDeclaringTypeMnemonic = declaringTypeMnemonic;
-    fMethod = method;
+    fDeclaringTypeMnemonic = new TypeMnemonic(typeMnemonic.toString(), root);
+    fMethod = findMethod(fDeclaringTypeMnemonic.getType(), fMethodName, fIsConstructor, fMethodSignature);
   }
 
   private static IMethod findMethod(IType type, String name, boolean isConstructor, String signature) {
@@ -133,11 +121,11 @@ public class MethodMnemonic {
     StringBuilder mnemonic = new StringBuilder();
     
     mnemonic.append(fDeclaringTypeMnemonic.toString());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(getMethodName());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(isConstructor());
-    mnemonic.append(DELIMITER);
+    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
     mnemonic.append(getMethodSignature());
 
     return mnemonic.toString();

@@ -26,8 +26,8 @@ public class CounterPanel extends Composite {
 		setLayout(gridLayout);
 
 		errors = 0;
-		fNumberOfTests= createLabel("Tests generated:", "0"); //$NON-NLS-1$
-		fNumberOfErrors= createLabel("Failures:", "0"); //$NON-NLS-1$
+		fNumberOfTests= createLabel("Tests generated:", "0"); //$NON-NLS-2$
+		fNumberOfErrors= createLabel("Failures:", "0"); //$NON-NLS-2$
 	}
 
 	private Text createLabel(String name, String init) {

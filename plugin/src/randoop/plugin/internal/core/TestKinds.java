@@ -79,4 +79,5 @@ public enum TestKinds {
 
     return texts;
   }
+  
 }

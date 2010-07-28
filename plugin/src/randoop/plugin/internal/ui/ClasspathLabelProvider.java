@@ -107,4 +107,5 @@ public class ClasspathLabelProvider extends LabelProvider {
     }
     return super.getText(element);
   }
+  
 }

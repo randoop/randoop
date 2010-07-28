@@ -1,28 +1,14 @@
-package randoop.plugin.ui;
+package randoop.plugin.internal.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.jdt.core.IClassFile;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 
 public class AdaptablePropertyTester extends PropertyTester {
   private static final String PROPERTY_IS_TESTABLE = "isTestable"; //$NON-NLS-1$
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
-   */
   @Override
   public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
     if (!(receiver instanceof IAdaptable)) {
@@ -42,7 +28,7 @@ public class AdaptablePropertyTester extends PropertyTester {
     throw new IllegalArgumentException("Unknown test property '" + property + "'"); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
-  private boolean isTestable(IJavaElement element) {
+  private static boolean isTestable(IJavaElement element) {
     switch (element.getElementType()) {
     case IJavaElement.PACKAGE_FRAGMENT_ROOT:
     case IJavaElement.PACKAGE_FRAGMENT:

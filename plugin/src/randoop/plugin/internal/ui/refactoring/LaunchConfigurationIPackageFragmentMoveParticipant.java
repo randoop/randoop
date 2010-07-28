@@ -24,10 +24,15 @@ import randoop.plugin.internal.core.TypeMnemonic;
 public class LaunchConfigurationIPackageFragmentMoveParticipant extends MoveParticipant {
   private IPackageFragment fPackageFragment;
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-   */
+  @Override
+  protected boolean initialize(Object element) {
+    if (element instanceof IPackageFragment) {
+      fPackageFragment = (IPackageFragment) element;
+      return true;
+    }
+    return false;
+  }
+
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     List<Change> changes = new ArrayList<Change>();
@@ -52,48 +57,30 @@ public class LaunchConfigurationIPackageFragmentMoveParticipant extends MovePart
         }
         break;
       }
-
+  
       IClasspathEntry newClasspathEntry = ((IPackageFragmentRoot) destination).getRawClasspathEntry();
-
+  
       HashMap<String, String> newTypeMnemonicByOldTypeMnemonic = new HashMap<String, String>();
       for (IType type : affectedTypes) {
         TypeMnemonic oldTypeMnemonic = new TypeMnemonic(type);
-
+  
         TypeMnemonic newTypeMnemonic = new TypeMnemonic(oldTypeMnemonic.getJavaProjectName(),
             newClasspathEntry.getEntryKind(), newClasspathEntry.getPath(),
             oldTypeMnemonic.getFullyQualifiedName());
-
+  
         newTypeMnemonicByOldTypeMnemonic.put(oldTypeMnemonic.toString(), newTypeMnemonic.toString());
       }
-
+  
       for (ILaunchConfiguration config : configs) {
         // TODO: Check if change is needed first
-
         Change c = new LaunchConfigurationTypeChange(config, newTypeMnemonicByOldTypeMnemonic);
         changes.add(c);
       }
     }
-
+  
     return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
-  
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-   */
-  @Override
-  protected boolean initialize(Object element) {
-    if (element instanceof IPackageFragment) {
-      fPackageFragment = (IPackageFragment) element;
-      return true;
-    }
-    return false;
-  }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-   */
   @Override
   public RefactoringStatus checkConditions(IProgressMonitor pm,
       CheckConditionsContext context) throws OperationCanceledException {
@@ -101,12 +88,9 @@ public class LaunchConfigurationIPackageFragmentMoveParticipant extends MovePart
     return new RefactoringStatus();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
-   */
   @Override
   public String getName() {
     return "Launch configuration participant";
   }
+  
 }

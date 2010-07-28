@@ -17,16 +17,12 @@ import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.TypeMnemonic;
-import randoop.plugin.internal.ui.options.Mnemonics;
 
 public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant {
   private TypeMnemonic fTypeMnemonic;
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
-   */
   @Override
   protected boolean initialize(Object element) {
     Assert.isLegal(element instanceof IType);
@@ -40,10 +36,6 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
-   */
   @Override
   public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
     List<Change> changes = new ArrayList<Change>();
@@ -54,10 +46,11 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
     int classpathKind = fTypeMnemonic.getClasspathKind();
     IPath classpath = fTypeMnemonic.getClasspath();
     
-    String[] splitName = Mnemonics.splitFullyQualifiedName(fTypeMnemonic.getFullyQualifiedName());
-    splitName[1] = newName; 
-    String fullyQualifiedTypeName = Mnemonics.getFullyQualifiedName(splitName);
-    TypeMnemonic newTypeMnemonic = new TypeMnemonic(javaProjectName, classpathKind, classpath, fullyQualifiedTypeName);
+    String oldFullyQualifiedName = fTypeMnemonic.getFullyQualifiedName();
+    String packageName = RandoopCoreUtil.getPackageName(oldFullyQualifiedName);
+    String newFullyQualifiedName = RandoopCoreUtil.getFullyQualifiedName(packageName, newName);
+    
+    TypeMnemonic newTypeMnemonic = new TypeMnemonic(javaProjectName, classpathKind, classpath, newFullyQualifiedName);
 
     for(ILaunchConfiguration config : configs) {
       // TODO: Check if change is needed first
@@ -68,10 +61,6 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
     return RandoopRefactoringUtil.createChangeFromList(changes, "Launch configuration updates");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
-   */
   @Override
   public RefactoringStatus checkConditions(IProgressMonitor pm,
       CheckConditionsContext context) throws OperationCanceledException {
@@ -79,10 +68,6 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
     return new RefactoringStatus();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
-   */
   @Override
   public String getName() {
     return "Launch configuration participant";

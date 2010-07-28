@@ -35,7 +35,6 @@ import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
-import randoop.plugin.internal.core.MutableBoolean;
 import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
@@ -52,17 +51,8 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     fMessageReceiver = null;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse
-   * .debug.core.ILaunchConfiguration, java.lang.String,
-   * org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-   */
   @Override
-  public void launch(ILaunchConfiguration configuration, String mode,
-      ILaunch launch, IProgressMonitor monitor) throws CoreException {
+  public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
     System.out.println("Begin launch"); //$NON-NLS-1$
     
     final ILaunch theLaunch = launch;
@@ -75,7 +65,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       return;
 
     RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
-    IStatus status = args.getStatus();
+    IStatus status = args.checkForConflicts();
     if (status.getSeverity() == IStatus.ERROR) {
       informAndAbort(status);
     } else if (status.getSeverity() == IStatus.WARNING) {
@@ -85,11 +75,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     }
     
     TestGroupResources testGroupResources = new TestGroupResources(args, monitor);
-
-    status = testGroupResources.getStatus();
-    if (status.getSeverity() == IStatus.ERROR) {
-      informAndAbort(status);
-    }
 
     fPort = RandoopArgumentCollector.getPort(configuration);
     boolean useDefault = (fPort == IConstants.INVALID_PORT);
@@ -136,7 +121,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     // Search for similarly named files in the output directory and warn the user
     // if any are found. Similarly named files match the pattern <ClassName>[0-9]*.java
-    IPath outputDirPath = testGroupResources.getOutputPath();
+    IPath outputDirPath = testGroupResources.getOutputLocation();
     IResource outputDirResource = root.findMember(outputDirPath);
     
     // Check if the output directory exists
@@ -172,6 +157,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     collectProgramArguments(testGroupResources, programArguments);
 
     // VM-specific attributes
+    @SuppressWarnings("rawtypes")
     Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
     // Classpath
@@ -180,7 +166,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     cpList.add(RandoopPlugin.getRandoopJar().toOSString());
     cpList.add(RandoopPlugin.getPlumeJar().toOSString());
     
-    for (IPath path : testGroupResources.getClasspath()) {
+    for (IPath path : testGroupResources.getClasspathLocations()) {
       cpList.add(path.makeRelative().toOSString());
     }
     String[] classpath = cpList.toArray(new String[0]);
@@ -244,8 +230,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   protected void collectExecutionArguments(ILaunchConfiguration configuration,
       List<String> vmArguments, List<String> programArguments)
       throws CoreException {
-    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
-
     // add program & VM arguments provided by getProgramArguments and
     // getVMArguments
     String pgmArgs = getProgramArguments(configuration);
@@ -309,13 +293,13 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   private boolean showStatusMessage(final IStatus status) {
     final boolean[] success = new boolean[] { false };
     RandoopPlugin.getDisplay().syncExec(new Runnable() {
+      @Override
       public void run() {
         Shell shell = RandoopPlugin.getActiveWorkbenchShell();
         if (shell == null)
           shell = RandoopPlugin.getDisplay().getActiveShell();
         if (shell != null) {
-          MessageDialog.openInformation(shell, "Problems Launching Randoop",
-              status.getMessage());
+          MessageDialog.openInformation(shell, "Problems Launching Randoop", status.getMessage());
           success[0] = true;
         }
       }
@@ -323,12 +307,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     return success[0];
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#
-   * verifyMainTypeName(org.eclipse.debug.core.ILaunchConfiguration)
-   */
   @Override
   public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
     return "randoop.main.Main"; //$NON-NLS-1$
@@ -337,4 +315,5 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   private static IWorkspaceRoot getWorkspaceRoot() {
     return ResourcesPlugin.getWorkspace().getRoot();
   }
+  
 }

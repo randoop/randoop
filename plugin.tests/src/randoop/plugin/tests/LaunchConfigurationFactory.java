@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -22,10 +20,10 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.junit.Assert;
 
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.launching.RandoopLaunchConfigurationUtil;
 
 public class LaunchConfigurationFactory {
   private static final Random RAND = new Random(0);
@@ -105,7 +103,7 @@ public class LaunchConfigurationFactory {
     case IPackageFragmentRoot.K_BINARY:
       for (IClassFile cf : pf.getClassFiles()) {
         if (RAND.nextDouble() < ratio) {
-          types.addAll(RandoopLaunchConfigurationUtil.findTypes(cf, true, null));
+          types.addAll(RandoopCoreUtil.findTypes(cf, true, null));
           count++;
         }
 
@@ -117,7 +115,7 @@ public class LaunchConfigurationFactory {
     case IPackageFragmentRoot.K_SOURCE:
       for (ICompilationUnit cu : pf.getCompilationUnits()) {
         if (RAND.nextDouble() < ratio) {
-          types.addAll(RandoopLaunchConfigurationUtil.findTypes(cu, true, null));
+          types.addAll(RandoopCoreUtil.findTypes(cu, true, null));
           count++;
         }
 
