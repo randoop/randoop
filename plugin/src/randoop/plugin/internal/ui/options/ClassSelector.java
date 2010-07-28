@@ -225,7 +225,7 @@ public class ClassSelector {
     String packageName = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
     TreeItem parent = addPackage(packageName);
     
-    String text = typeMnemonic.getFullyQualifiedName();
+    String text = RandoopCoreUtil.getClassName(typeMnemonic.getFullyQualifiedName());
     int insertionIndex = getInsertionIndex(parent.getItems(), text);
     classItem = new TreeItem(parent, SWT.NONE, insertionIndex);
 
@@ -283,7 +283,7 @@ public class ClassSelector {
       
       TreeItem parent = addPackage(type.getPackageFragment().getElementName());
 
-      String text = typeMnemonic.getFullyQualifiedName();
+      String text = RandoopCoreUtil.getClassName(typeMnemonic.getFullyQualifiedName());
       int insertionIndex = getInsertionIndex(parent.getItems(), text);
       classItem = new TreeItem(parent, SWT.NONE, insertionIndex);
 
