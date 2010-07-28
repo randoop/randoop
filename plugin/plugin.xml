@@ -27,14 +27,14 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            class="randoop.plugin.ui.AdaptablePropertyTester"
+            class="randoop.plugin.internal.ui.AdaptablePropertyTester"
             id="randoop.plugin.adaptablePropertyTester"
             namespace="randoop.adaptable"
             properties="isTestable"
             type="org.eclipse.core.runtime.IAdaptable">
       </propertyTester>
       <propertyTester
-            class="randoop.plugin.ui.ArrayListPropertyTester"
+            class="randoop.plugin.internal.ui.ArrayListPropertyTester"
             id="randoop.plugin.arraylistPropertyTester"
             namespace="randoop.arraylist"
             properties="isAllInSameProject"
@@ -72,7 +72,7 @@
       <shortcut
             class="randoop.plugin.internal.ui.launching.RandoopLaunchShortcut"
             icon="icons/config.png"
-            id="randoop.plugin.ui.launchin.gentestsShortcut"
+            id="randoop.plugin.ui.launching.gentestsShortcut"
             label="Randoop Test Input"
             modes="run">
          <contextualLaunch>
