@@ -49,7 +49,6 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 	      }
 	    }
 	  }
-
 	  
 //	  // TODO error message if junit is not in classpath of project under test.
 	  private void createAndOpenFile(FailingMember unitTest) {
@@ -69,11 +68,10 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 	      
 	    IFile file = project.getFile(junitFilePath);
 	    
-	    /// XXX TODO What is the right way to handle this exception??
 	    try {
         file.refreshLocal(IResource.DEPTH_ONE, null);
       } catch (CoreException e) {
-        throw new RuntimeException(e);
+        // Do nothing, the user can refresh the file themselves
       }
 
 	    IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
