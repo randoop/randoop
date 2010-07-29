@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!--
+This example shows coordinating between 2 threads using
+mutexes and sleep. Thread 1 should execute after thread 2.
+-->
+
+<jelly xmlns="jelly:core" xmlns:threads="jelly:threads">
+
+    <threads:mutex var="mutex"/>
+
+    <threads:thread var="thread1">
+        <!-- give the other thread a chance to get the mutex -->
+        <threads:sleep for="100"/>
+
+        <!-- get the mutex -->
+        <threads:synchronize mutex="${mutex}">
+
+            <whitespace>
+                [thread1]: finally I got it
+            </whitespace>
+
+        </threads:synchronize>
+    </threads:thread>
+
+    <threads:thread>
+        <!-- get the mutex -->
+        <threads:synchronize mutex="${mutex}">
+
+            <whitespace>
+                [thread2]: making the other thread wait for 2 secs
+            </whitespace>
+
+            <!-- make the other thread wait -->
+            <threads:sleep for="2000"/>
+        </threads:synchronize>
+    </threads:thread>
+
+    <whitespace>
+        [main]: waiting for threads to finish
+    </whitespace>
+
+    <threads:join thread="${thread1}"/>
+
+    <whitespace>
+        [main]: threads are now done
+    </whitespace>
+
+</jelly>

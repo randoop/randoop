@@ -1,0 +1,41 @@
+
+PLUGIN BUGS
+
+* "Project Sources" dialog: When I first press "Project Sources", user
+  presented with an empty window and no classes, and no indication of
+  what user is to do. Should show a list of classes for the selected
+  project, or something like that. Also, the Project Sources class
+  selection dialog changes behavior on subsequent presses: it seems to
+  remember which classes I searched for in earlier dialogs, and shows
+  those classes in subsequent dialogs, which is confusing.
+
+* Cannot add from project classpath entry or library classpath entry
+
+* The Classpath tab is in the Randoop tab group, but this should not
+  be visible, and it should have no affect launching
+
+* As I use the plugin in an example use, many errors show up in the
+  Error Log window of the test Eclipse application.
+
+* [Usability] When showing dialog "Randoop found similarly named files
+ that may be overwritten by the generated tests", would be clearer to
+ see the files in question.
+
+* Run config, parameters tab: Thread Timeout, Null Ratio not working,
+  I couldn't get Randoop to run without threads, and when changing the
+  values for these fields, the "Apply" button stays greyed out.
+
+* Sometimes, pressing the "Regenerate tests" button results in NPE on
+  MessageViewListener.
+
+* When invoking Randoop, it and other plugin jars should come after
+  user classes in classpath, otherwise Randoop-specific classes
+  (e.g. graph.Node in randoop.jar) can shadow user classes. The real
+  solution here is actually to rename all randoop classes more
+  uniquely, to avoid clashes.
+
+* [Feature request, after beta release] Refresh generated directories
+  in package explorer upon completion of generation.
+
+* [Feature request, after beta release] Add buttom to remove all
+  Randoop-generate files.
