@@ -9,6 +9,8 @@ PLUGIN BUGS
   remember which classes I searched for in earlier dialogs, and shows
   those classes in subsequent dialogs, which is confusing.
 
+* Cannot add from project classpath entry or library classpath entry
+
 * The Classpath tab is in the Randoop tab group, but this should not
   be visible, and it should have no affect launching
 
