@@ -51,8 +51,10 @@ public class ClassSelector {
   
   private static final String ID_ELEMENT_TYPE = "ClassSelector.ID_ELEMENT_TYPE"; //$NON-NLS-1$
   
-  private static final String ID_MNEMONIC = "TypeSelector.ID_MNEMONIC"; //$NON-NLS-1$
+  private static final String ID_MNEMONIC = "ClassSelector.ID_MNEMONIC"; //$NON-NLS-1$
 
+  private static final String DEFAULT_PACKAGE_DISPLAY_NAME = "(default package)";
+  
   private Tree fTypeTree;
   private IJavaProject fJavaProject;
 
@@ -66,7 +68,7 @@ public class ClassSelector {
    * @param selectedTypes 
    * @param availableTypes 
    */
-  public ClassSelector(Tree classTree) {
+  ClassSelector(Tree classTree) {
     Assert.isLegal(classTree != null, "The Tree cannot be null"); //$NON-NLS-1$
 //    Assert.isLegal(classTree.getItemCount() == 0, "The Tree must be empty"); //$NON-NLS-1$
     Assert.isLegal((classTree.getStyle() & SWT.CHECK) != 0, "The Tree must use the SWT.CHECK style"); //$NON-NLS-1$
@@ -97,7 +99,7 @@ public class ClassSelector {
    * @param classTree
    *          empty tree that can be used to add
    */
-  public ClassSelector(Tree classTree, IJavaProject javaProject, List<String> availableTypes,
+  ClassSelector(Tree classTree, IJavaProject javaProject, List<String> availableTypes,
       List<String> selectedTypes, List<String> availableMethods, List<String> selectedMethods) {
 
     this(classTree);
@@ -152,7 +154,7 @@ public class ClassSelector {
         addClass(typeMnemonic, selectedTypes.contains(typeMnemonicString),
             methodsByType.get(typeMnemonicString), selectedMethods);
       } else {
-        TreeItem typeItem = addType(type, selectedTypes.contains(typeMnemonicString));
+        TreeItem typeItem = addClass(type, selectedTypes.contains(typeMnemonicString));
         
         for (TreeItem methodItem : typeItem.getItems()) {
           String methodMnemonic = getMnemonicString(methodItem);
@@ -174,28 +176,29 @@ public class ClassSelector {
    * @param packageFragment
    *          <code>IPackageFragment</code> to add to the class tree
    * @return a new or pre-existing <code>TreeItem</code> containing to <code>IPackageFragment</code>
+   * @throws JavaModelException 
    */
-  public TreeItem addPackage(String packageFragmentName) {
-    // Search for the item in the class tree
-    for(TreeItem item : fTypeTree.getItems()) {
-      String existingPackageName = getMnemonicString(item);
-      
-      if (packageFragmentName.equals(existingPackageName)) {
-        return item;
-      }
+  TreeItem addPackage(String packageFragmentName) {
+    if (packageFragmentName == null)
+      return null;
+    
+    TreeItem packageItem = getPackageItem(packageFragmentName);
+    if(packageItem != null) {
+      return packageItem;
     }
     
+    // Search for the item in the class tree
+    String text = packageFragmentName;
+    if (text.isEmpty()) {
+      text = DEFAULT_PACKAGE_DISPLAY_NAME;
+    }
+    int insertionIndex = getInsertionIndex(fTypeTree.getItems(), text);
+    
     // Add the package to the class tree since it does not already exist
-    TreeItem root = new TreeItem(fTypeTree, SWT.NONE);
-
+    TreeItem root = new TreeItem(fTypeTree, SWT.NONE, insertionIndex);
     Image image = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 
     root.setImage(image);
-
-    String text = packageFragmentName;
-    if (text.isEmpty()) {
-      text = "(default package)";
-    }
     root.setText(text);
     
     setMnemonic(root, IJavaElement.PACKAGE_FRAGMENT, packageFragmentName);
@@ -211,16 +214,24 @@ public class ClassSelector {
    * @return the <code>TreeItem</code> added to the <code>Tree</code> or
    *         <code>null</code> if it was not added
    */
-  public TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
+  TreeItem addClass(TypeMnemonic typeMnemonic, boolean classIsChecked, List<String> methods, List<String> selectedMethods) {
+    // First, check if the class item already exists in the tree
+    TreeItem classItem = getClassItem(typeMnemonic);
+    if (classItem != null) {
+      return classItem;
+    }
+    
     String packageName = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
     TreeItem parent = addPackage(packageName);
-
-    TreeItem classItem = new TreeItem(parent, SWT.NONE);
+    
+    String text = RandoopCoreUtil.getClassName(typeMnemonic.getFullyQualifiedName());
+    int insertionIndex = getInsertionIndex(parent.getItems(), text);
+    classItem = new TreeItem(parent, SWT.NONE, insertionIndex);
 
     Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
     classItem.setImage(errorImage);
 
-    classItem.setText(typeMnemonic.getFullyQualifiedName());
+    classItem.setText(text);
     setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
 
     setChecked(classItem, classIsChecked);
@@ -251,32 +262,34 @@ public class ClassSelector {
    * children to this tree.
    * 
    * @param type
-   * @return the <code>TreeItem</code> added to the <code>Tree</code> or
-   *         <code>null</code> if it was not added
+   * @return the <code>TreeItem</code> that already exists or was added to the
+   *         <code>Tree</code> for this class, or <code>null</code> if the class
+   *         was not added
    */
-  public TreeItem addType(IType type, boolean checked) {
+  TreeItem addClass(IType type, boolean checked) {
     try {
       if (type == null || type.isInterface() || Flags.isAbstract(type.getFlags())) {
         return null;
       }
       
       TypeMnemonic typeMnemonic = new TypeMnemonic(type);
-      String fqname = typeMnemonic.getFullyQualifiedName();
       
-      TreeItem classItem = getClassItem(fqname);
+      // First, check if the class item already exists in the tree
+      TreeItem classItem = getClassItem(typeMnemonic);
       if (classItem != null) {
         return classItem;
       }
       
       TreeItem parent = addPackage(type.getPackageFragment().getElementName());
 
-      classItem = new TreeItem(parent, SWT.NONE);
+      String text = RandoopCoreUtil.getClassName(typeMnemonic.getFullyQualifiedName());
+      int insertionIndex = getInsertionIndex(parent.getItems(), text);
+      classItem = new TreeItem(parent, SWT.NONE, insertionIndex);
 
       classItem.setImage(getImageForType(type));
-
-      classItem.setText(type.getFullyQualifiedName());
+      classItem.setText(text);
+      
       setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
-
       setMethods(classItem, type);
       
       setChecked(classItem, checked);
@@ -286,6 +299,17 @@ public class ClassSelector {
       RandoopPlugin.log(e);
       return null;
     }
+  }
+  
+  private int getInsertionIndex(TreeItem[] items, String text) {
+    int insertionIndex = 0;
+    for (TreeItem item : items) {
+      String otherText = item.getText();
+      if (text.compareToIgnoreCase(otherText) > 0) {
+        insertionIndex++;
+      }
+    }
+    return insertionIndex;
   }
   
   private static void setMethods(TreeItem classItem, IType type) throws JavaModelException {
@@ -338,7 +362,7 @@ public class ClassSelector {
     return null;
   }
 
-  public List<String> getAllClasses() {
+  List<String> getAllClasses() {
     List<String> types = new ArrayList<String>();
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -356,7 +380,7 @@ public class ClassSelector {
    * 
    * @return list of handlers for types that are fully checked (not grayed)
    */
-  public List<String> getCheckedClasses() {
+  List<String> getCheckedClasses() {
     List<String> classes = new ArrayList<String>();
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -378,7 +402,7 @@ public class ClassSelector {
    * 
    * @return list
    */
-  public List<String> getAllMethods() {
+  List<String> getAllMethods() {
     List<String> types = new ArrayList<String>();
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -400,7 +424,7 @@ public class ClassSelector {
    * 
    * @return list
    */
-  public List<String> getCheckedMethods() {
+  List<String> getCheckedMethods() {
     List<String> types = new ArrayList<String>();
 
     for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -542,17 +566,37 @@ public class ClassSelector {
       checkItems(items[i], checked);
     }
   }
-
-  TreeItem[] getMoveableSelection() {
-    TreeItem[] roots = getSelectedPackageFragments();
+  
+  /**
+   * Returns <code>true</code> if some of the selected <code>TreeItem</code>s
+   * can be removed from the <code>Tree</code>
+   */
+  boolean canRemoveFromSelection() {
+    TreeItem[] packages = getSelectedPackageFragments();
     TreeItem[] classes = getSelectedClasses();
+
+    return packages.length != 0 || classes.length != 0;
+  }
+  
+  void removeSelectedTypes() {
+    TreeItem[] packages = getSelectedPackageFragments();
+    TreeItem[] classes = getSelectedClasses();
+
+    for (TreeItem packageItem : packages) {
+      packageItem.removeAll();
+      packageItem.dispose();
+    }
     
-    if (roots.length != 0 && classes.length == 0) {
-      return roots;
-    } else if (roots.length == 0 && classes.length != 0) {
-      return classes;
-    } else {
-      return null;
+    for (TreeItem classItem : classes) {
+      if (!classItem.isDisposed()) {
+        classItem.removeAll();
+        TreeItem packageItem = classItem.getParentItem();
+        classItem.dispose();
+
+        if (packageItem.getItemCount() == 0) {
+          packageItem.dispose();
+        }
+      }
     }
   }
   
@@ -582,131 +626,37 @@ public class ClassSelector {
 
     return classes.toArray(new TreeItem[classes.size()]);
   }
-  
-  public void moveSelectedTypesUp() {
-    moveSelectedTypes(true);
-  }
 
-  public void moveSelectedTypesDown() {
-    moveSelectedTypes(false);
-  }
-  
-  private void moveSelectedTypes(boolean up) {
-    TreeItem[] selectedRoots = getMoveableSelection();
-
-    if (selectedRoots != null) {
-      if (up) {
-        for (int i = 0; i < selectedRoots.length; i++) {
-          moveItem(selectedRoots[i], true);
-        }
-      } else {
-        for (int i = selectedRoots.length - 1; i >= 0; i--) {
-          moveItem(selectedRoots[i], false);
-        }
-      }
-    }
-  }
-  
-  private TreeItem moveItem(TreeItem oldItem, boolean up) {
-    TreeItem parent = oldItem.getParentItem();
-    
-    int direction = up ? -1 : 2;
-    TreeItem newItem;
-    if (parent == null) {
-      int index = fTypeTree.indexOf(oldItem);
-      newItem = new TreeItem(fTypeTree, SWT.NONE, index + direction);
-    } else {
-      int index = parent.indexOf(oldItem);
-      newItem = new TreeItem(parent, SWT.NONE, index + direction);
-    }
-    
-    copy(oldItem, newItem);
-    
-    return newItem;
-  }
-
-  private void copy(TreeItem oldItem, TreeItem newItem) {
-    newItem.setChecked(oldItem.getChecked());
-    newItem.setGrayed(oldItem.getGrayed());
-    newItem.setText(oldItem.getText());
-    newItem.setImage(oldItem.getImage());
-    setMnemonic(newItem, getType(oldItem), getMnemonicString(oldItem));
-
-    TreeItem children[] = oldItem.getItems();
-    for (TreeItem oldChild : children) {
-      TreeItem newChild = new TreeItem(newItem, SWT.NONE);
-      copy(oldChild, newChild);
-      
-      oldChild.dispose();
-    }
-    
-    oldItem.dispose();
-  }
-
-  /**
-   * Returns <code>true</code> if some of the selected <code>TreeItem</code>s
-   * can be removed from the <code>Tree</code>
-   */
-  boolean canRemoveFromSelection() {
-    TreeItem[] items = fTypeTree.getSelection();
-
-    for (TreeItem item : items) {
-      // Only remove package fragments or classes (roots or their children)
-      if (item.getParentItem() == null || item.getParentItem().getParentItem() == null) {
-        return true;
-      }
-    }
-    
-    return false;
-  }
-  
-  public void removeSelectedTypes() {
-    TreeItem[] items = fTypeTree.getSelection();
-
-    for (TreeItem item : items) {
-      // Only remove package fragments or classes (roots or their children)
-      if (item.getParentItem() == null) {
-        item.dispose();
-      } else if (item.getParentItem().getParentItem() == null) {
-        TreeItem parent = item.getParentItem();
-        item.dispose();
-        
-        // If their are not classes left in the package fragment, dispose it
-        if(parent.getItemCount() == 0) {
-          parent.dispose();
-        }
-      }
-    }
-  }
-
-  public void checkAll() {
+  void checkAll() {
     for(TreeItem rootItem : fTypeTree.getItems()) {
       checkRootItem(rootItem, true);
     }
   }
 
-  public void uncheckAll() {
+  void uncheckAll() {
     for(TreeItem rootItem : fTypeTree.getItems()) {
       checkRootItem(rootItem, false);
     }
   }
 
-  private TreeItem getClassItem(String fullyQualifiedClassName) throws JavaModelException {
-    String packageName = RandoopCoreUtil.getPackageName(fullyQualifiedClassName);
-    String className = RandoopCoreUtil.getClassName(fullyQualifiedClassName);
+  private TreeItem getPackageItem(String packageFragmentName) {
+    for (TreeItem packageItem : fTypeTree.getItems()) {
+      if (getMnemonicString(packageItem).equals(packageFragmentName)) {
+        return packageItem;
+      }
+    }
 
-    return getClassItem(packageName, className);
+    return null;
   }
   
-  private TreeItem getClassItem(String packageName, String className) throws JavaModelException {
-    String fqname = RandoopCoreUtil.getFullyQualifiedName(packageName, className);
-    
+  private TreeItem getClassItem(TypeMnemonic typeMnemonic) {
+    String fqname = typeMnemonic.getFullyQualifiedName();
+    String packageName = RandoopCoreUtil.getPackageName(fqname);
+
     for(TreeItem packageItem : fTypeTree.getItems()) {
       if (getMnemonicString(packageItem).equals(packageName)) {
         for (TreeItem classItem : packageItem.getItems()) {
-          String otherFqname = new TypeMnemonic(getMnemonicString(classItem)).getFullyQualifiedName();
-          
-          if (fqname.equals(otherFqname)) {
+          if (typeMnemonic.toString().equals(getMnemonicString(classItem))) {
             return classItem;
           }
         }
@@ -728,7 +678,7 @@ public class ClassSelector {
     parentItem.setGrayed(false);
   }
   
-  public void resolveMissingClasses() throws JavaModelException {
+  void resolveMissingClasses() throws JavaModelException {
     Assert.isNotNull(fJavaProject);
 
     Map<String, List<MethodMnemonic>> checkedMethodsByFQTypeName = new HashMap<String, List<MethodMnemonic>>();
@@ -798,7 +748,7 @@ public class ClassSelector {
    * 
    * @param javaProject
    */
-  public void setJavaProject(IJavaProject javaProject) {
+  void setJavaProject(IJavaProject javaProject) {
     fJavaProject = javaProject;
     
     if (fJavaProject == null) {

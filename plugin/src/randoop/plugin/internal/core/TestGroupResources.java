@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,6 +22,7 @@ import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -79,7 +82,60 @@ public class TestGroupResources {
     
     writeMethods();
     
+    IPath fullOutputDirPath = args.getOutputDirectory();
     String packagePath = args.getJUnitPackageName().replace('.', '/');
+    IJavaProject javaProject = args.getJavaProject();
+    Assert.isTrue(javaProject.getPath().equals(fullOutputDirPath.uptoSegment(1)));
+    IPath outputDirPath = fullOutputDirPath.removeFirstSegments(1);
+    
+    IPackageFragmentRoot pfr = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputDirPath.toString());
+    if (pfr == null) {
+      // Make the directory
+      IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(fullOutputDirPath);
+      File file = folder.getLocation().toFile();
+      if (!file.exists() || !file.isDirectory()) {
+        // On some systems files and directories cannot be named the same
+        // XXX - Handle this situation more elegantly
+        Assert.isTrue(file.mkdirs());
+      }
+      
+      List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(Arrays.asList(javaProject
+          .getRawClasspath()));
+      
+      IContainer container = folder;
+      while ((pfr == null || !pfr.exists()) && container.getParent() != null && container.getParent() instanceof IFolder) {
+        container = container.getParent();
+        pfr = javaProject.getPackageFragmentRoot(container);
+      }
+      if (pfr != null && pfr.exists()) {
+        IClasspathEntry originalEntry = pfr.getRawClasspathEntry();
+        Assert.isTrue(originalEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE);
+
+        IPath suffix = folder.getFullPath()
+            .removeFirstSegments(container.getFullPath().segmentCount()).addTrailingSeparator();
+        List<IPath> exclusionPatterns = new ArrayList<IPath>(Arrays.asList(originalEntry
+            .getExclusionPatterns()));
+        if (!exclusionPatterns.contains(suffix)) {
+          exclusionPatterns.add(suffix);
+        }
+
+        IClasspathEntry replacementEntry = JavaCore.newSourceEntry(originalEntry.getPath(),
+            originalEntry.getInclusionPatterns(),
+            exclusionPatterns.toArray(new IPath[exclusionPatterns.size()]),
+            originalEntry.getOutputLocation(), originalEntry.getExtraAttributes());
+
+        for (int i = 0; i < entries.size(); i++) {
+          if (entries.get(i).equals(originalEntry)) {
+            entries.set(i, replacementEntry);
+          }
+        }
+      }
+      IClasspathEntry newEntry = JavaCore.newSourceEntry(folder.getFullPath());
+      entries.add(newEntry);
+      
+      javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
+    }
+
     fOoutputLocation = args.getOutputDirectory().append(packagePath);
   }
 
