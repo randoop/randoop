@@ -67,7 +67,7 @@ public class IRandoopLaunchConfigurationConstants {
   
   public static final String DEFAULT_JUNIT_PACKAGE_NAME = ""; //$NON-NLS-1$
   
-  public static final String DEFAULT_JUNIT_CLASS_NAME = "RandoopTest"; //$NON-NLS-1$
+  public static final String DEFAULT_JUNIT_CLASS_NAME = "randoop.RandoopTest"; //$NON-NLS-1$
   
   public static final String DEFAULT_MAXIMUM_TESTS_WRITTEN = "100000000"; //$NON-NLS-1$
   
@@ -77,7 +77,7 @@ public class IRandoopLaunchConfigurationConstants {
 
   public static final String DEFAULT_PROJECT = ""; //$NON-NLS-1$
   
-  public static final String DEFAULT_OUTPUT_DIRECTORY_NAME = ""; //$NON-NLS-1$
+  public static final String DEFAULT_OUTPUT_DIRECTORY_NAME = "test"; //$NON-NLS-1$
 
   public static final String DEFUALT_USE_LOCAL_TEMP_FOLDER = "false"; //$NON-NLS-1$
 

@@ -8,10 +8,12 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.PlatformUI;
 
@@ -33,18 +35,15 @@ public class MessageViewListener implements IMessageListener {
   @Override
   public void handleMessage(IMessage m) {
     if (m instanceof RandoopStarted) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      RandoopPlugin.getDisplay().syncExec(new Runnable() {
           @Override
           public void run() {
-            fViewPart.getProgressBar().start();
-            fViewPart.getCounterPanel().reset();
-            fViewPart.randoopErrors.reset();
-            
+            fViewPart.startNewLaunch();
           }
         });
     } else if (m instanceof PercentDone) {
       final PercentDone p = (PercentDone)m;
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      RandoopPlugin.getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           fViewPart.getProgressBar().setPercentDone(p.getPercentDone());
@@ -53,7 +52,7 @@ public class MessageViewListener implements IMessageListener {
       });
     } else if (m instanceof ErrorRevealed) {
       final ErrorRevealed err = (ErrorRevealed)m;
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      RandoopPlugin.getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           fViewPart.getProgressBar().error();
@@ -63,30 +62,56 @@ public class MessageViewListener implements IMessageListener {
       });
     } else if (m instanceof CreatedJUnitFile) {
       final CreatedJUnitFile fileCreated = (CreatedJUnitFile) m;
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+      
+      RandoopPlugin.getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
+          // Only worry about driver files
+          if (!fileCreated.isDriver())
+            return;
+          
           try {
             File f = fileCreated.getFile();
-
-            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            System.out.println("@@@" + f.toString());
-            IResource driver = root.findMember(new Path(f.toString()));
+            IPath path = new Path(f.toString());
             
-            // TODO root may be null. If it is, notify user that the given
-            // file was not found.
+            IProject project = root.getProject(path.segment(0));
+            Assert.isTrue(project.exists());
 
-            IProject project = driver.getProject();
-            IJavaProject jproject = (IJavaProject) project
-                .getNature(JavaCore.NATURE_ID);
-            IJavaElement element = JavaCore.create(driver, jproject);
+            IJavaProject javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
+            Assert.isNotNull(javaProject);
+            
+            // Search for the package fragment root which is containing this JUnit file
+            // so that we can quickly perform a refresh and see the new file
+            IPackageFragmentRoot outputPfr = null;
+            int matchingSegmentCount = 0;
+            for (IPackageFragmentRoot pfr : javaProject.getPackageFragmentRoots()) {
+              if(pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                IPath pfrPath = pfr.getPath();
+                if (pfrPath.isPrefixOf(path)) {
+                  int newMatchingSegmentCount = pfrPath.segmentCount();
+                  if (matchingSegmentCount < newMatchingSegmentCount) {
+                    matchingSegmentCount = newMatchingSegmentCount;
+                    outputPfr = pfr;
+                  }
+                }
+              }
+            }
+            
+            Assert.isNotNull(outputPfr);
+            outputPfr.getCorrespondingResource().refreshLocal(IResource.DEPTH_INFINITE, null);
+            
+            IResource driverResource = root.findMember(path);
 
-            Assert.isTrue(element instanceof ICompilationUnit);
-            element.getCorrespondingResource().refreshLocal(
-                IResource.DEPTH_ONE, null);
+            if (driverResource != null) {
+              Assert.isTrue(driverResource.getProject().equals(javaProject.getProject()));
+              IJavaElement driverElement = JavaCore.create(driverResource, javaProject);
+              Assert.isTrue(driverElement instanceof ICompilationUnit);
 
-            if (fileCreated.isDriver()) {
-              fViewPart.setDriver((ICompilationUnit) element);
+              fViewPart.setDriver((ICompilationUnit) driverElement);
+            } else {
+              // TODO root may be null. If it is, notify user that the given file was not found.
+              
             }
           } catch (CoreException e) {
             RandoopPlugin.log(e);
