@@ -178,5 +178,9 @@ public class TestGeneratorViewPart extends ViewPart {
 
   public void setDriver(ICompilationUnit driver) {
     junitDriver = driver;
+    if (junitDriver != null) {
+      debugWithJUnitAction.setEnabled(true);
+      runWithJUnitAction.setEnabled(true);
+    }
   }
 }
