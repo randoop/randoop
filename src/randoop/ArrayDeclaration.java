@@ -134,7 +134,8 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
       StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
+      if (!GenInputsAbstract.long_format
+          && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
         b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
       } else {
         b.append(inputVars.get(i).getName());
