@@ -70,8 +70,14 @@ public abstract class EnablementOption extends Option {
 
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fEnablement != null && fEnabledOption != null)
-      fEnabledOption.performApply(config); 
+    if (fEnablement != null && fEnabledOption != null) {
+      boolean enabled = fEnablement.getSelection();
+
+      setEnabled(config, enabled);
+      if (enabled) {
+        fEnabledOption.performApply(config);
+      }
+    }
   }
 
   @Override
@@ -81,4 +87,9 @@ public abstract class EnablementOption extends Option {
   }
   
   protected abstract void setDefaultEnablement(ILaunchConfigurationWorkingCopy config);
+  
+  protected abstract boolean isEnabled(ILaunchConfiguration config);
+  
+  protected abstract void setEnabled(ILaunchConfigurationWorkingCopy config, boolean enabled);
+  
 }

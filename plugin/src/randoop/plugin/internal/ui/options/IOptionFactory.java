@@ -144,6 +144,16 @@ public class IOptionFactory {
     public void restoreDefaults() {
       fEnablement.setSelection(Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
     }
+
+    @Override
+    protected boolean isEnabled(ILaunchConfiguration config) {
+      return RandoopArgumentCollector.getUseThreads(config);
+    }
+
+    @Override
+    protected void setEnabled(ILaunchConfigurationWorkingCopy config, boolean enabled) {
+      RandoopArgumentCollector.setUseThreads(config, enabled);
+    }
     
   }
   
@@ -196,6 +206,16 @@ public class IOptionFactory {
     @Override
     public void restoreDefaults() {
       fEnablement.setSelection(Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+    }
+    
+    @Override
+    protected boolean isEnabled(ILaunchConfiguration config) {
+      return RandoopArgumentCollector.getUseNull(config);
+    }
+
+    @Override
+    protected void setEnabled(ILaunchConfigurationWorkingCopy config, boolean enabled) {
+      RandoopArgumentCollector.setUseNull(config, enabled);
     }
     
   }
