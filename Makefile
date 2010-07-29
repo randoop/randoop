@@ -56,7 +56,7 @@ clean:
 # Build Randoop.
 build: bin randoop_agent.jar
 
-bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
+bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES) lib/plume.jar
 	mkdir -p bin
 	@echo ${JAVAC_COMMAND} -Xlint -Xlint:unchecked -g -d bin ...
 	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
@@ -518,6 +518,16 @@ utils/plume-lib:
 	mkdir -p utils
 	cd utils && hg clone https://plume-lib.googlecode.com/hg/ plume-lib
 
+plume-lib-update: utils/plume-lib
+	cd utils && hg pull -u
+
+.PHONY: utils/plume-lib/java/plume.jar
+utils/plume-lib/java/plume.jar:
+	make -C utils/plume-lib/java plume.jar
+
+lib/plume.jar: utils/plume-lib/java/plume.jar
+	cp -pf $< $@
+
 # List of .java files is from GenTests.java's "new Options" expression.
 GENTESTS_OPTIONS_JAVA = \
       src/randoop/Globals.java \
@@ -531,7 +541,7 @@ GENTESTS_OPTIONS_JAVA = \
 
 # "build" is a prerequisite because javadoc reads .class files to determine
 # annotations.
-manual: utils/plume-lib build
+manual: plume-lib-update build
 	cp -pf doc/index.html doc/index.html-old
 	javadoc -quiet -doclet plume.OptionsDoclet -docfile doc/index.html-old -outfile doc/index.html -quiet ${GENTESTS_OPTIONS_JAVA}
 	rm -f doc/index.html-old
