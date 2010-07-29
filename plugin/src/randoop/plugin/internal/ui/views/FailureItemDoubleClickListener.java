@@ -5,8 +5,11 @@ import java.io.StringReader;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
@@ -22,7 +25,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopCoreUtil;
+import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.model.resultstree.FailingMember;
 import randoop.plugin.model.resultstree.UnitTest;
@@ -48,26 +53,27 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 	  
 //	  // TODO error message if junit is not in classpath of project under test.
 	  private void createAndOpenFile(FailingMember unitTest) {
-
 	    IProject project = getJavaProject().getProject();
-	    
-	    
 	    System.out.println(">>>" + project.getName());
 	    
-//	    IPath dir = getOutputDir();
-//	    dir = dir.removeFirstSegments(1); // XXX yuck yuck yuck
-//	    IPath fileAsPath = dir.append("FailingTest.java");
-	    
-	    String projectPrefix = "/" + project.getName();
-	    assert unitTest.witnessTest.junitFile.getPath().startsWith(projectPrefix);
-	    
-	    IFile file = project.getFile(unitTest.witnessTest.junitFile.getPath().substring(projectPrefix.length()));
+	    IPath junitFilePath = new Path(unitTest.witnessTest.junitFile.getPath());
+	    if (project.getFullPath().isPrefixOf(junitFilePath)) {
+	      junitFilePath = junitFilePath.removeFirstSegments(project.getFullPath().segmentCount());
+	    } else if (project.getLocation().isPrefixOf(junitFilePath)) {
+	      junitFilePath = junitFilePath.removeFirstSegments(project.getLocation().segmentCount());
+	      junitFilePath = junitFilePath.setDevice(null);
+	    } else {
+	      // Otherwise something is very wrong, the file is not in the project at all!
+	      RandoopPlugin.log(StatusFactory.createErrorStatus("Generated failure file not in selected project.")); //$NON-NLS-1$
+	    }
+	      
+	    IFile file = project.getFile(junitFilePath);
 	    
 	    /// XXX TODO What is the right way to handle this exception??
 	    try {
-        file.refreshLocal(1, null);
-      } catch (CoreException e1) {
-        throw new RuntimeException(e1);
+        file.refreshLocal(IResource.DEPTH_ONE, null);
+      } catch (CoreException e) {
+        throw new RuntimeException(e);
       }
 
 	    IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
