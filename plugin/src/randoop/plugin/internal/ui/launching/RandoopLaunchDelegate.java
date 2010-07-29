@@ -121,15 +121,10 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     // Search for similarly named files in the output directory and warn the user
     // if any are found. Similarly named files match the pattern <ClassName>[0-9]*.java
-    IPath outputDirPath = testGroupResources.getOutputLocation();
-    IResource outputDirResource = root.findMember(outputDirPath);
+    IFolder outputFolder = testGroupResources.getOutputFolder();
     
     // Check if the output directory exists
-    if (outputDirResource != null) {
-      Assert.isTrue(outputDirResource instanceof IFolder);
-
-      IFolder outputFolder = (IFolder) outputDirResource;
-
+    if (outputFolder != null) {
       int similarlyNamedFiles = 0;
       for (IResource resource : outputFolder.members()) {
         if (resource instanceof IFile) {
@@ -148,17 +143,10 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       }
     }
     
-    // Environment variables
-    String[] envp = getEnvironment(configuration);
-
     ArrayList<String> vmArguments = new ArrayList<String>();
     ArrayList<String> programArguments = new ArrayList<String>();
     collectExecutionArguments(configuration, vmArguments, programArguments);
     collectProgramArguments(testGroupResources, programArguments);
-
-    // VM-specific attributes
-    @SuppressWarnings("rawtypes")
-    Map vmAttributesMap = getVMSpecificAttributesMap(configuration);
 
     // Classpath
     List<String> cpList = new ArrayList<String>(Arrays.asList(getClasspath(configuration)));
@@ -180,9 +168,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     runConfig.setVMArguments((String[]) vmArguments.toArray(new String[vmArguments.size()]));
     runConfig.setProgramArguments((String[]) programArguments.toArray(new String[programArguments.size()]));
-    runConfig.setEnvironment(envp);
+    runConfig.setEnvironment(getEnvironment(configuration));
     runConfig.setWorkingDirectory(workingDirName);
-    runConfig.setVMSpecificAttributesMap(vmAttributesMap);
+    runConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
 
     // Bootpath
     runConfig.setBootClassPath(getBootpath(configuration));
@@ -259,7 +247,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.add("--null-ratio=" + args.getNullRatio());//$NON-NLS-1$
     programArguments.add("--inputlimit=" + args.getJUnitTestInputs());//$NON-NLS-1$
     programArguments.add("--timelimit=" + args.getTimeLimit());//$NON-NLS-1$
-    programArguments.add("--junit-output-dir=" + args.getOutputDirectory());//$NON-NLS-1$
+    programArguments.add("--junit-output-dir=" + testSetResources.getOutputLocation().toOSString());//$NON-NLS-1$
     programArguments.add("--junit-package-name=" + args.getJUnitPackageName());//$NON-NLS-1$
     programArguments.add("--junit-classname=" + args.getJUnitClassName());//$NON-NLS-1$
     programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$

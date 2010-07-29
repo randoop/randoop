@@ -11,6 +11,7 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
@@ -42,12 +43,13 @@ public class TestGroupResources {
   private static final IPath TEMP_PATH = RandoopPlugin.getDefault().getStateLocation().append(TEMP_SEGMENT);
   private static final String METHODS_FILE = "methods"; //$NON-NLS-1$
   
-  public final IPath fOoutputLocation;
+  public final IFolder fOutputFolder;
   private RandoopArgumentCollector fArguments;
   private File fResourceFolder;
   private File fMethodsFile;
   private String fId;
   private IPath[] fClasspath;
+  private IPath fOutputLocation;
 
   /**
    * 
@@ -82,16 +84,23 @@ public class TestGroupResources {
     
     writeMethods();
     
+    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
+    // The full path to the output directory, /Project/src/
     IPath fullOutputDirPath = args.getOutputDirectory();
+    
+    // The relative location of the junit package, org/example
     String packagePath = args.getJUnitPackageName().replace('.', '/');
     IJavaProject javaProject = args.getJavaProject();
-    Assert.isTrue(javaProject.getPath().equals(fullOutputDirPath.uptoSegment(1)));
+    Assert.isTrue(javaProject.getPath().isPrefixOf(fullOutputDirPath));
+    fOutputLocation = root.getLocation().append(fullOutputDirPath);
+    
     IPath outputDirPath = fullOutputDirPath.removeFirstSegments(1);
     
     IPackageFragmentRoot pfr = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputDirPath.toString());
     if (pfr == null) {
       // Make the directory
-      IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(fullOutputDirPath);
+      IFolder folder = root.getFolder(fullOutputDirPath);
       File file = folder.getLocation().toFile();
       if (!file.exists() || !file.isDirectory()) {
         // On some systems files and directories cannot be named the same
@@ -99,15 +108,17 @@ public class TestGroupResources {
         Assert.isTrue(file.mkdirs());
       }
       
-      List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(Arrays.asList(javaProject
-          .getRawClasspath()));
-      
+      List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(Arrays.asList(javaProject.getRawClasspath()));
+
+      // Search for any package fragment root that may exist in an ancestor of this IResource
       IContainer container = folder;
       while ((pfr == null || !pfr.exists()) && container.getParent() != null && container.getParent() instanceof IFolder) {
         container = container.getParent();
         pfr = javaProject.getPackageFragmentRoot(container);
       }
+      
       if (pfr != null && pfr.exists()) {
+        // Add the new output directory to the list of exclusion patterns
         IClasspathEntry originalEntry = pfr.getRawClasspathEntry();
         Assert.isTrue(originalEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE);
 
@@ -135,8 +146,14 @@ public class TestGroupResources {
       
       javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
     }
-
-    fOoutputLocation = args.getOutputDirectory().append(packagePath);
+    
+    IResource outputDirResource = root.findMember(fullOutputDirPath.append(packagePath));
+    if (outputDirResource != null) {
+      Assert.isTrue(outputDirResource instanceof IFolder);
+      fOutputFolder = (IFolder) outputDirResource;
+    } else {
+      fOutputFolder = null;
+    }
   }
 
   private void writeMethods() {
@@ -293,8 +310,12 @@ public class TestGroupResources {
     return fClasspath;
   }
   
+  public IFolder getOutputFolder() {
+    return fOutputFolder;
+  }
+  
   public IPath getOutputLocation() {
-    return fOoutputLocation;
+    return fOutputLocation;
   }
 
   public static void clearTempLocation() {
@@ -303,7 +324,7 @@ public class TestGroupResources {
       Assert.isTrue(delete(f));
     }
   }
-
+  
   /**
    * Deletes the given <code>File</code>. If the <code>File</code> is a
    * directory, all subdirectories and contained files are deleted. Returns
