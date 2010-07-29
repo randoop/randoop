@@ -73,7 +73,12 @@ public class MessageViewListener implements IMessageListener {
           
           try {
             File f = fileCreated.getFile();
+            
             IPath path = new Path(f.toString());
+            if (root.getLocation().isPrefixOf(path)) {
+              path = path.removeFirstSegments(root.getLocation().segmentCount());
+              path = path.setDevice(null);
+            }
             
             IProject project = root.getProject(path.segment(0));
             Assert.isTrue(project.exists());
