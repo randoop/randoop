@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
@@ -63,25 +62,33 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Shell fShell;
   private ClassSelector fTypeSelector;
   private Tree fTypeTree;
-  private Button fClassUp;
-  private Button fClassDown;
-  private Button fClassRemove;
   private Button fClassAddFromSources;
   private Button fClassAddFromClasspaths;
   private Button fResolveClasses;
   private Button fSelectAll;
   private Button fSelectNone;
+  private Button fClassRemove;
   private Button fIgnoreJUnitTestCases;
   private IJavaProject fJavaProject;
   
-  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext, final SelectionListener listener, IJavaProject project) {
-    this(parent, runnableContext, listener);
-    fJavaProject = project;
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
+      final SelectionListener listener) {
+    
+    this(parent, runnableContext, listener, true);
   }
   
-  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext, final SelectionListener listener) {
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
+      final SelectionListener listener, IJavaProject project) {
+    
+    this(parent, runnableContext, listener, false);
+    fJavaProject = project;
+  }
+
+  private ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
+      final SelectionListener listener, boolean hasResolveButton) {
+    
     fRunnableContext = runnableContext;
-    Group comp = SWTFactory.createGroup(parent, "Test Inputs", 2, 1, GridData.FILL_BOTH);
+    Group comp = SWTFactory.createGroup(parent, "Classes/Methods Under Test", 2, 1, GridData.FILL_BOTH);
     fShell = comp.getShell();
 
     final Composite leftcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_BOTH);
@@ -109,11 +116,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       
       @Override
       public void widgetSelected(SelectionEvent e) {
-        TreeItem[] moveables = fTypeSelector.getMoveableSelection();
-        boolean enabled = moveables != null;
-        fClassUp.setEnabled(enabled);
-        fClassDown.setEnabled(enabled);
-        
         fClassRemove.setEnabled(fTypeSelector.canRemoveFromSelection());
       }
 
@@ -124,34 +126,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     });
     fTypeTree.addSelectionListener(listener);
     
-    fClassUp = SWTFactory.createPushButton(rightcomp, "Up", null);
-    fClassUp.addSelectionListener(new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.moveSelectedTypesUp();
-      }
-    });
-    fClassUp.addSelectionListener(listener);
-    
-    fClassDown = SWTFactory.createPushButton(rightcomp, "Down", null);
-    fClassDown.addSelectionListener(new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.moveSelectedTypesDown();
-      }
-    });
-    fClassDown.addSelectionListener(listener);
-    
-    fClassRemove = SWTFactory.createPushButton(rightcomp, "Remove", null);
-    fClassRemove.addSelectionListener(new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.removeSelectedTypes();
-      }
-    });
-    fClassRemove.addSelectionListener(listener);
-    
-    SWTFactory.createHorizontalSpacer(rightcomp, 0);
     SWTFactory.createLabel(rightcomp, "Add classes from:", 1);
     
     fClassAddFromSources = SWTFactory.createPushButton(rightcomp, "Project Sources...", null);
@@ -183,6 +157,27 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     });
     fClassAddFromClasspaths.addSelectionListener(listener);
     
+    if (hasResolveButton) {
+      fResolveClasses = SWTFactory.createPushButton(rightcomp, "Resolve Missing Classes", null);
+      fResolveClasses.setToolTipText("Finds classes in the project's classpath\nthat match those that are missing");
+      
+      fResolveClasses.addSelectionListener(new SelectionAdapter() {
+        @Override
+        public void widgetSelected(SelectionEvent e) {
+          String message = "This will attempt to find classes in the project's classpath with fully-qualified names identical to those that are missing. The classes found may differ from those originally intended to be tested.";
+          String question = "Proceed with operation?";
+          if (MessageUtil.openQuestion(message + "\n\n" + question)) { //$NON-NLS-1$
+            try {
+              fTypeSelector.resolveMissingClasses();
+            } catch (JavaModelException jme) {
+              RandoopPlugin.log(jme);
+            }
+          }
+        }
+      });
+      fResolveClasses.addSelectionListener(listener);
+    }
+    
     // Create a spacer
     SWTFactory.createLabel(rightcomp, "", 1);
     fSelectAll = SWTFactory.createPushButton(rightcomp, "Select All", null);
@@ -203,36 +198,27 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     });
     fSelectNone.addSelectionListener(listener);
     
+    fClassRemove = SWTFactory.createPushButton(rightcomp, "Remove", null);
+    fClassRemove.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        fTypeSelector.removeSelectedTypes();
+      }
+    });
+    fClassRemove.addSelectionListener(listener);
+    
+    
     fIgnoreJUnitTestCases = SWTFactory.createCheckButton(leftcomp,
         "Ignore JUnit tests cases when searching for Java types", null, true, 2);
     gd = (GridData) fIgnoreJUnitTestCases.getLayoutData();
     gd.horizontalIndent = 5;
     fIgnoreJUnitTestCases.setLayoutData(gd);
-    
-    // Create a spacer
-    SWTFactory.createLabel(rightcomp, "", 1);
-    fResolveClasses = SWTFactory.createPushButton(rightcomp, "Resolve Classes", null);
-    fResolveClasses.addSelectionListener(new SelectionAdapter() {
-      @Override
-      public void widgetSelected(SelectionEvent e) {
-        String message = "This will attempt to find classes in the project's classpath with fully-qualified names identical to those that are missing. The classes found may differ from those originally inteted to be tested.";
-        String question = "Proceed with operation?";
-        if (MessageUtil.openQuestion(message + "\n\n" + question)) { //$NON-NLS-1$
-          try {
-            fTypeSelector.resolveMissingClasses();
-          } catch (JavaModelException jme) {
-            RandoopPlugin.log(jme);
-          }
-        }
-      }
-    });
-    fResolveClasses.addSelectionListener(listener);
   }
 
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
       final SelectionListener listener, IJavaProject javaProject, IJavaElement[] elements) {
 
-    this(parent, runnableContext, listener);
+    this(parent, runnableContext, listener, false);
 
     fJavaProject = javaProject;
     
@@ -243,12 +229,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       case IJavaElement.PACKAGE_FRAGMENT_ROOT:
       case IJavaElement.PACKAGE_FRAGMENT:
         for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addType(type, false);
+          fTypeSelector.addClass(type, false);
         }
         break;
       case IJavaElement.COMPILATION_UNIT:
         for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addType(type, true);
+          fTypeSelector.addClass(type, true);
         }
         break;
       default:
@@ -275,7 +261,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           if (element instanceof IType) {
             IType type = (IType) element;
             if (type != null) {
-              fTypeSelector.addType(type, true);
+              fTypeSelector.addClass(type, true);
             }
           }
         }
@@ -287,12 +273,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
   @Override
   public IStatus canSave() {
-    if (fRunnableContext == null || fShell == null || fTypeSelector == null
-        || fTypeTree == null || fClassUp == null || fClassDown == null
-        || fClassRemove == null || fClassAddFromSources == null
-        || fClassAddFromClasspaths == null || fSelectAll == null
-        || fSelectNone == null) {
-      
+    if (fRunnableContext == null || fShell == null || fTypeSelector == null || fTypeTree == null
+        || fClassAddFromSources == null || fClassAddFromClasspaths == null || fSelectAll == null
+        || fSelectNone == null || fClassRemove == null) {
+
       return StatusFactory.ERROR_STATUS;
     }
 
@@ -401,75 +385,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
     return null;
   }
-  
-  // private IPackageFragmentRoot[] getJREPackgeFragmentRoots() {
-  // // TODO: Why doesn't JavaRuntime.getDefaultJREContainerEntry() work here?
-  // try {
-  // for (IClasspathEntry cpentry : fJavaProject.getRawClasspath()) {
-  // IPath path = cpentry.getPath();
-  // if (path.segmentCount() > 0) {
-  // if (path.segment(0).equals(JavaRuntime.JRE_CONTAINER)) {
-  // return fJavaProject.findPackageFragmentRoots(cpentry);
-  // }
-  // }
-  // }
-  // } catch (JavaModelException e) {
-  // RandoopPlugin.log(e);
-  // }
-  //
-  // return null;
-  // }
-  //
-  // private IType[] findClasses(ClassSearcher searcher) {
-  // try {
-  // fRunnableContext.run(true, true, searcher);
-  // } catch (InvocationTargetException e) {
-  // RandoopPlugin.log(e);
-  // } catch (InterruptedException e) {
-  // RandoopPlugin.log(e);
-  // }
-  //
-  // if (searcher.wasCancelled()) {
-  // return null;
-  // }
-  // return searcher.getTypes();
-  // }
-  //
-  // private abstract class ClassSearcher implements IRunnableWithProgress {
-  // private IJavaProject fJavaProject;
-  // private List<IType> fAvailableTypes;
-  // private boolean fCancelled;
-  //
-  // public ClassSearcher(IJavaProject project) {
-  // fJavaProject = project;
-  // fAvailableTypes = new ArrayList<IType>();
-  // fCancelled = false;
-  // }
-  //
-  // protected void addType(IType type) {
-  // fAvailableTypes.add(type);
-  // }
-  //
-  // protected void addTypes(Collection<? extends IType> types) {
-  // fAvailableTypes.addAll(types);
-  // }
-  //
-  // public IType[] getTypes() {
-  // return fAvailableTypes.toArray(new IType[fAvailableTypes.size()]);
-  // }
-  //
-  // protected IJavaProject getJavaProject() {
-  // return fJavaProject;
-  // }
-  //
-  // public boolean wasCancelled() {
-  // return fCancelled;
-  // }
-  //
-  // protected void cancel() {
-  // fCancelled = true;
-  // }
-  // }
   
   private class FilterJUnitSearchScope implements IJavaSearchScope {
     IJavaSearchScope fSearchScope;
