@@ -9,6 +9,9 @@ PLUGIN BUGS
   remember which classes I searched for in earlier dialogs, and shows
   those classes in subsequent dialogs, which is confusing.
 
+* The Classpath tab is in the Randoop tab group, but this should not
+  be visible, and it should have no affect launching
+
 * As I use the plugin in an example use, many errors show up in the
   Error Log window of the test Eclipse application.
 
@@ -20,13 +23,10 @@ PLUGIN BUGS
   I couldn't get Randoop to run without threads, and when changing the
   values for these fields, the "Apply" button stays greyed out.
 
-* Plugin should use a default output folder ("tests") and package
-  ("randoop" or some such). Default package is bad usage.
-
-* Sometimes, pressing the "Regenerat tests" buttom results in NPE on
+* Sometimes, pressing the "Regenerate tests" button results in NPE on
   MessageViewListener.
 
-* when invoking Randoop, it and other plugin jars should come after
+* When invoking Randoop, it and other plugin jars should come after
   user classes in classpath, otherwise Randoop-specific classes
   (e.g. graph.Node in randoop.jar) can shadow user classes. The real
   solution here is actually to rename all randoop classes more
@@ -37,49 +37,3 @@ PLUGIN BUGS
 
 * [Feature request, after beta release] Add buttom to remove all
   Randoop-generate files.
-
-* JUnit launch button in Randoop view fails sometimes. Also, it seems
-  to be hardcoded to "RandoopTest.java"). After this failure, pressing
-  the JUnit launch it again results in nothing happening,and stdout
-  "Running null". Stack trace:
-
-   @@@temp/src/RandoopTest0.javaException in thread
-  "Thread-37" org.eclipse.swt.SWTException: Failed to execute runnable
-  (java.lang.NullPointerException)
-
-				       at org.eclipse.swt.SWT.error(SWT.java:3884)
-				       at org.eclipse.swt.SWT.error(SWT.java:3799)
-				       at org.eclipse.swt.widgets.Synchronizer.syncExec(Synchronizer.java:195)
-				       at org.eclipse.ui.internal.UISynchronizer.syncExec(UISynchronizer.java:150)
-				       at org.eclipse.swt.widgets.Display.syncExec(Display.java:4113)
-				       at randoop.plugin.internal.ui.views.MessageViewListener.handleMessage(MessageViewListener.java:66)
-				       at randoop.plugin.internal.core.runtime.MessageReceiver.run(MessageReceiver.java:46)
-				       at java.lang.Thread.run(Thread.java:636)
-Caused by: java.lang.NullPointerException
-       at randoop.plugin.internal.ui.views.MessageViewListener$4.run(MessageViewListener.java:76)
-       at org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)
-       at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:134)
-       at org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:3468)
-       at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3115)
-       at org.eclipse.ui.internal.Workbench.runEventLoop(Workbench.java:2405)
-       at org.eclipse.ui.internal.Workbench.runUI(Workbench.java:2369)
-       at org.eclipse.ui.internal.Workbench.access$4(Workbench.java:2221)
-       at org.eclipse.ui.internal.Workbench$5.run(Workbench.java:500)
-       at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)
-       at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:493)
-       at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
-       at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:113)
-       at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:194)
-       at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
-       at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
-       at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:368)
-       at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
-       at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-       at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
-       at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-       at java.lang.reflect.Method.invoke(Method.java:616)
-       at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:559)
-       at org.eclipse.equinox.launcher.Main.basicRun(Main.java:514)
-       at org.eclipse.equinox.launcher.Main.run(Main.java:1311)
-       at org.eclipse.equinox.launcher.Main.main(Main.java:1287)
-
