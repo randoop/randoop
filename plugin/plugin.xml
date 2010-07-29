@@ -46,7 +46,7 @@
           <launchConfigurationType
             name="Randoop Launcher"
             delegate="randoop.plugin.internal.ui.launching.RandoopLaunchDelegate"
-            modes="run, debug"
+            modes="run"
             id="randoop.plugin.core.launching.gentestsType">
       </launchConfigurationType>
    </extension>
