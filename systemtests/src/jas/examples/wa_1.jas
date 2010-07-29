@@ -1,0 +1,11 @@
+# solvable polynomials, Weyl algebra A_1:
+(a,b,x,y) L
+RelationTable
+(
+ ( y ), ( x ), ( x y - 1 ),
+)
+
+(
+ ( x y^2 - a ),
+ ( y^3 - b )
+)

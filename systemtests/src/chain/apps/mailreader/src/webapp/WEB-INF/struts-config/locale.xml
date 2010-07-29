@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+<struts-config>
+    <display-name><![CDATA[
+         locale
+      ]]>
+    </display-name>
+    <description><![CDATA[
+     Change client's locale within Struts
+  ]]>
+    </description>
+
+    <form-beans>
+
+        <form-bean
+            name="LocaleChange"
+            type="org.apache.struts.validator.DynaValidatorForm">
+           <form-property name="language" type="java.lang.String"/>
+           <form-property name="country" type="java.lang.String"/>
+         </form-bean>
+
+     </form-beans>
+
+    <global-exceptions/>
+
+    <global-forwards/>
+
+    <action-mappings>
+        <action path="/LocaleChange"
+            name="LocaleChange"
+            type="org.apache.commons.chain.mailreader.struts.MailReaderAction">
+        <forward name="success" path="/Welcome.do" />
+        </action>
+    </action-mappings>
+
+</struts-config>

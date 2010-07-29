@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly xmlns:j="jelly:core" xmlns="jelly:swt" xmlns:log="jelly:log">
+
+  <shell text="Parent Demo" var="subShell" style="border, close, min, max, resize, title">
+      
+      <gridLayout/>
+
+  </shell>
+
+    <!-- 
+        || This demo shows how we can create a brand new widget which is added to a 
+        || given parent control (in this case the shell).
+        || This widget can be defined as a variable using the var="foo" attribute just
+        || like any other widget.
+        -->
+    <tree parent="${subShell}" toolTipText="This is a tree!" style="multi">
+        
+        <gridData style="fill_both"/>
+        
+        <!-- we'd normally use some Java bean model to implement the next bit -->
+        <treeItem text="A">
+            <treeItem text="A/A"/>
+            <treeItem text="A/B"/>
+            <treeItem text="A/C"/>
+        </treeItem>
+        <treeItem text="B">
+            <treeItem text="B/A"/>
+            <treeItem text="B/B"/>
+            <treeItem text="B/C"/>
+        </treeItem>
+                        
+        <menu style="pop_up">
+            <menuItem text="do something!">
+                <onEvent type="Selection">
+                    <log:info>Clicked on ${event}</log:info>
+                </onEvent>
+            </menuItem>
+        </menu>                            
+    </tree>
+    
+    ${subShell.pack()}
+    ${subShell.open()}
+    
+</j:jelly>
