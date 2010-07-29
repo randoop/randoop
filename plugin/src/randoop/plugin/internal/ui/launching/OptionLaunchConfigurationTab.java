@@ -58,7 +58,8 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
   @Override
   public boolean canSave() {
     setErrorMessage(null);
-
+    setMessage(null);
+    
     boolean isMessageSet = false;
     
     for (IOption option : fOptions) {
@@ -72,7 +73,6 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
         if (message != null && !message.isEmpty()) {
           if (!isMessageSet) {
             isMessageSet = setReadableMessage(message);
-            isMessageSet = true;
           }
         }
       }
@@ -84,7 +84,8 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
   @Override
   public boolean isValid(ILaunchConfiguration config) {
     setErrorMessage(null);
-
+    setMessage(null);
+    
     boolean isMessageSet = false;
     
     for (IOption option : fOptions) {
@@ -114,7 +115,7 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    */
   protected boolean setReadableMessage(String message) {
     String msg = message;
-    if (msg != null && !msg.equals(IConstants.EMPTY_STRING)) {
+    if (msg != null && !msg.isEmpty()) {
       setMessage(message);
       return true;
     }

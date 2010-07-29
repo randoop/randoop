@@ -174,19 +174,18 @@ public class ProjectOption extends Option {
       return StatusFactory.createErrorStatus(MessageFormat.format(
           "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
-    
+
+    final char[] ILLEGAL_CHARACTERS = { '\\', ':', '*', '`', '?', '"', '<', '>', '|' };
+    for (char c : ILLEGAL_CHARACTERS) {
+      if (outputSourceFolderName.contains(new Character(c).toString())) {
+        status = StatusFactory
+            .createErrorStatus("Output folder cannot contain any of the following characters: \\ : * ` ? \" < > |");
+        return status;
+      }
+    }
     IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputSourceFolderName);
     if (outputDir == null) {
-      status = StatusFactory.createErrorStatus("Output Directory is not a valid source folder");
-      return status;
-    } else if (!outputDir.exists()) {
-      status = StatusFactory.createErrorStatus(MessageFormat.format(
-          "Output Directory {0} does not exist", new Object[] { outputDir.getElementName() }));
-      return status;
-    } else if (!outputDir.getJavaProject().equals(javaProject)) {
-      status = StatusFactory.createErrorStatus(MessageFormat.format(
-          "Output Directory does not exist in project {0}",
-          new Object[] { javaProject.getElementName() }));
+      status = StatusFactory.createOkStatus("Output folder will be created on launch");
       return status;
     }
 
@@ -274,7 +273,7 @@ public class ProjectOption extends Option {
     ElementListSelectionDialog dialog = new ElementListSelectionDialog(
         getShell(), labelProvider);
     dialog.setTitle("Project Selection");
-    dialog.setMessage("Choose a project to constrain the search for test classes:");
+    dialog.setMessage("Choose a project to constrain the search for classes to test:");
     dialog.setElements(projects);
 
     IJavaProject javaProject = getJavaProject();
@@ -345,7 +344,7 @@ public class ProjectOption extends Option {
       ElementListSelectionDialog dialog = new ElementListSelectionDialog(
           getShell(), labelProvider);
       dialog.setTitle("Source Folder Selection");
-      dialog.setMessage("Choose a source folder to use for output of generated test classes:");
+      dialog.setMessage("Choose a source folder for the generated tests:");
       dialog.setElements(sourceFolders
           .toArray(new IPackageFragmentRoot[sourceFolders.size()]));
       dialog.setHelpAvailable(false);
