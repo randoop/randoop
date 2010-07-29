@@ -159,6 +159,13 @@ public class TestGeneratorViewPart extends ViewPart {
     mgr.add(relaunchAction);
   }
 
+  public void startNewLaunch() {
+    setDriver(null);
+    getProgressBar().start();
+    getCounterPanel().reset();
+    randoopErrors.reset();
+  }
+  
   public CounterPanel getCounterPanel() {
     return fCounterPanel;
   }
@@ -178,9 +185,8 @@ public class TestGeneratorViewPart extends ViewPart {
 
   public void setDriver(ICompilationUnit driver) {
     junitDriver = driver;
-    if (junitDriver != null) {
-      debugWithJUnitAction.setEnabled(true);
-      runWithJUnitAction.setEnabled(true);
-    }
+    debugWithJUnitAction.setEnabled(junitDriver != null);
+    runWithJUnitAction.setEnabled(junitDriver != null);
   }
+
 }

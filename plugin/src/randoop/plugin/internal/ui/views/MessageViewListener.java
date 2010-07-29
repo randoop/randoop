@@ -35,18 +35,15 @@ public class MessageViewListener implements IMessageListener {
   @Override
   public void handleMessage(IMessage m) {
     if (m instanceof RandoopStarted) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      RandoopPlugin.getDisplay().syncExec(new Runnable() {
           @Override
           public void run() {
-            fViewPart.getProgressBar().start();
-            fViewPart.getCounterPanel().reset();
-            fViewPart.randoopErrors.reset();
-            
+            fViewPart.startNewLaunch();
           }
         });
     } else if (m instanceof PercentDone) {
       final PercentDone p = (PercentDone)m;
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      RandoopPlugin.getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           fViewPart.getProgressBar().setPercentDone(p.getPercentDone());
@@ -55,7 +52,7 @@ public class MessageViewListener implements IMessageListener {
       });
     } else if (m instanceof ErrorRevealed) {
       final ErrorRevealed err = (ErrorRevealed)m;
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      RandoopPlugin.getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           fViewPart.getProgressBar().error();
@@ -67,7 +64,7 @@ public class MessageViewListener implements IMessageListener {
       final CreatedJUnitFile fileCreated = (CreatedJUnitFile) m;
       final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
       
-      PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+      RandoopPlugin.getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           // Only worry about driver files
