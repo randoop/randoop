@@ -209,7 +209,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     
     fIgnoreJUnitTestCases = SWTFactory.createCheckButton(leftcomp,
-        "Ignore JUnit tests cases when searching for Java types", null, true, 2);
+        "Ignore JUnit tests cases when searching for class inputs", null, true, 2);
     gd = (GridData) fIgnoreJUnitTestCases.getLayoutData();
     gd.horizontalIndent = 5;
     fIgnoreJUnitTestCases.setLayoutData(gd);
@@ -252,6 +252,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       SelectionDialog dialog = JavaUI.createTypeDialog(fShell, fRunnableContext, junitSearchScope,
           IJavaElementSearchConstants.CONSIDER_CLASSES_AND_ENUMS, true, "",
           new RandoopTestInputSelectionExtension());
+      dialog.setMessage("Add class input");
+      dialog.setMessage("Enter type name prefix or pattern (*, ?, or camel case):");
       dialog.open();
 
       // Add all of the types to the type selector
