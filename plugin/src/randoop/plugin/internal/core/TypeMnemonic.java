@@ -322,9 +322,8 @@ public class TypeMnemonic {
     
     IPackageFragmentRoot[] packageFragmentRoots = javaProject.findPackageFragmentRoots(classpathEntry);
 
-    int lastDelimiter = fqname.lastIndexOf('.');
-    String packageName = fqname.substring(0, lastDelimiter);
-    String classFileName = fqname.substring(lastDelimiter + 1);
+    String packageName = RandoopCoreUtil.getPackageName(fqname);
+    String classFileName = RandoopCoreUtil.getClassName(fqname);
 
     String typeName;
     if (classFileName.contains("$")) { //$NON-NLS-1$
