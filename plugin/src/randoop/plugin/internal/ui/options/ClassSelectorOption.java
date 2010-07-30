@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,11 +21,15 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.dialogs.ITypeInfoFilterExtension;
@@ -401,39 +406,73 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     public boolean encloses(String resourcePath) {
       if (fSearchScope.encloses(resourcePath)) {
         IWorkspaceRoot root = getWorkspaceRoot();
-        URI fileURI = root.getLocation().append(new Path(resourcePath)).toFile().toURI();
+        
+        int separator = resourcePath.indexOf(JAR_FILE_ENTRY_SEPARATOR);
+        String filePath = resourcePath.substring(0, separator);
+        String subFilePath = resourcePath.substring(separator + 1);
+        URI fileURI = root.getLocation().append(new Path(filePath)).toFile().toURI();
         IFile[] files = root.findFilesForLocationURI(fileURI);
+
+        boolean doesEnclose = true;
         for (IFile file : files) {
           IJavaElement element = JavaCore.create(file);
           if (element != null) {
             ArrayList<IType> types = new ArrayList<IType>();
-            if (element instanceof ICompilationUnit) {
-              try {
-                ICompilationUnit cu = (ICompilationUnit) element;
-                for (IType type : cu.getAllTypes()) {
-                  types.add(type);
-                }
-              } catch (JavaModelException e) {
-                RandoopPlugin.log(e);
+            
+            if (element instanceof IPackageFragmentRoot) {
+              separator = subFilePath.lastIndexOf(IPath.SEPARATOR);
+              String packageName = subFilePath.substring(0, separator).replace(IPath.SEPARATOR, '.');
+              String fileName = subFilePath.substring(separator + 1);
+              
+              IPackageFragmentRoot pfr = (IPackageFragmentRoot) element;
+              IPackageFragment pf = pfr.getPackageFragment(packageName);
+              
+              if (JavaConventions.validateClassFileName(fileName, "1.3", "1.3").isOK()) {  //$NON-NLS-1$//$NON-NLS-2$
+                IClassFile cf = pf.getClassFile(fileName);
+                collectTypes(cf, types);
+              } else if (JavaConventions.validateCompilationUnitName(fileName, "1.3", "1.3").isOK()) {  //$NON-NLS-1$//$NON-NLS-2$
+                ICompilationUnit cu = pf.getCompilationUnit(fileName);
+                collectTypes(cu, types);
               }
-            } else if (element instanceof IClassFile) {
-              IClassFile cf = (IClassFile) element;
-              types.add(cf.getType());
+            } else if (element instanceof ICompilationUnit || element instanceof IClassFile){
+              collectTypes(element, types);
+            } else {
+              RandoopPlugin.log(StatusFactory.createWarningStatus("Unknown element type, returning false"));
+              doesEnclose = false;
             }
 
-            boolean doesEnclose = true;
             for (IType type : types) {
               doesEnclose &= RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit);
             }
-            return doesEnclose;
           }
         }
-
-        return true;
+        return doesEnclose;
       }
       return false;
     }
+    
+    /*
+     * Helper method to collect the ITypes from an ICompilationUnit or IClassFile
+     */
+    private void collectTypes(IJavaElement element, List<IType> types) {
+      if (element == null || !element.exists())
+        return;
 
+      if (element instanceof ICompilationUnit) {
+        try {
+          ICompilationUnit cu = (ICompilationUnit) element;
+          for (IType type : cu.getAllTypes()) {
+            types.add(type);
+          }
+        } catch (JavaModelException e) {
+          RandoopPlugin.log(e);
+        }
+      } else if (element instanceof IClassFile) {
+        IClassFile cf = (IClassFile) element;
+        types.add(cf.getType());
+      }
+    }
+    
     @Override
     public boolean encloses(IJavaElement element) {
       if (fSearchScope.encloses(element)) {

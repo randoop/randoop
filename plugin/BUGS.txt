@@ -11,9 +11,6 @@ PLUGIN BUGS
 
 * Cannot add from project classpath entry or library classpath entry
 
-* The Classpath tab is in the Randoop tab group, but this should not
-  be visible, and it should have no affect launching
-
 * As I use the plugin in an example use, many errors show up in the
   Error Log window of the test Eclipse application.
 
