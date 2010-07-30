@@ -125,7 +125,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     
     // Check if the output directory exists
     if (threatenedResources.length > 0) {
-      if (!MessageUtil.openResourcesQuestion("Randoop found similarly named files (listed below) that may be overwritten by the generated tests.\n\nProceed with test generation?", threatenedResources)) {
+      String message = "The following files were found in the output directory and may be overwritten by the generated tests.";
+      String question = "Proceed with test generation?";
+      if (!MessageUtil.openResourcesQuestion(message + "\n\n" + question, threatenedResources)) { //$NON-NLS-1$
         return;
       }
     }
