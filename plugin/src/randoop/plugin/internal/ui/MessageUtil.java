@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -22,6 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
@@ -51,14 +53,14 @@ public class MessageUtil {
     return okToProceed.getValue();
   }
   
-  public static boolean openResourcesQuestion(final String message, final IResource[] resources) {
+  public static boolean openResourcesQuestion(final String message, final String question, final IResource[] resources) {
     final MutableBoolean okToProceed = new MutableBoolean(false);
     
     PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
       @Override
       public void run() {
         Dialog d = new ResourcesListQuestionDialog(PlatformUI.getWorkbench().getDisplay()
-            .getActiveShell(), "Randoop", message, resources);
+            .getActiveShell(), "Randoop", message, question, resources);
         
         okToProceed.setValue(d.open() == Dialog.OK);
       }
@@ -94,12 +96,15 @@ public class MessageUtil {
     
     private IResource[] fResourceList;
     
-    public ResourcesListQuestionDialog(Shell parentShell, String title, String message,
+    private String fQuestion;
+    
+    public ResourcesListQuestionDialog(Shell parentShell, String title, String message, String question,
         IResource[] resources) {
       
       super(parentShell, title, null, message, MessageDialog.QUESTION,
           new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
-      
+
+      fQuestion = question;
       fResourceList = resources;
     }
 
@@ -114,6 +119,14 @@ public class MessageUtil {
         fFixSelectionTable.addDoubleClickListener(this);
         fFixSelectionTable.setSelection(new StructuredSelection(fResourceList[0]));
       }
+      
+      Label l = new Label(composite, SWT.NONE);
+      l.setFont(composite.getFont());
+      l.setText(fQuestion);
+      
+      GridData gd = new GridData();;
+      gd.horizontalIndent = 13;
+      l.setLayoutData(gd);
       
       GridData gridData= new GridData(SWT.FILL, SWT.FILL, true, true);
       gridData.heightHint= convertHeightInCharsToPixels(4);
