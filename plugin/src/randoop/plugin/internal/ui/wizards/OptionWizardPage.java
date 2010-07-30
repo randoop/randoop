@@ -14,7 +14,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 
-import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.ui.options.IOption;
 
 public abstract class OptionWizardPage extends WizardPage {
