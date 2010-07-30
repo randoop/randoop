@@ -3,6 +3,7 @@ package randoop.plugin.internal.ui.launching;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -12,6 +13,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.ui.options.IOption;
@@ -161,6 +163,11 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   @Override
   public String getId() {
     return "randoop.plugin.ui.launching.parametersTab"; //$NON-NLS-1$
+  }
+  
+  @Override
+  public Image getImage() {
+    return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
   }
   
 }

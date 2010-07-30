@@ -1,7 +1,10 @@
 package randoop.plugin.internal.ui.launching;
 
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -74,6 +77,11 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
   @Override
   public String getId() {
     return "randoop.plugin.ui.launching.generalrTab"; //$NON-NLS-1$
+  }
+  
+  @Override
+  public Image getImage() {
+    return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
   }
   
 }
