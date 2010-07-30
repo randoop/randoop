@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,7 +22,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMRunner;
@@ -32,6 +38,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.omg.PortableServer.portable.Delegate;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
@@ -50,7 +57,43 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     super();
     fMessageReceiver = null;
   }
+  
+  private IProject[] computeReferencedProjectOrder(IJavaProject javaProject) throws JavaModelException {
+    List<IProject> buildOrder = new ArrayList<IProject>();
+    buildOrder.add(javaProject.getProject());
+    
+    for (IClasspathEntry ce : javaProject.getRawClasspath()) {
+      if (ce.getEntryKind() == IClasspathEntry.CPE_VARIABLE) {
+        ce = JavaCore.getResolvedClasspathEntry(ce);
+      }
+      
+      if (ce != null && ce.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+        buildOrder.add(getWorkspaceRoot().getProject(ce.getPath().toString()));
+      }
+    }
+    
+    return buildOrder.toArray(new IProject[buildOrder.size()]);
+  }
+  
+  @Override
+  protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
+    
+    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
+    
+    IJavaProject javaProject = args.getJavaProject();
+    return computeReferencedProjectOrder(javaProject);
+  }
+    
+  @Override
+  protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
 
+    IWorkspaceRoot root = getWorkspaceRoot();
+    RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, root);
+    
+    IJavaProject javaProject = args.getJavaProject();
+    return computeReferencedProjectOrder(javaProject);
+  }
+  
   @Override
   public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
     System.out.println("Begin launch"); //$NON-NLS-1$
