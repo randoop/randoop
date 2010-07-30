@@ -142,6 +142,7 @@ public class IOptionFactory {
     @Override
     public void restoreDefaults() {
       fEnablement.setSelection(Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
+      fEnabledOption.restoreDefaults();
     }
 
     @Override
@@ -205,6 +206,7 @@ public class IOptionFactory {
     @Override
     public void restoreDefaults() {
       fEnablement.setSelection(Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+      fEnabledOption.restoreDefaults();
     }
     
     @Override
