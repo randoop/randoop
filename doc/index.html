@@ -21,7 +21,13 @@
         <ul>
           <li><a href="#command-line-options">Command-line options</a></li>
         </ul></li>
-      <li><a href="#getting_help">Getting help</a></li>
+      <li><a href="#getting_help">Getting help</a>
+        <ul>
+          <li><a href="#troubleshooting">Getting help</a>
+            <ul>
+              <li><a href="#nontermination">Randoop does not terminate</a></li>
+            </ul></li>
+        </ul></li>
       <li><a href="#generating_tests">Generating tests</a>
         <ul>
           <li><a href="#error_revealing_tests">Error-revealing Tests</a></li>
@@ -283,7 +289,17 @@ the cause of the problem.</p>
 </li>
 </ul>
 
-<p>Randoop will output the syntax, description and options related to the <tt>gentests</tt> command, which generates tests. </p>
+
+<h3 id="troubleshooting">Getting help</h3>
+
+<h4 id="nontermination">Randoop does not terminate</h4>
+
+<p>
+If Randoop does not terminate, run it with the <tt>--log=filename</tt>
+command-line option, and either examine the log or send it to the Randoop
+developers for diagnosis.
+</p>
+
 
 <h2 id="generating_tests">Generating tests</h2>
 
