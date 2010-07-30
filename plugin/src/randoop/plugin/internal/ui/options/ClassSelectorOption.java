@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,7 +28,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.dialogs.ITypeInfoFilterExtension;
@@ -53,6 +51,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.StatusFactory;
@@ -435,11 +434,13 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
               
               IPackageFragmentRoot pfr = (IPackageFragmentRoot) element;
               IPackageFragment pf = pfr.getPackageFragment(packageName);
-              
-              if (JavaConventions.validateClassFileName(fileName, "1.3", "1.3").isOK()) {  //$NON-NLS-1$//$NON-NLS-2$
+
+              if (JavaConventions.validateClassFileName(fileName,
+                  IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
                 IClassFile cf = pf.getClassFile(fileName);
                 collectTypes(cf, types);
-              } else if (JavaConventions.validateCompilationUnitName(fileName, "1.3", "1.3").isOK()) {  //$NON-NLS-1$//$NON-NLS-2$
+              } else if (JavaConventions.validateCompilationUnitName(fileName,
+                  IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
                 ICompilationUnit cu = pf.getCompilationUnit(fileName);
                 collectTypes(cu, types);
               }

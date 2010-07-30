@@ -12,7 +12,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
@@ -333,7 +332,7 @@ public class IOptionFactory {
         DecimalFormat time = new DecimalFormat("#0.0"); //$NON-NLS-1$
         StringBuilder timeStr = new StringBuilder();
         if (seconds < 60) {
-          fConvertedTimeLimit.setText(IConstants.EMPTY_STRING);
+          fConvertedTimeLimit.setText(""); //$NON-NLS-1$
         } else if (seconds < 3600) {
           timeStr.append('(');
           timeStr.append(time.format(seconds / 60.0));
@@ -364,7 +363,7 @@ public class IOptionFactory {
           fConvertedTimeLimit.setText(timeStr.toString());
         }
       } catch (NumberFormatException e) {
-        fConvertedTimeLimit.setText(IConstants.EMPTY_STRING);
+        fConvertedTimeLimit.setText(""); //$NON-NLS-1$
       }
     }
   };
