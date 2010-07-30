@@ -1,18 +1,18 @@
 package randoop.plugin.internal;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Constants to be used throughout this plug-in.
+ * 
+ * TODO: Some alternative to this file should be used in the future
  */
 public interface IConstants {
-  public static final String EMPTY_STRING = ""; //$NON-NLS-1$
-  
-  public static final List<String> EMPTY_STRING_LIST = new ArrayList<String>();
   
   public static final int INVALID_PORT = -1;
   
   public static final String MNEMONIC_DELIMITER = "%"; //$NON-NLS-1$
+
+  public static final String DEFAULT_SOURCE_LEVEL = "1.3"; //$NON-NLS-1$
+
+  public static final String DEFAULT_COMPLIANCE_LEVEL = "1.3"; //$NON-NLS-1$
   
 }

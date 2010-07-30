@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.debug.internal.ui.SWTFactory;
 
-import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.IOptionFactory;
@@ -113,8 +112,9 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     SWTFactory.createLabel(group, "&Time Limit:", 1);
     Text timeLimit = SWTFactory.createSingleText(group, 1);
 
-    SWTFactory.createLabel(group, IConstants.EMPTY_STRING, 1); // spacer
-    Label convertedTimeLimit = SWTFactory.createLabel(group, IConstants.EMPTY_STRING, 1);
+    // Create a spacer 
+    SWTFactory.createLabel(group, "", 1); //$NON-NLS-1$
+    Label convertedTimeLimit = SWTFactory.createLabel(group, "", 1); //$NON-NLS-1$
     convertedTimeLimit.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true,
        false));
     

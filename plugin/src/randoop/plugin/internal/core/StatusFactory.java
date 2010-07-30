@@ -4,7 +4,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.IConstants;
 
 /**
  * Factory class to create <code>IStatus</code> objects.
@@ -16,12 +15,12 @@ public class StatusFactory {
   /**
    * An OK status with an empty message.
    */
-  public static final IStatus OK_STATUS =  createOkStatus(IConstants.EMPTY_STRING);
+  public static final IStatus OK_STATUS =  createOkStatus(""); //$NON-NLS-1$
 
   /**
    * An ERROR status with an empty message.
    */
-  public static final IStatus ERROR_STATUS = createErrorStatus(IConstants.EMPTY_STRING);
+  public static final IStatus ERROR_STATUS = createErrorStatus(""); //$NON-NLS-1$
 
   /**
    * An OK status with the specified message.
