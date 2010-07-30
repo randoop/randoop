@@ -3,6 +3,7 @@ package randoop.plugin.internal.ui.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
@@ -20,16 +21,23 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.MutableBoolean;
+import randoop.plugin.internal.core.MutableObject;
 import randoop.plugin.model.resultstree.RunResultsTree;
 
 public class TestGeneratorViewPart extends ViewPart {
   /**
    * The ID of the view as specified by the extension.
    */
-  public static final String ID = "randoop.plugin.ui.views.TestGeneratorViewPart"; //$NON-NLS-1$
+  private static final String ID = "randoop.plugin.ui.views.TestGeneratorViewPart"; //$NON-NLS-1$
 
   private TreeViewer viewer;
   private Composite fParent;
@@ -48,12 +56,46 @@ public class TestGeneratorViewPart extends ViewPart {
   
   public Action relaunchAction;
 
-  /**
-   * The constructor.
-   */
-  public TestGeneratorViewPart() {
+  private static boolean isDisposed = true;
+  
+  private static TestGeneratorViewPart viewPart = null;
+  
+  public static TestGeneratorViewPart getDefault() {
+    if (viewPart == null || isDisposed) {
+      return openInstance();
+    }
+    
+    return viewPart;
   }
-
+  
+  private static TestGeneratorViewPart openInstance() {
+    final MutableObject viewPart = new MutableObject(null);
+    
+    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      @Override
+      public void run() {
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IWorkbenchPage page = window.getActivePage();
+        
+        try {
+          // Open the view
+          viewPart.setValue(page.showView(TestGeneratorViewPart.ID));
+        } catch (PartInitException e) {
+          RandoopPlugin.log(e, "Randoop view could not be initialized"); //$NON-NLS-1$
+        }
+        
+      }
+    });
+    
+    if (viewPart.getValue() != null) {
+      Assert.isTrue(viewPart.getValue() instanceof TestGeneratorViewPart);
+      
+      isDisposed = false;
+      return (TestGeneratorViewPart) viewPart.getValue();
+    }
+    return null;
+  }
+  
   @Override
   public void createPartControl(Composite parent) {
     fParent = parent;
@@ -159,14 +201,20 @@ public class TestGeneratorViewPart extends ViewPart {
     mgr.add(relaunchAction);
   }
 
-  public void startNewLaunch() {
+  public void startNewLaunch(ILaunch launch) {
+    setFocus();
+    
+    this.launch = launch;
     setDriver(null);
     getProgressBar().start();
     getCounterPanel().reset();
     randoopErrors.reset();
+    relaunchAction.setEnabled(true);
   }
   
   public CounterPanel getCounterPanel() {
+    setFocus();
+    
     return fCounterPanel;
   }
 
@@ -174,19 +222,22 @@ public class TestGeneratorViewPart extends ViewPart {
     return fProgressBar;
   }
 
-  // TODO what is the right thing to do here?
-  @Override
-  public void setFocus() {
-  }
-
-  public void setLaunch(ILaunch launch) {
-    this.launch = launch;
-  }
-
   public void setDriver(ICompilationUnit driver) {
     junitDriver = driver;
     debugWithJUnitAction.setEnabled(junitDriver != null);
     runWithJUnitAction.setEnabled(junitDriver != null);
   }
-
+  
+  @Override
+  public void setFocus() {
+    // Choose a control to set focus to.
+  }
+  
+  @Override
+  public void dispose() {
+    isDisposed = true;
+    
+    super.dispose();
+  }
+  
 }

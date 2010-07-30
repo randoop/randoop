@@ -119,11 +119,11 @@ public class TypeMnemonicTest {
       TypeMnemonic typeMnemonic = new TypeMnemonic(kenkenType);
       assertTrue(typeMnemonic.exists());
 
-      // This type should be accessible from the boundary project since it
-      // references the kenken projects class folder, 'KenKen/bin'
+      // This type should be accessible from the kenken project since it
+      // generates the binary folder, 'KenKen/bin', that the boundary project
+      // references.
       assertNotNull(typeMnemonic.reassign(kenkenProject));
     }
   }
-  
-  
+
 }
