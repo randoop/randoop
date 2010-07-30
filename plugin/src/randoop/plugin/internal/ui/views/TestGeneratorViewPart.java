@@ -230,7 +230,8 @@ public class TestGeneratorViewPart extends ViewPart {
   }
 
   public void startNewLaunch(ILaunch launch) {
-    setFocus();
+    // steal focus
+    viewPart = openInstance();
     
     this.launch = launch;
     setDriver(null);
@@ -242,8 +243,6 @@ public class TestGeneratorViewPart extends ViewPart {
   }
   
   public CounterPanel getCounterPanel() {
-    setFocus();
-    
     return fCounterPanel;
   }
 
