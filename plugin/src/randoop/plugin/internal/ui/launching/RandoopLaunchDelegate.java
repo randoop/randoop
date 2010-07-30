@@ -127,7 +127,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     if (threatenedResources.length > 0) {
       String message = "The following files were found in the output directory and may be overwritten by the generated tests.";
       String question = "Proceed with test generation?";
-      if (!MessageUtil.openResourcesQuestion(message + "\n\n" + question, threatenedResources)) { //$NON-NLS-1$
+      if (!MessageUtil.openResourcesQuestion(message, question, threatenedResources)) { //$NON-NLS-1$
         return;
       }
     }
