@@ -194,6 +194,17 @@ public class ExecutableSequence implements Serializable {
     return b.toString();
   }
 
+  /*package-accessible*/
+  static boolean canUseShortFormat(StatementKind statementCreatingVar) {
+    return (statementCreatingVar instanceof PrimitiveOrStringOrNullDecl
+            // Do not use the short output format if the value is null, because
+            // the variable type may disambiguate among overloaded methods.
+            // (It would be even nicer to use the short output format unless
+            // disambiguation is truly needed.)
+            && ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue() != null);
+  }
+
+
   /**
    * Output this sequence as code. In addition to printing out the statements,
    * this method prints the checks.
@@ -211,7 +222,7 @@ public class ExecutableSequence implements Serializable {
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
       if (!GenInputsAbstract.long_format
-          && sequence.getStatementKind(i) instanceof PrimitiveOrStringOrNullDecl) {
+          && ExecutableSequence.canUseShortFormat(sequence.getStatementKind(i))) {
         continue;
       }
       
