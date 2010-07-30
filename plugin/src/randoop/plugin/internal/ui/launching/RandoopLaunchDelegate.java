@@ -79,37 +79,15 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     fPort = RandoopArgumentCollector.getPort(configuration);
     boolean useDefault = (fPort == IConstants.INVALID_PORT);
     
+    fMessageReceiver = null;
     if (useDefault) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-        
-        @Override
-        public void run() {
-          IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-          IWorkbenchPage page = window.getActivePage();
-
-          if (page != null) {
-            TestGeneratorViewPart viewPart;
-            try {
-              viewPart = (TestGeneratorViewPart) page.showView(TestGeneratorViewPart.ID);
-              Assert.isTrue(viewPart != null); // TODO is this true?
-              
-              viewPart.relaunchAction.setEnabled(true);
-              
-              fMessageReceiver = new MessageReceiver(new MessageViewListener(viewPart));
-              viewPart.setLaunch(theLaunch);
-              fPort = fMessageReceiver.getPort();
-            } catch (PartInitException e) {
-              fMessageReceiver = null;
-              RandoopPlugin.log(e, "Randoop view could not be initialized"); //$NON-NLS-1$
-            } catch (IOException e) {
-              fMessageReceiver = null;
-              RandoopPlugin.log(e, "Could not find free communication port"); //$NON-NLS-1$
-            }
-          }
-        }
-      });
-    } else {
-      fMessageReceiver = null;
+      try {
+        fMessageReceiver = new MessageReceiver(new MessageViewListener(theLaunch));
+        fPort = fMessageReceiver.getPort();
+      } catch (IOException e) {
+        fMessageReceiver = null;
+        RandoopPlugin.log(e, "Could not find free communication port"); //$NON-NLS-1$
+      }
     }
 
     String mainTypeName = verifyMainTypeName(configuration);
@@ -121,13 +99,13 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     // Search for similarly named files in the output directory and warn the user
     // if any are found. Similarly named files match the pattern <ClassName>[0-9]*.java
-    IResource[] threatenedResources = testGroupResources.getThreatendedResources();
-    
+    IResource[] resourcesInQuestion = testGroupResources.getThreatendedResources();
+
     // Check if the output directory exists
-    if (threatenedResources.length > 0) {
+    if (resourcesInQuestion.length > 0) {
       String message = "The following files were found in the output directory and may be overwritten by the generated tests.";
       String question = "Proceed with test generation?";
-      if (!MessageUtil.openResourcesQuestion(message, question, threatenedResources)) { //$NON-NLS-1$
+      if (!MessageUtil.openResourcesQuestion(message, question, resourcesInQuestion)) { //$NON-NLS-1$
         return;
       }
     }
