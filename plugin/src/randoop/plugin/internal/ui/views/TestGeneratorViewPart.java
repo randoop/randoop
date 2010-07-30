@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
@@ -21,10 +23,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.ViewPart;
 
 import randoop.plugin.RandoopPlugin;
@@ -47,10 +51,12 @@ public class TestGeneratorViewPart extends ViewPart {
   ICompilationUnit junitDriver;
   
   ILaunch launch;
-  
+
   public Action debugWithJUnitAction;
   
   public Action runWithJUnitAction;
+
+  public Action terminateAction;
   
   public Action relaunchAction;
 
@@ -150,9 +156,8 @@ public class TestGeneratorViewPart extends ViewPart {
         }
       }
     };
-    ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/bug.png");
-    debugWithJUnitAction.setImageDescriptor(desc);
-    
+    // ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/bug.png");
+    debugWithJUnitAction.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG));
     debugWithJUnitAction.setEnabled(false);
     
     runWithJUnitAction = new Action("Run tests with JUnit") {
@@ -171,31 +176,56 @@ public class TestGeneratorViewPart extends ViewPart {
     
     runWithJUnitAction.setEnabled(false);
     
-    desc = RandoopPlugin.getImageDescriptor("icons/run_junit.png");
+    ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/run_junit.png");
     runWithJUnitAction.setImageDescriptor(desc);
+    
+    terminateAction = new Action("Terminate") {
+      @Override
+      public void run() {
+        try {
+          terminate();
+        } catch (DebugException e) {
+          RandoopPlugin.log(e);
+        }
+      };
+    };
+    terminateAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
+    terminateAction.setEnabled(false);
     
     relaunchAction = new Action("Regenerate tests") {
       @Override
       public void run() {
-        ILaunchConfiguration config = launch.getLaunchConfiguration();
-        assert config != null; // TODO right?
-        String mode = launch.getLaunchMode();
-        assert mode != null; // TODO right?
-        DebugUITools.launch(config, mode);
+        try {
+          // Terminate the old launch
+          terminate();
+
+          ILaunchConfiguration config = launch.getLaunchConfiguration();
+          assert config != null; // TODO right?
+          String mode = launch.getLaunchMode();
+          assert mode != null; // TODO right?
+          DebugUITools.launch(config, mode);
+        } catch (DebugException e) {
+          RandoopPlugin.log(e);
+        }
       }
     };
-    
     relaunchAction.setEnabled(false);
 
     // TODO dispose?
-    desc = RandoopPlugin.getImageDescriptor("icons/arrow_redo.png");
-    relaunchAction.setImageDescriptor(desc);
+    // desc = RandoopPlugin.getImageDescriptor("icons/arrow_redo.png"); //$NON-NLS-1$
+    relaunchAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+  }
+  
+  private void terminate() throws DebugException {
+    launch.terminate();
+    terminateAction.setEnabled(false);
   }
 
   private void createToolBar() {
     IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
     mgr.add(debugWithJUnitAction);
     mgr.add(runWithJUnitAction);
+    mgr.add(terminateAction);
     mgr.add(relaunchAction);
   }
 
@@ -208,6 +238,7 @@ public class TestGeneratorViewPart extends ViewPart {
     getCounterPanel().reset();
     randoopErrors.reset();
     relaunchAction.setEnabled(true);
+    terminateAction.setEnabled(true);
   }
   
   public CounterPanel getCounterPanel() {
@@ -222,6 +253,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
   public void setDriver(ICompilationUnit driver) {
     junitDriver = driver;
+    terminateAction.setEnabled(false);
     debugWithJUnitAction.setEnabled(junitDriver != null);
     runWithJUnitAction.setEnabled(junitDriver != null);
   }
