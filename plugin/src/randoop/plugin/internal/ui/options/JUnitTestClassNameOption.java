@@ -130,6 +130,7 @@ public class JUnitTestClassNameOption extends Option {
   public void restoreDefaults() {
     String packageName = IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME;
     String className = IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME;
+    
     if (fFullyQualifiedTestName != null && fPackageName == null && fClassName == null) {
       fFullyQualifiedTestName.setText(RandoopCoreUtil.getFullyQualifiedName(packageName, className));
     } else if (fFullyQualifiedTestName == null && fPackageName != null && fClassName != null) {

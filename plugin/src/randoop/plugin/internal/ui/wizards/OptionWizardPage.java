@@ -61,6 +61,12 @@ public abstract class OptionWizardPage extends WizardPage {
     return isValid(fConfig);
   }
   
+  public void restoreDefualts() {
+    for (IOption option : fOptions) {
+      option.restoreDefaults();
+    }
+  }
+  
   // public void setDefaults(ILaunchConfigurationWorkingCopy config) {
   // for (IOption option : fOptions) {
   // option.setDefaults(config);
@@ -106,14 +112,15 @@ public abstract class OptionWizardPage extends WizardPage {
   
   public boolean isValid(ILaunchConfiguration config) {
     setErrorMessage(null);
-
+    setMessage(null);
+    
     boolean isMessageSet = false;
     
     for (IOption option : fOptions) {
       IStatus status = option.isValid(config);
 
       String message = status.getMessage();
-      if (!status.isOK()) {
+      if (status.getSeverity() == IStatus.ERROR) {
         setErrorMessage(message);
         return false;
       } else {
