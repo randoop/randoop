@@ -142,7 +142,7 @@ public abstract class OptionWizardPage extends WizardPage {
    */
   protected boolean setReadableMessage(String message) {
     String msg = message;
-    if (msg != null && !msg.equals(IConstants.EMPTY_STRING)) {
+    if (msg != null && !msg.isEmpty()) {
       setMessage(message);
       return true;
     }

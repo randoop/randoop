@@ -13,7 +13,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.IOptionFactory;
@@ -171,8 +170,9 @@ public class MainPage extends OptionWizardPage {
     SWTFactory.createLabel(comp, "&Time Limit:", 1);
     Text timeLimit = SWTFactory.createSingleText(comp, 1);
 
-    SWTFactory.createLabel(comp, IConstants.EMPTY_STRING, 1); // spacer
-    Label convertedTimeLimit = SWTFactory.createLabel(comp, IConstants.EMPTY_STRING, 1);
+    // Create a spacer
+    SWTFactory.createLabel(comp, "", 1); //$NON-NLS-1$
+    Label convertedTimeLimit = SWTFactory.createLabel(comp, "", 1); //$NON-NLS-1$
     convertedTimeLimit.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true,
        false));
     

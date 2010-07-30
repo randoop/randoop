@@ -31,7 +31,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 /**
@@ -73,8 +72,13 @@ public class TestGroupResources {
     Assert.isLegal(fArguments.getJavaProject() != null);
 
     // Create a unique name from the name and time stamp
-    fId = IConstants.EMPTY_STRING + Math.abs(args.getName().hashCode()) + '.'
-        + System.currentTimeMillis() + '.' + System.nanoTime();
+    StringBuilder id = new StringBuilder();
+    id.append(Math.abs(args.getName().hashCode()) );
+    id.append('.');
+    id.append(System.currentTimeMillis());
+    id.append('.');
+    id.append(System.nanoTime());
+    fId = id.toString();
 
     // Make a directory that may be used for storing temporary file if needed
     fResourceFolder = TEMP_PATH.append(fId).toFile();

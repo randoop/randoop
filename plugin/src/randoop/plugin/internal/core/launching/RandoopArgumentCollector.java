@@ -13,7 +13,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
@@ -25,6 +24,8 @@ import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TypeMnemonic;
 
 public class RandoopArgumentCollector {
+  private static final List<String> EMPTY_STRING_LIST = new ArrayList<String>();
+  
   private String fName;
   private List<IType> fSelectedTypes;
   private List<IMethod> fSelectedMethods;
@@ -223,25 +224,25 @@ public class RandoopArgumentCollector {
   public static List<String> getAvailableTypes(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES,
-        IConstants.EMPTY_STRING_LIST);
+        EMPTY_STRING_LIST);
   }
 
   public static List<String> getSelectedTypes(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES,
-        IConstants.EMPTY_STRING_LIST);
+        EMPTY_STRING_LIST);
   }
   
   public static List<String> getAvailableMethods(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS,
-        IConstants.EMPTY_STRING_LIST);
+        EMPTY_STRING_LIST);
   }
   
   public static List<String> getSelectedMethods(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
-        IConstants.EMPTY_STRING_LIST);
+        EMPTY_STRING_LIST);
   }
   
   public static String getRandomSeed(ILaunchConfiguration config) {
@@ -348,25 +349,25 @@ public class RandoopArgumentCollector {
   public static void restoreAvailableTypes(ILaunchConfigurationWorkingCopy config) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES,
-        IConstants.EMPTY_STRING_LIST);
+        EMPTY_STRING_LIST);
   }
 
   public static void restoreSelectedTypes(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES,
-        IConstants.EMPTY_STRING_LIST);
+        EMPTY_STRING_LIST);
   }
   
   public static void restoreAvailableMethods(ILaunchConfigurationWorkingCopy config) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS,
-        IConstants.EMPTY_STRING_LIST);
+        EMPTY_STRING_LIST);
   }
   
   public static void restoreSelectedMethods(ILaunchConfigurationWorkingCopy config) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
-        IConstants.EMPTY_STRING_LIST);
+        EMPTY_STRING_LIST);
   }
 
   public static void restoreRandomSeed(ILaunchConfigurationWorkingCopy config) {

@@ -67,14 +67,14 @@ public class JUnitTestClassNameOption extends Option {
     IStatus packageStatus = StatusFactory.OK_STATUS;
     if (!packageName.isEmpty()) {
       packageStatus = JavaConventions.validatePackageName(packageName,
-          IConstants.EMPTY_STRING, IConstants.EMPTY_STRING);
-      if(packageStatus.getSeverity() == IStatus.ERROR) {
+          IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL);
+      if (packageStatus.getSeverity() == IStatus.ERROR) {
         return packageStatus;
       }
     }
-    
+
     IStatus classStatus = JavaConventions.validateIdentifier(className,
-        IConstants.EMPTY_STRING, IConstants.EMPTY_STRING);
+        IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL);
     if(classStatus.getSeverity() == IStatus.ERROR) {
       return classStatus;
     }

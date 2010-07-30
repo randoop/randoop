@@ -25,7 +25,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.StatusFactory;
 
 public class RandoopCoreUtil {
@@ -35,7 +34,7 @@ public class RandoopCoreUtil {
     int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
     
     if (lastDelimiter == -1) {
-      return IConstants.EMPTY_STRING;
+      return ""; //$NON-NLS-1$
     } else {
       return fullyQualifiedName.substring(0, lastDelimiter);
     }
@@ -52,7 +51,7 @@ public class RandoopCoreUtil {
   }
 
   public static String getFullyQualifiedName(String packageName, String className) {
-    if (packageName.equals(IConstants.EMPTY_STRING)) {
+    if (packageName.isEmpty()) {
       return className;
     } else {
       return packageName + '.' + className;
