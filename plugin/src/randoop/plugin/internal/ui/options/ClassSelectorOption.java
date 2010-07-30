@@ -407,9 +407,18 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       if (fSearchScope.encloses(resourcePath)) {
         IWorkspaceRoot root = getWorkspaceRoot();
         
+        String filePath;
+        String subFilePath;
+        
         int separator = resourcePath.indexOf(JAR_FILE_ENTRY_SEPARATOR);
-        String filePath = resourcePath.substring(0, separator);
-        String subFilePath = resourcePath.substring(separator + 1);
+        if (separator == -1) {
+          filePath = resourcePath;
+          subFilePath = null;
+        } else {
+          filePath = resourcePath.substring(0, separator);
+          subFilePath = resourcePath.substring(separator + 1);
+        }
+        
         URI fileURI = root.getLocation().append(new Path(filePath)).toFile().toURI();
         IFile[] files = root.findFilesForLocationURI(fileURI);
 

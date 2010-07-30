@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -26,28 +27,30 @@ import randoop.runtime.PercentDone;
 import randoop.runtime.RandoopStarted;
 
 public class MessageViewListener implements IMessageListener {
-  private TestGeneratorViewPart fViewPart;
+  ILaunch fLaunch;
 
-  public MessageViewListener(TestGeneratorViewPart viewPart) {
-    fViewPart = viewPart;
+  public MessageViewListener(ILaunch launch) {
+    fLaunch = launch;
   }
 
   @Override
   public void handleMessage(IMessage m) {
     if (m instanceof RandoopStarted) {
       RandoopPlugin.getDisplay().syncExec(new Runnable() {
-          @Override
-          public void run() {
-            fViewPart.startNewLaunch();
-          }
-        });
+        @Override
+        public void run() {
+          TestGeneratorViewPart viewPart = TestGeneratorViewPart.getDefault();
+          viewPart.startNewLaunch(fLaunch);
+        }
+      });
     } else if (m instanceof PercentDone) {
       final PercentDone p = (PercentDone)m;
       RandoopPlugin.getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
-          fViewPart.getProgressBar().setPercentDone(p.getPercentDone());
-          fViewPart.getCounterPanel().numSequences(p.getSequencesGenerated());
+          TestGeneratorViewPart viewPart = TestGeneratorViewPart.getDefault();
+          viewPart.getProgressBar().setPercentDone(p.getPercentDone());
+          viewPart.getCounterPanel().numSequences(p.getSequencesGenerated());
         }
       });
     } else if (m instanceof ErrorRevealed) {
@@ -55,9 +58,10 @@ public class MessageViewListener implements IMessageListener {
       RandoopPlugin.getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
-          fViewPart.getProgressBar().error();
-          fViewPart.getCounterPanel().errors();
-          fViewPart.randoopErrors.add(err);          
+          TestGeneratorViewPart viewPart = TestGeneratorViewPart.getDefault();
+          viewPart.getProgressBar().error();
+          viewPart.getCounterPanel().errors();
+          viewPart.randoopErrors.add(err);          
         }
       });
     } else if (m instanceof CreatedJUnitFile) {
@@ -113,7 +117,8 @@ public class MessageViewListener implements IMessageListener {
               IJavaElement driverElement = JavaCore.create(driverResource, javaProject);
               Assert.isTrue(driverElement instanceof ICompilationUnit);
 
-              fViewPart.setDriver((ICompilationUnit) driverElement);
+              TestGeneratorViewPart viewPart = TestGeneratorViewPart.getDefault();
+              viewPart.setDriver((ICompilationUnit) driverElement);
             } else {
               // TODO root may be null. If it is, notify user that the given file was not found.
               
@@ -128,10 +133,11 @@ public class MessageViewListener implements IMessageListener {
 
   @Override
   public void handleTermination() {
-    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+    RandoopPlugin.getDisplay().syncExec(new Runnable() {
       @Override
       public void run() {
-        fViewPart.getProgressBar().stop();
+        TestGeneratorViewPart viewPart = TestGeneratorViewPart.getDefault();
+        viewPart.getProgressBar().stop();
       }
     });
   }
