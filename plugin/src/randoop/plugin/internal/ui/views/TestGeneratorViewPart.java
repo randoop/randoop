@@ -66,7 +66,7 @@ public class TestGeneratorViewPart extends ViewPart {
   
   public static TestGeneratorViewPart getDefault() {
     if (viewPart == null || isDisposed) {
-      return openInstance();
+      return viewPart = openInstance();
     }
     
     return viewPart;
