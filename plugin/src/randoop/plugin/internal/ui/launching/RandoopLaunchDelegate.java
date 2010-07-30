@@ -121,11 +121,11 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     // Search for similarly named files in the output directory and warn the user
     // if any are found. Similarly named files match the pattern <ClassName>[0-9]*.java
-    IResource[] threatenedFiles = testGroupResources.getThreatendedResources();
+    IResource[] threatenedResources = testGroupResources.getThreatendedResources();
     
     // Check if the output directory exists
-    if (threatenedFiles.length > 0) {
-      if (!MessageUtil.openQuestion("Randoop found similarly named files that may be overwritten by the generated tests.\n\nProceed with test generation?")) {
+    if (threatenedResources.length > 0) {
+      if (!MessageUtil.openResourcesQuestion("Randoop found similarly named files (listed below) that may be overwritten by the generated tests.\n\nProceed with test generation?", threatenedResources)) {
         return;
       }
     }

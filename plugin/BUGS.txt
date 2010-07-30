@@ -9,14 +9,10 @@ PLUGIN BUGS
   remember which classes I searched for in earlier dialogs, and shows
   those classes in subsequent dialogs, which is confusing.
 
-* Cannot add from project classpath entry or library classpath entry
+* Cannot add from project classpath entry
 
 * As I use the plugin in an example use, many errors show up in the
   Error Log window of the test Eclipse application.
-
-* [Usability] When showing dialog "Randoop found similarly named files
- that may be overwritten by the generated tests", would be clearer to
- see the files in question.
 
 * Run config, parameters tab: Thread Timeout, Null Ratio not working,
   I couldn't get Randoop to run without threads, and when changing the
