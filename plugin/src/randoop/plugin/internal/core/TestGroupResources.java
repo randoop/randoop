@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -310,8 +311,32 @@ public class TestGroupResources {
     return fClasspath;
   }
   
-  public IFolder getOutputFolder() {
-    return fOutputFolder;
+  /**
+   * Returns a list of IResources that may be overwritten by the generated tests.
+   * @return
+   */
+  public IResource[] getThreatendedResources() {
+    List<IResource> threatenedFiles = new ArrayList<IResource>();
+    IFolder outputFolder = fOutputFolder;
+    
+    // Check if the output directory exists
+    if (outputFolder != null && outputFolder.exists()) {
+      try {
+        for (IResource resource : outputFolder.members()) {
+          if (resource instanceof IFile) {
+            String resourceName = resource.getName();
+            String testName = getArguments().getJUnitClassName();
+            if (resourceName.matches(testName + "\\p{Digit}*.java")) { //$NON-NLS-1$
+              threatenedFiles.add(resource);
+            }
+          }
+        }
+      } catch (CoreException e) {
+        RandoopPlugin.log(e);
+      }
+    }
+    
+    return threatenedFiles.toArray(new IResource[threatenedFiles.size()]);
   }
   
   public IPath getOutputLocation() {
