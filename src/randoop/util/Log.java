@@ -19,7 +19,7 @@ public final class Log {
    * If not specified, no logging is done.
    */
   @OptionGroup("Logging")
-  @Option("Name of a file to which to log lots of information")
+  @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
 
   private Log() {
