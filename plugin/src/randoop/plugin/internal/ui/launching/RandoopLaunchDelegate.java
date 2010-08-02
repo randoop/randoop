@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
@@ -32,7 +34,9 @@ import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -42,10 +46,12 @@ import org.omg.PortableServer.portable.Delegate;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
+import randoop.plugin.internal.core.MutableBoolean;
 import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.ui.MessageUtil;
+import randoop.plugin.internal.ui.MessageUtil.ResourcesListQuestionDialog;
 import randoop.plugin.internal.ui.views.MessageViewListener;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 
@@ -142,14 +148,37 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     // Search for similarly named files in the output directory and warn the user
     // if any are found. Similarly named files match the pattern <ClassName>[0-9]*.java
-    IResource[] resourcesInQuestion = testGroupResources.getThreatendedResources();
+    final IResource[] resourcesInQuestion = testGroupResources.getThreatendedResources();
 
     // Check if the output directory exists
     if (resourcesInQuestion.length > 0) {
-      String message = "The following files were found in the output directory and may be overwritten by the generated tests.";
-      String question = "Proceed with test generation?";
-      if (!MessageUtil.openResourcesQuestion(message, question, resourcesInQuestion)) { //$NON-NLS-1$
+      final String message = "The following files were found in the output directory and may be overwritten by the generated tests.";
+      final String question = "Proceed with test generation?";
+      final String toggleQuestion = "Delete these files before launch";
+      
+      final MutableBoolean okToProceed = new MutableBoolean(false);
+      final MutableBoolean deleteFiles = new MutableBoolean(false);
+      
+      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+        @Override
+        public void run() {
+          MessageDialogWithToggle d = new MessageUtil.ResourcesListQuestionDialog(PlatformUI.getWorkbench().getDisplay()
+              .getActiveShell(), "Randoop", message, question, resourcesInQuestion, toggleQuestion);
+          
+          okToProceed.setValue(d.open() == Dialog.OK);
+          deleteFiles.setValue(d.getToggleState());
+        }
+      });
+      
+      if (!okToProceed.getValue()) {
         return;
+      }
+      
+      if (deleteFiles.getValue()) {
+        for (IResource r : resourcesInQuestion) {
+          monitor.beginTask("Deleting files", 0);
+          r.delete(true, new SubProgressMonitor(monitor, 0));
+        }
       }
     }
 
