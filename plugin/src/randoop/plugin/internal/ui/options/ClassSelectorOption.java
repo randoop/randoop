@@ -150,7 +150,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         try {
           IClasspathEntry classpathEntry = chooseClasspathEntry();
           if (classpathEntry != null) {
-            IJavaElement[] elements = fJavaProject.findPackageFragmentRoots(classpathEntry);
+            IJavaElement[] elements = RandoopCoreUtil.findPackageFragmentRoots(fJavaProject, classpathEntry);
             IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements);
             handleSearchButtonSelected(searchScope);
           }
