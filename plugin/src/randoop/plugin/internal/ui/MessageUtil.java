@@ -3,13 +3,9 @@ package randoop.plugin.internal.ui;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -26,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -53,23 +48,7 @@ public class MessageUtil {
     return okToProceed.getValue();
   }
   
-  public static boolean openResourcesQuestion(final String message, final String question, final IResource[] resources) {
-    final MutableBoolean okToProceed = new MutableBoolean(false);
-    
-    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-      @Override
-      public void run() {
-        Dialog d = new ResourcesListQuestionDialog(PlatformUI.getWorkbench().getDisplay()
-            .getActiveShell(), "Randoop", message, question, resources);
-        
-        okToProceed.setValue(d.open() == Dialog.OK);
-      }
-    });
-
-    return okToProceed.getValue();
-  }
-  
-  static private class ResourcesListQuestionDialog extends MessageDialog implements IDoubleClickListener {
+  static public class ResourcesListQuestionDialog extends MessageDialogWithToggle implements IDoubleClickListener {
     
     static class ResourceLabelProvider extends LabelProvider {
       @Override
@@ -86,7 +65,8 @@ public class MessageUtil {
       @Override
       public String getText(Object element) {
         if (element instanceof IResource) {
-          return ((IResource) element).getName();
+          IResource r = ((IResource) element);
+          return r.getFullPath().toString();
         }
         return null;
       }
@@ -98,11 +78,11 @@ public class MessageUtil {
     
     private String fQuestion;
     
-    public ResourcesListQuestionDialog(Shell parentShell, String title, String message, String question,
-        IResource[] resources) {
+    public ResourcesListQuestionDialog(Shell parentShell, String title, String message,
+        String question, String toggleQuestion, IResource[] resources) {
       
       super(parentShell, title, null, message, MessageDialog.QUESTION,
-          new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+          new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0, toggleQuestion, false);
 
       fQuestion = question;
       fResourceList = resources;
@@ -127,6 +107,9 @@ public class MessageUtil {
       GridData gd = new GridData();;
       gd.horizontalIndent = 13;
       l.setLayoutData(gd);
+      
+      // Create a spacer
+      l = new Label(composite, SWT.NONE);
       
       GridData gridData= new GridData(SWT.FILL, SWT.FILL, true, true);
       gridData.heightHint= convertHeightInCharsToPixels(4);

@@ -11,5 +11,3 @@ behaviors to tests / tests to write:
 * do something sensible if randoop runs out of memory (e.g. threads=false and objectcache)
 
 * do something sensible if randoop generates no inputs because of an equals objectcache
-
-  
