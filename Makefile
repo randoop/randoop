@@ -84,6 +84,7 @@ randoop_agent.jar : bin/randoop/instrument/Premain.class src/randoop/instrument/
 	  randoop/instrument/Premain.class
 
 jdoc:
+	\rm -rf doc/javadoc
 	mkdir -p doc/javadoc
 	find src/randoop -name "*.java" \
 		| xargs javadoc -d doc/javadoc -quiet -noqualifier all -notimestamp
