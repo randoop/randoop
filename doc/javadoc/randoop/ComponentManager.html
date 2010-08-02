@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML lang="en">
+<HEAD>
+<TITLE>
+ComponentManager
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ComponentManager";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../randoop/ClassLiterals.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/ContractCheckingVisitor.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/ComponentManager.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ComponentManager.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop</FONT>
+<BR>
+Class ComponentManager</H2>
+<PRE>
+Object
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>ComponentManager</STRONG>
+</PRE>
+<HR>
+<PRE>public class <STRONG>ComponentManager</STRONG>
+extends Object</PRE>
+
+<P>
+Stores and provides means to access the component sequences generated during
+ a run of Randoop. "Component sequences" are sequences that Randoop uses to
+ create larger sequences.
+ 
+ This class manages different collections of component sequences:
+ 
+ <ul>
+ <li>General components that can be used as input to any method in any class.
+ <li>Class literals: components representing literal values that apply only to
+ a specific class and should not be used as inputs to other classes.
+ <li>Package literals: analogous to class literals but at the package level.
+ </ul>
+ 
+ SEED SEQUENCES. Seed sequences are sequences that were not created during the
+ generation process but obtained via other means. They include (1) sequences
+ passed via the constructor, (2) class literals, and (3) package literals. The
+ only different treatment of seed sequences is during calls to the
+ clearGeneratedSequences() method, which removes only general, non-seed
+ components from the collection.
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#ComponentManager()">ComponentManager</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an empty component manager, with an empty seed sequence set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#ComponentManager(java.util.Collection)">ComponentManager</A></STRONG>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;generalSeeds)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a component manager, initially populated with the
+ given sequences, which are considered seed sequences.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#addClassLevelLiteral(java.lang.Class, randoop.Sequence)">addClassLevelLiteral</A></STRONG>(Class&lt;?&gt;&nbsp;cls,
+                     <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;seq)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add a sequence representing a literal value that can be used
+ when testing members of the given class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#addGeneratedSequence(randoop.Sequence)">addGeneratedSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add a component sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#addPackageLevelLiteral(java.lang.Package, randoop.Sequence)">addPackageLevelLiteral</A></STRONG>(Package&nbsp;pkg,
+                       <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;seq)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add a sequence representing a literal value that can be used
+ when testing classes in the given package.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#clearGeneratedSequences()">clearGeneratedSequences</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes any components sequences added so far, except for seed sequences,
+ which are preserved.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#getAllGeneratedSequences()">getAllGeneratedSequences</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#getAllPrimitiveSequences()">getAllPrimitiveSequences</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns all sequences that represent primitive values
+ (e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#getSequencesForType(java.lang.Class, boolean)">getSequencesForType</A></STRONG>(Class&lt;?&gt;&nbsp;cls,
+                    boolean&nbsp;exactMatch)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns all the general component sequences that create values of the given
+ class.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#getSequencesForType(randoop.StatementKind, int)">getSequencesForType</A></STRONG>(<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&nbsp;statement,
+                    int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns component sequences that create values of the type required by the
+ i-th input value of the given statement.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ComponentManager.html#numGeneratedSequences()">numGeneratedSequences</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of (non-seed) sequences stored by the manager.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Constructor Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ComponentManager()"><!-- --></A><H3>
+ComponentManager</H3>
+<PRE>
+public <STRONG>ComponentManager</STRONG>()</PRE>
+<DL>
+<DD>Create an empty component manager, with an empty seed sequence set.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ComponentManager(java.util.Collection)"><!-- --></A><H3>
+ComponentManager</H3>
+<PRE>
+public <STRONG>ComponentManager</STRONG>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;generalSeeds)</PRE>
+<DL>
+<DD>Create a component manager, initially populated with the
+ given sequences, which are considered seed sequences.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>generalSeeds</CODE> - seed sequences. Can be null, in which case
+ the seed sequences set is considered empty.</DD></DL>
+</DD>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Method Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="numGeneratedSequences()"><!-- --></A><H3>
+numGeneratedSequences</H3>
+<PRE>
+public int <STRONG>numGeneratedSequences</STRONG>()</PRE>
+<DL>
+<DD>Returns the number of (non-seed) sequences stored by the manager.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addClassLevelLiteral(java.lang.Class, randoop.Sequence)"><!-- --></A><H3>
+addClassLevelLiteral</H3>
+<PRE>
+public void <STRONG>addClassLevelLiteral</STRONG>(Class&lt;?&gt;&nbsp;cls,
+                                 <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;seq)</PRE>
+<DL>
+<DD>Add a sequence representing a literal value that can be used
+ when testing members of the given class.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addPackageLevelLiteral(java.lang.Package, randoop.Sequence)"><!-- --></A><H3>
+addPackageLevelLiteral</H3>
+<PRE>
+public void <STRONG>addPackageLevelLiteral</STRONG>(Package&nbsp;pkg,
+                                   <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;seq)</PRE>
+<DL>
+<DD>Add a sequence representing a literal value that can be used
+ when testing classes in the given package.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addGeneratedSequence(randoop.Sequence)"><!-- --></A><H3>
+addGeneratedSequence</H3>
+<PRE>
+public void <STRONG>addGeneratedSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</PRE>
+<DL>
+<DD>Add a component sequence.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearGeneratedSequences()"><!-- --></A><H3>
+clearGeneratedSequences</H3>
+<PRE>
+public void <STRONG>clearGeneratedSequences</STRONG>()</PRE>
+<DL>
+<DD>Removes any components sequences added so far, except for seed sequences,
+ which are preserved.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAllGeneratedSequences()"><!-- --></A><H3>
+getAllGeneratedSequences</H3>
+<PRE>
+public Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>getAllGeneratedSequences</STRONG>()</PRE>
+<HR>
+
+<A NAME="getSequencesForType(java.lang.Class, boolean)"><!-- --></A><H3>
+getSequencesForType</H3>
+<PRE>
+public <A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>getSequencesForType</STRONG>(Class&lt;?&gt;&nbsp;cls,
+                                                boolean&nbsp;exactMatch)</PRE>
+<DL>
+<DD>Returns all the general component sequences that create values of the given
+ class. If exactMatch==true returns only sequences that declare values of
+ the exact class specified; if exactMatch==false returns sequences declaring
+ values of cls or any other class that can be used as a cls (i.e. a subclass
+ of cls).
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSequencesForType(randoop.StatementKind, int)"><!-- --></A><H3>
+getSequencesForType</H3>
+<PRE>
+public <A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>getSequencesForType</STRONG>(<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&nbsp;statement,
+                                                int&nbsp;i)</PRE>
+<DL>
+<DD>Returns component sequences that create values of the type required by the
+ i-th input value of the given statement. Any applicable class- or
+ package-level literals, those are added to the collection as well.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAllPrimitiveSequences()"><!-- --></A><H3>
+getAllPrimitiveSequences</H3>
+<PRE>
+public Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>getAllPrimitiveSequences</STRONG>()</PRE>
+<DL>
+<DD>Returns all sequences that represent primitive values
+ (e.g. sequences like "Foo var0 = null" or "int var0 = 1"),
+ including general components, class literals and package
+ literals.
+<P>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../randoop/ClassLiterals.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/ContractCheckingVisitor.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/ComponentManager.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ComponentManager.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

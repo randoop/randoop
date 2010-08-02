@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
-<HTML>
+<HTML lang="en">
 <HEAD>
 <TITLE>
 SubTypeSet
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/StatsForMethod.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/TestValue.html" title="annotation in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/StatsForMethod.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/TestValue.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/SubTypeSet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="SubTypeSet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/SubTypeSet.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="SubTypeSet.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -90,12 +90,18 @@ randoop</FONT>
 Class SubTypeSet</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>SubTypeSet</B>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>SubTypeSet</STRONG>
 </PRE>
 <HR>
-<DL>
-<DT><PRE>public class <B>SubTypeSet</B><DT>extends Object</DL>
-</PRE>
+<PRE>public class <STRONG>SubTypeSet</STRONG>
+extends Object</PRE>
+
+<P>
+A set of classes. This data structure additionally allows for
+ efficient answers to queries about can-be-used-as
+ (<A HREF="../randoop/util/Reflection.html#canBeUsedAs(java.lang.Class, java.lang.Class)"><CODE>Reflection.canBeUsedAs(Class,Class)</CODE></A>)
+  relationships.
+<P>
 
 <P>
 <HR>
@@ -104,15 +110,17 @@ Object
 <!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#reversible">reversible</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#reversible">reversible</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -120,7 +128,7 @@ Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;Class&lt;?&gt;,Class&lt;?&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#subTypesWithsequences">subTypesWithsequences</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#subTypesWithsequences">subTypesWithsequences</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -128,7 +136,7 @@ Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</A>&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#typesWithsequences">typesWithsequences</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#typesWithsequences">typesWithsequences</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -138,13 +146,14 @@ Object
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 <A NAME="constructor_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#SubTypeSet(boolean)">SubTypeSet</A></B>(boolean&nbsp;reversible)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#SubTypeSet(boolean)">SubTypeSet</A></STRONG>(boolean&nbsp;reversible)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -154,15 +163,17 @@ Object
 <!-- ========== METHOD SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#add(java.lang.Class)">add</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#add(java.lang.Class)">add</A></STRONG>(Class&lt;?&gt;&nbsp;c)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -170,16 +181,17 @@ Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#containsAssignableType(java.lang.Class, randoop.util.Reflection.Match)">containsAssignableType</A></B>(Class&lt;?&gt;&nbsp;c,
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#containsAssignableType(java.lang.Class, randoop.util.Reflection.Match)">containsAssignableType</A></STRONG>(Class&lt;?&gt;&nbsp;c,
                        <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If <code>match==COMPATIBLE_TYPE</code>, returns <code>true</code> if this
+ set contains any classes that can-be-used-as the given class <code>c</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Set&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#getElements()">getElements</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#getElements()">getElements</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -187,15 +199,16 @@ Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Set&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#getMatches(java.lang.Class)">getMatches</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#getMatches(java.lang.Class)">getMatches</A></STRONG>(Class&lt;?&gt;&nbsp;c)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an unmodifiable list of the typesWithsequences in this subTypesWithsequences that can be used as c.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns all the classes in the set that can-be-used-as the given
+ <code>c</code>.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#mark()">mark</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#mark()">mark</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -203,7 +216,7 @@ Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#size()">size</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#size()">size</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -211,7 +224,7 @@ Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SubTypeSet.html#undoLastStep()">undoLastStep</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SubTypeSet.html#undoLastStep()">undoLastStep</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -220,7 +233,7 @@ Object
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
@@ -235,38 +248,26 @@ Object
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Field Detail</B></FONT></TH>
+<STRONG>Field Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="typesWithsequences"><!-- --></A><H3>
 typesWithsequences</H3>
 <PRE>
-public <A HREF="../randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</A>&lt;Class&lt;?&gt;&gt; <B>typesWithsequences</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+public <A HREF="../randoop/util/ISimpleSet.html" title="interface in randoop.util">ISimpleSet</A>&lt;Class&lt;?&gt;&gt; <STRONG>typesWithsequences</STRONG></PRE>
 <HR>
 
 <A NAME="subTypesWithsequences"><!-- --></A><H3>
 subTypesWithsequences</H3>
 <PRE>
-public <A HREF="../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;Class&lt;?&gt;,Class&lt;?&gt;&gt; <B>subTypesWithsequences</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+public <A HREF="../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;Class&lt;?&gt;,Class&lt;?&gt;&gt; <STRONG>subTypesWithsequences</STRONG></PRE>
 <HR>
 
 <A NAME="reversible"><!-- --></A><H3>
 reversible</H3>
 <PRE>
-public boolean <B>reversible</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+public boolean <STRONG>reversible</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -274,16 +275,14 @@ public boolean <B>reversible</B></PRE>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Constructor Detail</B></FONT></TH>
+<STRONG>Constructor Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="SubTypeSet(boolean)"><!-- --></A><H3>
 SubTypeSet</H3>
 <PRE>
-public <B>SubTypeSet</B>(boolean&nbsp;reversible)</PRE>
-<DL>
-</DL>
+public <STRONG>SubTypeSet</STRONG>(boolean&nbsp;reversible)</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -291,53 +290,36 @@ public <B>SubTypeSet</B>(boolean&nbsp;reversible)</PRE>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
+<STRONG>Method Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="mark()"><!-- --></A><H3>
 mark</H3>
 <PRE>
-public void <B>mark</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public void <STRONG>mark</STRONG>()</PRE>
 <HR>
 
 <A NAME="undoLastStep()"><!-- --></A><H3>
 undoLastStep</H3>
 <PRE>
-public void <B>undoLastStep</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public void <STRONG>undoLastStep</STRONG>()</PRE>
 <HR>
 
 <A NAME="add(java.lang.Class)"><!-- --></A><H3>
 add</H3>
 <PRE>
-public void <B>add</B>(Class&lt;?&gt;&nbsp;c)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public void <STRONG>add</STRONG>(Class&lt;?&gt;&nbsp;c)</PRE>
 <HR>
 
 <A NAME="getMatches(java.lang.Class)"><!-- --></A><H3>
 getMatches</H3>
 <PRE>
-public Set&lt;Class&lt;?&gt;&gt; <B>getMatches</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+public Set&lt;Class&lt;?&gt;&gt; <STRONG>getMatches</STRONG>(Class&lt;?&gt;&nbsp;c)</PRE>
 <DL>
-<DD>Returns an unmodifiable list of the typesWithsequences in this subTypesWithsequences that can be used as c.
- For each c2 in the result, Reflection.canBeUsedAs(c2, c).
+<DD>Returns all the classes in the set that can-be-used-as the given
+ <code>c</code>.
 <P>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -345,11 +327,17 @@ public Set&lt;Class&lt;?&gt;&gt; <B>getMatches</B>(Class&lt;?&gt;&nbsp;c)</PRE>
 <A NAME="containsAssignableType(java.lang.Class, randoop.util.Reflection.Match)"><!-- --></A><H3>
 containsAssignableType</H3>
 <PRE>
-public boolean <B>containsAssignableType</B>(Class&lt;?&gt;&nbsp;c,
+public boolean <STRONG>containsAssignableType</STRONG>(Class&lt;?&gt;&nbsp;c,
                                       <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</PRE>
 <DL>
-<DD><DL>
-</DL>
+<DD>If <code>match==COMPATIBLE_TYPE</code>, returns <code>true</code> if this
+ set contains any classes that can-be-used-as the given class <code>c</code>.
+
+ <p>
+
+ Otherwise, returns <code>true</code> if this set contains the
+ given class <code>c</code>
+<P>
 </DD>
 </DL>
 <HR>
@@ -357,23 +345,13 @@ public boolean <B>containsAssignableType</B>(Class&lt;?&gt;&nbsp;c,
 <A NAME="size()"><!-- --></A><H3>
 size</H3>
 <PRE>
-public int <B>size</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public int <STRONG>size</STRONG>()</PRE>
 <HR>
 
 <A NAME="getElements()"><!-- --></A><H3>
 getElements</H3>
 <PRE>
-public Set&lt;Class&lt;?&gt;&gt; <B>getElements</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public Set&lt;Class&lt;?&gt;&gt; <STRONG>getElements</STRONG>()</PRE>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -387,13 +365,13 @@ public Set&lt;Class&lt;?&gt;&gt; <B>getElements</B>()</PRE>
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -404,20 +382,20 @@ public Set&lt;Class&lt;?&gt;&gt; <B>getElements</B>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/StatsForMethod.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/TestValue.html" title="annotation in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/StatsForMethod.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/TestValue.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/SubTypeSet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="SubTypeSet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/SubTypeSet.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="SubTypeSet.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
