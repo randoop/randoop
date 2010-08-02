@@ -54,7 +54,7 @@ public class DataFlowInput implements Serializable {
    * new DataFlowInput object. If two records specify the same branch, the
    * two sequences are added to the same set.
    * 
-   * @param A text file containing a description of branches and sequences.
+   * @param inFile A text file containing a description of branches and sequences.
    *        If inFile ends in ".gz" it will be read as a compressed file.
    */
   public static DataFlowInput parse(String inFile) {

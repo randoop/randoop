@@ -140,7 +140,7 @@ public final class PrimitiveTypes {
    * Given a primitive, boxed primitive, or String, returns a String that can
    * be uesd in Java source to represent it.
    *
-   * @param the value to create a String representation for.
+   * @param value the value to create a String representation for.
    * The value's type must be a primitive type, a String, or null.
    */
   public static String toCodeString(Object value) {
