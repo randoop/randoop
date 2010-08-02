@@ -10,7 +10,7 @@ public class PublicTopLevelClassFilter implements ClassFilter {
   private final Pattern omitPattern;
 
   /**
-   * @param omitPattern can be null.
+   * @param omitPatternString can be null.
    */
   public PublicTopLevelClassFilter(String omitPatternString) {
     if (omitPatternString != null) {

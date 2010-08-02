@@ -156,7 +156,6 @@ public class ExecutableSequence implements Serializable {
    * check of class StatementThrowsException is allowed for each index,
    * and attempting to add a second check of this type will result in an
    * IllegalArgumentException.
-   * @param b 
    *
    * @throws IllegalArgumentException
    *           If the given check's class is StatementThrowsException and

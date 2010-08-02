@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
-<HTML>
+<HTML lang="en">
 <HEAD>
 <TITLE>
 Check
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/BugInRandoopException.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/CheckRep.html" title="annotation in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/BugInRandoopException.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/CheckRep.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/Check.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="Check.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/Check.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="Check.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -89,15 +89,14 @@ randoop</FONT>
 <BR>
 Interface Check</H2>
 <DL>
-<DT><B>All Superinterfaces:</B> <DD>Serializable</DD>
+<DT><STRONG>All Superinterfaces:</STRONG></DT> <DD>Serializable</DD>
 </DL>
 <DL>
-<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>, <A HREF="../randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>, <A HREF="../randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A></DD>
+<DT><STRONG>All Known Implementing Classes:</STRONG></DT> <DD><A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>, <A HREF="../randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>, <A HREF="../randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A></DD>
 </DL>
 <HR>
-<DL>
-<DT><PRE>public interface <B>Check</B><DT>extends Serializable</DL>
-</PRE>
+<PRE>public interface <STRONG>Check</STRONG>
+extends Serializable</PRE>
 
 <P>
 A correctness check performed on some aspect of a unit test's execution.
@@ -106,29 +105,33 @@ A correctness check performed on some aspect of a unit test's execution.
  
  <p>
  
- <code>Check</code> objects are inserted as a decorations on specific
- indices of an <A HREF="../randoop/ExecutableSequence.html" title="class in randoop"><CODE>ExecutableSequence</CODE></A>. Thus, a check is always associated
- with a specific statement in a sequence.
+ <code>Check</code> objects are inserted as a decorations on
+ specific indices of an <A HREF="../randoop/ExecutableSequence.html" title="class in randoop"><CODE>ExecutableSequence</CODE></A>. Thus, a check is
+ always associated with a specific index in a sequence. A check at
+ index i means that the check is to performed after statement i
+ finishes executing.
  
  <p>
- 
- A check may require some code to be emitted before and/or after the
- statement is printed. For example, a checker that inserts the assertion "
- <code>x != null</code>" for a statement "<code>Foo var0 = m()</code>" need
- only emit the assertion code after the statement. A checker that surrounds
- the statement with a try-catch clause to test for an expected exception needs
- to emit the <i>try</i> part of the clause before the statement, and the
- <i>catch</i> part after the statement (see <A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop"><CODE>ExpectedExceptionCheck</CODE></A>,
- for example).
+
+ A check implements two methods that specify the code to be
+ emitted before and/or after a statement in a <code>Sequence</code>
+ is executed.
 
  <p>
  
- A check must implement two methods that specify the code to be emitted
- before and/or after a statement in a <code>Sequence</code> is executed.
+ A check may require some code to be emitted before and/or after the
+ statement is printed. For example, a check for checking that
+ <code>x</code> is not null after the statement "<code>Foo x =
+ m()</code>" is executed might emit the assertion code
+ "<code>assertNotNull(x);</code>", and would do so after the
+ statement is printed. As a second example, a check for checking
+ that an expected exception is thrown by a statement would need to
+ emit something like "<code>try {</code>" before the statement, and
+ the catch clause after the statement.
  
  <p>
  
- Checks should be Serializable so that an ExecutableSequence can be
+ Checks are Serializable so that an <code>ExecutableSequence</code> can be
  serialized along with its associated checks.
 <P>
 
@@ -140,15 +143,17 @@ A correctness check performed on some aspect of a unit test's execution.
 <!-- ========== METHOD SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">evaluate</A></B>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">evaluate</A></STRONG>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates this check on the given unfolding execution of a sequence,
@@ -158,7 +163,7 @@ A correctness check performed on some aspect of a unit test's execution.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Check.html#get_value()">get_value</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Check.html#get_value()">get_value</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a short string that can be used to uniquely identify
@@ -167,7 +172,7 @@ A correctness check performed on some aspect of a unit test's execution.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Check.html#toCodeStringPostStatement()">toCodeStringPostStatement</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Check.html#toCodeStringPostStatement()">toCodeStringPostStatement</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted after a
@@ -176,7 +181,7 @@ A correctness check performed on some aspect of a unit test's execution.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Check.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Check.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted before a
@@ -192,23 +197,18 @@ A correctness check performed on some aspect of a unit test's execution.
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
+<STRONG>Method Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="toCodeStringPreStatement()"><!-- --></A><H3>
 toCodeStringPreStatement</H3>
 <PRE>
-String <B>toCodeStringPreStatement</B>()</PRE>
+String <STRONG>toCodeStringPreStatement</STRONG>()</PRE>
 <DL>
 <DD>Returns a string of Java source code to be emitted before a
  statement containing this check.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -216,16 +216,11 @@ String <B>toCodeStringPreStatement</B>()</PRE>
 <A NAME="toCodeStringPostStatement()"><!-- --></A><H3>
 toCodeStringPostStatement</H3>
 <PRE>
-String <B>toCodeStringPostStatement</B>()</PRE>
+String <STRONG>toCodeStringPostStatement</STRONG>()</PRE>
 <DL>
 <DD>Returns a string of Java source code to be emitted after a
  statement containing this check.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -233,16 +228,11 @@ String <B>toCodeStringPostStatement</B>()</PRE>
 <A NAME="get_value()"><!-- --></A><H3>
 get_value</H3>
 <PRE>
-String <B>get_value</B>()</PRE>
+String <STRONG>get_value</STRONG>()</PRE>
 <DL>
 <DD>Returns a short string that can be used to uniquely identify
  this check.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -250,17 +240,12 @@ String <B>get_value</B>()</PRE>
 <A NAME="evaluate(randoop.Execution)"><!-- --></A><H3>
 evaluate</H3>
 <PRE>
-boolean <B>evaluate</B>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</PRE>
+boolean <STRONG>evaluate</STRONG>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</PRE>
 <DL>
 <DD>Evaluates this check on the given unfolding execution of a sequence,
  returning <code>true</code> if the check succeeded, and <code>false</code>
  otherwise.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -276,13 +261,13 @@ boolean <B>evaluate</B>(<A HREF="../randoop/Execution.html" title="class in rand
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -293,20 +278,20 @@ boolean <B>evaluate</B>(<A HREF="../randoop/Execution.html" title="class in rand
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/BugInRandoopException.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/CheckRep.html" title="annotation in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/BugInRandoopException.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/CheckRep.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/Check.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="Check.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/Check.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="Check.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 

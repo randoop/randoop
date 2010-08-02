@@ -67,8 +67,8 @@ public abstract class AbstractGenerator {
    *          can be null.
    * @param timeMillis
    * @param maxSequences
-   * @param seeds
-   *          can be null.
+   * @param componentManager
+   * @param stopper
    */
   public AbstractGenerator(List<StatementKind> statements, List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentManager,
       IStoppingCriterion stopper) {

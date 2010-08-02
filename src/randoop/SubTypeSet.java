@@ -15,7 +15,7 @@ import randoop.util.SimpleSet;
 /**
  * A set of classes. This data structure additionally allows for
  * efficient answers to queries about can-be-used-as
- * ({@link randoop.util.Reflection@canBeUsedAs(Class,Class)})
+ * ({@link randoop.util.Reflection#canBeUsedAs(Class,Class)})
  *  relationships.
  */
 public class SubTypeSet {
