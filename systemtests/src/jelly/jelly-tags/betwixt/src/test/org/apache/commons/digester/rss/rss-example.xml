@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!--
+ Copyright 2004 The Apache Software Foundation.
+  
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+  
+      http://www.apache.org/licenses/LICENSE-2.0
+  
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!DOCTYPE rss PUBLIC
+ "-//Netscape Communications//DTD RSS 0.91//EN"
+ "http://my.netscape.com/publish/formats/rss-0.91.dtd">
+
+<rss version="0.91">
+
+  <channel>
+
+    <title>Apache</title>
+    <link>http://www.apache.org</link>
+    <description>The Apache Software Foundation</description>
+    <language>en-US</language>
+    <rating>(PICS-1.1 "http://www.rsac.org/ratingsv01.html"
+      2 gen true comment "RSACi North America Server"
+      for "http://www.rsac.org" on "1996.04.16T08:15-0500"
+      r (n 0 s 0 v 0 l 0))</rating>
+
+    <image>
+      <title>Apache</title>
+      <url>http://jakarta.apache.org/images/jakarta-logo.gif</url>
+      <link>http://jakarta.apache.org</link>
+      <width>505</width>
+      <height>480</height>
+      <description>The Jakarta project. Open source, serverside java.</description>
+    </image>
+
+    <item>
+      <title>Commons Attributes 2.1 Released</title>
+      <link>http://jakarta.apache.org/site/news/news-2004-2ndHalf.html#20040815.1</link>
+      <description>The Jakarta Commons team is happy to announce the release of Commons Attributes 2.1. 
+      This is the first release of the new Commons-Attributes code.</description>
+    </item>
+
+    <item>
+      <title>Cloudscape Becomes Apache Derby</title>
+      <link>http://jakarta.apache.org/site/news/elsewhere-2004-2ndHalf.html#20040803.1</link>
+      <description>IBM has submitted a proposal to the Apache DB project 
+      for a Java-based package to be called 'Derby'.</description>
+    </item>
+
+    <item>
+      <title>Commons BeanUtils 1.7 Released</title>
+      <link>http://jakarta.apache.org/site/news/news-2004-2ndHalf.html#20040802.1</link>
+    </item>
+
+    <item>
+      <title>Commons JXPath 1.2 Released</title>
+      <link>http://jakarta.apache.org/site/news/news-2004-2ndHalf.html#20040801.2</link>
+    </item>
+
+  </channel>
+
+</rss>

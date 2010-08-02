@@ -1,0 +1,632 @@
+<?xml version="1.0"?>
+
+<!--
+
+ Copyright 2001-2004 The Apache Software Foundation.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+
+<document>
+
+ <properties>
+  <title>Users Guide : Jakarta Commons Logging</title>
+  <author email="commons-dev@jakarta.apache.org">Commons Documentation Team</author>
+ </properties>
+
+ <body>
+    <section name='Contents'>
+        <p>
+            <ol>
+                <li><a href='#Introduction'>Introduction</a></li>
+                <li><a href='#Quick Start'>Quick Start</a>
+                    <ol>
+                        <li><a href='#Configuration'>Configuration</a></li>
+                        <li>
+<a href='#Configuring The Underlying Logging System'>Configuring The Underlying Logging System</a>
+                        </li>
+                        <li>
+<a href='#Configuring Log4J'>Configuring Log4J</a>
+                        </li>
+                    </ol>
+                </li>
+                <li><a href='#Developing With JCL'>Developing With JCL</a></li>
+                <li><a href='#JCL Best Practices'>JCL Best Practices</a></li>
+                <li><a href='#Best Practices (General)'>Best Practices (General)</a>
+                    <ol>
+                        <li><a href='#Code Guards'>Code Guards</a></li>
+                        <li><a href='#Message Priorities/Levels'>Message Priorities/Levels</a></li>
+                        <li><a href='#Default Message Priority/Level'>Default Message Priority/Level</a></li>
+                    </ol>
+                </li>
+                <li><a href='#Best Practices (Enterprise)'>Best Practices (Enterprise)</a>
+                    <ol>
+                        <li><a href='#Logging Exceptions'>Logging Exceptions</a></li>
+                        <li><a href='#When Info Level Instead of Debug?'>When Info Level Instead of Debug?</a></li>
+                        <li><a href='#More Control of Enterprise Exception Logging'>More Control of Enterprise Exception Logging</a></li>                    
+                        <li><a href='#National Language Support And Internationalization'>National Language Support And Internationalization</a></li>                    
+                    </ol>
+                </li>
+                <li><a href='#Extending Commons Logging'>Extending Commons Logging</a>
+                    <ol>
+                        <li><a href='#Contract'>Contract</a></li>
+                        <li><a href='#Creating a Log Implementation'>Creating a Log Implementation</a></li>
+                        <li><a href='#Creating A LogFactory Implementation'>Creating A LogFactory Implementation</a></li>
+                    </ol>
+                </li>
+                <li><a href='#Frequently Asked Questions'>Frequently Asked Questions</a>
+                    <ol>
+                        <li><a href='#Is JCL Thread Safe?'>Is JCL Thread Safe?</a></li>
+                        <li><a href='#Why "xxxLogger does not implement Log"?'>Why "xxxLogger does not implement Log"?</a></li>
+                        <li><a href='#How Can I Switch Logging Levels On And Off?'>How Can I Switch Logging Levels On And Off?</a></li>
+                        <li><a href='#How Do I Change The Logging System Configuration?'>How Do I Change The Logging System Configuration?</a></li>
+                    </ol>
+                </li>
+            </ol>
+        </p>
+    </section>
+    <section name="Introduction">
+        <p>
+The Jakarta Commons Logging (JCL) provides a <code>Log</code> interface that
+is intended to be both light-weight and an independent abstraction of other logging toolkits.
+It provides the middleware/tooling developer with a simple
+logging abstraction, that allows the user (application developer) to plug in
+a specific logging implementation.
+    </p>
+<p>JCL provides thin-wrapper <code>Log</code> implementations for
+other logging tools, including
+<a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>,
+<a href="http://jakarta.apache.org/avalon/logkit/index.html">Avalon LogKit</a>,
+the Avalon Framework's logging infrastructure,
+JDK 1.4, and an implementation of JDK 1.4 logging APIs (JSR-47) for pre-1.4
+systems.
+The interface maps closely to Log4J and LogKit.
+</p>
+        <p>
+Familiarity with high-level details of the relevant Logging implementations is presumed.
+    </p>
+</section>
+    <section name="Quick Start">
+        <p>
+As far as possible, JCL tries to be as unobtrusive as possible.
+In most cases, including the (full) <code>commons-logging.jar</code> in the classpath
+should result in JCL configuring itself in a reasonable manner.
+There's a good chance that it'll guess your preferred logging system and you won't
+need to do any configuration at all!
+    </p>
+        <subsection name='Configuration'>
+            <p>
+There are two base abstractions used by JCL: <code>Log</code>
+(the basic logger) and <code>LogFactory</code> (which knows how to create <code>Log</code>
+instances). Using <code>LogFactory</code> implementations other than the default is a
+subject for advanced users only, so let's concentrate on configuring the default
+implementation.
+        </p>
+            <p>
+The default <code>LogFactory</code> implementation uses the following discovery process
+to determine what type of <code>Log</code> implementation it should use
+(the process terminates when the first positive match - in order - is found):
+        </p>
+
+            <ol>
+                <li>
+Look for a configuration attribute of this factory named
+<code>org.apache.commons.logging.Log</code> (for backwards
+compatibility to pre-1.0 versions of this API, an attribute
+<code>org.apache.commons.logging.log</code> is also consulted).
+            </li>
+                <li>
+Look for a system property named
+<code>org.apache.commons.logging.Log</code> (for backwards
+compatibility to pre-1.0 versions of this API, a system property
+<code>org.apache.commons.logging.log</code> is also consulted).
+            </li>
+                <li>
+If the Log4J logging system is available in the application
+class path, use the corresponding wrapper class
+(<a href="http://jakarta.apache.org/commons/logging/api/org/apache/commons/logging/impl/Log4JLogger.html">Log4JLogger</a>).
+            </li>
+                <li>
+If the application is executing on a JDK 1.4 system, use
+the corresponding wrapper class
+(<a href="http://jakarta.apache.org/commons/logging/api/org/apache/commons/logging/impl/Jdk14Logger.html">Jdk14Logger</a>).
+            </li>
+                <li>
+Fall back to the default simple logging wrapper
+(<a href="http://jakarta.apache.org/commons/logging/api/org/apache/commons/logging/impl/SimpleLog.html">SimpleLog</a>).
+            </li>
+        </ol>
+            <p>
+Consult the JCL javadocs for details of the various <code>Log</code>
+implementations that ship with the component. (The discovery process is also covered in more
+detail there.)
+        </p>
+    </subsection>
+        <subsection name='Configuring The Underlying Logging System'>
+            <p>
+The JCL SPI
+can be configured to use different logging toolkits (see <a href='#Configuration'>above</a>).
+JCL provides only a bridge for writing log messages. It does not (and will not) support any
+sort of configuration API for the underlying logging system. 
+        </p>
+            <p>
+Configuration of the behavior of the JCL ultimately depends upon the
+logging toolkit being used. Please consult the documentation for the chosen logging system.
+        </p>
+            <subsection name='Configuring Log4J'>
+                <p>
+Log4J is a very commonly used logging implementation (as well as being the JCL primary default), 
+so a <i>few</i> details are presented herein to get the developer/integrator going.
+Please see the <a href='http://logging.apache.org/log4j'>Log4J Home</a> for more details
+on Log4J and it's configuration.
+            </p>
+                <p>
+Configure Log4J using system properties and/or a properties file:
+            </p>
+                <ul>
+                    <li>
+<strong>log4j.configuration=<em>log4j.properties</em></strong>
+Use this system property to specify the name of a Log4J configuration file.
+If not specified, the default configuration file is <i>log4j.properties</i>.
+                </li>
+                    <li>
+<strong>log4j.rootCategory=<i>priority</i> [, <i>appender</i>]*</strong>
+                </li>
+Set the default (root) logger priority.
+                    <li>
+<strong>log4j.logger.<i>logger.name</i>=<i>priority</i></strong>
+Set the priority for the named logger
+and all loggers hierarchically lower than, or below, the
+named logger.
+<i>logger.name</i> corresponds to the parameter of
+<code>LogFactory.getLog(<i>logger.name</i>)</code>,
+used to create the logger instance.  Priorities are:
+<code>DEBUG</code>,
+<code>INFO</code>,
+<code>WARN</code>,
+<code>ERROR</code>,
+or <code>FATAL</code>.
+<br/>
+Log4J understands hierarchical names,
+enabling control by package or high-level qualifiers:
+<code>log4j.logger.org.apache.component=DEBUG</code>
+will enable debug messages for all classes in both
+<code>org.apache.component</code>
+and
+<code>org.apache.component.sub</code>.
+Likewise, setting
+<code>log4j.logger.org.apache.component=DEBUG</code>
+will enable debug message for all 'component' classes,
+but not for other Jakarta projects.
+                </li>
+                    <li>
+<strong>log4j.appender.<i>appender</i>.Threshold=<i>priority</i></strong>
+                </li>
+Log4J <i>appenders</i> correspond to different output devices:
+console, files, sockets, and others.
+If appender's <i>threshold</i>
+is less than or equal to the message priority then
+the message is written by that appender.
+This allows different levels of detail to be appear
+at different log destinations.
+For example: one can capture DEBUG (and higher) level information in a logfile,
+while limiting console output to INFO (and higher).
+            </ul>
+        </subsection>
+    </subsection>
+</section>
+    <section name='Developing With JCL'>
+        <p>
+To use the JCL SPI from a Java class,
+include the following import statements:
+    </p>
+        <ul>
+            <code>
+import org.apache.commons.logging.Log;
+<br/>
+import org.apache.commons.logging.LogFactory;
+<br/>
+        </code>
+    </ul>
+        <p>
+Note that some components using JCL may
+either extend Log,
+or provide a component-specific LogFactory implementation.
+Review the component documentation for guidelines
+on how commons-logging should be used in such components.
+    </p>
+        <p>
+For each class definition, declare and initialize a
+<code>log</code> attribute as follows:
+    </p>
+        <ul>
+            <source>
+public class CLASS
+{
+    private static Log log = LogFactory.getLog(CLASS.class);
+    ...
+    ;
+        </source>
+    </ul>
+        <p>
+Messages are logged to a <em>logger</em>, such as <code>log</code>
+by invoking a method corresponding to <em>priority</em>.
+The <code>org.apache.commons.logging.Log</code> interface defines the
+following methods for use
+in writing log/trace messages to the log:
+    </p>
+        <ul>
+            <source>
+    log.fatal(Object message);
+    log.fatal(Object message, Throwable t);
+    log.error(Object message);
+    log.error(Object message, Throwable t);
+    log.warn(Object message);
+    log.warn(Object message, Throwable t);
+    log.info(Object message);
+    log.info(Object message, Throwable t);
+    log.debug(Object message);
+    log.debug(Object message, Throwable t);
+    log.trace(Object message);
+    log.trace(Object message, Throwable t);
+        </source>
+    </ul>
+        <p>
+Semantics for these methods are such that it is expected
+that the severity, from highest to lowest, of messages is ordered as above.
+    </p>
+        <p>
+In addition to the logging methods, the following are provided for code guards:
+    </p>
+        <ul>
+            <source>
+    log.isFatalEnabled();
+    log.isErrorEnabled();
+    log.isWarnEnabled();
+    log.isInfoEnabled();
+    log.isDebugEnabled();
+    log.isTraceEnabled();
+        </source>
+    </ul>
+</section>
+        <section name='JCL Best Practices'>
+            <p>
+Best practices for JCL are presented in two categories:
+General and Enterprise.
+The general principles are fairly clear.Enterprise practices are a bit more involved
+and it is not always as clear as to why they are important.
+        </p>
+            <p>
+Enterprise best-practice principles apply to middleware components
+and tooling that is expected to execute in an "Enterprise" level
+environment.
+These issues relate to Logging as Internationalization,
+and fault detection.
+Enterprise requires more effort and planning, but are strongly encouraged (if not required)
+in production level systems.  Different corporate enterprises/environments have different
+requirements, so being flexible always helps.
+        </p>
+    </section>
+    <section name='Best Practices (General)'>
+        <subsection name='Code Guards'>
+            <p>
+Code guards are typically used to guard code that
+only needs to execute in support of logging,
+that otherwise introduces undesirable runtime overhead
+in the general case (logging disabled).
+Examples are multiple parameters, or expressions (i.e. string + " more") for parameters.
+Use the guard methods of the form <code>log.is&lt;<i>Priority</i>&gt;()</code> to verify
+that logging should be performed, before incurring the overhead of the logging method call.
+Yes, the logging methods will perform the same check, but only after resolving parameters.
+            </p>
+        </subsection>
+           <subsection name='Message Priorities/Levels'>
+                <p>
+It is important to ensure that log message are
+appropriate in content and severity.
+The following guidelines are suggested:
+        </p>
+            <ul>
+                <li>
+<b>fatal</b> - Severe errors that cause premature termination.
+Expect these to be immediately visible on a status console.
+See also <a HREF="#National%20Language%20Support%20And%20Internationalization">
+Internationalization</a>.
+            </li>
+                <li>
+<b>error</b> - Other runtime errors or unexpected conditions.
+Expect these to be immediately visible on a status console.
+See also <a HREF="#National%20Language%20Support%20And%20Internationalization">
+Internationalization</a>.
+            </li>
+                <li>
+<b>warn</b> - Use of deprecated APIs, poor use of API, 'almost' errors,
+other runtime situations that are undesirable or unexpected, but not
+necessarily "wrong".
+Expect these to be immediately visible on a status console.
+See also <a HREF="#National%20Language%20Support%20And%20Internationalization">
+Internationalization</a>.
+            </li>
+                <li>
+<b>info</b> - Interesting runtime events (startup/shutdown).
+Expect these to be immediately visible on a console,
+so be conservative and keep to a minimum.
+See also <a HREF="#National%20Language%20Support%20And%20Internationalization">
+Internationalization</a>.
+            </li>
+                <li>
+<b>debug</b> - detailed information on the flow through the system.
+Expect these to be written to logs only.
+            </li>
+                <li>
+<b>trace</b> - more detailed information.
+Expect these to be written to logs only.
+            </li>
+        </ul>
+        </subsection>
+            <subsection name='Default Message Priority/Level'>
+                <p>
+By default the message priority should be no lower than <b>info</b>.
+That is, by default <b>debug</b> message should not be seen in the logs.
+            </p>
+        </subsection>
+    </section>
+    <section name='Best Practices (Enterprise)'>
+          <subsection name='Logging Exceptions'>
+               <p>
+The general rule in dealing with exceptions is to assume that
+the user (developer using a tooling/middleware API) isn't going
+to follow the rules.
+Since any problems that result are going to be assigned to you,
+it's in your best interest to be prepared with the proactive
+tools necessary to demonstrate that your component works correctly,
+or at worst that the problem can be analyzed from your logs.
+For this discussion, we must make a distinction between different types of exceptions
+based on what kind of boundaries they cross:
+           </p>
+               <ul>
+                   <li>
+<b>External Boundaries - Expected Exceptions</b>.
+This classification includes exceptions such as <code>FileNotFoundException</code>
+that cross API/SPI boundaries, and are exposed to the user of a component/toolkit.
+These are listed in the 'throws' clause of a method signature.
+<br/>
+Appropriate handling of these exceptions depends upon the type
+of code you are developing.
+API's for utility functions and tools should log these at the <b>debug</b> level,
+if they are caught at all by internal code.
+<br/>
+For higher level frameworks and middleware components,
+these exceptions should be caught immediatly prior to crossing
+the API/SPI interface back to user code-space,
+logged with full stack trace at <b>info</b> level,
+and rethrown.
+The assures that the log contains a record of the root cause for
+future analysis <i>in the event that the exception is not caught and resolved
+as expected by the user's code</i>.
+<br/>
+            </li>
+               <li>
+<b>External Boundaries - Unexpected Exceptions</b>.
+This classification includes exceptions such as <code>NullPointerException</code>
+that cross API/SPI boundaries, and are exposed to the user of a component/toolkit.
+These are runtime exceptions/error that are NOT
+listed in the 'throws' clause of a method signature.
+<br/>
+Appropriate handling of these exceptions depends upon the type
+of code you are developing.
+API's for utility functions and tools should log these at the <b>debug</b> level,
+if they are caught at all.
+<br/>
+For higher level frameworks and middleware components,
+these exceptions should be caught immediatly prior to crossing
+the API/SPI interface back to user code-space,
+logged with full stack trace at <b>info</b> level,
+and rethrown/wrapped as <code><i>Component</i>InternalError</code>.
+The assures that the log contains a record of the root cause for
+future analysis <i>in the event that the exception is not caught and
+logged/reported as expected by the user's code</i>.
+            </li>
+                <li>
+<b>Internal Boundaries</b>.
+Exceptions that occur internally and are resolved internally.
+These should be logged when caught as <b>debug</b> or <b>info</b> messages,
+at the programmer's discretion.
+            </li>
+                <li>
+<b>Significant Internal Boundaries</b>.
+This typically only applies to middleware components
+that span networks or runtime processes.
+Exceptions that cross over significant internal component boundaries, such as networks.
+These should be logged when caught as <b>info</b> messages.
+Do not assume that such a (process/network) boundary will deliver exceptions to the 'other side'.
+                </li>
+            </ul>
+    </subsection>
+        <subsection name='When Info Level Instead of Debug?'>
+                <p>
+You want to have exception/problem information available for
+first-pass problem determination in a production level
+enterprise application without turning on <b>debug</b>
+as a default log level.  There is simply too much information
+in <b>debug</b> to be appropriate for day-to-day operations.
+            </p>
+        </subsection>
+            <subsection name='More Control of Enterprise Exception Logging'>
+                <p>
+If more control is desired for the level of detail of these
+'enterprise' exceptions, then consider creating a special
+logger just for these exceptions:
+            </p>
+                <ul>
+<source>
+   Log log = LogFactory.getLog("org.apache.<i>component</i>.enterprise");
+</source>
+            </ul>
+                <p>
+This allows the 'enterprise' level information to be turned on/off explicitly
+by most logger implementations.
+            </p>
+        </subsection>
+        <subsection name='National Language Support And Internationalization'>
+            <p>
+NLS internationalization involves looking up messages from
+a message file by a message key, and using that message for logging.
+There are various tools in Java, and provided by other components,
+for working with NLS messages.
+                </p>
+            <p>
+NLS enabled components are particularly appreciated
+(that's an open-source-correct term for 'required by corporate end-users' :-)
+for <strong>tooling</strong> and <strong>middleware</strong> components.
+                </p>
+            <p>
+NLS internationalization SHOULD be strongly considered for used for
+<b>fatal</b>, <b>error</b>, <b>warn</b>, and <b>info</b> messages.
+It is generally considered optional for <b>debug</b> and <b>trace</b> messages.
+                </p>
+            <p>
+Perhaps more direct support for internationalizing log messages
+can be introduced in a future or alternate version of the <code>Log</code> interface.
+                </p>
+            </subsection>
+    </section>
+    <section name='Extending Commons Logging'>
+        <p>
+JCL is designed to encourage extensions to be created that add functionality. 
+Typically, extensions to JCL fall into two categories:
+    </p>
+        <ul>
+            <li>new <code>Log</code> implementations that provide new bridges to logging systems</li>
+            <li>
+new <code>LogFactory</code> implementations that provide alternative discovery strategies
+            </li>
+    </ul>
+        <subsection name='Contract'>
+            <p>
+When creating new implementations for <code>Log</code> and <code>LogFactory</code>,
+it is important to understand the implied contract between the factory 
+and the log implementations:
+                <ul>
+                    <li><b>Life cycle</b>
+                        <blockquote>
+The JCL LogFactory implementation must assume responsibility for
+either connecting/disconnecting to a logging toolkit,
+or instantiating/initializing/destroying a logging toolkit.
+                        </blockquote>
+                </li>
+                    <li><b>Exception handling</b>
+                        <blockquote>
+The JCL Log interface doesn't specify any exceptions to be handled,
+the implementation must catch any exceptions.
+                    </blockquote>
+                </li>
+                    <li><b>Multiple threads</b>
+                        <blockquote>
+The JCL Log and LogFactory implementations must ensure
+that any synchronization required by the logging toolkit
+is met.
+                    </blockquote>
+                </li>
+            </ul>
+        </p>
+    </subsection>
+    <subsection name='Creating a Log Implementation'>
+        <p>
+The minimum requirement to integrate with another logger
+is to provide an implementation of the
+<code>org.apache.commons.logging.Log</code> interface.
+In addition, an implementation of the
+<code>org.apache.commons.logging.LogFactory</code> interface
+can be provided to meet
+specific requirements for connecting to, or instantiating, a logger.
+    </p>
+            <p>
+The default <code>LogFactory</code> provided by JCL
+can be configured to instantiate a specific implementation of the
+<code>org.apache.commons.logging.Log</code> interface
+by setting the property of the same name (<code>org.apache.commons.logging.Log</code>).
+This property can be specified as a system property,
+or in the <code>commons-logging.properties</code> file,
+which must exist in the CLASSPATH.
+        </p>
+     </subsection>
+        <subsection name='Creating A LogFactory Implementation'>
+            <p>
+If desired, the default implementation of the
+<code>org.apache.commons.logging.LogFactory</code>
+interface can be overridden,
+allowing the JDK 1.3 Service Provider discovery process
+to locate and create a LogFactory specific to the needs of the application.
+Review the Javadoc for the <code>LogFactoryImpl.java</code>
+for details.
+        </p>
+    </subsection>
+</section>
+    <section name='Frequently Asked Questions'>
+        <subsection name='Is JCL Thread Safe?'>
+            <p>
+JCL doesn't (and cannot) impose any requirement on thread safety on the underlying implementation
+and thus its SPI contract doesn't guarantee thread safety.
+However, JCL can be safely used in a multi-threaded environment
+as long as the underlying implementation is thread-safe.
+        </p>
+            <p>
+It would be very unusual for a logging system to be thread unsafe.
+Certainly, JCL is thread safe when used with the distributed Log implementations.
+        </p>
+    </subsection>
+        <subsection name='Why "xxxLogger does not implement Log"?'>
+            <p>    
+Upon application startup (especially in a container environment), an exception is thrown
+with message 'xxxLogger does not implement Log'! What's the cause and how can 
+I fix this problem?
+        </p>
+            <p>
+This almost always a classloader issue. Log has been loaded by a different 
+classloader from the logging implementation. Please ensure that:
+        </p>
+            <ul>
+                <li>
+all the logging classes (both Log and the logging implementations) 
+are deployed by the same classloader
+            </li>
+        </ul>
+            <ul>
+                <li>
+there is only copy of the classes to be found within the classloader hierarchy. 
+In application container environments this means ensuring that if the classes 
+are found in a parent classloader, they are not also present in the leaf classloader 
+associated with the application. 
+So, if the jar is deployed within the root classloader of the container then it 
+should be removed from the application's library.
+            </li>
+        </ul>
+    </subsection>
+        <subsection name='How Can I Switch Logging Levels On And Off?'>
+            <p>
+See <a href='#How Do I Change The Logging System Configuration?'>
+How Can I Change The Logging System Configuration?</a>
+        </p>
+    </subsection>
+        <subsection name='How Do I Change The Logging System Configuration?'>
+            <p>
+The configuration supported by JCL is limited to choosing the underlying logging system.
+JCL does not (and will never) support changing the configuration of the wrapped logging system.
+Please use the mechanisms provided by the underlying logging system.
+        </p>
+    </subsection>
+</section>
+</body>
+</document>

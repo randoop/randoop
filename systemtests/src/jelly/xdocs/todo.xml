@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+  <properties>
+    <title>TODO</title>
+    <author email="jstrachan@apache.org">James Strachan</author>
+  </properties>
+
+  <body>
+    <section name="TODO"> 
+      <p>
+        The following is a list of items that need to be completed in
+        Jelly.  Contributions are welcome!.
+      </p>
+      
+      
+    <section name="Core tasks"> 
+      <ul>
+        <li>Implementa a META-INF/services mechanism for mapping Jelly libraries to namespace URIs
+            in a similar way to how the commons-discovery and JAXP libraries work.
+            This would allow Jelly libraries to be distributed in a self contained JAR then just put
+            on the classpath and they'd be usable.                
+        </li>
+        <li>
+            Implement a JJAR/Maven mechanism so that using a new Jelly library via a namespace URI would
+            automatically download the jar and its dependencies from some local/remote repository.
+        </li>
+        <li>Maybe add a Scope class to make it easier to plugin custom scopes such as 
+            request, session, applicaiton, initParams, params, transation etc.
+            In a workflow setting this could also include transient and persistent scopes
+        </li>
+        <li>Write a JellyServlet so that Jelly can be used as a page templating system.
+        </li>
+        <li>Implement a HTML parser for Jelly, probably using NeckoHTML so that non-XML can be parsed
+            and tags with prefixes can be bound to Jelly tags.
+        </li>
+        <li>write a Cocoon JellyGenerator so that Jelly scripts can be used easily inside Cocoon</li>
+        <li>consider implementing a Jelly Doclet so that Jelly can be used to code generate
+            stuff from javadoc tags in a similar way to XDoclet but making use of the JSTL tags and
+            the Velocity like expression language (Jexl) which will avoid the need to use huge numbers 
+            of tags.                
+        </li>
+        <li>Rename the DynaTag interface to be DynamicAttributes along with JSP1.3, 
+            also add a namespace URI parameter
+        </li>
+        <li>Add support for namespace URI use inside XPath expressions.</li>
+        <li>When defining new tags using &lt;define:tag&gt;, we should allow attributes to be named,<br/>
+            specified as required, specify the optional conditions and so forth for validating instances.<br/> 
+            I guess this could just be normal script though.
+        </li>
+        <li>The org.apache.commons.jelly.impl package doesn't have a great name - <br/>
+            Can we think of a better one? <br/>
+            Also some of the classes in this package could maybe do with a rename? <br/>
+            ScriptBlock for example - should we just call it a Block or maybe a CompositeScript?
+        </li>
+        <li>Add an adapter to run JSP tag libraries inside Jelly when Jelly is used in a 
+            Servlet / JSP environment?
+        </li>
+        <li>Document much more!</li>
+      </ul>
+    </section>
+      
+    <section name="Ideas for new tag libraries"> 
+      <ul>
+        <li>
+            An XSD tag library that can be used to parse XSD documents and create DynaBeans from the complex types.
+<pre>
+&lt;xsd:element name="MyDynamicClass"&gt;
+  &lt;xsd:complexType&gt;
+      ...
+  &lt;/xsd:complexType&gt;
+&lt;/xsd:element&gt;</pre>
+
+            Also we could consider using class names or XSD type names to do conversions of values, maybe using
+            the ConvertUtils class in beanutils.
+        </li>
+        <li>conside a tag library which implements the <a href="http://stx.gingerall.cz/stx/index.html">STX</a>
+            specification for the SAX based transformation of XML. This is kinda like XPath and XSLT but is based
+            purely on a SAX stream. Maybe we could wrap <a href="http://www.obqo.de/joost">Joost</a>
+            in a Jelly tag library
+        </li>
+        <li>Implement a Schematron tag library for validing XML using a path based approach, rather than schema based.</li>
+        <li>
+            Provide support for running a piece of Jelly script remotely. This would be particularly useful for distributed
+            testing. Maybe integrating or enhancing something like 
+            <a href="http://sourceforge.net/projects/remoteant">rant</a>
+        </li>
+      </ul>
+    </section>
+
+    <section name="Changes to existing tag libraries"> 
+      <ul>
+        <li>Add JSL test cases to test for ordering of patterns and that the correct output comes out.</li>
+      </ul>
+    </section>
+
+    <section name="Ponder about"> 
+      <p>
+        The following is a list of things that might be good to add to Jelly, maybe after more thought.
+      </p>
+      <ul>
+        <li>
+            maybe consider a tag which will switch the default EL to XPath; then XPath and EL can be peers. Then ${foo}
+            can be used as an XPath expression anywhere
+        </li>
+        <li>We could autogenerate XML Schemas or RelaxNG docs for tag libraries to help validate scripts</li>
+        <li>Patch TagLibrary to alias all &lt;mixedCase&gt; tags to &lt;mixed-case&gt;  tags</li>
+      </ul>
+    </section>
+    
+    </section>
+  </body>
+</document>
+

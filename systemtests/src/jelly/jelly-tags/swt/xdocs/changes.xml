@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+/*
+ * Copyright 2001-2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+
+<document>
+  <properties>
+    <title>Changes</title>
+    <author email="dion@apache.org">dIon Gillard</author>
+  </properties>
+  <body>
+    <release version="1.1-SNAPSHOT" date="in CVS">
+      <action dev="dion" type="fix" issue="JELLY-141" due-to="Hans Gilde">WidgetTag should null-out its bean after running</action>
+    </release>
+    <release version="1.0" date="2004-09-13">
+      <action dev="dion" type="fix" issue="JELLY-123" due-to="Marcus Crafter">var and resource support for images</action>
+      <action dev="dion" type="fix" issue="JELLY-42" due-to="Christiaan ten Klooster">add cTabFolder + cTabItem widgets</action>
+      <action dev="dion" type="fix" issue="JELLY-48" due-to="Christiaan ten Klooster">dialog tag</action>
+      <action dev="dion" type="fix" issue="JELLY-126" due-to="Marcus Crafter">Support for SWT GC objects</action>
+      <action dev="dion" type="fix" issue="JELLY-125" due-to="Marcus Crafter">Support for SWT Font objects</action>
+      <action dev="dion" type="fix" issue="JELLY-124" due-to="Marcus Crafter">Support for SWT Color objects</action>
+    </release>
+  </body>
+</document>
