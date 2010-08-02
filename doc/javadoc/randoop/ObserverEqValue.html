@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
-<HTML>
+<HTML lang="en">
 <HEAD>
 <TITLE>
 ObserverEqValue
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/Observer.html" title="annotation in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/Omit.html" title="annotation in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/Observer.html" title="annotation in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/Omit.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/ObserverEqValue.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="ObserverEqValue.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/ObserverEqValue.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ObserverEqValue.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -90,76 +90,78 @@ randoop</FONT>
 Class ObserverEqValue</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>ObserverEqValue</B>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>ObserverEqValue</STRONG>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>Serializable, <A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></DD>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable, <A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></DD>
 </DL>
 <HR>
+<PRE>public final class <STRONG>ObserverEqValue</STRONG>
+extends Object
+implements <A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></PRE>
+
+<P>
+A check recording the value that an observer method
+ returned during execution, e.g. a check recording that
+ a collection's <code>size()</code> method returned <code>3</code>
+ when called in particular sequence.
+
+ <p>
+
+ ObserverEqValue checks are not checks that must hold of all objects
+ of a given class (unlike a check like <A HREF="../randoop/EqualsReflexive.html" title="class in randoop"><CODE>EqualsReflexive</CODE></A>,
+ which must hold for any objects, no matter its execution context).
+ Randoop creates an instance of this contract when, during execution
+ of a sequence, it determines that the above property holds. The
+ property thus represents a <i>regression</i> as it captures the
+ behavior of the code when it is executed.
+<P>
+
+<P>
 <DL>
-<DT><PRE>public final class <B>ObserverEqValue</B><DT>extends Object<DT>implements <A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></DL>
-</PRE>
-
-<P>
-WARNING: This code is old and hasn't been tested recently.
- 
- An check recording the value of an observer call on a
- variable evaluated during execution. For example:
-
-     x.F() == value
-
-
- Obviously, this is not a property that must hold of all objects in a test.
- Randoop creates an instance of this contract when, during execution of
- a sequence, it determines that the above property holds. The property
- thus represents a <i>regression</i> as it captures the behavior of the
- code when it is executed.
-
- where value is a primitive value or a String.
-<P>
-
-<P>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../serialized-form.html#randoop.ObserverEqValue">Serialized Form</A></DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../serialized-form.html#randoop.ObserverEqValue">Serialized Form</A></DD></DL>
 <HR>
 
 <P>
 <!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Method</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#observer">observer</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#observer">observer</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The observer method.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Object</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#value">value</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#value">value</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The runtime value of the observer.</TD>
 </TR>
 </TABLE>
 &nbsp;
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 <A NAME="constructor_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#ObserverEqValue(java.lang.reflect.Method, java.lang.Object)">ObserverEqValue</A></B>(Method&nbsp;observer,
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#ObserverEqValue(java.lang.reflect.Method, java.lang.Object)">ObserverEqValue</A></STRONG>(Method&nbsp;observer,
                 Object&nbsp;value)</CODE>
 
 <BR>
@@ -170,15 +172,17 @@ WARNING: This code is old and hasn't been tested recently.
 <!-- ========== METHOD SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#equals(java.lang.Object)">equals</A></B>(Object&nbsp;o)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#equals(java.lang.Object)">equals</A></STRONG>(Object&nbsp;o)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -186,7 +190,7 @@ WARNING: This code is old and hasn't been tested recently.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#evalExceptionMeansFailure()">evalExceptionMeansFailure</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#evalExceptionMeansFailure()">evalExceptionMeansFailure</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Communicates to Randoop how to interpret exceptional behavior
@@ -195,7 +199,7 @@ WARNING: This code is old and hasn't been tested recently.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#evaluate(java.lang.Object...)">evaluate</A></B>(Object...&nbsp;objects)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#evaluate(java.lang.Object...)">evaluate</A></STRONG>(Object...&nbsp;objects)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates the contract on the given values.</TD>
@@ -203,7 +207,7 @@ WARNING: This code is old and hasn't been tested recently.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#getArity()">getArity</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#getArity()">getArity</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The number of values that this contract is over.</TD>
@@ -211,7 +215,7 @@ WARNING: This code is old and hasn't been tested recently.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../randoop/ObserverEqValue.html" title="class in randoop">ObserverEqValue</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#getObserverEqValue(java.lang.reflect.Method, java.lang.Object)">getObserverEqValue</A></B>(Method&nbsp;method,
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#getObserverEqValue(java.lang.reflect.Method, java.lang.Object)">getObserverEqValue</A></STRONG>(Method&nbsp;method,
                    Object&nbsp;val)</CODE>
 
 <BR>
@@ -221,7 +225,7 @@ WARNING: This code is old and hasn't been tested recently.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#hashCode()">hashCode</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#hashCode()">hashCode</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -229,7 +233,7 @@ WARNING: This code is old and hasn't been tested recently.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#toCodeString()">toCodeString</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#toCodeString()">toCodeString</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A string that can be used as Java source code and will result in the
@@ -238,7 +242,7 @@ WARNING: This code is old and hasn't been tested recently.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -246,20 +250,28 @@ WARNING: This code is old and hasn't been tested recently.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ObserverEqValue.html#toCommentString()">toCommentString</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#toCommentString()">toCommentString</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A string that will be inserted as a comment in the test before
  the code corresponding to this contract.</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObserverEqValue.html#toString()">toString</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -271,27 +283,30 @@ WARNING: This code is old and hasn't been tested recently.
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Field Detail</B></FONT></TH>
+<STRONG>Field Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="observer"><!-- --></A><H3>
 observer</H3>
 <PRE>
-public Method <B>observer</B></PRE>
+public Method <STRONG>observer</STRONG></PRE>
 <DL>
-<DL>
-</DL>
+<DD>The observer method.
+<P>
+</DD>
 </DL>
 <HR>
 
 <A NAME="value"><!-- --></A><H3>
 value</H3>
 <PRE>
-public Object <B>value</B></PRE>
+public Object <STRONG>value</STRONG></PRE>
 <DL>
-<DL>
-</DL>
+<DD>The runtime value of the observer. This variable holds a
+ primitive value or String.
+<P>
+</DD>
 </DL>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
@@ -300,17 +315,15 @@ public Object <B>value</B></PRE>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Constructor Detail</B></FONT></TH>
+<STRONG>Constructor Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="ObserverEqValue(java.lang.reflect.Method, java.lang.Object)"><!-- --></A><H3>
 ObserverEqValue</H3>
 <PRE>
-public <B>ObserverEqValue</B>(Method&nbsp;observer,
+public <STRONG>ObserverEqValue</STRONG>(Method&nbsp;observer,
                        Object&nbsp;value)</PRE>
-<DL>
-</DL>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -318,19 +331,17 @@ public <B>ObserverEqValue</B>(Method&nbsp;observer,
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
+<STRONG>Method Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="equals(java.lang.Object)"><!-- --></A><H3>
 equals</H3>
 <PRE>
-public boolean <B>equals</B>(Object&nbsp;o)</PRE>
+public boolean <STRONG>equals</STRONG>(Object&nbsp;o)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DL>
-</DD>
-<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -339,12 +350,10 @@ public boolean <B>equals</B>(Object&nbsp;o)</PRE>
 <A NAME="hashCode()"><!-- --></A><H3>
 hashCode</H3>
 <PRE>
-public int <B>hashCode</B>()</PRE>
+public int <STRONG>hashCode</STRONG>()</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DL>
-</DD>
-<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -353,23 +362,15 @@ public int <B>hashCode</B>()</PRE>
 <A NAME="toCodeStringPreStatement()"><!-- --></A><H3>
 toCodeStringPreStatement</H3>
 <PRE>
-public String <B>toCodeStringPreStatement</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public String <STRONG>toCodeStringPreStatement</STRONG>()</PRE>
 <HR>
 
 <A NAME="toCodeString()"><!-- --></A><H3>
 toCodeString</H3>
 <PRE>
-public String <B>toCodeString</B>()</PRE>
+public String <STRONG>toCodeString</STRONG>()</PRE>
 <DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#toCodeString()">ObjectContract</A></CODE></B></DD>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#toCodeString()">ObjectContract</A></CODE></STRONG></DD>
 <DD>A string that can be used as Java source code and will result in the
  expression being evaluated.
  <p>
@@ -381,10 +382,9 @@ public String <B>toCodeString</B>()</PRE>
  <p>
  The returned string should not be null.
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#toCodeString()">toCodeString</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/ObjectContract.html#toCodeString()">toCodeString</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -393,19 +393,12 @@ public String <B>toCodeString</B>()</PRE>
 <A NAME="getObserverEqValue(java.lang.reflect.Method, java.lang.Object)"><!-- --></A><H3>
 getObserverEqValue</H3>
 <PRE>
-public static <A HREF="../randoop/ObserverEqValue.html" title="class in randoop">ObserverEqValue</A> <B>getObserverEqValue</B>(Method&nbsp;method,
+public static <A HREF="../randoop/ObserverEqValue.html" title="class in randoop">ObserverEqValue</A> <STRONG>getObserverEqValue</STRONG>(Method&nbsp;method,
                                                  Object&nbsp;val)</PRE>
 <DL>
 <DD>Create an ObserverEqValue from its basic parts (used when
- reading from a serialized file).  Note that the 'val' parameter
- is the actual value to check, not the object from the sequence
- execution (as it is with the public constructor)
+ reading from a serialized file).
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -413,10 +406,10 @@ public static <A HREF="../randoop/ObserverEqValue.html" title="class in randoop"
 <A NAME="evaluate(java.lang.Object...)"><!-- --></A><H3>
 evaluate</H3>
 <PRE>
-public boolean <B>evaluate</B>(Object...&nbsp;objects)
+public boolean <STRONG>evaluate</STRONG>(Object...&nbsp;objects)
                  throws Throwable</PRE>
 <DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#evaluate(java.lang.Object...)">ObjectContract</A></CODE></B></DD>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#evaluate(java.lang.Object...)">ObjectContract</A></CODE></STRONG></DD>
 <DD>Evaluates the contract on the given values.
  <p>
  When calling this method during execution of a test, Randoop
@@ -427,13 +420,14 @@ public boolean <B>evaluate</B>(Object...&nbsp;objects)
  This method should return <code>true</code> if the contract was 
  satisfied and <code>false</code> if it was violated.
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#evaluate(java.lang.Object...)">evaluate</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
 </DD>
 <DD><DL>
-
-<DT><B>Throws:</B>
-<DD><CODE>Throwable</CODE></DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/ObjectContract.html#evaluate(java.lang.Object...)">evaluate</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DD>
+</DL>
+</DD>
+<DD><DL>
+<DT><STRONG>Throws:</STRONG></DT>
+<DD><CODE>Throwable</CODE></DD></DL>
 </DD>
 </DL>
 <HR>
@@ -441,15 +435,14 @@ public boolean <B>evaluate</B>(Object...&nbsp;objects)
 <A NAME="getArity()"><!-- --></A><H3>
 getArity</H3>
 <PRE>
-public int <B>getArity</B>()</PRE>
+public int <STRONG>getArity</STRONG>()</PRE>
 <DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#getArity()">ObjectContract</A></CODE></B></DD>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#getArity()">ObjectContract</A></CODE></STRONG></DD>
 <DD>The number of values that this contract is over.
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#getArity()">getArity</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/ObjectContract.html#getArity()">getArity</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -458,16 +451,15 @@ public int <B>getArity</B>()</PRE>
 <A NAME="toCommentString()"><!-- --></A><H3>
 toCommentString</H3>
 <PRE>
-public String <B>toCommentString</B>()</PRE>
+public String <STRONG>toCommentString</STRONG>()</PRE>
 <DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#toCommentString()">ObjectContract</A></CODE></B></DD>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#toCommentString()">ObjectContract</A></CODE></STRONG></DD>
 <DD>A string that will be inserted as a comment in the test before
  the code corresponding to this contract.
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#toCommentString()">toCommentString</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/ObjectContract.html#toCommentString()">toCommentString</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -476,9 +468,9 @@ public String <B>toCommentString</B>()</PRE>
 <A NAME="evalExceptionMeansFailure()"><!-- --></A><H3>
 evalExceptionMeansFailure</H3>
 <PRE>
-public boolean <B>evalExceptionMeansFailure</B>()</PRE>
+public boolean <STRONG>evalExceptionMeansFailure</STRONG>()</PRE>
 <DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#evalExceptionMeansFailure()">ObjectContract</A></CODE></B></DD>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/ObjectContract.html#evalExceptionMeansFailure()">ObjectContract</A></CODE></STRONG></DD>
 <DD>Communicates to Randoop how to interpret exceptional behavior
  from the <code>evaluate</code> method.
  <p>
@@ -489,10 +481,21 @@ public boolean <B>evalExceptionMeansFailure</B>()</PRE>
  If the method returns <code>false</code>, Randoop will interpret
  an exception as passing behavior.
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/ObjectContract.html#evalExceptionMeansFailure()">evalExceptionMeansFailure</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/ObjectContract.html#evalExceptionMeansFailure()">evalExceptionMeansFailure</A></CODE> in interface <CODE><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public String <STRONG>toString</STRONG>()</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -509,13 +512,13 @@ public boolean <B>evalExceptionMeansFailure</B>()</PRE>
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -526,20 +529,20 @@ public boolean <B>evalExceptionMeansFailure</B>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/Observer.html" title="annotation in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/Omit.html" title="annotation in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/Observer.html" title="annotation in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/Omit.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/ObserverEqValue.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="ObserverEqValue.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/ObserverEqValue.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ObserverEqValue.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 

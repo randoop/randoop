@@ -30,7 +30,7 @@ public class ClassListPrinter {
    * @param destinationFile
    * @param classDir
    * @param packageName may be null.
-   * @param omitPatternString
+   * @param filter
    * @throws IOException
    */
   public static void findPublicTopLevelClasses(String destinationFile, String classDir,
