@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
-<HTML>
+<HTML lang="en">
 <HEAD>
 <TITLE>
 Execution
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/Execution.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="Execution.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/Execution.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="Execution.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -90,16 +90,16 @@ randoop</FONT>
 Class Execution</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>Execution</B>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>Execution</STRONG>
 </PRE>
 <HR>
-<DL>
-<DT><PRE>public final class <B>Execution</B><DT>extends Object</DL>
-</PRE>
+<PRE>public final class <STRONG>Execution</STRONG>
+extends Object</PRE>
 
 <P>
 Represents the unfolding execution of a sequence.
- 
+
+ This is essentially a wrapper around List&lt;ExecutionOutcome&gt;.
  Stores information in a list of ExecutionOutcome objects, one for each
  statement in the sequence.
 <P>
@@ -111,15 +111,17 @@ Represents the unfolding execution of a sequence.
 <!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Execution.html#owner">owner</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Execution.html#owner">owner</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -127,7 +129,7 @@ Represents the unfolding execution of a sequence.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Execution.html#theList">theList</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Execution.html#theList">theList</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -137,19 +139,20 @@ Represents the unfolding execution of a sequence.
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 <A NAME="constructor_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/Execution.html#Execution(randoop.Sequence)">Execution</A></B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;owner)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Execution.html#Execution(randoop.Sequence)">Execution</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;owner)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an Execution to store the execution results of the given sequence.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/Execution.html#Execution(randoop.Sequence, java.util.List)">Execution</A></B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;owner,
+<TD><CODE><STRONG><A HREF="../randoop/Execution.html#Execution(randoop.Sequence, java.util.List)">Execution</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;owner,
           List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;theList)</CODE>
 
 <BR>
@@ -160,15 +163,17 @@ Represents the unfolding execution of a sequence.
 <!-- ========== METHOD SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Execution.html#get(int)">get</A></B>(int&nbsp;i)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Execution.html#get(int)">get</A></STRONG>(int&nbsp;i)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the outcome in the i-th slot.</TD>
@@ -176,7 +181,7 @@ Represents the unfolding execution of a sequence.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Execution.html#set(int, randoop.ExecutionOutcome)">set</A></B>(int&nbsp;i,
+<TD><CODE><STRONG><A HREF="../randoop/Execution.html#set(int, randoop.ExecutionOutcome)">set</A></STRONG>(int&nbsp;i,
     <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&nbsp;outcome)</CODE>
 
 <BR>
@@ -185,7 +190,7 @@ Represents the unfolding execution of a sequence.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/Execution.html#size()">size</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/Execution.html#size()">size</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The size of the list.</TD>
@@ -194,7 +199,7 @@ Represents the unfolding execution of a sequence.
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
@@ -209,28 +214,20 @@ Represents the unfolding execution of a sequence.
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Field Detail</B></FONT></TH>
+<STRONG>Field Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="theList"><!-- --></A><H3>
 theList</H3>
 <PRE>
-protected final List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt; <B>theList</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+protected final List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt; <STRONG>theList</STRONG></PRE>
 <HR>
 
 <A NAME="owner"><!-- --></A><H3>
 owner</H3>
 <PRE>
-protected final <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>owner</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+protected final <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>owner</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -238,31 +235,33 @@ protected final <A HREF="../randoop/Sequence.html" title="class in randoop">Sequ
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Constructor Detail</B></FONT></TH>
+<STRONG>Constructor Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="Execution(randoop.Sequence)"><!-- --></A><H3>
 Execution</H3>
 <PRE>
-public <B>Execution</B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;owner)</PRE>
+public <STRONG>Execution</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;owner)</PRE>
 <DL>
 <DD>Create an Execution to store the execution results of the given sequence.
  The list of outcomes is initialized to NotExecuted for every statement.
 <P>
+</DD>
 </DL>
 <HR>
 
 <A NAME="Execution(randoop.Sequence, java.util.List)"><!-- --></A><H3>
 Execution</H3>
 <PRE>
-public <B>Execution</B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;owner,
+public <STRONG>Execution</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;owner,
                  List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;theList)</PRE>
 <DL>
 <DD>Construct an Execution directly from the given arguments.
  
  Do not use this constructor! (Unless you know what you're doing.)
 <P>
+</DD>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -271,19 +270,17 @@ public <B>Execution</B>(<A HREF="../randoop/Sequence.html" title="class in rando
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
+<STRONG>Method Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="size()"><!-- --></A><H3>
 size</H3>
 <PRE>
-public int <B>size</B>()</PRE>
+public int <STRONG>size</STRONG>()</PRE>
 <DL>
 <DD>The size of the list.
 <P>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -291,13 +288,11 @@ public int <B>size</B>()</PRE>
 <A NAME="set(int, randoop.ExecutionOutcome)"><!-- --></A><H3>
 set</H3>
 <PRE>
-public void <B>set</B>(int&nbsp;i,
+public void <STRONG>set</STRONG>(int&nbsp;i,
                 <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&nbsp;outcome)</PRE>
 <DL>
 <DD>Set the i-th slot to the given outcome.
 <P>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -305,12 +300,10 @@ public void <B>set</B>(int&nbsp;i,
 <A NAME="get(int)"><!-- --></A><H3>
 get</H3>
 <PRE>
-public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A> <B>get</B>(int&nbsp;i)</PRE>
+public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A> <STRONG>get</STRONG>(int&nbsp;i)</PRE>
 <DL>
 <DD>Get the outcome in the i-th slot.
 <P>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -326,13 +319,13 @@ public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">Execu
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -343,20 +336,20 @@ public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">Execu
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/Execution.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="Execution.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/Execution.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="Execution.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 

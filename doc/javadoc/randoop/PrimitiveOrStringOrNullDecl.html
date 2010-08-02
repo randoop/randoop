@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
-<HTML>
+<HTML lang="en">
 <HEAD>
 <TITLE>
 PrimitiveOrStringOrNullDecl
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/Omit.html" title="annotation in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/PrimValue.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/PackageLiterals.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/PrimValue.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/PrimitiveOrStringOrNullDecl.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="PrimitiveOrStringOrNullDecl.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/PrimitiveOrStringOrNullDecl.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="PrimitiveOrStringOrNullDecl.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -90,42 +90,44 @@ randoop</FONT>
 Class PrimitiveOrStringOrNullDecl</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>PrimitiveOrStringOrNullDecl</B>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>PrimitiveOrStringOrNullDecl</STRONG>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>Serializable, <A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></DD>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable, <A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></DD>
 </DL>
 <HR>
-<DL>
-<DT><PRE>public final class <B>PrimitiveOrStringOrNullDecl</B><DT>extends Object<DT>implements <A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>, Serializable</DL>
-</PRE>
+<PRE>public final class <STRONG>PrimitiveOrStringOrNullDecl</STRONG>
+extends Object
+implements <A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>, Serializable</PRE>
 
 <P>
 Represents a primitive value (including Strings). This type of statement
  doesn't actually transform any state, but it works out
  nicely to represent primitives as statements.
 
- This decl info is for primitives, strings and nulls (of any type)
+ This decl info is for primitives, strings and nulls (of any type).
 <P>
 
 <P>
 <DL>
-<DT><B>See Also:</B><DD><A HREF="../serialized-form.html#randoop.PrimitiveOrStringOrNullDecl">Serialized Form</A></DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../serialized-form.html#randoop.PrimitiveOrStringOrNullDecl">Serialized Form</A></DD></DL>
 <HR>
 
 <P>
 <!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#ID">ID</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#ID">ID</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID for parsing purposes (see StatementKinds.parse method)</TD>
@@ -135,13 +137,14 @@ Represents a primitive value (including Strings). This type of statement
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 <A NAME="constructor_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#PrimitiveOrStringOrNullDecl(java.lang.Class, java.lang.Object)">PrimitiveOrStringOrNullDecl</A></B>(Class&lt;?&gt;&nbsp;t,
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#PrimitiveOrStringOrNullDecl(java.lang.Class, java.lang.Object)">PrimitiveOrStringOrNullDecl</A></STRONG>(Class&lt;?&gt;&nbsp;t,
                             Object&nbsp;o)</CODE>
 
 <BR>
@@ -152,15 +155,17 @@ Represents a primitive value (including Strings). This type of statement
 <!-- ========== METHOD SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)">appendCode</A></B>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;newVar,
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)">appendCode</A></STRONG>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;newVar,
            List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputVars,
            StringBuilder&nbsp;b)</CODE>
 
@@ -171,7 +176,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#equals(java.lang.Object)">equals</A></B>(Object&nbsp;o)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#equals(java.lang.Object)">equals</A></STRONG>(Object&nbsp;o)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates whether this PrimitiveOrStringOrNullDeclInfo is equal to o</TD>
@@ -179,7 +184,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#execute(java.lang.Object[], java.io.PrintStream)">execute</A></B>(Object[]&nbsp;statementInput,
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#execute(java.lang.Object[], java.io.PrintStream)">execute</A></STRONG>(Object[]&nbsp;statementInput,
         PrintStream&nbsp;out)</CODE>
 
 <BR>
@@ -188,7 +193,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#getInputTypes()">getInputTypes</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#getInputTypes()">getInputTypes</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extracts the input constraints for this PrimitiveOrStringOrNullDeclInfo</TD>
@@ -196,7 +201,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Class&lt;?&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#getOutputType()">getOutputType</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#getOutputType()">getOutputType</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns constraint to represent new reference to this statement</TD>
@@ -204,7 +209,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Class&lt;?&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#getType()">getType</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#getType()">getType</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -212,7 +217,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Object</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#getValue()">getValue</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#getValue()">getValue</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of this PrimitiveOrStringOrNullDeclInfo</TD>
@@ -220,7 +225,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#hashCode()">hashCode</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#hashCode()">hashCode</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a hash code value for this PrimitiveOrStringOrNullDeclInfo</TD>
@@ -228,7 +233,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#nullOrZeroDecl(java.lang.Class)">nullOrZeroDecl</A></B>(Class&lt;?&gt;&nbsp;c)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#nullOrZeroDecl(java.lang.Class)">nullOrZeroDecl</A></STRONG>(Class&lt;?&gt;&nbsp;c)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the appropriate PrimitiveOrStringOrNullDeclInfo representative of 
@@ -237,15 +242,23 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;<A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#parse(java.lang.String)">parse</A></B>(String&nbsp;s)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#parse(java.lang.String)">parse</A></STRONG>(String&nbsp;s)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A string representing this primitive declaration.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#sequenceForPrimitive(java.lang.Object)">sequenceForPrimitive</A></STRONG>(Object&nbsp;o)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the sequence corresponding to the given non-null primitive value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#toParseableString()">toParseableString</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#toParseableString()">toParseableString</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string representation of this StatementKind, which can
@@ -254,7 +267,7 @@ Represents a primitive value (including Strings). This type of statement
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#toString()">toString</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/PrimitiveOrStringOrNullDecl.html#toString()">toString</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns string representation of this PrimitiveOrStringOrNullDeclInfo</TD>
@@ -263,7 +276,7 @@ Represents a primitive value (including Strings). This type of statement
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
@@ -278,19 +291,21 @@ Represents a primitive value (including Strings). This type of statement
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Field Detail</B></FONT></TH>
+<STRONG>Field Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="ID"><!-- --></A><H3>
 ID</H3>
 <PRE>
-public static final String <B>ID</B></PRE>
+public static final String <STRONG>ID</STRONG></PRE>
 <DL>
 <DD>ID for parsing purposes (see StatementKinds.parse method)
 <P>
-<DL>
-<DT><B>See Also:</B><DD><A HREF="../constant-values.html#randoop.PrimitiveOrStringOrNullDecl.ID">Constant Field Values</A></DL>
+</DD>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../constant-values.html#randoop.PrimitiveOrStringOrNullDecl.ID">Constant Field Values</A></DD></DL>
+</DD>
 </DL>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
@@ -299,18 +314,19 @@ public static final String <B>ID</B></PRE>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Constructor Detail</B></FONT></TH>
+<STRONG>Constructor Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="PrimitiveOrStringOrNullDecl(java.lang.Class, java.lang.Object)"><!-- --></A><H3>
 PrimitiveOrStringOrNullDecl</H3>
 <PRE>
-public <B>PrimitiveOrStringOrNullDecl</B>(Class&lt;?&gt;&nbsp;t,
+public <STRONG>PrimitiveOrStringOrNullDecl</STRONG>(Class&lt;?&gt;&nbsp;t,
                                    Object&nbsp;o)</PRE>
 <DL>
 <DD>Constructs a PrimitiveOrStringOrNullDeclInfo of type t and value o
 <P>
+</DD>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -319,21 +335,20 @@ public <B>PrimitiveOrStringOrNullDecl</B>(Class&lt;?&gt;&nbsp;t,
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
+<STRONG>Method Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="equals(java.lang.Object)"><!-- --></A><H3>
 equals</H3>
 <PRE>
-public boolean <B>equals</B>(Object&nbsp;o)</PRE>
+public boolean <STRONG>equals</STRONG>(Object&nbsp;o)</PRE>
 <DL>
 <DD>Indicates whether this PrimitiveOrStringOrNullDeclInfo is equal to o
 <P>
-<DD><DL>
-<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -342,14 +357,13 @@ public boolean <B>equals</B>(Object&nbsp;o)</PRE>
 <A NAME="hashCode()"><!-- --></A><H3>
 hashCode</H3>
 <PRE>
-public int <B>hashCode</B>()</PRE>
+public int <STRONG>hashCode</STRONG>()</PRE>
 <DL>
 <DD>Returns a hash code value for this PrimitiveOrStringOrNullDeclInfo
 <P>
-<DD><DL>
-<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -358,14 +372,13 @@ public int <B>hashCode</B>()</PRE>
 <A NAME="toString()"><!-- --></A><H3>
 toString</H3>
 <PRE>
-public String <B>toString</B>()</PRE>
+public String <STRONG>toString</STRONG>()</PRE>
 <DL>
 <DD>Returns string representation of this PrimitiveOrStringOrNullDeclInfo
 <P>
-<DD><DL>
-<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -374,20 +387,22 @@ public String <B>toString</B>()</PRE>
 <A NAME="execute(java.lang.Object[], java.io.PrintStream)"><!-- --></A><H3>
 execute</H3>
 <PRE>
-public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A> <B>execute</B>(Object[]&nbsp;statementInput,
+public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A> <STRONG>execute</STRONG>(Object[]&nbsp;statementInput,
                                 PrintStream&nbsp;out)</PRE>
 <DL>
 <DD>Executes this statement, given the inputs to the statement. Returns
  the results of execution as an ResultOrException object and can 
  output results to specified PrintStream.
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/StatementKind.html#execute(java.lang.Object[], java.io.PrintStream)">execute</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>statementInput</CODE> - array containing appropriate inputs to statement<DD><CODE>out</CODE> - stream to output results of execution;
-            can be null if you don't want to print.
-<DT><B>Returns:</B><DD>results of executing this statement</DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/StatementKind.html#execute(java.lang.Object[], java.io.PrintStream)">execute</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DD>
+</DL>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>statementInput</CODE> - array containing appropriate inputs to statement</DD><DD><CODE>out</CODE> - stream to output results of execution;
+            can be null if you don't want to print.</DD>
+<DT><STRONG>Returns:</STRONG></DT><DD>results of executing this statement</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -395,16 +410,17 @@ public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">Execu
 <A NAME="getInputTypes()"><!-- --></A><H3>
 getInputTypes</H3>
 <PRE>
-public List&lt;Class&lt;?&gt;&gt; <B>getInputTypes</B>()</PRE>
+public List&lt;Class&lt;?&gt;&gt; <STRONG>getInputTypes</STRONG>()</PRE>
 <DL>
 <DD>Extracts the input constraints for this PrimitiveOrStringOrNullDeclInfo
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/StatementKind.html#getInputTypes()">getInputTypes</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DL>
 </DD>
 <DD><DL>
-
-<DT><B>Returns:</B><DD>list of input constraints</DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/StatementKind.html#getInputTypes()">getInputTypes</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DD>
+</DL>
+</DD>
+<DD><DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>list of input constraints</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -412,18 +428,17 @@ public List&lt;Class&lt;?&gt;&gt; <B>getInputTypes</B>()</PRE>
 <A NAME="appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)"><!-- --></A><H3>
 appendCode</H3>
 <PRE>
-public void <B>appendCode</B>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;newVar,
+public void <STRONG>appendCode</STRONG>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;newVar,
                        List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputVars,
                        StringBuilder&nbsp;b)</PRE>
 <DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/StatementKind.html#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)">StatementKind</A></CODE></B></DD>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/StatementKind.html#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)">StatementKind</A></CODE></STRONG></DD>
 <DD>Produces a Java source code representation of this statement and append it
  to the given StringBuilder.
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/StatementKind.html#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)">appendCode</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/StatementKind.html#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)">appendCode</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -432,15 +447,10 @@ public void <B>appendCode</B>(<A HREF="../randoop/Variable.html" title="class in
 <A NAME="getValue()"><!-- --></A><H3>
 getValue</H3>
 <PRE>
-public Object <B>getValue</B>()</PRE>
+public Object <STRONG>getValue</STRONG>()</PRE>
 <DL>
 <DD>Returns the value of this PrimitiveOrStringOrNullDeclInfo
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -448,14 +458,10 @@ public Object <B>getValue</B>()</PRE>
 <A NAME="getType()"><!-- --></A><H3>
 getType</H3>
 <PRE>
-public Class&lt;?&gt; <B>getType</B>()</PRE>
+public Class&lt;?&gt; <STRONG>getType</STRONG>()</PRE>
 <DL>
 <DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>Returns the type.</DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>Returns the type.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -463,14 +469,13 @@ public Class&lt;?&gt; <B>getType</B>()</PRE>
 <A NAME="getOutputType()"><!-- --></A><H3>
 getOutputType</H3>
 <PRE>
-public Class&lt;?&gt; <B>getOutputType</B>()</PRE>
+public Class&lt;?&gt; <STRONG>getOutputType</STRONG>()</PRE>
 <DL>
 <DD>Returns constraint to represent new reference to this statement
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/StatementKind.html#getOutputType()">getOutputType</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/StatementKind.html#getOutputType()">getOutputType</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -479,16 +484,11 @@ public Class&lt;?&gt; <B>getOutputType</B>()</PRE>
 <A NAME="nullOrZeroDecl(java.lang.Class)"><!-- --></A><H3>
 nullOrZeroDecl</H3>
 <PRE>
-public static <A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</A> <B>nullOrZeroDecl</B>(Class&lt;?&gt;&nbsp;c)</PRE>
+public static <A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</A> <STRONG>nullOrZeroDecl</STRONG>(Class&lt;?&gt;&nbsp;c)</PRE>
 <DL>
 <DD>Returns the appropriate PrimitiveOrStringOrNullDeclInfo representative of 
  the specified class c.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -496,20 +496,32 @@ public static <A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class
 <A NAME="toParseableString()"><!-- --></A><H3>
 toParseableString</H3>
 <PRE>
-public String <B>toParseableString</B>()</PRE>
+public String <STRONG>toParseableString</STRONG>()</PRE>
 <DL>
-<DD><B>Description copied from interface: <CODE><A HREF="../randoop/StatementKind.html#toParseableString()">StatementKind</A></CODE></B></DD>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/StatementKind.html#toParseableString()">StatementKind</A></CODE></STRONG></DD>
 <DD>Returns a string representation of this StatementKind, which can
  subsequently be used in this class's parse method. For a class C
  implementing the StatementKind interface, this method should return a
  String s such that parsing the string returns an object equivalent to
  this object, i.e. C.parse(this.s).equals(this).
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../randoop/StatementKind.html#toParseableString()">toParseableString</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/StatementKind.html#toParseableString()">toParseableString</A></CODE> in interface <CODE><A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></DD>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="sequenceForPrimitive(java.lang.Object)"><!-- --></A><H3>
+sequenceForPrimitive</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>sequenceForPrimitive</STRONG>(Object&nbsp;o)</PRE>
+<DL>
+<DD>Returns the sequence corresponding to the given non-null primitive value.
+ 
+ Requires: o != null and o is a boxed primitive or String.
+<P>
 </DD>
 </DL>
 <HR>
@@ -517,7 +529,7 @@ public String <B>toParseableString</B>()</PRE>
 <A NAME="parse(java.lang.String)"><!-- --></A><H3>
 parse</H3>
 <PRE>
-public static <A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</A> <B>parse</B>(String&nbsp;s)
+public static <A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</A> <STRONG>parse</STRONG>(String&nbsp;s)
                                          throws <A HREF="../randoop/StatementKindParseException.html" title="class in randoop">StatementKindParseException</A></PRE>
 <DL>
 <DD>A string representing this primitive declaration. The string is of the form:
@@ -530,25 +542,25 @@ public static <A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class
  
  Examples:
  
- java.lang.String:null        represents: String x = null
+ String:null                  represents: String x = null
  java.lang.String:""          represents: String x = "";
- java.lang.String:" "         represents: String x = " ";
- java.lang.String:"\""        represents: String x = "\"";
- java.lang.String:"\n"        represents: String x = "\n";
- java.lang.String:" "    represents: String x = " ";
+ String:""                    represents: String x = "";
+ String:" "                   represents: String x = " ";
+ String:"\""                  represents: String x = "\"";
+ String:"\n"                  represents: String x = "\n";
+ String:" "              represents: String x = " ";
  java.lang.Object:null        represents: Object x = null;
  [[Ljava.lang.Object;:null    represents: Object[][] = null;
  int:0                        represents: int x = 0;
  boolean:false                represents: boolean x = false;
  char:20                      represents: char x = ' ';
+ 
+ Note that a string type can be given as both "String" or "java.lang.String".
 <P>
-<DD><DL>
-</DL>
 </DD>
 <DD><DL>
-
-<DT><B>Throws:</B>
-<DD><CODE><A HREF="../randoop/StatementKindParseException.html" title="class in randoop">StatementKindParseException</A></CODE></DL>
+<DT><STRONG>Throws:</STRONG></DT>
+<DD><CODE><A HREF="../randoop/StatementKindParseException.html" title="class in randoop">StatementKindParseException</A></CODE></DD></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -564,13 +576,13 @@ public static <A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -581,20 +593,20 @@ public static <A HREF="../randoop/PrimitiveOrStringOrNullDecl.html" title="class
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/Omit.html" title="annotation in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/PrimValue.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/PackageLiterals.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/PrimValue.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/PrimitiveOrStringOrNullDecl.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="PrimitiveOrStringOrNullDecl.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/PrimitiveOrStringOrNullDecl.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="PrimitiveOrStringOrNullDecl.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
