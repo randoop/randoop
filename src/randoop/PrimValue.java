@@ -53,8 +53,6 @@ public final class PrimValue implements ObjectContract {
   }
 
   /**
-   * @param expression The expression. Cannot be not null.
-   * @param vars The variables for the expression. Must all belong to the same sequence.
    * @param value The value for the expression. Must be a primitive value or string.
    */
   public PrimValue(Object value, PrintMode printMode) {
