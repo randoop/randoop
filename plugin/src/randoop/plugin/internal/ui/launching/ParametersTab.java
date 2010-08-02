@@ -16,6 +16,7 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 
 import randoop.plugin.internal.core.TestKinds;
+import randoop.plugin.internal.ui.RandoopMessages;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.IOptionFactory;
 
@@ -23,11 +24,9 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fRandomSeed;
   private IOption fMaxTestSize;
   private IOption fUseThreads;
-  private IOption fThreadTimeout;
   private IOption fUseNull;
-  private IOption fNullRatio;
 
-  private IOption fJUnitTestInputs;
+  private IOption fInputLimit;
   private IOption fTimeLimit;
   
   private IOption fTestKinds;
@@ -44,7 +43,7 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     createOutputRestrictionsGroup(comp);
 
     Button restoreDefaults = new Button(comp, 0);
-    restoreDefaults.setText("Restore Defaults");
+    restoreDefaults.setText("Restore &Defaults");
     restoreDefaults.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
     restoreDefaults.addSelectionListener(new SelectionAdapter() {
       @Override
@@ -63,40 +62,47 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     ld.marginWidth = 1;
     ld.marginHeight = 1;
 
-    SWTFactory.createLabel(group, "Random &Seed:", 1);
-    Text randomSeed = SWTFactory.createSingleText(group, 1);
-    fRandomSeed = IOptionFactory.createRandomSeedOption(randomSeed);
+    Label randomSeedLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_randomseed, 1);
+    Text randomSeedText = SWTFactory.createSingleText(group, 1);
+    randomSeedLabel.setToolTipText(RandoopMessages.RandoopOption_randomseed_tooltip);
+    randomSeedText.setToolTipText(RandoopMessages.RandoopOption_randomseed_tooltip);
+    fRandomSeed = IOptionFactory.createRandomSeedOption(randomSeedText);
 
-    SWTFactory.createLabel(group, "Maximum Test Si&ze:", 1);
-    Text maxTestSize = SWTFactory.createSingleText(group, 1);
-    fMaxTestSize = IOptionFactory.createMaximumTestSizeOption(maxTestSize);
+    Label maxTestSizeLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_maxsize, 1);
+    Text maxTestSizeText = SWTFactory.createSingleText(group, 1);
+    maxTestSizeLabel.setToolTipText(RandoopMessages.RandoopOption_maxsize_tooltip);
+    maxTestSizeText.setToolTipText(RandoopMessages.RandoopOption_maxsize_tooltip);
+    fMaxTestSize = IOptionFactory.createMaximumTestSizeOption(maxTestSizeText);
 
-    Button useThreads = createCheckButton(group, "Thread Time&out:");
-    useThreads.setSelection(true);
+    Button threadTimeoutButton = createCheckButton(group, RandoopMessages.RandoopOption_usethreads);
+    Text threadTimeoutText = SWTFactory.createSingleText(group, 1);
+    threadTimeoutButton.setToolTipText(RandoopMessages.RandoopOption_usethreads_tooltip);
+    threadTimeoutButton.setSelection(true);
+    threadTimeoutText.setToolTipText(RandoopMessages.RandoopOption_timeout_tooltip);
+    threadTimeoutText.setEnabled(threadTimeoutButton.getSelection());
+    IOption threadTimeout = IOptionFactory.createThreadTimeoutOption(threadTimeoutText);
+    fUseThreads = IOptionFactory.createUseThreads(threadTimeout, threadTimeoutButton);
     
-    Text threadTimeout = SWTFactory.createSingleText(group, 1);
-    fThreadTimeout = IOptionFactory.createThreadTimeoutOption(threadTimeout);
-    fUseThreads = IOptionFactory.createUseThreads(fThreadTimeout, useThreads);
-    
-    Button useNull = createCheckButton(group, "Null R&atio:");
-    useNull.setSelection(false);
-    
-    Text nullRatio = SWTFactory.createSingleText(group, 1);
-    nullRatio.setEnabled(useNull.getSelection());
-    fNullRatio = IOptionFactory.createNullRatioOption(nullRatio);
-    fUseNull = IOptionFactory.createUseNull(fNullRatio, useNull);
+    Button nullRatioButton = createCheckButton(group, RandoopMessages.RandoopOption_forbid_null);
+    Text nullRatioText = SWTFactory.createSingleText(group, 1);
+    nullRatioButton.setToolTipText(RandoopMessages.RandoopOption_forbid_null_tooltip);
+    nullRatioButton.setSelection(false);
+    nullRatioText.setToolTipText(RandoopMessages.RandoopOption_null_ratio_tooltip);
+    nullRatioText.setEnabled(nullRatioButton.getSelection());
+    IOption nullRatio = IOptionFactory.createNullRatioOption(nullRatioText);
+    fUseNull = IOptionFactory.createUseNull(nullRatio, nullRatioButton);
     
     addOption(fRandomSeed);
     addOption(fMaxTestSize);
     addOption(fUseThreads);
     addOption(fUseNull);
     
-    randomSeed.addModifyListener(getBasicModifyListener());
-    maxTestSize.addModifyListener(getBasicModifyListener());
-    useThreads.addSelectionListener(getBasicSelectionListener());
-    threadTimeout.addModifyListener(getBasicModifyListener());
-    useNull.addSelectionListener(getBasicSelectionListener());
-    nullRatio.addModifyListener(getBasicModifyListener());
+    randomSeedText.addModifyListener(getBasicModifyListener());
+    maxTestSizeText.addModifyListener(getBasicModifyListener());
+    threadTimeoutButton.addSelectionListener(getBasicSelectionListener());
+    threadTimeoutText.addModifyListener(getBasicModifyListener());
+    nullRatioButton.addSelectionListener(getBasicSelectionListener());
+    nullRatioText.addModifyListener(getBasicModifyListener());
   }
 
   private void createGenerationLimitGroup(Composite parent) {
@@ -107,12 +113,16 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     ld.marginWidth = 1;
     ld.marginHeight = 1;
 
-    SWTFactory.createLabel(group, "JUnit Test &Inputs:", 1);
-    Text junitTestInputs = SWTFactory.createSingleText(group, 1);
-    fJUnitTestInputs = IOptionFactory.createJUnitTestInputsOption(junitTestInputs);
+    Label inputLimitLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_inputlimit, 1);
+    Text inputLimitText = SWTFactory.createSingleText(group, 1);
+    inputLimitLabel.setToolTipText(RandoopMessages.RandoopOption_inputlimit_tooltip);
+    inputLimitText.setToolTipText(RandoopMessages.RandoopOption_inputlimit_tooltip);
+    fInputLimit = IOptionFactory.createInputsLimitOption(inputLimitText);
 
-    SWTFactory.createLabel(group, "&Time Limit:", 1);
-    Text timeLimit = SWTFactory.createSingleText(group, 1);
+    Label timeLimitLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_timelimit, 1);
+    Text timeLimitText = SWTFactory.createSingleText(group, 1);
+    timeLimitLabel.setToolTipText(RandoopMessages.RandoopOption_timelimit_tooltip);
+    timeLimitText.setToolTipText(RandoopMessages.RandoopOption_timelimit_tooltip);
 
     // Create a spacer 
     SWTFactory.createLabel(group, "", 1); //$NON-NLS-1$
@@ -120,44 +130,50 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     convertedTimeLimit.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true,
        false));
     
-    fTimeLimit = IOptionFactory.createTimeLimitOption(timeLimit, convertedTimeLimit);
+    fTimeLimit = IOptionFactory.createTimeLimitOption(timeLimitText, convertedTimeLimit);
 
-    addOption(fJUnitTestInputs);
+    addOption(fInputLimit);
     addOption(fTimeLimit);
     
-    junitTestInputs.addModifyListener(getBasicModifyListener());
-    timeLimit.addModifyListener(getBasicModifyListener());
+    inputLimitText.addModifyListener(getBasicModifyListener());
+    timeLimitText.addModifyListener(getBasicModifyListener());
   }
   
   private void createOutputRestrictionsGroup(Composite parent) {
-    Group group = SWTFactory.createGroup(parent, "&Output Restrictions", 3, 1,
+    Group group = SWTFactory.createGroup(parent, "Output Restrictions", 3, 1,
         GridData.FILL_HORIZONTAL);
 
-    SWTFactory.createLabel(group, "Test &Kinds:", 1);
-    Combo testKinds = SWTFactory.createCombo(group, SWT.READ_ONLY, 2, TestKinds
+    Label testKindsLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_output_tests, 1);
+    Combo testKindsCombo = SWTFactory.createCombo(group, SWT.READ_ONLY, 2, TestKinds
         .getTranslatableNames());
-    fTestKinds = IOptionFactory.createTestKindsOption(testKinds);
+    testKindsLabel.setToolTipText(RandoopMessages.RandoopOption_output_tests_tooltip);
+    testKindsCombo.setToolTipText(RandoopMessages.RandoopOption_output_tests_tooltip);
+    fTestKinds = IOptionFactory.createTestKindsOption(testKindsCombo);
 
-    SWTFactory.createLabel(group, "Maximum Tests &Written:", 1);
-    Text maxTestsWritten = SWTFactory.createSingleText(group, 2);
-    fMaxTestsWritten = IOptionFactory.createMaximumTestsWrittenOption(maxTestsWritten);
+    Label maxTestsWrittenLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_outputlimit, 1);
+    Text maxTestsWrittenText = SWTFactory.createSingleText(group, 2);
+    maxTestsWrittenLabel.setToolTipText(RandoopMessages.RandoopOption_outputlimit_tooltip);
+    maxTestsWrittenText.setToolTipText(RandoopMessages.RandoopOption_outputlimit_tooltip);
+    fMaxTestsWritten = IOptionFactory.createMaximumTestsWrittenOption(maxTestsWrittenText);
 
-    SWTFactory.createLabel(group, "Maximum Tests Per &File:", 1);
-    Text maxTestsPerFile = SWTFactory.createSingleText(group, 2);
-    fMaxTestsPerFile = IOptionFactory.createMaximumTestsPerFileOption(maxTestsPerFile);
+    Label maxTestsPerFileLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_testsperfile, 1);
+    Text maxTestsPerFileText = SWTFactory.createSingleText(group, 2);
+    maxTestsPerFileLabel.setToolTipText(RandoopMessages.RandoopOption_testsperfile_tooltip);
+    maxTestsPerFileText.setToolTipText(RandoopMessages.RandoopOption_testsperfile_tooltip);
+    fMaxTestsPerFile = IOptionFactory.createMaximumTestsPerFileOption(maxTestsPerFileText);
 
     addOption(fTestKinds);
     addOption(fMaxTestsWritten);
     addOption(fMaxTestsPerFile);
     
-    testKinds.addModifyListener(getBasicModifyListener());
-    maxTestsWritten.addModifyListener(getBasicModifyListener());
-    maxTestsPerFile.addModifyListener(getBasicModifyListener());
+    testKindsCombo.addModifyListener(getBasicModifyListener());
+    maxTestsWrittenText.addModifyListener(getBasicModifyListener());
+    maxTestsPerFileText.addModifyListener(getBasicModifyListener());
   }
 
   @Override
   public String getName() {
-    return "Parameters";
+    return "&Parameters";
   }
 
   @Override
