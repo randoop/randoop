@@ -542,7 +542,6 @@ public final class Reflection {
     *
     * @param classListing
     * @param filter can be null.
-    * @return
     */
    public static List<StatementKind> getStatements(Collection<Class<?>> classListing, ReflectionFilter filter) {
      if (filter == null) filter = new DefaultReflectionFilter(null);
@@ -773,7 +772,7 @@ public final class Reflection {
 
   /**
    * Returns true if the the specified modifier is visible to Randoop.
-   * @see GenInputsAbstract.public_only
+   * @see GenInputsAbstract#public_only
    */
   public static boolean isVisible (int modifiers) {
     // System.out.printf ("isVisible public_only=%b, modifiers = %s%n",

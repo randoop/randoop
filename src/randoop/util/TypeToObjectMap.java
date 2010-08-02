@@ -29,8 +29,8 @@ public class TypeToObjectMap {
   }
 
   /**
-   * @requires runtimeObject is not null.
-   * @effects adds runtimeObject to the map, at key T where T = runtimeObject.getClass().
+   * Requires: runtimeObject is not null.
+   * Effects: adds runtimeObject to the map, at key T where T = runtimeObject.getClass().
    */
   public void addObject(Object runtimeObject) {
     if (runtimeObject == null)

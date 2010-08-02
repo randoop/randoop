@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
-<HTML>
+<HTML lang="en">
 <HEAD>
 <TITLE>
 IMultiMap
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../randoop/util/Histogram.html" title="class in randoop.util"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../randoop/util/InformationalComparator.html" title="class in randoop.util"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../randoop/util/Histogram.html" title="class in randoop.util"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/util/InformationalComparator.html" title="class in randoop.util"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../index.html?randoop/util/IMultiMap.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="IMultiMap.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../index.html?randoop/util/IMultiMap.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="IMultiMap.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -89,16 +89,15 @@ randoop.util</FONT>
 <BR>
 Interface IMultiMap&lt;T1,T2&gt;</H2>
 <DL>
-<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</A>, <A HREF="../../randoop/util/ReversibleMultiMap.html" title="class in randoop.util">ReversibleMultiMap</A></DD>
+<DT><STRONG>All Known Implementing Classes:</STRONG></DT> <DD><A HREF="../../randoop/util/MultiMap.html" title="class in randoop.util">MultiMap</A>, <A HREF="../../randoop/util/ReversibleMultiMap.html" title="class in randoop.util">ReversibleMultiMap</A></DD>
 </DL>
 <HR>
-<DL>
-<DT><PRE>public interface <B>IMultiMap&lt;T1,T2&gt;</B></DL>
-</PRE>
+<PRE>public interface <STRONG>IMultiMap&lt;T1,T2&gt;</STRONG></PRE>
 
 <P>
 Represents a relation from a set of T1s (the keys) to
  another set of T2s (the values).
+ In partucular, each key maps to a set of values.
 <P>
 
 <P>
@@ -109,15 +108,17 @@ Represents a relation from a set of T1s (the keys) to
 <!-- ========== METHOD SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../randoop/util/IMultiMap.html#add(T1, T2)">add</A></B>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key,
+<TD><CODE><STRONG><A HREF="../../randoop/util/IMultiMap.html#add(T1, T2)">add</A></STRONG>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key,
     <A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T2</A>&nbsp;value)</CODE>
 
 <BR>
@@ -126,7 +127,7 @@ Represents a relation from a set of T1s (the keys) to
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Set&lt;<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T2</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../randoop/util/IMultiMap.html#getValues(T1)">getValues</A></B>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key)</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/util/IMultiMap.html#getValues(T1)">getValues</A></STRONG>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the values that the given key maps to.</TD>
@@ -134,7 +135,7 @@ Represents a relation from a set of T1s (the keys) to
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Set&lt;<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../randoop/util/IMultiMap.html#keySet()">keySet</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/util/IMultiMap.html#keySet()">keySet</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the set of keys in this map (the domain).</TD>
@@ -142,7 +143,7 @@ Represents a relation from a set of T1s (the keys) to
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../randoop/util/IMultiMap.html#remove(T1, T2)">remove</A></B>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key,
+<TD><CODE><STRONG><A HREF="../../randoop/util/IMultiMap.html#remove(T1, T2)">remove</A></STRONG>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key,
        <A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T2</A>&nbsp;value)</CODE>
 
 <BR>
@@ -151,7 +152,7 @@ Represents a relation from a set of T1s (the keys) to
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../randoop/util/IMultiMap.html#size()">size</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/util/IMultiMap.html#size()">size</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the size of this map: the number of mappings.</TD>
@@ -159,7 +160,7 @@ Represents a relation from a set of T1s (the keys) to
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../randoop/util/IMultiMap.html#toString()">toString</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/util/IMultiMap.html#toString()">toString</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a String representation of this map.</TD>
@@ -174,20 +175,21 @@ Represents a relation from a set of T1s (the keys) to
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
+<STRONG>Method Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="add(java.lang.Object,java.lang.Object)"><!-- --></A><A NAME="add(T1, T2)"><!-- --></A><H3>
 add</H3>
 <PRE>
-void <B>add</B>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key,
+void <STRONG>add</STRONG>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key,
          <A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T2</A>&nbsp;value)</PRE>
 <DL>
 <DD>Precondition: the mapping key->value is not already in the map.
 <P>
+</DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>key</CODE> - cannot be null.<DD><CODE>value</CODE> - cannot be null.</DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>key</CODE> - cannot be null.</DD><DD><CODE>value</CODE> - cannot be null.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -195,13 +197,14 @@ void <B>add</B>(<A HREF="../../randoop/util/IMultiMap.html" title="type paramete
 <A NAME="remove(java.lang.Object,java.lang.Object)"><!-- --></A><A NAME="remove(T1, T2)"><!-- --></A><H3>
 remove</H3>
 <PRE>
-void <B>remove</B>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key,
+void <STRONG>remove</STRONG>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key,
             <A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T2</A>&nbsp;value)</PRE>
 <DL>
 <DD>Precondition: the mapping key->value is in the map.
 <P>
+</DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>key</CODE> - cannot be null.<DD><CODE>value</CODE> - cannot be null.</DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>key</CODE> - cannot be null.</DD><DD><CODE>value</CODE> - cannot be null.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -209,12 +212,13 @@ void <B>remove</B>(<A HREF="../../randoop/util/IMultiMap.html" title="type param
 <A NAME="getValues(java.lang.Object)"><!-- --></A><A NAME="getValues(T1)"><!-- --></A><H3>
 getValues</H3>
 <PRE>
-Set&lt;<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T2</A>&gt; <B>getValues</B>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key)</PRE>
+Set&lt;<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T2</A>&gt; <STRONG>getValues</STRONG>(<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&nbsp;key)</PRE>
 <DL>
 <DD>Returns the values that the given key maps to.
 <P>
+</DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>key</CODE> - cannot be null.</DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>key</CODE> - cannot be null.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -222,12 +226,10 @@ Set&lt;<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMul
 <A NAME="keySet()"><!-- --></A><H3>
 keySet</H3>
 <PRE>
-Set&lt;<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&gt; <B>keySet</B>()</PRE>
+Set&lt;<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMultiMap">T1</A>&gt; <STRONG>keySet</STRONG>()</PRE>
 <DL>
 <DD>Returns the set of keys in this map (the domain).
 <P>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -235,12 +237,10 @@ Set&lt;<A HREF="../../randoop/util/IMultiMap.html" title="type parameter in IMul
 <A NAME="size()"><!-- --></A><H3>
 size</H3>
 <PRE>
-int <B>size</B>()</PRE>
+int <STRONG>size</STRONG>()</PRE>
 <DL>
 <DD>Returns the size of this map: the number of mappings.
 <P>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -248,14 +248,13 @@ int <B>size</B>()</PRE>
 <A NAME="toString()"><!-- --></A><H3>
 toString</H3>
 <PRE>
-String <B>toString</B>()</PRE>
+String <STRONG>toString</STRONG>()</PRE>
 <DL>
 <DD>Returns a String representation of this map.
 <P>
-<DD><DL>
-<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DL>
 </DD>
 <DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -272,13 +271,13 @@ String <B>toString</B>()</PRE>
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -289,20 +288,20 @@ String <B>toString</B>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../randoop/util/Histogram.html" title="class in randoop.util"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../randoop/util/InformationalComparator.html" title="class in randoop.util"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../randoop/util/Histogram.html" title="class in randoop.util"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/util/InformationalComparator.html" title="class in randoop.util"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../index.html?randoop/util/IMultiMap.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="IMultiMap.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../../index.html?randoop/util/IMultiMap.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="IMultiMap.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 

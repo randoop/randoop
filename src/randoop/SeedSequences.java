@@ -80,8 +80,8 @@ public final class SeedSequences {
    * 
    * @param classes A collection of classes containing @TestValue annotation on
    *         one or more static fields.
-   * @return A set of Sequences representing primitive values collected from
-   *         @TestValue-annotated fields in the given classes 
+   * @return A set of Sequences representing primitive values collected
+   *         frome @TestValue-annotated fields in the given classes 
    */
   public static Set<Sequence> getSeedsFromAnnotatedFields(Class<?>... classes) {
 
