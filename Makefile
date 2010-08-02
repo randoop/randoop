@@ -523,7 +523,7 @@ plume-lib-update: utils/plume-lib
 	cd utils && hg pull -u
 
 .PHONY: utils/plume-lib/java/plume.jar
-utils/plume-lib/java/plume.jar:
+utils/plume-lib/java/plume.jar: utils/plume-lib
 	make -C utils/plume-lib/java plume.jar
 
 lib/plume.jar: utils/plume-lib/java/plume.jar
