@@ -1,9 +1,11 @@
 package randoop.plugin.internal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -15,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -23,6 +26,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.StatusFactory;
@@ -241,6 +245,55 @@ public class RandoopCoreUtil {
     }
 
     return true;
+  }
+
+  /**
+   * TODO: Find out why IJavaProject.findPackageFragmentRoots returns an empty
+   * list for IClasspathEntrys of kind CPE_PROJECT.
+   * 
+   * This is a workaround that find the actual project that is referenced and
+   * iterates through its raw classpath, searching for classpath entries that
+   * are exported.
+   * 
+   * @param javaProject
+   * @param classpathEntry
+   * @return
+   * @throws CoreException
+   */
+  public static IPackageFragmentRoot[] findPackageFragmentRoots(IJavaProject javaProject,
+      IClasspathEntry classpathEntry) {
+    
+    if (classpathEntry == null) {
+      return null;
+    }
+    
+    if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+      IWorkspace workspace = javaProject.getProject().getWorkspace();
+      IProject project = workspace.getRoot().getProject(classpathEntry.getPath().toString());
+
+      if (project.exists()) {
+        IProjectNature referencedProject;
+        try {
+          referencedProject = project.getNature(JavaCore.NATURE_ID);
+          if (referencedProject != null) {
+            IJavaProject referencedJavaProject = (IJavaProject) referencedProject;
+            List<IPackageFragmentRoot> roots = new ArrayList<IPackageFragmentRoot>();
+            for (IClasspathEntry cpe : referencedJavaProject.getRawClasspath()) {
+              if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE || cpe.isExported()) {
+                roots.addAll(Arrays.asList(findPackageFragmentRoots(referencedJavaProject, cpe)));
+              }
+            }
+            return (IPackageFragmentRoot[]) roots.toArray(new IPackageFragmentRoot[roots.size()]);
+          }
+        } catch (CoreException e) {
+          RandoopPlugin.log(e);
+        }
+      }
+      return null;
+    } else {
+      return javaProject.findPackageFragmentRoots(classpathEntry);
+    }
+    
   }
   
 }

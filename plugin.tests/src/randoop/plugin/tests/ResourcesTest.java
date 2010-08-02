@@ -64,7 +64,7 @@ public class ResourcesTest {
     }
   }
 
-  private static List<String> getTypeMnemonics(IJavaProject javaproject) throws JavaModelException {
+  private static List<String> getAllTypeMnemonics(IJavaProject javaproject) throws JavaModelException {
     List<String> mnemonics = new ArrayList<String>();
     for (IClasspathEntry classpathEntry : javaproject.getRawClasspath()) {
       for (IPackageFragmentRoot packageFragmentRoot : javaproject.findPackageFragmentRoots(classpathEntry)) {

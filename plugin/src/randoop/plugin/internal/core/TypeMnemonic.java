@@ -320,7 +320,7 @@ public class TypeMnemonic {
     // TODO - Fix problem with classpath entries of type CPE_PROJECT:
     // IJavaProject.findClasspathEntries() returns []
     
-    IPackageFragmentRoot[] packageFragmentRoots = javaProject.findPackageFragmentRoots(classpathEntry);
+    IPackageFragmentRoot[] packageFragmentRoots = RandoopCoreUtil.findPackageFragmentRoots(javaProject, classpathEntry);
 
     String packageName = RandoopCoreUtil.getPackageName(fqname);
     String classFileName = RandoopCoreUtil.getClassName(fqname);
