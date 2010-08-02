@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
-<HTML>
+<HTML lang="en">
 <HEAD>
 <TITLE>
 SequenceCollection
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/SequenceCollection.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="SequenceCollection.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/SequenceCollection.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="SequenceCollection.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -90,16 +90,43 @@ randoop</FONT>
 Class SequenceCollection</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>SequenceCollection</B>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>SequenceCollection</STRONG>
 </PRE>
 <HR>
-<DL>
-<DT><PRE>public class <B>SequenceCollection</B><DT>extends Object</DL>
-</PRE>
+<PRE>public class <STRONG>SequenceCollection</STRONG>
+extends Object</PRE>
 
 <P>
 A collection of sequences that makes its efficient to ask for
- all the sequences that declare a variable of a given type.
+ all the sequences that create a value of a given type.
+
+ <p>
+ RANDOOP IMPLEMENTATION NOTE.
+ <p>
+ 
+ When creating new sequences, Randoop often needs to search for all
+ the previously-generated sequences that create one or more values
+ of a given type. Since this set can contain thousands of sequences,
+ finding these sequences can can be time-consuming and a bottleneck
+ in generation (as we discovered during profiling).
+ 
+ <p>
+
+ This class makes the above search faster by maintanining two data structures:
+
+ <ul>
+ <li> A map from types to the sets of all sequences that create one
+      or more values of exactly the given type.
+
+ <li> A set of all the types that can be created with the existing
+      set of sequences.  The set is maintained as a <A HREF="../randoop/SubTypeSet.html" title="class in randoop"><CODE>SubTypeSet</CODE></A> that allows for quick queries about can-be-used-as
+      relationships among the types in the set.
+ </ul>
+
+ To find all the sequences that create values of a given type,
+ Randoop first uses the <code>SubTypeSet</code> to find the set
+ <code>S</code> of feasible subtypes in set of sequences, and
+ returns the range of <code>S</cod> in the sequence map.
 <P>
 
 <P>
@@ -109,15 +136,17 @@ A collection of sequences that makes its efficient to ask for
 <!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#numActivesequences">numActivesequences</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#numActivesequences">numActivesequences</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -127,43 +156,48 @@ A collection of sequences that makes its efficient to ask for
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 <A NAME="constructor_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#SequenceCollection()">SequenceCollection</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#SequenceCollection()">SequenceCollection</A></STRONG>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new, empty collection with no seeds.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new, empty collection.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#SequenceCollection(java.util.Collection)">SequenceCollection</A></B>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;seeds)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#SequenceCollection(java.util.Collection)">SequenceCollection</A></STRONG>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;initialSequences)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new collection that uses the given seeds.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#SequenceCollection(randoop.SequenceCollection)">SequenceCollection</A></B>(<A HREF="../randoop/SequenceCollection.html" title="class in randoop">SequenceCollection</A>&nbsp;c)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new one that is a copy of the old one.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new collection and adds the given initial sequences.</TD>
 </TR>
 </TABLE>
 &nbsp;
 <!-- ========== METHOD SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#add(randoop.Sequence)">add</A></B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#add(randoop.Sequence)">add</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add a sequence to this collection.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#addAll(java.util.Collection)">addAll</A></STRONG>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;col)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -171,7 +205,7 @@ A collection of sequences that makes its efficient to ask for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#addAll(java.util.Collection)">addAll</A></B>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;col)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#addAll(randoop.SequenceCollection)">addAll</A></STRONG>(<A HREF="../randoop/SequenceCollection.html" title="class in randoop">SequenceCollection</A>&nbsp;components)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -179,24 +213,15 @@ A collection of sequences that makes its efficient to ask for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#addAll(randoop.SequenceCollection)">addAll</A></B>(<A HREF="../randoop/SequenceCollection.html" title="class in randoop">SequenceCollection</A>&nbsp;components)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#clear()">clear</A></STRONG>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#clear()">clear</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Restores the collection to its initial state, meaning: the collection
- contains only the seeds given as input argument to the constructor.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes all sequences from this collection.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#getAllSequences()">getAllSequences</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#getAllSequences()">getAllSequences</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -204,7 +229,7 @@ A collection of sequences that makes its efficient to ask for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Set&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#getAllStatements()">getAllStatements</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#getAllStatements()">getAllStatements</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -212,7 +237,7 @@ A collection of sequences that makes its efficient to ask for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#getSequencesForType(java.lang.Class, boolean)">getSequencesForType</A></B>(Class&lt;?&gt;&nbsp;clazz,
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#getSequencesForType(java.lang.Class, boolean)">getSequencesForType</A></STRONG>(Class&lt;?&gt;&nbsp;clazz,
                     boolean&nbsp;exactMatch)</CODE>
 
 <BR>
@@ -222,7 +247,7 @@ A collection of sequences that makes its efficient to ask for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;Set&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#getTypesThatHaveSequences()">getTypesThatHaveSequences</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#getTypesThatHaveSequences()">getTypesThatHaveSequences</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -230,7 +255,7 @@ A collection of sequences that makes its efficient to ask for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#hasSequences(java.lang.Class, randoop.util.Reflection.Match)">hasSequences</A></B>(Class&lt;?&gt;&nbsp;targetClass,
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#hasSequences(java.lang.Class, randoop.util.Reflection.Match)">hasSequences</A></STRONG>(Class&lt;?&gt;&nbsp;targetClass,
              <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</CODE>
 
 <BR>
@@ -239,7 +264,7 @@ A collection of sequences that makes its efficient to ask for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#numTypes()">numTypes</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#numTypes()">numTypes</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -247,7 +272,7 @@ A collection of sequences that makes its efficient to ask for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/SequenceCollection.html#size()">size</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/SequenceCollection.html#size()">size</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -256,7 +281,7 @@ A collection of sequences that makes its efficient to ask for
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
@@ -271,18 +296,14 @@ A collection of sequences that makes its efficient to ask for
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Field Detail</B></FONT></TH>
+<STRONG>Field Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="numActivesequences"><!-- --></A><H3>
 numActivesequences</H3>
 <PRE>
-public int <B>numActivesequences</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+public int <STRONG>numActivesequences</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -290,40 +311,29 @@ public int <B>numActivesequences</B></PRE>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Constructor Detail</B></FONT></TH>
+<STRONG>Constructor Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="SequenceCollection()"><!-- --></A><H3>
 SequenceCollection</H3>
 <PRE>
-public <B>SequenceCollection</B>()</PRE>
+public <STRONG>SequenceCollection</STRONG>()</PRE>
 <DL>
-<DD>Create a new, empty collection with no seeds.
+<DD>Create a new, empty collection.
 <P>
-</DL>
-<HR>
-
-<A NAME="SequenceCollection(randoop.SequenceCollection)"><!-- --></A><H3>
-SequenceCollection</H3>
-<PRE>
-public <B>SequenceCollection</B>(<A HREF="../randoop/SequenceCollection.html" title="class in randoop">SequenceCollection</A>&nbsp;c)</PRE>
-<DL>
-<DD>Creates a new one that is a copy of the old one.
-<P>
+</DD>
 </DL>
 <HR>
 
 <A NAME="SequenceCollection(java.util.Collection)"><!-- --></A><H3>
 SequenceCollection</H3>
 <PRE>
-public <B>SequenceCollection</B>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;seeds)</PRE>
+public <STRONG>SequenceCollection</STRONG>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;initialSequences)</PRE>
 <DL>
-<DD>Create a new collection that uses the given seeds.
- Note: The clear() method removes all the sequences
- from the collection, and them adds back the seeds
- given in the constructor call.
+<DD>Create a new collection and adds the given initial sequences.
 <P>
+</DD>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -332,45 +342,29 @@ public <B>SequenceCollection</B>(Collection&lt;<A HREF="../randoop/Sequence.html
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
+<STRONG>Method Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="numTypes()"><!-- --></A><H3>
 numTypes</H3>
 <PRE>
-public int <B>numTypes</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public int <STRONG>numTypes</STRONG>()</PRE>
 <HR>
 
 <A NAME="size()"><!-- --></A><H3>
 size</H3>
 <PRE>
-public int <B>size</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public int <STRONG>size</STRONG>()</PRE>
 <HR>
 
 <A NAME="clear()"><!-- --></A><H3>
 clear</H3>
 <PRE>
-public void <B>clear</B>()</PRE>
+public void <STRONG>clear</STRONG>()</PRE>
 <DL>
-<DD>Restores the collection to its initial state, meaning: the collection
- contains only the seeds given as input argument to the constructor.
- In other words, this method removes all the sequences
- from the collection, and them adds back the seeds
- given in the constructor call.
+<DD>Removes all sequences from this collection.
 <P>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -378,32 +372,29 @@ public void <B>clear</B>()</PRE>
 <A NAME="addAll(java.util.Collection)"><!-- --></A><H3>
 addAll</H3>
 <PRE>
-public void <B>addAll</B>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;col)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public void <STRONG>addAll</STRONG>(Collection&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&nbsp;col)</PRE>
 <HR>
 
 <A NAME="addAll(randoop.SequenceCollection)"><!-- --></A><H3>
 addAll</H3>
 <PRE>
-public void <B>addAll</B>(<A HREF="../randoop/SequenceCollection.html" title="class in randoop">SequenceCollection</A>&nbsp;components)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public void <STRONG>addAll</STRONG>(<A HREF="../randoop/SequenceCollection.html" title="class in randoop">SequenceCollection</A>&nbsp;components)</PRE>
 <HR>
 
 <A NAME="add(randoop.Sequence)"><!-- --></A><H3>
 add</H3>
 <PRE>
-public void <B>add</B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</PRE>
+public void <STRONG>add</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</PRE>
 <DL>
-<DD><DL>
-</DL>
+<DD>Add a sequence to this collection. This method takes into account the
+ active indices in the sequence. If sequence[i] creates a values of type T,
+ and sequence[i].isActive==true, then the sequence is seen as creating a
+ useful value at index i. More precisely, the method/constructor at that
+ index is said to produce a useful value (and if the user later queries for
+ all sequences that create a T, the sequence will be in the collection
+ returned by the query). How a value is deemed useful or not is left up to
+ the client.
+<P>
 </DD>
 </DL>
 <HR>
@@ -411,17 +402,18 @@ public void <B>add</B>(<A HREF="../randoop/Sequence.html" title="class in randoo
 <A NAME="getSequencesForType(java.lang.Class, boolean)"><!-- --></A><H3>
 getSequencesForType</H3>
 <PRE>
-public <A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <B>getSequencesForType</B>(Class&lt;?&gt;&nbsp;clazz,
+public <A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>getSequencesForType</STRONG>(Class&lt;?&gt;&nbsp;clazz,
                                                 boolean&nbsp;exactMatch)</PRE>
 <DL>
 <DD>Searches through the set of active sequences to find all sequences whose types
  match with the parameter type.
 <P>
+</DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>clazz</CODE> - -
-            the type desired for the sequences being sought
-<DT><B>Returns:</B><DD>list of sequence objects that are of typp 'type' and abide by the
-         constraints defined by nullOk.</DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>clazz</CODE> - -
+            the type desired for the sequences being sought</DD>
+<DT><STRONG>Returns:</STRONG></DT><DD>list of sequence objects that are of typp 'type' and abide by the
+         constraints defined by nullOk.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -429,46 +421,26 @@ public <A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">S
 <A NAME="getTypesThatHaveSequences()"><!-- --></A><H3>
 getTypesThatHaveSequences</H3>
 <PRE>
-public Set&lt;Class&lt;?&gt;&gt; <B>getTypesThatHaveSequences</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public Set&lt;Class&lt;?&gt;&gt; <STRONG>getTypesThatHaveSequences</STRONG>()</PRE>
 <HR>
 
 <A NAME="hasSequences(java.lang.Class, randoop.util.Reflection.Match)"><!-- --></A><H3>
 hasSequences</H3>
 <PRE>
-public boolean <B>hasSequences</B>(Class&lt;?&gt;&nbsp;targetClass,
+public boolean <STRONG>hasSequences</STRONG>(Class&lt;?&gt;&nbsp;targetClass,
                             <A HREF="../randoop/util/Reflection.Match.html" title="enum in randoop.util">Reflection.Match</A>&nbsp;match)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
 <HR>
 
 <A NAME="getAllSequences()"><!-- --></A><H3>
 getAllSequences</H3>
 <PRE>
-public Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <B>getAllSequences</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>getAllSequences</STRONG>()</PRE>
 <HR>
 
 <A NAME="getAllStatements()"><!-- --></A><H3>
 getAllStatements</H3>
 <PRE>
-public Set&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt; <B>getAllStatements</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public Set&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt; <STRONG>getAllStatements</STRONG>()</PRE>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -482,13 +454,13 @@ public Set&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoo
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -499,20 +471,20 @@ public Set&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoo
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/Sequence.RelativeNegativeIndex.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/SequenceCollection.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="SequenceCollection.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/SequenceCollection.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="SequenceCollection.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 

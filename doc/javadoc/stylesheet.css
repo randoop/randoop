@@ -26,4 +26,7 @@ h1 { font-size: 145% }
 
 .NavBarCell2    { font-family: Arial, Helvetica, sans-serif; background-color:#FFFFFF; color:#000000}
 .NavBarCell3    { font-family: Arial, Helvetica, sans-serif; background-color:#FFFFFF; color:#000000}
-
+/* Table caption style */
+.TableCaption     { background: #CCCCFF; color:#000000; text-align: left; font-size: 150%; font-weight: bold; border-left: 2px ridge; border-right: 2px ridge; border-top: 2px ridge; padding-left: 5px; } /* Dark mauve */
+.TableSubCaption  { background: #EEEEFF; color:#000000; text-align: left; font-weight: bold; border-left: 2px ridge; border-right: 2px ridge; border-top: 2px ridge; padding-left: 5px; } /* Light mauve */
+.TableHeader     { text-align: center; font-size: 80%; font-weight: bold; }

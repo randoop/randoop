@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
-<HTML>
+<HTML lang="en">
 <HEAD>
 <TITLE>
 ExecutableSequence
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/ExceptionalExecution.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/Execution.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ExceptionalExecution.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/Execution.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/ExecutableSequence.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="ExecutableSequence.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/ExecutableSequence.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ExecutableSequence.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -90,29 +90,30 @@ randoop</FONT>
 Class ExecutableSequence</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><B>ExecutableSequence</B>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>ExecutableSequence</STRONG>
 </PRE>
 <DL>
-<DT><B>All Implemented Interfaces:</B> <DD>Serializable</DD>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable</DD>
 </DL>
 <HR>
-<DL>
-<DT><PRE>public class <B>ExecutableSequence</B><DT>extends Object<DT>implements Serializable</DL>
-</PRE>
+<PRE>public class <STRONG>ExecutableSequence</STRONG>
+extends Object
+implements Serializable</PRE>
 
 <P>
-An ExecutableSequence wraps a @{link Sequence} with functionality for
+An ExecutableSequence wraps a <A HREF="../randoop/Sequence.html" title="class in randoop"><CODE>Sequence</CODE></A> with functionality for
  executing the sequence. It also lets the client add <A HREF="../randoop/Check.html" title="interface in randoop"><CODE>Check</CODE></A>s to
  that check expected behaviors of the execution.
  <p>
  An ExecutableSequence augments a sequence with three additional pieces
  of data:
  <p>
- </ul><b>Execution results.</b>An ExecutableSequence can be executed, and the
+ <ul>
+ <li> <b>Execution results.</b>An ExecutableSequence can be executed, and the
       results of the execution (meaning the objects created during execution,
       and any exceptions thrown) are made available to clients or execution
       visitors to inspect.
- <ul> <b>Checks.</b> A check is an object representing an expected runtime behavior
+ <li> <b>Checks.</b> A check is an object representing an expected runtime behavior
       of the sequence. Clients can add checks to specific indices of the sequence.
       For example, a client might add a <code>NotNull</code> check to the ith index 
       of a sequence to signify that the value returned by the statement at index i
@@ -120,6 +121,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
  <li> <b>Check evaluation results.</b>Corresponding to every check is a boolean value that
       represents whether the check passed or failed during the last execution
       of the sequence.
+ </ul>
  <p>
  
  Of the three pieces of data above, an ExecutableSequence only directly manages
@@ -158,22 +160,24 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 
 <P>
 <DL>
-<DT><B>See Also:</B><DD><A HREF="../serialized-form.html#randoop.ExecutableSequence">Serialized Form</A></DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../serialized-form.html#randoop.ExecutableSequence">Serialized Form</A></DD></DL>
 <HR>
 
 <P>
 <!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Field Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#checks">checks</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#checks">checks</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -181,7 +185,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;List&lt;List&lt;Boolean&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#checksResults">checksResults</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#checksResults">checksResults</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -189,7 +193,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;long</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#exectime">exectime</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#exectime">exectime</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -197,7 +201,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected &nbsp;<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#executionResults">executionResults</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#executionResults">executionResults</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -205,7 +209,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;long</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#gentime">gentime</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#gentime">gentime</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -213,7 +217,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#sequence">sequence</A></B></CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#sequence">sequence</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -223,15 +227,17 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 
 <A NAME="constructor_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Constructor Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence)">ExecutableSequence</A></B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence)">ExecutableSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an executable sequence that executes the given sequence.</TD>
@@ -239,7 +245,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected </CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence, randoop.Execution, java.util.List)">ExecutableSequence</A></B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence, randoop.Execution, java.util.List)">ExecutableSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
                    <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;exec,
                    List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;&nbsp;checks)</CODE>
 
@@ -251,15 +257,17 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <!-- ========== METHOD SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#addCheck(int, randoop.Check, boolean)">addCheck</A></B>(int&nbsp;i,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#addCheck(int, randoop.Check, boolean)">addCheck</A></STRONG>(int&nbsp;i,
          <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&nbsp;check,
          boolean&nbsp;passed)</CODE>
 
@@ -269,7 +277,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#checks_count(java.util.List)">checks_count</A></B>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;seqs)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#checks_count(java.util.List)">checks_count</A></STRONG>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;seqs)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the total number of checks in a list of sequences</TD>
@@ -277,7 +285,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#compare_checks(randoop.ExecutableSequence, boolean, boolean)">compare_checks</A></B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#compare_checks(randoop.ExecutableSequence, boolean, boolean)">compare_checks</A></STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
                boolean&nbsp;remove_diffs,
                boolean&nbsp;print_diffs)</CODE>
 
@@ -287,7 +295,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#duplicate()">duplicate</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#duplicate()">duplicate</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -295,7 +303,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#equals(java.lang.Object)">equals</A></B>(Object&nbsp;obj)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#equals(java.lang.Object)">equals</A></STRONG>(Object&nbsp;obj)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -303,7 +311,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#exceptionIndex()">exceptionIndex</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#exceptionIndex()">exceptionIndex</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the index i for which this.isExceptionalExecution(i), or -1 if
@@ -312,7 +320,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#execute(randoop.ExecutionVisitor)">execute</A></B>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#execute(randoop.ExecutionVisitor)">execute</A></STRONG>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Executes sequence, stopping on exceptions</TD>
@@ -320,7 +328,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#execute(randoop.ExecutionVisitor, boolean)">execute</A></B>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#execute(randoop.ExecutionVisitor, boolean)">execute</A></STRONG>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor,
         boolean&nbsp;stop_on_exception)</CODE>
 
 <BR>
@@ -330,7 +338,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#executedSize()">executedSize</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#executedSize()">executedSize</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -338,7 +346,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#executeStatement(randoop.Sequence, java.util.List, int, java.lang.Object[])">executeStatement</A></B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#executeStatement(randoop.Sequence, java.util.List, int, java.lang.Object[])">executeStatement</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
                  List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
                  int&nbsp;index,
                  Object[]&nbsp;inputVariables)</CODE>
@@ -349,7 +357,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getAllResults()">getAllResults</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getAllResults()">getAllResults</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -357,7 +365,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getChecks(int)">getChecks</A></B>(int&nbsp;i)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getChecks(int)">getChecks</A></STRONG>(int&nbsp;i)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the checks for the i-th element of the sequence.</TD>
@@ -365,7 +373,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getChecks(int, java.lang.Class)">getChecks</A></B>(int&nbsp;i,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getChecks(int, java.lang.Class)">getChecks</A></STRONG>(int&nbsp;i,
           Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
 
 <BR>
@@ -374,7 +382,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;List&lt;List&lt;Boolean&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getChecksResults()">getChecksResults</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getChecksResults()">getChecksResults</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -382,7 +390,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getContractCheckIndex(java.lang.Class)">getContractCheckIndex</A></B>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getContractCheckIndex(java.lang.Class)">getContractCheckIndex</A></STRONG>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -390,7 +398,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getExceptionIndex(java.lang.Class)">getExceptionIndex</A></B>(Class&lt;?&gt;&nbsp;exceptionClass)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getExceptionIndex(java.lang.Class)">getExceptionIndex</A></STRONG>(Class&lt;?&gt;&nbsp;exceptionClass)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -398,7 +406,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getFailureIndex()">getFailureIndex</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getFailureIndex()">getFailureIndex</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -406,7 +414,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getFailures(int)">getFailures</A></B>(int&nbsp;idx)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getFailures(int)">getFailures</A></STRONG>(int&nbsp;idx)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -414,7 +422,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getResult(int)">getResult</A></B>(int&nbsp;index)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getResult(int)">getResult</A></STRONG>(int&nbsp;index)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method is typically used by ExecutionVisitors.</TD>
@@ -422,7 +430,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getRuntimeInputs(randoop.Sequence, java.util.List, int, java.util.List, java.lang.Object[])">getRuntimeInputs</A></B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getRuntimeInputs(randoop.Sequence, java.util.List, int, java.util.List, java.lang.Object[])">getRuntimeInputs</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
                  List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
                  int&nbsp;i,
                  List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputs,
@@ -434,7 +442,7 @@ An ExecutableSequence wraps a @{link Sequence} with functionality for
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>protected static&nbsp;Object[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getRuntimeValuesForVars(java.util.List, java.util.List)">getRuntimeValuesForVars</A></B>(List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;vars,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getRuntimeValuesForVars(java.util.List, java.util.List)">getRuntimeValuesForVars</A></STRONG>(List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;vars,
                         List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;execution)</CODE>
 
 <BR>
@@ -452,7 +460,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 </TR>
 </TABLE>
 </CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#getSequences(java.util.List)">getSequences</A></B>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;exec)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getSequences(java.util.List)">getSequences</A></STRONG>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;exec)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -460,7 +468,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasCheck(java.lang.Class)">hasCheck</A></B>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasCheck(java.lang.Class)">hasCheck</A></STRONG>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -468,7 +476,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasCheck(int, java.lang.Class)">hasCheck</A></B>(int&nbsp;i,
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasCheck(int, java.lang.Class)">hasCheck</A></STRONG>(int&nbsp;i,
          Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
 
 <BR>
@@ -477,7 +485,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasChecks(int)">hasChecks</A></B>(int&nbsp;i)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasChecks(int)">hasChecks</A></STRONG>(int&nbsp;i)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -485,7 +493,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasFailure()">hasFailure</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasFailure()">hasFailure</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -493,7 +501,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasFailure(int)">hasFailure</A></B>(int&nbsp;i)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasFailure(int)">hasFailure</A></STRONG>(int&nbsp;i)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -501,7 +509,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hashCode()">hashCode</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hashCode()">hashCode</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -509,7 +517,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasNonExecutedStatements()">hasNonExecutedStatements</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasNonExecutedStatements()">hasNonExecutedStatements</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -517,16 +525,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#hasUnexpectedException()">hasUnexpectedException</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns true if there was an exception on any statement other than
- the last statement.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#isNormalExecution()">isNormalExecution</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#isNormalExecution()">isNormalExecution</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -534,7 +533,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#isNormalExecution(int)">isNormalExecution</A></B>(int&nbsp;i)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#isNormalExecution(int)">isNormalExecution</A></STRONG>(int&nbsp;i)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method is typically used by ExecutionVisitors.</TD>
@@ -542,7 +541,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#removeChecks()">removeChecks</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#removeChecks()">removeChecks</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -550,7 +549,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#throwsException()">throwsException</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#throwsException()">throwsException</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -558,7 +557,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#throwsException(java.lang.Class)">throwsException</A></B>(Class&lt;?&gt;&nbsp;exceptionClass)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#throwsException(java.lang.Class)">throwsException</A></STRONG>(Class&lt;?&gt;&nbsp;exceptionClass)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -566,7 +565,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#toCodeString()">toCodeString</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#toCodeString()">toCodeString</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output this sequence as code.</TD>
@@ -574,7 +573,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../randoop/ExecutableSequence.html#toString()">toString</A></B>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#toString()">toString</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -583,7 +582,7 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class Object</B></TH>
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
@@ -598,68 +597,44 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Field Detail</B></FONT></TH>
+<STRONG>Field Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="sequence"><!-- --></A><H3>
 sequence</H3>
 <PRE>
-public <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <B>sequence</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+public <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>sequence</STRONG></PRE>
 <HR>
 
 <A NAME="checks"><!-- --></A><H3>
 checks</H3>
 <PRE>
-protected List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt; <B>checks</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+protected List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt; <STRONG>checks</STRONG></PRE>
 <HR>
 
 <A NAME="checksResults"><!-- --></A><H3>
 checksResults</H3>
 <PRE>
-protected List&lt;List&lt;Boolean&gt;&gt; <B>checksResults</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+protected List&lt;List&lt;Boolean&gt;&gt; <STRONG>checksResults</STRONG></PRE>
 <HR>
 
 <A NAME="executionResults"><!-- --></A><H3>
 executionResults</H3>
 <PRE>
-protected transient <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A> <B>executionResults</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+protected transient <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A> <STRONG>executionResults</STRONG></PRE>
 <HR>
 
 <A NAME="gentime"><!-- --></A><H3>
 gentime</H3>
 <PRE>
-public long <B>gentime</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+public long <STRONG>gentime</STRONG></PRE>
 <HR>
 
 <A NAME="exectime"><!-- --></A><H3>
 exectime</H3>
 <PRE>
-public long <B>exectime</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
+public long <STRONG>exectime</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -667,24 +642,25 @@ public long <B>exectime</B></PRE>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Constructor Detail</B></FONT></TH>
+<STRONG>Constructor Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="ExecutableSequence(randoop.Sequence)"><!-- --></A><H3>
 ExecutableSequence</H3>
 <PRE>
-public <B>ExecutableSequence</B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</PRE>
+public <STRONG>ExecutableSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</PRE>
 <DL>
 <DD>Create an executable sequence that executes the given sequence.
 <P>
+</DD>
 </DL>
 <HR>
 
 <A NAME="ExecutableSequence(randoop.Sequence, randoop.Execution, java.util.List)"><!-- --></A><H3>
 ExecutableSequence</H3>
 <PRE>
-protected <B>ExecutableSequence</B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
+protected <STRONG>ExecutableSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
                              <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;exec,
                              List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;&nbsp;checks)</PRE>
 <DL>
@@ -692,6 +668,7 @@ protected <B>ExecutableSequence</B>(<A HREF="../randoop/Sequence.html" title="cl
 
  Don't use this constructor! (Unless you know what you're doing.)
 <P>
+</DD>
 </DL>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -700,22 +677,17 @@ protected <B>ExecutableSequence</B>(<A HREF="../randoop/Sequence.html" title="cl
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
+<STRONG>Method Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
 
 <A NAME="getChecks(int)"><!-- --></A><H3>
 getChecks</H3>
 <PRE>
-public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <B>getChecks</B>(int&nbsp;i)</PRE>
+public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <STRONG>getChecks</STRONG>(int&nbsp;i)</PRE>
 <DL>
 <DD>Get the checks for the i-th element of the sequence.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -723,7 +695,7 @@ public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Chec
 <A NAME="addCheck(int, randoop.Check, boolean)"><!-- --></A><H3>
 addCheck</H3>
 <PRE>
-public void <B>addCheck</B>(int&nbsp;i,
+public void <STRONG>addCheck</STRONG>(int&nbsp;i,
                      <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&nbsp;check,
                      boolean&nbsp;passed)</PRE>
 <DL>
@@ -732,14 +704,11 @@ public void <B>addCheck</B>(int&nbsp;i,
  and attempting to add a second check of this type will result in an
  IllegalArgumentException.
 <P>
-<DD><DL>
-</DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>b</CODE> - 
-<DT><B>Throws:</B>
+<DT><STRONG>Throws:</STRONG></DT>
 <DD><CODE>IllegalArgumentException</CODE> - If the given check's class is StatementThrowsException and
-           there is already an check of this class at the give index.</DL>
+           there is already an check of this class at the give index.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -747,12 +716,10 @@ public void <B>addCheck</B>(int&nbsp;i,
 <A NAME="toString()"><!-- --></A><H3>
 toString</H3>
 <PRE>
-public String <B>toString</B>()</PRE>
+public String <STRONG>toString</STRONG>()</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DL>
-</DD>
-<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -761,7 +728,7 @@ public String <B>toString</B>()</PRE>
 <A NAME="toCodeString()"><!-- --></A><H3>
 toCodeString</H3>
 <PRE>
-public String <B>toCodeString</B>()</PRE>
+public String <STRONG>toCodeString</STRONG>()</PRE>
 <DL>
 <DD>Output this sequence as code. In addition to printing out the statements,
  this method prints the checks.
@@ -771,11 +738,6 @@ public String <B>toCodeString</B>()</PRE>
  immediately before the statement, and its post-statement code is printed
  immediately after the statement.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -783,15 +745,10 @@ public String <B>toCodeString</B>()</PRE>
 <A NAME="execute(randoop.ExecutionVisitor)"><!-- --></A><H3>
 execute</H3>
 <PRE>
-public void <B>execute</B>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor)</PRE>
+public void <STRONG>execute</STRONG>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor)</PRE>
 <DL>
 <DD>Executes sequence, stopping on exceptions
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -799,7 +756,7 @@ public void <B>execute</B>(<A HREF="../randoop/ExecutionVisitor.html" title="int
 <A NAME="execute(randoop.ExecutionVisitor, boolean)"><!-- --></A><H3>
 execute</H3>
 <PRE>
-public void <B>execute</B>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor,
+public void <STRONG>execute</STRONG>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor,
                     boolean&nbsp;stop_on_exception)</PRE>
 <DL>
 <DD>Execute this sequence, invoking the given visitor as the execution
@@ -823,12 +780,10 @@ public void <B>execute</B>(<A HREF="../randoop/ExecutionVisitor.html" title="int
    </ul>
  </ul>
 <P>
-<DD><DL>
-</DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>visitor</CODE> - can be null, in which case no visitor will be invoked
-        during execution.</DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>visitor</CODE> - can be null, in which case no visitor will be invoked
+        during execution.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -836,67 +791,38 @@ public void <B>execute</B>(<A HREF="../randoop/ExecutionVisitor.html" title="int
 <A NAME="getRuntimeInputs(randoop.Sequence, java.util.List, int, java.util.List, java.lang.Object[])"><!-- --></A><H3>
 getRuntimeInputs</H3>
 <PRE>
-protected static boolean <B>getRuntimeInputs</B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+protected static boolean <STRONG>getRuntimeInputs</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
                                           List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
                                           int&nbsp;i,
                                           List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputs,
                                           Object[]&nbsp;runtimeObjects)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
 <HR>
 
 <A NAME="getRuntimeValuesForVars(java.util.List, java.util.List)"><!-- --></A><H3>
 getRuntimeValuesForVars</H3>
 <PRE>
-protected static Object[] <B>getRuntimeValuesForVars</B>(List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;vars,
+protected static Object[] <STRONG>getRuntimeValuesForVars</STRONG>(List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;vars,
                                                   List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;execution)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
 <HR>
 
 <A NAME="executeStatement(randoop.Sequence, java.util.List, int, java.lang.Object[])"><!-- --></A><H3>
 executeStatement</H3>
 <PRE>
-protected static void <B>executeStatement</B>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+protected static void <STRONG>executeStatement</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
                                        List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
                                        int&nbsp;index,
                                        Object[]&nbsp;inputVariables)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
 <HR>
 
 <A NAME="getResult(int)"><!-- --></A><H3>
 getResult</H3>
 <PRE>
-public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A> <B>getResult</B>(int&nbsp;index)</PRE>
+public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A> <STRONG>getResult</STRONG>(int&nbsp;index)</PRE>
 <DL>
 <DD>This method is typically used by ExecutionVisitors.
 
  The result of executing the i-th element of the sequence.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -904,28 +830,16 @@ public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">Execu
 <A NAME="getChecksResults()"><!-- --></A><H3>
 getChecksResults</H3>
 <PRE>
-public List&lt;List&lt;Boolean&gt;&gt; <B>getChecksResults</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public List&lt;List&lt;Boolean&gt;&gt; <STRONG>getChecksResults</STRONG>()</PRE>
 <HR>
 
 <A NAME="getAllResults()"><!-- --></A><H3>
 getAllResults</H3>
 <PRE>
-public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>[] <B>getAllResults</B>()</PRE>
+public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>[] <STRONG>getAllResults</STRONG>()</PRE>
 <DL>
 <DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>all the execution outcomes for this sequence.</DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>all the execution outcomes for this sequence.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -933,15 +847,11 @@ public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">Execu
 <A NAME="executedSize()"><!-- --></A><H3>
 executedSize</H3>
 <PRE>
-public int <B>executedSize</B>()</PRE>
+public int <STRONG>executedSize</STRONG>()</PRE>
 <DL>
 <DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>the number of elements in the sequence that were executed before
- an execution result of type randoop.NotExecuted.</DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>the number of elements in the sequence that were executed before
+ an execution result of type randoop.NotExecuted.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -949,17 +859,12 @@ public int <B>executedSize</B>()</PRE>
 <A NAME="isNormalExecution(int)"><!-- --></A><H3>
 isNormalExecution</H3>
 <PRE>
-public boolean <B>isNormalExecution</B>(int&nbsp;i)</PRE>
+public boolean <STRONG>isNormalExecution</STRONG>(int&nbsp;i)</PRE>
 <DL>
 <DD>This method is typically used by ExecutionVisitors.
 
  True if execution of the i-th statement terminated normally.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -967,93 +872,37 @@ public boolean <B>isNormalExecution</B>(int&nbsp;i)</PRE>
 <A NAME="isNormalExecution()"><!-- --></A><H3>
 isNormalExecution</H3>
 <PRE>
-public boolean <B>isNormalExecution</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="hasUnexpectedException()"><!-- --></A><H3>
-hasUnexpectedException</H3>
-<PRE>
-public boolean <B>hasUnexpectedException</B>()</PRE>
-<DL>
-<DD>Returns true if there was an exception on any statement other than
- the last statement.  Exceptions within a sequence are unexpected, because
- Randoop only builds on sequences that don't throw exceptions.  They
- can happen in some cases, though, when changes to the global state
- cause an existing sequence to throw an exception early
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public boolean <STRONG>isNormalExecution</STRONG>()</PRE>
 <HR>
 
 <A NAME="getChecks(int, java.lang.Class)"><!-- --></A><H3>
 getChecks</H3>
 <PRE>
-public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <B>getChecks</B>(int&nbsp;i,
+public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <STRONG>getChecks</STRONG>(int&nbsp;i,
                              Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
 <HR>
 
 <A NAME="removeChecks()"><!-- --></A><H3>
 removeChecks</H3>
 <PRE>
-public void <B>removeChecks</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public void <STRONG>removeChecks</STRONG>()</PRE>
 <HR>
 
 <A NAME="hasCheck(java.lang.Class)"><!-- --></A><H3>
 hasCheck</H3>
 <PRE>
-public boolean <B>hasCheck</B>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public boolean <STRONG>hasCheck</STRONG>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
 <HR>
 
 <A NAME="getContractCheckIndex(java.lang.Class)"><!-- --></A><H3>
 getContractCheckIndex</H3>
 <PRE>
-public int <B>getContractCheckIndex</B>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
+public int <STRONG>getContractCheckIndex</STRONG>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
 <DL>
 <DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>the first index at which an check of the given type occurs,
+<DT><STRONG>Returns:</STRONG></DT><DD>the first index at which an check of the given type occurs,
          or -1 if there is no check of the given type in this
-         sequence.</DL>
+         sequence.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -1061,16 +910,11 @@ public int <B>getContractCheckIndex</B>(Class&lt;? extends <A HREF="../randoop/C
 <A NAME="hasCheck(int, java.lang.Class)"><!-- --></A><H3>
 hasCheck</H3>
 <PRE>
-public boolean <B>hasCheck</B>(int&nbsp;i,
+public boolean <STRONG>hasCheck</STRONG>(int&nbsp;i,
                         Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
 <DL>
 <DD>True iff this sequences has at least one check of the given type at index i.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -1078,86 +922,42 @@ public boolean <B>hasCheck</B>(int&nbsp;i,
 <A NAME="hasChecks(int)"><!-- --></A><H3>
 hasChecks</H3>
 <PRE>
-public boolean <B>hasChecks</B>(int&nbsp;i)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public boolean <STRONG>hasChecks</STRONG>(int&nbsp;i)</PRE>
 <HR>
 
 <A NAME="hasFailure(int)"><!-- --></A><H3>
 hasFailure</H3>
 <PRE>
-public boolean <B>hasFailure</B>(int&nbsp;i)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public boolean <STRONG>hasFailure</STRONG>(int&nbsp;i)</PRE>
 <HR>
 
 <A NAME="hasFailure()"><!-- --></A><H3>
 hasFailure</H3>
 <PRE>
-public boolean <B>hasFailure</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public boolean <STRONG>hasFailure</STRONG>()</PRE>
 <HR>
 
 <A NAME="getFailures(int)"><!-- --></A><H3>
 getFailures</H3>
 <PRE>
-public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <B>getFailures</B>(int&nbsp;idx)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <STRONG>getFailures</STRONG>(int&nbsp;idx)</PRE>
 <HR>
 
 <A NAME="getFailureIndex()"><!-- --></A><H3>
 getFailureIndex</H3>
 <PRE>
-public int <B>getFailureIndex</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public int <STRONG>getFailureIndex</STRONG>()</PRE>
 <HR>
 
 <A NAME="getExceptionIndex(java.lang.Class)"><!-- --></A><H3>
 getExceptionIndex</H3>
 <PRE>
-public int <B>getExceptionIndex</B>(Class&lt;?&gt;&nbsp;exceptionClass)</PRE>
+public int <STRONG>getExceptionIndex</STRONG>(Class&lt;?&gt;&nbsp;exceptionClass)</PRE>
 <DL>
 <DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>The index in the sequence at which an exception of the
+<DT><STRONG>Returns:</STRONG></DT><DD>The index in the sequence at which an exception of the
  given class (or a class compatible with it) was thrown. If no such
- exception, returns -1.</DL>
+ exception, returns -1.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -1165,15 +965,11 @@ public int <B>getExceptionIndex</B>(Class&lt;?&gt;&nbsp;exceptionClass)</PRE>
 <A NAME="throwsException(java.lang.Class)"><!-- --></A><H3>
 throwsException</H3>
 <PRE>
-public boolean <B>throwsException</B>(Class&lt;?&gt;&nbsp;exceptionClass)</PRE>
+public boolean <STRONG>throwsException</STRONG>(Class&lt;?&gt;&nbsp;exceptionClass)</PRE>
 <DL>
 <DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>True if an exception of the given class (or a class compatible with
-         it) has been thrown during this sequence's execution.</DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>True if an exception of the given class (or a class compatible with
+         it) has been thrown during this sequence's execution.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -1181,14 +977,10 @@ public boolean <B>throwsException</B>(Class&lt;?&gt;&nbsp;exceptionClass)</PRE>
 <A NAME="throwsException()"><!-- --></A><H3>
 throwsException</H3>
 <PRE>
-public boolean <B>throwsException</B>()</PRE>
+public boolean <STRONG>throwsException</STRONG>()</PRE>
 <DL>
 <DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>True if an exception has been thrown during this sequence's execution.</DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>True if an exception has been thrown during this sequence's execution.</DD></DL>
 </DD>
 </DL>
 <HR>
@@ -1196,44 +988,23 @@ public boolean <B>throwsException</B>()</PRE>
 <A NAME="hasNonExecutedStatements()"><!-- --></A><H3>
 hasNonExecutedStatements</H3>
 <PRE>
-public boolean <B>hasNonExecutedStatements</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public boolean <STRONG>hasNonExecutedStatements</STRONG>()</PRE>
 <HR>
 
 <A NAME="duplicate()"><!-- --></A><H3>
 duplicate</H3>
 <PRE>
-public <A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A> <B>duplicate</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public <A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A> <STRONG>duplicate</STRONG>()</PRE>
 <HR>
 
 <A NAME="exceptionIndex()"><!-- --></A><H3>
 exceptionIndex</H3>
 <PRE>
-public int <B>exceptionIndex</B>()</PRE>
+public int <STRONG>exceptionIndex</STRONG>()</PRE>
 <DL>
 <DD>Returns the index i for which this.isExceptionalExecution(i), or -1 if
  there is no such index.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -1241,26 +1012,16 @@ public int <B>exceptionIndex</B>()</PRE>
 <A NAME="getSequences(java.util.List)"><!-- --></A><H3>
 getSequences</H3>
 <PRE>
-public static &lt;D extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <B>getSequences</B>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;exec)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+public static &lt;D extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>getSequences</STRONG>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;exec)</PRE>
 <HR>
 
 <A NAME="hashCode()"><!-- --></A><H3>
 hashCode</H3>
 <PRE>
-public int <B>hashCode</B>()</PRE>
+public int <STRONG>hashCode</STRONG>()</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DL>
-</DD>
-<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -1269,12 +1030,10 @@ public int <B>hashCode</B>()</PRE>
 <A NAME="equals(java.lang.Object)"><!-- --></A><H3>
 equals</H3>
 <PRE>
-public boolean <B>equals</B>(Object&nbsp;obj)</PRE>
+public boolean <STRONG>equals</STRONG>(Object&nbsp;obj)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DL>
-</DD>
-<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DD>
 </DL>
 </DD>
 </DL>
@@ -1283,7 +1042,7 @@ public boolean <B>equals</B>(Object&nbsp;obj)</PRE>
 <A NAME="compare_checks(randoop.ExecutableSequence, boolean, boolean)"><!-- --></A><H3>
 compare_checks</H3>
 <PRE>
-public int <B>compare_checks</B>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
+public int <STRONG>compare_checks</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
                           boolean&nbsp;remove_diffs,
                           boolean&nbsp;print_diffs)</PRE>
 <DL>
@@ -1292,11 +1051,6 @@ public int <B>compare_checks</B>(<A HREF="../randoop/ExecutableSequence.html" ti
  differing checks are removed from both sequences.
  Prints any differences to stdout if print_diffs is true.
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <HR>
@@ -1304,15 +1058,10 @@ public int <B>compare_checks</B>(<A HREF="../randoop/ExecutableSequence.html" ti
 <A NAME="checks_count(java.util.List)"><!-- --></A><H3>
 checks_count</H3>
 <PRE>
-public static int <B>checks_count</B>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;seqs)</PRE>
+public static int <STRONG>checks_count</STRONG>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;seqs)</PRE>
 <DL>
 <DD>Return the total number of checks in a list of sequences
 <P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -1328,13 +1077,13 @@ public static int <B>checks_count</B>(List&lt;<A HREF="../randoop/ExecutableSequ
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -1345,20 +1094,20 @@ public static int <B>checks_count</B>(List&lt;<A HREF="../randoop/ExecutableSequ
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/ExceptionalExecution.html" title="class in randoop"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../randoop/Execution.html" title="class in randoop"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ExceptionalExecution.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/Execution.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/ExecutableSequence.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="ExecutableSequence.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+  <A HREF="../index.html?randoop/ExecutableSequence.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ExecutableSequence.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
