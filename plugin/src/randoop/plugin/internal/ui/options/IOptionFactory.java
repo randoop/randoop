@@ -49,8 +49,8 @@ public class IOptionFactory {
     return new NullRatioOption(text);
   }
   
-  public static IOption createJUnitTestInputsOption(Text text) {
-    return new JUnitTestInputsOption(text);
+  public static IOption createInputsLimitOption(Text text) {
+    return new InputLimitOption(text);
   }
   
   public static IOption createTimeLimitOption(Text text, Label convertedTimeLabel) {
@@ -255,9 +255,9 @@ public class IOptionFactory {
 
   }
   
-  private static class JUnitTestInputsOption extends PositiveIntegerOption {
+  private static class InputLimitOption extends PositiveIntegerOption {
     
-    public JUnitTestInputsOption(Text text) {
+    public InputLimitOption(Text text) {
       super(text);
       setNonPositiveIntErrorMessage("JUnit Test Inputs is not a positive integer");
       setInvalidIntErrorMessage("JUnit Test Inputs is not a valid integer");
