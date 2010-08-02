@@ -28,7 +28,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.ViewPart;
 
 import randoop.plugin.RandoopPlugin;
@@ -182,11 +181,7 @@ public class TestGeneratorViewPart extends ViewPart {
     terminateAction = new Action("Terminate") {
       @Override
       public void run() {
-        try {
-          terminate();
-        } catch (DebugException e) {
-          RandoopPlugin.log(e);
-        }
+        stopLaunch();
       };
     };
     terminateAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
@@ -195,17 +190,13 @@ public class TestGeneratorViewPart extends ViewPart {
     relaunchAction = new Action("Regenerate tests") {
       @Override
       public void run() {
-        try {
-          // Terminate the old launch
-          terminate();
-
+        // Terminate the old launch
+        if (stopLaunch()) {
           ILaunchConfiguration config = launch.getLaunchConfiguration();
           assert config != null; // TODO right?
           String mode = launch.getLaunchMode();
           assert mode != null; // TODO right?
           DebugUITools.launch(config, mode);
-        } catch (DebugException e) {
-          RandoopPlugin.log(e);
         }
       }
     };
@@ -216,11 +207,6 @@ public class TestGeneratorViewPart extends ViewPart {
     relaunchAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
   }
   
-  private void terminate() throws DebugException {
-    launch.terminate();
-    terminateAction.setEnabled(false);
-  }
-
   private void createToolBar() {
     IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
     mgr.add(debugWithJUnitAction);
@@ -240,6 +226,20 @@ public class TestGeneratorViewPart extends ViewPart {
     randoopErrors.reset();
     relaunchAction.setEnabled(true);
     terminateAction.setEnabled(true);
+  }
+  
+  public boolean stopLaunch() {
+    if (!launch.isTerminated()) {
+      try {
+        launch.terminate();
+      } catch (DebugException e) {
+        RandoopPlugin.log(e);
+        return false;
+      }
+    }
+    
+    terminateAction.setEnabled(false);
+    return true;
   }
   
   public CounterPanel getCounterPanel() {

@@ -9,8 +9,6 @@ PLUGIN BUGS
   remember which classes I searched for in earlier dialogs, and shows
   those classes in subsequent dialogs, which is confusing.
 
-* Stop button is not greyed out when stop is pressed in the console
-
 * As I use the plugin in an example use, many errors show up in the
   Error Log window of the test Eclipse application.
 
