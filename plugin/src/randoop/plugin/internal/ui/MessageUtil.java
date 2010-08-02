@@ -65,7 +65,8 @@ public class MessageUtil {
       @Override
       public String getText(Object element) {
         if (element instanceof IResource) {
-          return ((IResource) element).getName();
+          IResource r = ((IResource) element);
+          return r.getFullPath().toString();
         }
         return null;
       }
@@ -77,8 +78,8 @@ public class MessageUtil {
     
     private String fQuestion;
     
-    public ResourcesListQuestionDialog(Shell parentShell, String title, String message, String question,
-        IResource[] resources, String toggleQuestion) {
+    public ResourcesListQuestionDialog(Shell parentShell, String title, String message,
+        String question, String toggleQuestion, IResource[] resources) {
       
       super(parentShell, title, null, message, MessageDialog.QUESTION,
           new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0, toggleQuestion, false);

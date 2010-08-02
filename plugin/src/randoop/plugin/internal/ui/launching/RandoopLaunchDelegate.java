@@ -153,7 +153,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     // Check if the output directory exists
     if (resourcesInQuestion.length > 0) {
       final String message = "The following files were found in the output directory and may be overwritten by the generated tests.";
-      final String question = "Proceed with test generation?";
+      final String yesNoQuestion = "Proceed with test generation?";
       final String toggleQuestion = "Delete these files before launch";
       
       final MutableBoolean okToProceed = new MutableBoolean(false);
@@ -163,7 +163,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
         @Override
         public void run() {
           MessageDialogWithToggle d = new MessageUtil.ResourcesListQuestionDialog(PlatformUI.getWorkbench().getDisplay()
-              .getActiveShell(), "Randoop", message, question, resourcesInQuestion, toggleQuestion);
+              .getActiveShell(), "Randoop", message, yesNoQuestion, toggleQuestion, resourcesInQuestion);
           
           okToProceed.setValue(d.open() == Dialog.OK);
           deleteFiles.setValue(d.getToggleState());
