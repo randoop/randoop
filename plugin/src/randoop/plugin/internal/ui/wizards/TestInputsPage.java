@@ -32,7 +32,7 @@ public class TestInputsPage extends OptionWizardPage {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(comp);
 
-    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard().getContainer(), getSelectionListener(), fJavaProject, fElements);
+    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard().getContainer(), getBasicSelectionListener(), fJavaProject, fElements);
     
     addOption(fTestInputSelectorOption);
     

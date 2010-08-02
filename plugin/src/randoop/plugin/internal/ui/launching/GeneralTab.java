@@ -28,7 +28,7 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     // Project group:
     Composite comp = SWTFactory.createComposite(tabcomp, 3, 1, GridData.FILL_HORIZONTAL);
 
-    SWTFactory.createLabel(comp, "Project:", 1);
+    SWTFactory.createLabel(comp, "Pro&ject:", 1);
 
     Text projectText = new Text(comp, SWT.SINGLE | SWT.BORDER);
     projectText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -36,10 +36,10 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     Button projectBrowseButton = SWTFactory.createPushButton(comp, "Browse...", null);
     projectBrowseButton.setText("&Browse...");
 
-    SWTFactory.createLabel(comp, "Output Folder:", 1);
+    SWTFactory.createLabel(comp, "&Output Folder:", 1);
     Text outputSourceFolderText = SWTFactory.createSingleText(comp, 1);
 
-    Button sourceFolderBrowseButton = SWTFactory.createPushButton(comp, "Search...", null);
+    Button sourceFolderBrowseButton = SWTFactory.createPushButton(comp, "&Search...", null);
 
     fProjectOption = new ProjectOption(getShell(), projectText, projectBrowseButton,
         outputSourceFolderText, sourceFolderBrowseButton);
@@ -47,7 +47,7 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     // Class name option:
     comp = SWTFactory.createComposite(tabcomp, 3, 1, GridData.FILL_HORIZONTAL);
 
-    SWTFactory.createLabel(comp, "JUnit Class Name:", 1);
+    SWTFactory.createLabel(comp, "JUnit Class Na&me:", 1);
     Text fullyQualifiedTestName = SWTFactory.createSingleText(comp, 2);
 
     fJUnitTestClassNameOption = new JUnitTestClassNameOption(fullyQualifiedTestName);
@@ -71,7 +71,7 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
 
   @Override
   public String getName() {
-    return "General";
+    return "&General";
   }
   
   @Override

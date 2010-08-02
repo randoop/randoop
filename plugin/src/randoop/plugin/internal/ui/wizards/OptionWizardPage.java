@@ -89,11 +89,11 @@ public abstract class OptionWizardPage extends WizardPage {
     fConfig = config;
   }
 
-  protected SelectionListener getSelectionListener() {
+  protected SelectionListener getBasicSelectionListener() {
     return fBasicSelectionListener;
   }
   
-  protected ModifyListener getModifyListener() {
+  protected ModifyListener getBasicModifyListener() {
     return fBasicModifyListener;
   }
 
