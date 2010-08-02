@@ -136,7 +136,7 @@ public class MessageViewListener implements IMessageListener {
       @Override
       public void run() {
         TestGeneratorViewPart viewPart = TestGeneratorViewPart.getDefault();
-        viewPart.getProgressBar().stop();
+        viewPart.stopLaunch();
       }
     });
   }
