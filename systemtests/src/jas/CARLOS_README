@@ -1,0 +1,5 @@
+
+I moved all test classes into a directory tests/. They used to be in src/.
+
+I didn't update build.xml.
+

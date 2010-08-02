@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+
+<!--
+
+ Copyright 2001-2004 The Apache Software Foundation.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+
+<document>
+
+ <properties>
+  <title>Commons</title>
+  <author email="commons-dev@jakarta.apache.org">Commons Documentation Team</author>
+ </properties>
+
+ <body>
+
+<section name="The Logging Component">
+
+<p>There is a great need for debugging and logging information inside of
+Commons components such as HTTPClient and DBCP.  However, there are many
+logging APIs out there and it is difficult to choose among them.</p>
+
+<p>The Logging package is an ultra-thin bridge between different logging
+libraries.  Commons components may use the Logging API to remove
+compile-time and run-time dependencies on any particular logging package,
+and contributors may write Log implementations for the library of
+their choice.</p>
+
+</section>
+
+
+<section name="Documentation">
+
+<p>The <a href="http://jakarta.apache.org/commons/logging/RELEASE-NOTES.txt">
+Release Notes</a> document the new features and bug fixes that have been
+included in the latest release.</p>
+
+<p>The <a href="http://jakarta.apache.org/commons/logging/api/index.html">
+JavaDoc API documents</a> for the latest release are available online.
+In particular, you should read the package overview of the <code>org.apache.commons.logging</code>
+package. In addition, there is a (short)
+<a href="guide.html">User Guide</a>.</p>
+
+</section>
+
+
+<section name="Releases">
+    <subsection name='1.0.4 Release'>
+        <p>
+The 1.0.4 release of commons-logging is a service
+release containing support for both the 1.2.x and 1.3.x series of Log4J releases. 
+        </p>
+    </subsection>
+    <subsection name='Mirrored Releases'>
+<p>
+Releases after 1.0.2 should be downloaded from a mirror. Please remember to verify the
+signature of the release from the 
+<a href='http://www.apache.org/dist/jakarta/commons/logging/'>main apache site</a>
+when downloading from a mirror.
+</p>
+<p>
+    Binary releases are available
+       <a href="http://jakarta.apache.org/site/binindex.cgi">here</a>.
+    Source releases are available
+       <a href="http://jakarta.apache.org/site/sourceindex.cgi">here</a>
+</p>
+<p>
+<ul>
+       <li>Version 1.0.4 (latest) - 16 Jun 2004</li>
+       <li>Version 1.0.3 - 7 Apr 2003</li>
+</ul>
+</p>
+    </subsection>
+    <subsection name='Older Releases (Not Mirrored)'>
+    <p>
+    <ul>
+<ul>
+<li><a href="http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0.2/">Version 1.0.2</a></li>
+<li><a href="http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0.1/">Version 1.0.1</a></li>
+<li><a href="http://jakarta.apache.org/builds/jakarta-commons/release/commons-logging/v1.0/">Version 1.0</a></li>
+</ul>
+    </ul>
+    </p>
+    </subsection>
+</section>
+
+
+</body>
+</document>
