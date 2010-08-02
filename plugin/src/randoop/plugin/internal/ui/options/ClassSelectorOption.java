@@ -92,7 +92,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       final SelectionListener listener, boolean hasResolveButton) {
     
     fRunnableContext = runnableContext;
-    Group comp = SWTFactory.createGroup(parent, "Classes/Methods Under Test", 2, 1, GridData.FILL_BOTH);
+    Group comp = SWTFactory.createGroup(parent, "Classes/Methods Un&der Test", 2, 1, GridData.FILL_BOTH);
     fShell = comp.getShell();
 
     final Composite leftcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_BOTH);
@@ -132,7 +132,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     SWTFactory.createLabel(rightcomp, "Add classes from:", 1);
     
-    fClassAddFromSources = SWTFactory.createPushButton(rightcomp, "Project Sources...", null);
+    fClassAddFromSources = SWTFactory.createPushButton(rightcomp, "Project So&urces...", null);
     fClassAddFromSources.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
@@ -143,7 +143,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     });
     fClassAddFromSources.addSelectionListener(listener);
     
-    fClassAddFromClasspaths = SWTFactory.createPushButton(rightcomp, "Referenced Classpaths...", null);
+    fClassAddFromClasspaths = SWTFactory.createPushButton(rightcomp, "Referenced Classpat&hs...", null);
     fClassAddFromClasspaths.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
@@ -162,7 +162,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fClassAddFromClasspaths.addSelectionListener(listener);
     
     if (hasResolveButton) {
-      fResolveClasses = SWTFactory.createPushButton(rightcomp, "Resolve Missing Classes", null);
+      fResolveClasses = SWTFactory.createPushButton(rightcomp, "Resolve M&issing Classes", null);
       fResolveClasses.setToolTipText("Finds classes in the project's classpath\nthat match those that are missing");
       
       fResolveClasses.addSelectionListener(new SelectionAdapter() {
@@ -184,7 +184,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     // Create a spacer
     SWTFactory.createLabel(rightcomp, "", 1);
-    fSelectAll = SWTFactory.createPushButton(rightcomp, "Select All", null);
+    fSelectAll = SWTFactory.createPushButton(rightcomp, "Select &All", null);
     fSelectAll.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
@@ -193,7 +193,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     });
     fSelectAll.addSelectionListener(listener);
     
-    fSelectNone = SWTFactory.createPushButton(rightcomp, "Select None", null);
+    fSelectNone = SWTFactory.createPushButton(rightcomp, "Select Non&e", null);
     fSelectNone.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
@@ -202,7 +202,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     });
     fSelectNone.addSelectionListener(listener);
     
-    fClassRemove = SWTFactory.createPushButton(rightcomp, "Remove", null);
+    fClassRemove = SWTFactory.createPushButton(rightcomp, "&Remove", null);
     fClassRemove.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
@@ -213,7 +213,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     
     fIgnoreJUnitTestCases = SWTFactory.createCheckButton(leftcomp,
-        "Ignore JUnit tests cases when searching for class inputs", null, true, 2);
+        "Ignore JUni&t tests cases when searching for class inputs", null, true, 2);
     gd = (GridData) fIgnoreJUnitTestCases.getLayoutData();
     gd.horizontalIndent = 5;
     fIgnoreJUnitTestCases.setLayoutData(gd);
