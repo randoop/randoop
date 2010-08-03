@@ -19,6 +19,7 @@ public class CounterPanel extends Composite {
 
 	public CounterPanel(Composite parent) {
 		super(parent, SWT.WRAP);
+		
 		GridLayout gridLayout= new GridLayout();
 		gridLayout.numColumns= 4;
 		gridLayout.makeColumnsEqualWidth= false;
