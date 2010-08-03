@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Text;
 public class CounterPanel extends Composite {
 	protected Text fNumberOfTests;
 	protected Text fNumberOfErrors;
-	private int errors;
+	private int fErrorCount;
 
 	public CounterPanel(Composite parent) {
 		super(parent, SWT.WRAP);
@@ -25,7 +25,7 @@ public class CounterPanel extends Composite {
 		gridLayout.marginWidth= 0;
 		setLayout(gridLayout);
 
-		errors = 0;
+		fErrorCount = 0;
 		fNumberOfTests= createLabel("Tests generated:", "0"); //$NON-NLS-2$
 		fNumberOfErrors= createLabel("Failures:", "0"); //$NON-NLS-2$
 	}
@@ -44,19 +44,26 @@ public class CounterPanel extends Composite {
 	}
 
 	public void reset() {
-	  errors = 0;
-    fNumberOfErrors.setText(Integer.toString(errors));
-	  numSequences(0);
+	  fErrorCount = 0;
+    fNumberOfErrors.setText(Integer.toString(fErrorCount));
+	  setNumSequences(0);
 	}
 
-  public void numSequences(int value) {
+  public void setNumSequences(int value) {
     fNumberOfTests.setText(Integer.toString(value));
     redraw();
   }
-
-  public void errors() {
-    errors++;
-    fNumberOfErrors.setText(Integer.toString(errors));
+  
+  public void setErrorCount(int count) {
+    fErrorCount = count;
+    fNumberOfErrors.setText(Integer.toString(fErrorCount));
     redraw();
   }
+  
+  public void incrementErrorCount() {
+    fErrorCount++;
+    fNumberOfErrors.setText(Integer.toString(fErrorCount));
+    redraw();
+  }
+  
 }
