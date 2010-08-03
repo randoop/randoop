@@ -15,8 +15,6 @@ bin/randoop/test/resources/sequence_tests_script.txt
 bin/randoop/test/resources/universal_driver.txt
 TAGS
 
-lib/plume.jar
-
 systemtests/randoop-contracts-test-scratch
 systemtests/jc-covinst
 systemtests/jc.classlist.txt
