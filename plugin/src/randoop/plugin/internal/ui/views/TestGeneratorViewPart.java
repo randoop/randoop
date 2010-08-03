@@ -120,16 +120,13 @@ public class TestGeneratorViewPart extends ViewPart {
 
     fCounterPanel = new CounterPanel(parent);
     fCounterPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+    
     fProgressBar = new RandoopProgressBar(parent);
     fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
-    Label errTitle = new Label(parent, SWT.NONE);
-    errTitle.setText("Failures:");
-    
     fTreeViewer = new TreeViewer(parent);
 
-    createActions();
-    createToolBar();
+    createActionToolBar();
     
     setActiveTestRunSession(TestGeneratorSession.getActiveSession());
     
@@ -139,91 +136,101 @@ public class TestGeneratorViewPart extends ViewPart {
     gd.horizontalAlignment = SWT.FILL;
     gd.verticalAlignment = SWT.FILL;
     fTreeViewer.getControl().setLayoutData(gd);
+    
     FailureItemDoubleClickListener doubleClickListener = new FailureItemDoubleClickListener();
     fTreeViewer.addDoubleClickListener(doubleClickListener);
     doubleClickListener.viewPart = this;
   }
 
-  private void createActions() {
-    fDebugWithJUnitAction = new Action("Debug tests with JUnit") {
-      @Override
-      public void run() {
-        System.out.println("Running " + fJUnitDriver);
-        if (fJUnitDriver != null) {
-          List<IJavaElement> list = new ArrayList<IJavaElement>();
-          list.add(fJUnitDriver);
-          IStructuredSelection selection = new StructuredSelection(list);
-          
-          // TODO: Is there a shared instance of JUnitLaunchShortcut?
-          new JUnitLaunchShortcut().launch(selection, "debug");
-        }
+  private class DebugWithJUNitAction extends Action {
+    public DebugWithJUNitAction() {
+      super("Debug tests with JUnit");
+      setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG));
+    }
+    
+    @Override
+    public void run() {
+      System.out.println("Running " + fJUnitDriver);
+      if (fJUnitDriver != null) {
+        List<IJavaElement> list = new ArrayList<IJavaElement>();
+        list.add(fJUnitDriver);
+        IStructuredSelection selection = new StructuredSelection(list);
+        
+        new JUnitLaunchShortcut().launch(selection, "debug");
       }
-    };
-    // ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/bug.png");
-    fDebugWithJUnitAction.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG));
-    fDebugWithJUnitAction.setEnabled(false);
-    
-    fRunWithJUnitAction = new Action("Run tests with JUnit") {
-      @Override
-      public void run() {
-        System.out.println("Running " + fJUnitDriver);
-        if (fJUnitDriver != null) {
-          List<IJavaElement> list = new ArrayList<IJavaElement>();
-          list.add(fJUnitDriver);
-          IStructuredSelection selection = new StructuredSelection(list);
-          
-          new JUnitLaunchShortcut().launch(selection, "run");
-        }
-      }
-    };
-    
-    fRunWithJUnitAction.setEnabled(false);
-    
-    ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/run_junit.png");
-    fRunWithJUnitAction.setImageDescriptor(desc);
-    
-    fTerminateAction = new Action("Terminate") {
-      @Override
-      public void run() {
-        stopLaunch();
-      };
-    };
-    fTerminateAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
-    fTerminateAction.setEnabled(false);
-    
-    fRelaunchAction = new Action("Regenerate tests") {
-      @Override
-      public void run() {
-        // Terminate the old launch
-        if (stopLaunch()) {
-          fSession = new TestGeneratorSession(fSession.getLaunch(), fSession.getArguments());
-          ILaunch launch = fSession.getLaunch();
-          
-          ILaunchConfiguration config = launch.getLaunchConfiguration();
-          Assert.isNotNull(config); // TODO right?
-          String mode = launch.getLaunchMode();
-          Assert.isNotNull(mode); // TODO right?
-          
-          TestGeneratorSession.setActiveSession(fSession);
-          DebugUITools.launch(config, mode);
-        }
-      }
-    };
-    fRelaunchAction.setEnabled(false);
-
-    // TODO dispose?
-    // desc = RandoopPlugin.getImageDescriptor("icons/arrow_redo.png"); //$NON-NLS-1$
-    fRelaunchAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+    }
   }
   
-  private void createToolBar() {
+  private class RunWithJUnitAction extends Action {
+    public RunWithJUnitAction() {
+      super("Run tests with JUnit");
+      
+      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/run_junit.png");
+      setImageDescriptor(desc);
+    }
+    
+    @Override
+    public void run() {
+      System.out.println("Running " + fJUnitDriver);
+      if (fJUnitDriver != null) {
+        List<IJavaElement> list = new ArrayList<IJavaElement>();
+        list.add(fJUnitDriver);
+        IStructuredSelection selection = new StructuredSelection(list);
+        
+        new JUnitLaunchShortcut().launch(selection, "run");
+      }
+    }
+  }
+  
+  private class TerminateAction extends Action {
+    public TerminateAction() {
+      super("Terminate");
+      
+      setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
+    }
+    
+    @Override
+    public void run() {
+      stopLaunch();
+    }
+  }
+  
+  private class RelaunchAction extends Action {
+    public RelaunchAction () {
+      super("Regenerate tests");
+      setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+    }
+    @Override
+    public void run() {
+      // Terminate the old launch
+      if (stopLaunch()) {
+        fSession = new TestGeneratorSession(fSession.getLaunch(), fSession.getArguments());
+        ILaunch launch = fSession.getLaunch();
+        
+        ILaunchConfiguration config = launch.getLaunchConfiguration();
+        Assert.isNotNull(config); // TODO right?
+        String mode = launch.getLaunchMode();
+        Assert.isNotNull(mode); // TODO right?
+        
+        TestGeneratorSession.setActiveSession(fSession);
+        DebugUITools.launch(config, mode);
+      }
+    }
+  }
+
+  private void createActionToolBar() {
+    fDebugWithJUnitAction = new DebugWithJUNitAction();
+    fRunWithJUnitAction = new RunWithJUnitAction();
+    fTerminateAction = new TerminateAction();
+    fRelaunchAction = new RelaunchAction();
+
     IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
     mgr.add(fDebugWithJUnitAction);
     mgr.add(fRunWithJUnitAction);
     mgr.add(fTerminateAction);
     mgr.add(fRelaunchAction);
   }
-
+  
   public void startNewLaunch() {
     setDriver(null);
     fDebugWithJUnitAction.setEnabled(false);
@@ -234,7 +241,13 @@ public class TestGeneratorViewPart extends ViewPart {
   
   public void setActiveTestRunSession(TestGeneratorSession session) {
     fSession = session;
-    if (fSession != null) {
+    
+    if (fSession == null) {
+      fDebugWithJUnitAction.setEnabled(false);
+      fRunWithJUnitAction.setEnabled(false);
+      fTerminateAction.setEnabled(false);
+      fRelaunchAction.setEnabled(false);
+    } else {
       fSession.addListener(fSessionListener);
       fRelaunchAction.setEnabled(true);
 
