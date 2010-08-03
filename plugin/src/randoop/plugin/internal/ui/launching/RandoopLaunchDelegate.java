@@ -44,6 +44,7 @@ import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.core.runtime.MessageSessionListener;
 import randoop.plugin.internal.ui.MessageUtil;
+import randoop.plugin.internal.ui.ResourcesListQuestionDialogWithToggle;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 
 public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate {
@@ -153,8 +154,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
-          MessageDialogWithToggle d = new MessageUtil.ResourcesListQuestionDialog(PlatformUI.getWorkbench().getDisplay()
-              .getActiveShell(), "Randoop", message, yesNoQuestion, toggleQuestion, resourcesInQuestion);
+          MessageDialogWithToggle d = new ResourcesListQuestionDialogWithToggle(PlatformUI
+              .getWorkbench().getDisplay().getActiveShell(), "Randoop", message, yesNoQuestion,
+              toggleQuestion, resourcesInQuestion);
           
           okToProceed.setValue(d.open() == Dialog.OK);
           deleteFiles.setValue(d.getToggleState());
