@@ -50,7 +50,7 @@ public class TestGeneratorSession {
   }
   
   public boolean isStarted() {
-    return fIsStarted && !isStopped();
+    return fIsStarted;
   }
   
   public boolean isRunning() {
@@ -149,11 +149,17 @@ public class TestGeneratorSession {
     return fIsStopped;
   }
   
-  public void stop() {
+  public void stop(boolean force) {
     fIsStopped = true;
     
-    for (Object o : fListeners.getListeners()) {
-      ((ITestGeneratorSessionListener) o).sessionStopped();
+    if (force) {
+      for (Object o : fListeners.getListeners()) {
+        ((ITestGeneratorSessionListener) o).sessionStopped();
+      }
+    } else {
+      for (Object o : fListeners.getListeners()) {
+        ((ITestGeneratorSessionListener) o).sessionEnded();
+      }
     }
   }
   
@@ -165,6 +171,7 @@ public class TestGeneratorSession {
     fListeners.add(listener);
   }
 
+  // TODO: Use ViewHistory instead, and remove these static methods
   public static TestGeneratorSession getActiveSession() {
     return activeSession;
   }

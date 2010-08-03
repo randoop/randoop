@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Text;
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.ui.RandoopMessages;
 import randoop.plugin.internal.ui.options.IOption;
-import randoop.plugin.internal.ui.options.IOptionFactory;
+import randoop.plugin.internal.ui.options.OptionFactory;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
 
@@ -107,21 +107,21 @@ public class MainPage extends OptionWizardPage {
     Text randomSeedText = SWTFactory.createSingleText(comp, 1);
     randomSeedLabel.setToolTipText(RandoopMessages.RandoopOption_randomseed_tooltip);
     randomSeedText.setToolTipText(RandoopMessages.RandoopOption_randomseed_tooltip);
-    fRandomSeed = IOptionFactory.createRandomSeedOption(randomSeedText);
+    fRandomSeed = OptionFactory.createRandomSeedOption(randomSeedText);
 
     Label maxTestSizeLabel = SWTFactory.createLabel(comp, RandoopMessages.RandoopOption_maxsize, 1);
     Text maxTestSizeText = SWTFactory.createSingleText(comp, 1);
     maxTestSizeLabel.setToolTipText(RandoopMessages.RandoopOption_maxsize_tooltip);
     maxTestSizeText.setToolTipText(RandoopMessages.RandoopOption_maxsize_tooltip);
-    fMaxTestSize = IOptionFactory.createMaximumTestSizeOption(maxTestSizeText);
+    fMaxTestSize = OptionFactory.createMaximumTestSizeOption(maxTestSizeText);
 
     Button threadTimeoutButton = SWTFactory.createCheckButton(comp, RandoopMessages.RandoopOption_usethreads, null, true, 1);
     Text threadTimeoutText = SWTFactory.createSingleText(comp, 1);
     threadTimeoutButton.setToolTipText(RandoopMessages.RandoopOption_usethreads_tooltip);
     threadTimeoutText.setToolTipText(RandoopMessages.RandoopOption_timeout_tooltip);
     threadTimeoutText.setEnabled(threadTimeoutButton.getSelection());
-    IOption threadTimeout = IOptionFactory.createThreadTimeoutOption(threadTimeoutText);
-    fUseThreads = IOptionFactory.createUseThreads(threadTimeout, threadTimeoutButton);
+    IOption threadTimeout = OptionFactory.createThreadTimeoutOption(threadTimeoutText);
+    fUseThreads = OptionFactory.createUseThreads(threadTimeout, threadTimeoutButton);
     
     Button nullRatioButton = SWTFactory.createCheckButton(comp, RandoopMessages.RandoopOption_forbid_null, null, false, 1);
     Text nullRatioText = SWTFactory.createSingleText(comp, 1);
@@ -129,8 +129,8 @@ public class MainPage extends OptionWizardPage {
     nullRatioButton.setSelection(false);
     nullRatioText.setToolTipText(RandoopMessages.RandoopOption_null_ratio_tooltip);
     nullRatioText.setEnabled(nullRatioButton.getSelection());
-    IOption nullRatio = IOptionFactory.createNullRatioOption(nullRatioText);
-    fUseNull = IOptionFactory.createUseNull(nullRatio, nullRatioButton);
+    IOption nullRatio = OptionFactory.createNullRatioOption(nullRatioText);
+    fUseNull = OptionFactory.createUseNull(nullRatio, nullRatioButton);
     
     addOption(fRandomSeed);
     addOption(fMaxTestSize);
@@ -157,7 +157,7 @@ public class MainPage extends OptionWizardPage {
     Text inputLimitText = SWTFactory.createSingleText(comp, 1);
     inputLimitLabel.setToolTipText(RandoopMessages.RandoopOption_inputlimit_tooltip);
     inputLimitText.setToolTipText(RandoopMessages.RandoopOption_inputlimit_tooltip);
-    fInputLimit = IOptionFactory.createInputsLimitOption(inputLimitText);
+    fInputLimit = OptionFactory.createInputsLimitOption(inputLimitText);
 
     Label timeLimitLabel = SWTFactory.createLabel(comp, RandoopMessages.RandoopOption_timelimit, 1);
     Text timeLimitText = SWTFactory.createSingleText(comp, 1);
@@ -169,7 +169,7 @@ public class MainPage extends OptionWizardPage {
     Label convertedTimeLimit = SWTFactory.createLabel(comp, "", 1); //$NON-NLS-1$
     convertedTimeLimit.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true, false));
 
-    fTimeLimit = IOptionFactory.createTimeLimitOption(timeLimitText, convertedTimeLimit);
+    fTimeLimit = OptionFactory.createTimeLimitOption(timeLimitText, convertedTimeLimit);
 
     addOption(fInputLimit);
     addOption(fTimeLimit);
@@ -186,21 +186,21 @@ public class MainPage extends OptionWizardPage {
         TestKinds.getTranslatableNames());
     testKindsLabel.setToolTipText(RandoopMessages.RandoopOption_output_tests_tooltip);
     testKindsCombo.setToolTipText(RandoopMessages.RandoopOption_output_tests_tooltip);
-    fTestKinds = IOptionFactory.createTestKindsOption(testKindsCombo);
+    fTestKinds = OptionFactory.createTestKindsOption(testKindsCombo);
 
     Label maxTestsWrittenLabel = SWTFactory.createLabel(comp,
         RandoopMessages.RandoopOption_outputlimit, 1);
     Text maxTestsWrittenText = SWTFactory.createSingleText(comp, 2);
     maxTestsWrittenLabel.setToolTipText(RandoopMessages.RandoopOption_outputlimit_tooltip);
     maxTestsWrittenText.setToolTipText(RandoopMessages.RandoopOption_outputlimit_tooltip);
-    fMaxTestsWritten = IOptionFactory.createMaximumTestsWrittenOption(maxTestsWrittenText);
+    fMaxTestsWritten = OptionFactory.createMaximumTestsWrittenOption(maxTestsWrittenText);
 
     Label maxTestsPerFileLabel = SWTFactory.createLabel(comp,
         RandoopMessages.RandoopOption_testsperfile, 1);
     Text maxTestsPerFileText = SWTFactory.createSingleText(comp, 2);
     maxTestsPerFileLabel.setToolTipText(RandoopMessages.RandoopOption_testsperfile_tooltip);
     maxTestsPerFileText.setToolTipText(RandoopMessages.RandoopOption_testsperfile_tooltip);
-    fMaxTestsPerFile = IOptionFactory.createMaximumTestsPerFileOption(maxTestsPerFileText);
+    fMaxTestsPerFile = OptionFactory.createMaximumTestsPerFileOption(maxTestsPerFileText);
 
     addOption(fTestKinds);
     addOption(fMaxTestsWritten);
