@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<j:jelly xmlns:j="jelly:core" xmlns:define="jelly:define" xmlns:http="jelly:http">
+  <define:taglib uri="jelly:babelfish">  
+
+
+    <!-- defines the <search> tag  -->
+    <define:tag name="search">
+      <j:if test="${key == null}">
+          <j:set var="key" value="00000000000"/>
+      </j:if>      
+      <http:post url="http://www.google.com/soap">
+       <http:header name="SOAPAction" value="urn:GoogleSearch"/>
+       <http:header name="Content-Type" value="text/xml"/>
+       <http:body>
+        <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+          <SOAP-ENV:Body>
+            <ns1:doGoogleSearch xmlns:ns1="urn:GoogleSearch" 
+                 SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+              <key xsi:type="xsd:string">${googleKey}</key>
+              <q xsi:type="xsd:string">${query}</q>
+              <start xsi:type="xsd:int">0</start>
+              <maxResults xsi:type="xsd:int">10</maxResults>
+              <filter xsi:type="xsd:boolean">true</filter>
+              <restrict xsi:type="xsd:string"></restrict>
+              <safeSearch xsi:type="xsd:boolean">false</safeSearch>
+              <lr xsi:type="xsd:string"></lr>
+              <ie xsi:type="xsd:string">latin1</ie>
+              <oe xsi:type="xsd:string">latin1</oe>
+            </ns1:doGoogleSearch>
+          </SOAP-ENV:Body>
+        </SOAP-ENV:Envelope>
+       </http:body>
+      </http:post>
+    </define:tag>
+    
+  </define:taglib>    
+</j:jelly>

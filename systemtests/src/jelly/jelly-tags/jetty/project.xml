@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project>
+  <extend>${basedir}/../tag-project.xml</extend>
+  <id>commons-jelly-tags-jetty</id>
+  <name>commons-jelly-tags-jetty</name>
+  <currentVersion>1.0</currentVersion>
+  <package>org.apache.commons.jelly.tags.jetty</package>
+  <description>These are Jelly tags that can set up an in-process web server.</description>
+  <shortDescription>Commons Jelly Jetty Tag Library</shortDescription>
+  <versions>
+    <version>
+      <id>1.0</id>
+      <name>1.0</name>
+      <tag>COMMONS-JELLY-JETTY-1_0</tag>
+    </version>
+  </versions>
+
+  <dependencies>
+    <!-- START for compilation -->
+    <!-- may need JDK 1.4 or jsse -->
+
+    <!-- http taglib -->
+    <dependency>
+      <id>commons-httpclient</id>
+      <version>2.0</version>
+      <properties>
+        <gump.project>commons-httpclient-2.0-branch</gump.project>
+      </properties>
+    </dependency>
+    <dependency>
+      <id>jetty</id>
+      <version>4.2.3</version>
+      <properties>
+        <gump.project>jetty4</gump.project>
+      </properties>
+    </dependency>
+    <!-- END for compilation -->
+
+    <!-- for testing -->
+
+    <dependency>
+      <groupId>commons-jelly</groupId>
+      <artifactId>commons-jelly-tags-http</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <!-- PL: Commented out as it might be this is part of JDK 1.4...
+    <dependency>
+      <id>jsse</id>
+      <version>1.0.3</version>
+    </dependency>
+
+    <dependency>
+      <id>jsse+jnet</id>
+      <version>1.0.3</version>
+    </dependency> -->
+    <!-- END for testing -->
+    <!-- for runtime -->
+
+    <dependency>
+      <id>servletapi</id>
+      <version>2.2</version>
+      <url>http://jakarta.apache.org/tomcat/</url>
+      <properties>
+        <gump.project>jakarta-servletapi-5-servlet</gump.project>
+      </properties>
+    </dependency>
+    <!-- END for runtime -->
+
+  </dependencies>
+</project>
