@@ -10,7 +10,6 @@ import randoop.runtime.ErrorRevealed;
 public class RunResultsTree implements IRandoopTreeElement {
 
   private Failures failures;
-  public TreeViewer viewer;
 
   public RunResultsTree() {
     this.failures = new Failures();
@@ -40,17 +39,10 @@ public class RunResultsTree implements IRandoopTreeElement {
       throw new IllegalArgumentException("err is null"); //$NON-NLS-1$
     }
     failures.add(err);
-    if (viewer != null) {
-      viewer.refresh();
-      viewer.expandAll();
-    }
   }
 
   public void reset() {
     failures = new Failures();
-    if (viewer != null) {
-      viewer.refresh();
-    }
   }
 
 }

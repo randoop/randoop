@@ -5,26 +5,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -38,21 +32,18 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.omg.PortableServer.portable.Delegate;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MutableBoolean;
 import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+import randoop.plugin.internal.core.runtime.TestGeneratorSession;
+import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
+import randoop.plugin.internal.core.runtime.MessageSessionListener;
 import randoop.plugin.internal.ui.MessageUtil;
-import randoop.plugin.internal.ui.MessageUtil.ResourcesListQuestionDialog;
-import randoop.plugin.internal.ui.views.MessageViewListener;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 
 public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate {
@@ -104,8 +95,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
     System.out.println("Begin launch"); //$NON-NLS-1$
     
-    final ILaunch theLaunch = launch;
-    
     if (monitor == null)
       monitor = new NullProgressMonitor();
 
@@ -124,14 +113,16 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     }
     
     TestGroupResources testGroupResources = new TestGroupResources(args, monitor);
-
+    final TestGeneratorSession session = new TestGeneratorSession(launch, args);
+    
     fPort = RandoopArgumentCollector.getPort(configuration);
     boolean useDefault = (fPort == IConstants.INVALID_PORT);
     
     fMessageReceiver = null;
     if (useDefault) {
       try {
-        fMessageReceiver = new MessageReceiver(new MessageViewListener(theLaunch));
+        IMessageListener listener = new MessageSessionListener(session);
+        fMessageReceiver = new MessageReceiver(listener);
         fPort = fMessageReceiver.getPort();
       } catch (IOException e) {
         fMessageReceiver = null;
@@ -181,6 +172,18 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
         }
       }
     }
+    
+    // Set the shared instance of the session to the session about to run
+    TestGeneratorSession.setActiveSession(session);
+    
+    // Open the randoop view and set its session
+    final TestGeneratorViewPart viewPart = TestGeneratorViewPart.openInstance();
+    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      @Override
+      public void run() {
+        viewPart.setActiveTestRunSession(session);
+      }
+    });
 
     ArrayList<String> vmArguments = new ArrayList<String>();
     ArrayList<String> programArguments = new ArrayList<String>();

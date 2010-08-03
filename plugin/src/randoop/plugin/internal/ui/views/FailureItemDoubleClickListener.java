@@ -95,8 +95,7 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 	  }
 
 	  private IJavaProject getJavaProject() {
-	    String projectName = RandoopArgumentCollector.getProjectName(viewPart.launch.getLaunchConfiguration());
-	    return RandoopCoreUtil.getProjectFromName(projectName);
+	    return viewPart.getActiveSession().getArguments().getJavaProject();
 	  }
 //	  
 //	  private IPath getOutputDir() {
