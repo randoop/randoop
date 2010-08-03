@@ -48,7 +48,7 @@ public class MessageUtil {
     return okToProceed.getValue();
   }
   
-  static public class ResourcesListQuestionDialog extends MessageDialogWithToggle implements IDoubleClickListener {
+  public static class ResourcesListQuestionDialog extends MessageDialogWithToggle implements IDoubleClickListener {
     
     static class ResourceLabelProvider extends LabelProvider {
       @Override
