@@ -131,18 +131,7 @@ public class TestGeneratorViewPart extends ViewPart {
     createActions();
     createToolBar();
     
-    if (fSession == null) {
-      setActiveTestRunSession(TestGeneratorSession.getActiveSession());
-    }
-    
-    if (fSession != null) {
-      RandoopContentProvider prov = new RandoopContentProvider(fSession.getRandoopErrors());
-      fTreeViewer.setContentProvider(prov);
-      
-      prov.viewer = fTreeViewer;
-      fTreeViewer.setLabelProvider(new RandoopLabelProvider());
-      fTreeViewer.setInput(fSession.getRandoopErrors());
-    }
+    setActiveTestRunSession(TestGeneratorSession.getActiveSession());
     
     GridData gd = new GridData();
     gd.grabExcessHorizontalSpace = true;
@@ -337,6 +326,14 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void sessionEnded() {
+      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+        @Override
+        public void run() {
+          if (!isDisposed()) {
+            fTerminateAction.setEnabled(false);
+          }
+        }
+      });
     }
 
     @Override

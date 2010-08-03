@@ -21,6 +21,7 @@ import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.ErrorRevealed;
 import randoop.runtime.IMessage;
 import randoop.runtime.PercentDone;
+import randoop.runtime.RandoopFinished;
 import randoop.runtime.RandoopStarted;
 
 public class MessageSessionListener implements IMessageListener {
@@ -43,6 +44,8 @@ public class MessageSessionListener implements IMessageListener {
       ErrorRevealed err = (ErrorRevealed) m;
 
       fSession.addRevealedError(err);
+    } else if (m instanceof RandoopFinished) {
+      fSession.stop(false);
     } else if (m instanceof CreatedJUnitFile) {
       final CreatedJUnitFile fileCreated = (CreatedJUnitFile) m;
       final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -111,7 +114,7 @@ public class MessageSessionListener implements IMessageListener {
     RandoopPlugin.getDisplay().syncExec(new Runnable() {
       @Override
       public void run() {
-        fSession.stop();
+        fSession.stop(true);
       }
     });
   }
