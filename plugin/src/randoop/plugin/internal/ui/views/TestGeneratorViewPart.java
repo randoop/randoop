@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
@@ -62,15 +63,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
   private boolean isDisposed = true;
   
-//  private static TestGeneratorViewPart viewPart = null;
-  
-//  public static TestGeneratorViewPart getDefault() {
-//    if (viewPart == null || isDisposed) {
-//      return viewPart = openInstance();
-//    }
-//    
-//    return viewPart;
-//  }
+  private Composite fParent;
   
   public static TestGeneratorViewPart openInstance() {
     final MutableObject viewPart = new MutableObject(null);
@@ -109,25 +102,31 @@ public class TestGeneratorViewPart extends ViewPart {
 
   @Override
   public void createPartControl(Composite parent) {
+    // Store the parent so we can see if it is disposed later
+    fParent = parent;
     isDisposed = false;
 
+    // Set the parent layout
     GridLayout layout = new GridLayout();
     layout.marginWidth = 3;
     layout.marginHeight = 3;
     layout.horizontalSpacing = 3;
     layout.numColumns = 1;
-    parent.setLayout(layout);
+    fParent.setLayout(layout);
+    
+    // Create a register global actions with the action bar
+    createActionBar();
 
-    fCounterPanel = new CounterPanel(parent);
+    // Create controls within the parent
+    fCounterPanel = new CounterPanel(fParent);
     fCounterPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
     
-    fProgressBar = new RandoopProgressBar(parent);
+    fProgressBar = new RandoopProgressBar(fParent);
     fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
-    fTreeViewer = new TreeViewer(parent);
-
-    createActionToolBar();
+    fTreeViewer = new TreeViewer(fParent);
     
+    // TODO: Change how sessions are manages and accessed
     setActiveTestRunSession(TestGeneratorSession.getActiveSession());
     
     GridData gd = new GridData();
@@ -218,7 +217,7 @@ public class TestGeneratorViewPart extends ViewPart {
     }
   }
 
-  private void createActionToolBar() {
+  private void createActionBar() {
     fDebugWithJUnitAction = new DebugWithJUNitAction();
     fRunWithJUnitAction = new RunWithJUnitAction();
     fTerminateAction = new TerminateAction();
@@ -239,16 +238,21 @@ public class TestGeneratorViewPart extends ViewPart {
     fRelaunchAction.setEnabled(true);
   }
   
-  public void setActiveTestRunSession(TestGeneratorSession session) {
-    fSession = session;
+  public boolean setActiveTestRunSession(TestGeneratorSession session) {
+    deregisterTestSessionListener(true);
     
+    fSession = session;
     if (fSession == null) {
       fDebugWithJUnitAction.setEnabled(false);
       fRunWithJUnitAction.setEnabled(false);
       fTerminateAction.setEnabled(false);
       fRelaunchAction.setEnabled(false);
+
+      return true;
     } else {
+      fSessionListener = new SessionListener();
       fSession.addListener(fSessionListener);
+
       fRelaunchAction.setEnabled(true);
 
       RandoopContentProvider prov = new RandoopContentProvider(fSession.getRandoopErrors());
@@ -259,7 +263,7 @@ public class TestGeneratorViewPart extends ViewPart {
       fTreeViewer.refresh();
       fTreeViewer.expandAll();
 
-      int errorCount = fSession.getErrorCount(); 
+      int errorCount = fSession.getErrorCount();
       if (errorCount > 0) {
         getProgressBar().error();
       }
@@ -268,13 +272,21 @@ public class TestGeneratorViewPart extends ViewPart {
       getProgressBar().setPercentDone(fSession.getPercentDone());
       getCounterPanel().setNumSequences(fSession.getSequenceCount());
 
-      if (session.isRunning()) {
+      if (fSession.isRunning()) {
         fDebugWithJUnitAction.setEnabled(false);
         fRunWithJUnitAction.setEnabled(false);
         fTerminateAction.setEnabled(true);
       }
 
       setDriver(fSession.getJUnitDriver());
+    }
+    return true;
+  }
+  
+  private void deregisterTestSessionListener(boolean force) {
+    if (fSession != null && fSessionListener != null && (force || !fSession.isRunning())) {
+      fSession.removeListener(fSessionListener);
+      fSessionListener = null;
     }
   }
   
@@ -317,17 +329,18 @@ public class TestGeneratorViewPart extends ViewPart {
   public void dispose() {
     isDisposed = true;
     
+    setActiveTestRunSession(null);
     super.dispose();
   }
   
   public boolean isDisposed() {
-    return isDisposed || getCounterPanel().isDisposed() || getProgressBar().isDisposed();
+    return isDisposed || fParent.isDisposed() || getCounterPanel().isDisposed() || getProgressBar().isDisposed();
   }
 
   private class SessionListener implements ITestGeneratorSessionListener {
     @Override
     public void sessionStarted() {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           if (!isDisposed()) {
@@ -339,9 +352,11 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void sessionEnded() {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
+          deregisterTestSessionListener(false);
+          
           if (!isDisposed()) {
             fTerminateAction.setEnabled(false);
           }
@@ -351,9 +366,11 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void sessionStopped() {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
+          deregisterTestSessionListener(true);
+          
           if (!isDisposed()) {
             stopLaunch();
           }
@@ -363,7 +380,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void errorRevealed(final ErrorRevealed error) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           if (!isDisposed()) {
@@ -379,7 +396,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void madeProgress(final double percentDone) {
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+        getSite().getShell().getDisplay().syncExec(new Runnable() {
           @Override
           public void run() {
             if (!isDisposed()) {
@@ -391,7 +408,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void madeSequences(final int count) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           if (!isDisposed()) {
@@ -403,7 +420,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void madeJUnitDriver(final ICompilationUnit driverFile) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           if (!isDisposed()) {
@@ -412,6 +429,6 @@ public class TestGeneratorViewPart extends ViewPart {
         }
       });
     }
-
   }
+  
 }
