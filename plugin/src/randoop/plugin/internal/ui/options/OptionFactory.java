@@ -17,7 +17,7 @@ import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
-public class IOptionFactory {
+public class OptionFactory {
   
   public static IOption createRandomSeedOption(Text text) {
     return new RandomSeedOption(text);

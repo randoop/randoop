@@ -44,6 +44,7 @@ import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
 import randoop.plugin.internal.core.runtime.MessageSessionListener;
 import randoop.plugin.internal.ui.MessageUtil;
+import randoop.plugin.internal.ui.ResourcesListQuestionDialogWithToggle;
 import randoop.plugin.internal.ui.views.TestGeneratorViewPart;
 
 public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelegate {
@@ -153,8 +154,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
-          MessageDialogWithToggle d = new MessageUtil.ResourcesListQuestionDialog(PlatformUI.getWorkbench().getDisplay()
-              .getActiveShell(), "Randoop", message, yesNoQuestion, toggleQuestion, resourcesInQuestion);
+          MessageDialogWithToggle d = new ResourcesListQuestionDialogWithToggle(PlatformUI
+              .getWorkbench().getDisplay().getActiveShell(), "Randoop", message, yesNoQuestion,
+              toggleQuestion, resourcesInQuestion);
           
           okToProceed.setValue(d.open() == Dialog.OK);
           deleteFiles.setValue(d.getToggleState());
@@ -176,9 +178,12 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     // Set the shared instance of the session to the session about to run
     TestGeneratorSession.setActiveSession(session);
     
-    // Open the randoop view and set its session
+    // Open the randoop view
+    // TODO: Future revisions should not need to set the session this way
+    // and setActiveTestRunSession should be private
     final TestGeneratorViewPart viewPart = TestGeneratorViewPart.openInstance();
-    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+    viewPart.getSite().getShell().getDisplay().syncExec(new Runnable() {
+
       @Override
       public void run() {
         viewPart.setActiveTestRunSession(session);
@@ -193,14 +198,14 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     // Classpath
     List<String> cpList = new ArrayList<String>(Arrays.asList(getClasspath(configuration)));
 
-    cpList.add(RandoopPlugin.getRandoopJar().toOSString());
-    cpList.add(RandoopPlugin.getPlumeJar().toOSString());
-    
     for (IPath path : testGroupResources.getClasspathLocations()) {
       cpList.add(path.makeRelative().toOSString());
     }
+    cpList.add(RandoopPlugin.getRandoopJar().toOSString());
+    cpList.add(RandoopPlugin.getPlumeJar().toOSString());
+
     String[] classpath = cpList.toArray(new String[0]);
-    
+
     for(String str : classpath) {
       System.out.println(str);
     }
