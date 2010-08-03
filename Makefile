@@ -56,7 +56,7 @@ clean:
 # Build Randoop.
 build: bin randoop_agent.jar
 
-bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES) lib/plume.jar
+bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	mkdir -p bin
 	@echo ${JAVAC_COMMAND} -Xlint -Xlint:unchecked -g -d bin ...
 	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
@@ -510,8 +510,7 @@ summary:
 
 
 ############################################################
-# Targets for updating Randoop's manual.
-# Keeping it simple: manual is all in index.html.
+# Plume-lib (only needed by maintainers)
 
 # Checks out a copy of the plume libraries.
 # We only use the html-update package.
@@ -523,11 +522,21 @@ plume-lib-update: utils/plume-lib
 	cd utils && hg pull -u
 
 .PHONY: utils/plume-lib/java/plume.jar
-utils/plume-lib/java/plume.jar: utils/plume-lib
+utils/plume-lib/java/plume.jar: plume-lib-update
 	make -C utils/plume-lib/java plume.jar
 
+# NOTE that lib/plume.jar is not necessarily up-to-date with
+# utils/plume-lib/java/.  This step must be done by hand and is not
+# automated nor called from anywhere
+.PHONY: update-plume-jar
+update-plume-jar: lib/plume.jar
 lib/plume.jar: utils/plume-lib/java/plume.jar
 	cp -pf $< $@
+
+
+############################################################
+# Updating Randoop's manual.
+# Keeping it simple: manual is all in index.html.
 
 # List of .java files is from GenTests.java's "new Options" expression.
 GENTESTS_OPTIONS_JAVA = \
