@@ -171,6 +171,7 @@ public class TestGeneratorSession {
     fListeners.add(listener);
   }
 
+  // TODO: Use ViewHistory instead, and remove these static methods
   public static TestGeneratorSession getActiveSession() {
     return activeSession;
   }
