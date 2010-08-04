@@ -36,12 +36,6 @@ PLUGIN BUGS
 
 * Randoop view: Stop button stays red even after Randoop has terminated.
 
-* Randoop dialog showing files that may be deleted when regenerating
-  does not show randoopFailures.RandoopTest_failure_N.java files.
-
-* Toggling Null Ratio and Thead Timeout buttons results in
-  apply/revert button toggling between in/active, incorrectly.
-
 * Problem when playing with run config:
 
 Problems occurred when invoking code from plug-in: "org.eclipse.jface".
