@@ -33,13 +33,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("The name of a file that lists classes under test")
   public static String classlist = null;
 
-  // TODO: what is the format of this file?  Does this only restrict?
+  // TODO: what is the format of each line of this file?
+  // Does the file restrict what would otherwise be tested, or augment what would otherwise be tested?
+  // What happens if it is not present?
   /**
+   * The name of a file that lists methods under test.
    * In the file, each each method under test is specified on a separate
    * line.
    */
   @Option("The name of a file that lists methods under test")
   public static String methodlist = null;
+
+  // TODO: How does this relate to methodlist?
+  @Option("Do not exercise methods that match regular expresssion <string>")
+  public static Pattern omitmethods = null;
 
   @Option("specifies initialization routine (class.method)")
   public static String init_routine = null;
@@ -339,10 +346,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Do not do online illegal")
   public static boolean offline = false;
-
-  @Unpublicized
-  @Option("Do not exercise methods that match regular expresssion <string>")
-  public static Pattern omitmethods = null;
 
   @Unpublicized
   @Option("Generate inputs but do not check any contracts")
