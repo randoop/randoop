@@ -190,9 +190,10 @@ public class TestGroupResources {
         
         bw.write(method.getDeclaringType().getFullyQualifiedName());
         bw.write('.');
-        bw.write(method.getElementName());
         if(isConstructor) {
           bw.write("<init>"); //$NON-NLS-1$
+        } else {
+          bw.write(method.getElementName());
         }
         bw.write('(');
         
