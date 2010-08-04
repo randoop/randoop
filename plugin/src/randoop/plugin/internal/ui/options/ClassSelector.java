@@ -746,6 +746,8 @@ public class ClassSelector {
         }
       }
     }
+    
+    updateImages();
   }
   
   /**
@@ -762,16 +764,6 @@ public class ClassSelector {
     
     if (fJavaProject == null) {
       fHasMissingClasses = true;
-      
-      // Set each TreeItem's image to a red X, indicating it is invalid
-      Image image = IMG_ERROR;
-      for (TreeItem packageItem : fTypeTree.getItems()) {
-        for (TreeItem classItem : packageItem.getItems()) {
-          for (TreeItem methodItem : classItem.getItems()) {
-            methodItem.setImage(image);
-          }
-        }
-      }
     } else {
       IWorkspaceRoot root = getWorkspaceRoot();
 
@@ -784,14 +776,14 @@ public class ClassSelector {
 
             // If newMnemonic is not null, the IType was found in a classpath
             // entry of the new Java project
-            if (newMnemonic != null && newMnemonic.exists()) {
+            if (newMnemonic == null || !newMnemonic.exists()) {
+              fHasMissingClasses = true;
+            } else {
               // Update the mnemonic for this TreeItem
               setMnemonic(classItem, IJavaElement.TYPE, newMnemonic.toString());
-              classItem.setImage(getImageForType(newMnemonic.getType()));
 
               // Make a list of methods that are are currently checked under
-              // this
-              // TreeItem
+              // this TreeItem
               List<MethodMnemonic> checkedMethods = new ArrayList<MethodMnemonic>();
               for (TreeItem methodItem : classItem.getItems()) {
                 if (methodItem.getChecked()) {
@@ -823,15 +815,43 @@ public class ClassSelector {
               } catch (JavaModelException e) {
                 RandoopPlugin.log(e);
               }
-            } else {
-              // Otherwise the IType was not found in a classpath
-              fHasMissingClasses = true;
-              
-              // Set this TreeItem's image to an error image
-              classItem.setImage(IMG_ERROR);
-              for (TreeItem methodItem : classItem.getItems()) {
-                methodItem.setImage(IMG_ERROR);
-              }
+            }
+          }
+        }
+      }
+    }
+    
+    updateImages();
+  }
+  
+  void updateImages() {
+    if (fJavaProject == null) {
+      // Set each TreeItem's image to a red X, indicating it is invalid
+      for (TreeItem packageItem : fTypeTree.getItems()) {
+        for (TreeItem classItem : packageItem.getItems()) {
+          for (TreeItem methodItem : classItem.getItems()) {
+            methodItem.setImage(IMG_ERROR);
+          }
+        }
+      }
+    } else {
+      IWorkspaceRoot root = getWorkspaceRoot();
+      
+      for (TreeItem packageItem : fTypeTree.getItems()) {
+        for (TreeItem classItem : packageItem.getItems()) {
+          TypeMnemonic mnemonic = new TypeMnemonic(getMnemonicString(classItem), root);
+
+          if (fJavaProject.equals(mnemonic.getJavaProject())) {
+            // Make sure the images are up to date
+            classItem.setImage(getImageForType(mnemonic.getType()));
+            for (TreeItem methodItem : classItem.getItems()) {
+              MethodMnemonic mm = new MethodMnemonic(getMnemonicString(methodItem), root);
+              methodItem.setImage(getImageMethod(mm.getMethod()));
+            }
+          } else {
+            classItem.setImage(IMG_ERROR);
+            for (TreeItem methodItem : classItem.getItems()) {
+              methodItem.setImage(IMG_ERROR);
             }
           }
         }
