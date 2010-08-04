@@ -68,10 +68,11 @@ public class MessageSessionListener implements IMessageListener {
 
         IJavaProject javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
         Assert.isNotNull(javaProject);
-
+        
         // Search for the package fragment root which is containing this
-        // JUnit file
-        // so that we can quickly perform a refresh and see the new file
+        // JUnit file so that we can quickly perform a refresh and see the new
+        // file
+        javaProject.getProject().refreshLocal(IResource.DEPTH_ONE, null);
         IPackageFragmentRoot outputPfr = null;
         int matchingSegmentCount = 0;
         for (IPackageFragmentRoot pfr : javaProject.getPackageFragmentRoots()) {
