@@ -265,17 +265,17 @@ public class OptionFactory {
 
     @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-      RandoopArgumentCollector.restoreJUnitTestInputs(config);
+      RandoopArgumentCollector.restoreInputLimit(config);
     }
     
     @Override
     protected void setValue(ILaunchConfigurationWorkingCopy config, String value) {
-      RandoopArgumentCollector.setJUnitTestInputs(config, value);
+      RandoopArgumentCollector.setInputLimit(config, value);
     }
 
     @Override
     protected String getValue(ILaunchConfiguration config) {
-      return RandoopArgumentCollector.getJUnitTestInputs(config);
+      return RandoopArgumentCollector.getInputLimit(config);
     }
     
     @Override

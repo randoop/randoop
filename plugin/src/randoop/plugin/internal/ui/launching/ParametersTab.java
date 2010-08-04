@@ -12,13 +12,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 
 import randoop.plugin.internal.core.TestKinds;
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.RandoopMessages;
+import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
+import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.OptionFactory;
+import randoop.plugin.internal.ui.options.ProjectOption;
 
 public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fRandomSeed;
@@ -32,6 +38,21 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fTestKinds;
   private IOption fMaxTestsWritten;
   private IOption fMaxTestsPerFile;
+
+  @Override
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    RandoopArgumentCollector.restoreRandomSeed(config);
+    RandoopArgumentCollector.restoreMaxTestSize(config);
+    RandoopArgumentCollector.restoreUseThreads(config);
+    RandoopArgumentCollector.restoreUseNull(config);
+    
+    RandoopArgumentCollector.restoreInputLimit(config);
+    RandoopArgumentCollector.restoreTimeLimit(config);
+    
+    RandoopArgumentCollector.restoreTestKinds(config);
+    RandoopArgumentCollector.restoreMaxTestSize(config);
+    RandoopArgumentCollector.restoreMaxTestsPerFile(config);
+  }
   
   @Override
   public void createControl(Composite parent) {
@@ -185,5 +206,5 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   public Image getImage() {
     return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
   }
-  
+
 }
