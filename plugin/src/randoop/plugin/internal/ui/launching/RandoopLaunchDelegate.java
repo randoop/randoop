@@ -138,8 +138,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     File workingDir = root.getLocation().toFile();
     String workingDirName = workingDir.getAbsolutePath();
 
-    // Search for similarly named files in the output directory and warn the user
-    // if any are found. Similarly named files match the pattern <ClassName>[0-9]*.java
+    // Search for similarly named files in the output directory and warn the user if any are found.
     final IResource[] resourcesInQuestion = testGroupResources.getThreatendedResources();
 
     // Check if the output directory exists
