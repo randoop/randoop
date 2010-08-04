@@ -31,6 +31,9 @@ PLUGIN BUGS
 * [Feature request, after beta release] Add buttom to remove all
   Randoop-generate files.
 
+* Resolve Missing Classes should be grayed out when there are no missing
+  classes
+
 * Randoop view: Stop button stays red even after Randoop has terminated.
 
 * Randoop dialog showing files that may be deleted when regenerating
@@ -38,10 +41,6 @@ PLUGIN BUGS
 
 * Toggling Null Ratio and Thead Timeout buttons results in
   apply/revert button toggling between in/active, incorrectly.
-
-* I open launch config and make no changes, just navigate the
-  tabs. Then I attempt to close it, and it tellsm e I have unsaved
-  changes.
 
 * Problem when playing with run config:
 

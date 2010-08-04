@@ -230,8 +230,12 @@ public class ProjectOption extends Option {
 
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.restoreProjectName(config);
+    writeDefaults(config);
+  }
+  
+  public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
     RandoopArgumentCollector.restoreOutputDirectoryName(config);
+    RandoopArgumentCollector.restoreProjectName(config);
   }
   
   /*

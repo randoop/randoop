@@ -292,7 +292,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.add("--timeout=" + args.getThreadTimeout());//$NON-NLS-1$
     programArguments.add("--forbid-null=" + !args.getUseNull());//$NON-NLS-1$
     programArguments.add("--null-ratio=" + args.getNullRatio());//$NON-NLS-1$
-    programArguments.add("--inputlimit=" + args.getJUnitTestInputs());//$NON-NLS-1$
+    programArguments.add("--inputlimit=" + args.getInputLimit());//$NON-NLS-1$
     programArguments.add("--timelimit=" + args.getTimeLimit());//$NON-NLS-1$
     programArguments.add("--junit-output-dir=" + testSetResources.getOutputLocation().toOSString());//$NON-NLS-1$
     programArguments.add("--junit-package-name=" + args.getJUnitPackageName());//$NON-NLS-1$
