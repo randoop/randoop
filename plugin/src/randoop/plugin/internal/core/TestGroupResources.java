@@ -43,7 +43,11 @@ public class TestGroupResources {
   private static final IPath TEMP_PATH = RandoopPlugin.getDefault().getStateLocation().append(TEMP_SEGMENT);
   private static final String METHODS_FILE = "methods"; //$NON-NLS-1$
   
-  public final IFolder fOutputFolder;
+  private static final String FAILURE_PATH = "randoopFailures"; //$NON-NLS-1$
+  private static final String FAILURE_SUFFIX = "_failure_"; //$NON-NLS-1$
+  
+  private IFolder fJUnitOutputFolder;
+  private IFolder fFailureOutputFolder;
   private RandoopArgumentCollector fArguments;
   private File fResourceFolder;
   private File fMethodsFile;
@@ -151,16 +155,19 @@ public class TestGroupResources {
       
       javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
     }
-    
-    IResource outputDirResource = root.findMember(fullOutputDirPath.append(packagePath));
-    if (outputDirResource != null) {
-      Assert.isTrue(outputDirResource instanceof IFolder);
-      fOutputFolder = (IFolder) outputDirResource;
-    } else {
-      fOutputFolder = null;
-    }
-  }
 
+    fJUnitOutputFolder = getFolder(root, fullOutputDirPath.append(packagePath));
+    fFailureOutputFolder = getFolder(root, fullOutputDirPath.append(FAILURE_PATH));
+  }
+  
+  private static IFolder getFolder(IWorkspaceRoot root, IPath path) {
+    IResource outputDirResource = root.findMember(path);
+    if (outputDirResource != null && outputDirResource instanceof IFolder) {
+      return (IFolder) outputDirResource;
+    }
+    return null;
+  }
+  
   private void writeMethods() {
     try {
       fMethodsFile = new File(fResourceFolder, METHODS_FILE);
@@ -315,23 +322,39 @@ public class TestGroupResources {
     return fClasspath;
   }
   
+  public IPath getOutputLocation() {
+    return fOutputLocation;
+  }
+  
   /**
    * Returns a list of IResources that may be overwritten by the generated tests.
+   * Similarly named files match the pattern <ClassName>[0-9]*.java
+   * 
    * @return
    */
   public IResource[] getThreatendedResources() {
     List<IResource> threatenedFiles = new ArrayList<IResource>();
-    IFolder outputFolder = fOutputFolder;
+
+    String testName = getArguments().getJUnitClassName();
+    threatenedFiles.addAll(findResources(fJUnitOutputFolder,
+        testName + "\\p{Digit}*.java")); //$NON-NLS-1$
     
-    // Check if the output directory exists
-    if (outputFolder != null && outputFolder.exists()) {
+    threatenedFiles.addAll(findResources(fFailureOutputFolder,
+        testName + FAILURE_SUFFIX + "\\p{Digit}*.java")); //$NON-NLS-1$
+
+    return threatenedFiles.toArray(new IResource[threatenedFiles.size()]);
+  }
+  
+  private static List<IResource> findResources(IFolder folder, String pattern) {
+    List<IResource> resources = new ArrayList<IResource>();
+    
+    if (folder != null && folder.exists()) {
       try {
-        for (IResource resource : outputFolder.members()) {
+        for (IResource resource : folder.members()) {
           if (resource instanceof IFile) {
             String resourceName = resource.getName();
-            String testName = getArguments().getJUnitClassName();
-            if (resourceName.matches(testName + "\\p{Digit}*.java")) { //$NON-NLS-1$
-              threatenedFiles.add(resource);
+            if (resourceName.matches(pattern)) {
+              resources.add(resource);
             }
           }
         }
@@ -340,11 +363,7 @@ public class TestGroupResources {
       }
     }
     
-    return threatenedFiles.toArray(new IResource[threatenedFiles.size()]);
-  }
-  
-  public IPath getOutputLocation() {
-    return fOutputLocation;
+    return resources;
   }
 
   public static void clearTempLocation() {
