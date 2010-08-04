@@ -272,8 +272,8 @@ public class RandoopArgumentCollector {
 
   public static boolean getUseNull(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean
-            .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+        IRandoopLaunchConfigurationConstants.ATTR_USE_NULL,
+        Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
   }
 
   public static String getNullRatio(ILaunchConfiguration config) {
