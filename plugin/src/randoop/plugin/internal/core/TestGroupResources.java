@@ -154,6 +154,7 @@ public class TestGroupResources {
       entries.add(newEntry);
       
       javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
+      javaProject.getProject().refreshLocal(IResource.DEPTH_ONE, monitor);
     }
 
     fJUnitOutputFolder = getFolder(root, fullOutputDirPath.append(packagePath));
