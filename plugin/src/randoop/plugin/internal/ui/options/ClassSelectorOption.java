@@ -368,7 +368,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       IType type = typeMnemonic.getType();
       if (type == null || !type.exists()) {
         return StatusFactory.createErrorStatus("One of the selected types does not exist.");
-      } else if (!javaProject.equals(type.getJavaProject())) {
+      } else if (!javaProject.equals(typeMnemonic.getJavaProject())) {
         return StatusFactory.createErrorStatus("One of the selected types does not exist in the selected project.");
       }
     }
@@ -559,12 +559,13 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
       fJavaProject = RandoopCoreUtil.getProjectFromName(event.getValue());
 
-      boolean enabled = fJavaProject != null;
+      boolean enabled = fJavaProject != null && fJavaProject.exists();
       fClassAddFromSources.setEnabled(enabled);
       fClassAddFromClasspaths.setEnabled(enabled);
+
+      fTypeSelector.setJavaProject(fJavaProject);
+      fResolveClasses.setEnabled(enabled && fTypeSelector.hasMissingClasses());
     }
-    fTypeSelector.setJavaProject(fJavaProject);
-    fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
   }
   
   /*

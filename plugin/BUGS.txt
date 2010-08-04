@@ -30,8 +30,9 @@ PLUGIN BUGS
 
 * [Feature request, after beta release] Add buttom to remove all
   Randoop-generate files.
-
-* Images for items in tree are not updated immediately
+  
+* [Feature request, after beta release] Delete button should be able
+  to remove selected classes from the class selector
 
 * Randoop view: Stop button stays red even after Randoop has terminated.
 
