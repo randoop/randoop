@@ -22,8 +22,11 @@ public abstract class TextOption extends Option {
     }
     
     String text = fText.getText();
-    
-    return validate(text);
+    if (text.isEmpty()) {
+      return StatusFactory.OK_STATUS;
+    } else {
+      return validate(text);
+    }
   }
 
   @Override
