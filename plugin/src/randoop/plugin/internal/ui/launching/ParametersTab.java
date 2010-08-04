@@ -44,13 +44,15 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     RandoopArgumentCollector.restoreRandomSeed(config);
     RandoopArgumentCollector.restoreMaxTestSize(config);
     RandoopArgumentCollector.restoreUseThreads(config);
+    RandoopArgumentCollector.restoreThreadTimeout(config);
     RandoopArgumentCollector.restoreUseNull(config);
+    RandoopArgumentCollector.restoreNullRatio(config);
     
     RandoopArgumentCollector.restoreInputLimit(config);
     RandoopArgumentCollector.restoreTimeLimit(config);
     
     RandoopArgumentCollector.restoreTestKinds(config);
-    RandoopArgumentCollector.restoreMaxTestSize(config);
+    RandoopArgumentCollector.restoreMaxTestsWritten(config);
     RandoopArgumentCollector.restoreMaxTestsPerFile(config);
   }
   
