@@ -320,31 +320,41 @@ public class ClassSelector {
     
     IMethod[] methods = type.getMethods();
     for (IMethod m : methods) {
-      TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
-      MethodMnemonic methodMnemonic = new MethodMnemonic(m);
-      String methodSignature = methodMnemonic.getMethodSignature();
-      
-      // Uses-fully qualified names:
-      // String readableMethod = Signature.toString(methodMnemonic.getMethodSignature(), m.getElementName(), null, false, true);
-      
-      // Get a human readable name for this method without using fully-qualified names
-      StringBuilder readableMethod = new StringBuilder();
-      readableMethod.append(RandoopCoreUtil.getClassName(type, Signature.getReturnType(methodSignature)));
-      readableMethod.append(' ');
-      readableMethod.append(methodMnemonic.getMethodName());
-      readableMethod.append('(');
-      String[] parameters = Signature.getParameterTypes(methodSignature);
-      for (String parameter : parameters) {
-        readableMethod.append(RandoopCoreUtil.getClassName(type, parameter));
+      int flags = m.getFlags();
+      if (Flags.isPublic(flags)) {
+        TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
+        MethodMnemonic methodMnemonic = new MethodMnemonic(m);
+        String methodSignature = methodMnemonic.getMethodSignature();
+
+        // Uses-fully qualified names:
+        // String readableMethod =
+        // Signature.toString(methodMnemonic.getMethodSignature(),
+        // m.getElementName(), null, false, true);
+
+        // Get a human readable name for this method without using
+        // fully-qualified names
+        StringBuilder readableMethod = new StringBuilder();
+        readableMethod.append(RandoopCoreUtil.getClassName(type, Signature.getReturnType(methodSignature)));
+        readableMethod.append(' ');
+        readableMethod.append(methodMnemonic.getMethodName());
+        readableMethod.append('(');
+        String[] parameters = Signature.getParameterTypes(methodSignature);
+        for (int i = 0; i < parameters.length; i++) {
+          readableMethod.append(RandoopCoreUtil.getClassName(type, parameters[i]));
+          
+          if (i + 1 < parameters.length) {
+            readableMethod.append(", "); //$NON-NLS-1$
+          }
+        }
+        readableMethod.append(')');
+
+        Signature.toString(methodMnemonic.getMethodSignature(), m.getElementName(), null, false, true);
+
+        methodItem.setText(readableMethod.toString());
+        methodItem.setImage(getImageMethod(m));
+
+        setMnemonic(methodItem, IJavaElement.METHOD, methodMnemonic.toString());
       }
-      readableMethod.append(')');
-      
-      Signature.toString(methodMnemonic.getMethodSignature(), m.getElementName(), null, false, true);
-      
-      methodItem.setText(readableMethod.toString());
-      methodItem.setImage(getImageMethod(m));
-      
-      setMnemonic(methodItem, IJavaElement.METHOD, methodMnemonic.toString());
     }
   }
   
