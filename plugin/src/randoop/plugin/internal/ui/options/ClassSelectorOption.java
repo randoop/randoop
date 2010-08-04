@@ -326,9 +326,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    writeDefaults(config);
+  }
+  
+  public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
     RandoopArgumentCollector.restoreSelectedTypes(config);
     RandoopArgumentCollector.restoreAvailableTypes(config);
     RandoopArgumentCollector.restoreSelectedMethods(config);
+    RandoopArgumentCollector.restoreAvailableMethods(config);
   }
 
   /**
