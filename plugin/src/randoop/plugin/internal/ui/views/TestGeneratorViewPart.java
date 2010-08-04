@@ -355,8 +355,10 @@ public class TestGeneratorViewPart extends ViewPart {
       getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
-          deregisterTestSessionListener(false);
-          
+          // TODO: RandoopFinished is sent before CreatedJUnitFile
+          // so the listener cannot be removed
+          // deregisterTestSessionListener(false);
+
           if (!isDisposed()) {
             fTerminateAction.setEnabled(false);
           }
