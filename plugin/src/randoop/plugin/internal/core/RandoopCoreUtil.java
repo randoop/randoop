@@ -26,13 +26,55 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.StatusFactory;
 
 public class RandoopCoreUtil {
+  
+  public static String getFullyQualifiedUnresolvedSignature(IType type, String typeSignature) throws JavaModelException {
+    String typeName = Signature.toString(typeSignature);
+    String[][] types = type.resolveType(typeName);
+    
+    StringBuilder fqname = new StringBuilder();
+    if (types != null) {
+      // Write the first type that was resolved
+      fqname.append(types[0][0]); // the package name
+      fqname.append('.');
+      fqname.append(types[0][1]); // the class name
+      return Signature.createTypeSignature(fqname.toString(), false);
+    } else {
+      // Otherwise this is a primitive type, return the signature as it is
+      return typeSignature;
+    }
+    
+  }
 
+  public static String getFullyQualifiedName(IType type, String typeSignature) throws JavaModelException {
+    String typeName = Signature.toString(typeSignature);
+    String[][] types = type.resolveType(typeName);
+    
+    StringBuilder fqname = new StringBuilder();
+    if (types != null) {
+      // Write the first type that was resolved
+      fqname.append(types[0][0]); // the package name
+      fqname.append('.');
+      fqname.append(types[0][1]); // the class name
+    } else {
+      // Otherwise this is a primitive type, write it as it is
+      fqname.append(typeName);
+    }
+    
+    return fqname.toString();
+  }
+  
+  public static String getPackageName(IType type, String typeSignature) throws JavaModelException {
+    String fqname = RandoopCoreUtil.getFullyQualifiedName(type, typeSignature);
+    return RandoopCoreUtil.getPackageName(fqname);
+  }
+  
   // expects use of $
   public static String getPackageName(String fullyQualifiedName) {
     int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
@@ -43,7 +85,12 @@ public class RandoopCoreUtil {
       return fullyQualifiedName.substring(0, lastDelimiter);
     }
   }
-
+  
+  public static String getClassName(IType type, String typeSignature) throws JavaModelException {
+    String fqname = RandoopCoreUtil.getFullyQualifiedName(type, typeSignature);
+    return RandoopCoreUtil.getClassName(fqname);
+  }
+  
   public static String getClassName(String fullyQualifiedName) {
     int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
     
