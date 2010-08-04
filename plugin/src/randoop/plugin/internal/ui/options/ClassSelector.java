@@ -317,14 +317,34 @@ public class ClassSelector {
   
   private static void setMethods(TreeItem classItem, IType type) throws JavaModelException {
     classItem.removeAll();
+    
     IMethod[] methods = type.getMethods();
     for (IMethod m : methods) {
       TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
-      methodItem.setText(Signature.toString(m.getSignature(), m.getElementName(), null, false, true));
-
+      MethodMnemonic methodMnemonic = new MethodMnemonic(m);
+      String methodSignature = methodMnemonic.getMethodSignature();
+      
+      // Uses-fully qualified names:
+      // String readableMethod = Signature.toString(methodMnemonic.getMethodSignature(), m.getElementName(), null, false, true);
+      
+      // Get a human readable name for this method without using fully-qualified names
+      StringBuilder readableMethod = new StringBuilder();
+      readableMethod.append(RandoopCoreUtil.getClassName(type, Signature.getReturnType(methodSignature)));
+      readableMethod.append(' ');
+      readableMethod.append(methodMnemonic.getMethodName());
+      readableMethod.append('(');
+      String[] parameters = Signature.getParameterTypes(methodSignature);
+      for (String parameter : parameters) {
+        readableMethod.append(RandoopCoreUtil.getClassName(type, parameter));
+      }
+      readableMethod.append(')');
+      
+      Signature.toString(methodMnemonic.getMethodSignature(), m.getElementName(), null, false, true);
+      
+      methodItem.setText(readableMethod.toString());
       methodItem.setImage(getImageMethod(m));
-
-      setMnemonic(methodItem, IJavaElement.METHOD, new MethodMnemonic(m).toString());
+      
+      setMnemonic(methodItem, IJavaElement.METHOD, methodMnemonic.toString());
     }
   }
   
@@ -787,13 +807,15 @@ public class ClassSelector {
               List<MethodMnemonic> checkedMethods = new ArrayList<MethodMnemonic>();
               for (TreeItem methodItem : classItem.getItems()) {
                 if (methodItem.getChecked()) {
-                  checkedMethods.add(new MethodMnemonic(getMnemonicString(methodItem)));
+                  MethodMnemonic checkedMnemonic = new MethodMnemonic(getMnemonicString(methodItem));
+                  checkedMethods.add(checkedMnemonic);
                 }
               }
-              classItem.removeAll();
+              boolean expanded = classItem.getExpanded();
 
               try {
                 setMethods(classItem, newMnemonic.getType());
+                classItem.setExpanded(expanded);
 
                 for (TreeItem methodItem : classItem.getItems()) {
                   MethodMnemonic methodMnemonic = new MethodMnemonic(getMnemonicString(methodItem));
@@ -802,11 +824,14 @@ public class ClassSelector {
                   for (MethodMnemonic checkedMethodMnemonic : checkedMethods) {
                     // See if the new method mnemonic is similar to one that was
                     // checked
-                    if (methodMnemonic.getMethodName().equals(checkedMethodMnemonic.getMethodName())
-                        && checkedMethodMnemonic.getMethodSignature().equals(
-                            methodMnemonic.getMethodSignature())) {
-                      methodItem.setChecked(true);
-                      break;
+                    if (methodMnemonic.isConstructor() == checkedMethodMnemonic.isConstructor()) {
+                      if (methodMnemonic.getMethodName().equals(checkedMethodMnemonic.getMethodName())) {
+                        if (methodMnemonic.getMethodSignature().equals(
+                            checkedMethodMnemonic.getMethodSignature())) {
+                          methodItem.setChecked(true);
+                          break;
+                        }
+                      }
                     }
                   }
 
@@ -829,6 +854,7 @@ public class ClassSelector {
       // Set each TreeItem's image to a red X, indicating it is invalid
       for (TreeItem packageItem : fTypeTree.getItems()) {
         for (TreeItem classItem : packageItem.getItems()) {
+          classItem.setImage(IMG_ERROR);
           for (TreeItem methodItem : classItem.getItems()) {
             methodItem.setImage(IMG_ERROR);
           }

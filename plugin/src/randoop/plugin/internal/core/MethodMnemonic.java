@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
@@ -36,9 +37,26 @@ public class MethodMnemonic {
 
     fMethodName = fMethod.getElementName();
     fIsConstructor = fMethod.isConstructor();
-    fMethodSignature = fMethod.getSignature();
+    
+    IType type = m.getDeclaringType();
+    fMethodSignature = getStableSignature(type, m);
   }
 
+  public static String getStableSignature(IType type, IMethod method) throws JavaModelException {
+    StringBuilder methodSignature = new StringBuilder();
+    methodSignature.append('(');
+    String[] parameters = method.getParameterTypes();
+    for (String parameter : parameters) {
+      String sig = RandoopCoreUtil.getFullyQualifiedUnresolvedSignature(type, parameter);
+      methodSignature.append(sig);
+    }
+    methodSignature.append(')');
+    String sig = RandoopCoreUtil.getFullyQualifiedUnresolvedSignature(type, method.getReturnType());
+    methodSignature.append(sig);
+
+    return methodSignature.toString();
+  }
+  
   public MethodMnemonic(String typeMnemonic, String methodName, boolean isConstructor, String methodSignature) {
     fDeclaringTypeMnemonic = new TypeMnemonic(typeMnemonic);
     fMethodName = methodName;
@@ -63,7 +81,10 @@ public class MethodMnemonic {
     String[] s = mnemonic.split(IConstants.MNEMONIC_DELIMITER);
     Assert.isLegal(s.length == TypeMnemonic.LENGTH + LENGTH);
 
-    int typeMnemonicEnd = mnemonic .lastIndexOf(s[TypeMnemonic.LENGTH - 1]) + s[TypeMnemonic.LENGTH - 1].length();
+    int typeMnemonicEnd = 0;
+    for (int i=0;i<TypeMnemonic.LENGTH;i++) {
+      typeMnemonicEnd = mnemonic.indexOf(IConstants.MNEMONIC_DELIMITER, typeMnemonicEnd + 1);
+    }
     TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic.substring(0, typeMnemonicEnd));
     fMethodName = s[TypeMnemonic.LENGTH];
     fIsConstructor = Boolean.parseBoolean(s[TypeMnemonic.LENGTH + 1]);
@@ -79,7 +100,7 @@ public class MethodMnemonic {
         for (IMethod m : type.getMethods()) {
           if (m.isConstructor() == isConstructor) {
             if (m.getElementName().equals(name)) {
-              if (m.getSignature().equals(signature)) {
+              if (getStableSignature(type, m).equals(signature)) {
                 return m;
               }
             }
