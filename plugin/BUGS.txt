@@ -31,8 +31,7 @@ PLUGIN BUGS
 * [Feature request, after beta release] Add buttom to remove all
   Randoop-generate files.
 
-* Resolve Missing Classes should be grayed out when there are no missing
-  classes
+* Images for items in tree are not updated immediately
 
 * Randoop view: Stop button stays red even after Randoop has terminated.
 

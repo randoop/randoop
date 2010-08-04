@@ -227,7 +227,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fJavaProject = javaProject;
     
     fTypeSelector.setJavaProject(fJavaProject);
-
+    
+    fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
+    
     for (IJavaElement element : elements) {
       switch (element.getElementType()) {
       case IJavaElement.PACKAGE_FRAGMENT_ROOT:
@@ -309,6 +311,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(config);
 
       fTypeSelector = new ClassSelector(fTypeTree, fJavaProject, availableTypes, selectedTypes, availableMethods, selectedMethods);
+      fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
     }
   }
 
@@ -559,9 +562,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       boolean enabled = fJavaProject != null;
       fClassAddFromSources.setEnabled(enabled);
       fClassAddFromClasspaths.setEnabled(enabled);
-      fResolveClasses.setEnabled(enabled);
     }
     fTypeSelector.setJavaProject(fJavaProject);
+    fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
   }
   
   /*
