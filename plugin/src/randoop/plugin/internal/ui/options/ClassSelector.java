@@ -55,6 +55,7 @@ public class ClassSelector {
 
   private static final String DEFAULT_PACKAGE_DISPLAY_NAME = "(default package)";
   
+  private boolean fHasMissingClasses;
   private Tree fTypeTree;
   private IJavaProject fJavaProject;
 
@@ -73,6 +74,8 @@ public class ClassSelector {
 //    Assert.isLegal(classTree.getItemCount() == 0, "The Tree must be empty"); //$NON-NLS-1$
     Assert.isLegal((classTree.getStyle() & SWT.CHECK) != 0, "The Tree must use the SWT.CHECK style"); //$NON-NLS-1$
 
+    fHasMissingClasses = false;
+    
     fTypeTree = classTree;
     fTypeTree.removeAll();
     fJavaProject = null;
@@ -122,8 +125,6 @@ public class ClassSelector {
       }
     }
     
-    fJavaProject = javaProject;
-
     IWorkspaceRoot root = getWorkspaceRoot();
     
     // Create a mapping between type mnemonics and method mnemonics. Each type
@@ -166,6 +167,8 @@ public class ClassSelector {
         }
       }
     }
+    
+    setJavaProject(javaProject);
   }
 
   /**
@@ -360,6 +363,10 @@ public class ClassSelector {
       RandoopPlugin.log(e);
     }
     return null;
+  }
+  
+  boolean hasMissingClasses() {
+    return fHasMissingClasses;
   }
 
   List<String> getAllClasses() {
@@ -681,6 +688,7 @@ public class ClassSelector {
   void resolveMissingClasses() throws JavaModelException {
     Assert.isNotNull(fJavaProject);
 
+    // Create a mapping to remember which methods are checked in which class
     Map<String, List<MethodMnemonic>> checkedMethodsByFQTypeName = new HashMap<String, List<MethodMnemonic>>();
     List<String> methodMnemonics = getCheckedMethods();
     for (String methodMnemonicString : methodMnemonics) {
@@ -701,7 +709,7 @@ public class ClassSelector {
 
         TypeMnemonic typeMnemonic = new TypeMnemonic(getMnemonicString(classItem), getWorkspaceRoot());
         IType type = typeMnemonic.getType();
-        if (type == null) {
+        if (type == null || !fJavaProject.equals(type.getJavaProject())) {
           type = fJavaProject.findType(typeMnemonic.getFullyQualifiedName(), (IProgressMonitor) null);
           if (type != null) {
             typeMnemonic = new TypeMnemonic(type);
@@ -750,8 +758,11 @@ public class ClassSelector {
    */
   void setJavaProject(IJavaProject javaProject) {
     fJavaProject = javaProject;
+    fHasMissingClasses = false;
     
     if (fJavaProject == null) {
+      fHasMissingClasses = true;
+      
       // Set each TreeItem's image to a red X, indicating it is invalid
       Image image = IMG_ERROR;
       for (TreeItem packageItem : fTypeTree.getItems()) {
@@ -813,8 +824,10 @@ public class ClassSelector {
                 RandoopPlugin.log(e);
               }
             } else {
-              // Otherwise the IType was not found in a classpath, set this
-              // TreeItem's image to an error image
+              // Otherwise the IType was not found in a classpath
+              fHasMissingClasses = true;
+              
+              // Set this TreeItem's image to an error image
               classItem.setImage(IMG_ERROR);
               for (TreeItem methodItem : classItem.getItems()) {
                 methodItem.setImage(IMG_ERROR);
