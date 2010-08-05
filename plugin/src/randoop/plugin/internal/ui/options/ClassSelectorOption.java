@@ -231,16 +231,32 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     for (IJavaElement element : elements) {
       switch (element.getElementType()) {
+      case IJavaElement.JAVA_PROJECT:
+        try {
+          for (IPackageFragmentRoot pfr : ((IJavaProject) element).getPackageFragmentRoots()) {
+            if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
+              for (IType type : RandoopCoreUtil.findTypes(pfr, true, null)) {
+                fTypeSelector.addClass(type, true);
+              }
+            }
+          }
+        } catch (JavaModelException e) {
+          RandoopPlugin.log(e);
+        }
+        break;
       case IJavaElement.PACKAGE_FRAGMENT_ROOT:
       case IJavaElement.PACKAGE_FRAGMENT:
         for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addClass(type, false);
+          fTypeSelector.addClass(type, true);
         }
         break;
       case IJavaElement.COMPILATION_UNIT:
         for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
           fTypeSelector.addClass(type, true);
         }
+        break;
+      case IJavaElement.TYPE:
+        fTypeSelector.addClass((IType) element, true);
         break;
       default:
         RandoopPlugin.log(StatusFactory.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
