@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import randoop.plugin.internal.core.TestGroupResources;
+import randoop.plugin.internal.core.launching.RandoopLaunchResources;
 
 /**
  * The activator class controls the plug-in life cycle. It stores a shared
@@ -85,7 +85,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
   @Override
   public void stop(BundleContext context) throws Exception {
     // Remove all files from the temp folder in the state location
-    TestGroupResources.clearTempLocation();
+    RandoopLaunchResources.deleteAllLaunchResources();
     
     plugin = null;
     isStopped = true;

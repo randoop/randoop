@@ -19,12 +19,12 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
     
     fConfig = config;
     
-    fMainPage = new MainPage("Main", project, fConfig);
     fTestInputsPage = new TestInputsPage("Test Inputs", project, elements, fConfig);
-    fTestInputsPage.setPreviousPage(fMainPage);
+    fMainPage = new ParametersPage("Main", project, fConfig);
+    fMainPage.setPreviousPage(fMainPage);
     
-    addPage(fMainPage);
     addPage(fTestInputsPage);
+    addPage(fMainPage);
 
     setNeedsProgressMonitor(true);
     setHelpAvailable(true);
