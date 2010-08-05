@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -34,8 +35,17 @@ import randoop.plugin.internal.core.StatusFactory;
 
 public class RandoopCoreUtil {
   
-  public static String getFullyQualifiedUnresolvedSignature(IType type, String typeSignature) throws JavaModelException {
-    String typeName = Signature.toString(typeSignature);
+  public static String getFullyQualifiedUnresolvedSignature(IMethod method, String typeSignature) throws JavaModelException {
+    IType type = method.getDeclaringType();
+    
+    int arrayCount = Signature.getArrayCount(typeSignature);
+    String typeSignatureWithoutArray = typeSignature.substring(arrayCount);
+    
+    String typeName = Signature.toString(typeSignatureWithoutArray);
+    if (method.getTypeParameter(typeName).exists() || type.getTypeParameter(typeName).exists()) {
+      String typeSig = Signature.C_TYPE_VARIABLE + typeName + Signature.C_SEMICOLON;
+      return Signature.createArraySignature(typeSig, arrayCount);
+    }
     String[][] types = type.resolveType(typeName);
     
     StringBuilder fqname = new StringBuilder();
@@ -44,7 +54,9 @@ public class RandoopCoreUtil {
       fqname.append(types[0][0]); // the package name
       fqname.append('.');
       fqname.append(types[0][1]); // the class name
-      return Signature.createTypeSignature(fqname.toString(), false);
+      
+      String typeSig = Signature.createTypeSignature(fqname.toString(), false);
+      return Signature.createArraySignature(typeSig, arrayCount);
     } else {
       // Otherwise this is a primitive type, return the signature as it is
       return typeSignature;

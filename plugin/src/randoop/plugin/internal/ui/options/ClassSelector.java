@@ -321,7 +321,7 @@ public class ClassSelector {
     IMethod[] methods = type.getMethods();
     for (IMethod m : methods) {
       int flags = m.getFlags();
-      if (Flags.isPublic(flags)) {
+      if (Flags.isPublic(flags) && ! (Flags.isSynthetic(flags) || Flags.isBridge(flags))) {
         TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
         MethodMnemonic methodMnemonic = new MethodMnemonic(m);
         String methodSignature = methodMnemonic.getMethodSignature();
@@ -334,8 +334,10 @@ public class ClassSelector {
         // Get a human readable name for this method without using
         // fully-qualified names
         StringBuilder readableMethod = new StringBuilder();
-        readableMethod.append(RandoopCoreUtil.getClassName(type, Signature.getReturnType(methodSignature)));
-        readableMethod.append(' ');
+        if (!m.isConstructor()) {
+          readableMethod.append(RandoopCoreUtil.getClassName(type, Signature.getReturnType(methodSignature)));
+          readableMethod.append(' ');
+        }
         readableMethod.append(methodMnemonic.getMethodName());
         readableMethod.append('(');
         String[] parameters = Signature.getParameterTypes(methodSignature);

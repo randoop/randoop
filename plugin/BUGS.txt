@@ -1,6 +1,19 @@
 
 PLUGIN BUGS
 
+* If you edit some code: remove, change visibility, or change parameters
+  to some method that are used in a launch configuration, when you click
+  on that launch configuration there will be unsaved changes.
+  REASON: The config stores methods so it knows what should be checked
+          when the config is opened, but it checks if the methods are
+          available before adding them to the list.
+  SOLUTION: Probably the best way to fix this would be to have a refresh
+            button that searches for changes, removes methods that don't
+            exist, and adds new ones that have been added.
+            
+* Cannot runs tests on methods with generic type parameters without testing
+  the entire class.
+
 * "Project Sources" dialog: When I first press "Project Sources", user
   presented with an empty window and no classes, and no indication of
   what user is to do. Should show a list of classes for the selected
