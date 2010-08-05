@@ -344,7 +344,7 @@ public class ClassSelector {
     classItem.removeAll();
     
     for (IMethod m : type.getMethods()) {
-      addMethod(classItem, new MethodMnemonic(m));
+      addMethods(classItem, new MethodMnemonic(m));
     }
   }
   
@@ -352,15 +352,15 @@ public class ClassSelector {
     classItem.removeAll();
     
     for (MethodMnemonic methodMnemonic : methodMnemonics) {
-      addMethod(classItem, methodMnemonic);
+      addMethods(classItem, methodMnemonic);
     }
   }
   
-  private static void addMethod(TreeItem classItem, MethodMnemonic methodMnemonic) {
+  private static void addMethods(TreeItem classItem, MethodMnemonic methodMnemonic) {
     try {
       IMethod m = methodMnemonic.getMethod();
       int flags = m.getFlags();
-      if (Flags.isPublic(flags) && !(Flags.isSynthetic(flags) || Flags.isBridge(flags))) {
+      if (!(Flags.isSynthetic(flags) || Flags.isBridge(flags))) {
         TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
         String methodSignature = methodMnemonic.getMethodSignature();
 
