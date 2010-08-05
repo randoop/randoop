@@ -271,11 +271,36 @@ public class ClassSelector {
    */
   TreeItem addClass(IType type, boolean checked) {
     try {
+      return addClass(new TypeMnemonic(type), checked);
+    } catch (JavaModelException e) {
+      RandoopPlugin.log(e);
+      return null;
+    }
+  }
+
+  TreeItem addClass(TypeMnemonic typeMnemonic, boolean checked) {
+    IType type = typeMnemonic.getType();
+    List<MethodMnemonic> methodList = new ArrayList<MethodMnemonic>();
+
+    try {
+      IMethod[] methods = type.getMethods();
+      for (IMethod m : methods) {
+        methodList.add(new MethodMnemonic(m));
+      }
+    } catch (JavaModelException e) {
+      RandoopPlugin.log(e);
+    }
+
+    return addClass(typeMnemonic, checked, methodList);
+  }
+  
+  TreeItem addClass(TypeMnemonic typeMnemonic, boolean checked, List<MethodMnemonic> methodMnemonics) {
+    try {
+      IType type = typeMnemonic.getType();
+      
       if (type == null || type.isInterface() || Flags.isAbstract(type.getFlags())) {
         return null;
       }
-      
-      TypeMnemonic typeMnemonic = new TypeMnemonic(type);
       
       // First, check if the class item already exists in the tree
       TreeItem classItem = getClassItem(typeMnemonic);
@@ -293,11 +318,11 @@ public class ClassSelector {
       classItem.setText(text);
       
       setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
-      setMethods(classItem, type);
+      setMethods(classItem, methodMnemonics);
       
       setChecked(classItem, checked);
-      return classItem;
       
+      return classItem;
     } catch (JavaModelException e) {
       RandoopPlugin.log(e);
       return null;
@@ -318,12 +343,25 @@ public class ClassSelector {
   private static void setMethods(TreeItem classItem, IType type) throws JavaModelException {
     classItem.removeAll();
     
-    IMethod[] methods = type.getMethods();
-    for (IMethod m : methods) {
+    for (IMethod m : type.getMethods()) {
+      addMethod(classItem, new MethodMnemonic(m));
+    }
+  }
+  
+  private static void setMethods(TreeItem classItem, List<MethodMnemonic> methodMnemonics) throws JavaModelException {
+    classItem.removeAll();
+    
+    for (MethodMnemonic methodMnemonic : methodMnemonics) {
+      addMethod(classItem, methodMnemonic);
+    }
+  }
+  
+  private static void addMethod(TreeItem classItem, MethodMnemonic methodMnemonic) {
+    try {
+      IMethod m = methodMnemonic.getMethod();
       int flags = m.getFlags();
-      if (Flags.isPublic(flags) && ! (Flags.isSynthetic(flags) || Flags.isBridge(flags))) {
+      if (Flags.isPublic(flags) && !(Flags.isSynthetic(flags) || Flags.isBridge(flags))) {
         TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
-        MethodMnemonic methodMnemonic = new MethodMnemonic(m);
         String methodSignature = methodMnemonic.getMethodSignature();
 
         // Uses-fully qualified names:
@@ -335,15 +373,16 @@ public class ClassSelector {
         // fully-qualified names
         StringBuilder readableMethod = new StringBuilder();
         if (!m.isConstructor()) {
-          readableMethod.append(RandoopCoreUtil.getClassName(type, Signature.getReturnType(methodSignature)));
+          readableMethod.append(RandoopCoreUtil.getClassName(m.getDeclaringType(),
+              Signature.getReturnType(methodSignature)));
           readableMethod.append(' ');
         }
         readableMethod.append(methodMnemonic.getMethodName());
         readableMethod.append('(');
         String[] parameters = Signature.getParameterTypes(methodSignature);
         for (int i = 0; i < parameters.length; i++) {
-          readableMethod.append(RandoopCoreUtil.getClassName(type, parameters[i]));
-          
+          readableMethod.append(RandoopCoreUtil.getClassName(m.getDeclaringType(), parameters[i]));
+
           if (i + 1 < parameters.length) {
             readableMethod.append(", "); //$NON-NLS-1$
           }
@@ -357,9 +396,11 @@ public class ClassSelector {
 
         setMnemonic(methodItem, IJavaElement.METHOD, methodMnemonic.toString());
       }
+    } catch (JavaModelException e) {
+      RandoopPlugin.log(e);
     }
   }
-  
+
   private static Image getImageForType(IType type) {
     try {
       if (type != null && type.exists()) {
