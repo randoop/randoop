@@ -41,7 +41,21 @@ public class MessageUtil {
       @Override
       public void run() {
         okToProceed.setValue(MessageDialog.openQuestion(
-            PlatformUI.getWorkbench().getDisplay().getActiveShell(), "Randoop", message));
+            RandoopPlugin.getDisplay().getActiveShell(), "Randoop", message));
+      }
+    });
+
+    return okToProceed.getValue();
+  }
+
+  public static boolean openInformation(final String message) {
+    final MutableBoolean okToProceed = new MutableBoolean(false);
+
+    PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      @Override
+      public void run() {
+        MessageDialog.openInformation(
+            RandoopPlugin.getDisplay().getActiveShell(), "Randoop", message);
       }
     });
 
