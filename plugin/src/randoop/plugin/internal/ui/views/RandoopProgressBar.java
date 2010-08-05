@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+import randoop.plugin.internal.core.runtime.TestGeneratorSession;
+
 /**
  * A progress bar with a red/green indication for success or failure.
  */
@@ -39,12 +41,12 @@ public class RandoopProgressBar extends Canvas {
   private Color fOKColor;
   private Color fFailureColor;
   private Color fStoppedColor;
-  private boolean fError;
-  private boolean fStopped;
+  private boolean fHasError;
+  private boolean fIsTerminated;
 
   public RandoopProgressBar(Composite parent) {
     super(parent, SWT.NONE);
-    start();
+    reset();
 
     addControlListener(new ControlAdapter() {
       @Override
@@ -81,9 +83,9 @@ public class RandoopProgressBar extends Canvas {
   }
 
   private void setStatusColor(GC gc) {
-    if (fStopped)
+    if (fIsTerminated)
       gc.setBackground(fStoppedColor);
-    else if (fError)
+    else if (fHasError)
       gc.setBackground(fFailureColor);
     else
       gc.setBackground(fOKColor);
@@ -133,6 +135,21 @@ public class RandoopProgressBar extends Canvas {
     return size;
   }
 
+  public void reset() {
+    fPercentDone = 0;
+    fColorBarWidth = 0;
+    fHasError = false;
+    fIsTerminated = false;
+    redraw();
+  }
+  
+  public void initializeFrom(TestGeneratorSession session) {
+    reset();
+    fHasError = session.getErrorCount() > 0;
+    fIsTerminated = session.isTerminated();
+    setPercentDone(session.getPercentDone());
+  }
+  
   public void setPercentDone(double percentDone) {
     fPercentDone = percentDone;
     int x = fColorBarWidth;
@@ -145,21 +162,14 @@ public class RandoopProgressBar extends Canvas {
     paintStep(x, fColorBarWidth);
   }
   
-  public void stop() {
-    fStopped = true;
+  public void terminate() {
+    fIsTerminated = true;
     redraw();
   }
   
   public void error() {
-    fError = true;
+    fHasError = true;
     redraw();
   }
-
-	public void start() {
-		fPercentDone = 0;
-		fColorBarWidth = 0;
-		fError = false;
-		fStopped = false;
-		redraw();
-	}
+  
 }
