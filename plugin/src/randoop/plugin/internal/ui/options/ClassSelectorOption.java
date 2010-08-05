@@ -1,15 +1,20 @@
 package randoop.plugin.internal.ui.options;
 
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -18,6 +23,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -221,51 +227,21 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
 
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, IJavaProject javaProject, IJavaElement[] elements) {
+      final SelectionListener listener, IJavaProject javaProject, List<TypeMnemonic> types,
+      Map<TypeMnemonic, List<MethodMnemonic>> methodsByDeclaringTypes) {
 
     this(parent, runnableContext, listener, false);
 
     fJavaProject = javaProject;
-    
-    fTypeSelector.setJavaProject(fJavaProject);
-    
-    for (IJavaElement element : elements) {
-      switch (element.getElementType()) {
-      case IJavaElement.JAVA_PROJECT:
-        try {
-          for (IPackageFragmentRoot pfr : ((IJavaProject) element).getPackageFragmentRoots()) {
-            if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
-              for (IType type : RandoopCoreUtil.findTypes(pfr, true, null)) {
-                fTypeSelector.addClass(type, true);
-              }
-            }
-          }
-        } catch (JavaModelException e) {
-          RandoopPlugin.log(e);
-        }
-        break;
-      case IJavaElement.PACKAGE_FRAGMENT_ROOT:
-      case IJavaElement.PACKAGE_FRAGMENT:
-        for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addClass(type, true);
-        }
-        break;
-      case IJavaElement.COMPILATION_UNIT:
-        for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addClass(type, true);
-        }
-        break;
-      case IJavaElement.TYPE:
-        fTypeSelector.addClass((IType) element, true);
-        break;
-      default:
-        RandoopPlugin.log(StatusFactory.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
-            + element.getElementType()));
-        return;
-      }
-    }
-  }
 
+    fTypeSelector.setJavaProject(fJavaProject);
+
+    for (TypeMnemonic type : types) {
+      fTypeSelector.addClass(type, true, methodsByDeclaringTypes.get(type));
+    }
+    
+  }
+  
   private void handleSearchButtonSelected(IJavaSearchScope searchScope) {
     try {
       IJavaSearchScope junitSearchScope = new FilterJUnitSearchScope(searchScope, fIgnoreJUnitTestCases.getSelection());

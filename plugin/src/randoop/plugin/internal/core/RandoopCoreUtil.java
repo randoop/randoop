@@ -1,5 +1,6 @@
 package randoop.plugin.internal.core;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -162,20 +165,20 @@ public class RandoopCoreUtil {
     return null;
   }
   
-  public static List<IType> findTypes(IJavaElement element, boolean ignoreJUnitTestCases, IProgressMonitor pm) {
+  public static List<IType> findTypes(IJavaElement element, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
     switch (element.getElementType()) {
     case IJavaElement.PACKAGE_FRAGMENT_ROOT:
       IPackageFragmentRoot pfr = (IPackageFragmentRoot) element;
-      return findTypes(pfr, ignoreJUnitTestCases, pm);
+      return findTypes(pfr, ignoreJUnitTestCases, monitor);
     case IJavaElement.PACKAGE_FRAGMENT:
       IPackageFragment pf = (IPackageFragment) element;
-      return findTypes(pf, ignoreJUnitTestCases, pm);
+      return findTypes(pf, ignoreJUnitTestCases, monitor);
     case IJavaElement.COMPILATION_UNIT:
       ICompilationUnit cu = (ICompilationUnit) element;
-      return findTypes(cu, ignoreJUnitTestCases, pm);
+      return findTypes(cu, ignoreJUnitTestCases, monitor);
     case IJavaElement.CLASS_FILE:
       IClassFile cf = (IClassFile) element;
-      return findTypes(cf, ignoreJUnitTestCases, pm);
+      return findTypes(cf, ignoreJUnitTestCases, monitor);
     default:
       RandoopPlugin.log(StatusFactory.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
           + element.getElementType()));
@@ -183,47 +186,53 @@ public class RandoopCoreUtil {
     return null;
   }
 
-  public static List<IType> findTypes(IPackageFragmentRoot pfr, boolean ignoreJUnitTestCases, IProgressMonitor pm) {
-    if (pm == null) {
-      pm = new NullProgressMonitor();
-    }
+  public static List<IType> findTypes(IPackageFragmentRoot pfr, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
+    SubMonitor sm = SubMonitor.convert(monitor);
 
     List<IType> types = new ArrayList<IType>();
     try {
-      for (IJavaElement e : pfr.getChildren()) {
+      IJavaElement[] children = pfr.getChildren();
+      String taskName = MessageFormat.format("Searching for Java types in {0}", pfr.getElementName()); 
+      sm.beginTask(taskName, children.length);
+      for (IJavaElement e : children) {
         Assert.isTrue(e instanceof IPackageFragment);
         IPackageFragment pf = (IPackageFragment) e;
-        types.addAll(findTypes(pf, ignoreJUnitTestCases, pm));
+        types.addAll(findTypes(pf, ignoreJUnitTestCases, sm.newChild(1)));
       }
     } catch (JavaModelException e) {
       RandoopPlugin.log(e);
+    } finally {
+      sm.done();
     }
     
     return types;
   }
   
-  public static List<IType> findTypes(IPackageFragment pf, boolean ignoreJUnitTestCases, IProgressMonitor pm) {
-    if (pm == null) {
-      pm = new NullProgressMonitor();
-    }
+  public static List<IType> findTypes(IPackageFragment pf, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
+    SubMonitor sm = SubMonitor.convert(monitor);
 
     List<IType> types = new ArrayList<IType>();
     try {
+      String taskName = MessageFormat.format("Searching for Java types in {0}", pf.getElementName()); 
       switch (pf.getKind()) {
       case IPackageFragmentRoot.K_BINARY:
-        for (IClassFile cf : pf.getClassFiles()) {
-          types.addAll(findTypes(cf, ignoreJUnitTestCases, pm));
+        IClassFile[] classFiles =  pf.getClassFiles();
+        sm.beginTask(taskName, classFiles.length);
+        for (IClassFile cf : classFiles) {
+          types.addAll(findTypes(cf, ignoreJUnitTestCases, sm.newChild(1)));
 
-          if (pm.isCanceled()) {
+          if (sm.isCanceled()) {
             return types;
           }
         }
         break;
       case IPackageFragmentRoot.K_SOURCE:
-        for (ICompilationUnit cu : pf.getCompilationUnits()) {
-          types.addAll(findTypes(cu, ignoreJUnitTestCases, pm));
+        ICompilationUnit[] compilationUnits =  pf.getCompilationUnits();
+        sm.beginTask(taskName, compilationUnits.length);
+        for (ICompilationUnit cu : compilationUnits) {
+          types.addAll(findTypes(cu, ignoreJUnitTestCases, sm.newChild(1)));
 
-          if (pm.isCanceled()) {
+          if (sm.isCanceled()) {
             return types;
           }
         }
@@ -231,63 +240,61 @@ public class RandoopCoreUtil {
       }
     } catch (JavaModelException e) {
       RandoopPlugin.log(e);
+    } finally {
+      sm.done();
     }
 
     return types;
   }
   
   public static List<IType> findTypes(ICompilationUnit cu, boolean ignoreJUnitTestCases, IProgressMonitor pm)  {
-    if (pm == null) {
-      pm = new NullProgressMonitor();
-    }
+    SubMonitor sm = SubMonitor.convert(pm);
     
-    List<IType> types = new ArrayList<IType>();
+    List<IType> validTypes = new ArrayList<IType>();
     if (cu != null && cu.exists()) {
       try {
-        for (IType t : cu.getAllTypes()) {
+        IType[] allTypes = cu.getAllTypes();
+        pm.beginTask(MessageFormat.format("Searching for valid Java types in {0}", cu.getElementName()), allTypes.length);
+        for (IType t : allTypes) {
           if (isValidTestInput(t, ignoreJUnitTestCases)) {
-            types.add(t);
+            validTypes.add(t);
 
-            pm.worked(1);
             if (pm.isCanceled()) {
-              return types;
+              return validTypes;
             }
           }
+          pm.worked(1);
         }
       } catch (JavaModelException e) {
         RandoopPlugin.log(e);
+        sm.done();
       }
     }
-    return types;
+    
+    sm.done();
+    return validTypes;
   }
   
-  public static List<IType> findTypes(IClassFile cf, boolean ignoreJUnitTestCases, IProgressMonitor pm) {
-    if (pm == null) {
-      pm = new NullProgressMonitor();
-    }
+  public static List<IType> findTypes(IClassFile cf, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
+    SubMonitor sm = SubMonitor.convert(monitor);
 
     List<IType> types = new ArrayList<IType>();
 
+    sm.beginTask(MessageFormat.format("Checking if Java type for {0} is valid", cf.getElementName()), 1);
     if (cf != null && cf.exists()) {
       IType t = cf.getType();
       if (isValidTestInput(t, ignoreJUnitTestCases)) {
         types.add(t);
-
-        pm.worked(1);
-        if (pm.isCanceled()) {
-          return types;
-        }
       }
+      
+      sm.worked(1);
     }
-
+    
+    sm.done();
     return types;
   }
 
   public static boolean isValidTestInput(IType type, boolean ignoreJUnitTestCases) {
-    if (type == null || !type.exists()) {
-      return false;
-    }
-    
     try {
       if (type.isInterface() || Flags.isAbstract(type.getFlags()) || !Flags.isPublic(type.getFlags())) {
         return false;
