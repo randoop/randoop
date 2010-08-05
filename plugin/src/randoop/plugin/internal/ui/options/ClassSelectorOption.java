@@ -179,6 +179,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           }
         }
       });
+      fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
       fResolveClasses.addSelectionListener(listener);
     }
     
@@ -227,8 +228,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fJavaProject = javaProject;
     
     fTypeSelector.setJavaProject(fJavaProject);
-    
-    fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
     
     for (IJavaElement element : elements) {
       switch (element.getElementType()) {
