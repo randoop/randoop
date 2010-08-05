@@ -1,4 +1,4 @@
-package randoop.plugin.internal.core;
+package randoop.plugin.internal.core.launching;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,6 +31,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 /**
@@ -38,9 +39,9 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
  * include the temporary folder for storing class files, and arguments used for
  * generating the test files.
  */
-public class TestGroupResources {
-  public static final String TEMP_SEGMENT = "/temp"; //$NON-NLS-1$
-  private static final IPath TEMP_PATH = RandoopPlugin.getDefault().getStateLocation().append(TEMP_SEGMENT);
+public class RandoopLaunchResources {
+  public static final String LAUNCH_SEGMENT = "/launch"; //$NON-NLS-1$
+  private static final IPath LAUNCH_PATH = RandoopPlugin.getDefault().getStateLocation().append(LAUNCH_SEGMENT);
   private static final String METHODS_FILE = "methods"; //$NON-NLS-1$
   
   private static final String FAILURE_PATH = "randoopFailures"; //$NON-NLS-1$
@@ -64,7 +65,7 @@ public class TestGroupResources {
    *          a name for this set of resources
    * @throws CoreException
    */
-  public TestGroupResources(RandoopArgumentCollector args, IProgressMonitor monitor) throws CoreException {
+  public RandoopLaunchResources(RandoopArgumentCollector args, IProgressMonitor monitor) throws CoreException {
 
     Assert.isLegal(args != null);
     
@@ -76,16 +77,14 @@ public class TestGroupResources {
     Assert.isLegal(fArguments.getJavaProject() != null);
 
     // Create a unique name from the name and time stamp
-    StringBuilder id = new StringBuilder();
-    id.append(Math.abs(args.getName().hashCode()) );
-    id.append('.');
-    id.append(System.currentTimeMillis());
-    id.append('.');
-    id.append(System.nanoTime());
-    fId = id.toString();
+    StringBuilder prehashString = new StringBuilder();
+    prehashString.append(args.getName());
+    prehashString.append(System.currentTimeMillis());
+    prehashString.append(System.nanoTime());
+    fId = Integer.toString(Math.abs(prehashString.toString().hashCode()));
 
     // Make a directory that may be used for storing temporary file if needed
-    fResourceFolder = TEMP_PATH.append(fId).toFile();
+    fResourceFolder = LAUNCH_PATH.append(fId).toFile();
     fResourceFolder.mkdirs();
     
     // Search the arguments for all necessary classpaths in the workspace
@@ -368,8 +367,8 @@ public class TestGroupResources {
     return resources;
   }
 
-  public static void clearTempLocation() {
-    File f = TEMP_PATH.toFile();
+  public static void deleteAllLaunchResources() {
+    File f = LAUNCH_PATH.toFile();
     if (f.exists()) {
       Assert.isTrue(delete(f));
     }

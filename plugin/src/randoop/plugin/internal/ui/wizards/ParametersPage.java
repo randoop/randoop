@@ -20,7 +20,7 @@ import randoop.plugin.internal.ui.options.OptionFactory;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
 
-public class MainPage extends OptionWizardPage {
+public class ParametersPage extends OptionWizardPage {
   private final IJavaProject fProject;
   
   private IOption fOutputFolderOption;
@@ -38,11 +38,11 @@ public class MainPage extends OptionWizardPage {
   private IOption fMaxTestsWritten;
   private IOption fMaxTestsPerFile;
 
-  protected MainPage(String pageName, IJavaProject project, ILaunchConfigurationWorkingCopy config) {
+  protected ParametersPage(String pageName, IJavaProject project, ILaunchConfigurationWorkingCopy config) {
     super(pageName, config);
     
     fProject = project;
-    setTitle("Randoop Launch Configuration"); //$NON-NLS-1$
+    setTitle("Randoop Launch Configuration");
   }
   
   @Override
