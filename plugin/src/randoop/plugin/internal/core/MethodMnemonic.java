@@ -39,19 +39,21 @@ public class MethodMnemonic {
     fIsConstructor = fMethod.isConstructor();
     
     IType type = m.getDeclaringType();
-    fMethodSignature = getStableSignature(type, m);
+    fMethodSignature = getStableSignature(m);
   }
 
-  public static String getStableSignature(IType type, IMethod method) throws JavaModelException {
+  public static String getStableSignature(IMethod method) throws JavaModelException {
+    IType type = method.getDeclaringType();
+    
     StringBuilder methodSignature = new StringBuilder();
     methodSignature.append('(');
     String[] parameters = method.getParameterTypes();
     for (String parameter : parameters) {
-      String sig = RandoopCoreUtil.getFullyQualifiedUnresolvedSignature(type, parameter);
+      String sig = RandoopCoreUtil.getFullyQualifiedUnresolvedSignature(method, parameter);
       methodSignature.append(sig);
     }
     methodSignature.append(')');
-    String sig = RandoopCoreUtil.getFullyQualifiedUnresolvedSignature(type, method.getReturnType());
+    String sig = RandoopCoreUtil.getFullyQualifiedUnresolvedSignature(method, method.getReturnType());
     methodSignature.append(sig);
 
     return methodSignature.toString();
@@ -100,7 +102,7 @@ public class MethodMnemonic {
         for (IMethod m : type.getMethods()) {
           if (m.isConstructor() == isConstructor) {
             if (m.getElementName().equals(name)) {
-              if (getStableSignature(type, m).equals(signature)) {
+              if (getStableSignature(m).equals(signature)) {
                 return m;
               }
             }
