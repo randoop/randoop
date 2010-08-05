@@ -2,6 +2,7 @@ package randoop.plugin.internal.ui.launching;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -10,6 +11,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -34,7 +36,8 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
 
     if (selected.length == 1 && selected[0] instanceof IJavaProject) {
       javaProject = (IJavaProject) selected[0];
-      elements = new IJavaElement[0];
+      elements = new IJavaElement[1];
+      elements[0] = javaProject;
     } else {
       // Ensure every selected object is an instance of IJavaElement that is
       // contained in the same project as the other selected objects
