@@ -37,8 +37,8 @@ import org.eclipse.ui.PlatformUI;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MutableBoolean;
-import randoop.plugin.internal.core.TestGroupResources;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+import randoop.plugin.internal.core.launching.RandoopLaunchResources;
 import randoop.plugin.internal.core.runtime.TestGeneratorSession;
 import randoop.plugin.internal.core.runtime.IMessageListener;
 import randoop.plugin.internal.core.runtime.MessageReceiver;
@@ -113,7 +113,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       }
     }
     
-    TestGroupResources testGroupResources = new TestGroupResources(args, monitor);
+    RandoopLaunchResources launchResources = new RandoopLaunchResources(args, monitor);
     final TestGeneratorSession session = new TestGeneratorSession(launch, args);
     
     fPort = RandoopArgumentCollector.getPort(configuration);
@@ -139,7 +139,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     String workingDirName = workingDir.getAbsolutePath();
 
     // Search for similarly named files in the output directory and warn the user if any are found.
-    final IResource[] resourcesInQuestion = testGroupResources.getThreatendedResources();
+    final IResource[] resourcesInQuestion = launchResources.getThreatendedResources();
 
     // Check if the output directory exists
     if (resourcesInQuestion.length > 0) {
@@ -192,12 +192,12 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     ArrayList<String> vmArguments = new ArrayList<String>();
     ArrayList<String> programArguments = new ArrayList<String>();
     collectExecutionArguments(configuration, vmArguments, programArguments);
-    collectProgramArguments(testGroupResources, programArguments);
+    collectProgramArguments(launchResources, programArguments);
 
     // Classpath
     List<String> cpList = new ArrayList<String>(Arrays.asList(getClasspath(configuration)));
 
-    for (IPath path : testGroupResources.getClasspathLocations()) {
+    for (IPath path : launchResources.getClasspathLocations()) {
       cpList.add(path.makeRelative().toOSString());
     }
     cpList.add(RandoopPlugin.getRandoopJar().toOSString());
@@ -274,9 +274,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.addAll(Arrays.asList(execArgs.getProgramArgumentsArray()));
   }
 
-  protected void collectProgramArguments(TestGroupResources testSetResources,
+  protected void collectProgramArguments(RandoopLaunchResources launchResources,
       List<String> programArguments) {
-    RandoopArgumentCollector args = testSetResources.getArguments();
+    RandoopArgumentCollector args = launchResources.getArguments();
     programArguments.add("gentests"); //$NON-NLS-1$
 
     for (IType type : args.getSelectedTypes()) {
@@ -293,13 +293,13 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.add("--null-ratio=" + args.getNullRatio());//$NON-NLS-1$
     programArguments.add("--inputlimit=" + args.getInputLimit());//$NON-NLS-1$
     programArguments.add("--timelimit=" + args.getTimeLimit());//$NON-NLS-1$
-    programArguments.add("--junit-output-dir=" + testSetResources.getOutputLocation().toOSString());//$NON-NLS-1$
+    programArguments.add("--junit-output-dir=" + launchResources.getOutputLocation().toOSString());//$NON-NLS-1$
     programArguments.add("--junit-package-name=" + args.getJUnitPackageName());//$NON-NLS-1$
     programArguments.add("--junit-classname=" + args.getJUnitClassName());//$NON-NLS-1$
     programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$
     programArguments.add("--outputlimit=" + args.getMaxTestsWritten());//$NON-NLS-1$
     programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
-    programArguments.add("--methodlist=" + testSetResources.getMethodFile().getAbsolutePath());//$NON-NLS-1$
+    programArguments.add("--methodlist=" + launchResources.getMethodFile().getAbsolutePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
     programArguments.add("--noprogressdisplay"); //$NON-NLS-1$
     programArguments.add("--log=randooplog.txt"); // XXX remove
