@@ -143,7 +143,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
   private class DebugWithJUNitAction extends Action {
     public DebugWithJUNitAction() {
-      super("Debug tests with JUnit");
+      super("Debug Tests with JUnit");
       setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG));
     }
     
@@ -162,10 +162,11 @@ public class TestGeneratorViewPart extends ViewPart {
   
   private class RunWithJUnitAction extends Action {
     public RunWithJUnitAction() {
-      super("Run tests with JUnit");
+      super("Run Tests with JUnit");
       
       ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/run_junit.png");
       setImageDescriptor(desc);
+      setEnabled(false);
     }
     
     @Override
@@ -183,9 +184,10 @@ public class TestGeneratorViewPart extends ViewPart {
   
   private class TerminateAction extends Action {
     public TerminateAction() {
-      super("Terminate");
+      super("Stop Test Generation");
       
       setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
+      setEnabled(false);
     }
     
     @Override
@@ -197,7 +199,9 @@ public class TestGeneratorViewPart extends ViewPart {
   private class RelaunchAction extends Action {
     public RelaunchAction () {
       super("Regenerate tests");
+      
       setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+      setEnabled(false);
     }
     @Override
     public void run() {
@@ -236,6 +240,9 @@ public class TestGeneratorViewPart extends ViewPart {
     fRunWithJUnitAction.setEnabled(false);
     fTerminateAction.setEnabled(true);
     fRelaunchAction.setEnabled(true);
+    
+    getProgressBar().reset();
+    getCounterPanel().reset();
   }
   
   public boolean setActiveTestRunSession(TestGeneratorSession session) {
@@ -263,19 +270,17 @@ public class TestGeneratorViewPart extends ViewPart {
       fTreeViewer.refresh();
       fTreeViewer.expandAll();
 
-      int errorCount = fSession.getErrorCount();
-      if (errorCount > 0) {
-        getProgressBar().error();
-      }
-      getCounterPanel().setErrorCount(errorCount);
-
-      getProgressBar().setPercentDone(fSession.getPercentDone());
-      getCounterPanel().setNumSequences(fSession.getSequenceCount());
+      getProgressBar().initializeFrom(fSession);
+      getCounterPanel().initializeFrom(fSession);
 
       if (fSession.isRunning()) {
         fDebugWithJUnitAction.setEnabled(false);
         fRunWithJUnitAction.setEnabled(false);
         fTerminateAction.setEnabled(true);
+      } else if (fSession.isTerminated()) {
+        fDebugWithJUnitAction.setEnabled(false);
+        fRunWithJUnitAction.setEnabled(false);
+        fTerminateAction.setEnabled(false);
       }
 
       setDriver(fSession.getJUnitDriver());
@@ -300,6 +305,7 @@ public class TestGeneratorViewPart extends ViewPart {
       }
     }
     
+    getProgressBar().terminate();
     fTerminateAction.setEnabled(false);
     return true;
   }
@@ -367,7 +373,7 @@ public class TestGeneratorViewPart extends ViewPart {
     }
 
     @Override
-    public void sessionStopped() {
+    public void sessionTerminated() {
       getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {

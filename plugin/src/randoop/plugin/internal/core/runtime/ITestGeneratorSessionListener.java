@@ -10,7 +10,7 @@ public interface ITestGeneratorSessionListener {
   
   public void sessionEnded();
   
-  public void sessionStopped();
+  public void sessionTerminated();
   
   public void errorRevealed(ErrorRevealed error);
   

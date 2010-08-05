@@ -31,6 +31,8 @@ public class TestGeneratorSession {
   
   private boolean fIsStopped;
 
+  private boolean fIsTerminated;
+  
   private ListenerList/*<ISessionChangeListener>*/ fListeners;
 
   public TestGeneratorSession(ILaunch launch, RandoopArgumentCollector args) {
@@ -47,6 +49,7 @@ public class TestGeneratorSession {
     
     fIsStarted = false;
     fIsStopped = false;
+    fIsTerminated = false;
   }
   
   public boolean isStarted() {
@@ -149,12 +152,17 @@ public class TestGeneratorSession {
     return fIsStopped;
   }
   
+  public boolean isTerminated() {
+    return fIsTerminated;
+  }
+  
   public void stop(boolean force) {
     fIsStopped = true;
+    fIsTerminated = force;
     
     if (force) {
       for (Object o : fListeners.getListeners()) {
-        ((ITestGeneratorSessionListener) o).sessionStopped();
+        ((ITestGeneratorSessionListener) o).sessionTerminated();
       }
     } else {
       for (Object o : fListeners.getListeners()) {
