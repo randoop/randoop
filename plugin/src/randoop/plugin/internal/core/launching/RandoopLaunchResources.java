@@ -29,10 +29,13 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+import randoop.plugin.internal.ui.MessageUtil;
 
 /**
  * Manages and supplies resources used for generating a test set. Resources
@@ -178,51 +181,83 @@ public class RandoopLaunchResources {
       
       List<IMethod> methods = fArguments.getSelectedMethods();
       
+      String unusedStatments = "";
       for (IMethod method : methods) {
+        // TODO: This blocks the output of any methods that use type variables
+        boolean hasTypeVariables = false;
+        if (method.getTypeParameters().length != 0)
+          hasTypeVariables = true;
+        
+        List<String> potentialTypeVars = new ArrayList<String>();
+        potentialTypeVars.add(method.getReturnType());
+        potentialTypeVars.addAll(Arrays.asList(method.getParameterTypes()));
+        for (String paramType : potentialTypeVars) {
+          String sig = RandoopCoreUtil.getFullyQualifiedUnresolvedSignature(method, paramType);
+          
+          int arrayCount = Signature.getArrayCount(sig);
+          String sigWithoutArray = sig.substring(arrayCount);
+          if (sigWithoutArray.charAt(0) == Signature.C_TYPE_VARIABLE) {
+            hasTypeVariables = true;
+            break;
+          }
+        }
+
+        StringBuilder statement = new StringBuilder();
+        
         boolean isConstructor = method.isConstructor();
-        
-        if(isConstructor) {
-          bw.write("cons : "); //$NON-NLS-1$
+        if (isConstructor) {
+          statement.append("cons : "); //$NON-NLS-1$
         } else {
-          bw.write("method : "); //$NON-NLS-1$
+          statement.append("method : "); //$NON-NLS-1$
         }
-        
-        bw.write(method.getDeclaringType().getFullyQualifiedName());
-        bw.write('.');
-        if(isConstructor) {
-          bw.write("<init>"); //$NON-NLS-1$
+
+        statement.append(method.getDeclaringType().getFullyQualifiedName());
+        statement.append('.');
+        if (isConstructor) {
+          statement.append("<init>"); //$NON-NLS-1$
         } else {
-          bw.write(method.getElementName());
+          statement.append(method.getElementName());
         }
-        bw.write('(');
-        
+        statement.append('(');
+
         String[] parameters = method.getParameterTypes();
-        for(int i=0;i<parameters.length;i++) {
+        for (int i = 0; i < parameters.length; i++) {
           String parameter = Signature.toString(parameters[i]);
           IType type = method.getDeclaringType();
-          
+
           String[][] types = type.resolveType(parameter);
-          
+
           if (types != null) {
             // Write the first type that was resolved
-            bw.write(types[0][0]); // the package name
-            bw.write('.');
-            bw.write(types[0][1]); // the class name
+            statement.append(types[0][0]); // the package name
+            statement.append('.');
+            statement.append(types[0][1]); // the class name
           } else {
             // Otherwise this is a primitive type, write it as it is
-            bw.write(parameter);
+            statement.append(parameter);
           }
           if (i < parameters.length - 1) {
-            bw.write(',');
+            statement.append(',');
           }
         }
-        bw.write(')');
+        statement.append(')');
         
-        bw.newLine();
-        bw.flush();
+        if (hasTypeVariables) {
+          unusedStatments += statement.toString() + '\n';
+        } else {
+          bw.write(statement.toString());
+          bw.newLine();
+          bw.flush();
+        }
       }
       
       bw.close();
+      
+      if (!unusedStatments.isEmpty()) {
+        unusedStatments = "The Randoop Eclipse plugin does not currently support selectively testing methods that use type variables. The following methods will not be tested:\n\n" //$NON-NLS-1$
+            + unusedStatments;
+        MessageUtil.openInformation(unusedStatments);
+      }
     } catch (IOException e) {
       fMethodsFile = null;
     } catch (JavaModelException e) {
