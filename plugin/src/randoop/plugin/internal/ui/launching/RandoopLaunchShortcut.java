@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -80,10 +81,12 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     }
     
     final List<TypeMnemonic> typeMnemonics = new ArrayList<TypeMnemonic>();
-    final Map<TypeMnemonic, List<MethodMnemonic>> methodsByDeclaringTypes= new HashMap<TypeMnemonic, List<MethodMnemonic>>();
+    final Map<TypeMnemonic, List<String>> availableMethodsByDeclaringTypes = new HashMap<TypeMnemonic, List<String>>();
+    final Map<TypeMnemonic, List<String>> selectedMethodsByDeclaringTypes = new HashMap<TypeMnemonic, List<String>>();
     
     try {
       final MutableBoolean isCancelled = new MutableBoolean(true);
+      
       IRunnableWithProgress op = new IRunnableWithProgress() {
 
         @Override
@@ -91,13 +94,14 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
           SubMonitor parentMonitor = SubMonitor.convert(monitor);
           parentMonitor.beginTask("Searching for class and method inputs in selection...", 2);
           List<IType> types = new ArrayList<IType>();
+          List<IType> selectedTypes = new ArrayList<IType>();
 
           SubMonitor listSearchMonitor = parentMonitor.newChild(1);
           listSearchMonitor.beginTask("Searching for class inputs in selection...", elements.length);
           for (IJavaElement element : elements) {
             SubMonitor elementSearchMonitor = listSearchMonitor.newChild(2);
             switch (element.getElementType()) {
-            case IType.JAVA_PROJECT:
+            case IJavaElement.JAVA_PROJECT:
               try {
                 String taskName = MessageFormat.format("Searching for class inputs in {0}",
                     element.getElementName());
@@ -114,21 +118,37 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
                 RandoopPlugin.log(e);
               }
               break;
-            case IType.PACKAGE_FRAGMENT_ROOT:
-            case IType.PACKAGE_FRAGMENT:
+            case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+            case IJavaElement.PACKAGE_FRAGMENT:
               types.addAll(RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1)));
               break;
-            case IType.COMPILATION_UNIT:
+            case IJavaElement.COMPILATION_UNIT:
               types.addAll(RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1)));
               break;
-            case IType.TYPE:
+            case IJavaElement.TYPE:
               types.add((IType) element);
+              selectedTypes.add((IType) element);
               elementSearchMonitor.worked(1);
               break;
-            default:
-              RandoopPlugin.log(StatusFactory.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
-                  + element.getElementType()));
-              return;
+            case IJavaElement.METHOD:
+              try {
+                IMethod m = (IMethod) element;
+                IType type = m.getDeclaringType();
+                TypeMnemonic typeMnemonic = new TypeMnemonic(type);
+
+                List<String> methodMnemonics = selectedMethodsByDeclaringTypes.get(typeMnemonic);
+                if (methodMnemonics == null) {
+                  methodMnemonics = new ArrayList<String>();
+                  selectedMethodsByDeclaringTypes.put(typeMnemonic, methodMnemonics);
+                }
+                methodMnemonics.add(new MethodMnemonic(m).toString());
+                if (!types.contains(type)) {
+                  types.add(type);
+                }
+                break;
+              } catch (JavaModelException e) {
+                RandoopPlugin.log(e);
+              }
             }
           }
           listSearchMonitor.done();
@@ -141,18 +161,19 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
 
               TypeMnemonic typeMnemonic = new TypeMnemonic(type);
               typeMnemonics.add(typeMnemonic);
-
-              List<MethodMnemonic> methodMnemonics = methodsByDeclaringTypes.get(typeMnemonics);
-              if (methodMnemonics == null) {
-                methodMnemonics = new ArrayList<MethodMnemonic>();
-                methodsByDeclaringTypes.put(typeMnemonic, methodMnemonics);
+              
+              if (selectedTypes.contains(type)) {
+                selectedMethodsByDeclaringTypes.put(typeMnemonic, null);
               }
+
+              List<String> methodMnemonics = new ArrayList<String>();
+              availableMethodsByDeclaringTypes.put(typeMnemonic, methodMnemonics);
               
               IMethod[] methods = type.getMethods();
               SubMonitor methodMonitor = conversionMonitor.newChild(1);
               methodMonitor.beginTask(MessageFormat.format("Searching for methods in {0}", type.getElementName()), methods.length);
               for (IMethod m : methods) {
-                methodMnemonics.add(new MethodMnemonic(m));
+                methodMnemonics.add(new MethodMnemonic(m).toString());
                 methodMonitor.worked(1);
               }
               methodMonitor.done();
@@ -179,8 +200,8 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
         ILaunchConfigurationWorkingCopy config = randoopLaunchType.newInstance(null,
             launchManager.generateUniqueLaunchConfigurationNameFrom("RandoopTest")); //$NON-NLS-1$
 
-        RandoopWizardRunner runner = new RandoopWizardRunner(javaProject,
-            typeMnemonics, methodsByDeclaringTypes, config);
+        RandoopWizardRunner runner = new RandoopWizardRunner(javaProject, typeMnemonics,
+            availableMethodsByDeclaringTypes, selectedMethodsByDeclaringTypes, config);
         PlatformUI.getWorkbench().getDisplay().syncExec(runner);
 
         if (runner.getReturnCode() == WizardDialog.OK) {
@@ -204,16 +225,19 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
   private class RandoopWizardRunner implements Runnable {
     IJavaProject fJavaProject;
     List<TypeMnemonic> fTypes;
-    Map<TypeMnemonic, List<MethodMnemonic>> fMethodsByDeclaringTypes;
+    Map<TypeMnemonic, List<String>> fAvailableMethodsByDeclaringTypes;
+    Map<TypeMnemonic, List<String>> fSelectedMethodsByDeclaringTypes;
     ILaunchConfigurationWorkingCopy fConfig;
     int fReturnCode;
 
     public RandoopWizardRunner(IJavaProject javaProject, List<TypeMnemonic> typeMnemonics,
-        Map<TypeMnemonic, List<MethodMnemonic>> methodsByDeclaringTypes,
+        Map<TypeMnemonic, List<String>> availableMethodsByDeclaringTypes,
+        Map<TypeMnemonic, List<String>> selectedMethodsByDeclaringTypes,
         ILaunchConfigurationWorkingCopy config) {
       fJavaProject = javaProject;
       fTypes = typeMnemonics;
-      fMethodsByDeclaringTypes = methodsByDeclaringTypes;
+      fAvailableMethodsByDeclaringTypes = availableMethodsByDeclaringTypes;
+      fSelectedMethodsByDeclaringTypes = selectedMethodsByDeclaringTypes;
       fConfig = config;
       fReturnCode = -1;
     }
@@ -225,7 +249,9 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
         Assert.isNotNull(shell);
 
-        RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(fJavaProject, fTypes, fMethodsByDeclaringTypes, fConfig);
+        RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(
+            fJavaProject, fTypes, fAvailableMethodsByDeclaringTypes,
+            fSelectedMethodsByDeclaringTypes, fConfig);
         WizardDialog dialog = new WizardDialog(shell, wizard);
 
         dialog.create();

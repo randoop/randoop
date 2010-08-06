@@ -22,10 +22,14 @@ public class TestInputsPage extends OptionWizardPage {
 
   private IJavaProject fJavaProject;
   private List<TypeMnemonic> fTypes;
-  private Map<TypeMnemonic, List<MethodMnemonic>> fMethodsByDeclaringTypes;
+  private Map<TypeMnemonic, List<String>> fAvailableMethodsByDeclaringTypes;
+  private Map<TypeMnemonic, List<String>> fSelectedMethodsByDeclaringTypes;
 
   protected TestInputsPage(String pageName, IJavaProject project, List<TypeMnemonic> types,
-      Map<TypeMnemonic, List<MethodMnemonic>> methodsByDeclaringTypes, ILaunchConfigurationWorkingCopy config) {
+      Map<TypeMnemonic, List<String>> availableMethodsByDeclaringTypes,
+      Map<TypeMnemonic, List<String>> selectedMethodsByDeclaringTypes,
+      ILaunchConfigurationWorkingCopy config) {
+
     super(pageName, config);
 
     setTitle("Test Inputs");
@@ -33,18 +37,21 @@ public class TestInputsPage extends OptionWizardPage {
 
     fJavaProject = project;
     fTypes = types;
-    fMethodsByDeclaringTypes = methodsByDeclaringTypes;
+    fAvailableMethodsByDeclaringTypes = availableMethodsByDeclaringTypes;
+    fSelectedMethodsByDeclaringTypes = selectedMethodsByDeclaringTypes;
   }
-  
+
   @Override
   public void createControl(Composite parent) {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(comp);
 
-    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard().getContainer(), getBasicSelectionListener(), fJavaProject, fTypes, fMethodsByDeclaringTypes);
-    
+    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard().getContainer(),
+        getBasicSelectionListener(), fJavaProject, fTypes, fAvailableMethodsByDeclaringTypes,
+        fSelectedMethodsByDeclaringTypes);
+
     addOption(fTestInputSelectorOption);
-    
+
     super.createControl(parent);
   }
 
