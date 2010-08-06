@@ -77,7 +77,26 @@
             modes="run">
          <contextualLaunch>
 	         <enablement>
-		       <or>
+         <or>
+            <with
+                  variable="selection">
+               <and>
+                  <test
+                        property="randoop.arraylist.isAllInSameProject">
+                  </test>
+                  <iterate
+                        operator="or">
+                     <and>
+                        <adapt
+                              type="org.eclipse.jdt.core.IJavaElement">
+                        </adapt>
+                        <test
+                              property="randoop.adaptable.isTestable">
+                        </test>
+                     </and>
+                  </iterate>
+               </and>
+            </with>
             <with
                   variable="selection">
                <count
@@ -95,24 +114,7 @@
                   </and>
                </iterate>
             </with>
-            <with
-                  variable="selection">
-               <and>
-                  <test
-                        property="randoop.arraylist.isAllInSameProject">
-                  </test>
-                  <iterate
-                        operator="and">
-                     <adapt
-                           type="org.eclipse.jdt.core.IJavaElement">
-                     </adapt>
-                     <test
-                           property="randoop.adaptable.isTestable">
-                     </test>
-                  </iterate>
-               </and>
-            </with>
-		       </or>
+         </or>
 	         </enablement>
          </contextualLaunch>
          <configurationType

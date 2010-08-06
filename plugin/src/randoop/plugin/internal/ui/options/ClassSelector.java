@@ -210,8 +210,6 @@ public class ClassSelector {
   }
   
   /**
-   * Adds a type to this tree. The type is assumed to not exist, and methods
-   * will not be searched for.
    * 
    * @param type
    * @return the <code>TreeItem</code> added to the <code>Tree</code> or
@@ -231,8 +229,7 @@ public class ClassSelector {
     int insertionIndex = getInsertionIndex(parent.getItems(), text);
     classItem = new TreeItem(parent, SWT.NONE, insertionIndex);
 
-    Image errorImage = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
-    classItem.setImage(errorImage);
+    classItem.setImage(getImageForType(typeMnemonic.getType()));
 
     classItem.setText(text);
     setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
@@ -245,10 +242,9 @@ public class ClassSelector {
         MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString);
 
         setMnemonic(methodItem, IJavaElement.METHOD, methodMnemonicString);
-        methodItem.setImage(errorImage);
+        methodItem.setImage(getImageMethod(new MethodMnemonic(methodMnemonicString, getWorkspaceRoot()).getMethod()));
 
-        methodItem.setText(Signature.toString(methodMnemonic.getMethodSignature(),
-            methodMnemonic.getMethodName(), null, false, true));
+        methodItem.setText(getReadableStringForMethod(methodMnemonic));
 
         if (classIsChecked || selectedMethods.contains(methodMnemonicString)) {
           methodItem.setChecked(true);
@@ -259,7 +255,7 @@ public class ClassSelector {
     
     return classItem;
   }
-  
+
   /**
    * Adds a type to this tree. All of the types methods will also be added as
    * children to this tree.
@@ -271,33 +267,8 @@ public class ClassSelector {
    */
   TreeItem addClass(IType type, boolean checked) {
     try {
-      return addClass(new TypeMnemonic(type), checked);
-    } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
-      return null;
-    }
-  }
+      TypeMnemonic typeMnemonic = new TypeMnemonic(type);
 
-  TreeItem addClass(TypeMnemonic typeMnemonic, boolean checked) {
-    IType type = typeMnemonic.getType();
-    List<MethodMnemonic> methodList = new ArrayList<MethodMnemonic>();
-
-    try {
-      IMethod[] methods = type.getMethods();
-      for (IMethod m : methods) {
-        methodList.add(new MethodMnemonic(m));
-      }
-    } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
-    }
-
-    return addClass(typeMnemonic, checked, methodList);
-  }
-  
-  TreeItem addClass(TypeMnemonic typeMnemonic, boolean checked, List<MethodMnemonic> methodMnemonics) {
-    try {
-      IType type = typeMnemonic.getType();
-      
       if (type == null || type.isInterface() || Flags.isAbstract(type.getFlags())) {
         return null;
       }
@@ -318,10 +289,11 @@ public class ClassSelector {
       classItem.setText(text);
       
       setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
-      setMethods(classItem, methodMnemonics);
+      setMethods(classItem, type, true);
       
       setChecked(classItem, checked);
       
+      updateTree(classItem);
       return classItem;
     } catch (JavaModelException e) {
       RandoopPlugin.log(e);
@@ -340,58 +312,59 @@ public class ClassSelector {
     return insertionIndex;
   }
   
-  private static void setMethods(TreeItem classItem, IType type) throws JavaModelException {
+  private static void setMethods(TreeItem classItem, IType type, boolean checked) throws JavaModelException {
     classItem.removeAll();
     
     for (IMethod m : type.getMethods()) {
-      addMethods(classItem, new MethodMnemonic(m));
+      addMethods(classItem, new MethodMnemonic(m), checked);
     }
   }
   
-  private static void setMethods(TreeItem classItem, List<MethodMnemonic> methodMnemonics) throws JavaModelException {
+  private static void setMethods(TreeItem classItem, List<MethodMnemonic> methodMnemonics, boolean checked) throws JavaModelException {
     classItem.removeAll();
     
     for (MethodMnemonic methodMnemonic : methodMnemonics) {
-      addMethods(classItem, methodMnemonic);
+      addMethods(classItem, methodMnemonic, checked);
     }
   }
   
-  private static void addMethods(TreeItem classItem, MethodMnemonic methodMnemonic) {
+  private static void addMethods(TreeItem classItem, MethodMnemonic methodMnemonic, boolean checked) {
     try {
       IMethod m = methodMnemonic.getMethod();
       int flags = m.getFlags();
-      if (!(Flags.isSynthetic(flags) || Flags.isBridge(flags))) {
+      if (!Flags.isSynthetic(flags) && !Flags.isBridge(flags)) {
         TreeItem methodItem = new TreeItem(classItem, SWT.NONE);
-        String methodSignature = methodMnemonic.getMethodSignature();
 
         // Uses-fully qualified names:
         // String readableMethod =
         // Signature.toString(methodMnemonic.getMethodSignature(),
         // m.getElementName(), null, false, true);
 
-        // Get a human readable name for this method without using
-        // fully-qualified names
-        StringBuilder readableMethod = new StringBuilder();
-        if (!m.isConstructor()) {
-          readableMethod.append(RandoopCoreUtil.getClassName(m.getDeclaringType(),
-              Signature.getReturnType(methodSignature)));
-          readableMethod.append(' ');
-        }
-        readableMethod.append(methodMnemonic.getMethodName());
-        readableMethod.append('(');
-        String[] parameters = Signature.getParameterTypes(methodSignature);
-        for (int i = 0; i < parameters.length; i++) {
-          readableMethod.append(RandoopCoreUtil.getClassName(m.getDeclaringType(), parameters[i]));
-
-          if (i + 1 < parameters.length) {
-            readableMethod.append(", "); //$NON-NLS-1$
-          }
-        }
-        readableMethod.append(')');
+//        String methodSignature = methodMnemonic.getMethodSignature();
+//        // Get a human readable name for this method without using
+//        // fully-qualified names
+//        StringBuilder readableMethod = new StringBuilder();
+//        if (!m.isConstructor()) {
+//          readableMethod.append(RandoopCoreUtil.getClassName(m.getDeclaringType(),
+//              Signature.getReturnType(methodSignature)));
+//          readableMethod.append(' ');
+//        }
+//        readableMethod.append(methodMnemonic.getMethodName());
+//        readableMethod.append('(');
+//        String[] parameters = Signature.getParameterTypes(methodSignature);
+//        for (int i = 0; i < parameters.length; i++) {
+//          readableMethod.append(RandoopCoreUtil.getClassName(m.getDeclaringType(), parameters[i]));
+//
+//          if (i + 1 < parameters.length) {
+//            readableMethod.append(", "); //$NON-NLS-1$
+//          }
+//        }
+//        readableMethod.append(')');
 
         Signature.toString(methodMnemonic.getMethodSignature(), m.getElementName(), null, false, true);
 
-        methodItem.setText(readableMethod.toString());
+        methodItem.setChecked(checked);
+        methodItem.setText(getReadableStringForMethod(methodMnemonic));
         methodItem.setImage(getImageMethod(m));
 
         setMnemonic(methodItem, IJavaElement.METHOD, methodMnemonic.toString());
@@ -399,6 +372,32 @@ public class ClassSelector {
     } catch (JavaModelException e) {
       RandoopPlugin.log(e);
     }
+  }
+  
+  private static String getReadableStringForMethod(MethodMnemonic methodMnemonic) {
+    String methodSignature = methodMnemonic.getMethodSignature();
+    
+    StringBuilder readableMethod = new StringBuilder();
+    if (!methodMnemonic.isConstructor()) {
+      String returnSig = Signature.getReturnType(methodSignature);
+      String returnFQTypename = Signature.toString(returnSig);
+      readableMethod.append(RandoopCoreUtil.getClassName(returnFQTypename));
+      readableMethod.append(' ');
+    }
+    readableMethod.append(methodMnemonic.getMethodName());
+    readableMethod.append('(');
+    String[] parameters = Signature.getParameterTypes(methodSignature);
+    for (int i = 0; i < parameters.length; i++) {
+      String fqname = Signature.toString(parameters[i]);
+      readableMethod.append(RandoopCoreUtil.getClassName(fqname));
+
+      if (i + 1 < parameters.length) {
+        readableMethod.append(", "); //$NON-NLS-1$
+      }
+    }
+    readableMethod.append(')');
+    
+    return readableMethod.toString();
   }
 
   private static Image getImageForType(IType type) {
@@ -788,7 +787,7 @@ public class ClassSelector {
             typeMnemonic = new TypeMnemonic(type);
 
             setMnemonic(classItem, IJavaElement.TYPE, typeMnemonic.toString());
-            setMethods(classItem, type);
+            setMethods(classItem, type, false);
           }
           
           boolean hasIndividuallyCheckedMethods = classItem.getGrayed();
@@ -867,7 +866,7 @@ public class ClassSelector {
               boolean expanded = classItem.getExpanded();
 
               try {
-                setMethods(classItem, newMnemonic.getType());
+                setMethods(classItem, newMnemonic.getType(), false);
                 classItem.setExpanded(expanded);
 
                 for (TreeItem methodItem : classItem.getItems()) {

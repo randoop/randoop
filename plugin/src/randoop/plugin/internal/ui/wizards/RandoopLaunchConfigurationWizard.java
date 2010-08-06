@@ -22,15 +22,19 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
   OptionWizardPage fTestInputsPage;
 
   public RandoopLaunchConfigurationWizard(IJavaProject javaProject, List<TypeMnemonic> types,
-      Map<TypeMnemonic, List<MethodMnemonic>> methodsByDeclaringTypes, ILaunchConfigurationWorkingCopy config) throws CoreException {
+      Map<TypeMnemonic, List<String>> methodsByDeclaringTypes,
+      Map<TypeMnemonic, List<String>> availableByDeclaringTypes,
+      ILaunchConfigurationWorkingCopy config) throws CoreException {
+    
     super();
-    
+
     fConfig = config;
-    
-    fTestInputsPage = new TestInputsPage("Test Inputs", javaProject, types, methodsByDeclaringTypes, fConfig);
+
+    fTestInputsPage = new TestInputsPage("Test Inputs", javaProject, types,
+        methodsByDeclaringTypes, availableByDeclaringTypes, fConfig);
     fMainPage = new ParametersPage("Main", javaProject, fConfig);
     fMainPage.setPreviousPage(fMainPage);
-    
+
     addPage(fTestInputsPage);
     addPage(fMainPage);
 
