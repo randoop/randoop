@@ -228,7 +228,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
       final SelectionListener listener, IJavaProject javaProject, List<TypeMnemonic> types,
-      Map<TypeMnemonic, List<MethodMnemonic>> methodsByDeclaringTypes) {
+      Map<TypeMnemonic, List<String>> availableMethodsByDeclaringTypes,
+      Map<TypeMnemonic, List<String>> selectedMethodsByDeclaringTypes) {
 
     this(parent, runnableContext, listener, false);
 
@@ -237,7 +238,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeSelector.setJavaProject(fJavaProject);
 
     for (TypeMnemonic type : types) {
-      fTypeSelector.addClass(type, true, methodsByDeclaringTypes.get(type));
+      List<String> availableMethods = availableMethodsByDeclaringTypes.get(type);
+      List<String> selectedMethods = selectedMethodsByDeclaringTypes.get(type);
+      fTypeSelector.addClass(type, selectedMethods == null, availableMethods, selectedMethods);
     }
     
   }

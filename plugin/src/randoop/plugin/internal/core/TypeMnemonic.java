@@ -404,5 +404,18 @@ public class TypeMnemonic {
 
     return mnemonic.toString();
   }
+  
+  @Override
+  public int hashCode() {
+    return toString().hashCode();
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof TypeMnemonic) {
+      return toString().equals(((TypeMnemonic) obj).toString());
+    }
+    return false;
+  }
 
 }

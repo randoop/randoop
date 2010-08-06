@@ -153,5 +153,18 @@ public class MethodMnemonic {
 
     return mnemonic.toString();
   }
-
+  
+  @Override
+  public int hashCode() {
+    return toString().hashCode();
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof MethodMnemonic) {
+      return toString().equals(((MethodMnemonic) obj).toString());
+    }
+    return false;
+  }
+  
 }
