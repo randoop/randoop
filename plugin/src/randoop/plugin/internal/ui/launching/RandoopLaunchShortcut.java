@@ -120,10 +120,14 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
               break;
             case IJavaElement.PACKAGE_FRAGMENT_ROOT:
             case IJavaElement.PACKAGE_FRAGMENT:
+              List<IType> foundTypes = RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1));
               types.addAll(RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1)));
+              selectedTypes.addAll(foundTypes);
               break;
             case IJavaElement.COMPILATION_UNIT:
-              types.addAll(RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1)));
+              foundTypes = RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1));
+              types.addAll(foundTypes);
+              selectedTypes.addAll(foundTypes);
               break;
             case IJavaElement.TYPE:
               types.add((IType) element);
