@@ -3,6 +3,7 @@ package randoop.plugin.internal.ui.options;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -154,10 +155,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       @Override
       public void widgetSelected(SelectionEvent e) {
         try {
-          IClasspathEntry classpathEntry = chooseClasspathEntry();
-          if (classpathEntry != null) {
-            IJavaElement[] elements = RandoopCoreUtil.findPackageFragmentRoots(fJavaProject, classpathEntry);
-            IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements);
+          IClasspathEntry[] classpathEntries = chooseClasspathEntry();
+          if (classpathEntries != null) {
+            ArrayList<IJavaElement> elements = new ArrayList<IJavaElement>();
+            for (IClasspathEntry classpathEntry : classpathEntries) {
+              IPackageFragmentRoot[] pfrs = RandoopCoreUtil.findPackageFragmentRoots(fJavaProject, classpathEntry);
+              elements.addAll(Arrays.asList(pfrs));
+            }
+            
+            IJavaElement[] elementArray = (IJavaElement[]) elements.toArray(new IJavaElement[elements.size()]);
+            IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elementArray);
             handleSearchButtonSelected(searchScope);
           }
         } catch (JavaModelException jme) {
@@ -252,7 +259,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       SelectionDialog dialog = JavaUI.createTypeDialog(fShell, fRunnableContext, junitSearchScope,
           IJavaElementSearchConstants.CONSIDER_CLASSES_AND_ENUMS, true, "",
           new RandoopTestInputSelectionExtension());
-      dialog.setMessage("Add class input");
+      dialog.setTitle("Add Classes");
       dialog.setMessage("Enter type name prefix or pattern (*, ?, or camel case):");
       dialog.open();
 
@@ -379,7 +386,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return StatusFactory.OK_STATUS;
   }
 
-  private IClasspathEntry chooseClasspathEntry() throws JavaModelException {
+  private IClasspathEntry[] chooseClasspathEntry() throws JavaModelException {
     ILabelProvider labelProvider = new ClasspathLabelProvider(fJavaProject);
     ElementListSelectionDialog dialog = new ElementListSelectionDialog(fShell, labelProvider);
     dialog.setTitle("Classpath Selection");
@@ -387,9 +394,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
     IClasspathEntry[] classpaths = fJavaProject.getRawClasspath();
     dialog.setElements(classpaths);
+    dialog.setMultipleSelection(true);
 
     if (dialog.open() == Window.OK) {
-      return (IClasspathEntry) dialog.getFirstResult();
+      List<IClasspathEntry> cpentries = new ArrayList<IClasspathEntry>();
+      for (Object obj : dialog.getResult()) {
+        if (obj instanceof IClasspathEntry) {
+          cpentries.add((IClasspathEntry) obj);
+        }
+      }
+      return (IClasspathEntry[]) cpentries.toArray(new IClasspathEntry[cpentries.size()]);
     }
     return null;
   }
