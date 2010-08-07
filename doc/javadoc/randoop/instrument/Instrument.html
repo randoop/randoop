@@ -1,0 +1,555 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML lang="en">
+<HEAD>
+<TITLE>
+Instrument
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Instrument";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../randoop/instrument/Premain.html" title="class in randoop.instrument"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?randoop/instrument/Instrument.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="Instrument.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop.instrument</FONT>
+<BR>
+Class Instrument</H2>
+<PRE>
+Object
+  <IMG SRC="../../resources/inherit.gif" ALT="extended by "><STRONG>Instrument</STRONG>
+</PRE>
+<DL>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>ClassFileTransformer</DD>
+</DL>
+<HR>
+<PRE>public class <STRONG>Instrument</STRONG>
+extends Object
+implements ClassFileTransformer</PRE>
+
+<P>
+The Instrument class is responsible for modifying another class's
+ bytecode.  It changes calls to specified functions into static
+ calls to user functions.  This allows a user of Randoop to capture
+ arbitrary calls and modify them as desired.  For example, all
+ calls to JOptionPane.showConfirmDialog (which would otherwise
+ hang a regressions test) can be changed to throw an exception,
+ or simply print a message and continue.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;SimpleLog</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#debug_instrument">debug_instrument</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;SimpleLog</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#debug_instrument_inst">debug_instrument_inst</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;SimpleLog</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#debug_map">debug_map</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Debug information on method maping</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;SimpleLog</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#debug_transform">debug_transform</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Debug information about which classes are transformed and why</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;InstructionFactory</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#ifact">ifact</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;List&lt;Instrument.MethodMapInfo&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#map_list">map_list</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List of all classname regexs and their corresponding method maps</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#Instrument()">Instrument</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#add_map_file_shutdown_hook()">add_map_file_shutdown_hook</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a shutdown hook that prints out the results of the method maps</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#dump_map_list()">dump_map_list</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dumps out the map list to the debug_map logger</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#get_attribute_name(org.apache.bcel.classfile.Attribute)">get_attribute_name</A></STRONG>(Attribute&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the attribute name for the specified attribute</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#instrument_method(org.apache.bcel.classfile.Method, org.apache.bcel.generic.MethodGen)">instrument_method</A></STRONG>(Method&nbsp;m,
+                  MethodGen&nbsp;mg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instrument the specified method to replace mapped calls.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#is_local_variable_type_table(org.apache.bcel.classfile.Attribute)">is_local_variable_type_table</A></STRONG>(Attribute&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#read_map_file(java.io.File)">read_map_file</A></STRONG>(File&nbsp;map_file)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads the file that specifies method calls that should be replaced
+ by other method calls.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#replace_instructions(org.apache.bcel.generic.InstructionList, org.apache.bcel.generic.InstructionHandle, org.apache.bcel.generic.InstructionList)">replace_instructions</A></STRONG>(InstructionList&nbsp;il,
+                     InstructionHandle&nbsp;ih,
+                     InstructionList&nbsp;new_il)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replace instruction ih in list il with the instructions in new_il.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/instrument/Instrument.html#transform(java.lang.ClassLoader, java.lang.String, java.lang.Class, java.security.ProtectionDomain, byte[])">transform</A></STRONG>(ClassLoader&nbsp;loader,
+          String&nbsp;className,
+          Class&lt;?&gt;&nbsp;classBeingRedefined,
+          ProtectionDomain&nbsp;protectionDomain,
+          byte[]&nbsp;classfileBuffer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given another class, return a transformed version of the class which
+ replaces specified calls with alternative static implementations</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Field Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ifact"><!-- --></A><H3>
+ifact</H3>
+<PRE>
+protected InstructionFactory <STRONG>ifact</STRONG></PRE>
+<HR>
+
+<A NAME="debug_transform"><!-- --></A><H3>
+debug_transform</H3>
+<PRE>
+public static SimpleLog <STRONG>debug_transform</STRONG></PRE>
+<DL>
+<DD>Debug information about which classes are transformed and why
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="debug_instrument"><!-- --></A><H3>
+debug_instrument</H3>
+<PRE>
+public static SimpleLog <STRONG>debug_instrument</STRONG></PRE>
+<HR>
+
+<A NAME="debug_instrument_inst"><!-- --></A><H3>
+debug_instrument_inst</H3>
+<PRE>
+public static SimpleLog <STRONG>debug_instrument_inst</STRONG></PRE>
+<HR>
+
+<A NAME="debug_map"><!-- --></A><H3>
+debug_map</H3>
+<PRE>
+public static SimpleLog <STRONG>debug_map</STRONG></PRE>
+<DL>
+<DD>Debug information on method maping
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="map_list"><!-- --></A><H3>
+map_list</H3>
+<PRE>
+public static List&lt;Instrument.MethodMapInfo&gt; <STRONG>map_list</STRONG></PRE>
+<DL>
+<DD>List of all classname regexs and their corresponding method maps
+<P>
+</DD>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Constructor Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="Instrument()"><!-- --></A><H3>
+Instrument</H3>
+<PRE>
+public <STRONG>Instrument</STRONG>()</PRE>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Method Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="transform(java.lang.ClassLoader, java.lang.String, java.lang.Class, java.security.ProtectionDomain, byte[])"><!-- --></A><H3>
+transform</H3>
+<PRE>
+public byte[] <STRONG>transform</STRONG>(ClassLoader&nbsp;loader,
+                        String&nbsp;className,
+                        Class&lt;?&gt;&nbsp;classBeingRedefined,
+                        ProtectionDomain&nbsp;protectionDomain,
+                        byte[]&nbsp;classfileBuffer)
+                 throws IllegalClassFormatException</PRE>
+<DL>
+<DD>Given another class, return a transformed version of the class which
+ replaces specified calls with alternative static implementations
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE>transform</CODE> in interface <CODE>ClassFileTransformer</CODE></DD>
+</DL>
+</DD>
+<DD><DL>
+<DT><STRONG>Throws:</STRONG></DT>
+<DD><CODE>IllegalClassFormatException</CODE></DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="instrument_method(org.apache.bcel.classfile.Method, org.apache.bcel.generic.MethodGen)"><!-- --></A><H3>
+instrument_method</H3>
+<PRE>
+public void <STRONG>instrument_method</STRONG>(Method&nbsp;m,
+                              MethodGen&nbsp;mg)</PRE>
+<DL>
+<DD>Instrument the specified method to replace mapped calls.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="replace_instructions(org.apache.bcel.generic.InstructionList, org.apache.bcel.generic.InstructionHandle, org.apache.bcel.generic.InstructionList)"><!-- --></A><H3>
+replace_instructions</H3>
+<PRE>
+protected static void <STRONG>replace_instructions</STRONG>(InstructionList&nbsp;il,
+                                           InstructionHandle&nbsp;ih,
+                                           InstructionList&nbsp;new_il)</PRE>
+<DL>
+<DD>Replace instruction ih in list il with the instructions in new_il.  If
+ new_il is null, do nothing
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="is_local_variable_type_table(org.apache.bcel.classfile.Attribute)"><!-- --></A><H3>
+is_local_variable_type_table</H3>
+<PRE>
+public boolean <STRONG>is_local_variable_type_table</STRONG>(Attribute&nbsp;a)</PRE>
+<HR>
+
+<A NAME="get_attribute_name(org.apache.bcel.classfile.Attribute)"><!-- --></A><H3>
+get_attribute_name</H3>
+<PRE>
+public String <STRONG>get_attribute_name</STRONG>(Attribute&nbsp;a)</PRE>
+<DL>
+<DD>Returns the attribute name for the specified attribute
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read_map_file(java.io.File)"><!-- --></A><H3>
+read_map_file</H3>
+<PRE>
+public void <STRONG>read_map_file</STRONG>(File&nbsp;map_file)
+                   throws IOException</PRE>
+<DL>
+<DD>Reads the file that specifies method calls that should be replaced
+ by other method calls.  The file is of the form:
+
+ [regex]
+   [orig-method-def]
+   [new-method-name]
+
+ where the orig_method-def is of the form:
+
+    fully-qualified-method-name (args)
+
+ Blank lines and // comments are ignored.  The orig-method-def is
+ replaced by a call to new-method-name with the same arguments in
+ any classfile that matches the regular expressions.  All method
+ names and argument types should be fully qualified.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Throws:</STRONG></DT>
+<DD><CODE>IOException</CODE></DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dump_map_list()"><!-- --></A><H3>
+dump_map_list</H3>
+<PRE>
+public static void <STRONG>dump_map_list</STRONG>()</PRE>
+<DL>
+<DD>Dumps out the map list to the debug_map logger
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="add_map_file_shutdown_hook()"><!-- --></A><H3>
+add_map_file_shutdown_hook</H3>
+<PRE>
+public void <STRONG>add_map_file_shutdown_hook</STRONG>()</PRE>
+<DL>
+<DD>Adds a shutdown hook that prints out the results of the method maps
+<P>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../randoop/instrument/Premain.html" title="class in randoop.instrument"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?randoop/instrument/Instrument.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="Instrument.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

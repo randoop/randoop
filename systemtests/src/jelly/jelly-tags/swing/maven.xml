@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project default="jar:jar" xmlns:j="jelly:core">
+
+  <!-- define the classpath used to run examples -->
+  <goal name="create-classpath" prereqs="java:compile, test:compile">
+        <path id="test.classpath">
+            <pathelement path="${maven.build.dest}"/>
+            <pathelement path="target/classes"/>
+            <pathelement path="target/test-classes"/>
+            <path refid="maven.dependency.classpath"/>
+        </path>
+  </goal>
+
+
+  <goal name="demo:swing" prereqs="create-classpath"
+    description="Runs a sample Swing demo, creating a Swing UI from Jelly script">
+    <java classname="org.apache.commons.jelly.Jelly" fork="yes">
+      <classpath refid="test.classpath"/>
+      <arg value="src/test/org/apache/commons/jelly/swing/example.jelly"/>
+    </java>
+  </goal>
+
+
+    <!-- move this into a Maven plugin -->
+  <goal name="jelly:runner" prereqs="create-classpath"
+    description="Runs the Jelly Runner which is a JellySwing script to run other Jelly scripts)">
+    <java classname="org.apache.commons.jelly.Jelly" fork="yes">
+      <classpath refid="test.classpath"/>
+      <sysproperty key="http.proxyHost" value="${maven.proxy.host}"/>
+      <sysproperty key="http.proxyPort" value="${maven.proxy.port}"/>
+     <arg value="src/test/org/apache/commons/jelly/swing/run.jelly"/>
+    </java>
+  </goal>
+
+  <goal name="jelly:runner2" prereqs="create-classpath"
+    description="Runs the Jelly Runner which is a JellySwing script to run other Jelly scripts)">
+    <j:include uri="file:///${user.dir}/src/test/org/apache/commons/jelly/swing/run.jelly"/>
+    <i:ask question="Hit Enter to terminate" answer="dummy" xmlns:i="jelly:interaction"/>
+  </goal>
+
+  <goal name="jelly:wizard" prereqs="create-classpath"
+    description="Runs the Jelly Runner which is a JellySwing script to run other Jelly scripts)">
+    <j:include uri="file:///${user.dir}/src/test/org/apache/commons/jelly/swing/wizard.jelly"/>
+    <i:ask question="Hit Enter to terminate" answer="dummy" xmlns:i="jelly:interaction"/>
+  </goal>
+
+
+    <!-- a simple example program to demonstrate the use of <tableModel> -->
+  <goal name="jelly:showvars" prereqs="create-classpath"
+    description="Displays the current variables in the Maven project">
+    <java classname="org.apache.commons.jelly.Jelly" fork="yes">
+      <classpath refid="test.classpath"/>
+      <sysproperty key="http.proxyHost" value="${maven.proxy.host}"/>
+      <sysproperty key="http.proxyPort" value="${maven.proxy.port}"/>
+      <arg value="src/test/org/apache/commons/jelly/swing/showVariables.jelly"/>
+    </java>
+  </goal>
+
+  
+  <goal name="trash"> 
+    <echo>${pom.id.substring(28)}</echo>
+  </goal>
+
+</project>

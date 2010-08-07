@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+
+ <properties>
+  <title>JellyMBean</title>
+  <author email="jstrachan@apache.org">James Strachan</author>
+ </properties>
+
+<body>
+
+<section name="JellyMBean">
+
+<p>
+    JellyMBean is a Jelly library for creating, configuring and registering beans and 
+    MBeans with a JMX server.
+    JellyMBean uses the 
+    <a href="http://jakarta.apache.org/commons/jelly/libs/bean/">JellyBean</a> library 
+    to create and configure beans and extends it to support JMX operations.
+</p>
+
+<p>
+    JellyMBean is similar to the MLET parser in 
+    <a href="http://mx4j.sourceforge.net/">mx4j</a> and 
+    <a href="http://jboss.org/">JBoss</a> and the 
+    <a href="http://ant.apache.org/">Ant</a> tasks in 
+    <a href="http://jakarta.apache.org/commons/modeler.html">commons-modeler</a>
+</p>
+
+<p>
+    There is an example JellyBean deployment descriptor file 
+    <a href="">here</a>.
+</p>
+</section>
+
+
+</body>
+</document>
+
