@@ -42,7 +42,7 @@ public class RandoopLabelProvider extends LabelProvider {
       } else  if (kind.getClassName().equals("NPEs / Assertion violations")) {
         descriptor = RandoopPlugin.getImageDescriptor("icons/failure_npe.png");
       } else  if (kind.getClassName().equals("class randoop.EqualsReflexive")) {
-        descriptor = RandoopPlugin.getImageDescriptor("icons/not_equals.png");
+        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equals.png");
       } else  if (kind.getClassName().equals("class randoop.EqualsHashcode")) {
         descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equalsHashCode.png");
       }
