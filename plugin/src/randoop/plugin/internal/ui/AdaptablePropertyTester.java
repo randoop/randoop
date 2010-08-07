@@ -14,8 +14,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
-import randoop.plugin.RandoopPlugin;
-
 public class AdaptablePropertyTester extends PropertyTester {
   private static final String PROPERTY_IS_TESTABLE = "isTestable"; //$NON-NLS-1$
 

@@ -221,10 +221,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       @Override
       public void widgetSelected(SelectionEvent e) {
         fTypeSelector.removeSelectedTypes();
+        fClassRemove.setEnabled(false);
       }
     });
     fClassRemove.addSelectionListener(listener);
-    
+    fClassRemove.setEnabled(false);
     
     fIgnoreJUnitTestCases = SWTFactory.createCheckButton(leftcomp,
         "Ignore JUni&t tests cases when searching for class inputs", null, true, 2);
