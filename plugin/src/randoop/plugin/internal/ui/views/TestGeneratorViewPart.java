@@ -195,7 +195,7 @@ public class TestGeneratorViewPart extends ViewPart {
     
     @Override
     public void run() {
-      stopLaunch();
+      terminateLaunch();
     }
   }
   
@@ -209,7 +209,7 @@ public class TestGeneratorViewPart extends ViewPart {
     @Override
     public void run() {
       // Terminate the old launch
-      if (stopLaunch()) {
+      if (terminateLaunch()) {
         fSession = new TestGeneratorSession(fSession.getLaunch(), fSession.getArguments());
         ILaunch launch = fSession.getLaunch();
         
@@ -298,7 +298,10 @@ public class TestGeneratorViewPart extends ViewPart {
     }
   }
   
-  public boolean stopLaunch() {
+  public boolean terminateLaunch() {
+    if (!fSession.isStopped())
+      getProgressBar().terminate();
+    
     if (!fSession.getLaunch().isTerminated()) {
       try {
         fSession.getLaunch().terminate();
@@ -308,7 +311,6 @@ public class TestGeneratorViewPart extends ViewPart {
       }
     }
     
-    getProgressBar().terminate();
     fTerminateAction.setEnabled(false);
     return true;
   }
@@ -383,7 +385,7 @@ public class TestGeneratorViewPart extends ViewPart {
           deregisterTestSessionListener(true);
           
           if (!isDisposed()) {
-            stopLaunch();
+            terminateLaunch();
           }
         }
       });
