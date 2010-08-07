@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -209,8 +211,7 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
         PlatformUI.getWorkbench().getDisplay().syncExec(runner);
 
         if (runner.getReturnCode() == WizardDialog.OK) {
-          RandoopArgumentCollector args = new RandoopArgumentCollector(config,
-              RandoopPlugin.getWorkspaceRoot());
+          RandoopArgumentCollector args = new RandoopArgumentCollector(config, getWorkspaceRoot());
           config.rename(launchManager.generateUniqueLaunchConfigurationNameFrom(args.getJUnitClassName()));
           config.doSave();
 
@@ -293,6 +294,10 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
   private ILaunchManager getLaunchManager() {
     ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
     return manager;
+  }
+  
+  private IWorkspaceRoot getWorkspaceRoot() {
+    return ResourcesPlugin.getWorkspace().getRoot();
   }
   
 }

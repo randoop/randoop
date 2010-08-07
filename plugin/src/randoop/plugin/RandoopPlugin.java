@@ -3,8 +3,6 @@ package randoop.plugin;
 import java.io.IOException;
 import java.net.URL;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -124,21 +122,35 @@ public class RandoopPlugin extends AbstractUIPlugin {
   }
 
   /**
-   * Logs a status with the specified <code>Exception</code> in the shared
-   * instance's log. The status logged will use a severity of
+   * Logs a status with the specified <code>Exception</code> and message in the
+   * shared instance's log. The logged status will have severity of
    * <code>IStatus.ERROR</code>.
    * 
    * @param e
-   *          the <code>Exception</code> to log
+   *          the <code>Throwable</code> to log
+   * @param message
+   *          the message to log for this exception
    */
-  public static void log(Throwable e) {
-    log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, "Error", e)); //$NON-NLS-1$
-  }
-  
   public static void log(Throwable e, String message) {
     log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, e));
   }
 
+  /**
+   * Logs the given <code>Throwable</code> in the error log using its message as
+   * the logged message. The logged status will have severity of
+   * <code>IStatus.ERROR</code>.
+   * 
+   * <p>
+   * This is a convenience method fully equivilent to
+   * <code>RandoopPlugin.log(e, e.getMessage()</code>
+   * 
+   * @param e
+   *          the <code>Throwable</code> to log
+   */
+  public static void log(Throwable e) {
+    log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, e.getMessage(), e)); //$NON-NLS-1$
+  }
+  
   /**
    * Logs a status in the shared instance's log
    * 
@@ -212,7 +224,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
     }
     return new Path(url.getPath());
   }
-  
+
   /**
    * Returns the current display, or the default display if the currently
    * running thread is not a user-interface thread for any display.
@@ -228,8 +240,4 @@ public class RandoopPlugin extends AbstractUIPlugin {
     return display;
   }
 
-  public static IWorkspaceRoot getWorkspaceRoot() {
-    return ResourcesPlugin.getWorkspace().getRoot();
-  }
-  
 }
