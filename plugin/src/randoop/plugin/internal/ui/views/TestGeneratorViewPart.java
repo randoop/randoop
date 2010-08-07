@@ -11,6 +11,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.junit.JUnitCore;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -144,7 +145,9 @@ public class TestGeneratorViewPart extends ViewPart {
   private class DebugWithJUNitAction extends Action {
     public DebugWithJUNitAction() {
       super("Debug Tests with JUnit");
-      setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG));
+      
+      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/debugjunit.png");
+      setImageDescriptor(desc);
     }
     
     @Override
@@ -164,7 +167,7 @@ public class TestGeneratorViewPart extends ViewPart {
     public RunWithJUnitAction() {
       super("Run Tests with JUnit");
       
-      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/run_junit.png");
+      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/runjunit.png");
       setImageDescriptor(desc);
       setEnabled(false);
     }
@@ -200,8 +203,8 @@ public class TestGeneratorViewPart extends ViewPart {
     public RelaunchAction () {
       super("Regenerate tests");
       
-      setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
-      setEnabled(false);
+      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/runrandoop.png");
+      setImageDescriptor(desc);
     }
     @Override
     public void run() {
