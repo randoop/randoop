@@ -69,9 +69,9 @@ Restart Eclipse.
 <h2 id="generating_tests">Generating Tests</h2>
 
 <p><b><i>WARNING: the Randoop Eclipse plug-in does not place any constraints on
-Randoop's behavior. Code that modifies your file system might result in Randoop
-generating tests that modify your filesystem! Be careful choosing classes and
-methods to test.</i></b>
+Randoop's behavior. Testing code that modifies your file system might result in
+Randoop generating tests that modify your file system! Be careful choosing
+classes and methods to test.</i></b>
 
 <p>The Randoop Eclipse plug-in uses the same mechanism for launching Randoop
 as is used for launching user-written JUnit tests and Java applications. The
@@ -216,18 +216,28 @@ but the files will remain in the project.
 
 <h3 id="">Output</h3>
 
-Randoop will output all files to the selected source folder in the Java project
+<p>Randoop will output all files to the selected source folder in the Java project
 the tests are being generated for. The source folder will be created and added
 to the Java project's classpath if it does not already exist. Randoop outputs
-two sets of files containing tests. The first will be placed in
-<tt>[project]/[outputdir]/[package/name]</tt> and be named
-<tt>[ClassName].java</tt>, <tt>[ClassName].java</tt>, <tt>[ClassName].java</tt>,
-and so forth, where each <tt>[project]</tt>, <tt>[outputdir]</tt>,
-<tt>[package/name]</tt>, and <tt>[ClassName]</tt> are specified in the launch
-configuration. The second set of files will contain one failing test each and be
-placed in the directory <tt>[project]/[outputdir]/randoopError</tt>. These will
-be named <tt>[ClassName]_failure_1.java</tt>,
-<tt>[ClassName]_failure_2.java</tt>, and so forth.
+two sets of JUnit tests. The first set of tests will be placed in
+
+<pre class="code">
+[project]/[outputdir]/[package/name]
+</pre>
+
+<p>and the files will be named <tt>[ClassName].java</tt>, <tt>[ClassName].java</tt>,
+<tt>[ClassName].java</tt>, and so forth, where each <tt>[project]</tt>,
+<tt>[outputdir]</tt>, <tt>[package/name]</tt>, and <tt>[ClassName]</tt> are
+specified in the launch configuration. The second set of tests will contain one
+failing test each and be placed in
+
+<pre class="code">
+[project]/[outputdir]/randoopError</tt>
+</pre>
+
+<p>and be named <tt>[ClassName]_failure_1.java</tt>,
+<tt>[ClassName]_failure_2.java</tt>, and so forth. These JUnit files will contain
+one test each and be linked to by the Randoop view. 
 
 <div class="image">
 <img src="img/output.png" alt="Files written to the output directory">
