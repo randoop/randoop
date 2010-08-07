@@ -6,12 +6,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 
 /**
+ * 
  * Returns a mnemonic for this method. The mnemonic can be used to reconstruct
  * information about the <code>IMethod</code>
  */
