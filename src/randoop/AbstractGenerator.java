@@ -157,7 +157,7 @@ public abstract class AbstractGenerator {
 
       if (msgSender != null) {
         long timeSoFar = timer.getTimeElapsedMillis();
-        if (timeSoFar - timeOfLastUpdate > 250) {
+        if (timeSoFar - timeOfLastUpdate > 50) {
           double percentTimeDone = timeSoFar / (double) timeMillis;
           double percentSequencesDone = numSequences() / (double) maxSequences;
 
