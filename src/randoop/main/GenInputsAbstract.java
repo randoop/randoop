@@ -12,6 +12,7 @@ import plume.Options;
 import plume.Unpublicized;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
+import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
 
 public abstract class GenInputsAbstract extends CommandHandler {
@@ -123,11 +124,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use null with the given frequency. [TODO explain]")
   public static Double null_ratio = null;
   
-  /**
-   * Don't set this greater than 65KB, because strings longer than that may
-   * be rejected, according to the Java Virtual Machine specification.
-   */
-  @Option("Maximum length of strings in generated tests")
+  // Implementation note: when checking whether a String S exceeds the given
+  // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
+  // the length of the string that will atually be printed out as code.
+  @Option("Maximum length of strings in generated tests. Note that strings "
+      + " greater than 65KB (or about 10,000 characters) "
+      + " may be rejected by the java compiler, according to the "
+      + "Java Virtual Machine specification.")
   public static int string_maxlen = 10000;
 
 

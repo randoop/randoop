@@ -124,6 +124,9 @@ public class TestGeneratorViewPart extends ViewPart {
     
     fProgressBar = new RandoopProgressBar(fParent);
     fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+    
+    Label errTitle = new Label(fParent, SWT.NONE);
+    errTitle.setText("Failures:");
 
     fTreeViewer = new TreeViewer(fParent);
     

@@ -54,7 +54,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
         throw new IllegalArgumentException("o is not a primitive-like value.");
     } else if (t.equals(String.class)) {
-      if (((String) o).length() > GenInputsAbstract.string_maxlen) {
+      if (!PrimitiveTypes.stringLenghtOK((String) o)) {
         throw new IllegalArgumentException("String too long, length = " + ((String) o).length());
       }
     } else {
@@ -221,7 +221,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
     if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(cls)) {
       throw new IllegalArgumentException("o is not a boxed primitive or String");
     }
-    if (cls.equals(String.class) && ((String)o).length() > GenInputsAbstract.string_maxlen) {
+    if (cls.equals(String.class) && !PrimitiveTypes.stringLenghtOK((String)o)) {
       throw new IllegalArgumentException("o is a string of length > " + GenInputsAbstract.string_maxlen);
     }
 
@@ -361,7 +361,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
           throw new StatementKindParseException(msg);
         }
         value = UtilMDE.unescapeNonJava(valString.substring(1, valString.length() - 1));
-        if (((String)value).length() > GenInputsAbstract.string_maxlen) {
+        if (!PrimitiveTypes.stringLenghtOK((String)value)) {
           throw new StatementKindParseException("Error when parsing String; length is greater than " + GenInputsAbstract.string_maxlen);
         }
       }

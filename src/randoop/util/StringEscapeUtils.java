@@ -20,6 +20,8 @@ package randoop.util;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * <p>Escapes and unescapes <code>String</code>s for
@@ -110,7 +112,7 @@ public class StringEscapeUtils {
       return null;
     }
   }
-
+  
   private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote) throws IOException {
     if (out == null) {
       throw new IllegalArgumentException("The Writer must not be null");
@@ -118,6 +120,7 @@ public class StringEscapeUtils {
     if (str == null) {
       return;
     }
+    
     int sz;
     sz = str.length();
     for (int i = 0; i < sz; i++) {
