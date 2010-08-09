@@ -1,0 +1,87 @@
+START RECORD
+
+BRANCH
+classname=java2.util2.ArrayList,methodname=indexOf,line=216,id=6,direction=false
+
+SEQUENCE
+var0 =  prim : int:10 : 
+var1 =  cons : java2.util2.Vector.<init>(int) : var0 
+var2 =  prim : char:61 : 
+var3 =  method : java2.util2.Vector.addElement(java.lang.Object) : var1 var2 
+var4 =  prim : int:10 : 
+var5 =  cons : java2.util2.Vector.<init>(int) : var4 
+var6 =  prim : char:61 : 
+var7 =  method : java2.util2.Vector.addElement(java.lang.Object) : var5 var6 
+var8 =  cons : java2.util2.LinkedHashSet.<init>(java2.util2.Collection) : var5 
+var9 =  prim : int:0 : 
+var10 =  method : java2.util2.HashSet.add(java.lang.Object) : var8 var9 
+var11 =  method : java2.util2.AbstractCollection.addAll(java2.util2.Collection) : var1 var8 
+var12 =  method : java2.util2.Collections.reverse(java2.util2.List) : var1 
+var13 =  prim : char:23 : 
+var14 =  prim : char:20 : 
+var15 =  array : char[2] : var13 var14 
+var16 =  prim : char:23 : 
+var17 =  method : java2.util2.Arrays.fill([C,char) : var15 var16 
+var18 =  method : java2.util2.Vector.addElement(java.lang.Object) : var1 var15 
+var19 =  prim : int:100 : 
+var20 =  method : java2.util2.Vector.setSize(int) : var1 var19 
+var21 =  prim : int:10 : 
+var22 =  method : java2.util2.Vector.remove(int) : var1 var21 
+var23 =  method : java2.util2.Vector.firstElement() : var1 
+var24 =  method : java2.util2.Collections.shuffle(java2.util2.List) : var1 
+var25 =  prim : java.lang.String:"hi!" : 
+var26 =  prim : java.lang.String:"" : 
+var27 =  prim : boolean:false : 
+var28 =  cons : java2.util2.StringTokenizer.<init>(java.lang.String,java.lang.String,boolean) : var25 var26 var27 
+var29 =  method : java2.util2.Collections.list(java2.util2.Enumeration) : var28 
+var30 =  prim : int:10 : 
+var31 =  cons : java2.util2.Vector.<init>(int) : var30 
+var32 =  prim : char:61 : 
+var33 =  method : java2.util2.Vector.addElement(java.lang.Object) : var31 var32 
+var34 =  prim : int:10 : 
+var35 =  cons : java2.util2.Vector.<init>(int) : var34 
+var36 =  prim : char:61 : 
+var37 =  method : java2.util2.Vector.addElement(java.lang.Object) : var35 var36 
+var38 =  cons : java2.util2.LinkedHashSet.<init>(java2.util2.Collection) : var35 
+var39 =  prim : int:0 : 
+var40 =  method : java2.util2.HashSet.add(java.lang.Object) : var38 var39 
+var41 =  method : java2.util2.AbstractCollection.addAll(java2.util2.Collection) : var31 var38 
+var42 =  prim : byte:0 : 
+var43 =  array : byte[1] : var42 
+var44 =  method : java2.util2.Arrays.sort([B) : var43 
+var45 =  method : java2.util2.Vector.addElement(java.lang.Object) : var31 var43 
+var46 =  prim : int:10 : 
+var47 =  cons : java2.util2.Vector.<init>(int) : var46 
+var48 =  prim : char:61 : 
+var49 =  method : java2.util2.Vector.addElement(java.lang.Object) : var47 var48 
+var50 =  prim : int:10 : 
+var51 =  cons : java2.util2.Vector.<init>(int) : var50 
+var52 =  prim : char:61 : 
+var53 =  method : java2.util2.Vector.addElement(java.lang.Object) : var51 var52 
+var54 =  cons : java2.util2.LinkedHashSet.<init>(java2.util2.Collection) : var51 
+var55 =  prim : int:0 : 
+var56 =  method : java2.util2.HashSet.add(java.lang.Object) : var54 var55 
+var57 =  method : java2.util2.AbstractCollection.addAll(java2.util2.Collection) : var47 var54 
+var58 =  method : java2.util2.Collections.reverse(java2.util2.List) : var47 
+var59 =  prim : char:23 : 
+var60 =  prim : char:20 : 
+var61 =  array : char[2] : var59 var60 
+var62 =  prim : char:23 : 
+var63 =  method : java2.util2.Arrays.fill([C,char) : var61 var62 
+var64 =  method : java2.util2.Vector.addElement(java.lang.Object) : var47 var61 
+var65 =  method : java2.util2.Collections.enumeration(java2.util2.Collection) : var47 
+var66 =  method : java2.util2.Vector.add(java.lang.Object) : var31 var47 
+var67 =  method : java2.util2.Vector.clone() : var31 
+var68 =  method : java2.util2.ArrayList.addAll(java2.util2.Collection) : var29 var31 
+var69 =  prim : int:0 : 
+var70 =  method : java2.util2.ArrayList.get(int) : var29 var69 
+var71 =  cons : java2.util2.HashSet.<init>(java2.util2.Collection) : var29 
+var72 =  array : float[0] : 
+var73 =  method : java2.util2.Arrays.sort([F) : var72 
+var74 =  method : java2.util2.ArrayList.add(java.lang.Object) : var29 var72 
+var75 =  method : java2.util2.Collections.unmodifiableCollection(java2.util2.Collection) : var29 
+var76 =  method : java2.util2.Vector.retainAll(java2.util2.Collection) : var1 var75 
+
+
+END RECORD
+
