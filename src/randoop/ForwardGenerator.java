@@ -216,9 +216,9 @@ public class ForwardGenerator extends AbstractGenerator {
         
         boolean looksLikeObjToString = (runtimeValue instanceof String)
           && PrimitiveTypes.looksLikeObjectToString((String)runtimeValue);
-        boolean stringLengthOK = (runtimeValue instanceof String)
-          && PrimitiveTypes.stringLenghtOK((String)runtimeValue);
-        if (!looksLikeObjToString && stringLengthOK && runtimePrimitivesSeen.add(runtimeValue)) {
+        boolean tooLongString = (runtimeValue instanceof String)
+          && !PrimitiveTypes.stringLenghtOK((String)runtimeValue);
+        if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(PrimitiveOrStringOrNullDecl.sequenceForPrimitive(runtimeValue));
         }
