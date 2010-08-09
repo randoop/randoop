@@ -160,21 +160,33 @@ public class ForwardGenerator extends AbstractGenerator {
   public void processSequence(ExecutableSequence seq) {
 
     if (GenInputsAbstract.offline) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Making all indices active (offline generation specified; sequences are not executed).");
+      }
       seq.sequence.setAllActiveFlags();
       return;
     }
 
     if (seq.hasNonExecutedStatements()) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Making all indices inactive (sequence has non-executed statements, so judging it inadequate for further extension).");
+      }
       seq.sequence.clearAllActiveFlags();
       return;
     }
 
     if (seq.hasFailure()) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Making all indices inactive (sequence reveals a failure, so judging it inadequate for further extension)");
+      }
       seq.sequence.clearAllActiveFlags();
       return;
     }
 
     if (!seq.isNormalExecution()) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Making all indices inactive (exception thrown, or failure revealed during execution).");
+      }
       seq.sequence.clearAllActiveFlags();
       return;
     }
@@ -188,7 +200,7 @@ public class ForwardGenerator extends AbstractGenerator {
       Object runtimeValue = e.getRuntimeValue();
       if (runtimeValue == null) {
         if (Log.isLoggingOn()) {
-          Log.logLine("Object " + i + " is null. Making inactive.");
+          Log.logLine("Making index " + i + " inactive (value is null)");
         }
         seq.sequence.clearActiveFlag(i);
         continue;
@@ -198,7 +210,7 @@ public class ForwardGenerator extends AbstractGenerator {
       
       if (PrimitiveTypes.isBoxedOrPrimitiveOrStringType(objectClass)) {
         if (Log.isLoggingOn()) {
-          Log.logLine("Object " + i + " is a primitive. Making inactive.");
+          Log.logLine("Making index " + i + " inactive (value is a primitive)");
         }
         seq.sequence.clearActiveFlag(i);
         
@@ -212,6 +224,11 @@ public class ForwardGenerator extends AbstractGenerator {
         }
       } else if (GenInputsAbstract.use_object_cache) {
         objectCache.setActiveFlags(seq, i);
+      } else {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Making index " + i + " active.");
+        }
+
       }
     }
 

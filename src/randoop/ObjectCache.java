@@ -20,9 +20,14 @@ public class ObjectCache implements Serializable {
     
       // If runtime value is in object cache, clear active flag.
       if (!this.sm.add(e.getRuntimeValue())) {
-        if (Log.isLoggingOn())
-          Log.logLine("Already created an object equal to " + i + "th output. Making inactive");
+        if (Log.isLoggingOn()) {
+          Log.logLine("Making index " + i + " inactive (already created an object equal to " + i + "th output).");
+        }
         sequence.sequence.clearActiveFlag(i);
+      } else {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Making index " + i + " active (new value)");
+        }        
       }
   }
 
