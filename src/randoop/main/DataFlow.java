@@ -11,13 +11,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-import randoop.DFResultsOneSeq;
-import randoop.DataFlowInput;
-import randoop.DataFlowOutput;
 import randoop.Globals;
 import randoop.Sequence;
 import randoop.Variable;
-import randoop.DFResultsOneSeq.VariableInfo;
+import randoop.experiments.DFResultsOneSeq;
+import randoop.experiments.DataFlowInput;
+import randoop.experiments.DataFlowOutput;
+import randoop.experiments.DFResultsOneSeq.VariableInfo;
 import randoop.util.Files;
 import randoop.util.SerializationHelper;
 import randoop.util.StreamRedirectThread;

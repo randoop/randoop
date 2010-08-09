@@ -1,4 +1,4 @@
-package randoop;
+package randoop.experiments;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import randoop.Globals;
+import randoop.Sequence;
+import randoop.SequenceParseException;
+import randoop.Variable;
 
 import cov.Branch;
 import cov.CoverageAtom;

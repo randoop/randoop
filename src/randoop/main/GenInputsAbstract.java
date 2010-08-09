@@ -173,10 +173,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean long_format = false; 
 
   @Unpublicized
-  @Option("Has to do with experiments...")
-  public static boolean size_equalizer = false;
-  
-  @Unpublicized
   @Option("Write experiment results file")
   public static FileWriter expfile = null;
 

@@ -1,4 +1,4 @@
-package randoop;
+package randoop.experiments;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,6 +13,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import plume.Pair;
+import randoop.AbstractGenerator;
+import randoop.Check;
+import randoop.ComponentManager;
+import randoop.DummyVisitor;
+import randoop.ExceptionalExecution;
+import randoop.ExecutableSequence;
+import randoop.Execution;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.IStopper;
+import randoop.ITestFilter;
+import randoop.NormalExecution;
+import randoop.NotExecuted;
+import randoop.PrimitiveOrStringOrNullDecl;
+import randoop.RandoopListenerManager;
+import randoop.RandoopStat;
+import randoop.SeedSequences;
+import randoop.Sequence;
+import randoop.SequenceCollection;
+import randoop.Statement;
+import randoop.StatementKind;
+import randoop.SubTypeSet;
+import randoop.Variable;
 import randoop.main.GenInputsAbstract;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.CollectionsExt;
@@ -25,13 +49,11 @@ import randoop.util.ReversibleMultiMap;
 import randoop.util.ReversibleSet;
 import randoop.util.SimpleList;
 import randoop.util.Util;
-import plume.Pair;
 
-public class NaiveRandomGenerator extends AbstractGenerator {
-
-  private static final StatName STAT_NAIVE_START_NEW_SEQ =
-    new StatName("NUMBER OF TIMES EXPLORATION WAS RESET",
-        "Reset", "Number of times exploration reset.", true);
+/**
+ * Experimental code.
+ */
+public class RandomWalkGenerator extends AbstractGenerator {
 
   private List<StatementKind> initialEnabledStatements = new ArrayList<StatementKind>();
   private Map<Class<?>, Set<StatementKind>> initialMissingTypesToStatements = new LinkedHashMap<Class<?>, Set<StatementKind>>();
@@ -40,6 +62,9 @@ public class NaiveRandomGenerator extends AbstractGenerator {
   List<StatementKind> allStatements;
 
   private int numSeqs = 0;
+  
+  @RandoopStat("Number of resets")
+  private int num_resets = 0;
 
   SubTypeSet availableTypes = new SubTypeSet(true);
   ReversibleMultiMap<Class<?>, Integer> typesToVals;
@@ -62,10 +87,10 @@ public class NaiveRandomGenerator extends AbstractGenerator {
   private static SequenceCollection prims = new SequenceCollection(
       SeedSequences.defaultSeeds());
 
-  public NaiveRandomGenerator(List<StatementKind> statements,
-      List<Class<?>> covClasses, long timeMillis, int maxSequences, ComponentManager componentMgr,
-      IStoppingCriterion stopper) {
-    super(statements, covClasses, timeMillis, maxSequences, componentMgr, stopper);
+  public RandomWalkGenerator(List<StatementKind> statements,
+      long timeMillis, int maxSequences, ComponentManager componentMgr,
+      IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> fs) {
+    super(statements, timeMillis, maxSequences, componentMgr, stopper, listenerManager, fs);
 
     this.allStatements = statements;
 
@@ -101,14 +126,12 @@ public class NaiveRandomGenerator extends AbstractGenerator {
     if (initialEnabledStatements.isEmpty())
       throw new IllegalArgumentException("No active statements.");
 
-    stats.addKey(STAT_NAIVE_START_NEW_SEQ);
-
     resetState();
   }
 
   private void resetState() {
 
-    stats.globalStats.addToCount(STAT_NAIVE_START_NEW_SEQ, 1);
+    num_resets++;
 
     sequence = new Sequence();
     exec = new ArrayList<ExecutionOutcome>();
@@ -146,8 +169,6 @@ public class NaiveRandomGenerator extends AbstractGenerator {
   @Override
   public ExecutableSequence step() {
 
-    SequenceGeneratorStats.steps++;
-
     long startTime = System.nanoTime();
 
     assert sequence.size() < GenInputsAbstract.maxsize : sequence.size();
@@ -165,9 +186,8 @@ public class NaiveRandomGenerator extends AbstractGenerator {
     logState();
 
     numSeqs++;
-    stats.statStatementNotDiscarded(sequence.getLastStatement());
 
-    SequenceGeneratorStats.currSeq = sequence;
+    AbstractGenerator.currSeq = sequence;
 
     if (GenInputsAbstract.dontexecute) {
       // We may exceed seqence size because of primitive declarations.

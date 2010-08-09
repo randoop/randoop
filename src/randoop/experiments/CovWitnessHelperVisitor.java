@@ -1,4 +1,4 @@
-package randoop;
+package randoop.experiments;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import plume.Triple;
+import randoop.ExecutableSequence;
+import randoop.ExecutionVisitor;
+import randoop.Sequence;
 
 import cov.Branch;
 import cov.Coverage;
@@ -41,11 +44,12 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
   /**
    * @param covClasses the classes that are coverage-instrumented.
    */
-  public CovWitnessHelperVisitor(List<Class<?>> covClasses, Map<CoverageAtom,Set<Sequence>> covWitnessMap) {
-    if (covClasses == null || covWitnessMap == null)
-      throw new IllegalArgumentException("args cannot be null.");
-    this.covClasses = covClasses;
-    this.covWitnessMap = covWitnessMap;
+  public CovWitnessHelperVisitor(CodeCoverageTracker tracker) {
+    if (tracker == null) {
+      throw new IllegalArgumentException("tracker is null");
+    }
+    this.covClasses = tracker.covClasses;
+    this.covWitnessMap = tracker.branchesToCoveringSeqs;
     this.trues = null;
     this.falses = null;
   }
