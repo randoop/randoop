@@ -1,7 +1,9 @@
 package randoop.plugin.internal.core.launching;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Assert;
@@ -27,8 +29,9 @@ public class RandoopArgumentCollector {
   private static final List<String> EMPTY_STRING_LIST = new ArrayList<String>();
   
   private String fName;
+  private ArrayList<IType> fAvailableTypes;
   private List<IType> fSelectedTypes;
-  private List<IMethod> fSelectedMethods;
+  private Map<IType, List<IMethod>> fSelectedMethodsByType;
   private int fRandomSeed;
   private int fMaxTestSize;
   private boolean fUseThreads;
@@ -44,8 +47,9 @@ public class RandoopArgumentCollector {
   private String fTestKinds;
   private int fMaxTestsWritten;
   private int fMaxTestsPerFile;
+
   
-  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) {
+  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) throws JavaModelException {
     fName = config.getName();
     Assert.isNotNull(fName, "Configuration name not given"); //$NON-NLS-1$
     
@@ -54,9 +58,11 @@ public class RandoopArgumentCollector {
     Assert.isNotNull(fJavaProject, "Java project not specified"); //$NON-NLS-1$
 
     fSelectedTypes = new ArrayList<IType>();
+    fAvailableTypes = new ArrayList<IType>();
+    List<?> availableTypes = getAvailableTypes(config);
     List<?> selectedTypes = getSelectedTypes(config);
-    for (Object o : selectedTypes) {
-      Assert.isTrue(o instanceof String, "Non-String arguments stored in class input list"); //$NON-NLS-1$
+    for (Object o : availableTypes) {
+      Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list"); //$NON-NLS-1$
       String mnemonic = (String) o;
       
       TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic, root);
@@ -64,26 +70,32 @@ public class RandoopArgumentCollector {
       
       Assert.isTrue(fJavaProject.equals(type.getJavaProject()), "One of the selected class inputs is not associated with the selected project"); //$NON-NLS-1$
 
-      fSelectedTypes.add(type);
+      fAvailableTypes.add(type);
+      if (selectedTypes.contains(o)) {
+        fSelectedTypes.add(type);
+      }
     }
     
-    fSelectedMethods = new ArrayList<IMethod>();
-    List<?> selectedMethods = getSelectedMethods(config);
-    for (Object o : selectedMethods) {
-      Assert.isTrue(o instanceof String, "Non-String arguments stored in method input list"); //$NON-NLS-1$
-      String mnemonic = (String) o;
-
-      MethodMnemonic methodMneomic = new MethodMnemonic(mnemonic, root);
-      IMethod method = methodMneomic.getMethod();
-      Assert.isNotNull(method, "Stored method does not exist"); //$NON-NLS-1$
-      Assert.isNotNull(method.exists(), "Stored method [" + method.getElementName() + "] does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
-
-      Assert.isTrue(fJavaProject.equals(method.getJavaProject()), "One of the selected method input's declaring type is not associated with the selected project"); //$NON-NLS-1$
+    fSelectedMethodsByType = new HashMap<IType, List<IMethod>>();
+    for (IType type : fSelectedTypes) {
+      List<IMethod> methodList = new ArrayList<IMethod>();
+      List<?> selectedMethods = getSelectedMethods(config, new TypeMnemonic(type).toString());
+      for (Object o : selectedMethods) {
+        Assert.isTrue(o instanceof String, "Non-String arguments stored in method-input list"); //$NON-NLS-1$
+        String mnemonic = (String) o;
+        
+        IMethod m = new MethodMnemonic(mnemonic).findMethod(type);
+        Assert.isNotNull(m, "Stored method does not exist"); //$NON-NLS-1$
+        Assert.isNotNull(m.exists(), "Stored method [" + m.getElementName() + "] does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
+        Assert.isTrue(fJavaProject.equals(m.getJavaProject()), "One of the selected method-input's declaring type is not associated with the selected project"); //$NON-NLS-1$
+        
+        methodList.add(m);
+      }
       
-      fSelectedMethods.add(method);
+      fSelectedMethodsByType.put(type, methodList);
     }
     
-    Assert.isTrue(!fSelectedTypes.isEmpty() || !fSelectedMethods.isEmpty(), "No class input or method input given"); //$NON-NLS-1$
+    Assert.isTrue(!fSelectedTypes.isEmpty() || !fSelectedMethodsByType.isEmpty(), "No class input or method input given"); //$NON-NLS-1$
 
     fRandomSeed = Integer.parseInt(getRandomSeed(config));
     fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
@@ -128,8 +140,7 @@ public class RandoopArgumentCollector {
       }
     }
     
-    for (IMethod m : getSelectedMethods()) {
-      IType type = m.getDeclaringType();
+    for (IType type : fSelectedMethodsByType.keySet()) {
       String fqname = type.getFullyQualifiedName().replace('$', '.');
       
       try {
@@ -156,8 +167,8 @@ public class RandoopArgumentCollector {
     return fSelectedTypes;
   }
 
-  public List<IMethod> getSelectedMethods() {
-    return fSelectedMethods;
+  public Map<IType, List<IMethod>> getSelectedMethodsByType() {
+    return fSelectedMethodsByType;
   }
 
   public int getRandomSeed() {
@@ -233,15 +244,15 @@ public class RandoopArgumentCollector {
         EMPTY_STRING_LIST);
   }
   
-  public static List<String> getAvailableMethods(ILaunchConfiguration config) {
+  public static List<String> getAvailableMethods(ILaunchConfiguration config, String typeMnemonic) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS,
+        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS_PREFIX + typeMnemonic,
         EMPTY_STRING_LIST);
   }
   
-  public static List<String> getSelectedMethods(ILaunchConfiguration config) {
+  public static List<String> getSelectedMethods(ILaunchConfiguration config, String typeMnemonic) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
+        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS_PREFIX + typeMnemonic,
         EMPTY_STRING_LIST);
   }
   
@@ -358,16 +369,16 @@ public class RandoopArgumentCollector {
         EMPTY_STRING_LIST);
   }
   
-  public static void restoreAvailableMethods(ILaunchConfigurationWorkingCopy config) {
+  public static void deleteAvailableMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic) {
     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS,
-        EMPTY_STRING_LIST);
+        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS_PREFIX + typeMnemonic,
+        (String) null);
   }
   
-  public static void restoreSelectedMethods(ILaunchConfigurationWorkingCopy config) {
+  public static void deleteSelectedMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic) {
     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS,
-        EMPTY_STRING_LIST);
+        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS_PREFIX + typeMnemonic,
+        (String) null);
   }
 
   public static void restoreRandomSeed(ILaunchConfigurationWorkingCopy config) {
@@ -477,12 +488,12 @@ public class RandoopArgumentCollector {
     setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES, selectedTypes);
   }
 
-  public static void setAvailableMethods(ILaunchConfigurationWorkingCopy config, List<String> availableMethods) {
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS, availableMethods);
+  public static void setAvailableMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic, List<String> availableMethods) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS_PREFIX + typeMnemonic, availableMethods);
   }
 
-  public static void setSelectedMethods(ILaunchConfigurationWorkingCopy config, List<String> selectedMethods) {
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS, selectedMethods);
+  public static void setSelectedMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic, List<String> selectedMethods) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS_PREFIX + typeMnemonic, selectedMethods);
   }
 
   public static void setRandomSeed(ILaunchConfigurationWorkingCopy config, String seed) {
@@ -609,7 +620,7 @@ public class RandoopArgumentCollector {
 
       return getName().equals(other.getName())
           && getSelectedTypes().equals(other.getSelectedTypes())
-          && getSelectedMethods().equals(other.getSelectedMethods())
+          && getSelectedMethodsByType().equals(other.getSelectedMethodsByType())
           && getRandomSeed() == other.getRandomSeed()
           && getMaxTestSize() == other.getMaxTestSize()
           && getUseThreads() == other.getUseThreads()
@@ -632,7 +643,7 @@ public class RandoopArgumentCollector {
   @Override
   public int hashCode() {
     return (getName() + getSelectedTypes().toString()
-        + getSelectedMethods().toString() + getRandomSeed() + getMaxTestSize()
+        + getSelectedMethodsByType().toString() + getRandomSeed() + getMaxTestSize()
         + getUseThreads() + getThreadTimeout() + getUseNull() + getNullRatio()
         + getInputLimit() + getTimeLimit() + getOutputDirectory()
         + getJUnitPackageName() + getJUnitClassName() + getTestKinds()
