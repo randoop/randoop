@@ -1,15 +1,21 @@
 package randoop.plugin.internal.ui.options;
 
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -18,6 +24,7 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -148,10 +155,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       @Override
       public void widgetSelected(SelectionEvent e) {
         try {
-          IClasspathEntry classpathEntry = chooseClasspathEntry();
-          if (classpathEntry != null) {
-            IJavaElement[] elements = RandoopCoreUtil.findPackageFragmentRoots(fJavaProject, classpathEntry);
-            IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements);
+          IClasspathEntry[] classpathEntries = chooseClasspathEntry();
+          if (classpathEntries != null) {
+            ArrayList<IJavaElement> elements = new ArrayList<IJavaElement>();
+            for (IClasspathEntry classpathEntry : classpathEntries) {
+              IPackageFragmentRoot[] pfrs = RandoopCoreUtil.findPackageFragmentRoots(fJavaProject, classpathEntry);
+              elements.addAll(Arrays.asList(pfrs));
+            }
+            
+            IJavaElement[] elementArray = (IJavaElement[]) elements.toArray(new IJavaElement[elements.size()]);
+            IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elementArray);
             handleSearchButtonSelected(searchScope);
           }
         } catch (JavaModelException jme) {
@@ -179,6 +192,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           }
         }
       });
+      fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
       fResolveClasses.addSelectionListener(listener);
     }
     
@@ -207,10 +221,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       @Override
       public void widgetSelected(SelectionEvent e) {
         fTypeSelector.removeSelectedTypes();
+        fClassRemove.setEnabled(false);
       }
     });
     fClassRemove.addSelectionListener(listener);
-    
+    fClassRemove.setEnabled(false);
     
     fIgnoreJUnitTestCases = SWTFactory.createCheckButton(leftcomp,
         "Ignore JUni&t tests cases when searching for class inputs", null, true, 2);
@@ -220,35 +235,24 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
 
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, IJavaProject javaProject, IJavaElement[] elements) {
+      final SelectionListener listener, IJavaProject javaProject, List<TypeMnemonic> types,
+      Map<TypeMnemonic, List<String>> availableMethodsByDeclaringTypes,
+      Map<TypeMnemonic, List<String>> selectedMethodsByDeclaringTypes) {
 
     this(parent, runnableContext, listener, false);
 
     fJavaProject = javaProject;
-    
+
     fTypeSelector.setJavaProject(fJavaProject);
 
-    for (IJavaElement element : elements) {
-      switch (element.getElementType()) {
-      case IJavaElement.PACKAGE_FRAGMENT_ROOT:
-      case IJavaElement.PACKAGE_FRAGMENT:
-        for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addClass(type, false);
-        }
-        break;
-      case IJavaElement.COMPILATION_UNIT:
-        for (IType type : RandoopCoreUtil.findTypes(element, false, null)) {
-          fTypeSelector.addClass(type, true);
-        }
-        break;
-      default:
-        RandoopPlugin.log(StatusFactory.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
-            + element.getElementType()));
-        return;
-      }
+    for (TypeMnemonic type : types) {
+      List<String> availableMethods = availableMethodsByDeclaringTypes.get(type);
+      List<String> selectedMethods = selectedMethodsByDeclaringTypes.get(type);
+      fTypeSelector.addClass(type, selectedMethods == null, availableMethods, selectedMethods);
     }
+    
   }
-
+  
   private void handleSearchButtonSelected(IJavaSearchScope searchScope) {
     try {
       IJavaSearchScope junitSearchScope = new FilterJUnitSearchScope(searchScope, fIgnoreJUnitTestCases.getSelection());
@@ -256,7 +260,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       SelectionDialog dialog = JavaUI.createTypeDialog(fShell, fRunnableContext, junitSearchScope,
           IJavaElementSearchConstants.CONSIDER_CLASSES_AND_ENUMS, true, "",
           new RandoopTestInputSelectionExtension());
-      dialog.setMessage("Add class input");
+      dialog.setTitle("Add Classes");
       dialog.setMessage("Enter type name prefix or pattern (*, ?, or camel case):");
       dialog.open();
 
@@ -309,6 +313,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(config);
 
       fTypeSelector = new ClassSelector(fTypeTree, fJavaProject, availableTypes, selectedTypes, availableMethods, selectedMethods);
+      fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
     }
   }
 
@@ -326,9 +331,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    writeDefaults(config);
+  }
+  
+  public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
     RandoopArgumentCollector.restoreSelectedTypes(config);
     RandoopArgumentCollector.restoreAvailableTypes(config);
     RandoopArgumentCollector.restoreSelectedMethods(config);
+    RandoopArgumentCollector.restoreAvailableMethods(config);
   }
 
   /**
@@ -360,7 +370,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       IType type = typeMnemonic.getType();
       if (type == null || !type.exists()) {
         return StatusFactory.createErrorStatus("One of the selected types does not exist.");
-      } else if (!javaProject.equals(type.getJavaProject())) {
+      } else if (!javaProject.equals(typeMnemonic.getJavaProject())) {
         return StatusFactory.createErrorStatus("One of the selected types does not exist in the selected project.");
       }
     }
@@ -377,7 +387,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return StatusFactory.OK_STATUS;
   }
 
-  private IClasspathEntry chooseClasspathEntry() throws JavaModelException {
+  private IClasspathEntry[] chooseClasspathEntry() throws JavaModelException {
     ILabelProvider labelProvider = new ClasspathLabelProvider(fJavaProject);
     ElementListSelectionDialog dialog = new ElementListSelectionDialog(fShell, labelProvider);
     dialog.setTitle("Classpath Selection");
@@ -385,9 +395,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
     IClasspathEntry[] classpaths = fJavaProject.getRawClasspath();
     dialog.setElements(classpaths);
+    dialog.setMultipleSelection(true);
 
     if (dialog.open() == Window.OK) {
-      return (IClasspathEntry) dialog.getFirstResult();
+      List<IClasspathEntry> cpentries = new ArrayList<IClasspathEntry>();
+      for (Object obj : dialog.getResult()) {
+        if (obj instanceof IClasspathEntry) {
+          cpentries.add((IClasspathEntry) obj);
+        }
+      }
+      return (IClasspathEntry[]) cpentries.toArray(new IClasspathEntry[cpentries.size()]);
     }
     return null;
   }
@@ -551,12 +568,13 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
       fJavaProject = RandoopCoreUtil.getProjectFromName(event.getValue());
 
-      boolean enabled = fJavaProject != null;
+      boolean enabled = fJavaProject != null && fJavaProject.exists();
       fClassAddFromSources.setEnabled(enabled);
       fClassAddFromClasspaths.setEnabled(enabled);
-      fResolveClasses.setEnabled(enabled);
+
+      fTypeSelector.setJavaProject(fJavaProject);
+      fResolveClasses.setEnabled(enabled && fTypeSelector.hasMissingClasses());
     }
-    fTypeSelector.setJavaProject(fJavaProject);
   }
   
   /*

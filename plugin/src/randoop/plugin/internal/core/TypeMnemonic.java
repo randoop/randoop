@@ -222,15 +222,16 @@ public class TypeMnemonic {
         case IClasspathEntry.CPE_PROJECT:
           // this entry describes another project
           
-          // check if project is the same as javaProject
-          if (getJavaProject().equals(javaProject)) {
-            // Nothing should change, return this
-            return this;
+          // check if this type's project is the same as javaProject
+          if (getClasspath().equals(javaProject.getPath())) {
+            // search for the type in the java project - it should exist
+            IType type = javaProject.findType(getFullyQualifiedName());
+            if (type != null)
+              return new TypeMnemonic(type);
+          } else {
+            // check for the exact same project in javaProject's classpath
+            newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, getClasspath());
           }
-          
-          // check for the exact same project in javaProject's classpath
-          projectPath = getJavaProject().getPath();
-          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, projectPath);
           break;
         case IClasspathEntry.CPE_VARIABLE:
           // this entry describes a project or library indirectly via a
@@ -402,6 +403,19 @@ public class TypeMnemonic {
     mnemonic.append(getFullyQualifiedName());
 
     return mnemonic.toString();
+  }
+  
+  @Override
+  public int hashCode() {
+    return toString().hashCode();
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof TypeMnemonic) {
+      return toString().equals(((TypeMnemonic) obj).toString());
+    }
+    return false;
   }
 
 }

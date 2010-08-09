@@ -41,7 +41,7 @@ public final class Sequence implements Serializable, WeightedElement {
   public double lastTimeUsed = java.lang.System.currentTimeMillis();
 
   // The list of statements.
-  protected final SimpleList<Statement> statements;
+  public final SimpleList<Statement> statements;
 
   // The values involved in the last statement (receiver, return
   // value, parameters). Should be final but cannot because of serialization.
@@ -368,7 +368,7 @@ public final class Sequence implements Serializable, WeightedElement {
 
 
   // Create a sequence with the given statements.
-  /*package*/ Sequence(SimpleList<Statement> statements) {
+  /*package*/ public Sequence(SimpleList<Statement> statements) {
     this(statements, computeHashcode(statements), computeNetSize(statements));
   }
 

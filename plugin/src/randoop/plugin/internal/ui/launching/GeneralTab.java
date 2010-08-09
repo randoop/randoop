@@ -1,5 +1,6 @@
 package randoop.plugin.internal.ui.launching;
 
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -10,15 +11,23 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
 
 public class GeneralTab extends OptionLaunchConfigurationTab {
-  private IOption fProjectOption;
-  private IOption fJUnitTestClassNameOption;
+  private ProjectOption fProjectOption;
+  private JUnitTestClassNameOption fJUnitTestClassNameOption;
   private ClassSelectorOption fTestInputSelectorOption;
+  
+  @Override
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    ProjectOption.writeDefaults(config);
+    JUnitTestClassNameOption.writeDefaults(config);
+    ClassSelectorOption.writeDefaults(config);
+  }
 
   @Override
   public void createControl(Composite parent) {
@@ -83,5 +92,5 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
   public Image getImage() {
     return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
   }
-  
+
 }

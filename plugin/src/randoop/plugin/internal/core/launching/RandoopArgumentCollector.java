@@ -35,7 +35,7 @@ public class RandoopArgumentCollector {
   private int fThreadTimeout;
   private boolean fUseNull;
   private double fNullRatio;
-  private int fJUnitTestInputs;
+  private int fInputLimit;
   private int fTimeLimit;
   private IJavaProject fJavaProject;
   private IPath fOutputDirectory;
@@ -93,7 +93,7 @@ public class RandoopArgumentCollector {
     fUseNull = getUseNull(config);
     if (fUseNull)
       fNullRatio = Double.parseDouble(getNullRatio(config));
-    fJUnitTestInputs = Integer.parseInt(getJUnitTestInputs(config));
+    fInputLimit = Integer.parseInt(getInputLimit(config));
     fTimeLimit = Integer.parseInt(getTimeLimit(config));
 
     String outputSourceFolderName = getOutputDirectoryName(config);
@@ -184,8 +184,8 @@ public class RandoopArgumentCollector {
     return fNullRatio;
   }
 
-  public int getJUnitTestInputs() {
-    return fJUnitTestInputs;
+  public int getInputLimit() {
+    return fInputLimit;
   }
 
   public int getTimeLimit() {
@@ -272,8 +272,8 @@ public class RandoopArgumentCollector {
 
   public static boolean getUseNull(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean
-            .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+        IRandoopLaunchConfigurationConstants.ATTR_USE_NULL,
+        Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
   }
 
   public static String getNullRatio(ILaunchConfiguration config) {
@@ -282,7 +282,7 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
   }
 
-  public static String getJUnitTestInputs(ILaunchConfiguration config) {
+  public static String getInputLimit(ILaunchConfiguration config) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
         IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
@@ -408,7 +408,7 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
   }
 
-  public static void restoreJUnitTestInputs(ILaunchConfigurationWorkingCopy config) {
+  public static void restoreInputLimit(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
         IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
@@ -509,7 +509,7 @@ public class RandoopArgumentCollector {
     setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO, nullRatio);
   }
 
-  public static void setJUnitTestInputs(ILaunchConfigurationWorkingCopy config, String testInputs) {
+  public static void setInputLimit(ILaunchConfigurationWorkingCopy config, String testInputs) {
     setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS, testInputs);
   }
 
@@ -616,7 +616,7 @@ public class RandoopArgumentCollector {
           && getThreadTimeout() == other.getThreadTimeout()
           && getUseNull() == other.getUseNull()
           && getNullRatio() == other.getNullRatio()
-          && getJUnitTestInputs() == other.getJUnitTestInputs()
+          && getInputLimit() == other.getInputLimit()
           && getTimeLimit() == other.getTimeLimit()
           && getOutputDirectory().equals(other.getOutputDirectory())
           && getJUnitPackageName().equals(other.getJUnitPackageName())
@@ -634,7 +634,7 @@ public class RandoopArgumentCollector {
     return (getName() + getSelectedTypes().toString()
         + getSelectedMethods().toString() + getRandomSeed() + getMaxTestSize()
         + getUseThreads() + getThreadTimeout() + getUseNull() + getNullRatio()
-        + getJUnitTestInputs() + getTimeLimit() + getOutputDirectory()
+        + getInputLimit() + getTimeLimit() + getOutputDirectory()
         + getJUnitPackageName() + getJUnitClassName() + getTestKinds()
         + getMaxTestsWritten() + getMaxTestsPerFile()).hashCode();
   }

@@ -12,13 +12,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 
 import randoop.plugin.internal.core.TestKinds;
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.RandoopMessages;
+import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
-import randoop.plugin.internal.ui.options.IOptionFactory;
+import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
+import randoop.plugin.internal.ui.options.OptionFactory;
+import randoop.plugin.internal.ui.options.ProjectOption;
 
 public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fRandomSeed;
@@ -32,6 +38,23 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   private IOption fTestKinds;
   private IOption fMaxTestsWritten;
   private IOption fMaxTestsPerFile;
+
+  @Override
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    RandoopArgumentCollector.restoreRandomSeed(config);
+    RandoopArgumentCollector.restoreMaxTestSize(config);
+    RandoopArgumentCollector.restoreUseThreads(config);
+    RandoopArgumentCollector.restoreThreadTimeout(config);
+    RandoopArgumentCollector.restoreUseNull(config);
+    RandoopArgumentCollector.restoreNullRatio(config);
+    
+    RandoopArgumentCollector.restoreInputLimit(config);
+    RandoopArgumentCollector.restoreTimeLimit(config);
+    
+    RandoopArgumentCollector.restoreTestKinds(config);
+    RandoopArgumentCollector.restoreMaxTestsWritten(config);
+    RandoopArgumentCollector.restoreMaxTestsPerFile(config);
+  }
   
   @Override
   public void createControl(Composite parent) {
@@ -66,13 +89,13 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     Text randomSeedText = SWTFactory.createSingleText(group, 1);
     randomSeedLabel.setToolTipText(RandoopMessages.RandoopOption_randomseed_tooltip);
     randomSeedText.setToolTipText(RandoopMessages.RandoopOption_randomseed_tooltip);
-    fRandomSeed = IOptionFactory.createRandomSeedOption(randomSeedText);
+    fRandomSeed = OptionFactory.createRandomSeedOption(randomSeedText);
 
     Label maxTestSizeLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_maxsize, 1);
     Text maxTestSizeText = SWTFactory.createSingleText(group, 1);
     maxTestSizeLabel.setToolTipText(RandoopMessages.RandoopOption_maxsize_tooltip);
     maxTestSizeText.setToolTipText(RandoopMessages.RandoopOption_maxsize_tooltip);
-    fMaxTestSize = IOptionFactory.createMaximumTestSizeOption(maxTestSizeText);
+    fMaxTestSize = OptionFactory.createMaximumTestSizeOption(maxTestSizeText);
 
     Button threadTimeoutButton = createCheckButton(group, RandoopMessages.RandoopOption_usethreads);
     Text threadTimeoutText = SWTFactory.createSingleText(group, 1);
@@ -80,8 +103,8 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     threadTimeoutButton.setSelection(true);
     threadTimeoutText.setToolTipText(RandoopMessages.RandoopOption_timeout_tooltip);
     threadTimeoutText.setEnabled(threadTimeoutButton.getSelection());
-    IOption threadTimeout = IOptionFactory.createThreadTimeoutOption(threadTimeoutText);
-    fUseThreads = IOptionFactory.createUseThreads(threadTimeout, threadTimeoutButton);
+    IOption threadTimeout = OptionFactory.createThreadTimeoutOption(threadTimeoutText);
+    fUseThreads = OptionFactory.createUseThreads(threadTimeout, threadTimeoutButton);
     
     Button nullRatioButton = createCheckButton(group, RandoopMessages.RandoopOption_forbid_null);
     Text nullRatioText = SWTFactory.createSingleText(group, 1);
@@ -89,8 +112,8 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     nullRatioButton.setSelection(false);
     nullRatioText.setToolTipText(RandoopMessages.RandoopOption_null_ratio_tooltip);
     nullRatioText.setEnabled(nullRatioButton.getSelection());
-    IOption nullRatio = IOptionFactory.createNullRatioOption(nullRatioText);
-    fUseNull = IOptionFactory.createUseNull(nullRatio, nullRatioButton);
+    IOption nullRatio = OptionFactory.createNullRatioOption(nullRatioText);
+    fUseNull = OptionFactory.createUseNull(nullRatio, nullRatioButton);
     
     addOption(fRandomSeed);
     addOption(fMaxTestSize);
@@ -117,7 +140,7 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     Text inputLimitText = SWTFactory.createSingleText(group, 1);
     inputLimitLabel.setToolTipText(RandoopMessages.RandoopOption_inputlimit_tooltip);
     inputLimitText.setToolTipText(RandoopMessages.RandoopOption_inputlimit_tooltip);
-    fInputLimit = IOptionFactory.createInputsLimitOption(inputLimitText);
+    fInputLimit = OptionFactory.createInputsLimitOption(inputLimitText);
 
     Label timeLimitLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_timelimit, 1);
     Text timeLimitText = SWTFactory.createSingleText(group, 1);
@@ -130,7 +153,7 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     convertedTimeLimit.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, true,
        false));
     
-    fTimeLimit = IOptionFactory.createTimeLimitOption(timeLimitText, convertedTimeLimit);
+    fTimeLimit = OptionFactory.createTimeLimitOption(timeLimitText, convertedTimeLimit);
 
     addOption(fInputLimit);
     addOption(fTimeLimit);
@@ -148,19 +171,19 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
         .getTranslatableNames());
     testKindsLabel.setToolTipText(RandoopMessages.RandoopOption_output_tests_tooltip);
     testKindsCombo.setToolTipText(RandoopMessages.RandoopOption_output_tests_tooltip);
-    fTestKinds = IOptionFactory.createTestKindsOption(testKindsCombo);
+    fTestKinds = OptionFactory.createTestKindsOption(testKindsCombo);
 
     Label maxTestsWrittenLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_outputlimit, 1);
     Text maxTestsWrittenText = SWTFactory.createSingleText(group, 2);
     maxTestsWrittenLabel.setToolTipText(RandoopMessages.RandoopOption_outputlimit_tooltip);
     maxTestsWrittenText.setToolTipText(RandoopMessages.RandoopOption_outputlimit_tooltip);
-    fMaxTestsWritten = IOptionFactory.createMaximumTestsWrittenOption(maxTestsWrittenText);
+    fMaxTestsWritten = OptionFactory.createMaximumTestsWrittenOption(maxTestsWrittenText);
 
     Label maxTestsPerFileLabel = SWTFactory.createLabel(group, RandoopMessages.RandoopOption_testsperfile, 1);
     Text maxTestsPerFileText = SWTFactory.createSingleText(group, 2);
     maxTestsPerFileLabel.setToolTipText(RandoopMessages.RandoopOption_testsperfile_tooltip);
     maxTestsPerFileText.setToolTipText(RandoopMessages.RandoopOption_testsperfile_tooltip);
-    fMaxTestsPerFile = IOptionFactory.createMaximumTestsPerFileOption(maxTestsPerFileText);
+    fMaxTestsPerFile = OptionFactory.createMaximumTestsPerFileOption(maxTestsPerFileText);
 
     addOption(fTestKinds);
     addOption(fMaxTestsWritten);
@@ -185,5 +208,5 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   public Image getImage() {
     return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
   }
-  
+
 }

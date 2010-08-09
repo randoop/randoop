@@ -6,7 +6,7 @@
          point="org.eclipse.ui.views">
       <view
             name="Randoop"
-            icon="icons/config.png"
+            icon="icons/randoop.png"
             category="org.eclipse.jdt.ui.java"
             class="randoop.plugin.internal.ui.views.TestGeneratorViewPart"
             id="randoop.plugin.ui.views.TestGeneratorViewPart">
@@ -54,7 +54,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="randoop.plugin.core.launching.gentestsType"
-            icon="icons/config.png"
+            icon="icons/randoop.png"
             id="randoop.plugin.ui.gentestsTypeImage">
       </launchConfigurationTypeImage>
    </extension>
@@ -71,13 +71,32 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             class="randoop.plugin.internal.ui.launching.RandoopLaunchShortcut"
-            icon="icons/config.png"
+            icon="icons/randoop.png"
             id="randoop.plugin.ui.launching.gentestsShortcut"
             label="Randoop Test Input"
             modes="run">
          <contextualLaunch>
 	         <enablement>
-		       <or>
+         <or>
+            <with
+                  variable="selection">
+               <and>
+                  <test
+                        property="randoop.arraylist.isAllInSameProject">
+                  </test>
+                  <iterate
+                        operator="or">
+                     <and>
+                        <adapt
+                              type="org.eclipse.jdt.core.IJavaElement">
+                        </adapt>
+                        <test
+                              property="randoop.adaptable.isTestable">
+                        </test>
+                     </and>
+                  </iterate>
+               </and>
+            </with>
             <with
                   variable="selection">
                <count
@@ -95,24 +114,7 @@
                   </and>
                </iterate>
             </with>
-            <with
-                  variable="selection">
-               <and>
-                  <test
-                        property="randoop.arraylist.isAllInSameProject">
-                  </test>
-                  <iterate
-                        operator="and">
-                     <adapt
-                           type="org.eclipse.jdt.core.IJavaElement">
-                     </adapt>
-                     <test
-                           property="randoop.adaptable.isTestable">
-                     </test>
-                  </iterate>
-               </and>
-            </with>
-		       </or>
+         </or>
 	         </enablement>
          </contextualLaunch>
          <configurationType

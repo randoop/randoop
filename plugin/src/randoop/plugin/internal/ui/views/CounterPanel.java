@@ -8,6 +8,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import randoop.plugin.internal.core.runtime.TestGeneratorSession;
+
 /**
  * A panel with counters for the number of tests generated and errors revealed
  * during a run of Randoop.
@@ -19,6 +21,7 @@ public class CounterPanel extends Composite {
 
 	public CounterPanel(Composite parent) {
 		super(parent, SWT.WRAP);
+		
 		GridLayout gridLayout= new GridLayout();
 		gridLayout.numColumns= 4;
 		gridLayout.makeColumnsEqualWidth= false;
@@ -44,24 +47,30 @@ public class CounterPanel extends Composite {
 	}
 
 	public void reset() {
-	  fErrorCount = 0;
-    fNumberOfErrors.setText(Integer.toString(fErrorCount));
+	  setErrorCount(0);
 	  setNumSequences(0);
 	}
-
+	
+  public void initializeFrom(TestGeneratorSession session) {
+    reset();
+    setErrorCount(session.getErrorCount());
+    setNumSequences(session.getSequenceCount());
+    redraw();
+  }
+	
+  public void incrementErrorCount() {
+    fErrorCount++;
+    fNumberOfErrors.setText(Integer.toString(fErrorCount));
+    redraw();
+  }
+  
   public void setNumSequences(int value) {
     fNumberOfTests.setText(Integer.toString(value));
     redraw();
   }
   
-  public void setErrorCount(int count) {
+  private void setErrorCount(int count) {
     fErrorCount = count;
-    fNumberOfErrors.setText(Integer.toString(fErrorCount));
-    redraw();
-  }
-  
-  public void incrementErrorCount() {
-    fErrorCount++;
     fNumberOfErrors.setText(Integer.toString(fErrorCount));
     redraw();
   }

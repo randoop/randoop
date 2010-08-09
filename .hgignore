@@ -2,6 +2,7 @@ syntax: glob
 *.class
 *.diff
 *~
+*.orig
 Makefile.user
 bin/randoop/version.txt
 randoop.zip
@@ -14,8 +15,6 @@ bin/randoop/test/resources/java.util.classlist.txt
 bin/randoop/test/resources/sequence_tests_script.txt
 bin/randoop/test/resources/universal_driver.txt
 TAGS
-
-lib/plume.jar
 
 systemtests/randoop-contracts-test-scratch
 systemtests/jc-covinst
@@ -41,6 +40,7 @@ systemtests/sources.txt
 systemtests/resources/Literals0.java
 systemtests/resources/CustomVisitorTest0.java
 systemtests/resources/LongString0.java 
+systemtests/resources/JDK_Tests?.java 
 
 bdgen-log.txt
 bdgen2-log.txt

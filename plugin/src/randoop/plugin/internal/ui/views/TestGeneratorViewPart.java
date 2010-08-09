@@ -11,6 +11,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.junit.JUnitCore;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -22,6 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
@@ -62,15 +64,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
   private boolean isDisposed = true;
   
-//  private static TestGeneratorViewPart viewPart = null;
-  
-//  public static TestGeneratorViewPart getDefault() {
-//    if (viewPart == null || isDisposed) {
-//      return viewPart = openInstance();
-//    }
-//    
-//    return viewPart;
-//  }
+  private Composite fParent;
   
   public static TestGeneratorViewPart openInstance() {
     final MutableObject viewPart = new MutableObject(null);
@@ -109,40 +103,32 @@ public class TestGeneratorViewPart extends ViewPart {
 
   @Override
   public void createPartControl(Composite parent) {
+    // Store the parent so we can see if it is disposed later
+    fParent = parent;
     isDisposed = false;
 
+    // Set the parent layout
     GridLayout layout = new GridLayout();
     layout.marginWidth = 3;
     layout.marginHeight = 3;
     layout.horizontalSpacing = 3;
     layout.numColumns = 1;
-    parent.setLayout(layout);
+    fParent.setLayout(layout);
+    
+    // Create a register global actions with the action bar
+    createActionBar();
 
-    fCounterPanel = new CounterPanel(parent);
+    // Create controls within the parent
+    fCounterPanel = new CounterPanel(fParent);
     fCounterPanel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-    fProgressBar = new RandoopProgressBar(parent);
+    
+    fProgressBar = new RandoopProgressBar(fParent);
     fProgressBar.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
-    Label errTitle = new Label(parent, SWT.NONE);
-    errTitle.setText("Failures:");
+    fTreeViewer = new TreeViewer(fParent);
     
-    fTreeViewer = new TreeViewer(parent);
-
-    createActions();
-    createToolBar();
-    
-    if (fSession == null) {
-      setActiveTestRunSession(TestGeneratorSession.getActiveSession());
-    }
-    
-    if (fSession != null) {
-      RandoopContentProvider prov = new RandoopContentProvider(fSession.getRandoopErrors());
-      fTreeViewer.setContentProvider(prov);
-      
-      prov.viewer = fTreeViewer;
-      fTreeViewer.setLabelProvider(new RandoopLabelProvider());
-      fTreeViewer.setInput(fSession.getRandoopErrors());
-    }
+    // TODO: Change how sessions are manages and accessed
+    setActiveTestRunSession(TestGeneratorSession.getActiveSession());
     
     GridData gd = new GridData();
     gd.grabExcessHorizontalSpace = true;
@@ -150,103 +136,133 @@ public class TestGeneratorViewPart extends ViewPart {
     gd.horizontalAlignment = SWT.FILL;
     gd.verticalAlignment = SWT.FILL;
     fTreeViewer.getControl().setLayoutData(gd);
+    
     FailureItemDoubleClickListener doubleClickListener = new FailureItemDoubleClickListener();
     fTreeViewer.addDoubleClickListener(doubleClickListener);
     doubleClickListener.viewPart = this;
   }
 
-  private void createActions() {
-    fDebugWithJUnitAction = new Action("Debug tests with JUnit") {
-      @Override
-      public void run() {
-        System.out.println("Running " + fJUnitDriver);
-        if (fJUnitDriver != null) {
-          List<IJavaElement> list = new ArrayList<IJavaElement>();
-          list.add(fJUnitDriver);
-          IStructuredSelection selection = new StructuredSelection(list);
-          
-          // TODO: Is there a shared instance of JUnitLaunchShortcut?
-          new JUnitLaunchShortcut().launch(selection, "debug");
-        }
+  private class DebugWithJUNitAction extends Action {
+    public DebugWithJUNitAction() {
+      super("Debug Tests with JUnit");
+      
+      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/debugjunit.png");
+      setImageDescriptor(desc);
+    }
+    
+    @Override
+    public void run() {
+      System.out.println("Running " + fJUnitDriver);
+      if (fJUnitDriver != null) {
+        List<IJavaElement> list = new ArrayList<IJavaElement>();
+        list.add(fJUnitDriver);
+        IStructuredSelection selection = new StructuredSelection(list);
+        
+        new JUnitLaunchShortcut().launch(selection, "debug");
       }
-    };
-    // ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/bug.png");
-    fDebugWithJUnitAction.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG));
-    fDebugWithJUnitAction.setEnabled(false);
-    
-    fRunWithJUnitAction = new Action("Run tests with JUnit") {
-      @Override
-      public void run() {
-        System.out.println("Running " + fJUnitDriver);
-        if (fJUnitDriver != null) {
-          List<IJavaElement> list = new ArrayList<IJavaElement>();
-          list.add(fJUnitDriver);
-          IStructuredSelection selection = new StructuredSelection(list);
-          
-          new JUnitLaunchShortcut().launch(selection, "run");
-        }
-      }
-    };
-    
-    fRunWithJUnitAction.setEnabled(false);
-    
-    ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/run_junit.png");
-    fRunWithJUnitAction.setImageDescriptor(desc);
-    
-    fTerminateAction = new Action("Terminate") {
-      @Override
-      public void run() {
-        stopLaunch();
-      };
-    };
-    fTerminateAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
-    fTerminateAction.setEnabled(false);
-    
-    fRelaunchAction = new Action("Regenerate tests") {
-      @Override
-      public void run() {
-        // Terminate the old launch
-        if (stopLaunch()) {
-          fSession = new TestGeneratorSession(fSession.getLaunch(), fSession.getArguments());
-          ILaunch launch = fSession.getLaunch();
-          
-          ILaunchConfiguration config = launch.getLaunchConfiguration();
-          Assert.isNotNull(config); // TODO right?
-          String mode = launch.getLaunchMode();
-          Assert.isNotNull(mode); // TODO right?
-          
-          TestGeneratorSession.setActiveSession(fSession);
-          DebugUITools.launch(config, mode);
-        }
-      }
-    };
-    fRelaunchAction.setEnabled(false);
-
-    // TODO dispose?
-    // desc = RandoopPlugin.getImageDescriptor("icons/arrow_redo.png"); //$NON-NLS-1$
-    fRelaunchAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_REDO));
+    }
   }
   
-  private void createToolBar() {
+  private class RunWithJUnitAction extends Action {
+    public RunWithJUnitAction() {
+      super("Run Tests with JUnit");
+      
+      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/runjunit.png");
+      setImageDescriptor(desc);
+      setEnabled(false);
+    }
+    
+    @Override
+    public void run() {
+      System.out.println("Running " + fJUnitDriver);
+      if (fJUnitDriver != null) {
+        List<IJavaElement> list = new ArrayList<IJavaElement>();
+        list.add(fJUnitDriver);
+        IStructuredSelection selection = new StructuredSelection(list);
+        
+        new JUnitLaunchShortcut().launch(selection, "run");
+      }
+    }
+  }
+  
+  private class TerminateAction extends Action {
+    public TerminateAction() {
+      super("Stop Test Generation");
+      
+      setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_STOP));
+      setEnabled(false);
+    }
+    
+    @Override
+    public void run() {
+      terminateLaunch();
+    }
+  }
+  
+  private class RelaunchAction extends Action {
+    public RelaunchAction () {
+      super("Regenerate tests");
+      
+      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/runrandoop.png");
+      setImageDescriptor(desc);
+    }
+    @Override
+    public void run() {
+      // Terminate the old launch
+      if (terminateLaunch()) {
+        fSession = new TestGeneratorSession(fSession.getLaunch(), fSession.getArguments());
+        ILaunch launch = fSession.getLaunch();
+        
+        ILaunchConfiguration config = launch.getLaunchConfiguration();
+        Assert.isNotNull(config); // TODO right?
+        String mode = launch.getLaunchMode();
+        Assert.isNotNull(mode); // TODO right?
+        
+        TestGeneratorSession.setActiveSession(fSession);
+        DebugUITools.launch(config, mode);
+      }
+    }
+  }
+
+  private void createActionBar() {
+    fDebugWithJUnitAction = new DebugWithJUNitAction();
+    fRunWithJUnitAction = new RunWithJUnitAction();
+    fTerminateAction = new TerminateAction();
+    fRelaunchAction = new RelaunchAction();
+
     IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
     mgr.add(fDebugWithJUnitAction);
     mgr.add(fRunWithJUnitAction);
     mgr.add(fTerminateAction);
     mgr.add(fRelaunchAction);
   }
-
+  
   public void startNewLaunch() {
     setDriver(null);
     fDebugWithJUnitAction.setEnabled(false);
     fRunWithJUnitAction.setEnabled(false);
     fTerminateAction.setEnabled(true);
     fRelaunchAction.setEnabled(true);
+    
+    getProgressBar().reset();
+    getCounterPanel().reset();
   }
   
-  public void setActiveTestRunSession(TestGeneratorSession session) {
+  public boolean setActiveTestRunSession(TestGeneratorSession session) {
+    deregisterTestSessionListener(true);
+    
     fSession = session;
-    if (fSession != null) {
+    if (fSession == null) {
+      fDebugWithJUnitAction.setEnabled(false);
+      fRunWithJUnitAction.setEnabled(false);
+      fTerminateAction.setEnabled(false);
+      fRelaunchAction.setEnabled(false);
+
+      return true;
+    } else {
+      fSessionListener = new SessionListener();
       fSession.addListener(fSessionListener);
+
       fRelaunchAction.setEnabled(true);
 
       RandoopContentProvider prov = new RandoopContentProvider(fSession.getRandoopErrors());
@@ -257,26 +273,35 @@ public class TestGeneratorViewPart extends ViewPart {
       fTreeViewer.refresh();
       fTreeViewer.expandAll();
 
-      int errorCount = fSession.getErrorCount(); 
-      if (errorCount > 0) {
-        getProgressBar().error();
-      }
-      getCounterPanel().setErrorCount(errorCount);
+      getProgressBar().initializeFrom(fSession);
+      getCounterPanel().initializeFrom(fSession);
 
-      getProgressBar().setPercentDone(fSession.getPercentDone());
-      getCounterPanel().setNumSequences(fSession.getSequenceCount());
-
-      if (session.isRunning()) {
+      if (fSession.isRunning()) {
         fDebugWithJUnitAction.setEnabled(false);
         fRunWithJUnitAction.setEnabled(false);
         fTerminateAction.setEnabled(true);
+      } else if (fSession.isTerminated()) {
+        fDebugWithJUnitAction.setEnabled(false);
+        fRunWithJUnitAction.setEnabled(false);
+        fTerminateAction.setEnabled(false);
       }
 
       setDriver(fSession.getJUnitDriver());
     }
+    return true;
   }
   
-  public boolean stopLaunch() {
+  private void deregisterTestSessionListener(boolean force) {
+    if (fSession != null && fSessionListener != null && (force || !fSession.isRunning())) {
+      fSession.removeListener(fSessionListener);
+      fSessionListener = null;
+    }
+  }
+  
+  public boolean terminateLaunch() {
+    if (!fSession.isStopped())
+      getProgressBar().terminate();
+    
     if (!fSession.getLaunch().isTerminated()) {
       try {
         fSession.getLaunch().terminate();
@@ -315,17 +340,18 @@ public class TestGeneratorViewPart extends ViewPart {
   public void dispose() {
     isDisposed = true;
     
+    setActiveTestRunSession(null);
     super.dispose();
   }
   
   public boolean isDisposed() {
-    return isDisposed || getCounterPanel().isDisposed() || getProgressBar().isDisposed();
+    return isDisposed || fParent.isDisposed() || getCounterPanel().isDisposed() || getProgressBar().isDisposed();
   }
 
   private class SessionListener implements ITestGeneratorSessionListener {
     @Override
     public void sessionStarted() {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           if (!isDisposed()) {
@@ -337,15 +363,29 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void sessionEnded() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
+        @Override
+        public void run() {
+          // TODO: RandoopFinished is sent before CreatedJUnitFile
+          // so the listener cannot be removed
+          // deregisterTestSessionListener(false);
+
+          if (!isDisposed()) {
+            fTerminateAction.setEnabled(false);
+          }
+        }
+      });
     }
 
     @Override
-    public void sessionStopped() {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+    public void sessionTerminated() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
+          deregisterTestSessionListener(true);
+          
           if (!isDisposed()) {
-            stopLaunch();
+            terminateLaunch();
           }
         }
       });
@@ -353,7 +393,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void errorRevealed(final ErrorRevealed error) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           if (!isDisposed()) {
@@ -369,7 +409,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void madeProgress(final double percentDone) {
-        PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+        getSite().getShell().getDisplay().syncExec(new Runnable() {
           @Override
           public void run() {
             if (!isDisposed()) {
@@ -381,7 +421,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void madeSequences(final int count) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           if (!isDisposed()) {
@@ -393,7 +433,7 @@ public class TestGeneratorViewPart extends ViewPart {
 
     @Override
     public void madeJUnitDriver(final ICompilationUnit driverFile) {
-      PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+      getSite().getShell().getDisplay().syncExec(new Runnable() {
         @Override
         public void run() {
           if (!isDisposed()) {
@@ -402,6 +442,6 @@ public class TestGeneratorViewPart extends ViewPart {
         }
       });
     }
-
   }
+  
 }

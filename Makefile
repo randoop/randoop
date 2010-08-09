@@ -56,7 +56,7 @@ clean:
 # Build Randoop.
 build: bin randoop_agent.jar
 
-bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES) lib/plume.jar
+bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	mkdir -p bin
 	@echo ${JAVAC_COMMAND} -Xlint -Xlint:unchecked -g -d bin ...
 	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
@@ -72,7 +72,7 @@ tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bd
 # Runs pure Randoop-related tests.
 randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
-temp: randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
+temp: randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
 
 # build pre-agent instrumentation jar
@@ -169,18 +169,21 @@ randoop2: bin
 	  foo/bar/Naive*.java
 	cp systemtests/randoop-scratch/foo/bar/Naive0.java systemtests/resources/Naive0.java
 
-# Runs Randoop on Collections and TreeSet.
+# Runs Randoop on a large collections of classes from the JDK.
+# This run of Randoop ends up creating a bunch of randomly-named files
+# in current directory, so we execute it from scratch directory.
 randoop3: bin
 	rm -rf systemtests/randoop-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	mkdir systemtests/randoop-scratch
+	cd systemtests/randoop-scratch && java -ea -classpath $(RANDOOP_HOME):../src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
-	   --testclass=java2.util2.TreeSet \
-	   --testclass=java2.util2.Collections \
-	   --junit-classname=Naive2_ \
-	   --junit-package-name=foo.bar \
-	   --junit-output-dir=systemtests/randoop-scratch
-	cp systemtests/randoop-scratch/foo/bar/Naive2_0.java systemtests/resources/Naive2_0.java
+	   --classlist=../resources/jdk_classlist.txt \
+	   --junit-classname=JDK_Tests \
+	   --junit-package-name=jdktests \
+	   --junit-output-dir=../randoop-scratch
+	cp systemtests/randoop-scratch/jdktests/JDK_Tests0.java systemtests/resources/JDK_Tests0.java
+	cp systemtests/randoop-scratch/jdktests/JDK_Tests1.java systemtests/resources/JDK_Tests1.java
 
 randoop-contracts: bin
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Buggy.java
@@ -510,8 +513,7 @@ summary:
 
 
 ############################################################
-# Targets for updating Randoop's manual.
-# Keeping it simple: manual is all in index.html.
+# Plume-lib (only needed by maintainers)
 
 # Checks out a copy of the plume libraries.
 # We only use the html-update package.
@@ -523,11 +525,21 @@ plume-lib-update: utils/plume-lib
 	cd utils && hg pull -u
 
 .PHONY: utils/plume-lib/java/plume.jar
-utils/plume-lib/java/plume.jar: utils/plume-lib
+utils/plume-lib/java/plume.jar: plume-lib-update
 	make -C utils/plume-lib/java plume.jar
 
+# NOTE that lib/plume.jar is not necessarily up-to-date with
+# utils/plume-lib/java/.  This step must be done by hand and is not
+# automated nor called from anywhere
+.PHONY: update-plume-jar
+update-plume-jar: lib/plume.jar
 lib/plume.jar: utils/plume-lib/java/plume.jar
 	cp -pf $< $@
+
+
+############################################################
+# Updating Randoop's manual.
+# Keeping it simple: manual is all in index.html.
 
 # List of .java files is from GenTests.java's "new Options" expression.
 GENTESTS_OPTIONS_JAVA = \
@@ -537,8 +549,7 @@ GENTESTS_OPTIONS_JAVA = \
       src/randoop/util/Log.java \
       src/randoop/util/ReflectionExecutor.java \
       src/randoop/ForwardGenerator.java \
-      src/randoop/AbstractGenerator.java \
-      src/randoop/SequenceGeneratorStats.java
+      src/randoop/AbstractGenerator.java
 
 # "build" is a prerequisite because javadoc reads .class files to determine
 # annotations.
