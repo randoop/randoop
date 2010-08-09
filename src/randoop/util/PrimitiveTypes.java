@@ -271,5 +271,57 @@ public final class PrimitiveTypes {
 
     return s.matches(OBJECT_REF_PATTERN);
   }
+  
+  // Used to increase performance of stringLengthOK method.
+  private static Map<String, Boolean> stringLengthOKCached =
+    new LinkedHashMap<String, Boolean>();
+  
+  /**
+   * Returns true if the given string is deemed to be reasonable (i.e. not too long)
+   * based on the --string-maxlen=N parameter.
+   * <p>
+   * If Randoop generates tests using strings that are too long, this can
+   * result in non-compilable tests due to the JVM's limit on the length of a string.
+   * <p>
+   * A string S is too long if, when printed as code in a generated unit test,
+   * it may result in a non-compilable test. In order to determine this, we have
+   * to consider not the length of s, but the length of the string that would be
+   * printed to obtain s, which may be different due to escaped and unicode characters.
+   * This method takes this into account.
+   *
+   *  @see GenInputsAbstract
+   */
+  public static boolean stringLenghtOK(String s) {
+    if (s == null) {
+      throw new IllegalArgumentException("s is null");
+    }
+    
+    // Optimization: return cached value if available.
+    Boolean b = stringLengthOKCached.get(s);
+    if (b != null) {
+      return b;
+    }
+    
+    int length = s.length();
+    
+    // Optimization: if length greater than maxlen, return false right away.
+    if (length > GenInputsAbstract.string_maxlen) {
+      stringLengthOKCached.put(s, false);
+      return false;
+    }
+    
+    // Optimization: if the string is definitely short enough, return true right away.
+    // If a string's length is less than 1/6 * maxlen, it's definitely short enough, since
+    // the worst that could happen is that every character in s is unicode and is
+    // expanded to "\u0000" format, blowing up the length to s.length() * 6.
+    if (length * 6 < GenInputsAbstract.string_maxlen) {
+      stringLengthOKCached.put(s, true);
+      return true;
+    }
+    
+    boolean retval = StringEscapeUtils.escapeJava(s).length() <= GenInputsAbstract.string_maxlen;
+    stringLengthOKCached.put(s, retval);
+    return retval;
+  }
 
 }
