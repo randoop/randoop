@@ -1,10 +1,13 @@
-package randoop;
+package randoop.experiments;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.MSequence;
+import randoop.MStatement;
+import randoop.MVariable;
 import randoop.util.Reflection;
 
 public class BranchDirMutator {

@@ -1,4 +1,4 @@
-package randoop;
+package randoop.experiments;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,6 +11,8 @@ import java.util.Set;
 
 import plume.Pair;
 import plume.UtilMDE;
+import randoop.Globals;
+import randoop.Sequence;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import cov.Branch;

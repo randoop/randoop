@@ -1,4 +1,4 @@
-package randoop;
+package randoop.experiments;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import plume.UtilMDE;
+import randoop.Globals;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 

@@ -1,6 +1,6 @@
 package randoop;
 
-public interface IStoppingCriterion {
+public interface IStopper {
   
   boolean stop();
 

@@ -33,8 +33,6 @@ import randoop.util.ReflectionExecutor;
 
 public class ForwardExplorerTests extends TestCase {
 
-  private static final int TIME_LIMIT_SECS = 1;
-
   public static void test1() {
 
     List<StatementKind> m =
@@ -43,7 +41,7 @@ public class ForwardExplorerTests extends TestCase {
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer = new ForwardGenerator(m,
-      null, Long.MAX_VALUE, 5000, mgr, null, null);
+      Long.MAX_VALUE, 5000, mgr, null, null, null);
     explorer.explore();
     GenInputsAbstract.dontexecute = false;
     assertTrue(explorer.allSequences.size() != 0);
@@ -66,7 +64,7 @@ public class ForwardExplorerTests extends TestCase {
     ReflectionExecutor.timeout = 200;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp =
-      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, mgr, null, null);
+      new ForwardGenerator(Reflection.getStatements(classes, null), Long.MAX_VALUE, 200, mgr, null, null, null);
     exp.explore();
     ReflectionExecutor.timeout = oldTimeout;
     for (Sequence s : exp.allSequences()) {
@@ -86,68 +84,6 @@ public class ForwardExplorerTests extends TestCase {
     assertTrue(swapright);
     assertTrue(random);
   }
-
-// Removed because it fails nondeterministically.
-//   public void test3() {
-
-
-//     boolean blacknode = false;
-//     boolean greynode = false;
-//     boolean northeast = false;
-//     boolean northwest = false;
-//     boolean perimeter = false;
-//     boolean quadrant = false;
-//     boolean quadtreenode = false;
-//     boolean southeast = false;
-//     boolean southwest = false;
-//     boolean whitenode = false;
-
-
-//     List<Class<?>> classes = new ArrayList<Class<?>>();
-//     classes.add(BlackNode.class);
-//     classes.add(GreyNode.class);
-//     classes.add(NorthEast.class);
-//     classes.add(NorthWest.class);
-//     classes.add(Perimeter.class);
-//     classes.add(Quadrant.class);
-//     classes.add(QuadTreeNode.class);
-//     classes.add(SouthEast.class);
-//     classes.add(SouthWest.class);
-//     classes.add(WhiteNode.class);
-
-//     long oldTimeout = ReflectionExecutor.timeout;
-//     ReflectionExecutor.timeout = 200;
-//     ForwardGenerator exp =
-//       new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, null);
-//     GenInputsAbstract.forbid_null = false;
-//     exp.explore();
-//     ReflectionExecutor.timeout = oldTimeout;
-//     for (Sequence s : exp.allSequences()) {
-//       String str = s.toCodeString();
-//       if (str.contains("BlackNode")) blacknode = true;
-//       if (str.contains("GreyNode")) greynode = true;
-//       if (str.contains("NorthEast")) northeast = true;
-//       if (str.contains("NorthWest")) northwest = true;
-//       if (str.contains("Perimeter")) perimeter = true;
-//       if (str.contains("Quadrant")) quadrant = true;
-//       if (str.contains("QuadTreeNode")) quadtreenode = true;
-//       if (str.contains("SouthEast")) southeast = true;
-//       if (str.contains("SouthWest")) southwest = true;
-//       if (str.contains("WhiteNode")) whitenode = true;
-//     }
-
-//     assertTrue(blacknode);
-//     assertTrue(greynode);
-//     assertTrue(northeast);
-//     assertTrue(northwest);
-//     assertTrue(perimeter);
-//     assertTrue(quadrant);
-//     assertTrue(quadtreenode);
-//     assertTrue(southeast);
-//     assertTrue(southwest);
-//     assertTrue(whitenode);
-//   }
-
 
   public void test4() throws Exception {
 
@@ -170,7 +106,7 @@ public class ForwardExplorerTests extends TestCase {
 
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator exp =
-      new ForwardGenerator(Reflection.getStatements(classes, null), null, Long.MAX_VALUE, 200, mgr, null, null);
+      new ForwardGenerator(Reflection.getStatements(classes, null), Long.MAX_VALUE, 200, mgr, null, null, null);
     GenInputsAbstract.forbid_null = false;
     exp.explore();
     for (Sequence s : exp.allSequences()) {
