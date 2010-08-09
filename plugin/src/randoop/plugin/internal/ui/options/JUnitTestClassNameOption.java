@@ -122,6 +122,10 @@ public class JUnitTestClassNameOption extends Option {
 
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    writeDefaults(config);
+  }
+  
+  public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
     RandoopArgumentCollector.restoreJUnitPackageName(config);
     RandoopArgumentCollector.restoreJUnitClassName(config);
   }

@@ -34,13 +34,24 @@ public class RandoopLabelProvider extends LabelProvider {
       // PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS_DEFAULT);
       // or
       // RandoopPlugin.getDefault().getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_CFILE);
-      descriptor = RandoopPlugin.getImageDescriptor("icons/bomb.png");
+      
+      // TODO: Failure kinds should be stored in an enum or public static ints 
+      FailureKind kind = (FailureKind) element;
+      if (kind.getClassName().equals("class randoop.EqualsToNullRetFalse")) {
+        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equalsToNull.png");
+      } else  if (kind.getClassName().equals("NPEs / Assertion violations")) {
+        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_npe.png");
+      } else  if (kind.getClassName().equals("class randoop.EqualsReflexive")) {
+        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equals.png");
+      } else  if (kind.getClassName().equals("class randoop.EqualsHashcode")) {
+        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equalsHashCode.png");
+      }
     } else if (element instanceof Failures) {
-      return null;
+      descriptor = RandoopPlugin.getImageDescriptor("icons/bomb.png");
     } else if (element instanceof RunResultsTree) {
       return null;
     } else {
-        throw new RuntimeException("unknown tree element: " + element.getClass());
+      throw new RuntimeException("unknown tree element: " + element.getClass());
     }
 
     //obtain the cached image corresponding to the descriptor

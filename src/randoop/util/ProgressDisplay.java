@@ -1,14 +1,21 @@
 package randoop.util;
 
+import java.util.Date;
 import java.util.Map;
 
 import plume.UtilMDE;
+import randoop.AbstractGenerator;
 import randoop.Globals;
-import randoop.SequenceGeneratorStats;
+import randoop.RandoopListenerManager;
 
 /**
  * Modified from Daikon.FileIOProgress.
  */
+// TODO: Split this class into two: one is responsible for
+// displaying information at a regular interval, and a
+// second class is responsible for monitoring for progress
+// and terminating Randoop if it appears the tool is hanging.
+// Currently this class does both things.
 public class ProgressDisplay extends Thread {
 
   /**
@@ -24,24 +31,29 @@ public class ProgressDisplay extends Thread {
   public static enum Mode { SINGLE_LINE_OVERWRITE, MULTILINE, NO_DISPLAY }
 
   private Mode outputMode;
-  private long progressIntervalMillis = 1000;
-  private SequenceGeneratorStats stats;
+  private long progressIntervalMillis = 5000;
 
-  public ProgressDisplay(SequenceGeneratorStats stats,
+  private RandoopListenerManager listenerMgr;
+
+  private AbstractGenerator generator;
+
+  public ProgressDisplay(AbstractGenerator generator, RandoopListenerManager listenerMgr,
       Mode outputMode, int progressWidth) {
-    this.stats = stats;
+    if (generator == null) {
+      throw new IllegalArgumentException("generator is null");
+    }
+    this.generator = generator;
     this.outputMode = outputMode;
+    this.listenerMgr = listenerMgr;
     ProgressDisplay.progresswidth = progressWidth;
     setDaemon(true);
   }
 
-  private int queries = 0;
-
   public String message() {
     StringBuilder b = new StringBuilder();
-    if (queries++ % 10 == 0)
-      b.append(stats.getTitle());
-    b.append(stats.toStringGlobal());
+      b.append("Progress update: test inputs generated=" + generator.num_sequences_generated);
+      b.append(", failing inputs=" + generator.num_failing_sequences);
+      b.append("      (" + new Date() + ")");
     return b.toString();
   }
 
@@ -60,7 +72,9 @@ public class ProgressDisplay extends Thread {
         return;
       }
       display();
-      updateLastBranchCov();
+      if (listenerMgr != null) {
+        listenerMgr.progressThreadUpdateNotify();
+      }
 
       // Check that we're still doing progress. If no new inputs
       // generated for several seconds, we're probably in an infinite
@@ -88,7 +102,7 @@ public class ProgressDisplay extends Thread {
     System.out.println("that leads to nonterminating behavior.");
     System.out.println("Last sequence generated:");
     System.out.println();
-    System.out.println(SequenceGeneratorStats.currSeq);
+    System.out.println(AbstractGenerator.currSeq);
     System.out.println();
     System.out.println("Will print all thread stack traces and exit with code 1.");
 
@@ -108,7 +122,7 @@ public class ProgressDisplay extends Thread {
   private long lastNumSeqs = 0;
 
   private void updateLastSeqGen() {
-    long seqs = SequenceGeneratorStats.steps;
+    long seqs = generator.num_steps;
     if (seqs > lastNumSeqs) {
       lastNumSeqsIncrease = System.currentTimeMillis();
       lastNumSeqs = seqs;
@@ -118,14 +132,6 @@ public class ProgressDisplay extends Thread {
 
   public long lastCovIncrease = System.currentTimeMillis();
   private int lastNumBranches = 0;
-
-  private void updateLastBranchCov() {
-   
-    if (stats.branchesCovered.size() > lastNumBranches) {
-      lastCovIncrease = System.currentTimeMillis();
-      lastNumBranches = stats.branchesCovered.size();
-    }
-  }
 
   /** Clear the display; good to do before printing to System.out. * */
   public void clear() {

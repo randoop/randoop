@@ -21,6 +21,7 @@ import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.ErrorRevealed;
 import randoop.runtime.IMessage;
 import randoop.runtime.PercentDone;
+import randoop.runtime.RandoopFinished;
 import randoop.runtime.RandoopStarted;
 
 public class MessageSessionListener implements IMessageListener {
@@ -43,6 +44,8 @@ public class MessageSessionListener implements IMessageListener {
       ErrorRevealed err = (ErrorRevealed) m;
 
       fSession.addRevealedError(err);
+    } else if (m instanceof RandoopFinished) {
+      fSession.stop(false);
     } else if (m instanceof CreatedJUnitFile) {
       final CreatedJUnitFile fileCreated = (CreatedJUnitFile) m;
       final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -65,10 +68,11 @@ public class MessageSessionListener implements IMessageListener {
 
         IJavaProject javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
         Assert.isNotNull(javaProject);
-
+        
         // Search for the package fragment root which is containing this
-        // JUnit file
-        // so that we can quickly perform a refresh and see the new file
+        // JUnit file so that we can quickly perform a refresh and see the new
+        // file
+        javaProject.getProject().refreshLocal(IResource.DEPTH_ONE, null);
         IPackageFragmentRoot outputPfr = null;
         int matchingSegmentCount = 0;
         for (IPackageFragmentRoot pfr : javaProject.getPackageFragmentRoots()) {
@@ -111,7 +115,7 @@ public class MessageSessionListener implements IMessageListener {
     RandoopPlugin.getDisplay().syncExec(new Runnable() {
       @Override
       public void run() {
-        fSession.stop();
+        fSession.stop(true);
       }
     });
   }

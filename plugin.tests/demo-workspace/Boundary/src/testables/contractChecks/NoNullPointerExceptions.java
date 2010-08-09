@@ -1,4 +1,4 @@
-package testables.contracts;
+package testables.contractChecks;
 
 public class NoNullPointerExceptions {
 
