@@ -24,7 +24,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 
 public class TypeMnemonic {
-  public static final int LENGTH = 4;
+  private static final int LENGTH = 4;
   
   private final IJavaProject fJavaProject;
   private final IClasspathEntry fClasspathEntry;
@@ -318,9 +318,6 @@ public class TypeMnemonic {
   }
 
   private static IType findType(IJavaProject javaProject, IClasspathEntry classpathEntry, String fqname) throws JavaModelException {
-    // TODO - Fix problem with classpath entries of type CPE_PROJECT:
-    // IJavaProject.findClasspathEntries() returns []
-    
     IPackageFragmentRoot[] packageFragmentRoots = RandoopCoreUtil.findPackageFragmentRoots(javaProject, classpathEntry);
 
     String packageName = RandoopCoreUtil.getPackageName(fqname);
