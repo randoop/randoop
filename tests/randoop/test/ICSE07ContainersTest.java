@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 import randoop.ComponentManager;
 import randoop.EverythingIsDifferentMatcher;
 import randoop.ForwardGenerator;
-import randoop.IStoppingCriterion;
+import randoop.IStopper;
 import randoop.ObjectCache;
 import randoop.SeedSequences;
 import randoop.StatementKind;
@@ -41,7 +41,7 @@ public class ICSE07ContainersTest extends TestCase {
   ForwardGenerator explorer = null;
 
   public static void runRandoop(String name, List<Class<?>> classList,
-      Pattern pattern, IStoppingCriterion stopper) {
+      Pattern pattern, IStopper stopper) {
 
     System.out.println("ICSE 2006 container: " + name);
 
@@ -50,7 +50,7 @@ public class ICSE07ContainersTest extends TestCase {
     
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer = new ForwardGenerator(statements,
-        null, 120000 /* two minutes */, Integer.MAX_VALUE, componentMgr, null, stopper);
+        120000 /* two minutes */, Integer.MAX_VALUE, componentMgr, stopper, null, null);
     explorer.setObjectCache(new ObjectCache(new EverythingIsDifferentMatcher()));
     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
     GenInputsAbstract.repeat_heuristic = true;
@@ -64,7 +64,7 @@ public class ICSE07ContainersTest extends TestCase {
     classList.add(FibHeap.class);
     FibHeap.rand.setSeed(0);
     randoop.util.Randomness.reset(0);
-    IStoppingCriterion stopper = new IStoppingCriterion() {
+    IStopper stopper = new IStopper() {
       @Override
       public boolean stop() {
         return FibHeap.tests.size() >= 96;
@@ -78,7 +78,7 @@ public class ICSE07ContainersTest extends TestCase {
     List<Class<?>> classList = new ArrayList<Class<?>>();
     classList.add(BinTree.class);
     randoop.util.Randomness.reset(0);
-    IStoppingCriterion stopper = new IStoppingCriterion() {
+    IStopper stopper = new IStopper() {
       @Override
       public boolean stop() {
         return BinTree.tests.size() >= 54;
@@ -92,7 +92,7 @@ public class ICSE07ContainersTest extends TestCase {
     List<Class<?>> classList = new ArrayList<Class<?>>();
     classList.add(TreeMap.class);
     randoop.util.Randomness.reset(0);
-    IStoppingCriterion stopper = new IStoppingCriterion() {
+    IStopper stopper = new IStopper() {
       @Override
       public boolean stop() {
         return TreeMap.tests.size() >= 106;
@@ -106,7 +106,7 @@ public class ICSE07ContainersTest extends TestCase {
     List<Class<?>> classList = new ArrayList<Class<?>>();
     classList.add(BinomialHeap.class);
     randoop.util.Randomness.reset(0);
-    IStoppingCriterion stopper = new IStoppingCriterion() {
+    IStopper stopper = new IStopper() {
       @Override
       public boolean stop() {
         return BinomialHeap.tests.size() >= 101;

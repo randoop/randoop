@@ -11,7 +11,7 @@ import randoop.Sequence.RelativeNegativeIndex;
  * The elements of a Sequence. Each of these contains two pieces of information:
  * (1) A statement kind, and (2) inputs to the statement.
  */
-final class Statement implements Serializable {
+public final class Statement implements Serializable {
 
   private static final long serialVersionUID = -6876369784900176443L;
 

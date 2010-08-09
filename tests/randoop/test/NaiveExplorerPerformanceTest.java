@@ -6,8 +6,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import randoop.Globals;
-import randoop.NaiveRandomGenerator;
 import randoop.StatementKind;
+import randoop.experiments.RandomWalkGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.util.Reflection;
 import randoop.util.Timer;
@@ -42,7 +42,7 @@ public class NaiveExplorerPerformanceTest extends TestCase {
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     Globals.nochecks = true;
-    NaiveRandomGenerator explorer = new NaiveRandomGenerator(m, null, TIME_LIMIT_SECS*1000, Integer.MAX_VALUE, null, null);
+    RandomWalkGenerator explorer = new RandomWalkGenerator(m, TIME_LIMIT_SECS*1000, Integer.MAX_VALUE, null, null, null, null);
     
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.explore();

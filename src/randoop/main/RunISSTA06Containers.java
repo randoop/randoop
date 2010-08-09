@@ -76,7 +76,7 @@ public class RunISSTA06Containers extends CommandHandler {
       Reflection.getStatements(classList, new DefaultReflectionFilter(pattern));
 
     ForwardGenerator explorer = new ForwardGenerator(statements,
-        null, timeLimit, Integer.MAX_VALUE, null, null, null);
+        timeLimit, Integer.MAX_VALUE, null, null, null, null);
     explorer.setObjectCache(new ObjectCache(new EverythingIsDifferentMatcher()));
     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
     GenInputsAbstract.noprogressdisplay = true;

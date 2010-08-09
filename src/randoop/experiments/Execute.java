@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import randoop.DataFlowInput;
 import randoop.DummyVisitor;
 import randoop.ExecutableSequence;
 import randoop.ExecutionOutcome;
