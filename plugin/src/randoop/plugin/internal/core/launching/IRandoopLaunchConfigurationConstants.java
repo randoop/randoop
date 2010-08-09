@@ -45,9 +45,9 @@ public class IRandoopLaunchConfigurationConstants {
   
   public static final String ATTR_SELECTED_TYPES = RandoopPlugin.getPluginId() + ".SELECTED_TYPES"; //$NON-NLS-1$
   
-  public static final String ATTR_AVAILABLE_METHODS = RandoopPlugin.getPluginId() + ".AVAILABLE_METHODS"; //$NON-NLS-1$
+  public static final String ATTR_AVAILABLE_METHODS_PREFIX = RandoopPlugin.getPluginId() + ".AVAILABLE_METHODS_"; //$NON-NLS-1$
   
-  public static final String ATTR_SELECTED_METHODS = RandoopPlugin.getPluginId() + ".SELECTED_METHODS"; //$NON-NLS-1$
+  public static final String ATTR_SELECTED_METHODS_PREFIX = RandoopPlugin.getPluginId() + ".SELECTED_METHODS_"; //$NON-NLS-1$
   
   public static final String DEFAULT_RANDOM_SEED = "0"; //$NON-NLS-1$
   

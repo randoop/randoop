@@ -4,6 +4,7 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -293,12 +294,71 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return StatusFactory.OK_STATUS;
   }
 
+  /**
+   * Returns an OK <code>IStatus</code> if the specified arguments could be
+   * passed to Randoop without raising any error. If the arguments are not
+   * valid, an ERROR status is returned with a message indicating what is wrong.
+   * 
+   * @param selectedTypes
+   * @param selectedMethods 
+   * @return
+   */
   @Override
   public IStatus isValid(ILaunchConfiguration config) {
+    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
     List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
-    List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(config);
+    Map<String, List<String>> selectedMethodsByType = new HashMap<String, List<String>>();
+    
+    for (String typeMnemonic : selectedTypes) {
+      List<String> methods = RandoopArgumentCollector.getSelectedMethods(config, typeMnemonic);
+      
+      if (methods != null && !methods.isEmpty()) {
+        selectedMethodsByType.put(typeMnemonic, methods);
+      }
+    }
 
-    return validate(fJavaProject, selectedTypes, selectedMethods);
+    boolean areTypesSelected = selectedTypes == null || !selectedTypes.isEmpty();
+    boolean areMethodsSelected = !selectedMethodsByType.keySet().isEmpty();
+
+    if (!areTypesSelected && !areMethodsSelected) {
+      return StatusFactory.createErrorStatus("At least one existing type or method must be selected.");
+    }
+    
+    if (fJavaProject == null) {
+      if (areTypesSelected || areMethodsSelected) {
+        return StatusFactory.createErrorStatus("Types cannot be selected if no Java project is set");
+      }
+      return StatusFactory.OK_STATUS;
+    }
+    
+    for (String typeMnemonicString : availableTypes) {
+      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
+      IType type = typeMnemonic.getType();
+      
+      if (selectedTypes.contains(typeMnemonicString)) {
+        if (type == null || !type.exists()) {
+          return StatusFactory.createErrorStatus("One of the selected types does not exist.");
+        } else if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
+          return StatusFactory
+              .createErrorStatus("One of the selected types does not exist in the selected project.");
+        }
+      }
+      
+      List<String> methodMnemonics = selectedMethodsByType.get(typeMnemonicString);
+      if (methodMnemonics != null) {
+        for (String methodMnemonicString : methodMnemonics) {
+          MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString);
+
+          IMethod m = methodMnemonic.findMethod(type);
+
+          if (m == null || !m.exists()) {
+            return StatusFactory.createErrorStatus("One of the selected methods is invalid.");
+          }
+        }
+      }
+    }
+
+    return StatusFactory.OK_STATUS;
   }
 
   @Override
@@ -309,8 +369,13 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       
       List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
       List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
-      List<String> availableMethods = RandoopArgumentCollector.getAvailableMethods(config); 
-      List<String> selectedMethods = RandoopArgumentCollector.getSelectedMethods(config);
+      
+      Map<String, List<String>> availableMethods = new HashMap<String, List<String>>();
+      Map<String, List<String>> selectedMethods = new HashMap<String, List<String>>();
+      for (String typeMnemonic : availableTypes) {
+        availableMethods.put(typeMnemonic, RandoopArgumentCollector.getAvailableMethods(config, typeMnemonic));
+        selectedMethods.put(typeMnemonic, RandoopArgumentCollector.getSelectedMethods(config, typeMnemonic));
+      }
 
       fTypeSelector = new ClassSelector(fTypeTree, fJavaProject, availableTypes, selectedTypes, availableMethods, selectedMethods);
       fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
@@ -322,13 +387,29 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     if (fTypeSelector == null) {
       setDefaults(config);
     } else {
-      RandoopArgumentCollector.setAvailableTypes(config, fTypeSelector.getAllClasses());
-      RandoopArgumentCollector.setSelectedTypes(config, fTypeSelector.getCheckedClasses());
-      RandoopArgumentCollector.setAvailableMethods(config, fTypeSelector.getAllMethods());
-      RandoopArgumentCollector.setSelectedMethods(config, fTypeSelector.getCheckedMethods());
+      List<String> availableTypes = fTypeSelector.getAllClasses();
+      List<String> selectedTypes = fTypeSelector.getCheckedClasses();
+      
+      Map<String, List<String>> availableMethods = fTypeSelector.getAllMethods();
+      Map<String, List<String>> selectedMethods = fTypeSelector.getCheckedMethods();
+      
+      RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
+      RandoopArgumentCollector.setSelectedTypes(config, selectedTypes);
+      
+      for (String typeMnemonic : availableTypes) {
+        RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods.get(typeMnemonic));
+        RandoopArgumentCollector.setSelectedMethods(config, typeMnemonic, selectedMethods.get(typeMnemonic));
+      }
+      
+//      List<String> fDeletedTypes; // TODO: Use this field
+//      for (String typeMnemonic : fDeletedTypes) {
+//        RandoopArgumentCollector.deleteSelectedMethods(config, typeMnemonic);
+//        RandoopArgumentCollector.deleteAvailableMethods(config, typeMnemonic);
+//      }
+      
     }
   }
-
+  
   @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     writeDefaults(config);
@@ -337,54 +418,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
     RandoopArgumentCollector.restoreSelectedTypes(config);
     RandoopArgumentCollector.restoreAvailableTypes(config);
-    RandoopArgumentCollector.restoreSelectedMethods(config);
-    RandoopArgumentCollector.restoreAvailableMethods(config);
-  }
-
-  /**
-   * Returns an OK <code>IStatus</code> if the specified arguments could be
-   * passed to Randoop without raising any error. If the arguments are not
-   * valid, an ERROR status is returned with a message indicating what is wrong.
-   * 
-   * @param selectedTypes
-   * @param selectedMethods 
-   * @return
-   */
-  protected static IStatus validate(IJavaProject javaProject, List<String> selectedTypes, List<String> selectedMethods) {
-    boolean areTypesSelected = selectedTypes == null || !selectedTypes.isEmpty();
-    boolean areMethodsSelected = selectedMethods == null || !selectedMethods.isEmpty();
-
-    if (!areTypesSelected && !areMethodsSelected) {
-      return StatusFactory.createErrorStatus("At least one existing type or method must be selected.");
-    }
     
-    if (javaProject == null) {
-      if (areTypesSelected || areMethodsSelected) {
-        return StatusFactory.createErrorStatus("Types cannot be selected if no Java project is set");
-      }
-      return StatusFactory.OK_STATUS;
+    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
+    for (String typeMnemonic : availableTypes) {
+      RandoopArgumentCollector.deleteSelectedMethods(config, typeMnemonic);
+      RandoopArgumentCollector.deleteAvailableMethods(config, typeMnemonic);
     }
-    
-    for (String typeMnemonicString : selectedTypes) {
-      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
-      IType type = typeMnemonic.getType();
-      if (type == null || !type.exists()) {
-        return StatusFactory.createErrorStatus("One of the selected types does not exist.");
-      } else if (!javaProject.equals(typeMnemonic.getJavaProject())) {
-        return StatusFactory.createErrorStatus("One of the selected types does not exist in the selected project.");
-      }
-    }
-
-    for (String mnemonic : selectedMethods) {
-      MethodMnemonic methodMnemonic = new MethodMnemonic(mnemonic, getWorkspaceRoot());
-      IMethod m = methodMnemonic.getMethod();
-
-      if (m == null || !m.exists()) {
-        return StatusFactory.createErrorStatus("One of the selected methods is invalid.");
-      }
-    }
-
-    return StatusFactory.OK_STATUS;
   }
 
   private IClasspathEntry[] chooseClasspathEntry() throws JavaModelException {
