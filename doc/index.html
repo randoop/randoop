@@ -194,8 +194,10 @@ the cause of the problem.</p>
       <li><b>--testclass=</b><i>string[]</i>. Each element is the fully-qualified name of a class under test. [default []]</li>
       <li><b>--classlist=</b><i>string</i>. In the file, each class under test is specified by its fully
  qualified name on a separate line. [no default]</li>
-      <li><b>--methodlist=</b><i>string</i>. In the file, each each method under test is specified on a separate
+      <li><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
+ In the file, each each method under test is specified on a separate
  line. [no default]</li>
+      <li><b>--omitmethods=</b><i>regex</i>. Do not exercise methods that match regular expresssion &lt;string&gt; [no default]</li>
       <li><b>--init-routine=</b><i>string</i>. specifies initialization routine (class.method) [no default]</li>
       <li><b>--literals-level=</b><i>enum</i>. <ul>
  <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
