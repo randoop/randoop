@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -46,6 +47,7 @@ import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+import randoop.plugin.internal.ui.AdaptablePropertyTester;
 import randoop.plugin.internal.ui.wizards.RandoopLaunchConfigurationWizard;
 
 public class RandoopLaunchShortcut implements ILaunchShortcut {
@@ -144,14 +146,16 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
 
               if (!selectedTypes.contains(type)) {
                 try {
-                  List<String> methodMnemonics = selectedMethodsByDeclaringTypes.get(type);
-                  if (methodMnemonics == null) {
-                    methodMnemonics = new ArrayList<String>();
-                    selectedMethodsByDeclaringTypes.put(type, methodMnemonics);
-                  }
-                  methodMnemonics.add(new MethodMnemonic(m).toString());
-                  if (!types.contains(type)) {
-                    types.add(type);
+                  if (AdaptablePropertyTester.isTestable(m)) {
+                    List<String> methodMnemonics = selectedMethodsByDeclaringTypes.get(type);
+                    if (methodMnemonics == null) {
+                      methodMnemonics = new ArrayList<String>();
+                      selectedMethodsByDeclaringTypes.put(type, methodMnemonics);
+                    }
+                    methodMnemonics.add(new MethodMnemonic(m).toString());
+                    if (!types.contains(type)) {
+                      types.add(type);
+                    }
                   }
                 } catch (JavaModelException e) {
                   RandoopPlugin.log(e);

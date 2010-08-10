@@ -76,6 +76,7 @@ import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
+import randoop.plugin.internal.ui.AdaptablePropertyTester;
 import randoop.plugin.internal.ui.ClasspathLabelProvider;
 import randoop.plugin.internal.ui.MessageUtil;
 
@@ -423,45 +424,47 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
     @Override
     public Object[] getChildren(Object parentElement) {
-      TreeNode node = (TreeNode) parentElement;
+      TreeNode typeNode = (TreeNode) parentElement;
   
-      if (node.getObject() instanceof TypeMnemonic) {
-        if (!node.hasChildren()) {
+      if (typeNode.getObject() instanceof TypeMnemonic) {
+        if (!typeNode.hasChildren()) {
           try {
-            final boolean typeChecked = node.isChecked();
-            final boolean typeGrayed = node.isGrayed();
+            final boolean typeChecked = typeNode.isChecked();
+            final boolean typeGrayed = typeNode.isGrayed();
             
-            IType type = ((TypeMnemonic) node.getObject()).getType();
+            IType type = ((TypeMnemonic) typeNode.getObject()).getType();
   
             if (type != null){
               List<String> checkedMethods = fCheckedMethodsByType.get(type);
   
               IMethod[] methods = type.getMethods();
-              TreeNode[] nodes = new TreeNode[methods.length];
-              for (int i = 0; i < methods.length; i++) {
-                MethodMnemonic methodMnemonic = new MethodMnemonic(methods[i]);
-                
-                boolean methodChecked;
-                if (typeChecked && typeGrayed) {
-                  if (checkedMethods != null) {
-                    methodChecked = checkedMethods.contains(methodMnemonic.toString());
+              List<TreeNode> methodNodes = new ArrayList<TreeNode>();
+              for (IMethod method : methods) {
+                if (AdaptablePropertyTester.isTestable(method)) {
+                  MethodMnemonic methodMnemonic = new MethodMnemonic(method);
+
+                  boolean methodChecked;
+                  if (typeChecked && typeGrayed) {
+                    if (checkedMethods != null) {
+                      methodChecked = checkedMethods.contains(methodMnemonic.toString());
+                    } else {
+                      methodChecked = false;
+                    }
                   } else {
-                    methodChecked = false;
+                    methodChecked = typeChecked;
                   }
-                } else {
-                  methodChecked = typeChecked;
+
+                  methodNodes.add(typeNode.addChild(methodMnemonic, methodChecked, false));
                 }
-  
-                nodes[i] = node.addChild(methodMnemonic, methodChecked, false);
               }
-            return nodes;
+            return (TreeNode[]) methodNodes.toArray(new TreeNode[methodNodes.size()]);
             }
           } catch (JavaModelException e) {
             RandoopPlugin.log(e);
           }
         }
       }
-      return node.getChildren();
+      return typeNode.getChildren();
     }
   }
 
