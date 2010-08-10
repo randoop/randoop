@@ -41,7 +41,7 @@ PLUGIN BUGS / FEATURE REQUESTS
             button that searches for changes, removes methods that don't
             exist, and adds new ones that have been added.
             
-* Cannot runs tests on methods with generic type parameters without testing
+* Cannot run tests on methods with generic type parameters without testing
   the entire class.
 
 * "Project Sources" dialog: When I first press "Project Sources", user
