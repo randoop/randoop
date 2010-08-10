@@ -1,0 +1,102 @@
+*branch br:name=java2.util2.AbstractCollectionline=245,num=0,dir=false: [var1]
+  The branch is comparing items in the list to null.  var 1 is in the list
+
+*branch br:name=java2.util2.AbstractListline=609,num=0,dir=false: [var7, var14]
+  The branch is comparing objects from two lists.  each object is
+  compared against null and if both are non-null, they are compared
+  using equals.  The list equals is called from indexOf.  It turns
+  out that the sequence calls indexof on a list containing a list (the
+  list var0 contains the list var6) and a list (var13).  Both lists
+  contain a single boolean value (var14 is in list var13 and 
+  var7 is in list var6).  var7 and var14 are compared in the branch.
+
+  The same line also contains a branch for var7==null and var14==null.
+  Its possible that is the branch we are looking for
+  
+-branch br:name=java2.util2.AbstractListline=612,num=1,dir=false: []
+  The branch is looking at the result of a hasNext function of an iterator.
+  hasNext() returns a boolean that is set via control flow.  The statement
+  is:
+
+    return cursor != size()
+
+  cursor is not controlled by the test sequence.  But size() is controlled
+  via add/remove.  How can we figure that out and communicate it back?
+  We can probably relate it back to the size field, but its not clear
+  what to do with that unless we find the methods that change it.  I
+  think a good possible approach would be that we should be able to
+  tell what methods (if any) were called in the sequence that affected
+  the values.
+
+*branch br:name=java2.util2.AbstractListline=599,num=0,dir=false: [var0, var1]
+  The branch is 'if o == this' in AbstractList.equals().
+  var0 is the arraylist, var1 is the value being compared (a short in this
+  case).
+
+-branch br:name=java2.util2.ArrayListline=439,num=0,dir=true: []
+  The branch is in addAll.  It compares the number of items in the
+  the added collection to 0.  Since the size is not directly set,
+  we don't get any variable information.  But we do see that the
+  size is changed in ArrayList.add() and should be able to return
+  that information.
+
+*branch br:name=java2.util2.ArrayListline=214,num=0,dir=false: [var1]
+  The branch is in indexOf(elem).  It is comparing the 'elem' parameter to
+  null.  In this case the 'elem' parameter is 'var1'.
+
+*branch br:name=java2.util2.ArrayListline=235,num=0,dir=false: [var1]
+  the branch is in lastIndexOf(elem).  It is comparing 'elem' to
+  null.  In this case the elem parameter is var1.
+
+*branch br:name=java2.util2.ArrayListline=241,num=0,dir=false: [var1, var3]
+  The branch is in lastIndexOf(elem).  It is comparing elem (using equals)
+  to a item in the list.  In the sequence, var3 is elem and var1 is the
+  item in the lsit.
+
+*branch java2.util2.AbstractCollectionline=455,num=0,dir=false: [var3,var4]
+  The branch is in toString().  The branch is comparing the item in the
+  list to the collection itself.  var3 is the arraylist, var4 is an item
+  in the arraylist.
+
++branch br:name=java2.util2.AbstractListline=569,num=0,dir=true: [var0]
+  The branch is in subList(fromIndex,toIndex).  The branch is checking
+  'this' to see if it is RandomAccess (this instanceof RandomAccess).
+  var0 is this.
+
+  To execute the otherside of the branch we would need to return what
+  'this' is being compared to so that we could create versions with
+  and without RandomAccess.
+
+Possible improvements:
+
+  - Return additional information about the variable.  First, would be what
+    it is compared to in the frontier branch.  Other things might be values
+    that contribute to its value.
+
+  - When no test sequence variable is involved (or possibly even when 
+    there is a test sequence variable involved), return the method (if
+    any) called from the test sequence that caused the value to be changed.
+    For example add() causes the size variable to change.
+    
+
+Thoughts:
+
+  - Can we try and find uncovered code more directly?  For example,
+    by calling equals on two array objects rather than through
+    indexOf?
+
+  - Can we characterize methods in the following ways:
+
+      - Always mutators (eg, add, or a setter)
+      - Never mutatates (get)
+      - Sometimes mutates (remove)
+      - Replaces (setter, but not add)
+      - Grower (adds new data and keeps old each time it is called, eg add)
+
+    Having some information like this would help guide test creation.
+    For example, calling a replacer multiple times doesn't do much, whereas
+    calling a grower does.  Calling a remover is seldom going to create
+    a more interesting object than you could create directly.
+
+  - What do we do with two branches on the same line?  Is there some
+    reasonable way to define which one we are interested in?

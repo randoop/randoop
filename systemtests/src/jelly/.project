@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<projectDescription>
+  <name>commons-jelly</name>
+  <comment>Jelly is a Java and XML based scripting engine. Jelly combines the best ideas from JSTL, Velocity, DVSL, Ant and Cocoon all together in a simple yet powerful scripting engine.</comment>
+  <projects>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments>
+      </arguments>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
