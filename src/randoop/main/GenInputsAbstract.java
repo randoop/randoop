@@ -127,10 +127,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will atually be printed out as code.
-  @Option("Maximum length of strings in generated tests. Note that strings "
-      + " greater than 65KB (or about 10,000 characters) "
-      + " may be rejected by the java compiler, according to the "
-      + "Java Virtual Machine specification.")
+  /**
+   * Maximum length of strings in generated tests.  Strings longer than
+   * 65KB (or about 10,000 characters) may be rejected by the Java
+   * compiler, according to the Java Virtual Machine specification.
+   */
+  @Option("Maximum length of Strings in generated tests.")
   public static int string_maxlen = 10000;
 
 
