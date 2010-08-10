@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -281,8 +282,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       TreeNode[] children = getChildren();
 
       for (TreeNode child : children) {
-        child.setChecked(isChecked());
         child.setGrayed(false);
+        child.setChecked(isChecked());
         child.updateChildren();
       }
     }
@@ -736,7 +737,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       Object[] results = dialog.getResult();
       if (results != null && results.length > 0) {
         
-        List<TreeNode> addedNodes = new ArrayList<ClassSelectorOption.TreeNode>();
         for (Object element : results) {
           if (element instanceof IType) {
             IType type = (IType) element;
@@ -755,20 +755,20 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
               if (!typeAlreadyInTree) {
                 // Remove this from the list of deletes classes
-                TypeMnemonic typeMnemonic = new TypeMnemonic(type);
+                TypeMnemonic typeMnemonic = new TypeMnemonic(type).reassign(fJavaProject);
                 fDeletesTypeNodes.remove(typeMnemonic.toString());
                 
-                TreeNode typeNode = packageNode.addChild(typeMnemonic, true, false);
-                addedNodes.add(typeNode);
+                packageNode.addChild(typeMnemonic, true, false);
 
                 fTypeTreeViewer.refresh();
-                fTypeTreeViewer.setExpandedState(packageNode, true);
+                if (results.length < 3) {
+                  fTypeTreeViewer.setExpandedState(packageNode, true);
+                }
               }
             }
           }
         }
         
-        fTypeTreeViewer.setSelection(new StructuredSelection(addedNodes));
         fTypeTreeViewer.refresh();
       }
     } catch (JavaModelException jme) {
@@ -799,58 +799,13 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    */
   @Override
   public IStatus isValid(ILaunchConfiguration config) {
-//    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
-//    List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
-//    Map<String, List<String>> selectedMethodsByType = new HashMap<String, List<String>>();
-//    
-//    for (String typeMnemonic : selectedTypes) {
-//      List<String> methods = RandoopArgumentCollector.getSelectedMethods(config, typeMnemonic);
-//      
-//      if (methods != null && !methods.isEmpty()) {
-//        selectedMethodsByType.put(typeMnemonic, methods);
-//      }
-//    }
-//
-//    boolean areTypesSelected = selectedTypes == null || !selectedTypes.isEmpty();
-//    boolean areMethodsSelected = !selectedMethodsByType.keySet().isEmpty();
-//
-//    if (!areTypesSelected && !areMethodsSelected) {
-//      return StatusFactory.createErrorStatus("At least one existing type or method must be selected.");
-//    }
-//    
-//    if (fJavaProject == null) {
-//      if (areTypesSelected || areMethodsSelected) {
-//        return StatusFactory.createErrorStatus("Types cannot be selected if no Java project is set");
-//      }
-//      return StatusFactory.OK_STATUS;
-//    }
-//    
-//    for (String typeMnemonicString : availableTypes) {
-//      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
-//      IType type = typeMnemonic.getType();
-//      
-//      if (selectedTypes.contains(typeMnemonicString)) {
-//        if (type == null || !type.exists()) {
-//          return StatusFactory.createErrorStatus("One of the selected types does not exist.");
-//        } else if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
-//          return StatusFactory
-//              .createErrorStatus("One of the selected types does not exist in the selected project.");
-//        }
-//      }
-//      
-//      List<String> methodMnemonics = selectedMethodsByType.get(typeMnemonicString);
-//      if (methodMnemonics != null) {
-//        for (String methodMnemonicString : methodMnemonics) {
-//          MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString);
-//
-//          IMethod m = methodMnemonic.findMethod(type);
-//
-//          if (m == null || !m.exists()) {
-//            return StatusFactory.createErrorStatus("One of the selected methods is invalid.");
-//          }
-//        }
-//      }
-//    }
+    try {
+      new RandoopArgumentCollector(config, getWorkspaceRoot());
+    } catch (JavaModelException e) {
+      return StatusFactory.createErrorStatus(e.getMessage());
+    } catch (AssertionFailedException e) {
+      return StatusFactory.createErrorStatus(e.getMessage().substring(18));
+    }
 
     return StatusFactory.OK_STATUS;
   }
@@ -912,6 +867,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
+    // Ugly hack to determine if the apply button was pressed.
+    // boolean applyPressed = false;
+    // for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+    // applyPressed = ste.getMethodName().equals("handleApplyPressed");
+    // if (applyPressed) {
+    // break;
+    // }
+    // }
+    
     ITreeContentProvider prov = (ITreeContentProvider) fTypeTreeViewer.getContentProvider();
     TreeInput input = (TreeInput) fTypeTreeViewer.getInput();
     fTypeTreeViewer.refresh();
@@ -940,22 +904,22 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
           if (typeNode.isGrayed()) {
             grayedTypes.add(typeMnemonic);
-          }
 
-          List<String> availableMethods = new ArrayList<String>();
-          List<String> checkedMethods = new ArrayList<String>();
-          for (Object methodObject : prov.getChildren(typeObject)) {
-            TreeNode methodNode = (TreeNode) methodObject;
-            String methodMnemonicString = methodNode.getObject().toString();
+            List<String> availableMethods = new ArrayList<String>();
+            List<String> checkedMethods = new ArrayList<String>();
+            for (Object methodObject : prov.getChildren(typeObject)) {
+              TreeNode methodNode = (TreeNode) methodObject;
+              String methodMnemonicString = methodNode.getObject().toString();
 
-            availableMethods.add(methodMnemonicString);
-            if (methodNode.isChecked()) {
-              checkedMethods.add(methodMnemonicString);
+              availableMethods.add(methodMnemonicString);
+              if (methodNode.isChecked()) {
+                checkedMethods.add(methodMnemonicString);
+              }
             }
-          }
 
-          RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods);
-          RandoopArgumentCollector.setCheckedMethods(config, typeMnemonic, checkedMethods);
+            RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods);
+            RandoopArgumentCollector.setCheckedMethods(config, typeMnemonic, checkedMethods);
+          }
         }
       }
     }
@@ -963,31 +927,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
     RandoopArgumentCollector.setGrayedTypes(config, grayedTypes);
     RandoopArgumentCollector.setCheckedTypes(config, checkedTypes);
-    
-//    if (fTypeSelector == null) {
-//      setDefaults(config);
-//    } else {
-//      List<String> availableTypes = fTypeSelector.getAllClasses();
-//      List<String> selectedTypes = fTypeSelector.getCheckedClasses();
-//      
-//      Map<String, List<String>> availableMethods = fTypeSelector.getAllMethods();
-//      Map<String, List<String>> selectedMethods = fTypeSelector.getCheckedMethods();
-//      
-//      RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
-//      RandoopArgumentCollector.setSelectedTypes(config, selectedTypes);
-//      
-//      for (String typeMnemonic : availableTypes) {
-//        RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods.get(typeMnemonic));
-//        RandoopArgumentCollector.setSelectedMethods(config, typeMnemonic, selectedMethods.get(typeMnemonic));
-//      }
-      
-//      List<String> fDeletedTypes; // TODO: Use this field
-//      for (String typeMnemonic : fDeletedTypes) {
-//        RandoopArgumentCollector.deleteSelectedMethods(config, typeMnemonic);
-//        RandoopArgumentCollector.deleteAvailableMethods(config, typeMnemonic);
-//      }
-      
-//    }
   }
   
   @Override
@@ -996,14 +935,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
-//    RandoopArgumentCollector.restoreSelectedTypes(config);
-//    RandoopArgumentCollector.restoreAvailableTypes(config);
-//    
-//    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
-//    for (String typeMnemonic : availableTypes) {
-//      RandoopArgumentCollector.deleteSelectedMethods(config, typeMnemonic);
-//      RandoopArgumentCollector.deleteAvailableMethods(config, typeMnemonic);
-//    }
+    RandoopArgumentCollector.restoreAvailableTypes(config);
+    RandoopArgumentCollector.restoreCheckedTypes(config);
+    
+    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
+    for (String typeMnemonic : availableTypes) {
+      RandoopArgumentCollector.deleteAvailableMethods(config, typeMnemonic);
+      RandoopArgumentCollector.deleteCheckedMethods(config, typeMnemonic);
+    }
   }
 
   private IClasspathEntry[] chooseClasspathEntry() throws JavaModelException {
@@ -1238,7 +1177,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void restoreDefaults() {
-//    fTypeTree.removeAll();
+    if (fTreeInput != null) {
+      for (TreeNode node : fTreeInput.getRoots()) {
+        fTreeInput.removeRoot(node);
+      }
+    }
   }
-  
+
 }

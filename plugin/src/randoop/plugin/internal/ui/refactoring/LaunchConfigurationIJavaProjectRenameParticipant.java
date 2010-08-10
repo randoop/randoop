@@ -39,7 +39,6 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
   
     boolean selectedProjectChangeNeeded = false;
     boolean typeChangeNeeded = false;
-    boolean methodChangeNeeded = false;
   
     for (ILaunchConfiguration config : configs) {
       if (RandoopArgumentCollector.getProjectName(config).equals(fOldProjectName)) {
@@ -57,24 +56,13 @@ public class LaunchConfigurationIJavaProjectRenameParticipant extends RenamePart
         }
       }
   
-      List<String> methodMnemonics = RandoopArgumentCollector.getAvailableMethods(config);
-      for (String mnemonic : methodMnemonics) {
-        MethodMnemonic methodMnemonic = new MethodMnemonic(mnemonic);
-        String projectName = methodMnemonic.getDeclaringTypeMnemonic().getJavaProjectName();
-  
-        if (projectName.equals(fOldProjectName)) {
-          methodChangeNeeded = true;
-          break;
-        }
-      }
-  
-      if (selectedProjectChangeNeeded || typeChangeNeeded || methodChangeNeeded) {
+      if (selectedProjectChangeNeeded || typeChangeNeeded) {
         String newProjectName = getArguments().getNewName();
         IPath oldPath = new Path(fOldProjectName).makeAbsolute();
         IPath newPath = new Path(newProjectName).makeAbsolute();
         Change c = new LaunchConfigurationClasspathEntryChange(config, oldPath, newPath);
         changes.add(c);
-        c = new LaunchConfigurationProjectChange(config, newProjectName, selectedProjectChangeNeeded, typeChangeNeeded, methodChangeNeeded);
+        c = new LaunchConfigurationProjectChange(config, newProjectName, selectedProjectChangeNeeded, typeChangeNeeded);
         changes.add(c);
       }
     }
