@@ -5,12 +5,17 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -34,20 +39,37 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
+import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.dialogs.ITypeInfoFilterExtension;
 import org.eclipse.jdt.ui.dialogs.ITypeInfoRequestor;
 import org.eclipse.jdt.ui.dialogs.TypeSelectionExtension;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -55,8 +77,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.internal.dialogs.TreeManager.CheckStateProvider;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
@@ -70,10 +96,379 @@ import randoop.plugin.internal.ui.ClasspathLabelProvider;
 import randoop.plugin.internal.ui.MessageUtil;
 
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
+  private static Image IMG_ERROR = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
+  private static Image IMG_ENUM = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_ENUM);
+  private static Image IMG_CLASS = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
+
+  private static Image IMG_METHOD_PUBLIC = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PUBLIC);
+  private static Image IMG_METHOD_PRIVATE = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PRIVATE);
+  private static Image IMG_METHOD_PROTECTED = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PROTECTED);
+  private static Image IMG_METHOD_DEFAULT = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_DEFAULT);
+  
+  private static Image IMG_PACKAGE_FRAGMENT = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+  
+  private static final String DEFAULT_PACKAGE_DISPLAY_NAME = "(default package)";
+  
   private IRunnableContext fRunnableContext;
   private Shell fShell;
-  private ClassSelector fTypeSelector;
-  private Tree fTypeTree;
+//  private ClassSelector fTypeSelector;
+//  private Tree fTypeTree;
+  
+  private CheckboxTreeViewer fTypeTreeViewer;
+  
+  private HashSet<String> fDeletesTypeNodes;
+  
+  private HashMap<IType, List<String>> fCheckedMethodsByType;
+  
+  TreeInput fTreeInput;
+  
+  private static class TreeInput {
+    private List<TreeNode> fRoots;
+
+    public TreeInput() {
+      fRoots = new ArrayList<TreeNode>();
+    }
+
+    public TreeNode addRoot(Object object) {
+      for (TreeNode root : fRoots) {
+        if (root.getObject().equals(object)) {
+          return root;
+        }
+      }
+
+      TreeNode root = new TreeNode(null, object, false, false);
+      fRoots.add(root);
+      return root;
+    }
+    
+    public void removeRoot(TreeNode node) {
+      fRoots.remove(node);
+    }
+
+    public TreeNode[] getRoots() {
+      return (TreeNode[]) fRoots.toArray(new TreeNode[fRoots.size()]);
+    }
+    
+  }
+
+  private static class TreeNode {
+    private TreeNode fParent;
+    private List<TreeNode> fChildren;
+    private Object fObject;
+    
+    private boolean fIsChecked;
+    private boolean fIsGrayed;
+    
+    private TreeNode(TreeNode parent, Object object, boolean checkedState, boolean grayedState) {
+      if (object instanceof IMethod) {
+        //TODO: remove
+        try {
+          throw new NullPointerException();
+        } catch (NullPointerException npe) {
+          npe.printStackTrace();
+        }
+      }
+      Assert.isLegal(object != null);
+      fParent = parent;
+      fObject = object;
+      
+      fIsChecked = checkedState;
+      fIsGrayed = grayedState;
+      
+      fChildren = new ArrayList<TreeNode>();
+      
+      updateRelatives();
+    }
+    
+    public TreeNode addChild(Object object, boolean checkedState, boolean grayedState) {
+      TreeNode node = new TreeNode(this, object, checkedState, grayedState);
+      fChildren.add(node);
+
+      node.updateRelatives();
+
+      return node;
+    }
+    
+    public void setObject(Object object) {
+      fObject = object;
+    }
+    
+    public Object getObject() {
+      return fObject;
+    }
+    
+    public TreeNode getParent() {
+      return fParent;
+    }
+    
+
+    public void setChecked(boolean state) {
+      fIsChecked = state;
+    }
+
+    public void setGrayed(boolean state) {
+      fIsGrayed = state;
+    }
+    
+    public boolean isChecked() {
+      return fIsChecked;
+    }
+    
+    public boolean isGrayed() {
+      return fIsGrayed;
+    }
+    
+    public boolean hasChildren() {
+      return !fChildren.isEmpty();
+    }
+    
+    public TreeNode[] getChildren() {
+      return (TreeNode[]) fChildren.toArray(new TreeNode[fChildren.size()]);
+    }
+    
+    @Override
+    public int hashCode() {
+      return fObject.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+      if (obj instanceof TreeNode) {
+        return fObject.equals(((TreeNode) obj).getObject());
+      }
+      return false;
+    }
+    
+    public void delete() {
+      if (fParent != null) {
+        fParent.fChildren.remove(this);
+        updateParent();
+      }
+    }
+    
+    public void updateRelatives() {
+      updateParent();
+      updateChildren();
+    }
+
+    private void updateParent() {
+      if (fParent != null) {
+        TreeNode[] siblings = fParent.getChildren();
+        
+        boolean allChecked = true;
+        boolean noneChecked = true;
+        for (TreeNode sibling : siblings) {
+          allChecked &= sibling.isChecked() && !sibling.isGrayed();
+          noneChecked &= !sibling.isChecked();
+        }
+        
+        if (allChecked) {
+          fParent.setChecked(true);
+          fParent.setGrayed(false);
+        } else if (noneChecked) {
+          fParent.setChecked(false);
+          fParent.setGrayed(false);
+        } else {
+          fParent.setChecked(true);
+          fParent.setGrayed(true);
+        }
+        
+        fParent.updateParent();
+      }
+    }
+
+    private void updateChildren() {
+      TreeNode[] children = getChildren();
+
+      for (TreeNode child : children) {
+        child.setChecked(isChecked());
+        child.setGrayed(false);
+        child.updateChildren();
+      }
+    }
+  }
+
+  private LabelProvider fTreeLabelProvider = new LabelProvider() {
+    @Override
+    public Image getImage(Object element) {
+      TreeNode node = (TreeNode) element;
+      Object obj = node.getObject();
+      if (obj instanceof String) {
+        return IMG_PACKAGE_FRAGMENT;
+      } else if (obj instanceof TypeMnemonic) {
+        TypeMnemonic typeMnemonic = ((TypeMnemonic) obj);
+        if (!typeMnemonic.exists() || !typeMnemonic.getJavaProject().equals(fJavaProject)) {
+          return IMG_ERROR;
+        } else {
+          return getImageForType(typeMnemonic.getType());
+        }
+      } else if (obj instanceof MethodMnemonic) {
+        if (getImage(node.getParent()).equals(IMG_ERROR)) {
+          return IMG_ERROR;
+        } else {
+          return getImageForMethod(((MethodMnemonic) obj).getMethod());
+        }
+      }
+
+      return null;
+    }
+    
+    private Image getImageForType(IType type) {
+      try {
+        if (type != null && type.exists()) {
+          if (type.isEnum()) {
+            return IMG_ENUM;
+          } else if (type.isClass()) {
+            return IMG_CLASS;
+          }
+        }
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
+      return IMG_ERROR;
+    }
+
+    private Image getImageForMethod(IMethod method) {
+      if (method == null || !method.exists()) {
+        return IMG_ERROR;
+      }
+
+      try {
+        int flags = method.getFlags();
+        if (Flags.isPublic(flags)) {
+          return IMG_METHOD_PUBLIC;
+        } else if (Flags.isPrivate(flags)) {
+          return IMG_METHOD_PRIVATE;
+        } else if (Flags.isProtected(flags)) {
+          return IMG_METHOD_PROTECTED;
+        } else {
+          return IMG_METHOD_DEFAULT;
+        }
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
+      return null;
+    }
+    
+    @Override
+    public String getText(Object element) {
+      Object obj = ((TreeNode) element).getObject();
+
+      if (obj instanceof String) {
+        String pfname = (String) obj;
+        return pfname.isEmpty() ? DEFAULT_PACKAGE_DISPLAY_NAME : pfname;
+      } else if (obj instanceof TypeMnemonic) {
+        return RandoopCoreUtil.getClassName(((TypeMnemonic) obj).getFullyQualifiedName());
+      } else if (obj instanceof MethodMnemonic) {
+        return getReadable((MethodMnemonic) obj);
+      }
+
+      return obj.toString();
+    }
+    
+    private String getReadable(MethodMnemonic methodMnemonic) {
+      String methodSignature = methodMnemonic.getMethodSignature();
+
+      StringBuilder readableMethod = new StringBuilder();
+      if (!methodMnemonic.isConstructor()) {
+        String returnSig = Signature.getReturnType(methodSignature);
+        String returnFQTypename = Signature.toString(returnSig);
+        readableMethod.append(RandoopCoreUtil.getClassName(returnFQTypename));
+        readableMethod.append(' ');
+      }
+      readableMethod.append(methodMnemonic.getMethodName());
+      readableMethod.append('(');
+      String[] parameters = Signature.getParameterTypes(methodSignature);
+      for (int i = 0; i < parameters.length; i++) {
+        String fqname = Signature.toString(parameters[i]);
+        readableMethod.append(RandoopCoreUtil.getClassName(fqname));
+
+        if (i + 1 < parameters.length) {
+          readableMethod.append(", "); //$NON-NLS-1$
+        }
+      }
+      readableMethod.append(')');
+
+      return readableMethod.toString();
+    }
+  };
+
+  private ITreeContentProvider fTypeTreeContentProvider = new ITreeContentProvider() {
+    
+    @Override
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    }
+    
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public boolean hasChildren(Object element) {
+      TreeNode node = (TreeNode) element;
+      if (node.getObject() instanceof TypeMnemonic) {
+        try {
+          IType type = ((TypeMnemonic) node.getObject()).getType();
+          if (type != null) {
+            return type.getMethods().length != 0;
+          }
+        } catch (JavaModelException e) {
+          RandoopPlugin.log(e);
+        }
+      }
+      return node.hasChildren();
+    }
+
+    @Override
+    public Object getParent(Object element) {
+      return ((TreeNode) element).getParent();
+    }
+    
+    @Override
+    public Object[] getElements(Object inputElement) {
+      return fTreeInput.getRoots();
+    }
+
+    @Override
+    public Object[] getChildren(Object parentElement) {
+      TreeNode node = (TreeNode) parentElement;
+
+      if (node.getObject() instanceof TypeMnemonic) {
+        if (!node.hasChildren()) {
+          try {
+            final boolean typeChecked = node.isChecked();
+            final boolean typeGrayed = node.isGrayed();
+            
+            IType type = ((TypeMnemonic) node.getObject()).getType();
+
+            if (type != null){
+              List<String> checkedMethods = fCheckedMethodsByType.get(type);
+
+              IMethod[] methods = type.getMethods();
+              TreeNode[] nodes = new TreeNode[methods.length];
+              for (int i = 0; i < methods.length; i++) {
+                MethodMnemonic methodMnemonic = new MethodMnemonic(methods[i]);
+                
+                boolean methodChecked;
+                if (typeChecked && typeGrayed) {
+                  methodChecked = checkedMethods.contains(methodMnemonic.toString());
+                } else {
+                  methodChecked = typeChecked;
+                }
+
+                nodes[i] = node.addChild(methodMnemonic, methodChecked, false);
+              }
+            return nodes;
+            }
+          } catch (JavaModelException e) {
+            RandoopPlugin.log(e);
+          }
+        }
+      }
+      return node.getChildren();
+    }
+  };
+
   private Button fClassAddFromSources;
   private Button fClassAddFromClasspaths;
   private Button fResolveClasses;
@@ -116,27 +511,56 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     gd.horizontalAlignment = SWT.LEFT;
     gd.verticalAlignment = SWT.TOP;
 
-    fTypeTree = new Tree(leftcomp, SWT.MULTI | SWT.CHECK | SWT.BORDER);
-    fTypeTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+    fDeletesTypeNodes = new HashSet<String>();
     
-    // Add type selector functionalities to this tree. This will also add a
-    // Listener to fTypeTree that adds default tree behavior. That is, checking/
-    // unchecking a parent item also checks/unchecks all descendant items
-    fTypeSelector = new ClassSelector(fTypeTree);
-    
-    fTypeTree.addSelectionListener(new SelectionListener() {
+    fTypeTreeViewer = new CheckboxTreeViewer(leftcomp, SWT.MULTI | SWT.BORDER);
+    fTypeTreeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+    fTypeTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
       
       @Override
-      public void widgetSelected(SelectionEvent e) {
-        fClassRemove.setEnabled(fTypeSelector.canRemoveFromSelection());
+      public void selectionChanged(SelectionChangedEvent event) {
+        ITreeSelection selection = (ITreeSelection) event.getSelection();
+
+        Iterator<?> it = selection.iterator();
+        while (it.hasNext()) {
+          TreeNode node = (TreeNode) it.next();
+          Object obj = node.getObject();
+          if (obj instanceof TypeMnemonic || obj instanceof String) {
+            fClassRemove.setEnabled(true);
+            return;
+          }
+        }
+        fClassRemove.setEnabled(false);
+      }
+    });
+    fTypeTreeViewer.setCheckStateProvider(new ICheckStateProvider() {
+
+      @Override
+      public boolean isChecked(Object element) {
+        TreeNode node = ((TreeNode) element);
+        return node.isChecked();
       }
 
       @Override
-      public void widgetDefaultSelected(SelectionEvent e) {
-        widgetSelected(e);
+      public boolean isGrayed(Object element) {
+        TreeNode node = ((TreeNode) element);
+        return node.isGrayed();
+      }
+
+    });
+    fTypeTreeViewer.addCheckStateListener(new ICheckStateListener() {
+
+      @Override
+      public void checkStateChanged(CheckStateChangedEvent event) {
+        TreeNode node = (TreeNode) event.getElement();
+        node.setGrayed(false);
+        node.setChecked(event.getChecked());
+        node.updateRelatives();
+        
+        fTypeTreeViewer.refresh();
+        listener.widgetSelected(null);
       }
     });
-    fTypeTree.addSelectionListener(listener);
     
     SWTFactory.createLabel(rightcomp, "Add classes from:", 1);
     
@@ -185,15 +609,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           String message = "This will attempt to find classes in the project's classpath with fully-qualified names identical to those that are missing. The classes found may differ from those originally intended to be tested.";
           String question = "Proceed with operation?";
           if (MessageUtil.openQuestion(message + "\n\n" + question)) { //$NON-NLS-1$
-            try {
-              fTypeSelector.resolveMissingClasses();
-            } catch (JavaModelException jme) {
-              RandoopPlugin.log(jme);
-            }
+//            try {
+//              fTypeSelector.resolveMissingClasses();
+//            } catch (JavaModelException jme) {
+//              RandoopPlugin.log(jme);
+//            }
           }
         }
       });
-      fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
+      fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists());
+          //&& fTypeSelector.hasMissingClasses());
       fResolveClasses.addSelectionListener(listener);
     }
     
@@ -203,7 +628,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fSelectAll.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.checkAll();
+        for (TreeNode node : fTreeInput.getRoots()) {
+          node.setGrayed(false);
+          node.setChecked(true);
+          node.updateRelatives();
+        }
+        fTypeTreeViewer.refresh();
       }
     });
     fSelectAll.addSelectionListener(listener);
@@ -212,16 +642,52 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fSelectNone.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.uncheckAll();
+        for (TreeNode node : fTreeInput.getRoots()) {
+          node.setGrayed(false);
+          node.setChecked(false);
+          node.updateRelatives();
+        }
+        fTypeTreeViewer.refresh();
       }
     });
     fSelectNone.addSelectionListener(listener);
     
     fClassRemove = SWTFactory.createPushButton(rightcomp, "&Remove", null);
     fClassRemove.addSelectionListener(new SelectionAdapter() {
+
+      void remove(TreeNode node) throws JavaModelException {
+        Object obj = node.getObject();
+
+        if (obj instanceof TypeMnemonic) {
+          fDeletesTypeNodes.add(obj.toString());
+
+          node.delete();
+          if (!node.getParent().hasChildren()) {
+            remove(node.getParent());
+          }
+        } else if (obj instanceof String) {
+          for (TreeNode child : node.getChildren()) {
+            remove(child);
+          }
+
+          fTreeInput.removeRoot(node);
+        }
+      }
+      
       @Override
       public void widgetSelected(SelectionEvent e) {
-        fTypeSelector.removeSelectedTypes();
+        ITreeSelection selection = (ITreeSelection) fTypeTreeViewer.getSelection();
+
+        try {
+          Iterator<?> it = selection.iterator();
+          while (it.hasNext()) {
+            remove((TreeNode) it.next());
+          }
+        } catch (JavaModelException jme) {
+          RandoopPlugin.log(jme);
+        }
+
+        fTypeTreeViewer.refresh();
         fClassRemove.setEnabled(false);
       }
     });
@@ -244,13 +710,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
     fJavaProject = javaProject;
 
-    fTypeSelector.setJavaProject(fJavaProject);
+    // TODO: How to construct this
+//    fRoot = new TypeRoot(types, availableMethodsByDeclaringTypes, selectedMethodsByDeclaringTypes);
+//    fTypeTreeViewer.setInput(fRoot);
 
-    for (TypeMnemonic type : types) {
-      List<String> availableMethods = availableMethodsByDeclaringTypes.get(type);
-      List<String> selectedMethods = selectedMethodsByDeclaringTypes.get(type);
-      fTypeSelector.addClass(type, selectedMethods == null, availableMethods, selectedMethods);
-    }
+//    for (TypeMnemonic type : types) {
+//      List<String> availableMethods = availableMethodsByDeclaringTypes.get(type);
+//      List<String> selectedMethods = selectedMethodsByDeclaringTypes.get(type);
+//    }
     
   }
   
@@ -268,14 +735,41 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       // Add all of the types to the type selector
       Object[] results = dialog.getResult();
       if (results != null && results.length > 0) {
+        
+        List<TreeNode> addedNodes = new ArrayList<ClassSelectorOption.TreeNode>();
         for (Object element : results) {
           if (element instanceof IType) {
             IType type = (IType) element;
             if (type != null) {
-              fTypeSelector.addClass(type, true);
+              
+              String pfname = type.getPackageFragment().getElementName();
+              TreeNode packageNode = fTreeInput.addRoot(pfname);
+              
+              boolean typeAlreadyInTree = false;
+              for (TreeNode node : packageNode.getChildren()) {
+                if (node.getObject().equals(type)) {
+                  typeAlreadyInTree = true;
+                  break;
+                }
+              }
+
+              if (!typeAlreadyInTree) {
+                // Remove this from the list of deletes classes
+                TypeMnemonic typeMnemonic = new TypeMnemonic(type);
+                fDeletesTypeNodes.remove(typeMnemonic.toString());
+                
+                TreeNode typeNode = packageNode.addChild(typeMnemonic, true, false);
+                addedNodes.add(typeNode);
+
+                fTypeTreeViewer.refresh();
+                fTypeTreeViewer.setExpandedState(packageNode, true);
+              }
             }
           }
         }
+        
+        fTypeTreeViewer.setSelection(new StructuredSelection(addedNodes));
+        fTypeTreeViewer.refresh();
       }
     } catch (JavaModelException jme) {
       RandoopPlugin.log(jme);
@@ -284,7 +778,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
   @Override
   public IStatus canSave() {
-    if (fRunnableContext == null || fShell == null || fTypeSelector == null || fTypeTree == null
+    if (fRunnableContext == null || fShell == null || fTypeTreeViewer == null || fTreeInput == null
         || fClassAddFromSources == null || fClassAddFromClasspaths == null || fSelectAll == null
         || fSelectNone == null || fClassRemove == null) {
 
@@ -305,101 +799,187 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    */
   @Override
   public IStatus isValid(ILaunchConfiguration config) {
-    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
-    List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
-    Map<String, List<String>> selectedMethodsByType = new HashMap<String, List<String>>();
-    
-    for (String typeMnemonic : selectedTypes) {
-      List<String> methods = RandoopArgumentCollector.getSelectedMethods(config, typeMnemonic);
-      
-      if (methods != null && !methods.isEmpty()) {
-        selectedMethodsByType.put(typeMnemonic, methods);
-      }
-    }
-
-    boolean areTypesSelected = selectedTypes == null || !selectedTypes.isEmpty();
-    boolean areMethodsSelected = !selectedMethodsByType.keySet().isEmpty();
-
-    if (!areTypesSelected && !areMethodsSelected) {
-      return StatusFactory.createErrorStatus("At least one existing type or method must be selected.");
-    }
-    
-    if (fJavaProject == null) {
-      if (areTypesSelected || areMethodsSelected) {
-        return StatusFactory.createErrorStatus("Types cannot be selected if no Java project is set");
-      }
-      return StatusFactory.OK_STATUS;
-    }
-    
-    for (String typeMnemonicString : availableTypes) {
-      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
-      IType type = typeMnemonic.getType();
-      
-      if (selectedTypes.contains(typeMnemonicString)) {
-        if (type == null || !type.exists()) {
-          return StatusFactory.createErrorStatus("One of the selected types does not exist.");
-        } else if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
-          return StatusFactory
-              .createErrorStatus("One of the selected types does not exist in the selected project.");
-        }
-      }
-      
-      List<String> methodMnemonics = selectedMethodsByType.get(typeMnemonicString);
-      if (methodMnemonics != null) {
-        for (String methodMnemonicString : methodMnemonics) {
-          MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString);
-
-          IMethod m = methodMnemonic.findMethod(type);
-
-          if (m == null || !m.exists()) {
-            return StatusFactory.createErrorStatus("One of the selected methods is invalid.");
-          }
-        }
-      }
-    }
+//    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
+//    List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
+//    Map<String, List<String>> selectedMethodsByType = new HashMap<String, List<String>>();
+//    
+//    for (String typeMnemonic : selectedTypes) {
+//      List<String> methods = RandoopArgumentCollector.getSelectedMethods(config, typeMnemonic);
+//      
+//      if (methods != null && !methods.isEmpty()) {
+//        selectedMethodsByType.put(typeMnemonic, methods);
+//      }
+//    }
+//
+//    boolean areTypesSelected = selectedTypes == null || !selectedTypes.isEmpty();
+//    boolean areMethodsSelected = !selectedMethodsByType.keySet().isEmpty();
+//
+//    if (!areTypesSelected && !areMethodsSelected) {
+//      return StatusFactory.createErrorStatus("At least one existing type or method must be selected.");
+//    }
+//    
+//    if (fJavaProject == null) {
+//      if (areTypesSelected || areMethodsSelected) {
+//        return StatusFactory.createErrorStatus("Types cannot be selected if no Java project is set");
+//      }
+//      return StatusFactory.OK_STATUS;
+//    }
+//    
+//    for (String typeMnemonicString : availableTypes) {
+//      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
+//      IType type = typeMnemonic.getType();
+//      
+//      if (selectedTypes.contains(typeMnemonicString)) {
+//        if (type == null || !type.exists()) {
+//          return StatusFactory.createErrorStatus("One of the selected types does not exist.");
+//        } else if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
+//          return StatusFactory
+//              .createErrorStatus("One of the selected types does not exist in the selected project.");
+//        }
+//      }
+//      
+//      List<String> methodMnemonics = selectedMethodsByType.get(typeMnemonicString);
+//      if (methodMnemonics != null) {
+//        for (String methodMnemonicString : methodMnemonics) {
+//          MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString);
+//
+//          IMethod m = methodMnemonic.findMethod(type);
+//
+//          if (m == null || !m.exists()) {
+//            return StatusFactory.createErrorStatus("One of the selected methods is invalid.");
+//          }
+//        }
+//      }
+//    }
 
     return StatusFactory.OK_STATUS;
   }
 
   @Override
   public void initializeFrom(ILaunchConfiguration config) {
-    if (fTypeTree != null) {
-      String projectName = RandoopArgumentCollector.getProjectName(config);
-      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
-      
-      List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
-      List<String> selectedTypes = RandoopArgumentCollector.getSelectedTypes(config);
-      
-      Map<String, List<String>> availableMethods = new HashMap<String, List<String>>();
-      Map<String, List<String>> selectedMethods = new HashMap<String, List<String>>();
-      for (String typeMnemonic : availableTypes) {
-        availableMethods.put(typeMnemonic, RandoopArgumentCollector.getAvailableMethods(config, typeMnemonic));
-        selectedMethods.put(typeMnemonic, RandoopArgumentCollector.getSelectedMethods(config, typeMnemonic));
-      }
+    fTypeTreeViewer.setContentProvider(fTypeTreeContentProvider);
+    fTypeTreeViewer.setLabelProvider(fTreeLabelProvider);
+    
+    fTreeInput = new TreeInput();
+    fTypeTreeViewer.setInput(fTreeInput);
+    
+    String projectName = RandoopArgumentCollector.getProjectName(config);
+    fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
 
-      fTypeSelector = new ClassSelector(fTypeTree, fJavaProject, availableTypes, selectedTypes, availableMethods, selectedMethods);
-      fResolveClasses.setEnabled(fJavaProject != null && fJavaProject.exists() && fTypeSelector.hasMissingClasses());
+    fCheckedMethodsByType = new HashMap<IType, List<String>>();
+    
+    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
+    List<String> grayedTypes = RandoopArgumentCollector.getGrayedTypes(config);
+    List<String> checkedTypes = RandoopArgumentCollector.getCheckedTypes(config);
+
+    for (String typeString : availableTypes) {
+      TypeMnemonic typeMnemonic = new TypeMnemonic(typeString, getWorkspaceRoot());
+      boolean typeIsChecked = checkedTypes.contains(typeString);
+      boolean typeIsGrayed = grayedTypes.contains(typeString);
+      
+      String pfname = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
+      TreeNode pfNode = fTreeInput.addRoot(pfname);
+      fTypeTreeViewer.refresh();
+      
+      List<String> checkedMethods = RandoopArgumentCollector.getCheckedMethods(config, typeString);
+      if (typeMnemonic.getType() != null) {
+        pfNode.addChild(typeMnemonic, typeIsChecked, typeIsGrayed);
+        
+        fCheckedMethodsByType.put(typeMnemonic.getType(), checkedMethods);
+      } else {
+        TreeNode typeNode = pfNode.addChild(typeMnemonic, typeIsChecked, typeIsGrayed);
+
+        List<String> availableMethods = RandoopArgumentCollector.getAvailableMethods(config, typeString);
+
+        for (String methodString : availableMethods) {
+          MethodMnemonic methodMnemonic = new MethodMnemonic(methodString);
+          
+          
+          if (typeIsChecked && !typeIsGrayed) {
+            typeNode.addChild(methodMnemonic, true, false);
+          } else {
+            boolean methodIsChecked = checkedMethods.contains(methodString);
+            boolean methodIsGrayed = false;
+
+            typeNode.addChild(methodMnemonic, methodIsChecked, methodIsGrayed);
+          }
+        }
+      }
     }
+    
+    fTypeTreeViewer.refresh();
   }
 
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fTypeSelector == null) {
-      setDefaults(config);
-    } else {
-      List<String> availableTypes = fTypeSelector.getAllClasses();
-      List<String> selectedTypes = fTypeSelector.getCheckedClasses();
-      
-      Map<String, List<String>> availableMethods = fTypeSelector.getAllMethods();
-      Map<String, List<String>> selectedMethods = fTypeSelector.getCheckedMethods();
-      
-      RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
-      RandoopArgumentCollector.setSelectedTypes(config, selectedTypes);
-      
-      for (String typeMnemonic : availableTypes) {
-        RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods.get(typeMnemonic));
-        RandoopArgumentCollector.setSelectedMethods(config, typeMnemonic, selectedMethods.get(typeMnemonic));
+    ITreeContentProvider prov = (ITreeContentProvider) fTypeTreeViewer.getContentProvider();
+    TreeInput input = (TreeInput) fTypeTreeViewer.getInput();
+    fTypeTreeViewer.refresh();
+    
+    for (String mnemonic : fDeletesTypeNodes) {
+      RandoopArgumentCollector.deleteAvailableMethods(config, mnemonic);
+      RandoopArgumentCollector.deleteCheckedMethods(config, mnemonic);
+    }
+
+    List<String> availableTypes = new ArrayList<String>();
+    List<String> grayedTypes = new ArrayList<String>();
+    List<String> checkedTypes = new ArrayList<String>();
+
+    for (TreeNode packageNode : input.getRoots()) {
+      for (Object typeObject : prov.getChildren(packageNode)) {
+        TreeNode typeNode = (TreeNode) typeObject;
+
+        String typeMnemonic = null;
+        if (typeNode.getObject() instanceof TypeMnemonic) {
+          typeMnemonic = typeNode.getObject().toString();
+        }
+        availableTypes.add(typeMnemonic);
+
+        if (typeNode.isChecked()) {
+          checkedTypes.add(typeMnemonic);
+
+          if (typeNode.isGrayed()) {
+            grayedTypes.add(typeMnemonic);
+          }
+
+          List<String> availableMethods = new ArrayList<String>();
+          List<String> checkedMethods = new ArrayList<String>();
+          for (Object methodObject : prov.getChildren(typeObject)) {
+            TreeNode methodNode = (TreeNode) methodObject;
+            String methodMnemonicString = methodNode.getObject().toString();
+
+            availableMethods.add(methodMnemonicString);
+            if (methodNode.isChecked()) {
+              checkedMethods.add(methodMnemonicString);
+            }
+          }
+
+          RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods);
+          RandoopArgumentCollector.setCheckedMethods(config, typeMnemonic, checkedMethods);
+        }
       }
+    }
+
+    RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
+    RandoopArgumentCollector.setGrayedTypes(config, grayedTypes);
+    RandoopArgumentCollector.setCheckedTypes(config, checkedTypes);
+    
+//    if (fTypeSelector == null) {
+//      setDefaults(config);
+//    } else {
+//      List<String> availableTypes = fTypeSelector.getAllClasses();
+//      List<String> selectedTypes = fTypeSelector.getCheckedClasses();
+//      
+//      Map<String, List<String>> availableMethods = fTypeSelector.getAllMethods();
+//      Map<String, List<String>> selectedMethods = fTypeSelector.getCheckedMethods();
+//      
+//      RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
+//      RandoopArgumentCollector.setSelectedTypes(config, selectedTypes);
+//      
+//      for (String typeMnemonic : availableTypes) {
+//        RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods.get(typeMnemonic));
+//        RandoopArgumentCollector.setSelectedMethods(config, typeMnemonic, selectedMethods.get(typeMnemonic));
+//      }
       
 //      List<String> fDeletedTypes; // TODO: Use this field
 //      for (String typeMnemonic : fDeletedTypes) {
@@ -407,7 +987,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 //        RandoopArgumentCollector.deleteAvailableMethods(config, typeMnemonic);
 //      }
       
-    }
+//    }
   }
   
   @Override
@@ -416,14 +996,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.restoreSelectedTypes(config);
-    RandoopArgumentCollector.restoreAvailableTypes(config);
-    
-    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
-    for (String typeMnemonic : availableTypes) {
-      RandoopArgumentCollector.deleteSelectedMethods(config, typeMnemonic);
-      RandoopArgumentCollector.deleteAvailableMethods(config, typeMnemonic);
-    }
+//    RandoopArgumentCollector.restoreSelectedTypes(config);
+//    RandoopArgumentCollector.restoreAvailableTypes(config);
+//    
+//    List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
+//    for (String typeMnemonic : availableTypes) {
+//      RandoopArgumentCollector.deleteSelectedMethods(config, typeMnemonic);
+//      RandoopArgumentCollector.deleteAvailableMethods(config, typeMnemonic);
+//    }
   }
 
   private IClasspathEntry[] chooseClasspathEntry() throws JavaModelException {
@@ -611,9 +1191,42 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       fClassAddFromSources.setEnabled(enabled);
       fClassAddFromClasspaths.setEnabled(enabled);
 
-      fTypeSelector.setJavaProject(fJavaProject);
-      fResolveClasses.setEnabled(enabled && fTypeSelector.hasMissingClasses());
+      setJavaProject(fJavaProject);
+//      fResolveClasses.setEnabled(enabled && fTypeSelector.hasMissingClasses());
     }
+  }
+  
+  void setJavaProject(IJavaProject javaProject) {
+    if (fTreeInput == null)
+      return;
+    
+    fJavaProject = javaProject;
+    boolean fHasMissingClasses = false;
+    
+    if (fJavaProject == null) {
+      fHasMissingClasses = true;
+    } else {
+      for (TreeNode pfNode : fTreeInput.getRoots()) {
+        for (TreeNode typeNode : pfNode.getChildren()) {
+          TypeMnemonic oldMnemonic = (TypeMnemonic) typeNode.getObject();
+          
+          if (!fJavaProject.equals(oldMnemonic.getJavaProject())) {
+            TypeMnemonic newMnemonic = oldMnemonic.reassign(fJavaProject);
+
+            // If newMnemonic is not null, the IType was found in a classpath
+            // entry of the new Java project
+            if (newMnemonic == null || !newMnemonic.exists()) {
+              fHasMissingClasses = true;
+            } else {
+              // Update the mnemonic for this TreeItem
+              typeNode.setObject(newMnemonic);
+            }
+          }
+        }
+      }
+    }
+    
+    fTypeTreeViewer.refresh();
   }
   
   /*
@@ -625,7 +1238,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   @Override
   public void restoreDefaults() {
-    fTypeTree.removeAll();
+//    fTypeTree.removeAll();
   }
   
 }

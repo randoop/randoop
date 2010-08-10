@@ -60,7 +60,7 @@ public class RandoopArgumentCollector {
     fSelectedTypes = new ArrayList<IType>();
     fAvailableTypes = new ArrayList<IType>();
     List<?> availableTypes = getAvailableTypes(config);
-    List<?> selectedTypes = getSelectedTypes(config);
+    List<?> selectedTypes = getCheckedTypes(config);
     for (Object o : availableTypes) {
       Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list"); //$NON-NLS-1$
       String mnemonic = (String) o;
@@ -79,7 +79,7 @@ public class RandoopArgumentCollector {
     fSelectedMethodsByType = new HashMap<IType, List<IMethod>>();
     for (IType type : fSelectedTypes) {
       List<IMethod> methodList = new ArrayList<IMethod>();
-      List<?> selectedMethods = getSelectedMethods(config, new TypeMnemonic(type).toString());
+      List<?> selectedMethods = getCheckedMethods(config, new TypeMnemonic(type).toString());
       for (Object o : selectedMethods) {
         Assert.isTrue(o instanceof String, "Non-String arguments stored in method-input list"); //$NON-NLS-1$
         String mnemonic = (String) o;
@@ -237,22 +237,28 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES,
         EMPTY_STRING_LIST);
   }
-
-  public static List<String> getSelectedTypes(ILaunchConfiguration config) {
+  
+  public static List<String> getGrayedTypes(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES,
+        IRandoopLaunchConfigurationConstants.ATTR_GRAYED_TYPES,
         EMPTY_STRING_LIST);
   }
-  
+
+  public static List<String> getCheckedTypes(ILaunchConfiguration config) {
+    return getAttribute(config,
+        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_TYPES,
+        EMPTY_STRING_LIST);
+  }
+
   public static List<String> getAvailableMethods(ILaunchConfiguration config, String typeMnemonic) {
     return getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS_PREFIX + typeMnemonic,
         EMPTY_STRING_LIST);
   }
   
-  public static List<String> getSelectedMethods(ILaunchConfiguration config, String typeMnemonic) {
+  public static List<String> getCheckedMethods(ILaunchConfiguration config, String typeMnemonic) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS_PREFIX + typeMnemonic,
+        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_METHODS_PREFIX + typeMnemonic,
         EMPTY_STRING_LIST);
   }
   
@@ -363,9 +369,15 @@ public class RandoopArgumentCollector {
         EMPTY_STRING_LIST);
   }
 
-  public static void restoreSelectedTypes(ILaunchConfigurationWorkingCopy config) {
+  public static void restoreGrayedTypes(ILaunchConfigurationWorkingCopy config) {
+    setAttribute(config,
+       IRandoopLaunchConfigurationConstants.ATTR_GRAYED_TYPES,
+       EMPTY_STRING_LIST);
+ }
+  
+  public static void restoreCheckedTypes(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES,
+        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_TYPES,
         EMPTY_STRING_LIST);
   }
   
@@ -375,9 +387,9 @@ public class RandoopArgumentCollector {
         (String) null);
   }
   
-  public static void deleteSelectedMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic) {
+  public static void deleteCheckedMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic) {
     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS_PREFIX + typeMnemonic,
+        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_METHODS_PREFIX + typeMnemonic,
         (String) null);
   }
 
@@ -484,16 +496,20 @@ public class RandoopArgumentCollector {
     setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES, availableTypes);
   }
 
-  public static void setSelectedTypes(ILaunchConfigurationWorkingCopy config, List<String> selectedTypes) {
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_SELECTED_TYPES, selectedTypes);
+  public static void setGrayedTypes(ILaunchConfigurationWorkingCopy config, List<String> grayedTypes) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_GRAYED_TYPES, grayedTypes);
+  }
+  
+  public static void setCheckedTypes(ILaunchConfigurationWorkingCopy config, List<String> checkedTypes) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_CHECKED_TYPES, checkedTypes);
   }
 
   public static void setAvailableMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic, List<String> availableMethods) {
     setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS_PREFIX + typeMnemonic, availableMethods);
   }
 
-  public static void setSelectedMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic, List<String> selectedMethods) {
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_SELECTED_METHODS_PREFIX + typeMnemonic, selectedMethods);
+  public static void setCheckedMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic, List<String> selectedMethods) {
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_CHECKED_METHODS_PREFIX + typeMnemonic, selectedMethods);
   }
 
   public static void setRandomSeed(ILaunchConfigurationWorkingCopy config, String seed) {
