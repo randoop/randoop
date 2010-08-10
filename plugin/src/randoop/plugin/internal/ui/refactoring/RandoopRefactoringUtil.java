@@ -7,6 +7,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -15,6 +16,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class RandoopRefactoringUtil {
   /*
@@ -58,23 +60,20 @@ public class RandoopRefactoringUtil {
       }
     }
   }
-
-  public static void updateMethodMnemonics(HashMap<String, String> newTypeMnemonicByOldTypeMnemonic, List<String> availableMethodMnemonics) {
-    for (int i = 0; i < availableMethodMnemonics.size(); i++) {
-      String methodMnemonicString = availableMethodMnemonics.get(i);
-      MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString);
-      TypeMnemonic typeMnemonic = methodMnemonic.getDeclaringTypeMnemonic();
-
-      String newTypeMnemonic = newTypeMnemonicByOldTypeMnemonic.get(typeMnemonic.toString());
-      if (newTypeMnemonic != null) {
-        String methodName = methodMnemonic.getMethodName();
-        boolean isConstructor = methodMnemonic.isConstructor();
-        String methodSignature = methodMnemonic.getMethodSignature();
-
-        MethodMnemonic newMethodMnemonic = new MethodMnemonic(newTypeMnemonic, methodName, isConstructor, methodSignature);
-        availableMethodMnemonics.set(i, newMethodMnemonic.toString());
-      }
+  
+  public static void updateMethodMnemonicKeys(ILaunchConfigurationWorkingCopy wc, HashMap<String, String> newTypeMnemonicByOldTypeMnemonic) {
+    for (String oldMnemonic : newTypeMnemonicByOldTypeMnemonic.keySet()) {
+      String newMnemonic = newTypeMnemonicByOldTypeMnemonic.get(oldMnemonic);
+      
+      List<String> availableMethods = RandoopArgumentCollector.getAvailableMethods(wc, oldMnemonic);
+      List<String> checkedMethods = RandoopArgumentCollector.getCheckedMethods(wc, oldMnemonic);
+      
+      RandoopArgumentCollector.setAvailableMethods(wc, newMnemonic, availableMethods);
+      RandoopArgumentCollector.setCheckedMethods(wc, newMnemonic, checkedMethods);
+      
+      RandoopArgumentCollector.deleteAvailableMethods(wc, oldMnemonic);
+      RandoopArgumentCollector.deleteCheckedMethods(wc, oldMnemonic);
     }
   }
-  
+
 }

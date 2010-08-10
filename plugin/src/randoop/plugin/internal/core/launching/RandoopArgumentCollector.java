@@ -1,5 +1,6 @@
 package randoop.plugin.internal.core.launching;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,25 +52,25 @@ public class RandoopArgumentCollector {
   
   public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) throws JavaModelException {
     fName = config.getName();
-    Assert.isNotNull(fName, "Configuration name not given"); //$NON-NLS-1$
+    Assert.isNotNull(fName, "Configuration name not given");
     
     String projectName = getProjectName(config);
     fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
-    Assert.isNotNull(fJavaProject, "Java project not specified"); //$NON-NLS-1$
+    Assert.isNotNull(fJavaProject, "Java project not specified");
 
     fSelectedTypes = new ArrayList<IType>();
     fAvailableTypes = new ArrayList<IType>();
     List<?> availableTypes = getAvailableTypes(config);
     List<?> selectedTypes = getCheckedTypes(config);
     for (Object o : availableTypes) {
-      Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list"); //$NON-NLS-1$
+      Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list");
       String mnemonic = (String) o;
       
       TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic, root);
       IType type = typeMnemonic.getType();
       
-      Assert.isTrue(fJavaProject.equals(type.getJavaProject()), "One of the selected class inputs is not associated with the selected project"); //$NON-NLS-1$
-
+      Assert.isTrue(fJavaProject.equals(typeMnemonic.getJavaProject()), "One of the class-inputs does not exist in the selected project");
+      
       fAvailableTypes.add(type);
       if (selectedTypes.contains(o)) {
         fSelectedTypes.add(type);
@@ -79,15 +80,15 @@ public class RandoopArgumentCollector {
     fSelectedMethodsByType = new HashMap<IType, List<IMethod>>();
     for (IType type : fSelectedTypes) {
       List<IMethod> methodList = new ArrayList<IMethod>();
+      
       List<?> selectedMethods = getCheckedMethods(config, new TypeMnemonic(type).toString());
       for (Object o : selectedMethods) {
-        Assert.isTrue(o instanceof String, "Non-String arguments stored in method-input list"); //$NON-NLS-1$
+        Assert.isTrue(o instanceof String, "Non-String arguments stored in method-input list");
         String mnemonic = (String) o;
         
         IMethod m = new MethodMnemonic(mnemonic).findMethod(type);
-        Assert.isNotNull(m, "Stored method does not exist"); //$NON-NLS-1$
-        Assert.isNotNull(m.exists(), "Stored method [" + m.getElementName() + "] does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
-        Assert.isTrue(fJavaProject.equals(m.getJavaProject()), "One of the selected method-input's declaring type is not associated with the selected project"); //$NON-NLS-1$
+        Assert.isNotNull(m, "One of the method inputs does not exist");
+        Assert.isTrue(m.exists(), MessageFormat.format("Stored method [{0}] does not exist", m.getElementName()));
         
         methodList.add(m);
       }
@@ -95,7 +96,7 @@ public class RandoopArgumentCollector {
       fSelectedMethodsByType.put(type, methodList);
     }
     
-    Assert.isTrue(!fSelectedTypes.isEmpty() || !fSelectedMethodsByType.isEmpty(), "No class input or method input given"); //$NON-NLS-1$
+    Assert.isTrue(!fSelectedTypes.isEmpty() || !fSelectedMethodsByType.isEmpty(), "No class-input or method-input selected");
 
     fRandomSeed = Integer.parseInt(getRandomSeed(config));
     fMaxTestSize = Integer.parseInt(getMaxTestSize(config));

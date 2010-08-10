@@ -40,11 +40,10 @@ public class LaunchConfigurationIMethodRenameParticipant extends RenameParticipa
     ILaunchConfiguration[] configs = RandoopRefactoringUtil.getRandoopTypeLaunchConfigurations();
     String newMethodName = getArguments().getNewName();
     
-    String typeMnemonic = fMethodMnemonic.getDeclaringTypeMnemonic().toString();
     boolean isConstructor = fMethodMnemonic.isConstructor();
     String methodSignature = fMethodMnemonic.getMethodSignature();
     
-    MethodMnemonic newMethodMnemonic = new MethodMnemonic(typeMnemonic, newMethodName, isConstructor, methodSignature);
+    MethodMnemonic newMethodMnemonic = new MethodMnemonic(newMethodName, isConstructor, methodSignature);
     
     for(ILaunchConfiguration config : configs) {
       // TODO: Check if change is needed first

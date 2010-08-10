@@ -69,24 +69,22 @@ public class LaunchConfigurationClasspathEntryChange extends Change  {
     HashMap<String, String> newTypeMnemonicByOldTypeMnemonic = new HashMap<String, String>();
     
     List<String> availableTypeMnemonics = RandoopArgumentCollector.getAvailableTypes(wc);
-    List<String> selectedTypeMnemonics = RandoopArgumentCollector.getSelectedTypes(wc);
-    List<String> availableMethodMnemonics = RandoopArgumentCollector.getAvailableMethods(wc);
-    List<String> selectedMethodMnemonics = RandoopArgumentCollector.getSelectedMethods(wc);
+    List<String> grayedTypeMnemonics = RandoopArgumentCollector.getGrayedTypes(wc);
+    List<String> checkedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(wc);
     
     List<String> typeMnemonics = new ArrayList<String>();
     typeMnemonics.addAll(availableTypeMnemonics);
-    typeMnemonics.addAll(getTypeMnemonicsFromMethods(availableMethodMnemonics));
+    typeMnemonics.addAll(grayedTypeMnemonics);
+    typeMnemonics.addAll(checkedTypeMnemonics);
     createNewMnemonicsFromTypes(newTypeMnemonicByOldTypeMnemonic, typeMnemonics);
     
     RandoopRefactoringUtil.updateTypeMnemonics(newTypeMnemonicByOldTypeMnemonic, availableTypeMnemonics);
-    RandoopRefactoringUtil.updateTypeMnemonics(newTypeMnemonicByOldTypeMnemonic, selectedTypeMnemonics);
-    RandoopRefactoringUtil.updateMethodMnemonics(newTypeMnemonicByOldTypeMnemonic, availableMethodMnemonics);
-    RandoopRefactoringUtil.updateMethodMnemonics(newTypeMnemonicByOldTypeMnemonic, selectedMethodMnemonics);
+    RandoopRefactoringUtil.updateTypeMnemonics(newTypeMnemonicByOldTypeMnemonic, grayedTypeMnemonics);
+    RandoopRefactoringUtil.updateTypeMnemonics(newTypeMnemonicByOldTypeMnemonic, checkedTypeMnemonics);
     
     RandoopArgumentCollector.setAvailableTypes(wc, availableTypeMnemonics);
-    RandoopArgumentCollector.setSelectedTypes(wc, selectedTypeMnemonics);
-    RandoopArgumentCollector.setAvailableMethods(wc, availableMethodMnemonics);
-    RandoopArgumentCollector.setSelectedMethods(wc, selectedMethodMnemonics);
+    RandoopArgumentCollector.setGrayedTypes(wc, grayedTypeMnemonics);
+    RandoopArgumentCollector.setCheckedTypes(wc, checkedTypeMnemonics);
     
     if (wc.isDirty()) {
       fLaunchConfiguration = wc.doSave();
@@ -133,16 +131,4 @@ public class LaunchConfigurationClasspathEntryChange extends Change  {
     return null;
   }
 
-  private List<String> getTypeMnemonicsFromMethods(List<String> methodMnemonics) {
-    List<String> typeMnemonics = new ArrayList<String>();
-    for (String mnemonic : methodMnemonics) {
-      MethodMnemonic methodMnemonic = new MethodMnemonic(mnemonic);
-      TypeMnemonic oldTypeMnemonic = methodMnemonic.getDeclaringTypeMnemonic();
-      
-      typeMnemonics.add(oldTypeMnemonic.toString());
-    }
-    
-    return typeMnemonics;
-  }
-  
 }

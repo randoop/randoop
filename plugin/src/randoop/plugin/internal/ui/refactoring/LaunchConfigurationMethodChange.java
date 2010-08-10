@@ -59,28 +59,30 @@ public class LaunchConfigurationMethodChange  extends Change  {
   public Change perform(IProgressMonitor pm) throws CoreException {
     final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
 
-    List<String> availableMethodMnemonics = RandoopArgumentCollector.getAvailableMethods(wc);
-    List<String> selectedMethodMnemonics = RandoopArgumentCollector.getSelectedMethods(wc);
-    
-    for (int i = 0; i < availableMethodMnemonics.size(); i++) {
-      String oldMnemonic = availableMethodMnemonics.get(i);
+    for (String typeMnemonic : RandoopArgumentCollector.getAvailableTypes(wc)) {
+      List<String> availableMethodMnemonics = RandoopArgumentCollector.getAvailableMethods(wc, typeMnemonic);
+      List<String> checkedMethodMnemonics = RandoopArgumentCollector.getCheckedMethods(wc, typeMnemonic);
 
-      if (oldMnemonic.equals(fOldMnemonic)) {
-        availableMethodMnemonics.set(i, fNewMnemonic);
+      for (int i = 0; i < availableMethodMnemonics.size(); i++) {
+        String oldMnemonic = availableMethodMnemonics.get(i);
+
+        if (oldMnemonic.equals(fOldMnemonic)) {
+          availableMethodMnemonics.set(i, fNewMnemonic);
+        }
       }
+
+      for (int i = 0; i < checkedMethodMnemonics.size(); i++) {
+        String oldMnemonic = checkedMethodMnemonics.get(i);
+
+        if (oldMnemonic.equals(fOldMnemonic)) {
+          checkedMethodMnemonics.set(i, fNewMnemonic);
+        }
+      }
+
+      RandoopArgumentCollector.setAvailableMethods(wc, typeMnemonic, availableMethodMnemonics);
+      RandoopArgumentCollector.setCheckedMethods(wc, typeMnemonic, checkedMethodMnemonics);
     }
 
-    for (int i = 0; i < selectedMethodMnemonics.size(); i++) {
-      String oldMnemonic = selectedMethodMnemonics.get(i);
-
-      if (oldMnemonic.equals(fOldMnemonic)) {
-        selectedMethodMnemonics.set(i, fNewMnemonic);
-      }
-    }
-    
-    RandoopArgumentCollector.setAvailableMethods(wc, availableMethodMnemonics);
-    RandoopArgumentCollector.setSelectedMethods(wc, selectedMethodMnemonics);
-    
     if (wc.isDirty()) {
       fLaunchConfiguration = wc.doSave();
     }

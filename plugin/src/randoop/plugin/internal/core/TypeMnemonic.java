@@ -129,6 +129,12 @@ public class TypeMnemonic {
 
   public TypeMnemonic reassign(IJavaProject javaProject) {
     if (javaProject != null && exists()) {
+      
+      // Check if reassignment is necessary first
+      if (javaProject.equals(getJavaProject())) {
+        return this;
+      }
+      
       try {
         IWorkspaceRoot root = getJavaProject().getCorrespondingResource().getWorkspace().getRoot();
 
