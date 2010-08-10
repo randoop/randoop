@@ -40,7 +40,7 @@ public class AdaptablePropertyTester extends PropertyTester {
     throw new IllegalArgumentException("Unknown test property '" + property + "'"); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
-  private static boolean isTestable(IJavaElement element) throws JavaModelException {
+  public static boolean isTestable(IJavaElement element) throws JavaModelException {
     switch (element.getElementType()) {
     case IJavaElement.PACKAGE_FRAGMENT_ROOT:
       IPackageFragmentRoot pfr = (IPackageFragmentRoot) element;
@@ -72,7 +72,7 @@ public class AdaptablePropertyTester extends PropertyTester {
     case IJavaElement.METHOD:
       IMethod m = (IMethod) element;
       int flags = m.getFlags();
-      if (!Flags.isSynthetic(flags) && !Flags.isBridge(flags)) {
+      if (Flags.isPublic(flags) && !Flags.isSynthetic(flags) && !Flags.isBridge(flags)) {
         return isTestable(m.getDeclaringType());
       }
       return false;
