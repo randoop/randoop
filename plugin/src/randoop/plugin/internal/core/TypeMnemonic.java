@@ -122,7 +122,11 @@ public class TypeMnemonic {
     fJavaProject = javaProject;
     fType = type;
   }
-  
+
+  public TypeMnemonic resolve(IWorkspaceRoot root) {
+    return new TypeMnemonic(toString(), root);
+  }
+
   public TypeMnemonic reassign(IJavaProject javaProject) {
     if (javaProject != null && exists()) {
       try {
