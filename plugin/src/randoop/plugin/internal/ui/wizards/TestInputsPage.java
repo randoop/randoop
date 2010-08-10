@@ -3,7 +3,6 @@ package randoop.plugin.internal.ui.wizards;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IJavaProject;
@@ -11,7 +10,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
@@ -21,13 +19,13 @@ public class TestInputsPage extends OptionWizardPage {
   private IOption fTestInputSelectorOption;
 
   private IJavaProject fJavaProject;
-  private List<TypeMnemonic> fTypes;
-  private Map<TypeMnemonic, List<String>> fAvailableMethodsByDeclaringTypes;
-  private Map<TypeMnemonic, List<String>> fSelectedMethodsByDeclaringTypes;
+  private List<TypeMnemonic> fCheckedTypes;
+  private List<TypeMnemonic> fGrayedTypes;
+  private Map<IType, List<String>> fSelectedMethodsByDeclaringTypes;
 
-  protected TestInputsPage(String pageName, IJavaProject project, List<TypeMnemonic> types,
-      Map<TypeMnemonic, List<String>> availableMethodsByDeclaringTypes,
-      Map<TypeMnemonic, List<String>> selectedMethodsByDeclaringTypes,
+  protected TestInputsPage(String pageName, IJavaProject project, List<TypeMnemonic> checkedTypes,
+      List<TypeMnemonic> grayedTypes,
+      Map<IType, List<String>> selectedMethodsByDeclaringTypes,
       ILaunchConfigurationWorkingCopy config) {
 
     super(pageName, config);
@@ -36,8 +34,8 @@ public class TestInputsPage extends OptionWizardPage {
     setPageComplete(false);
 
     fJavaProject = project;
-    fTypes = types;
-    fAvailableMethodsByDeclaringTypes = availableMethodsByDeclaringTypes;
+    fCheckedTypes = checkedTypes;
+    fGrayedTypes = grayedTypes;
     fSelectedMethodsByDeclaringTypes = selectedMethodsByDeclaringTypes;
   }
 
@@ -47,7 +45,7 @@ public class TestInputsPage extends OptionWizardPage {
     setControl(comp);
 
     fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard().getContainer(),
-        getBasicSelectionListener(), fJavaProject, fTypes, fAvailableMethodsByDeclaringTypes,
+        getBasicSelectionListener(), fJavaProject, fCheckedTypes, fGrayedTypes,
         fSelectedMethodsByDeclaringTypes);
 
     addOption(fTestInputSelectorOption);

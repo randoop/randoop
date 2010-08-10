@@ -1,7 +1,6 @@
 package randoop.plugin.internal.ui.launching;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -12,9 +11,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Composite;
-
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.options.IOption;
 
 public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
