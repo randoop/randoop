@@ -21,17 +21,17 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
   OptionWizardPage fMainPage;
   OptionWizardPage fTestInputsPage;
 
-  public RandoopLaunchConfigurationWizard(IJavaProject javaProject, List<TypeMnemonic> types,
-      Map<TypeMnemonic, List<String>> methodsByDeclaringTypes,
-      Map<TypeMnemonic, List<String>> availableByDeclaringTypes,
+  public RandoopLaunchConfigurationWizard(IJavaProject javaProject,
+      List<TypeMnemonic> checkedTypes, List<TypeMnemonic> grayedTypes,
+      Map<IType, List<String>> selectedMethodsByDeclaringTypes,
       ILaunchConfigurationWorkingCopy config) throws CoreException {
     
     super();
 
     fConfig = config;
 
-    fTestInputsPage = new TestInputsPage("Test Inputs", javaProject, types,
-        methodsByDeclaringTypes, availableByDeclaringTypes, fConfig);
+    fTestInputsPage = new TestInputsPage("Test Inputs", javaProject, checkedTypes, grayedTypes,
+        selectedMethodsByDeclaringTypes, fConfig);
     fMainPage = new ParametersPage("Main", javaProject, fConfig);
     fMainPage.setPreviousPage(fMainPage);
 
