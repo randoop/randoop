@@ -50,7 +50,7 @@ public class LaunchConfigurationFactory {
     }
     
     RandoopArgumentCollector.setAvailableTypes(config, typeMnemonics);
-    RandoopArgumentCollector.setSelectedTypes(config, typeMnemonics);
+    RandoopArgumentCollector.setCheckedTypes(config, typeMnemonics);
   
     return config;
   }

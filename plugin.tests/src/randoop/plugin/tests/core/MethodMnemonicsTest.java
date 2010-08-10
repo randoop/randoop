@@ -94,15 +94,17 @@ public class MethodMnemonicsTest {
   }
 
   private void verify(IWorkspaceRoot root, HashMap<String, IMethod> methodsByMnemonics) throws CoreException {
-    // Check that MethodMnemonics.getMethod reconstructs the methods correctly
-    for (String mnemonic : methodsByMnemonics.keySet()) {
-      IMethod m1 = new MethodMnemonic(mnemonic, root).getMethod();
-      assertNotNull(m1);
-      methodsByMnemonics.get(mnemonic);
+    // MethodMnemonic doesn't do this anymore, so this whole test is pointless
 
-      IMethod m2 = methodsByMnemonics.get(mnemonic);
-      assertEquals(m1, m2);
-    }
+    // Check that MethodMnemonics.getMethod reconstructs the methods correctly
+//    for (String mnemonic : methodsByMnemonics.keySet()) {
+//      IMethod m1 = new MethodMnemonic(mnemonic).getMethod();
+//      assertNotNull(m1);
+//      methodsByMnemonics.get(mnemonic);
+//
+//      IMethod m2 = methodsByMnemonics.get(mnemonic);
+//      assertEquals(m1, m2);
+//    }
   }
   
   
