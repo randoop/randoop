@@ -554,12 +554,12 @@ GENTESTS_OPTIONS_JAVA = \
 # "build" is a prerequisite because javadoc reads .class files to determine
 # annotations.
 manual: plume-lib-update build
-	cp -pf doc/index.html doc/index.html-old
-	javadoc -quiet -doclet plume.OptionsDoclet -docfile doc/index.html-old -outfile doc/index.html -quiet ${GENTESTS_OPTIONS_JAVA}
-	rm -f doc/index.html-old
+	javadoc -quiet -doclet plume.OptionsDoclet -i -docfile doc/index.html ${GENTESTS_OPTIONS_JAVA}
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
 
+# A separate target because the "validate" tool may not be installed. 
+# It does not depend on "manual" because that is 
 validate-manual:
 	validate doc/index.html
 	validate doc/dev.html
