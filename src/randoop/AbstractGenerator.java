@@ -19,7 +19,7 @@ import randoop.util.Timer;
 /**
  * Algorithm template for implementing a test generator.
  * 
- * The main generation loop is defined in method <code>explore()</code),
+ * The main generation loop is defined in method <code>explore()</code>,
  * which repeatedly generates a new sequence, determines if it a failing
  * sequence, and stops the process when the time or sequence limit expires.
  * The process of generating a new sequences is left abstract.
