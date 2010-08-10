@@ -72,7 +72,7 @@ tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bd
 # Runs pure Randoop-related tests.
 randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
-temp: randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
+temp: randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
 
 
 # build pre-agent instrumentation jar
@@ -169,18 +169,21 @@ randoop2: bin
 	  foo/bar/Naive*.java
 	cp systemtests/randoop-scratch/foo/bar/Naive0.java systemtests/resources/Naive0.java
 
-# Runs Randoop on Collections and TreeSet.
+# Runs Randoop on a large collections of classes from the JDK.
+# This run of Randoop ends up creating a bunch of randomly-named files
+# in current directory, so we execute it from scratch directory.
 randoop3: bin
 	rm -rf systemtests/randoop-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	mkdir systemtests/randoop-scratch
+	cd systemtests/randoop-scratch && java -ea -classpath $(RANDOOP_HOME):../src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
-	   --testclass=java2.util2.TreeSet \
-	   --testclass=java2.util2.Collections \
-	   --junit-classname=Naive2_ \
-	   --junit-package-name=foo.bar \
-	   --junit-output-dir=systemtests/randoop-scratch
-	cp systemtests/randoop-scratch/foo/bar/Naive2_0.java systemtests/resources/Naive2_0.java
+	   --classlist=../resources/jdk_classlist.txt \
+	   --junit-classname=JDK_Tests \
+	   --junit-package-name=jdktests \
+	   --junit-output-dir=../randoop-scratch
+	cp systemtests/randoop-scratch/jdktests/JDK_Tests0.java systemtests/resources/JDK_Tests0.java
+	cp systemtests/randoop-scratch/jdktests/JDK_Tests1.java systemtests/resources/JDK_Tests1.java
 
 randoop-contracts: bin
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Buggy.java
@@ -546,18 +549,17 @@ GENTESTS_OPTIONS_JAVA = \
       src/randoop/util/Log.java \
       src/randoop/util/ReflectionExecutor.java \
       src/randoop/ForwardGenerator.java \
-      src/randoop/AbstractGenerator.java \
-      src/randoop/SequenceGeneratorStats.java
+      src/randoop/AbstractGenerator.java
 
 # "build" is a prerequisite because javadoc reads .class files to determine
 # annotations.
 manual: plume-lib-update build
-	cp -pf doc/index.html doc/index.html-old
-	javadoc -quiet -doclet plume.OptionsDoclet -docfile doc/index.html-old -outfile doc/index.html -quiet ${GENTESTS_OPTIONS_JAVA}
-	rm -f doc/index.html-old
+	javadoc -quiet -doclet plume.OptionsDoclet -i -docfile doc/index.html ${GENTESTS_OPTIONS_JAVA}
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
 
+# A separate target because the "validate" tool may not be installed. 
+# It does not depend on "manual" because that is 
 validate-manual:
 	validate doc/index.html
 	validate doc/dev.html

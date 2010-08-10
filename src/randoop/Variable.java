@@ -11,7 +11,7 @@ public class Variable implements Comparable<Variable>, Serializable {
   private static final long serialVersionUID = 4465111607016458010L;
 
   // The index of the statement that creates this value.
-  final int index;
+  public final int index;
 
   // The sequence that creates this value.
   public final Sequence sequence;

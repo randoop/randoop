@@ -4,15 +4,13 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Set;
 
-import randoop.ExecutableSequence;
-import randoop.FailureAnalyzer;
 import plume.Option;
 import plume.Options;
 import plume.UtilMDE;
 import plume.Options.ArgException;
-import cov.Branch;
+import randoop.ExecutableSequence;
+import randoop.FailureAnalyzer;
 
 public class StatsWriter {
 
@@ -81,7 +79,8 @@ public class StatsWriter {
     }
   }
 
-  public static void write(FileWriter writer, ExecutableSequence seq, Set<Branch> cov, FailureAnalyzer fa) throws IOException {
+  // Keep in synch with read method below.
+  public static void write(FileWriter writer, ExecutableSequence seq, FailureAnalyzer fa) throws IOException {
     StringBuilder b = new StringBuilder();
 
     // Number of executed statements ("real" size).
@@ -100,12 +99,6 @@ public class StatsWriter {
     } else {
       b.append("\n");
     }
-
-    // Branches covered.
-    for (Branch br : cov) {
-      b.append(br + " ");
-    }
-    b.append("\n");
 
     // Compute classifications.
     StringBuilder classif = new StringBuilder();
@@ -145,7 +138,6 @@ public class StatsWriter {
   public long gentime;
   public long exectime;
   public String seq_str = null;
-  public String branches_str = null;
   public int numclassifs = -1;
   public String[] classifNames = new String[maxclassifs];
   public String[] classifSources = new String[maxclassifs];
@@ -154,6 +146,7 @@ public class StatsWriter {
   public String[] record = new String[300]; // TODO parameterize.
   public int recordsize;
 
+  // Keep in sync with write method above.
   public boolean read(BufferedReader reader, StatsComputer comp) throws IOException {
     recordsread++;
     String line = null;
@@ -182,9 +175,6 @@ public class StatsWriter {
         // Sequence.
         seq_str = readLine(reader);
       }
-
-      // Branches
-      branches_str = readLine(reader);
 
       numclassifs = Integer.parseInt(readLine(reader));
       for (int i = 0 ; i < numclassifs ; i++) {

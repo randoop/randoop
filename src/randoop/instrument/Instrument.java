@@ -167,7 +167,7 @@ public class Instrument implements ClassFileTransformer {
     }
 
     // Don't intrument our code
-    if (className.startsWith ("Randoop")) {
+    if (className.startsWith ("randoop.")) {
       debug_transform.log ("Not considering randoop class %s%n",fullClassName);
       return (null);
     }
@@ -177,7 +177,7 @@ public class Instrument implements ClassFileTransformer {
     debug_class = false;
     for (MethodMapInfo mmi : map_list) {
       if (mmi.class_regex.matcher(className).matches()) {
-        if (false && className.startsWith ("test"))
+        if (false && className.startsWith ("RandoopTest"))
           debug_class = true;
         if (debug_class)
           System.out.printf ("Classname %s matches re %s%n", className,

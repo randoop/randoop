@@ -4,8 +4,8 @@ import java.io.InputStream;
 import java.util.List;
 
 import randoop.Globals;
-import randoop.NaiveRandomGenerator;
 import randoop.StatementKind;
+import randoop.experiments.RandomWalkGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.util.Reflection;
 
@@ -23,7 +23,7 @@ public class NaivePerformanceTest extends AbstractPerformanceTest {
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     Globals.nochecks = true;
-    NaiveRandomGenerator explorer = new NaiveRandomGenerator(m, null, Long.MAX_VALUE, 100000, null, null);
+    RandomWalkGenerator explorer = new RandomWalkGenerator(m, Long.MAX_VALUE, 100000, null, null, null, null);
     explorer.explore();
   }
 

@@ -1,5 +1,35 @@
 
-PLUGIN BUGS
+PLUGIN BUGS / FEATURE REQUESTS
+
+* [Improvment request, not showstopper bug] Launch configuration (both
+  wizard and config tab): please do a bit of visual rearrangement of
+  the configuration a bit to make more user-friendly, as follows (the
+  "[...]" symbol means the place where user inputs text; test in
+  between *pound symbols* means bolded or italicized):
+
+ 1. First should come stopping criteria, as follows:
+
+   -----------------------------------------------------
+   *Stopping criterion.* Stop test generation after:
+
+     Randoop has generated [...] tests, OR
+     Randoop has generates tests for [...] seconds
+   -----------------------------------------------------
+
+ 2. Second should come output prameters, as follows:
+
+   -----------------------------------------------------
+   *Test output parameters.*
+   
+   Output tests that: [Fail/Pass/All selection]
+   -----------------------------------------------------
+
+  3. Finally, all the others. Title this section "Advanced" so that
+     user knows they don't have to touch them on first pass; anslo,
+     delete the "Maximum Tests Written" dialog for now; let's have
+     current behavior be all tests output.
+
+
 
 * If you edit some code: remove, change visibility, or change parameters
   to some method that are used in a launch configuration, when you click
