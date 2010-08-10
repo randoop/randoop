@@ -291,7 +291,7 @@ public final class PrimitiveTypes {
    *
    *  @see GenInputsAbstract
    */
-  public static boolean stringLenghtOK(String s) {
+  public static boolean stringLengthOK(String s) {
     if (s == null) {
       throw new IllegalArgumentException("s is null");
     }
