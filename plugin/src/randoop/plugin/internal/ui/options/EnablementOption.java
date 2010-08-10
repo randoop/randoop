@@ -64,8 +64,12 @@ public abstract class EnablementOption extends Option {
 
   @Override
   public void initializeFrom(ILaunchConfiguration config) {
-    if (fEnablement != null && fEnabledOption != null)
-      fEnabledOption.initializeFrom(config);    
+    if (fEnablement != null && fEnabledOption != null) {
+      boolean enabled = isEnabled(config);
+      fEnablement.setSelection(enabled);
+      fEnabledOption.initializeFrom(config);
+      fEnabledOption.setEnabled(enabled);
+    }
   }
 
   @Override
