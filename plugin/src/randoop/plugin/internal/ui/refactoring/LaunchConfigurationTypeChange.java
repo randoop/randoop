@@ -69,19 +69,18 @@ public class LaunchConfigurationTypeChange  extends Change  {
     final ILaunchConfigurationWorkingCopy wc = fLaunchConfiguration.getWorkingCopy();
 
     List<String> availableTypeMnemonics = RandoopArgumentCollector.getAvailableTypes(wc);
-    List<String> selectedTypeMnemonics = RandoopArgumentCollector.getSelectedTypes(wc);
-    List<String> availableMethodMnemonics = RandoopArgumentCollector.getAvailableMethods(wc);
-    List<String> selectedMethodMnemonics = RandoopArgumentCollector.getSelectedMethods(wc);
+    List<String> grayedTypeMnemonics = RandoopArgumentCollector.getGrayedTypes(wc);
+    List<String> checkedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(wc);
     
     RandoopRefactoringUtil.updateTypeMnemonics(fNewTypeMnemonicByOldTypeMnemonic, availableTypeMnemonics);
-    RandoopRefactoringUtil.updateTypeMnemonics(fNewTypeMnemonicByOldTypeMnemonic, selectedTypeMnemonics);
-    RandoopRefactoringUtil.updateMethodMnemonics(fNewTypeMnemonicByOldTypeMnemonic, availableMethodMnemonics);
-    RandoopRefactoringUtil.updateMethodMnemonics(fNewTypeMnemonicByOldTypeMnemonic, selectedMethodMnemonics);
+    RandoopRefactoringUtil.updateTypeMnemonics(fNewTypeMnemonicByOldTypeMnemonic, grayedTypeMnemonics);
+    RandoopRefactoringUtil.updateTypeMnemonics(fNewTypeMnemonicByOldTypeMnemonic, checkedTypeMnemonics);
+    
+    RandoopRefactoringUtil.updateMethodMnemonicKeys(wc, fNewTypeMnemonicByOldTypeMnemonic);
     
     RandoopArgumentCollector.setAvailableTypes(wc, availableTypeMnemonics);
-    RandoopArgumentCollector.setSelectedTypes(wc, selectedTypeMnemonics);
-    RandoopArgumentCollector.setAvailableMethods(wc, availableMethodMnemonics);
-    RandoopArgumentCollector.setSelectedMethods(wc, selectedMethodMnemonics);
+    RandoopArgumentCollector.setGrayedTypes(wc, grayedTypeMnemonics);
+    RandoopArgumentCollector.setCheckedTypes(wc, checkedTypeMnemonics);
     
     if (wc.isDirty()) {
       fLaunchConfiguration = wc.doSave();

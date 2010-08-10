@@ -28,17 +28,15 @@ public class LaunchConfigurationProjectChange extends Change {
   
   private boolean fSelectedProjectChange;
   private boolean fTypeChange;
-  private boolean fMethodChange;
 
   public LaunchConfigurationProjectChange(ILaunchConfiguration launchConfiguration, String newProjectName,
-      boolean selectedProjectChange, boolean typeChange, boolean methodChange) throws CoreException {
+      boolean selectedProjectChange, boolean typeChange) throws CoreException {
     fLaunchConfiguration = launchConfiguration;
     fNewProjectName = newProjectName;
     fOldProjectName = RandoopArgumentCollector.getProjectName(fLaunchConfiguration);
     
     fSelectedProjectChange = selectedProjectChange;
     fTypeChange = typeChange;
-    fMethodChange = methodChange;
   }
 
   @Override
@@ -80,34 +78,23 @@ public class LaunchConfigurationProjectChange extends Change {
       RandoopArgumentCollector.setProjectName(wc, fNewProjectName);
     }
     
-    HashMap<String, String> newTypeMnemonicByOldTypeMnemonic = new HashMap<String, String>();
-    List<String> availableTypeMnemonics = RandoopArgumentCollector.getAvailableTypes(wc);
-    List<String> availableMethodMnemonics = RandoopArgumentCollector.getAvailableMethods(wc);
-    List<String> selectedTypeMnemonics = RandoopArgumentCollector.getSelectedTypes(wc);
-    List<String> selectedMethodMnemonics = RandoopArgumentCollector.getSelectedMethods(wc);
     
     if(fTypeChange) {
+      HashMap<String, String> newTypeMnemonicByOldTypeMnemonic = new HashMap<String, String>();
+      List<String> availableTypeMnemonics = RandoopArgumentCollector.getAvailableTypes(wc);
+      List<String> grayedTypeMnemonics = RandoopArgumentCollector.getGrayedTypes(wc);
+      List<String> checkedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(wc);
+
       createNewMnemonicsFromTypes(newTypeMnemonicByOldTypeMnemonic, availableTypeMnemonics);
-    }
 
-    if (fMethodChange) {
-      createNewMnemonicsFromMethods(newTypeMnemonicByOldTypeMnemonic, availableMethodMnemonics);
-    }
-
-    if (fTypeChange) {
       RandoopRefactoringUtil.updateTypeMnemonics(newTypeMnemonicByOldTypeMnemonic, availableTypeMnemonics);
-      RandoopRefactoringUtil.updateTypeMnemonics(newTypeMnemonicByOldTypeMnemonic, selectedTypeMnemonics);
+      RandoopRefactoringUtil.updateTypeMnemonics(newTypeMnemonicByOldTypeMnemonic, checkedTypeMnemonics);
+      
+      RandoopRefactoringUtil.updateMethodMnemonicKeys(wc, newTypeMnemonicByOldTypeMnemonic);
       
       RandoopArgumentCollector.setAvailableTypes(wc, availableTypeMnemonics);
-      RandoopArgumentCollector.setSelectedTypes(wc, selectedTypeMnemonics);
-    }
-
-    if (fMethodChange) {
-      RandoopRefactoringUtil.updateMethodMnemonics(newTypeMnemonicByOldTypeMnemonic, availableMethodMnemonics);
-      RandoopRefactoringUtil.updateMethodMnemonics(newTypeMnemonicByOldTypeMnemonic, selectedMethodMnemonics);
-      
-      RandoopArgumentCollector.setAvailableMethods(wc, availableMethodMnemonics);
-      RandoopArgumentCollector.setSelectedMethods(wc, selectedMethodMnemonics);
+      RandoopArgumentCollector.setGrayedTypes(wc, grayedTypeMnemonics);
+      RandoopArgumentCollector.setCheckedTypes(wc, checkedTypeMnemonics);
     }
     
     if (wc.isDirty()) {
@@ -115,7 +102,7 @@ public class LaunchConfigurationProjectChange extends Change {
     }
     
     // create the undo change
-    return new LaunchConfigurationProjectChange(fLaunchConfiguration, fOldProjectName, fSelectedProjectChange, fTypeChange, fMethodChange);
+    return new LaunchConfigurationProjectChange(fLaunchConfiguration, fOldProjectName, fSelectedProjectChange, fTypeChange);
   }
   
   protected void createNewMnemonicsFromTypes(HashMap<String, String> newTypeMnemonicByOldTypeMnemonic, List<String> typeMnemonics) {
@@ -132,27 +119,6 @@ public class LaunchConfigurationProjectChange extends Change {
           TypeMnemonic newTypeMnemonic = new TypeMnemonic(fNewProjectName, classpathKind, classpath, fqname);
           String newMnemonic = newTypeMnemonic.toString();
           newTypeMnemonicByOldTypeMnemonic.put(oldMnemonic, newMnemonic);
-        }
-      }
-    }
-  }
-
-  protected void createNewMnemonicsFromMethods(HashMap<String, String> newTypeMnemonicByOldTypeMnemonic, List<String> methodMnemonics) {
-    for (String mnemonic : methodMnemonics) {
-      MethodMnemonic methodMnemonic = new MethodMnemonic(mnemonic);
-      TypeMnemonic oldTypeMnemonic = methodMnemonic.getDeclaringTypeMnemonic();
-
-      if (!newTypeMnemonicByOldTypeMnemonic.containsKey(oldTypeMnemonic.toString())) {
-        String projectName = oldTypeMnemonic.getJavaProjectName();
-        if (projectName.equals(fOldProjectName)) {
-          int classpathKind = oldTypeMnemonic.getClasspathKind();
-          IPath classpath = oldTypeMnemonic.getClasspath();
-          String fqname = oldTypeMnemonic.getFullyQualifiedName();
-
-          TypeMnemonic newTypeMnemonic = new TypeMnemonic(fNewProjectName, classpathKind, classpath, fqname);
-
-          String newMnemonic = newTypeMnemonic.toString();
-          newTypeMnemonicByOldTypeMnemonic.put(oldTypeMnemonic.toString(), newMnemonic);
         }
       }
     }
