@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-import randoop.NaiveRandomGenerator;
 import randoop.StatementKind;
+import randoop.experiments.RandomWalkGenerator;
 import randoop.util.Reflection;
 
 public class NaiveGeneratorTest extends TestCase {
@@ -19,7 +19,7 @@ public class NaiveGeneratorTest extends TestCase {
     
     List<StatementKind> statements = Reflection.getStatements(classes, null);
 
-    NaiveRandomGenerator gen = new NaiveRandomGenerator(statements, null, Long.MAX_VALUE, 1000000, null, null);
+    RandomWalkGenerator gen = new RandomWalkGenerator(statements, Long.MAX_VALUE, 1000000, null, null, null, null);
 
     gen.explore();
   }

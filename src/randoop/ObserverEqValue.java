@@ -91,7 +91,7 @@ public final class ObserverEqValue implements ObjectContract {
 
     String methodname = observer.getName();
     if (value == null) {
-      b.append(String.format ("assertNull(\"x0.%s() == null\", x0.%s());", methodname));
+      b.append(String.format ("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
     } else if (observer.getReturnType().isPrimitive()) {
       if (observer.getReturnType().equals(boolean.class)) {
         assert value.equals(true) || value.equals(false);

@@ -3,7 +3,7 @@ package randoop.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.SequenceGeneratorStats;
+import randoop.AbstractGenerator;
 
 
 /**
@@ -102,7 +102,7 @@ public class Main {
 
       if (!success) {
         System.out.println("Randoop failed.");
-        System.out.println("Last sequence under execution:" + SequenceGeneratorStats.currSeq);
+        System.out.println("Last sequence under execution:" + AbstractGenerator.currSeq);
         System.exit(1);
       }
     }
