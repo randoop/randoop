@@ -6,13 +6,13 @@ import java.util.Map;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.model.resultstree.FailureKind;
 import randoop.plugin.model.resultstree.FailingMember;
 import randoop.plugin.model.resultstree.Failures;
 import randoop.plugin.model.resultstree.RunResultsTree;
-import randoop.plugin.model.resultstree.UnitTest;
 
 /**
  * Provides labels for the various trees displayed in the Randoop view.
@@ -45,6 +45,9 @@ public class RandoopLabelProvider extends LabelProvider {
         descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equals.png");
       } else  if (kind.getClassName().equals("class randoop.EqualsHashcode")) {
         descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equalsHashCode.png");
+      } else {
+        // Return a generic error image
+        return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_DEC_FIELD_ERROR);
       }
     } else if (element instanceof Failures) {
       descriptor = RandoopPlugin.getImageDescriptor("icons/bomb.png");
