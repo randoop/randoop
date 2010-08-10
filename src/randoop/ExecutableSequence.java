@@ -138,7 +138,7 @@ public class ExecutableSequence implements Serializable {
    *
    * Don't use this constructor! (Unless you know what you're doing.)
    */
-  protected ExecutableSequence(Sequence sequence,
+  public ExecutableSequence(Sequence sequence,
       Execution exec, List<List<Check>> checks) {
     this.sequence = sequence;
     this.executionResults = exec;
@@ -324,7 +324,7 @@ public class ExecutableSequence implements Serializable {
     }
   }
 
-  protected static boolean getRuntimeInputs(Sequence s, List<ExecutionOutcome> outcome,
+  public static boolean getRuntimeInputs(Sequence s, List<ExecutionOutcome> outcome,
       int i, List<Variable> inputs, Object[] runtimeObjects) {
     
     Object[] ros = getRuntimeValuesForVars(inputs, outcome);
@@ -368,7 +368,7 @@ public class ExecutableSequence implements Serializable {
 
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
-  protected static void executeStatement(Sequence s, List<ExecutionOutcome> outcome,
+  public static void executeStatement(Sequence s, List<ExecutionOutcome> outcome,
       int index, Object[] inputVariables) {
     StatementKind statement = s.getStatementKind(index);
 

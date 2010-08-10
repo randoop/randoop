@@ -1,9 +1,8 @@
 package randoop;
 
 /**
- * Represents the outcome of executing one statement in a sequence, for example
- * the value created by the statement, or the exception thrown. See implementors
- * for the possible outcomes.
+ * Represents the outcome of executing one statement in a sequence, including
+ * the value returned by the statement, or the exception thrown.
  */
 public abstract class ExecutionOutcome {
 

@@ -44,7 +44,7 @@ public class ComponentManager {
    * The subset of the sequences that were given pre-generation
    * to the component manager (via its constructor).
    */
-  // seeds are all contains in gralComponents. This list
+  // Seeds are all contained in gralComponents. This list
   // is kept to restore seeds if the user calls
   // clearGeneratedSequences().
   private final Collection<Sequence> gralSeeds;

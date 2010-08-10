@@ -6,8 +6,10 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -19,10 +21,10 @@ import randoop.main.GenInputsAbstract;
 public class JunitFileWriter {
 
   // The class of the main JUnit suite, and the prefix of the subsuite names.
-  private String junitDriverClassName;
+  public String junitDriverClassName;
 
    // The package name of the main JUnit suite
-  private String packageName;
+  public String packageName;
 
   // The directory where the JUnit files should be written to.
   private String dirName;
@@ -109,7 +111,7 @@ public class JunitFileWriter {
     PrintStream out = createTextOutputStream(file);
 
     try{
-      outputPackageName(out);
+      outputPackageName(out, packageName);
       out.println();
       out.println("import junit.framework.*;");
       out.println();
@@ -151,18 +153,18 @@ public class JunitFileWriter {
     return indented.toString();
   }
 
-  private void outputPackageName(PrintStream out) {
+  private static void outputPackageName(PrintStream out, String packageName) {
     boolean isDefaultPackage= packageName.length() == 0;
     if (!isDefaultPackage)
       out.println("package " + packageName + ";");
   }
 
   public File writeDriverFile() {
-    return writeDriverFile(Collections.<Class<?>>emptyList(), junitDriverClassName);
+    return writeDriverFile(junitDriverClassName);
   }
 
   public File writeDriverFile(List<Class<?>> allClasses) {
-    return writeDriverFile(allClasses, junitDriverClassName);
+    return writeDriverFile(junitDriverClassName);
   }
   /** Creates Junit tests for the faults.
    * Output is a set of .java files.
@@ -172,11 +174,28 @@ public class JunitFileWriter {
    * Otherwise, a bad suite can report good coverage.
    * The trick is to insert code that will load all those classes;
    */
-  public File writeDriverFile(List<Class<?>> allClasses, String driverClassName) {
-    File file = new File(getDir(), driverClassName + ".java");
+  // TODO allClasses is dead. Remove?
+  public File writeDriverFile(String driverClassName) {
+    return writeDriverFile(getDir(), packageName, driverClassName, getJunitTestSuiteNames());
+  }
+  
+  public List<String> getJunitTestSuiteNames() {
+    List<String> junitTestSuites = new LinkedList<String>();
+    for(String junitTestsClassName : createdSequencesAndClasses.keySet()) {
+      int numSubSuites = createdSequencesAndClasses.get(junitTestsClassName).size();
+      for (int i = 0; i < numSubSuites; i++) {
+        junitTestSuites.add(junitTestsClassName + i);
+      }
+    } 
+    return junitTestSuites;
+  }
+  
+  public static File writeDriverFile(File dir, String packageName, String driverClassName,
+      List<String> junitTestSuiteNames) {
+    File file = new File(dir, driverClassName + ".java");
     PrintStream out = createTextOutputStream(file);
     try {
-      outputPackageName(out);
+      outputPackageName(out, packageName);
       out.println("import junit.framework.*;");
       out.println("import junit.textui.*;");
       out.println("");
@@ -199,11 +218,8 @@ public class JunitFileWriter {
       out.println("");
       out.println("  public static Test suite() {");
       out.println("    TestSuite result = new TestSuite();");
-      for(String junitTestsClassName : createdSequencesAndClasses.keySet()) {
-        int numSubSuites = createdSequencesAndClasses.get(junitTestsClassName).size();
-        for (int i = 0; i < numSubSuites; i++)
-          out.println("    result.addTest(new TestSuite(" + junitTestsClassName + i
-              + ".class));");
+      for(String junitTestsClassName : junitTestSuiteNames) {
+        out.println("    result.addTest(new TestSuite(" + junitTestsClassName + ".class));");
       }
       out.println("    return result;");
       out.println("  }");
@@ -216,7 +232,7 @@ public class JunitFileWriter {
     return file;
   }
 
-  private File getDir() {
+  public File getDir() {
     File dir = null;
     if (dirName == null || dirName.length() == 0)
       dir = new File(System.getProperty("user.dir"));
@@ -234,7 +250,7 @@ public class JunitFileWriter {
     return dir;
   }
 
-  private PrintStream createTextOutputStream(File file) {
+  private static PrintStream createTextOutputStream(File file) {
     try {
       return new PrintStream(file);
     } catch (IOException e) {

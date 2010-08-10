@@ -14,9 +14,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
-import randoop.DataFlowInput;
 import randoop.Sequence;
 import randoop.StatementKind;
+import randoop.experiments.DataFlowInput;
 import randoop.util.Files;
 import plume.Option;
 import plume.Options;

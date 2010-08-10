@@ -191,7 +191,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
             // Don't create assertions over strings that are really long, as this
             // can cause the generate unit tests to be unreadable and/or non-compilable
             // due to Java restrictions on String constants.
-            if (str.length() > GenInputsAbstract.string_maxlen) {
+            if (!PrimitiveTypes.stringLengthOK(str)) {
               continue;
             }
           }

@@ -2,6 +2,7 @@ syntax: glob
 *.class
 *.diff
 *~
+*.orig
 Makefile.user
 bin/randoop/version.txt
 randoop.zip
@@ -39,6 +40,7 @@ systemtests/sources.txt
 systemtests/resources/Literals0.java
 systemtests/resources/CustomVisitorTest0.java
 systemtests/resources/LongString0.java 
+systemtests/resources/JDK_Tests?.java 
 
 bdgen-log.txt
 bdgen2-log.txt

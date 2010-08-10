@@ -15,8 +15,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -43,27 +45,31 @@ import randoop.EqualsToNullRetFalse;
 import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
 import randoop.ExpectedExceptionCheck;
+import randoop.DefaultTestFilter;
 import randoop.ForwardGenerator;
 import randoop.Globals;
+import randoop.ITestFilter;
 import randoop.JunitFileWriter;
 import randoop.LiteralFileReader;
-import randoop.NaiveRandomGenerator;
 import randoop.ObjectContract;
 import randoop.PrimitiveOrStringOrNullDecl;
 import randoop.RConstructor;
 import randoop.RMethod;
+import randoop.RandoopListenerManager;
 import randoop.RegressionCaptureVisitor;
 import randoop.ReplayVisitor;
 import randoop.SeedSequences;
 import randoop.Sequence;
-import randoop.SequenceGeneratorStats;
 import randoop.StatementKind;
 import randoop.Variable;
+import randoop.experiments.CodeCoverageTracker;
+import randoop.experiments.CovWitnessHelperVisitor;
+import randoop.experiments.RandomWalkGenerator;
 import randoop.runtime.ClosingStream;
 import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.IMessage;
 import randoop.runtime.MessageSender;
-import randoop.runtime.RandoopFinished;
+import randoop.runtime.PluginBridge;
 import randoop.util.ClassFileConstants;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
@@ -72,7 +78,6 @@ import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.RunCmd;
-import randoop.util.SerializationHelper;
 import cov.Branch;
 import cov.Coverage;
 
@@ -124,8 +129,7 @@ public class GenTests extends GenInputsAbstract {
       Log.class,
       ReflectionExecutor.class,
       ForwardGenerator.class,
-      AbstractGenerator.class,
-      SequenceGeneratorStats.class);
+      AbstractGenerator.class);
 
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output,
@@ -176,15 +180,6 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
     
-    MessageSender msgSender = null;
-    if (comm_port > 0) {
-      try {
-        msgSender = new MessageSender(comm_port);
-      } catch (IOException e) {
-        System.out.println("Could not connect to port " + comm_port + " on local host");
-        System.exit(1);
-      }
-    }
     
     List<Class<?>> allClasses = findClassesFromArgs(options);
 
@@ -193,9 +188,9 @@ public class GenTests extends GenInputsAbstract {
     List<Class<?>> classes = new ArrayList<Class<?>>(allClasses.size());
     for (Class<?> c : allClasses) {
       if (Reflection.isAbstract (c)) {
-        System.out.println("Ignoring abstract " + c + " specified on command line.");
+        System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
       } else if (! Reflection.isVisible (c)) {
-        System.out.println("Ignoring non-visible " + c + " specified on command line.");
+        System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
       } else {
         classes.add(c);
       }
@@ -308,38 +303,72 @@ public class GenTests extends GenInputsAbstract {
     
     addClassLiterals(componentMgr, allClasses);
     
+    RandoopListenerManager listenerMgr = new RandoopListenerManager();
+    
     AbstractGenerator explorer = null;
+    
+    LinkedList<ITestFilter> outputTestFilters = new LinkedList<ITestFilter>();
+    outputTestFilters.add(new DefaultTestFilter());
+    
+
+
 
     if (component_based) {
       explorer = new ForwardGenerator(
         model,
-        covClasses,
         timelimit * 1000,
         inputlimit,
         componentMgr,
-        msgSender,
-        null);
+        null,
+        listenerMgr,
+        outputTestFilters);
 
     } else {
 
-      // Generate inputs.
-      explorer = new NaiveRandomGenerator(
+      // Experimental.
+      // Generate inputs using random walk generator.
+      explorer = new RandomWalkGenerator(
           model,
-          covClasses,
           timelimit * 1000,
           inputlimit,
           componentMgr,
-          null);
+          null,
+          listenerMgr,
+          outputTestFilters);
     }
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf ("Explorer = %s\n", explorer);
     }
+    
+    // Set up plugin bridge.
+    PluginBridge pluginBridge = null;
+    if (comm_port > 0) {
+      MessageSender msgSender = null;
+      try {
+        msgSender = new MessageSender(comm_port);
+      } catch (IOException e) {
+        System.out.println("Could not connect to port " + comm_port + " on local host");
+        System.exit(1);
+      }
+      pluginBridge = new PluginBridge(explorer, msgSender);
+      explorer.listenerMgr.addListener(pluginBridge);
+      explorer.outputTestFilters.add(pluginBridge);
+    }
+    
 
     // Determine what visitors to install.
     // NOTE that order matters! Regression capture visitor
     // should come after contract-violating visitor.
-    List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
     
+    CodeCoverageTracker covTracker = new CodeCoverageTracker(covClasses);
+    listenerMgr.addListener(covTracker);
+
+    if (GenInputsAbstract.output_cov_witnesses) {
+      ExecutionVisitor covVisitor = new CovWitnessHelperVisitor(covTracker);
+      explorer.executionVisitor.visitors.add(covVisitor);
+    }
+    
+    List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
     
     if (check_object_contracts) {
       List<ObjectContract> contracts = new ArrayList<ObjectContract>();
@@ -382,14 +411,6 @@ public class GenTests extends GenInputsAbstract {
 
     explorer.explore();
 
-    if (explorer instanceof NaiveRandomGenerator) {
-      System.out.println("*** NORMALS:" + NaiveRandomGenerator.normals);
-      System.out.println("*** EXCEPTIONS:" + NaiveRandomGenerator.exceptions);
-    }
-
-    // Print branch coverage.
-    System.out.println();
-
     if (output_branches != null) {
       Comparator<Branch> branchComparator = new Comparator<Branch>() {
         public int compare(Branch o1, Branch o2) {
@@ -397,7 +418,7 @@ public class GenTests extends GenInputsAbstract {
         }
       };
       Set<Branch> branches = new TreeSet<Branch>(branchComparator);
-      branches.addAll(explorer.stats.branchesCovered);
+      branches.addAll(covTracker.branchesCovered);
       // Create a file with branches, sorted by their string representation.
       BufferedWriter writer = null;
       try {
@@ -417,7 +438,7 @@ public class GenTests extends GenInputsAbstract {
       try {
         FileOutputStream fileos = new FileOutputStream(output_covmap);
         ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-        objectos.writeObject(explorer.branchesToCoveringSeqs);
+        objectos.writeObject(covTracker.branchesToCoveringSeqs);
         objectos.close();
         fileos.close();
       } catch (Exception e) {
@@ -444,10 +465,6 @@ public class GenTests extends GenInputsAbstract {
       } catch (Exception e) {
         throw new Error(e);
       }
-    }
-
-    if (output_stats != null) {
-      SerializationHelper.writeSerialized(output_stats, explorer.stats);
     }
 
     if (dont_output_tests)
@@ -572,7 +589,8 @@ public class GenTests extends GenInputsAbstract {
       } catch (Exception e) {
         throw new Error ("can't create temp file", e);
       }
-      write_junit_tests ("./before_clean", sequences, msgSender);
+      write_junit_tests ("./before_clean", sequences, null);
+      
       write_sequences (sequences, tmpfile.getPath());
       generate_clean_checks (tmpfile.getPath());
     }
@@ -581,7 +599,8 @@ public class GenTests extends GenInputsAbstract {
     // This removes any checks whose values are not deterministic
     // (such as values dependent on the current date/time)
     if (GenInputsAbstract.compare_checks) {
-      write_junit_tests ("./before_cmp", sequences, msgSender);
+      write_junit_tests ("./before_cmp", sequences, null);
+      
       remove_diff_checks (tmpfile.getPath());
       sequences = read_sequences (tmpfile.getPath());
     }
@@ -593,11 +612,23 @@ public class GenTests extends GenInputsAbstract {
         seqs.add (sequences.get (ii));
       sequences = seqs;
     }
-    write_junit_tests (junit_output_dir, sequences, msgSender);
 
-    if (msgSender != null) {
+    List<File> genfiles = write_junit_tests (junit_output_dir, sequences,
+        pluginBridge == null ? null : pluginBridge.additionalJunitClasses);
+    
+    if (pluginBridge != null) {
+      for (File f : genfiles) {
+        // TODO: This is unsafe. I'm just assuming that the list file written is the driver file
+        boolean isDriver = genfiles.lastIndexOf(f) == genfiles.size() - 1;
+        pluginBridge.msgSender.send(new CreatedJUnitFile(f, isDriver));
+      }
+    }
+    
+    
+    
+    if (pluginBridge != null) {
       IMessage msg = new ClosingStream();
-      msgSender.send(msg);
+      pluginBridge.msgSender.send(msg);
     }
 
     return true;
@@ -654,13 +685,13 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Writes the sequences as junit files to the specified directory.
+   * Writes the sequences as JUnit files to the specified directory.
    *
-   * msgSender can be null.
+   * additionalJUnitCLasses can be null.
    **/
-  public static void write_junit_tests (String output_dir,
+  public static List<File> write_junit_tests (String output_dir,
                                         List<ExecutableSequence> seq,
-                                        MessageSender msgSender) {
+                                        List<String> additionalJUnitClasses) {
 
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing %d junit tests%n", seq.size());
@@ -668,21 +699,24 @@ public class GenTests extends GenInputsAbstract {
     JunitFileWriter jfw
       = new JunitFileWriter(output_dir, junit_package_name,
                             junit_classname, testsperfile);
-    List<File> files = jfw.createJunitFiles(seq);
+    List<File> ret = new ArrayList<File>();
+    ret.addAll(jfw.createJunitTestFiles(seq));
+    List<String> junitTestSuiteNames = new LinkedList<String>();
+    junitTestSuiteNames.addAll(jfw.getJunitTestSuiteNames());
+    junitTestSuiteNames.addAll(additionalJUnitClasses == null ? Collections.<String>emptyList() : additionalJUnitClasses);
+    ret.add(JunitFileWriter.writeDriverFile(jfw.getDir(), jfw.packageName, jfw.junitDriverClassName, junitTestSuiteNames));
+    //ret.add(jfw.writeDriverFile());
+    List<File> files = ret;
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.println();
     }
-    
+   
     for (File f : files) {
       if (!GenInputsAbstract.noprogressdisplay) {
         System.out.println("Created file: " + f.getAbsolutePath());
       }
-      if (msgSender != null) {
-        // TODO: This is unsafe. I'm just assuming that the list file written is the driver file
-        boolean isDriver = files.lastIndexOf(f) == files.size() - 1;
-        msgSender.send(new CreatedJUnitFile(f, isDriver));
-      }
     }
+    return files;
   }
 
   /**
