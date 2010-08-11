@@ -173,14 +173,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     private boolean fIsGrayed;
     
     private TreeNode(TreeNode parent, Object object, boolean checkedState, boolean grayedState) {
-      if (object instanceof IMethod) {
-        //TODO: remove
-        try {
-          throw new NullPointerException();
-        } catch (NullPointerException npe) {
-          npe.printStackTrace();
-        }
-      }
       Assert.isLegal(object != null);
       fParent = parent;
       fObject = object;
@@ -250,7 +242,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     @Override
     public boolean equals(Object obj) {
       if (obj instanceof TreeNode) {
-        return fObject.equals(((TreeNode) obj).getObject());
+        TreeNode otherNode = (TreeNode) obj;
+        boolean objectsEqual = getObject().equals(otherNode.getObject());
+        boolean parentsEqual;
+        if (getParent() == null) {
+          parentsEqual = otherNode.getParent() == null;
+        } else {
+          parentsEqual = getParent().equals(otherNode.getParent());
+        }
+        return objectsEqual && parentsEqual;
       }
       return false;
     }
@@ -297,14 +297,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       TreeNode[] children = getChildren();
   
       for (TreeNode child : children) {
-        child.setGrayed(false);
-        child.setChecked(isChecked());
-        child.updateChildren();
+        if (!isGrayed()) {
+          child.setGrayed(false);
+          child.setChecked(isChecked());
+          child.updateChildren();
+        }
       }
     }
-
+    
   }
-
 
   private class TreeLabelProvider extends LabelProvider {
     @Override
@@ -409,6 +410,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
       return readableMethod.toString();
     }
+    
   }
 
 
@@ -451,12 +453,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     @Override
     public Object[] getChildren(Object parentElement) {
       TreeNode typeNode = (TreeNode) parentElement;
-  
+      
       if (typeNode.getObject() instanceof TypeMnemonic) {
         if (!typeNode.hasChildren()) {
           try {
             final boolean typeChecked = typeNode.isChecked();
             final boolean typeGrayed = typeNode.isGrayed();
+            
+            boolean allChecked = true;
+            boolean noneChecked = true;
             
             IType type = ((TypeMnemonic) typeNode.getObject()).getType();
   
@@ -465,7 +470,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
               fCheckedMethodsByType.remove(type);
   
               IMethod[] methods = type.getMethods();
-              List<TreeNode> methodNodes = new ArrayList<TreeNode>();
               for (IMethod method : methods) {
                 if (AdaptablePropertyTester.isTestable(method)) {
                   MethodMnemonic methodMnemonic = new MethodMnemonic(method);
@@ -480,11 +484,28 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
                   } else {
                     methodChecked = typeChecked;
                   }
-
-                  methodNodes.add(typeNode.addChild(methodMnemonic, methodChecked, false));
+                  
+                  allChecked &= methodChecked;
+                  noneChecked &= !methodChecked;
+                  
+                  TreeNode methodNode = typeNode.addChild(methodMnemonic, methodChecked, false);
+                  methodNode.updateRelatives();
                 }
               }
-            return (TreeNode[]) methodNodes.toArray(new TreeNode[methodNodes.size()]);
+              
+              if (allChecked) {
+                typeNode.setChecked(true);
+                typeNode.setGrayed(false);
+              } else if (noneChecked) {
+                typeNode.setChecked(false);
+                typeNode.setGrayed(false);
+              } else {
+                typeNode.setChecked(true);
+                typeNode.setGrayed(true);
+              }
+              
+              typeNode.updateRelatives();
+              return typeNode.getChildren();
             }
           } catch (JavaModelException e) {
             RandoopPlugin.log(e);
@@ -951,6 +972,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
     RandoopArgumentCollector.setGrayedTypes(config, grayedTypes);
     RandoopArgumentCollector.setCheckedTypes(config, checkedTypes);
+    
+    fTypeTreeViewer.refresh();
   }
   
   @Override
