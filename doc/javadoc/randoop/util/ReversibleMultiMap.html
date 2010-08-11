@@ -1,0 +1,467 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML lang="en">
+<HEAD>
+<TITLE>
+ReversibleMultiMap
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ReversibleMultiMap";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/util/ReversibleSet.html" title="class in randoop.util"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?randoop/util/ReversibleMultiMap.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ReversibleMultiMap.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop.util</FONT>
+<BR>
+Class ReversibleMultiMap&lt;T1,T2&gt;</H2>
+<PRE>
+Object
+  <IMG SRC="../../resources/inherit.gif" ALT="extended by "><STRONG>ReversibleMultiMap&lt;T1,T2&gt;</STRONG>
+</PRE>
+<DL>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD><A HREF="../../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;T1,T2&gt;</DD>
+</DL>
+<HR>
+<PRE>public class <STRONG>ReversibleMultiMap&lt;T1,T2&gt;</STRONG>
+extends Object
+implements <A HREF="../../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;T1,T2&gt;</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;Integer&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#marks">marks</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#verbose_log">verbose_log</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#ReversibleMultiMap()">ReversibleMultiMap</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#add(T1, T2)">add</A></STRONG>(<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>&nbsp;key,
+    <A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Precondition: the mapping key->value is not already in the map.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;Set&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#getValues(T1)">getValues</A></STRONG>(<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>&nbsp;key)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the values that the given key maps to.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;Set&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#keySet()">keySet</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the set of keys in this map (the domain).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#mark()">mark</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#remove(T1, T2)">remove</A></STRONG>(<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>&nbsp;key,
+       <A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Precondition: the mapping key->value is in the map.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#size()">size</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the size of this map: the number of mappings.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#toString()">toString</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a String representation of this map.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/ReversibleMultiMap.html#undoToLastMark()">undoToLastMark</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Field Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="verbose_log"><!-- --></A><H3>
+verbose_log</H3>
+<PRE>
+public static boolean <STRONG>verbose_log</STRONG></PRE>
+<HR>
+
+<A NAME="marks"><!-- --></A><H3>
+marks</H3>
+<PRE>
+public final List&lt;Integer&gt; <STRONG>marks</STRONG></PRE>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Constructor Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ReversibleMultiMap()"><!-- --></A><H3>
+ReversibleMultiMap</H3>
+<PRE>
+public <STRONG>ReversibleMultiMap</STRONG>()</PRE>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Method Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="add(java.lang.Object,java.lang.Object)"><!-- --></A><A NAME="add(T1, T2)"><!-- --></A><H3>
+add</H3>
+<PRE>
+public void <STRONG>add</STRONG>(<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>&nbsp;key,
+                <A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&nbsp;value)</PRE>
+<DL>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../../randoop/util/IMultiMap.html#add(T1, T2)">IMultiMap</A></CODE></STRONG></DD>
+<DD>Precondition: the mapping key->value is not already in the map.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../../randoop/util/IMultiMap.html#add(T1, T2)">add</A></CODE> in interface <CODE><A HREF="../../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>,<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&gt;</CODE></DD>
+</DL>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>key</CODE> - cannot be null.</DD><DD><CODE>value</CODE> - cannot be null.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="remove(java.lang.Object,java.lang.Object)"><!-- --></A><A NAME="remove(T1, T2)"><!-- --></A><H3>
+remove</H3>
+<PRE>
+public void <STRONG>remove</STRONG>(<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>&nbsp;key,
+                   <A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&nbsp;value)</PRE>
+<DL>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../../randoop/util/IMultiMap.html#remove(T1, T2)">IMultiMap</A></CODE></STRONG></DD>
+<DD>Precondition: the mapping key->value is in the map.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../../randoop/util/IMultiMap.html#remove(T1, T2)">remove</A></CODE> in interface <CODE><A HREF="../../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>,<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&gt;</CODE></DD>
+</DL>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>key</CODE> - cannot be null.</DD><DD><CODE>value</CODE> - cannot be null.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mark()"><!-- --></A><H3>
+mark</H3>
+<PRE>
+public void <STRONG>mark</STRONG>()</PRE>
+<HR>
+
+<A NAME="undoToLastMark()"><!-- --></A><H3>
+undoToLastMark</H3>
+<PRE>
+public void <STRONG>undoToLastMark</STRONG>()</PRE>
+<HR>
+
+<A NAME="getValues(java.lang.Object)"><!-- --></A><A NAME="getValues(T1)"><!-- --></A><H3>
+getValues</H3>
+<PRE>
+public Set&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&gt; <STRONG>getValues</STRONG>(<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>&nbsp;key)</PRE>
+<DL>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../../randoop/util/IMultiMap.html#getValues(T1)">IMultiMap</A></CODE></STRONG></DD>
+<DD>Returns the values that the given key maps to.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../../randoop/util/IMultiMap.html#getValues(T1)">getValues</A></CODE> in interface <CODE><A HREF="../../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>,<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&gt;</CODE></DD>
+</DL>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>key</CODE> - cannot be null.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="keySet()"><!-- --></A><H3>
+keySet</H3>
+<PRE>
+public Set&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>&gt; <STRONG>keySet</STRONG>()</PRE>
+<DL>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../../randoop/util/IMultiMap.html#keySet()">IMultiMap</A></CODE></STRONG></DD>
+<DD>Returns the set of keys in this map (the domain).
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../../randoop/util/IMultiMap.html#keySet()">keySet</A></CODE> in interface <CODE><A HREF="../../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>,<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&gt;</CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="size()"><!-- --></A><H3>
+size</H3>
+<PRE>
+public int <STRONG>size</STRONG>()</PRE>
+<DL>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../../randoop/util/IMultiMap.html#size()">IMultiMap</A></CODE></STRONG></DD>
+<DD>Returns the size of this map: the number of mappings.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../../randoop/util/IMultiMap.html#size()">size</A></CODE> in interface <CODE><A HREF="../../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>,<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&gt;</CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public String <STRONG>toString</STRONG>()</PRE>
+<DL>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../../randoop/util/IMultiMap.html#toString()">IMultiMap</A></CODE></STRONG></DD>
+<DD>Returns a String representation of this map.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../../randoop/util/IMultiMap.html#toString()">toString</A></CODE> in interface <CODE><A HREF="../../randoop/util/IMultiMap.html" title="interface in randoop.util">IMultiMap</A>&lt;<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T1</A>,<A HREF="../../randoop/util/ReversibleMultiMap.html" title="type parameter in ReversibleMultiMap">T2</A>&gt;</CODE></DD>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/util/ReversibleSet.html" title="class in randoop.util"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../index.html?randoop/util/ReversibleMultiMap.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ReversibleMultiMap.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

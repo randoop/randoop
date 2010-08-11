@@ -1,0 +1,1129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML lang="en">
+<HEAD>
+<TITLE>
+ExecutableSequence
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ExecutableSequence";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../randoop/ExceptionalExecution.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/Execution.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/ExecutableSequence.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ExecutableSequence.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop</FONT>
+<BR>
+Class ExecutableSequence</H2>
+<PRE>
+Object
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>ExecutableSequence</STRONG>
+</PRE>
+<DL>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable</DD>
+</DL>
+<HR>
+<PRE>public class <STRONG>ExecutableSequence</STRONG>
+extends Object
+implements Serializable</PRE>
+
+<P>
+An ExecutableSequence wraps a <A HREF="../randoop/Sequence.html" title="class in randoop"><CODE>Sequence</CODE></A> with functionality for
+ executing the sequence. It also lets the client add <A HREF="../randoop/Check.html" title="interface in randoop"><CODE>Check</CODE></A>s to
+ that check expected behaviors of the execution.
+ <p>
+ An ExecutableSequence augments a sequence with three additional pieces
+ of data:
+ <p>
+ <ul>
+ <li> <b>Execution results.</b>An ExecutableSequence can be executed, and the
+      results of the execution (meaning the objects created during execution,
+      and any exceptions thrown) are made available to clients or execution
+      visitors to inspect.
+ <li> <b>Checks.</b> A check is an object representing an expected runtime behavior
+      of the sequence. Clients can add checks to specific indices of the sequence.
+      For example, a client might add a <code>NotNull</code> check to the ith index 
+      of a sequence to signify that the value returned by the statement at index i
+      should not be null.
+ <li> <b>Check evaluation results.</b>Corresponding to every check is a boolean value that
+      represents whether the check passed or failed during the last execution
+      of the sequence.
+ </ul>
+ <p>
+ 
+ Of the three pieces of data above, an ExecutableSequence only directly manages
+ the first one, i.e. the execution results. Other pieces of data, including
+ checks and check evaluation results, are added or removed by the
+ client of the ExecutableSequence. One way of doing this is by implementing an
+ <A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop"><CODE>ExecutionVisitor</CODE></A> and passing it as an argument to the <code>execute</code>
+ method.
+ 
+ <p>
+ 
+ The ethod <code>execute(ExecutionVisitor v)</code> executes the code that the 
+ sequence represents. This method uses reflection to execute each element in the 
+ sequence (method call, constructor call, primitive or array declaration, etc).
+ Before executing each statement (e.g. the i-th statement), execute(v)
+ calls v.visitBefore(this, i), and after executing each statement, it calls
+ v.visitAfter(this, i). The purpose of the visitor is to examine the unfolding
+ execution, and take some action depending on its intended purpose. For example,
+ it may decorate the sequence with <A HREF="../randoop/Check.html" title="interface in randoop"><CODE>Check</CODE></A>s about the
+ execution.
+ 
+ NOTES.
+ <p>
+ <ul>
+ <li> It only makes sense to call the following methods *after* executing the
+ i-th statement in a sequence:
+    <ul>
+        <li> isNormalExecution(i)
+        <li> isExceptionalExecution(i)
+        <li> getExecutionResult(i)
+        <li> getResult(i)
+        <li> getExecption(i)
+    </ul>
+ </ul>
+<P>
+
+<P>
+<DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../serialized-form.html#randoop.ExecutableSequence">Serialized Form</A></DD></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#checks">checks</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;List&lt;List&lt;Boolean&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#checksResults">checksResults</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#exectime">exectime</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#executionResults">executionResults</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#gentime">gentime</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#sequence">sequence</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence)">ExecutableSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an executable sequence that executes the given sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence, randoop.Execution, java.util.List)">ExecutableSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
+                   <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;exec,
+                   List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;&nbsp;checks)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an executable sequence directly using the given arguments.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#addCheck(int, randoop.Check, boolean)">addCheck</A></STRONG>(int&nbsp;i,
+         <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&nbsp;check,
+         boolean&nbsp;passed)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds the given check to the i-th element of the sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#checks_count(java.util.List)">checks_count</A></STRONG>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;seqs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the total number of checks in a list of sequences</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#compare_checks(randoop.ExecutableSequence, boolean, boolean)">compare_checks</A></STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
+               boolean&nbsp;remove_diffs,
+               boolean&nbsp;print_diffs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compares the results of the checks of two sequences.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#duplicate()">duplicate</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#equals(java.lang.Object)">equals</A></STRONG>(Object&nbsp;obj)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#exceptionIndex()">exceptionIndex</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the index i for which this.isExceptionalExecution(i), or -1 if
+ there is no such index.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#execute(randoop.ExecutionVisitor)">execute</A></STRONG>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Executes sequence, stopping on exceptions</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#execute(randoop.ExecutionVisitor, boolean)">execute</A></STRONG>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor,
+        boolean&nbsp;stop_on_exception)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Execute this sequence, invoking the given visitor as the execution
+ unfolds.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#executedSize()">executedSize</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#executeStatement(randoop.Sequence, java.util.List, int, java.lang.Object[])">executeStatement</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+                 List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
+                 int&nbsp;index,
+                 Object[]&nbsp;inputVariables)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>[]</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getAllResults()">getAllResults</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getChecks(int)">getChecks</A></STRONG>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the checks for the i-th element of the sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getChecks(int, java.lang.Class)">getChecks</A></STRONG>(int&nbsp;i,
+          Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;List&lt;Boolean&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getChecksResults()">getChecksResults</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getContractCheckIndex(java.lang.Class)">getContractCheckIndex</A></STRONG>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getExceptionIndex(java.lang.Class)">getExceptionIndex</A></STRONG>(Class&lt;?&gt;&nbsp;exceptionClass)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getFailureIndex()">getFailureIndex</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getFailures(int)">getFailures</A></STRONG>(int&nbsp;idx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getResult(int)">getResult</A></STRONG>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method is typically used by ExecutionVisitors.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getRuntimeInputs(randoop.Sequence, java.util.List, int, java.util.List, java.lang.Object[])">getRuntimeInputs</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+                 List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
+                 int&nbsp;i,
+                 List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputs,
+                 Object[]&nbsp;runtimeObjects)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;Object[]</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getRuntimeValuesForVars(java.util.List, java.util.List)">getRuntimeValuesForVars</A></STRONG>(List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;vars,
+                        List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;execution)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR ALIGN="right" VALIGN="">
+<TD NOWRAP><FONT SIZE="-1">
+<CODE>&lt;D extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; 
+<BR>
+List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;</CODE></FONT></TD>
+</TR>
+</TABLE>
+</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getSequences(java.util.List)">getSequences</A></STRONG>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;exec)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasCheck(java.lang.Class)">hasCheck</A></STRONG>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasCheck(int, java.lang.Class)">hasCheck</A></STRONG>(int&nbsp;i,
+         Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;True iff this sequences has at least one check of the given type at index i.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasChecks(int)">hasChecks</A></STRONG>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasFailure()">hasFailure</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasFailure(int)">hasFailure</A></STRONG>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hashCode()">hashCode</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#hasNonExecutedStatements()">hasNonExecutedStatements</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#isNormalExecution()">isNormalExecution</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#isNormalExecution(int)">isNormalExecution</A></STRONG>(int&nbsp;i)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method is typically used by ExecutionVisitors.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#removeChecks()">removeChecks</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#throwsException()">throwsException</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#throwsException(java.lang.Class)">throwsException</A></STRONG>(Class&lt;?&gt;&nbsp;exceptionClass)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#toCodeString()">toCodeString</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output this sequence as code.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#toString()">toString</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Field Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="sequence"><!-- --></A><H3>
+sequence</H3>
+<PRE>
+public <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>sequence</STRONG></PRE>
+<HR>
+
+<A NAME="checks"><!-- --></A><H3>
+checks</H3>
+<PRE>
+protected List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt; <STRONG>checks</STRONG></PRE>
+<HR>
+
+<A NAME="checksResults"><!-- --></A><H3>
+checksResults</H3>
+<PRE>
+protected List&lt;List&lt;Boolean&gt;&gt; <STRONG>checksResults</STRONG></PRE>
+<HR>
+
+<A NAME="executionResults"><!-- --></A><H3>
+executionResults</H3>
+<PRE>
+protected transient <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A> <STRONG>executionResults</STRONG></PRE>
+<HR>
+
+<A NAME="gentime"><!-- --></A><H3>
+gentime</H3>
+<PRE>
+public long <STRONG>gentime</STRONG></PRE>
+<HR>
+
+<A NAME="exectime"><!-- --></A><H3>
+exectime</H3>
+<PRE>
+public long <STRONG>exectime</STRONG></PRE>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Constructor Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ExecutableSequence(randoop.Sequence)"><!-- --></A><H3>
+ExecutableSequence</H3>
+<PRE>
+public <STRONG>ExecutableSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</PRE>
+<DL>
+<DD>Create an executable sequence that executes the given sequence.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ExecutableSequence(randoop.Sequence, randoop.Execution, java.util.List)"><!-- --></A><H3>
+ExecutableSequence</H3>
+<PRE>
+protected <STRONG>ExecutableSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
+                             <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;exec,
+                             List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;&nbsp;checks)</PRE>
+<DL>
+<DD>Create an executable sequence directly using the given arguments.
+
+ Don't use this constructor! (Unless you know what you're doing.)
+<P>
+</DD>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Method Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getChecks(int)"><!-- --></A><H3>
+getChecks</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <STRONG>getChecks</STRONG>(int&nbsp;i)</PRE>
+<DL>
+<DD>Get the checks for the i-th element of the sequence.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addCheck(int, randoop.Check, boolean)"><!-- --></A><H3>
+addCheck</H3>
+<PRE>
+public void <STRONG>addCheck</STRONG>(int&nbsp;i,
+                     <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&nbsp;check,
+                     boolean&nbsp;passed)</PRE>
+<DL>
+<DD>Adds the given check to the i-th element of the sequence. Only one
+ check of class StatementThrowsException is allowed for each index,
+ and attempting to add a second check of this type will result in an
+ IllegalArgumentException.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Throws:</STRONG></DT>
+<DD><CODE>IllegalArgumentException</CODE> - If the given check's class is StatementThrowsException and
+           there is already an check of this class at the give index.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public String <STRONG>toString</STRONG>()</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toCodeString()"><!-- --></A><H3>
+toCodeString</H3>
+<PRE>
+public String <STRONG>toCodeString</STRONG>()</PRE>
+<DL>
+<DD>Output this sequence as code. In addition to printing out the statements,
+ this method prints the checks.
+
+ If for a given statement there is an check of type
+ StatementThrowsException, that check's pre-statement code is printed
+ immediately before the statement, and its post-statement code is printed
+ immediately after the statement.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="execute(randoop.ExecutionVisitor)"><!-- --></A><H3>
+execute</H3>
+<PRE>
+public void <STRONG>execute</STRONG>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor)</PRE>
+<DL>
+<DD>Executes sequence, stopping on exceptions
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="execute(randoop.ExecutionVisitor, boolean)"><!-- --></A><H3>
+execute</H3>
+<PRE>
+public void <STRONG>execute</STRONG>(<A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A>&nbsp;visitor,
+                    boolean&nbsp;stop_on_exception)</PRE>
+<DL>
+<DD>Execute this sequence, invoking the given visitor as the execution
+ unfolds. After invoking this method, the client can query the outcome
+ of executing each statement via the method <code>getResult(i)</code>.
+ 
+ <ul>
+ <li> Before the sequence is executed, clears execution results and
+      calls <code>visitor.initialize(this)</code>.
+ <li> Executes each statement in the sequence. Before executing each statement
+      calls the given visitor's <code>visitBefore</code> method. After executing
+      each statement, calls the visitor's <code>visitAfter</code> method.
+ <li> Execution stops if one of the following conditions holds:
+   <ul>
+   <li> All statements in the sequences have been executed.
+   <li> A statement's execution results in an exception and
+        <code>stop_on_exception==true</code>.
+   <li> After executing the i-th statement and calling the visitor's
+        <code>visitAfter</code> method, a <code>ContractViolation</code>
+        check is present at index i.
+   </ul>
+ </ul>
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>visitor</CODE> - can be null, in which case no visitor will be invoked
+        during execution.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRuntimeInputs(randoop.Sequence, java.util.List, int, java.util.List, java.lang.Object[])"><!-- --></A><H3>
+getRuntimeInputs</H3>
+<PRE>
+protected static boolean <STRONG>getRuntimeInputs</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+                                          List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
+                                          int&nbsp;i,
+                                          List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputs,
+                                          Object[]&nbsp;runtimeObjects)</PRE>
+<HR>
+
+<A NAME="getRuntimeValuesForVars(java.util.List, java.util.List)"><!-- --></A><H3>
+getRuntimeValuesForVars</H3>
+<PRE>
+protected static Object[] <STRONG>getRuntimeValuesForVars</STRONG>(List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;vars,
+                                                  List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;execution)</PRE>
+<HR>
+
+<A NAME="executeStatement(randoop.Sequence, java.util.List, int, java.lang.Object[])"><!-- --></A><H3>
+executeStatement</H3>
+<PRE>
+protected static void <STRONG>executeStatement</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+                                       List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
+                                       int&nbsp;index,
+                                       Object[]&nbsp;inputVariables)</PRE>
+<HR>
+
+<A NAME="getResult(int)"><!-- --></A><H3>
+getResult</H3>
+<PRE>
+public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A> <STRONG>getResult</STRONG>(int&nbsp;index)</PRE>
+<DL>
+<DD>This method is typically used by ExecutionVisitors.
+
+ The result of executing the i-th element of the sequence.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChecksResults()"><!-- --></A><H3>
+getChecksResults</H3>
+<PRE>
+public List&lt;List&lt;Boolean&gt;&gt; <STRONG>getChecksResults</STRONG>()</PRE>
+<HR>
+
+<A NAME="getAllResults()"><!-- --></A><H3>
+getAllResults</H3>
+<PRE>
+public <A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>[] <STRONG>getAllResults</STRONG>()</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>all the execution outcomes for this sequence.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="executedSize()"><!-- --></A><H3>
+executedSize</H3>
+<PRE>
+public int <STRONG>executedSize</STRONG>()</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>the number of elements in the sequence that were executed before
+ an execution result of type randoop.NotExecuted.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isNormalExecution(int)"><!-- --></A><H3>
+isNormalExecution</H3>
+<PRE>
+public boolean <STRONG>isNormalExecution</STRONG>(int&nbsp;i)</PRE>
+<DL>
+<DD>This method is typically used by ExecutionVisitors.
+
+ True if execution of the i-th statement terminated normally.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isNormalExecution()"><!-- --></A><H3>
+isNormalExecution</H3>
+<PRE>
+public boolean <STRONG>isNormalExecution</STRONG>()</PRE>
+<HR>
+
+<A NAME="getChecks(int, java.lang.Class)"><!-- --></A><H3>
+getChecks</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <STRONG>getChecks</STRONG>(int&nbsp;i,
+                             Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
+<HR>
+
+<A NAME="removeChecks()"><!-- --></A><H3>
+removeChecks</H3>
+<PRE>
+public void <STRONG>removeChecks</STRONG>()</PRE>
+<HR>
+
+<A NAME="hasCheck(java.lang.Class)"><!-- --></A><H3>
+hasCheck</H3>
+<PRE>
+public boolean <STRONG>hasCheck</STRONG>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
+<HR>
+
+<A NAME="getContractCheckIndex(java.lang.Class)"><!-- --></A><H3>
+getContractCheckIndex</H3>
+<PRE>
+public int <STRONG>getContractCheckIndex</STRONG>(Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>the first index at which an check of the given type occurs,
+         or -1 if there is no check of the given type in this
+         sequence.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasCheck(int, java.lang.Class)"><!-- --></A><H3>
+hasCheck</H3>
+<PRE>
+public boolean <STRONG>hasCheck</STRONG>(int&nbsp;i,
+                        Class&lt;? extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&nbsp;clazz)</PRE>
+<DL>
+<DD>True iff this sequences has at least one check of the given type at index i.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasChecks(int)"><!-- --></A><H3>
+hasChecks</H3>
+<PRE>
+public boolean <STRONG>hasChecks</STRONG>(int&nbsp;i)</PRE>
+<HR>
+
+<A NAME="hasFailure(int)"><!-- --></A><H3>
+hasFailure</H3>
+<PRE>
+public boolean <STRONG>hasFailure</STRONG>(int&nbsp;i)</PRE>
+<HR>
+
+<A NAME="hasFailure()"><!-- --></A><H3>
+hasFailure</H3>
+<PRE>
+public boolean <STRONG>hasFailure</STRONG>()</PRE>
+<HR>
+
+<A NAME="getFailures(int)"><!-- --></A><H3>
+getFailures</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; <STRONG>getFailures</STRONG>(int&nbsp;idx)</PRE>
+<HR>
+
+<A NAME="getFailureIndex()"><!-- --></A><H3>
+getFailureIndex</H3>
+<PRE>
+public int <STRONG>getFailureIndex</STRONG>()</PRE>
+<HR>
+
+<A NAME="getExceptionIndex(java.lang.Class)"><!-- --></A><H3>
+getExceptionIndex</H3>
+<PRE>
+public int <STRONG>getExceptionIndex</STRONG>(Class&lt;?&gt;&nbsp;exceptionClass)</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>The index in the sequence at which an exception of the
+ given class (or a class compatible with it) was thrown. If no such
+ exception, returns -1.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="throwsException(java.lang.Class)"><!-- --></A><H3>
+throwsException</H3>
+<PRE>
+public boolean <STRONG>throwsException</STRONG>(Class&lt;?&gt;&nbsp;exceptionClass)</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>True if an exception of the given class (or a class compatible with
+         it) has been thrown during this sequence's execution.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="throwsException()"><!-- --></A><H3>
+throwsException</H3>
+<PRE>
+public boolean <STRONG>throwsException</STRONG>()</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Returns:</STRONG></DT><DD>True if an exception has been thrown during this sequence's execution.</DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasNonExecutedStatements()"><!-- --></A><H3>
+hasNonExecutedStatements</H3>
+<PRE>
+public boolean <STRONG>hasNonExecutedStatements</STRONG>()</PRE>
+<HR>
+
+<A NAME="duplicate()"><!-- --></A><H3>
+duplicate</H3>
+<PRE>
+public <A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A> <STRONG>duplicate</STRONG>()</PRE>
+<HR>
+
+<A NAME="exceptionIndex()"><!-- --></A><H3>
+exceptionIndex</H3>
+<PRE>
+public int <STRONG>exceptionIndex</STRONG>()</PRE>
+<DL>
+<DD>Returns the index i for which this.isExceptionalExecution(i), or -1 if
+ there is no such index.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSequences(java.util.List)"><!-- --></A><H3>
+getSequences</H3>
+<PRE>
+public static &lt;D extends <A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt; List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>getSequences</STRONG>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;exec)</PRE>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public int <STRONG>hashCode</STRONG>()</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <STRONG>equals</STRONG>(Object&nbsp;obj)</PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="compare_checks(randoop.ExecutableSequence, boolean, boolean)"><!-- --></A><H3>
+compare_checks</H3>
+<PRE>
+public int <STRONG>compare_checks</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
+                          boolean&nbsp;remove_diffs,
+                          boolean&nbsp;print_diffs)</PRE>
+<DL>
+<DD>Compares the results of the checks of two sequences.  Returns the
+ number of different checks.  If remove_diffs is true any
+ differing checks are removed from both sequences.
+ Prints any differences to stdout if print_diffs is true.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="checks_count(java.util.List)"><!-- --></A><H3>
+checks_count</H3>
+<PRE>
+public static int <STRONG>checks_count</STRONG>(List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;&nbsp;seqs)</PRE>
+<DL>
+<DD>Return the total number of checks in a list of sequences
+<P>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../randoop/ExceptionalExecution.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/Execution.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/ExecutableSequence.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ExecutableSequence.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

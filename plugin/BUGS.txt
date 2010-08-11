@@ -1,0 +1,78 @@
+
+PLUGIN BUGS / FEATURE REQUESTS
+
+* [Improvment request, not showstopper bug] Launch configuration (both
+  wizard and config tab): please do a bit of visual rearrangement of
+  the configuration a bit to make more user-friendly, as follows (the
+  "[...]" symbol means the place where user inputs text; test in
+  between *pound symbols* means bolded or italicized):
+
+ 1. First should come stopping criteria, as follows:
+
+   -----------------------------------------------------
+   *Stopping criterion.* Stop test generation after:
+
+     Randoop has generated [...] tests, OR
+     Randoop has generates tests for [...] seconds
+   -----------------------------------------------------
+
+ 2. Second should come output prameters, as follows:
+
+   -----------------------------------------------------
+   *Test output parameters.*
+   
+   Output tests that: [Fail/Pass/All selection]
+   -----------------------------------------------------
+
+  3. Finally, all the others. Title this section "Advanced" so that
+     user knows they don't have to touch them on first pass; anslo,
+     delete the "Maximum Tests Written" dialog for now; let's have
+     current behavior be all tests output.
+
+
+* Randoop generated JUnit files appeared to be uncompilable when
+  class-input was used from the default package
+  
+* Tree behavior in the class/method selector is not always working
+  as expected. This often happens to classes with only 2 to 3 methods.
+  
+* Sometimes the project does a full build when opening the launch
+  dialog. This is very time-consuming.
+
+* If you edit some code: remove, change visibility, or change parameters
+  to some method that are used in a launch configuration, when you click
+  on that launch configuration there will be unsaved changes.
+  REASON: The config stores methods so it knows what should be checked
+          when the config is opened, but it checks if the methods are
+          available before adding them to the list.
+  SOLUTION: Probably the best way to fix this would be to have a refresh
+            button that searches for changes, removes methods that don't
+            exist, and adds new ones that have been added.
+            
+* Cannot run tests on methods with generic type parameters without testing
+  the entire class.
+
+* "Project Sources" dialog: When I first press "Project Sources", user
+  presented with an empty window and no classes, and no indication of
+  what user is to do. Should show a list of classes for the selected
+  project, or something like that. Also, the Project Sources class
+  selection dialog changes behavior on subsequent presses: it seems to
+  remember which classes I searched for in earlier dialogs, and shows
+  those classes in subsequent dialogs, which is confusing.
+
+* As I use the plugin in an example use, many errors show up in the
+  Error Log window of the test Eclipse application.
+
+* Sometimes, pressing the "Regenerate tests" button results in NPE on
+  MessageViewListener.
+
+* [Feature request, after beta release] Refresh generated directories
+  in package explorer upon completion of generation.
+
+* [Feature request, after beta release] Add buttom to remove all
+  Randoop-generate files.
+  
+* [Feature request, after beta release] Delete button should be able
+  to remove selected classes from the class selector
+
+* Randoop view: Stop button stays red even after Randoop has terminated.
