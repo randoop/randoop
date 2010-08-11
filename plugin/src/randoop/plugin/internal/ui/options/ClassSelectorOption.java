@@ -1,6 +1,8 @@
 package randoop.plugin.internal.ui.options;
 
+import java.io.File;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,7 +10,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.soap.MessageFactory;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
@@ -67,6 +74,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
@@ -724,15 +732,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
   private void handleSearchButtonSelected(IJavaSearchScope searchScope) {
     try {
-      IJavaSearchScope junitSearchScope = new FilterJUnitSearchScope(searchScope, fIgnoreJUnitTestCases.getSelection());
+      boolean ignoreJUnit = fIgnoreJUnitTestCases.getSelection();
+      IJavaSearchScope junitSearchScope = new FilterJUnitSearchScope(searchScope, ignoreJUnit);
 
       SelectionDialog dialog = JavaUI.createTypeDialog(fShell, fRunnableContext, junitSearchScope,
-          IJavaElementSearchConstants.CONSIDER_CLASSES_AND_ENUMS, true, "",
+          IJavaElementSearchConstants.CONSIDER_CLASSES_AND_ENUMS, true, "", //$NON-NLS-1$
           new RandoopTestInputSelectionExtension());
       dialog.setTitle("Add Classes");
       dialog.setMessage("Enter type name prefix or pattern (*, ?, or camel case):");
       dialog.open();
-
+      
       // Add all of the types to the type selector
       Object[] results = dialog.getResult();
       if (results != null && results.length > 0) {
@@ -978,57 +987,79 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       if (fSearchScope.encloses(resourcePath)) {
         IWorkspaceRoot root = getWorkspaceRoot();
         
-        String filePath;
-        String subFilePath;
-        
-        int separator = resourcePath.indexOf(JAR_FILE_ENTRY_SEPARATOR);
-        if (separator == -1) {
-          filePath = resourcePath;
-          subFilePath = null;
+        ArrayList<IType> types = new ArrayList<IType>();
+
+        int jarFileSeparatorIndex = resourcePath.indexOf(JAR_FILE_ENTRY_SEPARATOR);
+        if (jarFileSeparatorIndex == -1) {
+          IPath filePath = new Path(resourcePath);
+          
+          IFile file = root.getFile(filePath);
+
+          if (JavaConventions.validateCompilationUnitName(file.getName(),
+              IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
+            ICompilationUnit cu = (ICompilationUnit) JavaCore.create(file, fJavaProject);
+            collectTypes(cu, types);
+          } else if (JavaConventions.validateClassFileName(file.getName(),
+              IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
+            IClassFile cf = (IClassFile) JavaCore.create(file, fJavaProject);
+            collectTypes(cf, types);
+          } else {
+            RandoopPlugin.log(StatusFactory.createWarningStatus("Unable to get class files or compilation unit from " + file)); //$NON-NLS-1$
+          }
         } else {
-          filePath = resourcePath.substring(0, separator);
-          subFilePath = resourcePath.substring(separator + 1);
-        }
-        
-        URI fileURI = root.getLocation().append(new Path(filePath)).toFile().toURI();
-        IFile[] files = root.findFilesForLocationURI(fileURI);
+          IPath filePath = new Path(resourcePath.substring(0, jarFileSeparatorIndex));
+          String subFilePath = resourcePath.substring(jarFileSeparatorIndex + 1);
+          
+          // TODO: How do you tell if resourcesPath is relative to the device or workspace?
+          // This could cause a rare error if the user happened to place a Java
+          // archive in the workspace that has a path relative to the workspace
+          // that is equivalent to a path to another Java archive on the file system.
+          
 
-        boolean doesEnclose = true;
-        for (IFile file : files) {
-          IJavaElement element = JavaCore.create(file);
-          if (element != null) {
-            ArrayList<IType> types = new ArrayList<IType>();
-            
-            if (element instanceof IPackageFragmentRoot) {
-              separator = subFilePath.lastIndexOf(IPath.SEPARATOR);
-              String packageName = subFilePath.substring(0, separator).replace(IPath.SEPARATOR, '.');
-              String fileName = subFilePath.substring(separator + 1);
-              
-              IPackageFragmentRoot pfr = (IPackageFragmentRoot) element;
-              IPackageFragment pf = pfr.getPackageFragment(packageName);
+          IPackageFragmentRoot pfr;
+          // First, search for the IPackageFragmentRoot in the workspace
+          IFile f = root.getFile(filePath);
+          IJavaElement element = JavaCore.create(f, fJavaProject);
+          if (element != null)
+            pfr = (IPackageFragmentRoot) element;
+          else
+            // Next, search for the IPackageFragmentRoot in the file system
+            pfr = fJavaProject.getPackageFragmentRoot(filePath.toOSString());
+          
+          try {
+            pfr.open(null);
 
-              if (JavaConventions.validateClassFileName(fileName,
-                  IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
-                IClassFile cf = pf.getClassFile(fileName);
-                collectTypes(cf, types);
-              } else if (JavaConventions.validateCompilationUnitName(fileName,
-                  IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
-                ICompilationUnit cu = pf.getCompilationUnit(fileName);
-                collectTypes(cu, types);
-              }
-            } else if (element instanceof ICompilationUnit || element instanceof IClassFile){
-              collectTypes(element, types);
-            } else {
-              RandoopPlugin.log(StatusFactory.createWarningStatus("Unknown element type, returning false"));
-              doesEnclose = false;
+            jarFileSeparatorIndex = subFilePath.lastIndexOf(IPath.SEPARATOR);
+            String packageName = subFilePath.substring(0, jarFileSeparatorIndex).replace(IPath.SEPARATOR, '.');
+            String fileName = subFilePath.substring(jarFileSeparatorIndex + 1);
+
+            IPackageFragment pf = pfr.getPackageFragment(packageName);
+
+            if (JavaConventions.validateClassFileName(fileName,
+                IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
+              IClassFile cf = pf.getClassFile(fileName);
+              collectTypes(cf, types);
+            } else if (JavaConventions.validateCompilationUnitName(fileName,
+                IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
+              ICompilationUnit cu = pf.getCompilationUnit(fileName);
+              collectTypes(cu, types);
             }
-
-            for (IType type : types) {
-              doesEnclose &= RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit);
-            }
+          } catch (JavaModelException e) {
+            RandoopPlugin.log(e);
           }
         }
-        return doesEnclose;
+        
+        if (types.isEmpty()) {
+          RandoopPlugin.log(StatusFactory.createWarningStatus("No classes found in " + resourcePath));
+          return false;
+        }
+        
+        for (IType type : types) {
+          if (RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit)) {
+            return true;
+          }
+        }
+        return false;
       }
       return false;
     }
@@ -1036,22 +1067,36 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     /*
      * Helper method to collect the ITypes from an ICompilationUnit or IClassFile
      */
-    private void collectTypes(IJavaElement element, List<IType> types) {
-      if (element == null || !element.exists())
+    private void collectTypes(IClassFile cf, List<IType> types) {
+      if (cf == null || !cf.exists())
         return;
 
-      if (element instanceof ICompilationUnit) {
-        try {
-          ICompilationUnit cu = (ICompilationUnit) element;
-          for (IType type : cu.getAllTypes()) {
+      try {
+        cf.open(null);
+
+        IType type = cf.getType();
+        if (type.exists()) {
+          types.add(type);
+        }
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
+    }
+    
+    private void collectTypes(ICompilationUnit cu, List<IType> types) {
+      if (cu == null || !cu.exists())
+        return;
+
+      try {
+        cu.open(null);
+
+        for (IType type : cu.getAllTypes()) {
+          if (type.exists()) {
             types.add(type);
           }
-        } catch (JavaModelException e) {
-          RandoopPlugin.log(e);
         }
-      } else if (element instanceof IClassFile) {
-        IClassFile cf = (IClassFile) element;
-        types.add(cf.getType());
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
       }
     }
     
@@ -1062,7 +1107,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           IType type = (IType) element;
           return RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit);
         }
-        return true;
       }
       return false;
     }
@@ -1098,13 +1142,25 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   private class RandoopTestInputSelectionExtension extends TypeSelectionExtension {
+    ITypeInfoFilterExtension fRandoopClassInputFilterExtension;
+    ISelectionStatusValidator fRandoopClassInputSelectionStatusValidator;
+    
+    public RandoopTestInputSelectionExtension() {
+      fRandoopClassInputFilterExtension = new RandoopClassInputFilterExtension();
+      fRandoopClassInputSelectionStatusValidator = new RandoopClassInputSelectionStatusValidator();
+    }
     
     @Override
     public ITypeInfoFilterExtension getFilterExtension() {
-      return new NoAbstractClassesOrInterfacesFilterExtension();
+      return fRandoopClassInputFilterExtension;
     }
 
-    private class NoAbstractClassesOrInterfacesFilterExtension implements ITypeInfoFilterExtension {
+    @Override
+    public ISelectionStatusValidator getSelectionValidator() {
+      return fRandoopClassInputSelectionStatusValidator;
+    }
+    
+    private class RandoopClassInputFilterExtension implements ITypeInfoFilterExtension {
 
       @Override
       public boolean select(ITypeInfoRequestor typeInfoRequestor) {
@@ -1115,6 +1171,34 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         
         return true;
       }
+    }
+    
+    private class RandoopClassInputSelectionStatusValidator implements ISelectionStatusValidator {
+
+      @Override
+      public IStatus validate(Object[] selection) {
+        for (Object obj : selection) {
+          try {
+            if (obj instanceof IType) {
+              IType type = (IType) obj;
+              int flags = type.getFlags();
+              if (type.isInterface()) {
+                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is an interface", type.getElementName()));
+              } else if (Flags.isAbstract(flags)) {
+                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is abstract", type.getElementName()));
+              } else if (!Flags.isPublic(flags)) {
+                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is not public", type.getElementName()));
+              }
+            } else {
+              return StatusFactory.createErrorStatus("One of the selected elements is not a Java class or enum");
+            }
+          } catch (JavaModelException e) {
+            RandoopPlugin.log(e, "Error when validating selected elements in type dialog"); //$NON-NLS-1$
+          }
+        }
+        return StatusFactory.OK_STATUS;
+      }
+      
     }
   }
   

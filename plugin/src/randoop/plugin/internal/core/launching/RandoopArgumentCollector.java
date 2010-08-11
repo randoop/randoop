@@ -62,6 +62,7 @@ public class RandoopArgumentCollector {
     fAvailableTypes = new ArrayList<IType>();
     List<?> availableTypes = getAvailableTypes(config);
     List<?> selectedTypes = getCheckedTypes(config);
+    
     for (Object o : availableTypes) {
       Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list");
       String mnemonic = (String) o;
