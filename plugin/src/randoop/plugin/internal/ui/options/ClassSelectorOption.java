@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -105,7 +106,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private IRunnableContext fRunnableContext;
   private Shell fShell;
   
-  TreeInput fTreeInput;
+  private TreeInput fTreeInput;
   private CheckboxTreeViewer fTypeTreeViewer;
   private HashSet<String> fDeletedTypeNodes;
   private Map<IType, List<String>> fCheckedMethodsByType;
@@ -146,6 +147,18 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
     public TreeNode[] getRoots() {
       return (TreeNode[]) fRoots.toArray(new TreeNode[fRoots.size()]);
+    }
+
+    public boolean hasMissingClasses(IJavaProject currentProject) {
+      for (TreeNode packageNode : getRoots()) {
+        for (TreeNode classNode : packageNode.getChildren()) {
+          if (!((TypeMnemonic) classNode.getObject()).getJavaProject().equals(currentProject)) {
+            return true;
+          }
+        }
+      }
+      
+      return false;
     }
     
   }
@@ -225,6 +238,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return (TreeNode[]) fChildren.toArray(new TreeNode[fChildren.size()]);
     }
     
+    public void removeAllChildren() {
+      fChildren = new ArrayList<TreeNode>();
+    }
+    
     @Override
     public int hashCode() {
       return fObject.hashCode();
@@ -285,6 +302,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         child.updateChildren();
       }
     }
+
   }
 
 
@@ -444,6 +462,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
             if (type != null){
               List<String> checkedMethods = fCheckedMethodsByType.get(type);
+              fCheckedMethodsByType.remove(type);
   
               IMethod[] methods = type.getMethods();
               List<TreeNode> methodNodes = new ArrayList<TreeNode>();
@@ -614,11 +633,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           String message = "This will attempt to find classes in the project's classpath with fully-qualified names identical to those that are missing. The classes found may differ from those originally intended to be tested.";
           String question = "Proceed with operation?";
           if (MessageUtil.openQuestion(message + "\n\n" + question)) { //$NON-NLS-1$
-//            try {
-//              fTypeSelector.resolveMissingClasses();
-//            } catch (JavaModelException jme) {
-//              RandoopPlugin.log(jme);
-//            }
+            try {
+              resolveMissingClasses();
+            } catch (JavaModelException jme) {
+              RandoopPlugin.log(jme);
+            }
           }
         }
       });
@@ -693,6 +712,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         }
 
         fTypeTreeViewer.refresh();
+        fResolveClasses.setEnabled(fJavaProject != null && fTreeInput.hasMissingClasses(fJavaProject));
         fClassRemove.setEnabled(false);
       }
     });
@@ -718,13 +738,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTreeInput = new TreeInput();
     fTypeTreeViewer.setInput(fTreeInput);
     
-    fCheckedMethodsByType = new HashMap<IType, List<String>>();
-    
     for (TypeMnemonic typeMnemonic : checkedTypes) {
       String pfname = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
       TreeNode pfNode = fTreeInput.addRoot(pfname);
 
-      TreeNode typeNode = pfNode.addChild(typeMnemonic, true, grayedTypes.contains(typeMnemonic));
+      pfNode.addChild(typeMnemonic, true, grayedTypes.contains(typeMnemonic));
     }
     fCheckedMethodsByType = selectedMethodsByDeclaringTypes;
     
@@ -1211,20 +1229,20 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       fClassAddFromSources.setEnabled(enabled);
       fClassAddFromClasspaths.setEnabled(enabled);
 
-      setJavaProject(fJavaProject);
-//      fResolveClasses.setEnabled(enabled && fTypeSelector.hasMissingClasses());
+      boolean hasMissingClasses = setJavaProject(fJavaProject);
+      fResolveClasses.setEnabled(fJavaProject != null && hasMissingClasses);
     }
   }
   
-  void setJavaProject(IJavaProject javaProject) {
+  private boolean setJavaProject(IJavaProject javaProject) {
     if (fTreeInput == null)
-      return;
+      return false;
     
     fJavaProject = javaProject;
-    boolean fHasMissingClasses = false;
+    boolean hasMissingClasses = false;
     
     if (fJavaProject == null) {
-      fHasMissingClasses = true;
+      hasMissingClasses = true;
     } else {
       for (TreeNode pfNode : fTreeInput.getRoots()) {
         for (TreeNode typeNode : pfNode.getChildren()) {
@@ -1236,11 +1254,66 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
             // If newMnemonic is not null, the IType was found in a classpath
             // entry of the new Java project
             if (newMnemonic == null || !newMnemonic.exists()) {
-              fHasMissingClasses = true;
+              hasMissingClasses = true;
             } else {
               // Update the mnemonic for this TreeItem
               typeNode.setObject(newMnemonic);
             }
+          }
+        }
+      }
+    }
+    
+    fTypeTreeViewer.refresh();
+    return hasMissingClasses;
+  }
+  
+  public void resolveMissingClasses() throws JavaModelException {
+    if (fJavaProject == null)
+      return;
+    
+    // Create a mapping to remember which methods are checked in which class
+//    Map<String, List<MethodMnemonic>> checkedMethodsByFQTypeName = new HashMap<String, List<MethodMnemonic>>();
+//    List<String> methodMnemonics = getCheckedMethods();
+//    for (String methodMnemonicString : methodMnemonics) {
+//      MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString, getWorkspaceRoot());
+//
+//      String fqname = methodMnemonic.getDeclaringTypeMnemonic().toString();
+//      List<MethodMnemonic> methods = checkedMethodsByFQTypeName.get(fqname);
+//      if (methods == null) {
+//        methods = new ArrayList<MethodMnemonic>();
+//        checkedMethodsByFQTypeName.put(fqname, methods);
+//      }
+//      methods.add(methodMnemonic);
+//    }
+
+    for (TreeNode packageItem : fTreeInput.getRoots()) {
+      for (TreeNode classItem : packageItem.getChildren()) {
+
+        TypeMnemonic oldTypeMnemonic = (TypeMnemonic) classItem.getObject();
+        IType type = oldTypeMnemonic.getType();
+        if (type == null || !fJavaProject.equals(type.getJavaProject())) {
+          type = fJavaProject.findType(oldTypeMnemonic.getFullyQualifiedName(), (IProgressMonitor) null);
+          if (type != null) {
+            TypeMnemonic newTypeMnemonic = new TypeMnemonic(type);
+            fDeletedTypeNodes.add(oldTypeMnemonic.toString());
+            
+            List<String> checkedMethods;
+            if (classItem.hasChildren()) {
+              checkedMethods = new ArrayList<String>();
+              for (TreeNode methodItem : classItem.getChildren()) {
+                checkedMethods.add(((MethodMnemonic) methodItem.getObject()).toString());
+              }
+            } else {
+              // Otherwise, the item probably hasn't been expanded. Move the
+              // list of checked methods from the old key to the new one
+              checkedMethods = fCheckedMethodsByType.get(oldTypeMnemonic.getType());
+            }
+            fCheckedMethodsByType.put(newTypeMnemonic.getType(), checkedMethods);
+            fCheckedMethodsByType.remove(oldTypeMnemonic.getType());
+
+            classItem.setObject(newTypeMnemonic);
+            classItem.removeAllChildren();
           }
         }
       }
