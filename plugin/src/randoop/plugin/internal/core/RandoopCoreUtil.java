@@ -294,7 +294,8 @@ public class RandoopCoreUtil {
 
   public static boolean isValidTestInput(IType type, boolean ignoreJUnitTestCases) {
     try {
-      if (type.isInterface() || Flags.isAbstract(type.getFlags()) || !Flags.isPublic(type.getFlags())) {
+      int flags = type.getFlags();
+      if (type.isInterface() || Flags.isAbstract(flags) || !Flags.isPublic(flags)) {
         return false;
       }
       if (ignoreJUnitTestCases) {
