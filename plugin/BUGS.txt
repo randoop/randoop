@@ -33,15 +33,6 @@ PLUGIN BUGS / FEATURE REQUESTS
 * Randoop generated JUnit files appeared to be uncompilable when
   class-input was used from the default package
   
-* Tree behavior in the class/method selector is not always working
-  as expected. This often happens to classes with only 2 to 3 methods.
-  
-* Sometimes when selecting a large group of classes for class-input,
-  Randoop well halt and say that some of the types are not visible.
-  Also, method-inputs are sometimes not found by Randoop, and an exception
-  is thrown in the console. These invisible inputs should be detected
-  before launch.
-  
 * Sometimes the project does a full build when opening the launch
   dialog. This is very time-consuming.
 

@@ -1,18 +1,12 @@
 package randoop.plugin.internal.ui.views;
 
-import java.io.InputStream;
-import java.io.StringReader;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TreePath;
@@ -26,12 +20,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.StatusFactory;
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.model.resultstree.FailingMember;
-import randoop.plugin.model.resultstree.UnitTest;
-import randoop.plugin.util.ReaderInputStream;
 
 
 public class FailureItemDoubleClickListener implements IDoubleClickListener {

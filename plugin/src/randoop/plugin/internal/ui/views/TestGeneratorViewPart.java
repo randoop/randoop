@@ -8,10 +8,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.junit.JUnitCore;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -23,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
@@ -34,8 +31,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MutableObject;
-import randoop.plugin.internal.core.runtime.TestGeneratorSession;
 import randoop.plugin.internal.core.runtime.ITestGeneratorSessionListener;
+import randoop.plugin.internal.core.runtime.TestGeneratorSession;
 import randoop.runtime.ErrorRevealed;
 
 public class TestGeneratorViewPart extends ViewPart {
