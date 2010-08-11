@@ -30,7 +30,6 @@ public class RandoopArgumentCollector {
   private static final List<String> EMPTY_STRING_LIST = new ArrayList<String>();
   
   private String fName;
-  private ArrayList<IType> fAvailableTypes;
   private List<IType> fSelectedTypes;
   private Map<IType, List<IMethod>> fSelectedMethodsByType;
   private int fRandomSeed;
@@ -49,8 +48,7 @@ public class RandoopArgumentCollector {
   private int fMaxTestsWritten;
   private int fMaxTestsPerFile;
 
-  
-  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) throws JavaModelException {
+  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) throws JavaModelException, NumberFormatException {
     fName = config.getName();
     Assert.isNotNull(fName, "Configuration name not given");
     
@@ -59,45 +57,44 @@ public class RandoopArgumentCollector {
     Assert.isNotNull(fJavaProject, "Java project not specified");
 
     fSelectedTypes = new ArrayList<IType>();
-    fAvailableTypes = new ArrayList<IType>();
+    fSelectedMethodsByType = new HashMap<IType, List<IMethod>>();
+    
     List<?> availableTypes = getAvailableTypes(config);
-    List<?> selectedTypes = getCheckedTypes(config);
-    for (Object o : availableTypes) {
-      Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list");
-      String mnemonic = (String) o;
+    List<?> grayedTypes = getGrayedTypes(config);
+    
+    Assert.isTrue(!availableTypes.isEmpty(), "No class-input or method-input selected");
+    
+    
+    for (Object typeObject : availableTypes) {
+      Assert.isTrue(typeObject instanceof String, "Non-String arguments stored in class-input list");
+      String typeMnemonicString = (String) typeObject;
       
-      TypeMnemonic typeMnemonic = new TypeMnemonic(mnemonic, root);
+      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, root);
       IType type = typeMnemonic.getType();
       
       Assert.isTrue(fJavaProject.equals(typeMnemonic.getJavaProject()), "One of the class-inputs does not exist in the selected project");
       
-      fAvailableTypes.add(type);
-      if (selectedTypes.contains(o)) {
+      if (grayedTypes.contains(typeObject)) {
+        List<IMethod> methodList = new ArrayList<IMethod>();
+        
+        List<?> selectedMethods = getCheckedMethods(config, new TypeMnemonic(type).toString());
+        for (Object methodObject : selectedMethods) {
+          Assert.isTrue(methodObject instanceof String, "Non-String arguments stored in method-input list");
+          String methodMnemonicString = (String) methodObject;
+          
+          IMethod m = new MethodMnemonic(methodMnemonicString).findMethod(type);
+          Assert.isNotNull(m, "One of the method inputs does not exist");
+          Assert.isTrue(m.exists(), MessageFormat.format("Stored method [{0}] does not exist", m.getElementName()));
+          
+          methodList.add(m);
+        }
+        
+        fSelectedMethodsByType.put(type, methodList);
+      } else {
         fSelectedTypes.add(type);
       }
     }
     
-    fSelectedMethodsByType = new HashMap<IType, List<IMethod>>();
-    for (IType type : fSelectedTypes) {
-      List<IMethod> methodList = new ArrayList<IMethod>();
-      
-      List<?> selectedMethods = getCheckedMethods(config, new TypeMnemonic(type).toString());
-      for (Object o : selectedMethods) {
-        Assert.isTrue(o instanceof String, "Non-String arguments stored in method-input list");
-        String mnemonic = (String) o;
-        
-        IMethod m = new MethodMnemonic(mnemonic).findMethod(type);
-        Assert.isNotNull(m, "One of the method inputs does not exist");
-        Assert.isTrue(m.exists(), MessageFormat.format("Stored method [{0}] does not exist", m.getElementName()));
-        
-        methodList.add(m);
-      }
-      
-      fSelectedMethodsByType.put(type, methodList);
-    }
-    
-    Assert.isTrue(!fSelectedTypes.isEmpty() || !fSelectedMethodsByType.isEmpty(), "No class-input or method-input selected");
-
     fRandomSeed = Integer.parseInt(getRandomSeed(config));
     fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
     fUseThreads = getUseThreads(config);

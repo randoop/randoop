@@ -6,8 +6,8 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import randoop.runtime.IMessage;
 import randoop.runtime.ClosingStream;
+import randoop.runtime.IMessage;
 
 public class MessageReceiver implements Runnable {
   private IMessageListener fIMessageListener;

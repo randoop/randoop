@@ -1,6 +1,6 @@
 package randoop.plugin.internal.ui.options;
 
-import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,12 +8,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -24,11 +26,11 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -53,6 +55,7 @@ import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -67,7 +70,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.dialogs.SelectionDialog;
+
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
@@ -97,7 +102,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private IRunnableContext fRunnableContext;
   private Shell fShell;
   
-  TreeInput fTreeInput;
+  private TreeInput fTreeInput;
   private CheckboxTreeViewer fTypeTreeViewer;
   private HashSet<String> fDeletedTypeNodes;
   private Map<IType, List<String>> fCheckedMethodsByType;
@@ -139,10 +144,21 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     public TreeNode[] getRoots() {
       return (TreeNode[]) fRoots.toArray(new TreeNode[fRoots.size()]);
     }
+
+    public boolean hasMissingClasses(IJavaProject currentProject) {
+      for (TreeNode packageNode : getRoots()) {
+        for (TreeNode classNode : packageNode.getChildren()) {
+          if (!((TypeMnemonic) classNode.getObject()).getJavaProject().equals(currentProject)) {
+            return true;
+          }
+        }
+      }
+      
+      return false;
+    }
     
   }
-
-
+  
   private static class TreeNode {
     private TreeNode fParent;
     private List<TreeNode> fChildren;
@@ -152,14 +168,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     private boolean fIsGrayed;
     
     private TreeNode(TreeNode parent, Object object, boolean checkedState, boolean grayedState) {
-      if (object instanceof IMethod) {
-        //TODO: remove
-        try {
-          throw new NullPointerException();
-        } catch (NullPointerException npe) {
-          npe.printStackTrace();
-        }
-      }
       Assert.isLegal(object != null);
       fParent = parent;
       fObject = object;
@@ -217,6 +225,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return (TreeNode[]) fChildren.toArray(new TreeNode[fChildren.size()]);
     }
     
+    public void removeAllChildren() {
+      fChildren = new ArrayList<TreeNode>();
+    }
+    
     @Override
     public int hashCode() {
       return fObject.hashCode();
@@ -225,7 +237,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     @Override
     public boolean equals(Object obj) {
       if (obj instanceof TreeNode) {
-        return fObject.equals(((TreeNode) obj).getObject());
+        TreeNode otherNode = (TreeNode) obj;
+        boolean objectsEqual = getObject().equals(otherNode.getObject());
+        boolean parentsEqual;
+        if (getParent() == null) {
+          parentsEqual = otherNode.getParent() == null;
+        } else {
+          parentsEqual = getParent().equals(otherNode.getParent());
+        }
+        return objectsEqual && parentsEqual;
       }
       return false;
     }
@@ -272,13 +292,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       TreeNode[] children = getChildren();
   
       for (TreeNode child : children) {
-        child.setGrayed(false);
-        child.setChecked(isChecked());
-        child.updateChildren();
+        if (!isGrayed()) {
+          child.setGrayed(false);
+          child.setChecked(isChecked());
+          child.updateChildren();
+        }
       }
     }
+    
   }
-
 
   private class TreeLabelProvider extends LabelProvider {
     @Override
@@ -383,6 +405,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
       return readableMethod.toString();
     }
+    
   }
 
 
@@ -425,20 +448,23 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     @Override
     public Object[] getChildren(Object parentElement) {
       TreeNode typeNode = (TreeNode) parentElement;
-  
+      
       if (typeNode.getObject() instanceof TypeMnemonic) {
         if (!typeNode.hasChildren()) {
           try {
             final boolean typeChecked = typeNode.isChecked();
             final boolean typeGrayed = typeNode.isGrayed();
             
+            boolean allChecked = true;
+            boolean noneChecked = true;
+            
             IType type = ((TypeMnemonic) typeNode.getObject()).getType();
   
             if (type != null){
               List<String> checkedMethods = fCheckedMethodsByType.get(type);
+              fCheckedMethodsByType.remove(type);
   
               IMethod[] methods = type.getMethods();
-              List<TreeNode> methodNodes = new ArrayList<TreeNode>();
               for (IMethod method : methods) {
                 if (AdaptablePropertyTester.isTestable(method)) {
                   MethodMnemonic methodMnemonic = new MethodMnemonic(method);
@@ -453,11 +479,28 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
                   } else {
                     methodChecked = typeChecked;
                   }
-
-                  methodNodes.add(typeNode.addChild(methodMnemonic, methodChecked, false));
+                  
+                  allChecked &= methodChecked;
+                  noneChecked &= !methodChecked;
+                  
+                  TreeNode methodNode = typeNode.addChild(methodMnemonic, methodChecked, false);
+                  methodNode.updateRelatives();
                 }
               }
-            return (TreeNode[]) methodNodes.toArray(new TreeNode[methodNodes.size()]);
+              
+              if (allChecked) {
+                typeNode.setChecked(true);
+                typeNode.setGrayed(false);
+              } else if (noneChecked) {
+                typeNode.setChecked(false);
+                typeNode.setGrayed(false);
+              } else {
+                typeNode.setChecked(true);
+                typeNode.setGrayed(true);
+              }
+              
+              typeNode.updateRelatives();
+              return typeNode.getChildren();
             }
           } catch (JavaModelException e) {
             RandoopPlugin.log(e);
@@ -510,6 +553,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     fTypeTreeViewer.setLabelProvider(fTreeLabelProvider);
     fTypeTreeViewer.setContentProvider(fTypeTreeContentProvider);
+    fTypeTreeViewer.setSorter(new ViewerSorter());
+    
     fTypeTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
       
       @Override
@@ -606,11 +651,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           String message = "This will attempt to find classes in the project's classpath with fully-qualified names identical to those that are missing. The classes found may differ from those originally intended to be tested.";
           String question = "Proceed with operation?";
           if (MessageUtil.openQuestion(message + "\n\n" + question)) { //$NON-NLS-1$
-//            try {
-//              fTypeSelector.resolveMissingClasses();
-//            } catch (JavaModelException jme) {
-//              RandoopPlugin.log(jme);
-//            }
+            try {
+              resolveMissingClasses();
+            } catch (JavaModelException jme) {
+              RandoopPlugin.log(jme);
+            }
           }
         }
       });
@@ -685,6 +730,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         }
 
         fTypeTreeViewer.refresh();
+        fResolveClasses.setEnabled(fJavaProject != null && fTreeInput.hasMissingClasses(fJavaProject));
         fClassRemove.setEnabled(false);
       }
     });
@@ -710,13 +756,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTreeInput = new TreeInput();
     fTypeTreeViewer.setInput(fTreeInput);
     
-    fCheckedMethodsByType = new HashMap<IType, List<String>>();
-    
     for (TypeMnemonic typeMnemonic : checkedTypes) {
       String pfname = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
       TreeNode pfNode = fTreeInput.addRoot(pfname);
 
-      TreeNode typeNode = pfNode.addChild(typeMnemonic, true, grayedTypes.contains(typeMnemonic));
+      pfNode.addChild(typeMnemonic, true, grayedTypes.contains(typeMnemonic));
     }
     fCheckedMethodsByType = selectedMethodsByDeclaringTypes;
     
@@ -724,15 +768,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
   private void handleSearchButtonSelected(IJavaSearchScope searchScope) {
     try {
-      IJavaSearchScope junitSearchScope = new FilterJUnitSearchScope(searchScope, fIgnoreJUnitTestCases.getSelection());
+      boolean ignoreJUnit = fIgnoreJUnitTestCases.getSelection();
+      IJavaSearchScope junitSearchScope = new FilterJUnitSearchScope(searchScope, ignoreJUnit);
 
       SelectionDialog dialog = JavaUI.createTypeDialog(fShell, fRunnableContext, junitSearchScope,
-          IJavaElementSearchConstants.CONSIDER_CLASSES_AND_ENUMS, true, "",
+          IJavaElementSearchConstants.CONSIDER_CLASSES_AND_ENUMS, true, "", //$NON-NLS-1$
           new RandoopTestInputSelectionExtension());
       dialog.setTitle("Add Classes");
       dialog.setMessage("Enter type name prefix or pattern (*, ?, or camel case):");
       dialog.open();
-
+      
       // Add all of the types to the type selector
       Object[] results = dialog.getResult();
       if (results != null && results.length > 0) {
@@ -741,13 +786,19 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           if (element instanceof IType) {
             IType type = (IType) element;
             if (type != null) {
-              
               String pfname = type.getPackageFragment().getElementName();
               TreeNode packageNode = fTreeInput.addRoot(pfname);
               
+              TypeMnemonic newTypeMnemonic = new TypeMnemonic(type).reassign(fJavaProject);
+              
               boolean typeAlreadyInTree = false;
               for (TreeNode node : packageNode.getChildren()) {
-                if (node.getObject().equals(type)) {
+                TypeMnemonic otherMnemonic = (TypeMnemonic) node.getObject();
+                if (otherMnemonic.getFullyQualifiedName().equals(newTypeMnemonic.getFullyQualifiedName())) {
+                  if (!otherMnemonic.exists() || !otherMnemonic.getJavaProject().equals(fJavaProject)) {
+                    // If it doesn't exist, simply replace it with the new class
+                    setNewTypeMnemonic(node, newTypeMnemonic);
+                  }
                   typeAlreadyInTree = true;
                   break;
                 }
@@ -755,10 +806,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
               if (!typeAlreadyInTree) {
                 // Remove this from the list of deletes classes
-                TypeMnemonic typeMnemonic = new TypeMnemonic(type).reassign(fJavaProject);
-                fDeletedTypeNodes.remove(typeMnemonic.toString());
+                fDeletedTypeNodes.remove(newTypeMnemonic.toString());
                 
-                packageNode.addChild(typeMnemonic, true, false);
+                packageNode.addChild(newTypeMnemonic, true, false);
 
                 fTypeTreeViewer.refresh();
                 if (results.length < 3) {
@@ -799,14 +849,43 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    */
   @Override
   public IStatus isValid(ILaunchConfiguration config) {
-    try {
-      new RandoopArgumentCollector(config, getWorkspaceRoot());
-    } catch (JavaModelException e) {
-      return StatusFactory.createErrorStatus(e.getMessage());
-    } catch (AssertionFailedException e) {
-      return StatusFactory.createErrorStatus(e.getMessage().substring(18));
+    List<?> grayedTypesMnemonic = RandoopArgumentCollector.getGrayedTypes(config);
+    List<?> selectedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(config);
+
+    if (selectedTypeMnemonics.isEmpty()) {
+      return StatusFactory.createErrorStatus("No class-input or method-input selected");
     }
 
+    for (Object o : selectedTypeMnemonics) {
+      Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list");
+      String typeMnemonicString = (String) o;
+      
+      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
+      IType type = typeMnemonic.getType();
+      
+      if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
+        return StatusFactory.createErrorStatus("One of the class-inputs does not exist in the selected project");
+      }
+      
+      if (grayedTypesMnemonic.contains(o)) {
+        List<IMethod> methodList = new ArrayList<IMethod>();
+        
+        List<?> selectedMethods = RandoopArgumentCollector.getCheckedMethods(config, typeMnemonicString);
+        for (Object methodObject : selectedMethods) {
+          String methodMnemonicString = (String) methodObject;
+          
+          IMethod m = new MethodMnemonic(methodMnemonicString).findMethod(type);
+          if (m == null) {
+            return StatusFactory.createErrorStatus("One of the method inputs does not exist");
+          } else if (!m.exists()) {
+            return StatusFactory.createErrorStatus(MessageFormat.format("Mmethod '{0}' does not exist", m.getElementName()));
+          }
+          
+          methodList.add(m);
+        }
+      }
+    }
+    
     return StatusFactory.OK_STATUS;
   }
 
@@ -924,6 +1003,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
     RandoopArgumentCollector.setGrayedTypes(config, grayedTypes);
     RandoopArgumentCollector.setCheckedTypes(config, checkedTypes);
+    
+    fTypeTreeViewer.refresh();
   }
   
   @Override
@@ -978,57 +1059,85 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       if (fSearchScope.encloses(resourcePath)) {
         IWorkspaceRoot root = getWorkspaceRoot();
         
-        String filePath;
-        String subFilePath;
-        
-        int separator = resourcePath.indexOf(JAR_FILE_ENTRY_SEPARATOR);
-        if (separator == -1) {
-          filePath = resourcePath;
-          subFilePath = null;
+        ArrayList<IType> types = new ArrayList<IType>();
+
+        int jarFileSeparatorIndex = resourcePath.indexOf(JAR_FILE_ENTRY_SEPARATOR);
+        if (jarFileSeparatorIndex == -1) {
+          IPath filePath = new Path(resourcePath);
+          
+          IFile file = root.getFile(filePath);
+
+          if (JavaConventions.validateCompilationUnitName(file.getName(),
+              IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
+            ICompilationUnit cu = (ICompilationUnit) JavaCore.create(file, fJavaProject);
+            if (!cu.exists()) {
+              cu = JavaCore.createCompilationUnitFrom(file);
+            }
+            collectTypes(cu, types);
+          } else if (JavaConventions.validateClassFileName(file.getName(),
+              IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
+            IClassFile cf = (IClassFile) JavaCore.create(file, fJavaProject);
+            if (!cf.exists()) {
+              cf = JavaCore.createClassFileFrom(file);
+            }
+            collectTypes(cf, types);
+          } else {
+            RandoopPlugin.log(StatusFactory.createWarningStatus("Unable to get class files or compilation unit from " + file)); //$NON-NLS-1$
+          }
         } else {
-          filePath = resourcePath.substring(0, separator);
-          subFilePath = resourcePath.substring(separator + 1);
-        }
-        
-        URI fileURI = root.getLocation().append(new Path(filePath)).toFile().toURI();
-        IFile[] files = root.findFilesForLocationURI(fileURI);
+          IPath filePath = new Path(resourcePath.substring(0, jarFileSeparatorIndex));
+          String subFilePath = resourcePath.substring(jarFileSeparatorIndex + 1);
+          
+          // TODO: How do you tell if resourcesPath is relative to the device or workspace?
+          // This could cause a rare error if the user happened to place a Java
+          // archive in the workspace that has a path relative to the workspace
+          // that is equivalent to a path to another Java archive on the file system.
+          
 
-        boolean doesEnclose = true;
-        for (IFile file : files) {
-          IJavaElement element = JavaCore.create(file);
-          if (element != null) {
-            ArrayList<IType> types = new ArrayList<IType>();
-            
-            if (element instanceof IPackageFragmentRoot) {
-              separator = subFilePath.lastIndexOf(IPath.SEPARATOR);
-              String packageName = subFilePath.substring(0, separator).replace(IPath.SEPARATOR, '.');
-              String fileName = subFilePath.substring(separator + 1);
-              
-              IPackageFragmentRoot pfr = (IPackageFragmentRoot) element;
-              IPackageFragment pf = pfr.getPackageFragment(packageName);
+          IPackageFragmentRoot pfr;
+          // First, search for the IPackageFragmentRoot in the workspace
+          IFile f = root.getFile(filePath);
+          IJavaElement element = JavaCore.create(f, fJavaProject);
+          if (element != null)
+            pfr = (IPackageFragmentRoot) element;
+          else
+            // Next, search for the IPackageFragmentRoot in the file system
+            pfr = fJavaProject.getPackageFragmentRoot(filePath.toOSString());
+          
+          try {
+            pfr.open(null);
 
-              if (JavaConventions.validateClassFileName(fileName,
-                  IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
-                IClassFile cf = pf.getClassFile(fileName);
-                collectTypes(cf, types);
-              } else if (JavaConventions.validateCompilationUnitName(fileName,
-                  IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
-                ICompilationUnit cu = pf.getCompilationUnit(fileName);
-                collectTypes(cu, types);
-              }
-            } else if (element instanceof ICompilationUnit || element instanceof IClassFile){
-              collectTypes(element, types);
-            } else {
-              RandoopPlugin.log(StatusFactory.createWarningStatus("Unknown element type, returning false"));
-              doesEnclose = false;
+            jarFileSeparatorIndex = subFilePath.lastIndexOf(IPath.SEPARATOR);
+            String packageName = subFilePath.substring(0, jarFileSeparatorIndex).replace(IPath.SEPARATOR, '.');
+            String fileName = subFilePath.substring(jarFileSeparatorIndex + 1);
+
+            IPackageFragment pf = pfr.getPackageFragment(packageName);
+
+            if (JavaConventions.validateClassFileName(fileName,
+                IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
+              IClassFile cf = pf.getClassFile(fileName);
+              collectTypes(cf, types);
+            } else if (JavaConventions.validateCompilationUnitName(fileName,
+                IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL).isOK()) { //$NON-NLS-1$//$NON-NLS-2$
+              ICompilationUnit cu = pf.getCompilationUnit(fileName);
+              collectTypes(cu, types);
             }
-
-            for (IType type : types) {
-              doesEnclose &= RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit);
-            }
+          } catch (JavaModelException e) {
+            RandoopPlugin.log(e);
           }
         }
-        return doesEnclose;
+        
+        if (types.isEmpty()) {
+          RandoopPlugin.log(StatusFactory.createWarningStatus("No classes found in " + resourcePath));
+          return false;
+        }
+        
+        for (IType type : types) {
+          if (RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit)) {
+            return true;
+          }
+        }
+        return false;
       }
       return false;
     }
@@ -1036,22 +1145,36 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     /*
      * Helper method to collect the ITypes from an ICompilationUnit or IClassFile
      */
-    private void collectTypes(IJavaElement element, List<IType> types) {
-      if (element == null || !element.exists())
+    private void collectTypes(IClassFile cf, List<IType> types) {
+      if (cf == null || !cf.exists())
         return;
 
-      if (element instanceof ICompilationUnit) {
-        try {
-          ICompilationUnit cu = (ICompilationUnit) element;
-          for (IType type : cu.getAllTypes()) {
+      try {
+        cf.open(null);
+
+        IType type = cf.getType();
+        if (type.exists()) {
+          types.add(type);
+        }
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
+      }
+    }
+    
+    private void collectTypes(ICompilationUnit cu, List<IType> types) {
+      if (cu == null || !cu.exists())
+        return;
+
+      try {
+        cu.open(null);
+
+        for (IType type : cu.getAllTypes()) {
+          if (type.exists()) {
             types.add(type);
           }
-        } catch (JavaModelException e) {
-          RandoopPlugin.log(e);
         }
-      } else if (element instanceof IClassFile) {
-        IClassFile cf = (IClassFile) element;
-        types.add(cf.getType());
+      } catch (JavaModelException e) {
+        RandoopPlugin.log(e);
       }
     }
     
@@ -1062,7 +1185,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           IType type = (IType) element;
           return RandoopCoreUtil.isValidTestInput(type, fIgnoreJUnit);
         }
-        return true;
       }
       return false;
     }
@@ -1098,13 +1220,25 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   private class RandoopTestInputSelectionExtension extends TypeSelectionExtension {
+    ITypeInfoFilterExtension fRandoopClassInputFilterExtension;
+    ISelectionStatusValidator fRandoopClassInputSelectionStatusValidator;
+    
+    public RandoopTestInputSelectionExtension() {
+      fRandoopClassInputFilterExtension = new RandoopClassInputFilterExtension();
+      fRandoopClassInputSelectionStatusValidator = new RandoopClassInputSelectionStatusValidator();
+    }
     
     @Override
     public ITypeInfoFilterExtension getFilterExtension() {
-      return new NoAbstractClassesOrInterfacesFilterExtension();
+      return fRandoopClassInputFilterExtension;
     }
 
-    private class NoAbstractClassesOrInterfacesFilterExtension implements ITypeInfoFilterExtension {
+    @Override
+    public ISelectionStatusValidator getSelectionValidator() {
+      return fRandoopClassInputSelectionStatusValidator;
+    }
+    
+    private class RandoopClassInputFilterExtension implements ITypeInfoFilterExtension {
 
       @Override
       public boolean select(ITypeInfoRequestor typeInfoRequestor) {
@@ -1115,6 +1249,34 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         
         return true;
       }
+    }
+    
+    private class RandoopClassInputSelectionStatusValidator implements ISelectionStatusValidator {
+
+      @Override
+      public IStatus validate(Object[] selection) {
+        for (Object obj : selection) {
+          try {
+            if (obj instanceof IType) {
+              IType type = (IType) obj;
+              int flags = type.getFlags();
+              if (type.isInterface()) {
+                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is an interface", type.getElementName()));
+              } else if (Flags.isAbstract(flags)) {
+                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is abstract", type.getElementName()));
+              } else if (!Flags.isPublic(flags)) {
+                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is not public", type.getElementName()));
+              }
+            } else {
+              return StatusFactory.createErrorStatus("One of the selected elements is not a Java class or enum");
+            }
+          } catch (JavaModelException e) {
+            RandoopPlugin.log(e, "Error when validating selected elements in type dialog"); //$NON-NLS-1$
+          }
+        }
+        return StatusFactory.OK_STATUS;
+      }
+      
     }
   }
   
@@ -1127,20 +1289,20 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       fClassAddFromSources.setEnabled(enabled);
       fClassAddFromClasspaths.setEnabled(enabled);
 
-      setJavaProject(fJavaProject);
-//      fResolveClasses.setEnabled(enabled && fTypeSelector.hasMissingClasses());
+      boolean hasMissingClasses = setJavaProject(fJavaProject);
+      fResolveClasses.setEnabled(fJavaProject != null && hasMissingClasses);
     }
   }
   
-  void setJavaProject(IJavaProject javaProject) {
+  private boolean setJavaProject(IJavaProject javaProject) {
     if (fTreeInput == null)
-      return;
+      return false;
     
     fJavaProject = javaProject;
-    boolean fHasMissingClasses = false;
+    boolean hasMissingClasses = false;
     
     if (fJavaProject == null) {
-      fHasMissingClasses = true;
+      hasMissingClasses = true;
     } else {
       for (TreeNode pfNode : fTreeInput.getRoots()) {
         for (TreeNode typeNode : pfNode.getChildren()) {
@@ -1152,7 +1314,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
             // If newMnemonic is not null, the IType was found in a classpath
             // entry of the new Java project
             if (newMnemonic == null || !newMnemonic.exists()) {
-              fHasMissingClasses = true;
+              hasMissingClasses = true;
             } else {
               // Update the mnemonic for this TreeItem
               typeNode.setObject(newMnemonic);
@@ -1163,6 +1325,66 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
     
     fTypeTreeViewer.refresh();
+    return hasMissingClasses;
+  }
+  
+  public void resolveMissingClasses() throws JavaModelException {
+    if (fJavaProject == null)
+      return;
+    
+    // Create a mapping to remember which methods are checked in which class
+//    Map<String, List<MethodMnemonic>> checkedMethodsByFQTypeName = new HashMap<String, List<MethodMnemonic>>();
+//    List<String> methodMnemonics = getCheckedMethods();
+//    for (String methodMnemonicString : methodMnemonics) {
+//      MethodMnemonic methodMnemonic = new MethodMnemonic(methodMnemonicString, getWorkspaceRoot());
+//
+//      String fqname = methodMnemonic.getDeclaringTypeMnemonic().toString();
+//      List<MethodMnemonic> methods = checkedMethodsByFQTypeName.get(fqname);
+//      if (methods == null) {
+//        methods = new ArrayList<MethodMnemonic>();
+//        checkedMethodsByFQTypeName.put(fqname, methods);
+//      }
+//      methods.add(methodMnemonic);
+//    }
+
+    for (TreeNode packageItem : fTreeInput.getRoots()) {
+      for (TreeNode classItem : packageItem.getChildren()) {
+
+        TypeMnemonic oldTypeMnemonic = (TypeMnemonic) classItem.getObject();
+        IType type = oldTypeMnemonic.getType();
+        if (type == null || !fJavaProject.equals(type.getJavaProject())) {
+          type = fJavaProject.findType(oldTypeMnemonic.getFullyQualifiedName(), (IProgressMonitor) null);
+          if (type != null) {
+            TypeMnemonic newTypeMnemonic = new TypeMnemonic(type);
+            setNewTypeMnemonic(classItem, newTypeMnemonic);
+          }
+        }
+      }
+    }
+    
+    fTypeTreeViewer.refresh();
+  }
+  
+  private void setNewTypeMnemonic(TreeNode node, TypeMnemonic newTypeMnemonic) {
+    TypeMnemonic oldTypeMnemonic = (TypeMnemonic) node.getObject();
+    fDeletedTypeNodes.add(oldTypeMnemonic.toString());
+
+    List<String> checkedMethods;
+    if (node.hasChildren()) {
+      checkedMethods = new ArrayList<String>();
+      for (TreeNode methodItem : node.getChildren()) {
+        checkedMethods.add(((MethodMnemonic) methodItem.getObject()).toString());
+      }
+    } else {
+      // Otherwise, the item probably hasn't been expanded. Move the
+      // list of checked methods from the old key to the new one
+      checkedMethods = fCheckedMethodsByType.get(oldTypeMnemonic.getType());
+    }
+    fCheckedMethodsByType.put(newTypeMnemonic.getType(), checkedMethods);
+    fCheckedMethodsByType.remove(oldTypeMnemonic.getType());
+
+    node.setObject(newTypeMnemonic);
+    node.removeAllChildren();
   }
   
   /*
