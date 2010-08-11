@@ -55,6 +55,7 @@ import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -552,6 +553,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
     fTypeTreeViewer.setLabelProvider(fTreeLabelProvider);
     fTypeTreeViewer.setContentProvider(fTypeTreeContentProvider);
+    fTypeTreeViewer.setSorter(new ViewerSorter());
+    
     fTypeTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
       
       @Override
@@ -783,13 +786,19 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           if (element instanceof IType) {
             IType type = (IType) element;
             if (type != null) {
-              
               String pfname = type.getPackageFragment().getElementName();
               TreeNode packageNode = fTreeInput.addRoot(pfname);
               
+              TypeMnemonic newTypeMnemonic = new TypeMnemonic(type).reassign(fJavaProject);
+              
               boolean typeAlreadyInTree = false;
               for (TreeNode node : packageNode.getChildren()) {
-                if (node.getObject().equals(type)) {
+                TypeMnemonic otherMnemonic = (TypeMnemonic) node.getObject();
+                if (otherMnemonic.getFullyQualifiedName().equals(newTypeMnemonic.getFullyQualifiedName())) {
+                  if (!otherMnemonic.exists() || !otherMnemonic.getJavaProject().equals(fJavaProject)) {
+                    // If it doesn't exist, simply replace it with the new class
+                    setNewTypeMnemonic(node, newTypeMnemonic);
+                  }
                   typeAlreadyInTree = true;
                   break;
                 }
@@ -797,10 +806,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
               if (!typeAlreadyInTree) {
                 // Remove this from the list of deletes classes
-                TypeMnemonic typeMnemonic = new TypeMnemonic(type).reassign(fJavaProject);
-                fDeletedTypeNodes.remove(typeMnemonic.toString());
+                fDeletedTypeNodes.remove(newTypeMnemonic.toString());
                 
-                packageNode.addChild(typeMnemonic, true, false);
+                packageNode.addChild(newTypeMnemonic, true, false);
 
                 fTypeTreeViewer.refresh();
                 if (results.length < 3) {
@@ -1342,30 +1350,35 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           type = fJavaProject.findType(oldTypeMnemonic.getFullyQualifiedName(), (IProgressMonitor) null);
           if (type != null) {
             TypeMnemonic newTypeMnemonic = new TypeMnemonic(type);
-            fDeletedTypeNodes.add(oldTypeMnemonic.toString());
-            
-            List<String> checkedMethods;
-            if (classItem.hasChildren()) {
-              checkedMethods = new ArrayList<String>();
-              for (TreeNode methodItem : classItem.getChildren()) {
-                checkedMethods.add(((MethodMnemonic) methodItem.getObject()).toString());
-              }
-            } else {
-              // Otherwise, the item probably hasn't been expanded. Move the
-              // list of checked methods from the old key to the new one
-              checkedMethods = fCheckedMethodsByType.get(oldTypeMnemonic.getType());
-            }
-            fCheckedMethodsByType.put(newTypeMnemonic.getType(), checkedMethods);
-            fCheckedMethodsByType.remove(oldTypeMnemonic.getType());
-
-            classItem.setObject(newTypeMnemonic);
-            classItem.removeAllChildren();
+            setNewTypeMnemonic(classItem, newTypeMnemonic);
           }
         }
       }
     }
     
     fTypeTreeViewer.refresh();
+  }
+  
+  private void setNewTypeMnemonic(TreeNode node, TypeMnemonic newTypeMnemonic) {
+    TypeMnemonic oldTypeMnemonic = (TypeMnemonic) node.getObject();
+    fDeletedTypeNodes.add(oldTypeMnemonic.toString());
+
+    List<String> checkedMethods;
+    if (node.hasChildren()) {
+      checkedMethods = new ArrayList<String>();
+      for (TreeNode methodItem : node.getChildren()) {
+        checkedMethods.add(((MethodMnemonic) methodItem.getObject()).toString());
+      }
+    } else {
+      // Otherwise, the item probably hasn't been expanded. Move the
+      // list of checked methods from the old key to the new one
+      checkedMethods = fCheckedMethodsByType.get(oldTypeMnemonic.getType());
+    }
+    fCheckedMethodsByType.put(newTypeMnemonic.getType(), checkedMethods);
+    fCheckedMethodsByType.remove(oldTypeMnemonic.getType());
+
+    node.setObject(newTypeMnemonic);
+    node.removeAllChildren();
   }
   
   /*
