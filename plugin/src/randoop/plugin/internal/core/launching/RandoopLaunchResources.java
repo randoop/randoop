@@ -33,7 +33,6 @@ import org.eclipse.jdt.core.Signature;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopCoreUtil;
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.MessageUtil;
 
 /**
