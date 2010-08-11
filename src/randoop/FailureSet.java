@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FailureAnalyzer {
+public class FailureSet {
   
   private Set<Failure> failures = new LinkedHashSet<Failure>();
   
@@ -32,7 +32,7 @@ public class FailureAnalyzer {
     }
   }
 
-  public FailureAnalyzer(ExecutableSequence es) {
+  public FailureSet(ExecutableSequence es) {
     int idx = es.getFailureIndex();
     
     if (idx < 0) {
