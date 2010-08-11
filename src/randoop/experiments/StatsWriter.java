@@ -10,7 +10,7 @@ import plume.Options;
 import plume.UtilMDE;
 import plume.Options.ArgException;
 import randoop.ExecutableSequence;
-import randoop.FailureAnalyzer;
+import randoop.FailureSet;
 
 public class StatsWriter {
 
@@ -80,7 +80,7 @@ public class StatsWriter {
   }
 
   // Keep in synch with read method below.
-  public static void write(FileWriter writer, ExecutableSequence seq, FailureAnalyzer fa) throws IOException {
+  public static void write(FileWriter writer, ExecutableSequence seq, FailureSet fa) throws IOException {
     StringBuilder b = new StringBuilder();
 
     // Number of executed statements ("real" size).
@@ -105,7 +105,7 @@ public class StatsWriter {
     int numclassifications = 0;
 
     if (fa.getFailures().size() > 0) {
-      for (FailureAnalyzer.Failure f : fa.getFailures()) {
+      for (FailureSet.Failure f : fa.getFailures()) {
         classif.append(f.viocls.getSimpleName() + "\n");
         classif.append(f.st + "\n");
         classif.append("0" + "\n"); // Means nothing but keeping for backwards compatibility.
