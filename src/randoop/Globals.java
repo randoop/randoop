@@ -8,6 +8,9 @@ import plume.Option;
 import plume.OptionGroup;
 import plume.Unpublicized;
 
+/**
+ * Various general global variables used throughout Randoop.
+ */
 public class Globals {
 
   public static final String RANDOOP_VERSION = "1.3.1";
