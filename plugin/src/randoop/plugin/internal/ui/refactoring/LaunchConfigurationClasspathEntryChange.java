@@ -16,7 +16,6 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 

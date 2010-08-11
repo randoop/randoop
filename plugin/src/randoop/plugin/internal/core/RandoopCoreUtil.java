@@ -29,10 +29,8 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.debug.ui.IJavaDebugUIConstants;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.core.StatusFactory;
 
 public class RandoopCoreUtil {
   

@@ -1,7 +1,5 @@
 package randoop.plugin.model.resultstree;
 
-import org.eclipse.jface.viewers.TreeViewer;
-
 import randoop.runtime.ErrorRevealed;
 
 /**
