@@ -9,7 +9,7 @@ import java.util.Set;
 import plume.Pair;
 import randoop.AbstractGenerator;
 import randoop.ExecutableSequence;
-import randoop.FailureAnalyzer;
+import randoop.FailureSet;
 import randoop.IEventListener;
 import randoop.ITestFilter;
 import randoop.JunitFileWriter;
@@ -41,13 +41,13 @@ public class PluginBridge implements ITestFilter, IEventListener {
   }
 
   @Override
-  public boolean outputSequence(ExecutableSequence s, FailureAnalyzer f) {
+  public boolean outputSequence(ExecutableSequence s, FailureSet f) {
     
     if (f.getFailures().isEmpty()) {
       return true;
     }
 
-    for (FailureAnalyzer.Failure failure : f.getFailures()) {
+    for (FailureSet.Failure failure : f.getFailures()) {
       if (errors.add(new Pair<StatementKind, Class<?>>(failure.st, failure.viocls))) {
         String description = failure.viocls.toString();
         if (failure.viocls.equals(NoExceptionCheck.class)) {
