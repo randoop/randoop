@@ -6,8 +6,20 @@ package randoop;
  */
 public interface IEventListener {
 
+  /**
+   * Called by the AbstractGenerator immediately before a generation <code>step()</code> is performed.
+   * 
+   *  @see randoop.AbstractGenerator
+   */
   void generationStepPre();
   
+  /**
+   * Called by the AbstractGenerator immediately after a generation <code>step()</code> has completed.
+   *  
+   * @param es
+   * 
+   *  @see randoop.AbstractGenerator
+   */
   void generationStepPost(ExecutableSequence es);
   
   void progressThreadUpdate();
