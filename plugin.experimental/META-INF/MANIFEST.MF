@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Randoop Experiments
+Bundle-SymbolicName: randoop.experimental;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Fragment-Host: randoop;bundle-version="0.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
