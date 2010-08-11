@@ -25,7 +25,7 @@ public class StatementKinds {
    * String.
    * 
    * For more details on the exact form of DESCRIPTION, see the different
-   * classes implementing StatmentKind.
+   * classes implementing StatementKind.
    */
   public static StatementKind parse(String str) throws StatementKindParseException {
     if (str == null || str.length() == 0)
