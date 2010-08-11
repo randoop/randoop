@@ -16,8 +16,8 @@ import org.eclipse.swt.widgets.Text;
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.ui.RandoopMessages;
 import randoop.plugin.internal.ui.options.IOption;
-import randoop.plugin.internal.ui.options.OptionFactory;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
+import randoop.plugin.internal.ui.options.OptionFactory;
 import randoop.plugin.internal.ui.options.ProjectOption;
 
 public class ParametersPage extends OptionWizardPage {

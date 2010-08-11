@@ -1,9 +1,7 @@
 package randoop.plugin.internal.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
-
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
