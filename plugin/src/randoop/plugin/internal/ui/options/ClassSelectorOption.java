@@ -157,8 +157,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
     
   }
-
-
+  
   private static class TreeNode {
     private TreeNode fParent;
     private List<TreeNode> fChildren;
@@ -842,14 +841,43 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    */
   @Override
   public IStatus isValid(ILaunchConfiguration config) {
-    try {
-      new RandoopArgumentCollector(config, getWorkspaceRoot());
-    } catch (JavaModelException e) {
-      return StatusFactory.createErrorStatus(e.getMessage());
-    } catch (AssertionFailedException e) {
-      return StatusFactory.createErrorStatus(e.getMessage().substring(18));
+    List<?> grayedTypesMnemonic = RandoopArgumentCollector.getGrayedTypes(config);
+    List<?> selectedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(config);
+
+    if (selectedTypeMnemonics.isEmpty()) {
+      return StatusFactory.createErrorStatus("No class-input or method-input selected");
     }
 
+    for (Object o : selectedTypeMnemonics) {
+      Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list");
+      String typeMnemonicString = (String) o;
+      
+      TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
+      IType type = typeMnemonic.getType();
+      
+      if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
+        return StatusFactory.createErrorStatus("One of the class-inputs does not exist in the selected project");
+      }
+      
+      if (grayedTypesMnemonic.contains(o)) {
+        List<IMethod> methodList = new ArrayList<IMethod>();
+        
+        List<?> selectedMethods = RandoopArgumentCollector.getCheckedMethods(config, typeMnemonicString);
+        for (Object methodObject : selectedMethods) {
+          String methodMnemonicString = (String) methodObject;
+          
+          IMethod m = new MethodMnemonic(methodMnemonicString).findMethod(type);
+          if (m == null) {
+            return StatusFactory.createErrorStatus("One of the method inputs does not exist");
+          } else if (!m.exists()) {
+            return StatusFactory.createErrorStatus(MessageFormat.format("Mmethod '{0}' does not exist", m.getElementName()));
+          }
+          
+          methodList.add(m);
+        }
+      }
+    }
+    
     return StatusFactory.OK_STATUS;
   }
 
