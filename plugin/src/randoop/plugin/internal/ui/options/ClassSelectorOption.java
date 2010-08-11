@@ -1070,10 +1070,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           if (JavaConventions.validateCompilationUnitName(file.getName(),
               IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
             ICompilationUnit cu = (ICompilationUnit) JavaCore.create(file, fJavaProject);
+            if (!cu.exists()) {
+              cu = JavaCore.createCompilationUnitFrom(file);
+            }
             collectTypes(cu, types);
           } else if (JavaConventions.validateClassFileName(file.getName(),
               IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
             IClassFile cf = (IClassFile) JavaCore.create(file, fJavaProject);
+            if (!cf.exists()) {
+              cf = JavaCore.createClassFileFrom(file);
+            }
             collectTypes(cf, types);
           } else {
             RandoopPlugin.log(StatusFactory.createWarningStatus("Unable to get class files or compilation unit from " + file)); //$NON-NLS-1$
