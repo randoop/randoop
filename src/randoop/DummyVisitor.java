@@ -1,7 +1,7 @@
 package randoop;
 
 
-/** A visitor that does nothing and adds no decorations. */
+/** A visitor that does nothing and adds no checks. */
 public final class DummyVisitor implements ExecutionVisitor {
 
   @Override
