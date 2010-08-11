@@ -1,5 +1,8 @@
 package randoop.plugin.internal.ui.launching;
 
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -12,9 +15,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;

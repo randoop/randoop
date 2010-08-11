@@ -33,9 +33,6 @@ PLUGIN BUGS / FEATURE REQUESTS
 * Randoop generated JUnit files appeared to be uncompilable when
   class-input was used from the default package
   
-* Tree behavior in the class/method selector is not always working
-  as expected. This often happens to classes with only 2 to 3 methods.
-  
 * Sometimes the project does a full build when opening the launch
   dialog. This is very time-consuming.
 

@@ -4,14 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.RGB;
 
-import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.TypeMnemonic;
 
 public class RandoopLaunchConfigurationWizard extends Wizard {

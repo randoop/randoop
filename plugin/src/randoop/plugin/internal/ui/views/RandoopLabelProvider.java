@@ -9,8 +9,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.model.resultstree.FailureKind;
 import randoop.plugin.model.resultstree.FailingMember;
+import randoop.plugin.model.resultstree.FailureKind;
 import randoop.plugin.model.resultstree.Failures;
 import randoop.plugin.model.resultstree.RunResultsTree;
 

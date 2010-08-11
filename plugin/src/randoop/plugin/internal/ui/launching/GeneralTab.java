@@ -10,9 +10,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+
+import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
-import randoop.plugin.internal.ui.options.ClassSelectorOption;
 
 public class GeneralTab extends OptionLaunchConfigurationTab {
   private ProjectOption fProjectOption;
