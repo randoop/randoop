@@ -552,7 +552,9 @@ public final class Reflection {
          if (Log.isLoggingOn()) Log.logLine("Will add members for class " + c.getName());
          // System.out.printf ("using class %s%n", c);
          for (Method m : getMethodsOrdered(c)) {
-           // System.out.printf ("Considering method %s%n", m);
+           if (Log.isLoggingOn()) {
+             Log.logLine(String.format("Considering method %s", m));
+           }
            if (filter.canUse(m)) {
              RMethod mc = RMethod.getRMethod(m);
              statements.add(mc);
