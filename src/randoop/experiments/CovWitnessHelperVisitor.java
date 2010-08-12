@@ -59,13 +59,13 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
     // Nothing to do for initialization.
   }
 
-  public boolean visitAfter(ExecutableSequence sequence, int idx) {
+  public void visitAfter(ExecutableSequence sequence, int idx) {
     
     assert sequence.sequence.size() > 0;
     
     if (sequence.sequence.size() == 1) {
       addWitnessesLength1Seq(sequence.sequence);
-      return true;
+      return;
     }
     
     assert sequence.sequence.size() > 1;
@@ -91,7 +91,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
         System.arraycopy(falseBranches, 0, savedfalses, 0, falseBranches.length);
         falses.put(cls, savedfalses);
       }
-      return true;
+      return;
     }
     
     if (idx == sequence.sequence.size() - 1) {
@@ -140,8 +140,6 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
       }
       
     }
-    
-    return true;
   }
 
   private void addWitnessesLength1Seq(Sequence sequence) {
