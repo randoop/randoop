@@ -28,11 +28,11 @@ public class CustomVisitor implements ExecutionVisitor {
   }
 
   @Override
-  public boolean visitAfter(ExecutableSequence esequence, int i) {
+  public void visitAfter(ExecutableSequence esequence, int i) {
     
     // If sequence has not executed to completion, do nothing.
     if (i < esequence.sequence.size() - 1) {
-      return true;
+      return;
     }
     
     // If we reach here, sequence has executed to completion. Look
@@ -72,7 +72,7 @@ public class CustomVisitor implements ExecutionVisitor {
         }
       }
     }
-    return true;
+    return;
   }
 
   @Override
