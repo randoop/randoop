@@ -7,34 +7,17 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
-import randoop.plugin.internal.ui.RandoopMessages;
 import randoop.plugin.internal.ui.ParametersSWTFactory;
 import randoop.plugin.internal.ui.options.IOption;
-import randoop.plugin.internal.ui.options.OptionFactory;
 
 public class ParametersTab extends OptionLaunchConfigurationTab {
 
@@ -55,7 +38,6 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     RandoopArgumentCollector.restoreMaxTestsPerFile(config);
   }
   
-  @Override
   public void createControl(Composite parent) {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, SWT.HORIZONTAL);
     setControl(comp);
@@ -88,7 +70,6 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     restoreDefaults.setEnabled(true);
   }
 
-  @Override
   public String getName() {
     return "&Parameters";
   }

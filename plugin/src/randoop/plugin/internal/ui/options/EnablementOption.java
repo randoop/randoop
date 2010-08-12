@@ -34,7 +34,6 @@ public abstract class EnablementOption extends Option {
     return fEnablement.getSelection();
   }
 
-  @Override
   public IStatus canSave() {
     if(fEnablement == null || fEnabledOption == null) {
       return StatusFactory.createErrorStatus(EnablementOption.class.getName()
@@ -48,7 +47,6 @@ public abstract class EnablementOption extends Option {
     }
   }
 
-  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     if(fEnablement == null || fEnabledOption == null) {
       return StatusFactory.createErrorStatus(EnablementOption.class.getName()
@@ -62,7 +60,6 @@ public abstract class EnablementOption extends Option {
     }
   }
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
     if (fEnablement != null && fEnabledOption != null) {
       boolean enabled = isEnabled(config);
@@ -72,7 +69,6 @@ public abstract class EnablementOption extends Option {
     }
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fEnablement != null && fEnabledOption != null) {
       boolean enabled = fEnablement.getSelection();
@@ -84,7 +80,6 @@ public abstract class EnablementOption extends Option {
     }
   }
 
-  @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     fEnabledOption.setDefaults(config); 
     setDefaultEnablement(config);

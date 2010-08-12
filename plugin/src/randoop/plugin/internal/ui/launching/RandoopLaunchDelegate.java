@@ -92,7 +92,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     return computeReferencedProjectOrder(javaProject);
   }
   
-  @Override
   public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
     System.out.println("Begin launch"); //$NON-NLS-1$
     
@@ -151,7 +150,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       final MutableBoolean deleteFiles = new MutableBoolean(false);
       
       PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-        @Override
+
         public void run() {
           MessageDialogWithToggle d = new ResourcesListQuestionDialogWithToggle(PlatformUI
               .getWorkbench().getDisplay().getActiveShell(), "Randoop", message, yesNoQuestion,
@@ -183,7 +182,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     final TestGeneratorViewPart viewPart = TestGeneratorViewPart.openInstance();
     viewPart.getSite().getShell().getDisplay().syncExec(new Runnable() {
 
-      @Override
       public void run() {
         viewPart.setActiveTestRunSession(session);
       }
@@ -327,7 +325,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
   private boolean showStatusMessage(final IStatus status) {
     final boolean[] success = new boolean[] { false };
     RandoopPlugin.getDisplay().syncExec(new Runnable() {
-      @Override
+
       public void run() {
         Shell shell = RandoopPlugin.getActiveWorkbenchShell();
         if (shell == null)

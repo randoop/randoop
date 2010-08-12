@@ -9,12 +9,10 @@ public class OptionChangeEvent implements IOptionChangeEvent {
     fValue = value;
   }
 
-  @Override
   public String getValue() {
     return fValue;
   }
 
-  @Override
   public String getAttribute() {
     return fAttribute;
   }

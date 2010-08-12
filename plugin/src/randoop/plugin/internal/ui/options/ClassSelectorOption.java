@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -60,7 +59,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -434,15 +432,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   private class TreeContentProvider implements ITreeContentProvider {
     
-    @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
     
-    @Override
     public void dispose() {
     }
   
-    @Override
     public boolean hasChildren(Object element) {
       TreeNode node = (TreeNode) element;
       if (node.getObject() instanceof TypeMnemonic) {
@@ -458,17 +453,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return node.hasChildren();
     }
   
-    @Override
     public Object getParent(Object element) {
       return ((TreeNode) element).getParent();
     }
     
-    @Override
     public Object[] getElements(Object inputElement) {
       return fTreeInput.getRoots();
     }
   
-    @Override
     public Object[] getChildren(Object parentElement) {
       TreeNode typeNode = (TreeNode) parentElement;
       
@@ -579,6 +571,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeViewer.setSorter(new ViewerSorter());
     
     fTypeTreeViewer.getTree().addKeyListener(new KeyAdapter() {
+      @Override
       public void keyPressed(KeyEvent event) {
         if (event.keyCode == SWT.DEL) {
           removeSelection();
@@ -588,7 +581,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     fTypeTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
       
-      @Override
       public void selectionChanged(SelectionChangedEvent event) {
         ITreeSelection selection = (ITreeSelection) event.getSelection();
 
@@ -607,13 +599,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     fTypeTreeViewer.setCheckStateProvider(new ICheckStateProvider() {
 
-      @Override
       public boolean isChecked(Object element) {
         TreeNode node = ((TreeNode) element);
         return node.isChecked();
       }
 
-      @Override
       public boolean isGrayed(Object element) {
         TreeNode node = ((TreeNode) element);
         return node.isGrayed();
@@ -623,7 +613,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     fTypeTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
-      @Override
       public void checkStateChanged(CheckStateChangedEvent event) {
         TreeNode node = (TreeNode) event.getElement();
         node.setGrayed(false);
@@ -836,7 +825,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
   }
   
-  @Override
   public IStatus canSave() {
     if (fRunnableContext == null || fShell == null || fTypeTreeViewer == null || fTreeInput == null
         || fClassAddFromSources == null || fClassAddFromClasspaths == null || fSelectAll == null
@@ -857,7 +845,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    * @param selectedMethods 
    * @return
    */
-  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     List<?> grayedTypesMnemonic = RandoopArgumentCollector.getGrayedTypes(config);
     List<?> selectedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(config);
@@ -899,7 +886,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return StatusFactory.OK_STATUS;
   }
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
     fTreeInput = new TreeInput();
     fTypeTreeViewer.setInput(fTreeInput);
@@ -951,7 +937,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeViewer.refresh();
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     // Ugly hack to determine if the apply button was pressed.
     // boolean applyPressed = false;
@@ -1017,7 +1002,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeViewer.refresh();
   }
   
-  @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     writeDefaults(config);
   }
@@ -1064,7 +1048,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       fIgnoreJUnit = ignoreJUnit;
     }
 
-    @Override
     public boolean encloses(String resourcePath) {
       if (fSearchScope.encloses(resourcePath)) {
         IWorkspaceRoot root = getWorkspaceRoot();
@@ -1188,7 +1171,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       }
     }
     
-    @Override
     public boolean encloses(IJavaElement element) {
       if (fSearchScope.encloses(element)) {
         if (element instanceof IType) {
@@ -1199,31 +1181,26 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return false;
     }
     
-    @Override
     public IPath[] enclosingProjectsAndJars() {
       return fSearchScope.enclosingProjectsAndJars();
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public boolean includesBinaries() {
       return fSearchScope.includesBinaries();
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public boolean includesClasspaths() {
       return fSearchScope.includesClasspaths();
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public void setIncludesBinaries(boolean includesBinaries) {
       fSearchScope.setIncludesBinaries(includesBinaries);
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public void setIncludesClasspaths(boolean includesClasspaths) {
       fSearchScope.setIncludesClasspaths(includesClasspaths);
     }
@@ -1250,7 +1227,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     private class RandoopClassInputFilterExtension implements ITypeInfoFilterExtension {
 
-      @Override
       public boolean select(ITypeInfoRequestor typeInfoRequestor) {
         int flags = typeInfoRequestor.getModifiers();
         if (Flags.isInterface(flags) || Flags.isAbstract(flags)) {
@@ -1263,7 +1239,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     private class RandoopClassInputSelectionStatusValidator implements ISelectionStatusValidator {
 
-      @Override
       public IStatus validate(Object[] selection) {
         for (Object obj : selection) {
           try {
@@ -1290,7 +1265,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
   }
   
-  @Override
   public void handleEvent(IOptionChangeEvent event) {
     if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
       fJavaProject = RandoopCoreUtil.getProjectFromName(event.getValue());
@@ -1421,7 +1395,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return ResourcesPlugin.getWorkspace().getRoot();
   }
 
-  @Override
   public void restoreDefaults() {
     if (fTreeInput != null) {
       fTreeInput.removeAll();

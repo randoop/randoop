@@ -18,7 +18,6 @@ public class RunResultsTree implements IRandoopTreeElement {
     f.owner = this;
   }
 
-  @Override
   public IRandoopTreeElement[] getChildren() {
     if (failures.getChildren().length == 0) {
       return new IRandoopTreeElement[0];
@@ -27,7 +26,6 @@ public class RunResultsTree implements IRandoopTreeElement {
     }
   }
 
-  @Override
   public IRandoopTreeElement getParent() {
     return null;
   }

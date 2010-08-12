@@ -53,7 +53,6 @@ public class ProjectOption extends Option {
     fProjectText = projectText;
     fProjectText.addModifyListener(new ModifyListener() {
       
-      @Override
       public void modifyText(ModifyEvent e) {
         String projectName = fProjectText.getText();
         
@@ -117,7 +116,6 @@ public class ProjectOption extends Option {
     fSourceFolderBrowseButton.setEnabled(true);
   }
 
-  @Override
   public IStatus canSave() {
     if (fOutputSourceFolderText == null || fSourceFolderBrowseButton == null) {
       return StatusFactory.ERROR_STATUS;
@@ -126,7 +124,6 @@ public class ProjectOption extends Option {
     return StatusFactory.OK_STATUS;
   }
 
-  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     String projectName = RandoopArgumentCollector.getProjectName(config);
     String outputSourceFolderName = RandoopArgumentCollector.getOutputDirectoryName(config);
@@ -192,7 +189,6 @@ public class ProjectOption extends Option {
     return StatusFactory.OK_STATUS;
   }
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
     if (fProjectText != null) {
       String projectName = RandoopArgumentCollector.getProjectName(config);
@@ -216,8 +212,6 @@ public class ProjectOption extends Option {
     }
   }
   
-  // expects ILaunchConfigurationWorkingCopy
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fProjectText != null)
       RandoopArgumentCollector.setProjectName(config, fProjectText.getText());
@@ -228,7 +222,6 @@ public class ProjectOption extends Option {
       RandoopArgumentCollector.setOutputDirectoryName(config, fOutputSourceFolderText.getText());
   }
 
-  @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     writeDefaults(config);
   }
@@ -369,7 +362,6 @@ public class ProjectOption extends Option {
     return fShell;
   }
 
-  @Override
   public void restoreDefaults() {
     if (fProjectText != null) {
       fProjectText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
@@ -386,4 +378,5 @@ public class ProjectOption extends Option {
       }
     }
   }
+  
 }
