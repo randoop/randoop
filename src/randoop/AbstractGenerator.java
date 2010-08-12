@@ -69,36 +69,71 @@ public abstract class AbstractGenerator {
   public List<StatementKind> statements;
   
   /**
-   * 
+   * Container for execution visitors used during execution of sequences. 
    */
   public final MultiVisitor executionVisitor;
-  
+
+  /**
+   * Component manager responsible for storing previously-generated sequences.
+   */
   public ComponentManager componentManager;
+  
+  /**
+   * Customizable stopping criterion in addition to time and sequence limits.
+   */
   private IStopper stopper;
   
-  // Can be null.
+  /**
+   * Manages notifications for listeners.
+   * 
+   * @see randoop.IEventLister.
+   */
   public RandoopListenerManager listenerMgr;
   
+  /**
+   * Updates the progress display message printed to the console.
+   */
   private ProgressDisplay progressDisplay;
   
+  /**
+   * This field is set by Randoop to point to the sequence currently being executed.
+   * In the event that Randoop appears to hang, this sequence is printed out to console
+   * to help the user debug the cause of the hanging behavior.
+   */
   public static Sequence currSeq = null;
   
+  /**
+   * The list of final sequences that are printed out as JUnit tests (i.e. Randoop's output). 
+   */
   public List<ExecutableSequence> outSeqs = new ArrayList<ExecutableSequence>();
 
+  /**
+   * A list of filters that can be installed to help determine if a sequence
+   * should be added to the final sequence list outSeqs.
+   */
   public List<ITestFilter> outputTestFilters;
   
  
   /**
-   * @param statements
-   * @param timeMillis
-   * @param maxSequences
-   * @param componentManager
-   * @param stopper
-   * @param listenerManager
-   * @param fs
+   * Constructs a generator with the given parameters.
+   * 
+   * @param statements Statements (e.g. methods and constructors) used to create sequences. Cannot be null.
+   * 
+   * @param timeMillis maximum time to spend in generation. Must be non-negative.
+   * 
+   * @param maxSequences maximum number of sequences to generate. Must be non-negative.
+   * 
+   * @param componentManager component manager to use to store sequences during component-based generation.
+   *        Can be null, in which case the generator's component manager is initialized as <code>new ComponentManager()</code>.
+   *        
+   * @param stopper Optional, additional stopping criterion for the generator. Can be null.
+   * 
+   * @param listenerManager Manager that stores and calls any listeners to use during generation. Can be null.
+   *  
+   * @param testfilters List of filters to determine which sequences to output. Can be null or empty.
    */
   public AbstractGenerator(List<StatementKind> statements, long timeMillis, int maxSequences, ComponentManager componentManager,
-      IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> fs) {
+      IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> testfilters) {
     assert statements != null;
 
     this.maxTimeMillis = timeMillis;
@@ -120,10 +155,10 @@ public abstract class AbstractGenerator {
     this.listenerMgr = listenerManager;
     
     outputTestFilters = new LinkedList<ITestFilter>();
-    if (fs == null || fs.isEmpty()) {
+    if (testfilters == null || testfilters.isEmpty()) {
       outputTestFilters.add(new DefaultTestFilter());
     } else {
-      outputTestFilters.addAll(fs);
+      outputTestFilters.addAll(testfilters);
     }
   }
 
@@ -189,7 +224,7 @@ public abstract class AbstractGenerator {
         
         num_sequences_generated++;
 
-        FailureAnalyzer fa = new FailureAnalyzer(eSeq);
+        FailureSet fa = new FailureSet(eSeq);
         
         if (fa.getFailures().size() > 0) {
           num_failing_sequences++;

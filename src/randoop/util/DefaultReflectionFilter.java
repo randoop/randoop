@@ -20,8 +20,6 @@ public class DefaultReflectionFilter implements ReflectionFilter {
 
   private Pattern omitmethods = null;
 
-  private static final boolean VERBOSE= false;
-
   /** omitmethods can be null (which means "omit no methods") */
   public DefaultReflectionFilter(Pattern omitmethods) {
     super();
@@ -41,41 +39,51 @@ public class DefaultReflectionFilter implements ReflectionFilter {
         && paramTypes.length == 1
         && paramTypes[0].isArray()
         && paramTypes[0].getComponentType().equals(String.class)) {
-      if (VERBOSE) {
-        System.out.println("Will not use: " + m.toString());
-        System.out.println("  reason: main method not applicable to unit testing.");
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: main method not applicable to unit testing.");
       }
       return false;
     }
 
     if (matchesOmitMethodPattern(m.toString())) {
-      if (VERBOSE) {
-        System.out.println("Will not use: " + m.toString());
-        System.out.println("  reason: matches regexp specified in -omitmethods option.");
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: matches regexp specified in -omitmethods option.");
       }
       return false;
     }
 
     if (m.isBridge()) {
-      if (VERBOSE) {
-        System.out.println("Will not use: " + m.toString());
-        System.out.println("  reason: it's a bridge method");
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: it's a bridge method");
       }
       return false;
     }
 
     if (m.isSynthetic()) {
-      if (VERBOSE) {
-        System.out.println("Will not use: " + m.toString());
-        System.out.println("  reason: it's a synthetic method");
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: it's a synthetic method");
       }
       return false;
     }
 
-    if (!Reflection.isVisible(m.getModifiers()))
+    if (!Reflection.isVisible(m.getModifiers())) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: randoop.util.Reflection.isVisible(int modifiers) returned false ");
+      }
       return false;
-    if (!Reflection.isVisible(m.getReturnType()))
+    }
+    if (!Reflection.isVisible(m.getReturnType())) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: randoop.util.Reflection.isVisible(Class<?> cls) returned false for method's return type");
+      }
       return false;
+    }
 
     // TODO we could enable some methods from Object, like getClass
     if (m.getDeclaringClass().equals(java.lang.Object.class))
@@ -90,9 +98,9 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     
     String reason = doNotUseSpecialCase(m);
     if (reason != null) {
-      if (VERBOSE) {
-        System.out.println("Will not use: " + m.toString());
-        System.out.println("  reason: " + reason);
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: " + reason);
       }
       return false;
     }
@@ -154,7 +162,9 @@ public class DefaultReflectionFilter implements ReflectionFilter {
   public boolean canUse(Constructor<?> c) {
 
     if (matchesOmitMethodPattern(c.toString())) {
-      System.out.println("Will not use: " + c.toString());
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + c.toString());
+      }
       return false;
     }
 
@@ -167,9 +177,14 @@ public class DefaultReflectionFilter implements ReflectionFilter {
   }
 
   private boolean matchesOmitMethodPattern(String name) {
-    // System.out.printf ("Comparing '%s' against pattern '%s' = %b%n", name,
-    //                   omitmethods, omitmethods.matcher(name).find());
-    return omitmethods != null && omitmethods.matcher(name).find();
+     if (omitmethods == null) {
+       return false;
+     }
+     if (Log.isLoggingOn()) {
+       Log.logLine (String.format("Comparing '%s' against pattern '%s' = %b%n", name,
+                    omitmethods, omitmethods.matcher(name).find()));
+     }
+    return omitmethods.matcher(name).find();
   }
 
 }

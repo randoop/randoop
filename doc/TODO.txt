@@ -11,9 +11,6 @@ larger potential projects.
 
 assertions not tested for when forbidnull==false
 
-are we removing checkrep methods from statements? (we should)
-
-
 * Reinstate HTML validation for manual pages. Perhaps
 
   http://www.w3.org/QA/Tools/LogValidator/

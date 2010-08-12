@@ -70,10 +70,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
-
-temp: randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string
-
+randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -271,6 +268,24 @@ randoop-long-string: bin
 	  java  -cp .:$(CLASSPATH) LongString
 	cp systemtests/randoop-scratch/LongString0.java \
 	  systemtests/resources/LongString0.java
+
+# Tests that Randoop does not create tests for methods that return non-public types, as this would
+# lead to non-compilable tests.
+randoop-visibility: bin
+	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Visibility.java
+	rm -rf systemtests/randoop-scratch
+	mkdir systemtests/randoop-scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	  randoop.main.Main gentests \
+	   --output-tests=all \
+	   --timelimit=2 \
+	   --testclass=examples.Visibility \
+	   --junit-classname=VisibilityTest \
+	   --junit-output-dir=systemtests/randoop-scratch \
+	   --log=systemtests/log.txt
+	cd systemtests/randoop-scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) VisibilityTest.java
+
 
 # Performance tests. Removed from Randoop tests because results highly dependent on machine that
 # tests are run, resulting in many false positives.
