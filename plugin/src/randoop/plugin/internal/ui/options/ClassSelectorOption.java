@@ -113,6 +113,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private ITreeContentProvider fTypeTreeContentProvider;
   
   private Button fClassAddFromSources;
+  private Button fClassAddFromSystemLibraries;
   private Button fClassAddFromClasspaths;
   private Button fResolveClasses;
   private Button fSelectAll;
@@ -646,6 +647,17 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       }
     });
     fClassAddFromSources.addSelectionListener(listener);
+    
+    fClassAddFromSystemLibraries = SWTFactory.createPushButton(rightcomp, "System Libraries...", null);
+    fClassAddFromSystemLibraries.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        IJavaElement[] elements = { fJavaProject };
+        IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements, IJavaSearchScope.SYSTEM_LIBRARIES);
+        handleSearchButtonSelected(searchScope);
+      }
+    });
+    fClassAddFromSystemLibraries.addSelectionListener(listener);
     
     fClassAddFromClasspaths = SWTFactory.createPushButton(rightcomp, "Referenced Classpat&hs...", null);
     fClassAddFromClasspaths.addSelectionListener(new SelectionAdapter() {
