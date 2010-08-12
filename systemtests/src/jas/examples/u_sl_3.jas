@@ -1,0 +1,11 @@
+# solvable polynomials in U(sl_3):
+#(a,x,y) L
+#RelationTable
+#(
+# ( y ), ( x ), ( x y + a )
+#)
+
+#(
+# ( y**3 + x**2 y + x y ),
+# ( x**2 + x )
+#)

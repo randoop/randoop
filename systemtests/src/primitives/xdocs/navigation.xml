@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   Copyright 2003-2004 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<!DOCTYPE org.apache.commons.menus SYSTEM '../../commons-build/menus/menus.dtd'>
+<project name="Primitives">
+  <title>Primitives</title>
+  <organizationLogo href="/images/jakarta-logo-blue.gif">Jakarta</organizationLogo>
+  <body> 
+    <links>
+      <item name="Jakarta Commons" href="http://jakarta.apache.org/commons/"/>
+    </links>
+
+    <menu name="Commons Primitives">
+      <item name="Overview" href="/index.html"/>
+      <item name="FAQ" href="/faq.html"/>
+      <item name="Javadoc" href="apidocs/index.html"/>
+      <item name="Mailing lists" href="/mail-lists.html"/>
+      <item name="Team" href="/team-list.html"/>
+      <item name="CVS" href="http://cvs.apache.org/viewcvs/jakarta-commons/primitives/"/>
+    </menu>
+    &common-menus;
+  </body>
+</project>

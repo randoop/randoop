@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+   Copyright 2003-2004 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<document>
+<properties>
+<title>Commons Primitives: Changes</title>
+<author email="commons-dev@jakarta.apache.org">Commons Documentation Team</author>
+</properties>
+<body>
+
+  <release version="1.1" date="in CVS">
+
+    <action dev="rwaldhoff" type="add">
+      Add BooleanXxx adapters.
+    </action>              
+
+    <action dev="akarasulu" type="add">
+      Add XxxStack collections. 
+    </action>              
+   
+    <action dev="akarasulu" type="add">
+      Add BooleanXxx collections. 
+    </action>              
+    
+    <action dev="rwaldhoff" type="add">
+      Add convenience methods for constructing adapters in
+      org.apache.commons.collections.primitives.adapters.Adapt, allowing 
+      calls like Adapt.toList(primitiveList), etc.      
+    </action>              
+    
+    <action dev="rwaldhoff" type="update">
+      Override clear() in ArrayXxxList for better performance.
+    </action>              
+    
+  </release>
+
+  <release version="1.0" date="2003-11-05">
+    <action dev="rwaldhoff" type="add">
+      Initial release, containing types initially developed (and unofficially released) as part of
+      the Jakarta Commons Collections component.
+    </action>              
+  </release>
+  
+</body>
+</document>
+
+
+
+
+
+
