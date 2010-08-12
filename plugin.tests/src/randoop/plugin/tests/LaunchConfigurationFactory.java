@@ -33,7 +33,7 @@ public class LaunchConfigurationFactory {
     ILaunchConfigurationType randoopType = launchManager
         .getLaunchConfigurationType(IRandoopLaunchConfigurationConstants.ID_RANDOOP_TEST_GENERATION);
 
-    return randoopType.newInstance(null, launchManager.generateLaunchConfigurationName(name));
+    return randoopType.newInstance(null, launchManager.generateUniqueLaunchConfigurationNameFrom(name));
   }
 
   public static ILaunchConfigurationWorkingCopy createConfig(IJavaProject javaProject, String name, int max, boolean useSource, boolean useBinary) throws CoreException {
