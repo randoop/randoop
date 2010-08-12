@@ -18,19 +18,14 @@ public class ReplayVisitor implements ExecutionVisitor {
   }
   
   @Override
-  public boolean visitAfter(ExecutableSequence es, int i) {
+  public void visitAfter(ExecutableSequence es, int i) {
     if (!es.hasChecks(i)) {
-      return true; // No checks here; nothing to do.
+      return; // No checks here; nothing to do.
     }
-    boolean failure = false;
     for (Check c : es.getChecks(i)) {
       boolean checkResult = c.evaluate(es.executionResults);
       es.checksResults.get(i).add(checkResult);
-      if (!checkResult) {
-        failure = true;
-      }
     }
-    return failure;
   }
 
   @Override

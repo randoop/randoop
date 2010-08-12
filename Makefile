@@ -70,7 +70,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility
+randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -285,6 +285,27 @@ randoop-visibility: bin
 	   --log=systemtests/log.txt
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) VisibilityTest.java
+
+# Ensure that no output goes to console if user specifies --noprogressdisplay.
+# This is important for plugin, since console output results in a Console window
+# popping up during Randoop run.
+#
+# Test only checks for no output on the happy (no errors) path.
+randoop-no-output: bin
+	rm -rf systemtests/randoop-scratch
+	mkdir systemtests/randoop-scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	  randoop.main.Main gentests \
+	   --output-tests=all \
+	   --timelimit=1 \
+	   --testclass=java.util.LinkedList \
+	   --junit-classname=NoOutputTest \
+	   --junit-output-dir=systemtests/randoop-scratch \
+	   --log=systemtests/log.txt \
+	   --noprogressdisplay \
+	   > systemtests/randoop-scratch/stdout.txt 2> systemtests/randoop-scratch/stderr.txt
+	cp $(RANDOOP_HOME)/systemtests/randoop-scratch/stdout.txt $(RANDOOP_HOME)/systemtests/resources
+	cp $(RANDOOP_HOME)/systemtests/randoop-scratch/stderr.txt $(RANDOOP_HOME)/systemtests/resources
 
 
 # Performance tests. Removed from Randoop tests because results highly dependent on machine that
