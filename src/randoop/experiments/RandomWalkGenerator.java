@@ -215,8 +215,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
       assert sequence.getStatementKind(i) instanceof PrimitiveOrStringOrNullDecl;
       executionVisitor.visitBefore(eseq, i);
       ExecutableSequence.executeStatement(sequence, exec, i, new Object[0]);
-      boolean b = executionVisitor.visitAfter(eseq, i);
-      assert b == true;
+      executionVisitor.visitAfter(eseq, i);
       normals++;
     }
 

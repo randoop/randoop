@@ -121,18 +121,18 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     }
   }
 
-  public boolean visitAfter(ExecutableSequence s, int idx) {
+  public void visitAfter(ExecutableSequence s, int idx) {
 
     // We're only interested in statements at the end.
     if (idx < (s.sequence.size()-1))
-      return true;
+      return;
 
     if (s.hasFailure(idx)) {
-      return true;
+      return;
     }
 
     if (s.hasNonExecutedStatements()) {
-      return true;
+      return;
     }
 
     // Capture checks for each value created.
@@ -266,7 +266,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         assert false : "Randoop should not have gotten here (bug in Randoop)";
       }
     }
-    return true;
+    return;
   }
 
   public void visitBefore(ExecutableSequence sequence, int i) {

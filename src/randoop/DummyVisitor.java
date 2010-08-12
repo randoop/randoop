@@ -13,9 +13,8 @@ public final class DummyVisitor implements ExecutionVisitor {
     // do nothing.
   }
 
-  public boolean visitAfter(ExecutableSequence sequence, int i) {
+  public void visitAfter(ExecutableSequence sequence, int i) {
     // do nothing.
-    return true;
   }
 
 }
