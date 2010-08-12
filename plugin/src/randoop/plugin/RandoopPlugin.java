@@ -3,6 +3,7 @@ package randoop.plugin;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -16,6 +17,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
 
 /**
@@ -30,9 +32,9 @@ public class RandoopPlugin extends AbstractUIPlugin {
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
 
   // TODO: Use archives when building update site
-  // private static final IPath RANDOOP_JAR = new Path("/randoop.jar"); //$NON-NLS-1$
+  private static final IPath RANDOOP_JAR = new Path("/randoop.jar"); //$NON-NLS-1$
 
-  private static final IPath RANDOOP_JAR = new Path("../bin/"); //$NON-NLS-1$
+  // private static final IPath RANDOOP_JAR = new Path("../bin/"); //$NON-NLS-1$
 
   private static final IPath PLUME_JAR = new Path("/plume.jar"); //$NON-NLS-1$
 
@@ -194,9 +196,14 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * 
    * @return full path to randoop.jar, or <code>null</code> if no the
    *         <code>IPath</code> could not be created
+   * @throws CoreException 
    */
-  public static IPath getRandoopJar() {
-    return getFullPath(RANDOOP_JAR);
+  public static IPath getRandoopJar() throws CoreException {
+    try {
+      return getFullPath(RANDOOP_JAR);
+    } catch (IOException e) {
+      throw new CoreException(StatusFactory.NO_LOCAL_RANDOOPJAR_ERROR.getStatus(e));
+    }
   }
 
   /**
@@ -204,9 +211,14 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * 
    * @return full path to plume.jar, or <code>null</code> if no the
    *         <code>IPath</code> could not be created
+   * @throws CoreException 
    */
-  public static IPath getPlumeJar() {
-    return getFullPath(PLUME_JAR);
+  public static IPath getPlumeJar() throws CoreException {
+    try {
+      return getFullPath(PLUME_JAR);
+    } catch (IOException e) {
+      throw new CoreException(StatusFactory.NO_LOCAL_PLUMEJAR_ERROR.getStatus(e));
+    }
   }
 
   /**
@@ -214,14 +226,11 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * 
    * @return local path to the , or <code>null</code> if no the
    *         <code>IPath</code> could not be created
+   * @throws CoreException 
    */
-  private static IPath getFullPath(IPath localPath) {
+  private static IPath getFullPath(IPath localPath) throws IOException {
     URL url = FileLocator.find(getDefault().getBundle(), localPath, null);
-    try {
-      url = FileLocator.toFileURL(url);
-    } catch (IOException e) {
-      return null;
-    }
+    url = FileLocator.toFileURL(url);
     return new Path(url.getPath());
   }
 

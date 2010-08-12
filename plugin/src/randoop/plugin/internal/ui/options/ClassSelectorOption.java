@@ -1070,14 +1070,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           if (JavaConventions.validateCompilationUnitName(file.getName(),
               IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
             ICompilationUnit cu = (ICompilationUnit) JavaCore.create(file, fJavaProject);
-            if (!cu.exists()) {
+            if (cu == null || !cu.exists()) {
               cu = JavaCore.createCompilationUnitFrom(file);
             }
             collectTypes(cu, types);
           } else if (JavaConventions.validateClassFileName(file.getName(),
               IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
             IClassFile cf = (IClassFile) JavaCore.create(file, fJavaProject);
-            if (!cf.exists()) {
+            if (cf == null || !cf.exists()) {
               cf = JavaCore.createClassFileFrom(file);
             }
             collectTypes(cf, types);
