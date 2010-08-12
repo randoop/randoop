@@ -42,13 +42,10 @@ public class MultiVisitor implements ExecutionVisitor {
     this.visitors.addAll(visitors);
   }
 
-  public boolean visitAfter(ExecutableSequence sequence, int i) {
+  public void visitAfter(ExecutableSequence sequence, int i) {
     for (ExecutionVisitor visitor : visitors) {
-      boolean ret = visitor.visitAfter(sequence, i);
-      if (ret == false)
-        return false;
+      visitor.visitAfter(sequence, i);
     }
-    return true;
   }
 
   public void visitBefore(ExecutableSequence sequence, int i) {
