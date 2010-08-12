@@ -7,7 +7,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 public class RandoopLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-  @Override
   public void createTabs(ILaunchConfigurationDialog dialog, String mod) {
     // The following tabs may need to be used in future revisions:
     // JavaClasspathTab, JavaJRETab, EnvironmentTab

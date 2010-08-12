@@ -27,7 +27,6 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     ClassSelectorOption.writeDefaults(config);
   }
 
-  @Override
   public void createControl(Composite parent) {
     Composite tabcomp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(tabcomp);
@@ -75,7 +74,6 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     fullyQualifiedTestName.addModifyListener(getBasicModifyListener());
   }
 
-  @Override
   public String getName() {
     return "&General";
   }

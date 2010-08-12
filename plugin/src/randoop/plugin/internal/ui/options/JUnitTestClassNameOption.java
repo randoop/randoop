@@ -31,7 +31,6 @@ public class JUnitTestClassNameOption extends Option {
     fFullyQualifiedTestName = null;
   }
 
-  @Override
   public IStatus canSave() {
     if (fFullyQualifiedTestName != null && fPackageName == null && fClassName == null) {
       // fFullyQualifiedTestName can be null if fPackageName and fClassName are not null
@@ -52,7 +51,6 @@ public class JUnitTestClassNameOption extends Option {
     }
   }
 
-  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     String packageName = RandoopArgumentCollector.getJUnitPackageName(config);
     String className = RandoopArgumentCollector.getJUnitClassName(config);
@@ -88,7 +86,6 @@ public class JUnitTestClassNameOption extends Option {
     }
   }
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
     if (fFullyQualifiedTestName != null) {
       String packageName = RandoopArgumentCollector.getJUnitPackageName(config);
@@ -105,7 +102,6 @@ public class JUnitTestClassNameOption extends Option {
     }
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fFullyQualifiedTestName != null) {
       String fqname = fFullyQualifiedTestName.getText();
@@ -120,7 +116,6 @@ public class JUnitTestClassNameOption extends Option {
     }
   }
 
-  @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     writeDefaults(config);
   }
@@ -130,7 +125,6 @@ public class JUnitTestClassNameOption extends Option {
     RandoopArgumentCollector.restoreJUnitClassName(config);
   }
 
-  @Override
   public void restoreDefaults() {
     String packageName = IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME;
     String className = IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME;

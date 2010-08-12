@@ -76,7 +76,6 @@ public class OptionFactory {
       setInvalidIntErrorMessage("Random Seed is not a valid integer");
     }
 
-    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreRandomSeed(config);
     }
@@ -91,7 +90,6 @@ public class OptionFactory {
       RandoopArgumentCollector.setRandomSeed(config, value);
     }
 
-    @Override
     public void restoreDefaults() {
       fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
     }
@@ -106,7 +104,7 @@ public class OptionFactory {
       setInvalidIntErrorMessage("Maximum Test Size is not a valid integer");
     }
 
-    @Override
+    
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreMaxTestSize(config);
     }
@@ -121,7 +119,7 @@ public class OptionFactory {
       RandoopArgumentCollector.setMaxTestSize(config, value);    
     }
     
-    @Override
+    
     public void restoreDefaults() {
       fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TEST_SIZE);
     }
@@ -139,7 +137,6 @@ public class OptionFactory {
       RandoopArgumentCollector.restoreUseThreads(config);
     }
     
-    @Override
     public void restoreDefaults() {
       fEnablement.setSelection(Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
       fEnabledOption.restoreDefaults();
@@ -165,7 +162,6 @@ public class OptionFactory {
       setInvalidIntErrorMessage("Thread Timeout is not a valid integer");
     }
 
-    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreThreadTimeout(config);
     }
@@ -180,12 +176,10 @@ public class OptionFactory {
       return RandoopArgumentCollector.getThreadTimeout(config);
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
       fText.setEnabled(enabled);
     }
     
-    @Override
     public void restoreDefaults() {
       fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_THREAD_TIMEOUT);
     }
@@ -203,7 +197,6 @@ public class OptionFactory {
       RandoopArgumentCollector.restoreUseNull(config);
     }
     
-    @Override
     public void restoreDefaults() {
       fEnablement.setSelection(Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
       fEnabledOption.restoreDefaults();
@@ -228,7 +221,6 @@ public class OptionFactory {
       setInvalidDoubleErrorMsg("Null Ratio is not a valid number");
     }
 
-    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreNullRatio(config);
     }
@@ -243,12 +235,10 @@ public class OptionFactory {
       RandoopArgumentCollector.setNullRatio(config, value);
     }
 
-    @Override
     public void setEnabled(boolean enabled) {
       fText.setEnabled(enabled);
     }
     
-    @Override
     public void restoreDefaults() {
       fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
     }
@@ -263,7 +253,6 @@ public class OptionFactory {
       setInvalidIntErrorMessage("JUnit Test Inputs is not a valid integer");
     }
 
-    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreInputLimit(config);
     }
@@ -278,7 +267,6 @@ public class OptionFactory {
       return RandoopArgumentCollector.getInputLimit(config);
     }
     
-    @Override
     public void restoreDefaults() {
       fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
     }
@@ -292,7 +280,7 @@ public class OptionFactory {
       fConvertedTimeLimit = convertedTime;
       
       fText.addModifyListener(new ModifyListener() {
-        @Override
+        
         public void modifyText(ModifyEvent e) {
           setConvertedTime();
         }
@@ -302,7 +290,6 @@ public class OptionFactory {
       setInvalidIntErrorMessage("Time Limit is not a valid integer");
     }
 
-    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreTimeLimit(config);
     }
@@ -317,7 +304,6 @@ public class OptionFactory {
       return RandoopArgumentCollector.getTimeLimit(config);
     }
     
-    @Override
     public void restoreDefaults() {
       fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
     }
@@ -376,7 +362,6 @@ public class OptionFactory {
       super(testKinds);
     }
 
-    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreTestKinds(config);
     }
@@ -410,7 +395,6 @@ public class OptionFactory {
       return TestKinds.getTestKind(fCombo.getSelectionIndex()).getArgumentName();
     }
 
-    @Override
     public void restoreDefaults() {
       int commandId = Integer.parseInt(IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
       fCombo.select(commandId);
@@ -426,7 +410,6 @@ public class OptionFactory {
       setInvalidIntErrorMessage("Maximum Tests Written is not a valid integer");
     }
 
-    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreMaxTestsWritten(config);
     }
@@ -441,7 +424,6 @@ public class OptionFactory {
       return RandoopArgumentCollector.getMaxTestsWritten(config);
     }
     
-    @Override
     public void restoreDefaults() {
       fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_WRITTEN);
     }
@@ -455,7 +437,6 @@ public class OptionFactory {
       setInvalidIntErrorMessage("Maximum Tests Per File is not a valid integer");
     }
 
-    @Override
     public void setDefaults(ILaunchConfigurationWorkingCopy config) {
       RandoopArgumentCollector.restoreMaxTestsPerFile(config);
     }
@@ -470,7 +451,6 @@ public class OptionFactory {
       return RandoopArgumentCollector.getMaxTestsPerFile(config);
     }
     
-    @Override
     public void restoreDefaults() {
       fText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
     }

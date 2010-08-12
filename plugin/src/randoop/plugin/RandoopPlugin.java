@@ -21,7 +21,6 @@ import org.osgi.framework.BundleContext;
 
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
-import randoop.plugin.internal.ui.MessageUtil;
 
 /**
  * The activator class controls the plug-in life cycle. It stores a shared

@@ -14,7 +14,6 @@ public abstract class TextOption extends Option {
     fText = text;
   }
   
-  @Override
   public IStatus canSave() {
     if (fText == null) {
       return StatusFactory.createErrorStatus(PositiveIntegerOption.class.getName()
@@ -29,20 +28,17 @@ public abstract class TextOption extends Option {
     }
   }
 
-  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     return validate(getValue(config));
   }
   
   protected abstract IStatus validate(String text);
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
     if (fText != null)
       fText.setText(getValue(config));
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fText != null)
       setValue(config, fText.getText());
@@ -51,4 +47,5 @@ public abstract class TextOption extends Option {
   protected abstract String getValue(ILaunchConfiguration config);
   
   protected abstract void setValue(ILaunchConfigurationWorkingCopy config, String value);
+  
 }

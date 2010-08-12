@@ -20,7 +20,6 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
   
   private ModifyListener fBasicModifyListener = new ModifyListener() {
     
-    @Override
     public void modifyText(ModifyEvent e) {
       setErrorMessage(null);
       updateLaunchConfigurationDialog();
@@ -29,13 +28,11 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
   
   private SelectionListener fBasicSelectionListener = new SelectionListener() {
 
-    @Override
     public void widgetSelected(SelectionEvent e) {
       setErrorMessage(null);
       updateLaunchConfigurationDialog();
     }
     
-    @Override
     public void widgetDefaultSelected(SelectionEvent e) {
     }
   };
@@ -122,21 +119,18 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     return false;
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     for (IOption option : fOptions) {
       option.performApply(config);
     }
   }
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
     for (IOption option : fOptions) {
       option.initializeFrom(config);
     }
   }
 
-  @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     for (IOption option : fOptions) {
       option.setDefaults(config);

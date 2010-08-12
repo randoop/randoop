@@ -17,25 +17,25 @@ import org.eclipse.swt.widgets.Composite;
 import randoop.plugin.internal.ui.options.IOption;
 
 public abstract class OptionWizardPage extends WizardPage {
+  
   private List<IOption> fOptions;
   
   private ILaunchConfigurationWorkingCopy fConfig;
 
   private ModifyListener fBasicModifyListener = new ModifyListener() {
-    @Override
+
     public void modifyText(ModifyEvent e) {
       update();
     }
   };
 
   private SelectionListener fBasicSelectionListener = new SelectionListener() {
-    @Override
+
     public void widgetSelected(SelectionEvent e) {
       setErrorMessage(null);
       update();
     }
 
-    @Override
     public void widgetDefaultSelected(SelectionEvent e) {
       setErrorMessage(null);
       update();
@@ -65,20 +65,19 @@ public abstract class OptionWizardPage extends WizardPage {
       option.restoreDefaults();
     }
   }
+
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    for (IOption option : fOptions) {
+      option.setDefaults(config);
+    }
+  }
+
+  public void initializeFrom(ILaunchConfiguration config) {
+    for (IOption option : fOptions) {
+      option.initializeFrom(config);
+    }
+  }
   
-  // public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-  // for (IOption option : fOptions) {
-  // option.setDefaults(config);
-  // }
-  // }
-  
-  // public void initializeFrom(ILaunchConfiguration config) {
-  // for (IOption option : fOptions) {
-  // option.initializeFrom(config);
-  // }
-  // }
-  
-  @Override
   public void createControl(Composite parent) {
     update();
   }

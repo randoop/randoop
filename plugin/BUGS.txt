@@ -79,7 +79,4 @@ FEATURE REQUESTS
   
 * Add button to remove all Randoop-generate files.
 
-* Delete button should be able to remove selected classes from the class
-  selector
-
 * The state of the check button [ ] Ignore JUNit Tests should be remembered

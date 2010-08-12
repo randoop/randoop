@@ -31,7 +31,6 @@ public class MessageSessionListener implements IMessageListener {
     fSession = session;
   }
 
-  @Override
   public void handleMessage(IMessage m) {
     if (m instanceof RandoopStarted) {
       fSession.start();
@@ -110,10 +109,8 @@ public class MessageSessionListener implements IMessageListener {
     }
   }
 
-  @Override
   public void handleTermination() {
     RandoopPlugin.getDisplay().syncExec(new Runnable() {
-      @Override
       public void run() {
         fSession.stop(true);
       }
