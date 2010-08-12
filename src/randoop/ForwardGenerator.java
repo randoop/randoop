@@ -323,7 +323,8 @@ public class ForwardGenerator extends AbstractGenerator {
     return new ExecutableSequence(newSequence);
   }
 
-  private void randoopConsistencyTest2(Sequence newSequence) {
+  // TODO: document.
+  protected void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
     if (Globals.randooptestrun) {
       this.allsequencesAsCode.add(newSequence.toCodeString());
@@ -331,7 +332,8 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
-  private void randoopConsistencyTests(Sequence newSequence) {
+  // TODO: document.
+  protected void randoopConsistencyTests(Sequence newSequence) {
     // Testing code.
     if (Globals.randooptestrun) {
       String code = newSequence.toCodeString();
