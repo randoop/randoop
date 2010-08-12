@@ -1,0 +1,14 @@
+# solvable polynomials, Weyl algebra A_6,1:
+(a,b,e1,e2,e3,e4,e5,e6) G
+RelationTable
+(
+ ( e2 ), ( e1 ), ( e1 e2 - e3 ),
+ ( e3 ), ( e1 ), ( e1 e3 - e4 ),
+ ( e5 ), ( e1 ), ( e1 e5 - e6 )
+)
+
+(
+ ( e1 e3^3 + e2^2 - a ),
+ ( e1^3 e2^2 + e3 ),
+ ( e3^3 + e3^2 - b )
+)

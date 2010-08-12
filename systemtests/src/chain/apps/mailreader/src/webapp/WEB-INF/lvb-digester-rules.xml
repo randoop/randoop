@@ -1,0 +1,8 @@
+<digester-rules>
+    <object-create-rule pattern="lv-beans" classname="java.util.ArrayList"/>
+    <pattern value="lv-beans/lv-bean">
+        <object-create-rule classname="org.apache.struts.util.LabelValueBean" />
+        <set-properties-rule />
+        <set-next-rule methodname="add" />
+      </pattern>
+</digester-rules> 

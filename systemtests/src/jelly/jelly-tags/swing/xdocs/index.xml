@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+  <properties>
+    <title>JellySwing</title>
+    <author email="jstrachan@apache.org">James Strachan</author>
+  </properties>
+
+  <body>
+    <section name="JellySwing"> 
+      <p>
+        JellySwing is a simple Jelly tag-library which can be used to create Swing user interfaces.
+        It allows XML documents (Jelly scripts) to be used to define the layout and rendering of Swing 
+        front ends which avoids lots of mundane Java coding, using markup to define the view 
+        of your front end and allowing you to bind to Java code for the business objects and models. 
+      </p>
+      <p>
+        This mechanism uses seperation of concerns and MVC ideas from web applications, allowing the rendering
+        of your Swing front end to be easily transformed (since its XML) into different styles while leaving your
+        model and business objects untouched. It also allows different views to be constructed independently of your models.
+      </p>
+      <p>
+        There is an example JellySwing script
+        <a href="http://cvs.apache.org/viewcvs.cgi/jakarta-commons/jelly/jelly-tags/swing/src/test/org/apache/commons/jelly/swing/example.jelly?rev=HEAD">here</a>
+      </p>
+      <p>
+        To try running the example type the following command then you should see a full Swing user interface 
+        appear with pull down menus, a splitter pane, a form, entry fields, buttons and a table.
+        (you should run this from within the <code>[jelly-home]/jelly-tags/swing</code>).
+      </p>
+      <source>maven demo:swing</source>
+      <p>
+        This example even shows that simple actions can be coded in Jelly script too! Though typically most
+        complex logic and models (such as TableModel, TreeModel) should be written in Java code.
+        Then Jelly script can be used to create the view and bind in the models.
+      </p>
+    </section>
+    
+    <section name="JellyRunner"> 
+      <p>
+        JellyRunner is a simple example Swing user interface written with JellySwing.
+        You can view the source to it
+        <a href="http://cvs.apache.org/viewcvs.cgi/jakarta-commons/jelly/jelly-tags/swing/src/test/org/apache/commons/jelly/swing/run.jelly?rev=HEAD">here</a>
+      </p>
+      <p>
+        If you invoke it via the following command you will get a small Swing UI that allows you to
+        choose Jelly scripts to invoke, within the current JVM.
+      </p>
+      <source> maven jelly:runner</source>
+      <p>
+        This makes developing Jelly scripts and JellySwing scripts in particular, much more RAD-like.
+        You can keep JellyRunner open, edit a Jelly script and just hit the 'Run' button and the
+        script executes instantaneously, there's no waiting for a JVM to startup.
+      </p>
+    </section>
+    
+    <section name="Comparing JellySwing with Java code for Swing"> 
+      <p>
+        There's a simple demo written by Otto von Wachter which demonstrates how Jelly can be used
+        for templating HTML.
+      </p>
+      <p>
+        The demo was orignally written in
+        <a href="http://cvs.apache.org/viewcvs.cgi/jakarta-commons/jelly/jelly-tags/swing/src/test/org/apache/commons/jelly/demos/HomepageBuilder.java?rev=HEAD">Java code</a>
+         
+        to implement a simple Swing UI
+        As an experiment the same Swing user interface has been written 
+       <a href="http://cvs.apache.org/viewcvs.cgi/jakarta-commons/jelly/jelly-tags/swing/src/test/org/apache/commons/jelly/demos/homepageBuilder.jelly?rev=HEAD">as a JellyScript</a>
+        as well.
+        While this is a fairly simple Swing UI and not a particularly great example of the power of JellySwing,
+        it does highlight the main difference between the two appraches.
+      </p>
+    </section>
+    
+  </body>
+</document>
+
