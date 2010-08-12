@@ -73,7 +73,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
   /**
    * If idx is the last index, checks contracts.
    */
-  public boolean visitAfter(ExecutableSequence s, int idx) {
+  public void visitAfter(ExecutableSequence s, int idx) {
 
     for (int i = 0 ; i <= idx ; i++) {
       assert !(s.getResult(i) instanceof NotExecuted) : s;
@@ -83,20 +83,17 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
 
     if (checkAtEndOfExec && idx < s.sequence.size() - 1) {
       // Check contracts only after the last statement is executed.
-      return true;
+      return;
     }
 
-     if (s.getResult(idx) instanceof ExceptionalExecution) {
-       if (GenInputsAbstract.forbid_null) {
-         ExceptionalExecution exec = (ExceptionalExecution)s.getResult(idx);
-         if (exec.getException().getClass().equals(NullPointerException.class)
-             || exec.getException().getClass().equals(AssertionError.class)) {
-           NoExceptionCheck obs = new NoExceptionCheck(idx);
-          s.addCheck(idx, obs, false);
-         }
-       }
-       return true;
-     }
+    if (s.getResult(idx) instanceof ExceptionalExecution) {
+      ExceptionalExecution exec = (ExceptionalExecution) s.getResult(idx);
+      if (exec.getException().getClass().equals(NullPointerException.class) || exec.getException().getClass().equals(AssertionError.class)) {
+        NoExceptionCheck obs = new NoExceptionCheck(idx);
+        s.addCheck(idx, obs, false);
+      }
+      return;
+    }
 
     MultiMap<Class<?>, Integer> idxmap = objectIndicesToCheck(s, idx);
 
@@ -111,7 +108,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
         }
       }
     }
-    return true;
+    return;
   }
 
   private void checkBinary(ExecutableSequence s, ObjectContract c, Set<Integer> values, int idx) {
