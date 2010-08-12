@@ -58,6 +58,9 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -118,7 +121,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Button fIgnoreJUnitTestCases;
   private IJavaProject fJavaProject;
   
-  private static class TreeInput {
+  private class TreeInput {
     private List<TreeNode> fRoots;
   
     public TreeInput() {
@@ -136,13 +139,32 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       fRoots.add(root);
       return root;
     }
-    
-    public void removeRoot(TreeNode node) {
-      fRoots.remove(node);
+
+    public void remove(TreeNode node) {
+      Object obj = node.getObject();
+
+      if (obj instanceof TypeMnemonic) {
+        fDeletedTypeNodes.add(obj.toString());
+
+        node.delete();
+        if (!node.getParent().hasChildren()) {
+          remove(node.getParent());
+        }
+      } else if (obj instanceof String) {
+        for (TreeNode child : node.getChildren()) {
+          remove(child);
+        }
+
+        fRoots.remove(node);
+      }
     }
   
     public TreeNode[] getRoots() {
       return (TreeNode[]) fRoots.toArray(new TreeNode[fRoots.size()]);
+    }
+    
+    public void removeAll() {
+      fRoots = new ArrayList<ClassSelectorOption.TreeNode>();
     }
 
     public boolean hasMissingClasses(IJavaProject currentProject) {
@@ -156,7 +178,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       
       return false;
     }
-    
+
   }
   
   private static class TreeNode {
@@ -555,6 +577,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeViewer.setContentProvider(fTypeTreeContentProvider);
     fTypeTreeViewer.setSorter(new ViewerSorter());
     
+    fTypeTreeViewer.getTree().addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent event) {
+        if (event.keyCode == SWT.DEL) {
+          removeSelection();
+        }
+      }
+    });
+    
     fTypeTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
       
       @Override
@@ -697,41 +727,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fClassRemove = SWTFactory.createPushButton(rightcomp, "&Remove", null);
     fClassRemove.addSelectionListener(new SelectionAdapter() {
 
-      void remove(TreeNode node) throws JavaModelException {
-        Object obj = node.getObject();
-
-        if (obj instanceof TypeMnemonic) {
-          fDeletedTypeNodes.add(obj.toString());
-
-          node.delete();
-          if (!node.getParent().hasChildren()) {
-            remove(node.getParent());
-          }
-        } else if (obj instanceof String) {
-          for (TreeNode child : node.getChildren()) {
-            remove(child);
-          }
-
-          fTreeInput.removeRoot(node);
-        }
-      }
-      
       @Override
       public void widgetSelected(SelectionEvent e) {
-        ITreeSelection selection = (ITreeSelection) fTypeTreeViewer.getSelection();
-
-        try {
-          Iterator<?> it = selection.iterator();
-          while (it.hasNext()) {
-            remove((TreeNode) it.next());
-          }
-        } catch (JavaModelException jme) {
-          RandoopPlugin.log(jme);
-        }
-
-        fTypeTreeViewer.refresh();
-        fResolveClasses.setEnabled(fJavaProject != null && fTreeInput.hasMissingClasses(fJavaProject));
-        fClassRemove.setEnabled(false);
+        removeSelection();
       }
     });
     fClassRemove.addSelectionListener(listener);
@@ -1328,6 +1326,21 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return hasMissingClasses;
   }
   
+  private void removeSelection() {
+    ITreeSelection selection = (ITreeSelection) fTypeTreeViewer.getSelection();
+
+    Iterator<?> it = selection.iterator();
+    while (it.hasNext()) {
+      fTreeInput.remove((TreeNode) it.next());
+    }
+
+    fTypeTreeViewer.refresh();
+    fClassRemove.setEnabled(false);
+    if (fResolveClasses != null) {
+      fResolveClasses.setEnabled(fJavaProject != null && fTreeInput.hasMissingClasses(fJavaProject));
+    }
+  }
+  
   public void resolveMissingClasses() throws JavaModelException {
     if (fJavaProject == null)
       return;
@@ -1366,6 +1379,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   private void setNewTypeMnemonic(TreeNode node, TypeMnemonic newTypeMnemonic) {
+    // TODO: Check if node or its object is null
+    
     TypeMnemonic oldTypeMnemonic = (TypeMnemonic) node.getObject();
     fDeletedTypeNodes.add(oldTypeMnemonic.toString());
 
@@ -1397,9 +1412,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   @Override
   public void restoreDefaults() {
     if (fTreeInput != null) {
-      for (TreeNode node : fTreeInput.getRoots()) {
-        fTreeInput.removeRoot(node);
-      }
+      fTreeInput.removeAll();
     }
   }
 
