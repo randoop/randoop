@@ -27,7 +27,6 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 
   public TestGeneratorViewPart viewPart;
 
-	  @Override
 	  public void doubleClick(DoubleClickEvent e) {
 	    if (viewPart != null) {
 	      TreeSelection selection = (TreeSelection) e.getSelection(); // ensure?

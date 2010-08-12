@@ -34,6 +34,7 @@ import randoop.plugin.RandoopPlugin;
 public class ResourcesListQuestionDialogWithToggle extends MessageDialogWithToggle implements IDoubleClickListener {
   
   static class ResourceLabelProvider extends LabelProvider {
+
     @Override
     public Image getImage(Object element) {
       if (element instanceof IFile) {
@@ -103,7 +104,6 @@ public class ResourcesListQuestionDialogWithToggle extends MessageDialogWithTogg
     return composite;
   }
 
-  @Override
   public void doubleClick(DoubleClickEvent event) {
     IStructuredSelection selection= (IStructuredSelection) fFixSelectionTable.getSelection();
     Object firstElement = selection.getFirstElement();

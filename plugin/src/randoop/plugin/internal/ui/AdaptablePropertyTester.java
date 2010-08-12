@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.JavaModelException;
 public class AdaptablePropertyTester extends PropertyTester {
   private static final String PROPERTY_IS_TESTABLE = "isTestable"; //$NON-NLS-1$
 
-  @Override
   public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
     if (!(receiver instanceof IAdaptable)) {
       throw new IllegalArgumentException(

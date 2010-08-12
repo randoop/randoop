@@ -47,7 +47,6 @@ import randoop.plugin.internal.ui.wizards.RandoopLaunchConfigurationWizard;
 
 public class RandoopLaunchShortcut implements ILaunchShortcut {
 
-  @Override
   public void launch(ISelection selection, String mode) {
     Assert.isTrue(selection instanceof IStructuredSelection);
     final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
@@ -88,7 +87,6 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
       
       IRunnableWithProgress op = new IRunnableWithProgress() {
 
-        @Override
         public void run(IProgressMonitor monitor) {
           SubMonitor parentMonitor = SubMonitor.convert(monitor);
           parentMonitor.beginTask("Searching for class and method inputs in selection...", 2);
@@ -238,7 +236,6 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
       fReturnCode = -1;
     }
 
-    @Override
     public void run() {
       try {
         // The shell is not null
@@ -261,7 +258,6 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     }
   }
 
-  @Override
   public void launch(IEditorPart editor, String mode) {
   }
 

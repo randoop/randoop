@@ -14,7 +14,6 @@ public abstract class ComboOption extends Option {
     fCombo = combo;
   }
   
-  @Override
   public IStatus canSave() {
     if (fCombo == null) {
       return StatusFactory.createErrorStatus(ComboOption.class.getName()
@@ -26,20 +25,17 @@ public abstract class ComboOption extends Option {
     return validate(text);
   }
   
-  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     return validate(getValue(config));
   }
   
   protected abstract IStatus validate(String text);
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
     if (fCombo != null)
       fCombo.setText(getValue(config));
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fCombo != null)
       setValue(config, getValue());
