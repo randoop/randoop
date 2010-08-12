@@ -4,6 +4,7 @@ import java.io.PrintStream;
 
 import plume.Option;
 import plume.OptionGroup;
+import plume.UtilMDE;
 
 
 /**
@@ -142,16 +143,52 @@ public final class ReflectionExecutor {
     } catch (ReflectionCode.NotCaughtIllegalStateException e) { // exception in randoop code
       throw e;
     } catch (Throwable e) {
-      if (e instanceof java.lang.reflect.InvocationTargetException)
+      Throwable orig_e = null;
+      if (e instanceof java.lang.reflect.InvocationTargetException) {
+        orig_e = e;
         e = e.getCause();
+      }
 
+      // Debugging
+      // printExceptionDetails(e, System.out);
+      // if (orig_e != null) {
+      //   System.out.println("Original exception: " + orig_e);
+      // }
       if (out != null) {
-        out.println("Exception thrown:" + e.toString());
-        out.println("Message: " + e.getMessage());
-        out.println("Stack trace: ");
-        e.printStackTrace(out);
+        printExceptionDetails(e, out);
+        if (orig_e != null) {
+          out.println("Original exception: " + orig_e);
+        }
       }
       return e;
     }
   }
+
+  private static void printExceptionDetails(Throwable e, PrintStream out) {
+    out.println("Exception thrown:" + e.toString());
+    out.println("Message: " + e.getMessage());
+    out.println("Stack trace: ");
+    try {
+      e.printStackTrace(out);
+    } catch (Throwable t) {
+      // One reason this can happen is that somehow, private field
+      // e.suppressedExceptions is null.  I'm seeing this when using JDK
+      // 1.7.0 b104, but not with JDK 1.7.0 b92.
+      // See: http://bugs.sun.com/view_bug.do?bug_id=6973831
+      // I could work around by checking for OutOfMemoryError and doing
+      // special processing for it.  Or just check if the value is null and
+      // set it to an empty list before calling printStackTrace.
+      out.println("Exception while trying to print stack trace for " + e + ": " + t);
+      try {
+        Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");
+        out.println("Original exception's suppressedExceptions field = " + eSuppressedExceptions);
+      } catch (NoSuchFieldException nsfe) {
+        // Didn't find the suppressedExceptions field.  There is no need
+        // to print anything about it, as the problem must be elsewhere.
+      } catch (IllegalAccessException iae) {
+        out.println("This can't happen: IllegalAccessException " + iae);
+      }
+    }
+  }
+
 }
