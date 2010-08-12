@@ -18,9 +18,9 @@
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <view
                id="randoop.plugin.ui.views.TestGeneratorViewPart"
-               ratio="0.5"
                relationship="stack"
-               relative="org.eclipse.jdt.ui.PackageExplorer">
+               relative="org.eclipse.jdt.junit.ResultView"
+               visible="false">
          </view>
       </perspectiveExtension>
    </extension>
