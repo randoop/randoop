@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
@@ -15,10 +16,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
+import randoop.plugin.internal.ui.MessageUtil;
 
 /**
  * The activator class controls the plug-in life cycle. It stores a shared
@@ -32,11 +35,11 @@ public class RandoopPlugin extends AbstractUIPlugin {
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
 
   // TODO: Use archives when building update site
-  private static final IPath RANDOOP_JAR = new Path("/randoop.jar"); //$NON-NLS-1$
+  private static final IPath RANDOOP_JAR = new Path("randoop.jar"); //$NON-NLS-1$
 
   // private static final IPath RANDOOP_JAR = new Path("../bin/"); //$NON-NLS-1$
 
-  private static final IPath PLUME_JAR = new Path("/plume.jar"); //$NON-NLS-1$
+  private static final IPath PLUME_JAR = new Path("plume.jar"); //$NON-NLS-1$
 
   // private static final IPath PLUME_JAR = new Path("../lib/plume.jar"); //$NON-NLS-1$
 
@@ -222,6 +225,8 @@ public class RandoopPlugin extends AbstractUIPlugin {
   }
 
   /**
+   * file://doc/index.html
+   *
    * Returns the full path to the the given Path.
    * 
    * @return local path to the , or <code>null</code> if no the
@@ -229,7 +234,8 @@ public class RandoopPlugin extends AbstractUIPlugin {
    * @throws CoreException 
    */
   private static IPath getFullPath(IPath localPath) throws IOException {
-    URL url = FileLocator.find(getDefault().getBundle(), localPath, null);
+    Bundle bundle = Platform.getBundle(getPluginId());
+    URL url = FileLocator.find(bundle, localPath, null);
     url = FileLocator.toFileURL(url);
     return new Path(url.getPath());
   }
