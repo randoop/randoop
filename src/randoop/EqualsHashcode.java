@@ -44,6 +44,11 @@ public final class EqualsHashcode implements ObjectContract {
     return "equals-hashcode on x0 and x1";
   }
 
+  @Override
+  public String get_observer_str() {
+    return "EqualsHashcode";
+  }
+
   public boolean evalExceptionMeansFailure() {
     return true;
   }

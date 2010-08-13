@@ -45,6 +45,11 @@ public final class EqualsSymmetric implements ObjectContract {
   }
 
   @Override
+  public String get_observer_str() {
+    return "equals-symmetric";
+  }
+
+  @Override
   public boolean evalExceptionMeansFailure() {
     return true;
   }

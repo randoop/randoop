@@ -411,6 +411,8 @@ public class GenTests extends GenInputsAbstract {
 
     explorer.explore();
 
+    // dump_seqs ("after explore", explorer.outSeqs);
+
     if (output_branches != null) {
       Comparator<Branch> branchComparator = new Comparator<Branch>() {
         public int compare(Branch o1, Branch o2) {
@@ -781,7 +783,10 @@ public class GenTests extends GenInputsAbstract {
 
   /** Write out a serialized file of sequences **/
   public static void write_sequences (List<ExecutableSequence> seqs,
-                                      String outfile) {
+                                      String outfile) { 
+
+    // dump_seqs ("write_sequences", seqs);
+
     try {
       FileOutputStream fileos = new FileOutputStream(outfile);
       ObjectOutputStream objectos
@@ -827,6 +832,8 @@ public class GenTests extends GenInputsAbstract {
     cmd.add (String.format("--usethreads=%b", ReflectionExecutor.usethreads));
     if (GenInputsAbstract.init_routine != null)
       cmd.add ("--init_routine=" + GenInputsAbstract.init_routine);
+    if (GenInputsAbstract.print_diff_obs)
+      cmd.add ("--print_diff_obs");
     cmd.add (String.format("--capture_output=%b",
                            GenInputsAbstract.capture_output));
 
@@ -876,6 +883,8 @@ public class GenTests extends GenInputsAbstract {
     cmd.add (String.format("--usethreads=%b", ReflectionExecutor.usethreads));
     if (GenInputsAbstract.init_routine != null)
       cmd.add ("--init_routine=" + GenInputsAbstract.init_routine);
+    if (GenInputsAbstract.print_diff_obs)
+      cmd.add ("--print_diff_obs");
     cmd.add (String.format("--capture_output=%b",
                            GenInputsAbstract.capture_output));
 
@@ -953,5 +962,17 @@ public class GenTests extends GenInputsAbstract {
       + m.toString() + "\". Will use it to check rep invariant of class "
       + m.getDeclaringClass().getCanonicalName() + " during generation.";
    System.out.println(msg);
+  }
+
+  public static void dump_seqs (String msg, List<ExecutableSequence> seqs) {
+
+    if (false) {
+      System.out.printf ("Sequences at %s\n", msg);
+      for (int seq_no = 0; seq_no < seqs.size(); seq_no++)
+        System.out.printf ("seq %d [%08X]:\n %s\n", seq_no, 
+                           seqs.get(seq_no).seq_id(),
+                           seqs.get(seq_no).toCodeString());
+
+    }
   }
 }
