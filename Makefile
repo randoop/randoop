@@ -558,7 +558,7 @@ utils/plume-lib:
 	cd utils && hg clone https://plume-lib.googlecode.com/hg/ plume-lib
 
 plume-lib-update: utils/plume-lib
-	cd utils && hg pull -u
+	cd utils/plume-lib && hg pull -u
 
 .PHONY: utils/plume-lib/java/plume.jar
 utils/plume-lib/java/plume.jar: plume-lib-update

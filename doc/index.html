@@ -191,7 +191,7 @@ the cause of the problem.</p>
 <ul>
   <li>Code under test
     <ul>
-      <li><b>--testclass=</b><i>string[]</i>. Each element is the fully-qualified name of a class under test. [default []]</li>
+      <li><b>--testclass=</b><i>string</i> <tt>[+]</tt>. Each element is the fully-qualified name of a class under test. [default []]</li>
       <li><b>--classlist=</b><i>string</i>. In the file, each class under test is specified by its fully
  qualified name on a separate line. [no default]</li>
       <li><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
@@ -205,7 +205,7 @@ the cause of the problem.</p>
  <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.</li>
  <li> --literals-level=NONE means do not use literals specified in a literals file.</li>
  </ul> [default NONE]</li>
-      <li><b>--literals-file=</b><i>string[]</i>. Literals in these files are used in addition to all other constants in the pool.
+      <li><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. Literals in these files are used in addition to all other constants in the pool.
  May be specified multiple times.
  For the format of this file, see documentation in class <code>randoop.LiteralFileReader</code>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under test. [default []]</li>
@@ -271,6 +271,7 @@ the cause of the problem.</p>
     </ul>
   </li>
 </ul>
+<tt>[+]</tt> marked option can be specified multiple times
 <!-- end options doc -->
 
 
