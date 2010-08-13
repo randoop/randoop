@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
 import randoop.plugin.internal.core.TypeMnemonic;
+import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class RandoopLaunchConfigurationWizard extends Wizard {
@@ -34,7 +35,7 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
 
     fConfig = config;
 
-    RandoopArgumentCollector.setProjectName(fConfig, javaProject.getElementName());
+    RandoopArgumentCollector.setProjectName(config, javaProject.getElementName());
 
     Set<String> availableTypesSet = new HashSet<String>();
     availableTypesSet.addAll(checkedTypes);
