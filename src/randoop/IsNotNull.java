@@ -60,6 +60,11 @@ public final class IsNotNull implements ObjectContract {
   }
 
   @Override
+  public String get_observer_str() {
+    return "IsNotNull";
+  }
+
+  @Override
   public boolean evalExceptionMeansFailure() {
     // Should never actually reach here: no way evaluating "objects[0] != null"
     // will throw an exception.
