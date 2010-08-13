@@ -7,7 +7,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class BoundedDoubleOption extends TextOption {
   private double fLowerBound;
@@ -40,12 +40,12 @@ public abstract class BoundedDoubleOption extends TextOption {
       double d = Double.parseDouble(text);
 
       if (d < fLowerBound || d > fUpperBound) {
-        return StatusFactory.createErrorStatus(fOutOfBoundsMsg);
+        return RandoopStatus.createErrorStatus(fOutOfBoundsMsg);
       }
 
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return StatusFactory.createErrorStatus(fInvalidErrorMsg);
+      return RandoopStatus.createErrorStatus(fInvalidErrorMsg);
     }
   }
   

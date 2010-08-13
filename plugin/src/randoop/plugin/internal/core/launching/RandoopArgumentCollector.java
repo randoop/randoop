@@ -24,7 +24,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.RandoopCoreUtil;
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.TypeMnemonic;
 
 public class RandoopArgumentCollector {
@@ -133,7 +133,7 @@ public class RandoopArgumentCollector {
       
       try {
         if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return StatusFactory.createWarningStatus("One of the selected classes has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
+          return RandoopStatus.createWarningStatus("One of the selected classes has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
         }
       } catch (JavaModelException e) {
         RandoopPlugin.log(e);
@@ -145,14 +145,14 @@ public class RandoopArgumentCollector {
       
       try {
         if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return StatusFactory.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class.");
+          return RandoopStatus.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class.");
         }
       } catch (JavaModelException e) {
         RandoopPlugin.log(e);
       }
     }
     
-    return StatusFactory.OK_STATUS;
+    return RandoopStatus.OK_STATUS;
   }
 
   public String getName() {

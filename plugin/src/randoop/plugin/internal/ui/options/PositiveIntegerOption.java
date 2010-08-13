@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class PositiveIntegerOption extends IntegerOption {
   
@@ -20,12 +20,12 @@ public abstract class PositiveIntegerOption extends IntegerOption {
   protected IStatus validate(String text) {
     try {
       if (Integer.parseInt(text) < 1) {
-        return StatusFactory.createErrorStatus(getNonpositiveIntegerErrorMessage());
+        return RandoopStatus.createErrorStatus(getNonpositiveIntegerErrorMessage());
       }
       
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return StatusFactory.createErrorStatus(getInvalidIntegerErrorMessage());
+      return RandoopStatus.createErrorStatus(getInvalidIntegerErrorMessage());
     }
   }
   

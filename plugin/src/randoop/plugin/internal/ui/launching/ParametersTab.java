@@ -3,7 +3,6 @@ package randoop.plugin.internal.ui.launching;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.swt.SWT;
@@ -15,7 +14,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.ParametersSWTFactory;
 import randoop.plugin.internal.ui.options.IOption;
 
