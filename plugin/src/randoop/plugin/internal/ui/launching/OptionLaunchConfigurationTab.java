@@ -7,36 +7,20 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 
 import randoop.plugin.internal.ui.options.IOption;
+import randoop.plugin.internal.ui.options.IOptionChangeEvent;
+import randoop.plugin.internal.ui.options.IOptionChangeListener;
 
 public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigurationTab {
 
   private List<IOption> fOptions;
   
-  private ModifyListener fBasicModifyListener = new ModifyListener() {
-    
-    @Override
-    public void modifyText(ModifyEvent e) {
-      setErrorMessage(null);
-      updateLaunchConfigurationDialog();
-    }
-  };
-  
-  private SelectionListener fBasicSelectionListener = new SelectionListener() {
+  private IOptionChangeListener fBasicOptionChangeListener = new IOptionChangeListener() {
 
-    @Override
-    public void widgetSelected(SelectionEvent e) {
+    public void attributeChanged(IOptionChangeEvent event) {
       setErrorMessage(null);
       updateLaunchConfigurationDialog();
-    }
-    
-    @Override
-    public void widgetDefaultSelected(SelectionEvent e) {
     }
   };
   
@@ -122,21 +106,18 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     return false;
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     for (IOption option : fOptions) {
       option.performApply(config);
     }
   }
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
     for (IOption option : fOptions) {
       option.initializeFrom(config);
     }
   }
 
-  @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     for (IOption option : fOptions) {
       option.setDefaults(config);
@@ -149,12 +130,8 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
     }
   }
   
-  protected ModifyListener getBasicModifyListener() {
-    return fBasicModifyListener;
-  }
-
-  protected SelectionListener getBasicSelectionListener() {
-    return fBasicSelectionListener;
+  protected IOptionChangeListener getBasicOptionChangeListener() {
+    return fBasicOptionChangeListener;
   }
 
 }

@@ -67,7 +67,7 @@ public class TestGeneratorViewPart extends ViewPart {
     final MutableObject viewPart = new MutableObject(null);
     
     PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-      @Override
+
       public void run() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
@@ -148,6 +148,7 @@ public class TestGeneratorViewPart extends ViewPart {
       
       ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/debugjunit.png");
       setImageDescriptor(desc);
+      setEnabled(false);
     }
     
     @Override
@@ -349,10 +350,10 @@ public class TestGeneratorViewPart extends ViewPart {
   }
 
   private class SessionListener implements ITestGeneratorSessionListener {
-    @Override
+
     public void sessionStarted() {
       getSite().getShell().getDisplay().syncExec(new Runnable() {
-        @Override
+
         public void run() {
           if (!isDisposed()) {
             startNewLaunch();
@@ -361,10 +362,9 @@ public class TestGeneratorViewPart extends ViewPart {
       });
     }
 
-    @Override
     public void sessionEnded() {
       getSite().getShell().getDisplay().syncExec(new Runnable() {
-        @Override
+
         public void run() {
           // TODO: RandoopFinished is sent before CreatedJUnitFile
           // so the listener cannot be removed
@@ -377,10 +377,9 @@ public class TestGeneratorViewPart extends ViewPart {
       });
     }
 
-    @Override
     public void sessionTerminated() {
       getSite().getShell().getDisplay().syncExec(new Runnable() {
-        @Override
+
         public void run() {
           deregisterTestSessionListener(true);
           
@@ -391,10 +390,9 @@ public class TestGeneratorViewPart extends ViewPart {
       });
     }
 
-    @Override
     public void errorRevealed(final ErrorRevealed error) {
       getSite().getShell().getDisplay().syncExec(new Runnable() {
-        @Override
+
         public void run() {
           if (!isDisposed()) {
             getProgressBar().error();
@@ -407,10 +405,9 @@ public class TestGeneratorViewPart extends ViewPart {
       });
     }
 
-    @Override
     public void madeProgress(final double percentDone) {
         getSite().getShell().getDisplay().syncExec(new Runnable() {
-          @Override
+
           public void run() {
             if (!isDisposed()) {
               getProgressBar().setPercentDone(percentDone);
@@ -419,10 +416,9 @@ public class TestGeneratorViewPart extends ViewPart {
         });
     }
 
-    @Override
     public void madeSequences(final int count) {
       getSite().getShell().getDisplay().syncExec(new Runnable() {
-        @Override
+
         public void run() {
           if (!isDisposed()) {
             getCounterPanel().setNumSequences(count);
@@ -431,10 +427,9 @@ public class TestGeneratorViewPart extends ViewPart {
       });
     }
 
-    @Override
     public void madeJUnitDriver(final ICompilationUnit driverFile) {
       getSite().getShell().getDisplay().syncExec(new Runnable() {
-        @Override
+
         public void run() {
           if (!isDisposed()) {
             setDriver(driverFile);

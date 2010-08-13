@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -58,6 +57,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -77,7 +78,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.RandoopCoreUtil;
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
@@ -86,6 +87,7 @@ import randoop.plugin.internal.ui.ClasspathLabelProvider;
 import randoop.plugin.internal.ui.MessageUtil;
 
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
+  
   private static Image IMG_ERROR = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
   private static Image IMG_ENUM = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_ENUM);
   private static Image IMG_CLASS = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
@@ -110,6 +112,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private ITreeContentProvider fTypeTreeContentProvider;
   
   private Button fClassAddFromSources;
+  private Button fClassAddFromSystemLibraries;
   private Button fClassAddFromClasspaths;
   private Button fResolveClasses;
   private Button fSelectAll;
@@ -118,7 +121,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   private Button fIgnoreJUnitTestCases;
   private IJavaProject fJavaProject;
   
-  private static class TreeInput {
+  private class TreeInput {
     private List<TreeNode> fRoots;
   
     public TreeInput() {
@@ -136,13 +139,32 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       fRoots.add(root);
       return root;
     }
-    
-    public void removeRoot(TreeNode node) {
-      fRoots.remove(node);
+
+    public void remove(TreeNode node) {
+      Object obj = node.getObject();
+
+      if (obj instanceof TypeMnemonic) {
+        fDeletedTypeNodes.add(obj.toString());
+
+        node.delete();
+        if (!node.getParent().hasChildren()) {
+          remove(node.getParent());
+        }
+      } else if (obj instanceof String) {
+        for (TreeNode child : node.getChildren()) {
+          remove(child);
+        }
+
+        fRoots.remove(node);
+      }
     }
   
     public TreeNode[] getRoots() {
       return (TreeNode[]) fRoots.toArray(new TreeNode[fRoots.size()]);
+    }
+    
+    public void removeAll() {
+      fRoots = new ArrayList<ClassSelectorOption.TreeNode>();
     }
 
     public boolean hasMissingClasses(IJavaProject currentProject) {
@@ -156,7 +178,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       
       return false;
     }
-    
+
   }
   
   private static class TreeNode {
@@ -411,15 +433,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
   private class TreeContentProvider implements ITreeContentProvider {
     
-    @Override
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     }
     
-    @Override
     public void dispose() {
     }
   
-    @Override
     public boolean hasChildren(Object element) {
       TreeNode node = (TreeNode) element;
       if (node.getObject() instanceof TypeMnemonic) {
@@ -435,17 +454,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return node.hasChildren();
     }
   
-    @Override
     public Object getParent(Object element) {
       return ((TreeNode) element).getParent();
     }
     
-    @Override
     public Object[] getElements(Object inputElement) {
       return fTreeInput.getRoots();
     }
   
-    @Override
     public Object[] getChildren(Object parentElement) {
       TreeNode typeNode = (TreeNode) parentElement;
       
@@ -511,21 +527,32 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
   }
 
-  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener) {
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext) {
     
-    this(parent, runnableContext, listener, true);
+    this(parent, runnableContext, true);
   }
   
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, IJavaProject project) {
-    
-    this(parent, runnableContext, listener, false);
+      IJavaProject project) {
+
+    this(parent, runnableContext, false);
     fJavaProject = project;
+
+    fTreeInput = new TreeInput();
+    fTypeTreeViewer.setInput(fTreeInput);
   }
 
-  private ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, boolean hasResolveButton) {
+  private ClassSelectorOption(Composite parent, IRunnableContext runnableContext, boolean hasResolveButton) {
+    
+    final SelectionListener listener = new SelectionListener() {
+      
+      public void widgetSelected(SelectionEvent e) {
+        notifyListeners(new OptionChangeEvent(null, null));
+      }
+      
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+    };
     
     fRunnableContext = runnableContext;
     Group comp = SWTFactory.createGroup(parent, "Classes/Methods Un&der Test", 2, 1, GridData.FILL_BOTH);
@@ -555,9 +582,17 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeViewer.setContentProvider(fTypeTreeContentProvider);
     fTypeTreeViewer.setSorter(new ViewerSorter());
     
+    fTypeTreeViewer.getTree().addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent event) {
+        if (event.keyCode == SWT.DEL) {
+          removeSelection();
+        }
+      }
+    });
+    
     fTypeTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
       
-      @Override
       public void selectionChanged(SelectionChangedEvent event) {
         ITreeSelection selection = (ITreeSelection) event.getSelection();
 
@@ -576,13 +611,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     fTypeTreeViewer.setCheckStateProvider(new ICheckStateProvider() {
 
-      @Override
       public boolean isChecked(Object element) {
         TreeNode node = ((TreeNode) element);
         return node.isChecked();
       }
 
-      @Override
       public boolean isGrayed(Object element) {
         TreeNode node = ((TreeNode) element);
         return node.isGrayed();
@@ -592,7 +625,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     fTypeTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
-      @Override
       public void checkStateChanged(CheckStateChangedEvent event) {
         TreeNode node = (TreeNode) event.getElement();
         node.setGrayed(false);
@@ -616,6 +648,17 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       }
     });
     fClassAddFromSources.addSelectionListener(listener);
+    
+    fClassAddFromSystemLibraries = SWTFactory.createPushButton(rightcomp, "System Libraries...", null);
+    fClassAddFromSystemLibraries.addSelectionListener(new SelectionAdapter() {
+      @Override
+      public void widgetSelected(SelectionEvent e) {
+        IJavaElement[] elements = { fJavaProject };
+        IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements, IJavaSearchScope.SYSTEM_LIBRARIES);
+        handleSearchButtonSelected(searchScope);
+      }
+    });
+    fClassAddFromSystemLibraries.addSelectionListener(listener);
     
     fClassAddFromClasspaths = SWTFactory.createPushButton(rightcomp, "Referenced Classpat&hs...", null);
     fClassAddFromClasspaths.addSelectionListener(new SelectionAdapter() {
@@ -697,41 +740,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fClassRemove = SWTFactory.createPushButton(rightcomp, "&Remove", null);
     fClassRemove.addSelectionListener(new SelectionAdapter() {
 
-      void remove(TreeNode node) throws JavaModelException {
-        Object obj = node.getObject();
-
-        if (obj instanceof TypeMnemonic) {
-          fDeletedTypeNodes.add(obj.toString());
-
-          node.delete();
-          if (!node.getParent().hasChildren()) {
-            remove(node.getParent());
-          }
-        } else if (obj instanceof String) {
-          for (TreeNode child : node.getChildren()) {
-            remove(child);
-          }
-
-          fTreeInput.removeRoot(node);
-        }
-      }
-      
       @Override
       public void widgetSelected(SelectionEvent e) {
-        ITreeSelection selection = (ITreeSelection) fTypeTreeViewer.getSelection();
-
-        try {
-          Iterator<?> it = selection.iterator();
-          while (it.hasNext()) {
-            remove((TreeNode) it.next());
-          }
-        } catch (JavaModelException jme) {
-          RandoopPlugin.log(jme);
-        }
-
-        fTypeTreeViewer.refresh();
-        fResolveClasses.setEnabled(fJavaProject != null && fTreeInput.hasMissingClasses(fJavaProject));
-        fClassRemove.setEnabled(false);
+        removeSelection();
       }
     });
     fClassRemove.addSelectionListener(listener);
@@ -744,28 +755,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fIgnoreJUnitTestCases.setLayoutData(gd);
   }
 
-  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, IJavaProject javaProject, List<TypeMnemonic> checkedTypes,
-      List<TypeMnemonic> grayedTypes,
-      Map<IType, List<String>> selectedMethodsByDeclaringTypes) {
-
-    this(parent, runnableContext, listener, false);
-
-    fJavaProject = javaProject;
-
-    fTreeInput = new TreeInput();
-    fTypeTreeViewer.setInput(fTreeInput);
-    
-    for (TypeMnemonic typeMnemonic : checkedTypes) {
-      String pfname = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
-      TreeNode pfNode = fTreeInput.addRoot(pfname);
-
-      pfNode.addChild(typeMnemonic, true, grayedTypes.contains(typeMnemonic));
-    }
-    fCheckedMethodsByType = selectedMethodsByDeclaringTypes;
-    
-  }
-  
   private void handleSearchButtonSelected(IJavaSearchScope searchScope) {
     try {
       boolean ignoreJUnit = fIgnoreJUnitTestCases.getSelection();
@@ -826,16 +815,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
   }
   
-  @Override
   public IStatus canSave() {
     if (fRunnableContext == null || fShell == null || fTypeTreeViewer == null || fTreeInput == null
         || fClassAddFromSources == null || fClassAddFromClasspaths == null || fSelectAll == null
         || fSelectNone == null || fClassRemove == null) {
 
-      return StatusFactory.ERROR_STATUS;
+      return RandoopStatus.ERROR_STATUS;
     }
 
-    return StatusFactory.OK_STATUS;
+    return RandoopStatus.OK_STATUS;
   }
 
   /**
@@ -847,13 +835,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    * @param selectedMethods 
    * @return
    */
-  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     List<?> grayedTypesMnemonic = RandoopArgumentCollector.getGrayedTypes(config);
     List<?> selectedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(config);
 
     if (selectedTypeMnemonics.isEmpty()) {
-      return StatusFactory.createErrorStatus("No class-input or method-input selected");
+      return RandoopStatus.createErrorStatus("No class-input or method-input selected");
     }
 
     for (Object o : selectedTypeMnemonics) {
@@ -863,8 +850,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
       IType type = typeMnemonic.getType();
       
-      if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
-        return StatusFactory.createErrorStatus("One of the class-inputs does not exist in the selected project");
+      if (fJavaProject == null || !fJavaProject.equals(typeMnemonic.getJavaProject())) {
+        return RandoopStatus.createErrorStatus("One of the class-inputs does not exist in the selected project");
       }
       
       if (grayedTypesMnemonic.contains(o)) {
@@ -876,9 +863,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           
           IMethod m = new MethodMnemonic(methodMnemonicString).findMethod(type);
           if (m == null) {
-            return StatusFactory.createErrorStatus("One of the method inputs does not exist");
+            return RandoopStatus.createErrorStatus("One of the method inputs does not exist");
           } else if (!m.exists()) {
-            return StatusFactory.createErrorStatus(MessageFormat.format("Mmethod '{0}' does not exist", m.getElementName()));
+            return RandoopStatus.createErrorStatus(MessageFormat.format("Mmethod '{0}' does not exist", m.getElementName()));
           }
           
           methodList.add(m);
@@ -886,11 +873,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       }
     }
     
-    return StatusFactory.OK_STATUS;
+    return RandoopStatus.OK_STATUS;
   }
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
+    setDisableListeners(true);
+    
     fTreeInput = new TreeInput();
     fTypeTreeViewer.setInput(fTreeInput);
     
@@ -939,9 +927,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
     
     fTypeTreeViewer.refresh();
+    setDisableListeners(false);
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     // Ugly hack to determine if the apply button was pressed.
     // boolean applyPressed = false;
@@ -955,15 +943,17 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     ITreeContentProvider prov = (ITreeContentProvider) fTypeTreeViewer.getContentProvider();
     TreeInput input = (TreeInput) fTypeTreeViewer.getInput();
     fTypeTreeViewer.refresh();
-    
+
+    List<String> availableTypes = new ArrayList<String>();
+    List<String> checkedTypes = new ArrayList<String>();
+    List<String> grayedTypes = new ArrayList<String>();
+    Map<String, List<String>> availableMethodsByDeclaringTypes = new HashMap<String, List<String>>();
+    Map<String, List<String>> checkedMethodsByDeclaringTypes = new HashMap<String, List<String>>();
+
     for (String mnemonic : fDeletedTypeNodes) {
       RandoopArgumentCollector.deleteAvailableMethods(config, mnemonic);
       RandoopArgumentCollector.deleteCheckedMethods(config, mnemonic);
     }
-
-    List<String> availableTypes = new ArrayList<String>();
-    List<String> grayedTypes = new ArrayList<String>();
-    List<String> checkedTypes = new ArrayList<String>();
 
     for (TreeNode packageNode : input.getRoots()) {
       for (Object typeObject : prov.getChildren(packageNode)) {
@@ -992,29 +982,26 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
                 checkedMethods.add(methodMnemonicString);
               }
             }
-
-            RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods);
-            RandoopArgumentCollector.setCheckedMethods(config, typeMnemonic, checkedMethods);
+            
+            availableMethodsByDeclaringTypes.put(typeMnemonic, availableMethods);
+            checkedMethodsByDeclaringTypes.put(typeMnemonic, checkedMethods);
           }
         }
       }
     }
 
-    RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
-    RandoopArgumentCollector.setGrayedTypes(config, grayedTypes);
-    RandoopArgumentCollector.setCheckedTypes(config, checkedTypes);
+    RandoopArgumentCollector.saveClassTree(config, availableTypes, checkedTypes, grayedTypes,
+        fDeletedTypeNodes, availableMethodsByDeclaringTypes, checkedMethodsByDeclaringTypes);
+    
+    fDeletedTypeNodes = new HashSet<String>();
     
     fTypeTreeViewer.refresh();
   }
   
-  @Override
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    writeDefaults(config);
-  }
-  
-  public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.restoreAvailableTypes(config);
-    RandoopArgumentCollector.restoreCheckedTypes(config);
+    RandoopArgumentCollector.setAvailableTypes(config, null);
+    RandoopArgumentCollector.setCheckedTypes(config, null);
+    RandoopArgumentCollector.setGrayedTypes(config, null);
     
     List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
     for (String typeMnemonic : availableTypes) {
@@ -1022,7 +1009,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       RandoopArgumentCollector.deleteCheckedMethods(config, typeMnemonic);
     }
   }
-
+  
   private IClasspathEntry[] chooseClasspathEntry() throws JavaModelException {
     ILabelProvider labelProvider = new ClasspathLabelProvider(fJavaProject);
     ElementListSelectionDialog dialog = new ElementListSelectionDialog(fShell, labelProvider);
@@ -1054,7 +1041,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       fIgnoreJUnit = ignoreJUnit;
     }
 
-    @Override
     public boolean encloses(String resourcePath) {
       if (fSearchScope.encloses(resourcePath)) {
         IWorkspaceRoot root = getWorkspaceRoot();
@@ -1082,7 +1068,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
             }
             collectTypes(cf, types);
           } else {
-            RandoopPlugin.log(StatusFactory.createWarningStatus("Unable to get class files or compilation unit from " + file)); //$NON-NLS-1$
+            RandoopPlugin.log(RandoopStatus.createWarningStatus("Unable to get class files or compilation unit from " + file)); //$NON-NLS-1$
           }
         } else {
           IPath filePath = new Path(resourcePath.substring(0, jarFileSeparatorIndex));
@@ -1128,7 +1114,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         }
         
         if (types.isEmpty()) {
-          RandoopPlugin.log(StatusFactory.createWarningStatus("No classes found in " + resourcePath));
+          RandoopPlugin.log(RandoopStatus.createWarningStatus("No classes found in " + resourcePath));
           return false;
         }
         
@@ -1178,7 +1164,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       }
     }
     
-    @Override
     public boolean encloses(IJavaElement element) {
       if (fSearchScope.encloses(element)) {
         if (element instanceof IType) {
@@ -1189,31 +1174,26 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return false;
     }
     
-    @Override
     public IPath[] enclosingProjectsAndJars() {
       return fSearchScope.enclosingProjectsAndJars();
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public boolean includesBinaries() {
       return fSearchScope.includesBinaries();
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public boolean includesClasspaths() {
       return fSearchScope.includesClasspaths();
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public void setIncludesBinaries(boolean includesBinaries) {
       fSearchScope.setIncludesBinaries(includesBinaries);
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public void setIncludesClasspaths(boolean includesClasspaths) {
       fSearchScope.setIncludesClasspaths(includesClasspaths);
     }
@@ -1240,7 +1220,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     private class RandoopClassInputFilterExtension implements ITypeInfoFilterExtension {
 
-      @Override
       public boolean select(ITypeInfoRequestor typeInfoRequestor) {
         int flags = typeInfoRequestor.getModifiers();
         if (Flags.isInterface(flags) || Flags.isAbstract(flags)) {
@@ -1253,7 +1232,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     private class RandoopClassInputSelectionStatusValidator implements ISelectionStatusValidator {
 
-      @Override
       public IStatus validate(Object[] selection) {
         for (Object obj : selection) {
           try {
@@ -1261,29 +1239,36 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
               IType type = (IType) obj;
               int flags = type.getFlags();
               if (type.isInterface()) {
-                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is an interface", type.getElementName()));
+                RandoopStatus.createErrorStatus(MessageFormat.format("'{0}' is an interface", type.getElementName()));
               } else if (Flags.isAbstract(flags)) {
-                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is abstract", type.getElementName()));
+                RandoopStatus.createErrorStatus(MessageFormat.format("'{0}' is abstract", type.getElementName()));
               } else if (!Flags.isPublic(flags)) {
-                StatusFactory.createErrorStatus(MessageFormat.format("'{0}' is not public", type.getElementName()));
+                RandoopStatus.createErrorStatus(MessageFormat.format("'{0}' is not public", type.getElementName()));
               }
             } else {
-              return StatusFactory.createErrorStatus("One of the selected elements is not a Java class or enum");
+              return RandoopStatus.createErrorStatus("One of the selected elements is not a Java class or enum");
             }
           } catch (JavaModelException e) {
             RandoopPlugin.log(e, "Error when validating selected elements in type dialog"); //$NON-NLS-1$
           }
         }
-        return StatusFactory.OK_STATUS;
+        return RandoopStatus.OK_STATUS;
       }
       
     }
   }
-  
-  @Override
-  public void handleEvent(IOptionChangeEvent event) {
-    if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
-      fJavaProject = RandoopCoreUtil.getProjectFromName(event.getValue());
+
+  public void attributeChanged(IOptionChangeEvent event) {
+    String attr = event.getAttributeName();
+
+    if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(attr)) {
+      Object value = event.getValue();
+      if (value == null) {
+        fJavaProject = null;
+      } else {
+        Assert.isTrue(value instanceof String, "Project name must be a string");
+        fJavaProject = RandoopCoreUtil.getProjectFromName((String) value);
+      }
 
       boolean enabled = fJavaProject != null && fJavaProject.exists();
       fClassAddFromSources.setEnabled(enabled);
@@ -1328,6 +1313,21 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return hasMissingClasses;
   }
   
+  private void removeSelection() {
+    ITreeSelection selection = (ITreeSelection) fTypeTreeViewer.getSelection();
+
+    Iterator<?> it = selection.iterator();
+    while (it.hasNext()) {
+      fTreeInput.remove((TreeNode) it.next());
+    }
+
+    fTypeTreeViewer.refresh();
+    fClassRemove.setEnabled(false);
+    if (fResolveClasses != null) {
+      fResolveClasses.setEnabled(fJavaProject != null && fTreeInput.hasMissingClasses(fJavaProject));
+    }
+  }
+  
   public void resolveMissingClasses() throws JavaModelException {
     if (fJavaProject == null)
       return;
@@ -1366,6 +1366,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   private void setNewTypeMnemonic(TreeNode node, TypeMnemonic newTypeMnemonic) {
+    // TODO: Check if node or its object is null
+    
     TypeMnemonic oldTypeMnemonic = (TypeMnemonic) node.getObject();
     fDeletedTypeNodes.add(oldTypeMnemonic.toString());
 
@@ -1394,12 +1396,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return ResourcesPlugin.getWorkspace().getRoot();
   }
 
-  @Override
   public void restoreDefaults() {
     if (fTreeInput != null) {
-      for (TreeNode node : fTreeInput.getRoots()) {
-        fTreeInput.removeRoot(node);
-      }
+      fTreeInput.removeAll();
     }
   }
 

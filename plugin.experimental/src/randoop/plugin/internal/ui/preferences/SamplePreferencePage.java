@@ -35,6 +35,7 @@ public class SamplePreferencePage
 	 * of preferences. Each field editor knows how to save and
 	 * restore itself.
 	 */
+	@Override
 	public void createFieldEditors() {
 		addField(new DirectoryFieldEditor(IPreferenceConstants.P_PATH, 
 				"&Directory preference:", getFieldEditorParent()));

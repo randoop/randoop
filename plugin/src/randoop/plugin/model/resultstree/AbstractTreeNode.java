@@ -8,10 +8,8 @@ public abstract class AbstractTreeNode implements IRandoopTreeElement {
 
   public IRandoopTreeElement owner;
 
-  @Override
   public abstract IRandoopTreeElement[] getChildren();
   
-  @Override
   public IRandoopTreeElement getParent() {
     return owner;
   }

@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -25,6 +23,7 @@ import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.ui.options.IOption;
+import randoop.plugin.internal.ui.options.IOptionChangeListener;
 import randoop.plugin.internal.ui.options.OptionFactory;
 
 public class ParametersSWTFactory {
@@ -33,7 +32,7 @@ public class ParametersSWTFactory {
   private final static int VERTICAL_LABEL_SPACING = 9;
   private final static int VERTICAL_TEXT_SPACING = 6;
   
-  public static List<IOption> createGenerationLimitComposite(Composite parent, ModifyListener modifyListener) {
+  public static List<IOption> createGenerationLimitComposite(Composite parent, IOptionChangeListener changeListener) {
     Composite comp = new Composite(parent, SWT.NONE);
     
     FormLayout formLayout = new FormLayout();
@@ -113,13 +112,16 @@ public class ParametersSWTFactory {
     options.add(OptionFactory.createInputsLimitOption(inputLimitText));
     options.add(OptionFactory.createTimeLimitOption(timeLimitText, convertedTimeLimit));
 
-    inputLimitText.addModifyListener(modifyListener);
-    timeLimitText.addModifyListener(modifyListener);
-    
+    for (IOption option : options) {
+      option.addChangeListener(changeListener);
+    }
+
     return options;
   }
-  
-  public static List<IOption> createOutputParametersComposite(Composite parent, ModifyListener modifyListener) {
+
+  public static List<IOption> createOutputParametersComposite(Composite parent,
+      IOptionChangeListener changeListener) {
+    
     Composite comp = new Composite(parent, SWT.NONE);
     
     FormLayout formLayout = new FormLayout();
@@ -163,12 +165,16 @@ public class ParametersSWTFactory {
     
     options.add(OptionFactory.createTestKindsOption(testKindsCombo));
     
-    testKindsCombo.addModifyListener(modifyListener);
+    for (IOption option : options) {
+      option.addChangeListener(changeListener);
+    }
     
     return options;
   }
-  
-  public static List<IOption> createAdvancedComposite(Composite parent, ModifyListener modifyListener, SelectionListener selectionListener) {
+
+  public static List<IOption> createAdvancedComposite(Composite parent,
+      IOptionChangeListener changeListener) {
+
     Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 
     GridLayout ld = (GridLayout) comp.getLayout();
@@ -241,14 +247,11 @@ public class ParametersSWTFactory {
     options.add(maxTestsPerFile);
     // addOption(fMaxTestsWritten);
     
-    randomSeedText.addModifyListener(modifyListener);
-    maxTestSizeText.addModifyListener(modifyListener);
-    threadTimeoutButton.addSelectionListener(selectionListener);
-    threadTimeoutText.addModifyListener(modifyListener);
-    nullRatioButton.addSelectionListener(selectionListener);
-    nullRatioText.addModifyListener(modifyListener);
-    maxTestsPerFileText.addModifyListener(modifyListener);
-    // maxTestsWrittenText.addModifyListener(getBasicModifyListener());
+    threadTimeout.addChangeListener(changeListener);
+    nullRatio.addChangeListener(changeListener);
+    for (IOption option : options) {
+      option.addChangeListener(changeListener);
+    }
     
     return options;
   }

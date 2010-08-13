@@ -5,16 +5,28 @@ import java.util.List;
 
 public abstract class Option implements IOption {
   
+  private boolean fListeneredDisabled = false;
+
   List<IOptionChangeListener> fListeners = new ArrayList<IOptionChangeListener>();
 
-  @Override
   public void addChangeListener(IOptionChangeListener listener) {
     fListeners.add(listener);
   }
 
+  public void removeChangeListener(IOptionChangeListener listener) {
+    fListeners.remove(listener);
+  }
+
   protected void notifyListeners(IOptionChangeEvent event) {
-    for (IOptionChangeListener listener : fListeners) {
-      listener.handleEvent(event);
+    if (!fListeneredDisabled) {
+      for (IOptionChangeListener listener : fListeners) {
+        listener.attributeChanged(event);
+      }
     }
   }
+
+  protected void setDisableListeners(boolean disabled) {
+    fListeneredDisabled = disabled;
+  }
+  
 }

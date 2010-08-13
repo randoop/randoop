@@ -2,20 +2,19 @@ package randoop.plugin.internal.ui.options;
 
 public class OptionChangeEvent implements IOptionChangeEvent {
   String fAttribute;
-  String fValue;
+  Object fValue;
 
-  public OptionChangeEvent(String attribute, String value) {
+  public OptionChangeEvent(String attribute, Object value) {
     fAttribute = attribute;
     fValue = value;
   }
 
-  @Override
-  public String getValue() {
+  public Object getValue() {
     return fValue;
   }
 
-  @Override
-  public String getAttribute() {
+  public String getAttributeName() {
     return fAttribute;
   }
+  
 }
