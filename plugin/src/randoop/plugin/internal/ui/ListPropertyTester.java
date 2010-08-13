@@ -10,7 +10,6 @@ public class ListPropertyTester extends PropertyTester {
   private static final String PROPERTY_IS_ALL_IN_SAME_PROJECT = "isAllInSameProject"; //$NON-NLS-1$
   
   @SuppressWarnings("unchecked")
-  @Override
   public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
     if (!(receiver instanceof List<?>)) {
       throw new IllegalArgumentException(

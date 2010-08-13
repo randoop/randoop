@@ -1,6 +1,5 @@
 package randoop.plugin.internal.ui.launching;
 
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -20,14 +19,6 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
   private JUnitTestClassNameOption fJUnitTestClassNameOption;
   private ClassSelectorOption fTestInputSelectorOption;
   
-  @Override
-  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    ProjectOption.writeDefaults(config);
-    JUnitTestClassNameOption.writeDefaults(config);
-    ClassSelectorOption.writeDefaults(config);
-  }
-
-  @Override
   public void createControl(Composite parent) {
     Composite tabcomp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(tabcomp);
@@ -60,22 +51,20 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
     fJUnitTestClassNameOption = new JUnitTestClassNameOption(fullyQualifiedTestName);
 
     // Test inputs option:
-    fTestInputSelectorOption = new ClassSelectorOption(tabcomp, getLaunchConfigurationDialog(), getBasicSelectionListener());
+    fTestInputSelectorOption = new ClassSelectorOption(tabcomp, getLaunchConfigurationDialog());
+
     fProjectOption.addChangeListener(fTestInputSelectorOption);
 
     addOption(fProjectOption);
     addOption(fJUnitTestClassNameOption);
     addOption(fTestInputSelectorOption);
-    
-    projectText.addModifyListener(getBasicModifyListener());
-    outputSourceFolderText.addModifyListener(getBasicModifyListener());
-    projectBrowseButton.addSelectionListener(getBasicSelectionListener());
-    sourceFolderBrowseButton.addSelectionListener(getBasicSelectionListener());
 
-    fullyQualifiedTestName.addModifyListener(getBasicModifyListener());
+    fProjectOption.addChangeListener(getBasicOptionChangeListener());
+    fJUnitTestClassNameOption.addChangeListener(getBasicOptionChangeListener());
+    fTestInputSelectorOption.addChangeListener(getBasicOptionChangeListener());
+    
   }
 
-  @Override
   public String getName() {
     return "&General";
   }

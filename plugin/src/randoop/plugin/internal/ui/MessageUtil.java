@@ -12,7 +12,6 @@ public class MessageUtil {
     final MutableBoolean okToProceed = new MutableBoolean(false);
     
     PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-      @Override
       public void run() {
         okToProceed.setValue(MessageDialog.openQuestion(
             RandoopPlugin.getDisplay().getActiveShell(), "Randoop", message));
@@ -26,7 +25,6 @@ public class MessageUtil {
     final MutableBoolean okToProceed = new MutableBoolean(false);
 
     PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-      @Override
       public void run() {
         MessageDialog.openInformation(
             RandoopPlugin.getDisplay().getActiveShell(), "Randoop", message);

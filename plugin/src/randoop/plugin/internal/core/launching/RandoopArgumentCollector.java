@@ -2,6 +2,7 @@ package randoop.plugin.internal.core.launching;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.RandoopCoreUtil;
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.TypeMnemonic;
 
 public class RandoopArgumentCollector {
@@ -60,6 +61,7 @@ public class RandoopArgumentCollector {
     fSelectedMethodsByType = new HashMap<IType, List<IMethod>>();
     
     List<?> availableTypes = getAvailableTypes(config);
+    List<?> checkedTypes = getCheckedTypes(config);
     List<?> grayedTypes = getGrayedTypes(config);
     
     Assert.isTrue(!availableTypes.isEmpty(), "No class-input or method-input selected");
@@ -90,7 +92,7 @@ public class RandoopArgumentCollector {
         }
         
         fSelectedMethodsByType.put(type, methodList);
-      } else {
+      } else if (checkedTypes.contains(typeObject)) {
         fSelectedTypes.add(type);
       }
     }
@@ -131,7 +133,7 @@ public class RandoopArgumentCollector {
       
       try {
         if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return StatusFactory.createWarningStatus("One of the selected classes has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
+          return RandoopStatus.createWarningStatus("One of the selected classes has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
         }
       } catch (JavaModelException e) {
         RandoopPlugin.log(e);
@@ -143,14 +145,14 @@ public class RandoopArgumentCollector {
       
       try {
         if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return StatusFactory.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class.");
+          return RandoopStatus.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class.");
         }
       } catch (JavaModelException e) {
         RandoopPlugin.log(e);
       }
     }
     
-    return StatusFactory.OK_STATUS;
+    return RandoopStatus.OK_STATUS;
   }
 
   public String getName() {
@@ -224,6 +226,7 @@ public class RandoopArgumentCollector {
   public int getMaxTestsPerFile() {
     return fMaxTestsPerFile;
   }
+
 
   public static int getPort(ILaunchConfiguration config) {
     return getAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_PORT,
@@ -299,8 +302,8 @@ public class RandoopArgumentCollector {
 
   public static String getInputLimit(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
+        IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT,
+        IRandoopLaunchConfigurationConstants.DEFAULT_INPUT_LIMIT);
   }
 
   public static String getTimeLimit(ILaunchConfiguration config) {
@@ -353,32 +356,6 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
   }
 
-  /*
-   * Methods to restore default values
-   */
-  public static void restorePort(ILaunchConfigurationWorkingCopy config) {
-    String nullStr = null;
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_PORT, nullStr);
-  }
-  
-  public static void restoreAvailableTypes(ILaunchConfigurationWorkingCopy config) {
-    setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_TYPES,
-        EMPTY_STRING_LIST);
-  }
-
-  public static void restoreGrayedTypes(ILaunchConfigurationWorkingCopy config) {
-    setAttribute(config,
-       IRandoopLaunchConfigurationConstants.ATTR_GRAYED_TYPES,
-       EMPTY_STRING_LIST);
- }
-  
-  public static void restoreCheckedTypes(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_CHECKED_TYPES,
-        EMPTY_STRING_LIST);
-  }
-  
   public static void deleteAvailableMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS_PREFIX + typeMnemonic,
@@ -391,97 +368,6 @@ public class RandoopArgumentCollector {
         (String) null);
   }
 
-  public static void restoreRandomSeed(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED,
-        IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
-  }
-
-  public static void restoreMaxTestSize(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE,
-        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TEST_SIZE);
-  }
-
-  public static void restoreUseThreads(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(
-        config,
-        IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS,
-        Boolean
-            .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
-  }
-
-  public static void restoreThreadTimeout(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT,
-        IRandoopLaunchConfigurationConstants.DEFAULT_THREAD_TIMEOUT);
-  }
-
-  public static void restoreUseNull(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean
-            .parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
-  }
-
-  public static void restoreNullRatio(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO,
-        IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
-  }
-
-  public static void restoreInputLimit(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
-  }
-
-  public static void restoreTimeLimit(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT,
-        IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
-  }
-
-  public static void restoreProjectName(ILaunchConfigurationWorkingCopy config) {
-    setAttribute(config,
-       IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME,
-       IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
- }
-  
-  public static void restoreOutputDirectoryName(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY_NAME);
-  }
-
-  public static void restoreJUnitPackageName(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME);
-  }
-
-  public static void restoreJUnitClassName(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME);
-  }
-
-  public static void restoreTestKinds(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_TEST_KINDS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_TEST_KINDS);
-  }
-
-  public static void restoreMaxTestsWritten(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_WRITTEN,
-        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_WRITTEN);
-  }
-
-  public static void restoreMaxTestsPerFile(ILaunchConfigurationWorkingCopy config) {
-     setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_PER_FILE,
-        IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
-  }
 
   /*
    * Methods to set ILaunchConfigurationWorkingCopy attributes
@@ -535,7 +421,7 @@ public class RandoopArgumentCollector {
   }
 
   public static void setInputLimit(ILaunchConfigurationWorkingCopy config, String testInputs) {
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS, testInputs);
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT, testInputs);
   }
 
   public static void setTimeLimit(ILaunchConfigurationWorkingCopy config, String timeLimit) {
@@ -609,6 +495,7 @@ public class RandoopArgumentCollector {
 
   private static void setAttribute(ILaunchConfigurationWorkingCopy config,
       String attributeName, int value) {
+    
     config.setAttribute(attributeName, value);
   }
   
@@ -627,6 +514,39 @@ public class RandoopArgumentCollector {
     config.setAttribute(attributeName, value);
   }
 
+  public static void saveClassTree(ILaunchConfigurationWorkingCopy config,
+      List<String> availableTypesa, List<String> checkedTypesa, List<String> grayedTypesa,
+      Collection<String> deletedTypesa, Map<String, List<String>> availableMethodsByDeclaringTypes,
+      Map<String, List<String>> checkedMethodsByDeclaringTypes) {
+
+    if (deletedTypesa != null) {
+      for (String mnemonic : deletedTypesa) {
+        RandoopArgumentCollector.deleteAvailableMethods(config, mnemonic);
+        RandoopArgumentCollector.deleteCheckedMethods(config, mnemonic);
+      }
+    }
+
+    RandoopArgumentCollector.setAvailableTypes(config, availableTypesa);
+    RandoopArgumentCollector.setGrayedTypes(config, grayedTypesa);
+    RandoopArgumentCollector.setCheckedTypes(config, checkedTypesa);
+
+    if (availableMethodsByDeclaringTypes != null) {
+      for (String typeMnemonic : availableMethodsByDeclaringTypes.keySet()) {
+        List<String> availableMethods = availableMethodsByDeclaringTypes.get(typeMnemonic);
+
+        RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods);
+      }
+    }
+
+    if (checkedMethodsByDeclaringTypes != null) {
+      for (String typeMnemonic : checkedMethodsByDeclaringTypes.keySet()) {
+        List<String> checkedMethods = checkedMethodsByDeclaringTypes.get(typeMnemonic);
+
+        RandoopArgumentCollector.setCheckedMethods(config, typeMnemonic, checkedMethods);
+      }
+    }
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof RandoopArgumentCollector) {
