@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly xmlns:j="jelly:core" xmlns:test="jelly:junit" xmlns:x="jelly:xml">
+    <x:parse var="nums">
+        <a>
+            <b v="3"/>
+            <b v="2"/>
+            <b v="1"/>
+            <b v="11"/>
+            <b v="1.4"/>
+            <b v="1.2"/>
+        </a>
+    </x:parse>
+
+    <x:parse var="strs">
+        <a>
+            <b v="z"/>
+            <b v="g"/>
+            <b v="d"/>
+            <b v="a"/>
+        </a>
+    </x:parse>
+
+    <x:parse var="deeper">
+        <a>
+            <b><c><d>3<e>1</e></d></c></b>
+            <b><c><d>2<e>11</e></d></c></b>
+            <b><c><d>1</d></c></b>
+            <b><c><d>11</d></c></b>
+        </a>
+    </x:parse>
+
+    <j:set var="result" value=""/>
+    <x:forEach select="$nums/a/b" var="x" sort="@v">
+        <x:set var="num" select="$x/@v"/>
+        <j:set var="result" value="${result} ${num.get(0).getText()}"/>
+    </x:forEach>
+    ${result}
+
+    <j:set var="result" value=""/>
+    <x:forEach select="$nums/a/b" var="x" sort="@v" descending="true">
+        <x:set var="num" select="$x/@v"/>
+        <j:set var="result" value="${result} ${num.get(0).getText()}"/>
+    </x:forEach>
+    ${result}
+
+    <j:set var="result" value=""/>
+    <x:forEach select="$nums/a/b" var="x" sort="@v" sortDataType="java.lang.String">
+        <x:set var="num" select="$x/@v"/>
+        <j:set var="result" value="${result} ${num.get(0).getText()}"/>
+    </x:forEach>
+    ${result}
+
+    <j:set var="result" value=""/>
+    <x:forEach select="$strs/a/b" var="x" sort="@v">
+        <x:set var="str" select="$x/@v"/>
+        <j:set var="result" value="${result} ${str.get(0).getText()}"/>
+    </x:forEach>
+    ${result}
+
+    <j:set var="result" value=""/>
+    <x:forEach select="$deeper/a/b" var="x" sort="c/d">
+        <j:set var="result" value="${result} ${x.getStringValue()}"/>
+    </x:forEach>
+    ${result}
+
+    <j:set var="result" value=""/>
+    <x:set var="rset" select="$nums/a/b" sort="@v"/>
+    <j:forEach var="num" items="${rset.iterator()}">
+        <j:set var="result" value="${result} ${num.attributeValue('v')}"/>
+    </j:forEach>
+    ${result}
+
+    <j:set var="result" value=""/>
+    <x:set var="rset" select="$nums/a/b"/>
+    <x:sort list="${rset}" sort="@v"/>
+    <j:forEach var="num" items="${rset.iterator()}">
+        <j:set var="result" value="${result} ${num.attributeValue('v')}"/>
+    </j:forEach>
+    ${result}
+
+</j:jelly>
