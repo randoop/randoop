@@ -30,6 +30,7 @@ public class ObjectCheck implements Check {
   private static final long serialVersionUID = 7794896690777599374L;
   public final ObjectContract contract;
   public final Variable[] vars;
+  public final int stmt_no;
 
   @Override
   public boolean equals(Object o) {
@@ -52,19 +53,21 @@ public class ObjectCheck implements Check {
     return h;
   }
 
-  public ObjectCheck(ObjectContract cc, Variable... vars) {
+  public ObjectCheck(ObjectContract cc, int stmt_no, Variable... vars) {
     if (cc == null) {
       throw new IllegalArgumentException("first argument cannot be null.");
     }
     if (vars.length != cc.getArity()) {
       throw new IllegalArgumentException("vars.size() != template.getArity().");
     }
+    this.stmt_no = stmt_no;
     this.contract = cc;
     this.vars = new Variable[vars.length];
     int count = 0;
     for (Variable v : vars) {
       this.vars[count++] = v;
     }
+
   }
 
   public String toString() {
@@ -114,5 +117,15 @@ public class ObjectCheck implements Check {
     } catch (Throwable t) {
       return contract.evalExceptionMeansFailure();
     }
+  }
+
+  @Override
+  public int get_stmt_no() {
+    return (stmt_no);
+  }
+
+  @Override
+  public String get_id() {
+    return contract.get_observer_str() + " " + Arrays.toString(vars);
   }
 }
