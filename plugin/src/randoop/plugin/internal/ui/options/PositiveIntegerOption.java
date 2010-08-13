@@ -11,6 +11,9 @@ public abstract class PositiveIntegerOption extends IntegerOption {
   
   private String fNonPosErrorMsg;
   
+  public PositiveIntegerOption() {
+  }
+  
   public PositiveIntegerOption(Text text) {
     super(text);
     fNonPosErrorMsg = MessageFormat.format("{0} is not a positive integer", getName());
