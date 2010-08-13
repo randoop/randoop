@@ -148,6 +148,7 @@ public class TestGeneratorViewPart extends ViewPart {
       
       ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/debugjunit.png");
       setImageDescriptor(desc);
+      setEnabled(false);
     }
     
     @Override
