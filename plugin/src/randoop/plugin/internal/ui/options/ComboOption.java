@@ -28,6 +28,10 @@ public abstract class ComboOption extends Option {
     });
   }
   
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    config.setAttribute(getAttributeName(), getDefaltValue());
+  }
+  
   public IStatus canSave() {
     if (fCombo == null) {
       return StatusFactory.createErrorStatus(ComboOption.class.getName()

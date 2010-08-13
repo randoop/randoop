@@ -140,7 +140,7 @@ public class JUnitTestClassNameOption extends Option {
       String fqname = fFullyQualifiedTestName.getText();
       String packageName = RandoopCoreUtil.getPackageName(fqname);
       String className = RandoopCoreUtil.getClassName(fqname);
-      
+
       RandoopArgumentCollector.setJUnitPackageName(config, packageName);
       RandoopArgumentCollector.setJUnitClassName(config, className);
     } else if (fPackageName != null && fClassName != null) {
@@ -150,8 +150,8 @@ public class JUnitTestClassNameOption extends Option {
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.restoreJUnitPackageName(config);
-    RandoopArgumentCollector.restoreJUnitClassName(config);
+    RandoopArgumentCollector.setJUnitPackageName(config, IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME);
+    RandoopArgumentCollector.setJUnitClassName(config, IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME);
   }
   
   public void restoreDefaults() {

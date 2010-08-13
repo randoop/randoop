@@ -133,8 +133,10 @@ public class ProjectOption extends Option {
 
   public IStatus isValid(ILaunchConfiguration config) {
     String projectName = RandoopArgumentCollector.getProjectName(config);
-    String outputSourceFolderName = RandoopArgumentCollector.getOutputDirectoryName(config);
-  
+
+    String outputSourceFolderName = RandoopArgumentCollector
+        .getOutputDirectoryName(config);
+
     return validate(projectName, outputSourceFolderName);
   }
 
@@ -204,7 +206,7 @@ public class ProjectOption extends Option {
 
       fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
       fProjectText.setText(projectName);
-        
+
       String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
       notifyListeners(new OptionChangeEvent(attr, projectName));
     }
@@ -224,23 +226,29 @@ public class ProjectOption extends Option {
   }
   
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fProjectText != null)
+    if (fProjectText != null) {
       RandoopArgumentCollector.setProjectName(config, fProjectText.getText());
-    else if (fJavaProject != null)
+    } else if (fJavaProject != null) {
       RandoopArgumentCollector.setProjectName(config, fJavaProject.getElementName());
-
-    if (fOutputSourceFolderText != null)
+    }
+    
+    if (fOutputSourceFolderText != null) {
       RandoopArgumentCollector.setOutputDirectoryName(config, fOutputSourceFolderText.getText());
+    }
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    if (fProjectText != null)
-      RandoopArgumentCollector.restoreProjectName(config);
+    if (fProjectText != null) {
+      RandoopArgumentCollector.setProjectName(config,
+          IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
+    }
 
-    if (fOutputSourceFolderText != null)
-      RandoopArgumentCollector.restoreOutputDirectoryName(config);
+    if (fOutputSourceFolderText != null) {
+      RandoopArgumentCollector.setOutputDirectoryName(config,
+          IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY_NAME);
+    }
   }
-  
+
   /*
    * Show a dialog that lets the user select a project. This in turn provides
    * context for the main type, allowing the user to key a main type name, or
