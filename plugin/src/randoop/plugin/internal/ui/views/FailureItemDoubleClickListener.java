@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.model.resultstree.FailingMember;
 
 public class FailureItemDoubleClickListener implements IDoubleClickListener {
@@ -51,7 +51,7 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 	      junitFilePath = junitFilePath.setDevice(null);
 	    } else {
 	      // Otherwise something is very wrong, the file is not in the project at all!
-	      RandoopPlugin.log(StatusFactory.createErrorStatus("Generated failure file not in selected project.")); //$NON-NLS-1$
+	      RandoopPlugin.log(RandoopStatus.createErrorStatus("Generated failure file not in selected project.")); //$NON-NLS-1$
 	    }
 	      
 	    IFile file = project.getFile(junitFilePath);

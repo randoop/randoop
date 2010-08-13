@@ -8,7 +8,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Combo;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.TestKinds;
 
 public abstract class ComboOption extends Option {
@@ -34,7 +34,7 @@ public abstract class ComboOption extends Option {
   
   public IStatus canSave() {
     if (fCombo == null) {
-      return StatusFactory.createErrorStatus(ComboOption.class.getName()
+      return RandoopStatus.createErrorStatus(ComboOption.class.getName()
           + " incorrectly initialized"); //$NON-NLS-1$
     }
     

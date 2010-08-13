@@ -176,7 +176,7 @@ public class RandoopCoreUtil {
       IClassFile cf = (IClassFile) element;
       return findTypes(cf, ignoreJUnitTestCases, monitor);
     default:
-      RandoopPlugin.log(StatusFactory.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
+      RandoopPlugin.log(RandoopStatus.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
           + element.getElementType()));
     }
     return null;

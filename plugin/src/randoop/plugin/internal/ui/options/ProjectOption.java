@@ -31,7 +31,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopCoreUtil;
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
@@ -125,10 +125,10 @@ public class ProjectOption extends Option {
 
   public IStatus canSave() {
     if (fOutputSourceFolderText == null || fSourceFolderBrowseButton == null) {
-      return StatusFactory.ERROR_STATUS;
+      return RandoopStatus.ERROR_STATUS;
     }
   
-    return StatusFactory.OK_STATUS;
+    return RandoopStatus.OK_STATUS;
   }
 
   public IStatus isValid(ILaunchConfiguration config) {
@@ -158,44 +158,44 @@ public class ProjectOption extends Option {
     if (status.isOK()) {
       IProject project = workspace.getRoot().getProject(projectName);
       if (!project.exists()) {
-        return StatusFactory.createErrorStatus(MessageFormat.format(
+        return RandoopStatus.createErrorStatus(MessageFormat.format(
             "Project {0} does not exist", new Object[] { projectName }));
       }
       if (!project.isOpen()) {
-        return StatusFactory.createErrorStatus(MessageFormat.format(
+        return RandoopStatus.createErrorStatus(MessageFormat.format(
             "Project {0} is closed", new Object[] { projectName }));
       }
       
       try {
         javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
         if (javaProject == null) {
-          return StatusFactory.createErrorStatus(MessageFormat.format(
+          return RandoopStatus.createErrorStatus(MessageFormat.format(
               "Project {0} is not a Java project", new Object[] { projectName }));
         }
       } catch (CoreException e) {
         RandoopPlugin.log(e);
-        return StatusFactory.ERROR_STATUS;
+        return RandoopStatus.ERROR_STATUS;
       }
     } else {
-      return StatusFactory.createErrorStatus(MessageFormat.format(
+      return RandoopStatus.createErrorStatus(MessageFormat.format(
           "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
 
     final char[] ILLEGAL_CHARACTERS = { '\\', ':', '*', '`', '?', '"', '<', '>', '|' };
     for (char c : ILLEGAL_CHARACTERS) {
       if (outputSourceFolderName.contains(new Character(c).toString())) {
-        status = StatusFactory
+        status = RandoopStatus
             .createErrorStatus("Output folder cannot contain any of the following characters: \\ : * ` ? \" < > |");
         return status;
       }
     }
     IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputSourceFolderName);
     if (outputDir == null) {
-      status = StatusFactory.createOkStatus("Output folder will be created on launch");
+      status = RandoopStatus.createOkStatus("Output folder will be created on launch");
       return status;
     }
 
-    return StatusFactory.OK_STATUS;
+    return RandoopStatus.OK_STATUS;
   }
 
   public void initializeFrom(ILaunchConfiguration config) {

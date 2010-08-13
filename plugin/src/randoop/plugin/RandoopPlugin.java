@@ -19,7 +19,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
 
 /**
@@ -204,7 +204,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
     try {
       return getFullPath(RANDOOP_JAR);
     } catch (IOException e) {
-      throw new CoreException(StatusFactory.NO_LOCAL_RANDOOPJAR_ERROR.getStatus(e));
+      throw new CoreException(RandoopStatus.NO_LOCAL_RANDOOPJAR_ERROR.getStatus(e));
     }
   }
 
@@ -219,7 +219,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
     try {
       return getFullPath(PLUME_JAR);
     } catch (IOException e) {
-      throw new CoreException(StatusFactory.NO_LOCAL_PLUMEJAR_ERROR.getStatus(e));
+      throw new CoreException(RandoopStatus.NO_LOCAL_PLUMEJAR_ERROR.getStatus(e));
     }
   }
 
