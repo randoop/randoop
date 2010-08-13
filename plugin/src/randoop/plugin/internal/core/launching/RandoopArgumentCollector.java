@@ -2,6 +2,7 @@ package randoop.plugin.internal.core.launching;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -299,8 +300,8 @@ public class RandoopArgumentCollector {
 
   public static String getInputLimit(ILaunchConfiguration config) {
     return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
+        IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT,
+        IRandoopLaunchConfigurationConstants.DEFAULT_INPUT_LIMIT);
   }
 
   public static String getTimeLimit(ILaunchConfiguration config) {
@@ -431,8 +432,8 @@ public class RandoopArgumentCollector {
 
   public static void restoreInputLimit(ILaunchConfigurationWorkingCopy config) {
      setAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_TEST_INPUTS);
+        IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT,
+        IRandoopLaunchConfigurationConstants.DEFAULT_INPUT_LIMIT);
   }
 
   public static void restoreTimeLimit(ILaunchConfigurationWorkingCopy config) {
@@ -535,7 +536,7 @@ public class RandoopArgumentCollector {
   }
 
   public static void setInputLimit(ILaunchConfigurationWorkingCopy config, String testInputs) {
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_JUNIT_TEST_INPUTS, testInputs);
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT, testInputs);
   }
 
   public static void setTimeLimit(ILaunchConfigurationWorkingCopy config, String timeLimit) {
@@ -627,6 +628,84 @@ public class RandoopArgumentCollector {
     config.setAttribute(attributeName, value);
   }
 
+  public static void saveClassTree(ILaunchConfigurationWorkingCopy config,
+      List<String> availableTypesa, List<String> checkedTypesa, List<String> grayedTypesa,
+      Collection<String> deletedTypesa, Map<String, List<String>> availableMethodsByDeclaringTypes,
+      Map<String, List<String>> checkedMethodsByDeclaringTypes) {
+
+    if (deletedTypesa != null) {
+      for (String mnemonic : deletedTypesa) {
+        RandoopArgumentCollector.deleteAvailableMethods(config, mnemonic);
+        RandoopArgumentCollector.deleteCheckedMethods(config, mnemonic);
+      }
+    }
+
+    RandoopArgumentCollector.setAvailableTypes(config, availableTypesa);
+    RandoopArgumentCollector.setGrayedTypes(config, grayedTypesa);
+    RandoopArgumentCollector.setCheckedTypes(config, checkedTypesa);
+
+    if (availableMethodsByDeclaringTypes != null) {
+      for (String typeMnemonic : availableMethodsByDeclaringTypes.keySet()) {
+        List<String> availableMethods = availableMethodsByDeclaringTypes.get(typeMnemonic);
+
+        RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods);
+      }
+    }
+
+    if (checkedMethodsByDeclaringTypes != null) {
+      for (String typeMnemonic : checkedMethodsByDeclaringTypes.keySet()) {
+        List<String> checkedMethods = checkedMethodsByDeclaringTypes.get(typeMnemonic);
+
+        RandoopArgumentCollector.setCheckedMethods(config, typeMnemonic, checkedMethods);
+      }
+    }
+    
+//
+//    List<String> availableTypeMnemonics = new ArrayList<String>();
+//    List<String> grayedTypes = new ArrayList<String>();
+//    List<String> checkedTypes = new ArrayList<String>();
+//
+//    for (TypeMnemonic typeMnemonic : )
+//    for (TreeNode packageNode : input.getRoots()) {
+//      for (Object typeObject : prov.getChildren(packageNode)) {
+//        TreeNode typeNode = (TreeNode) typeObject;
+//
+//        String typeMnemonic = null;
+//        if (typeNode.getObject() instanceof TypeMnemonic) {
+//          typeMnemonic = typeNode.getObject().toString();
+//        }
+//        availableTypeMnemonics.add(typeMnemonic);
+//
+//        if (typeNode.isChecked()) {
+//          checkedTypes.add(typeMnemonic);
+//
+//          if (typeNode.isGrayed()) {
+//            grayedTypes.add(typeMnemonic);
+//
+//            List<String> availableMethods = new ArrayList<String>();
+//            List<String> checkedMethods = new ArrayList<String>();
+//            for (Object methodObject : prov.getChildren(typeObject)) {
+//              TreeNode methodNode = (TreeNode) methodObject;
+//              String methodMnemonicString = methodNode.getObject().toString();
+//
+//              availableMethods.add(methodMnemonicString);
+//              if (methodNode.isChecked()) {
+//                checkedMethods.add(methodMnemonicString);
+//              }
+//            }
+//
+//            RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods);
+//            RandoopArgumentCollector.setCheckedMethods(config, typeMnemonic, checkedMethods);
+//          }
+//        }
+//      }
+//    }
+//
+//    RandoopArgumentCollector.setAvailableTypes(config, availableTypeMnemonics);
+//    RandoopArgumentCollector.setGrayedTypes(config, grayedTypes);
+//    RandoopArgumentCollector.setCheckedTypes(config, checkedTypes);
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof RandoopArgumentCollector) {

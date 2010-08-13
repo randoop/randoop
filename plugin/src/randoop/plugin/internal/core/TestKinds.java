@@ -1,9 +1,9 @@
 package randoop.plugin.internal.core;
 
 public enum TestKinds {
-  ALL("all", "All"), //$NON-NLS-1$
-  PASS("pass", "Pass"), //$NON-NLS-1$
-  FAIL("fail", "Fail"); //$NON-NLS-1$
+  all("all", "Pass or Fail"), //$NON-NLS-1$
+  pass("pass", "Pass"), //$NON-NLS-1$
+  fail("fail", "Fail"); //$NON-NLS-1$
 
   private String fArgumentName;
   private String fTranslatableName;

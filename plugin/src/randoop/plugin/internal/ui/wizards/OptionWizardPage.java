@@ -8,13 +8,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 
 import randoop.plugin.internal.ui.options.IOption;
+import randoop.plugin.internal.ui.options.IOptionChangeEvent;
+import randoop.plugin.internal.ui.options.IOptionChangeListener;
 
 public abstract class OptionWizardPage extends WizardPage {
   
@@ -22,21 +20,9 @@ public abstract class OptionWizardPage extends WizardPage {
   
   private ILaunchConfigurationWorkingCopy fConfig;
 
-  private ModifyListener fBasicModifyListener = new ModifyListener() {
+  private IOptionChangeListener fBasicOptionChangeListener = new IOptionChangeListener() {
 
-    public void modifyText(ModifyEvent e) {
-      update();
-    }
-  };
-
-  private SelectionListener fBasicSelectionListener = new SelectionListener() {
-
-    public void widgetSelected(SelectionEvent e) {
-      setErrorMessage(null);
-      update();
-    }
-
-    public void widgetDefaultSelected(SelectionEvent e) {
+    public void attributeChanged(IOptionChangeEvent event) {
       setErrorMessage(null);
       update();
     }
@@ -78,22 +64,14 @@ public abstract class OptionWizardPage extends WizardPage {
     }
   }
   
-  public void createControl(Composite parent) {
-    update();
-  }
-  
   protected OptionWizardPage(String pageName, String title, ImageDescriptor titleImage, ILaunchConfigurationWorkingCopy config) {
     super(pageName, title, titleImage);
     fOptions = new ArrayList<IOption>();
     fConfig = config;
   }
 
-  protected SelectionListener getBasicSelectionListener() {
-    return fBasicSelectionListener;
-  }
-  
-  protected ModifyListener getBasicModifyListener() {
-    return fBasicModifyListener;
+  protected IOptionChangeListener getBasicoptionChangeListener() {
+    return fBasicOptionChangeListener;
   }
 
   /**
@@ -137,6 +115,8 @@ public abstract class OptionWizardPage extends WizardPage {
     }
   }
   
+  public abstract void createControl(Composite parent);
+  
   /**
    * Sets the message so long as it is non-<code>null</code> and non-empty.
    * 
@@ -154,4 +134,5 @@ public abstract class OptionWizardPage extends WizardPage {
     
     return false;
   }
+
 }

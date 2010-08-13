@@ -1,7 +1,11 @@
 package randoop.plugin.internal.ui.wizards;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -9,8 +13,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
 
 import randoop.plugin.internal.core.TypeMnemonic;
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class RandoopLaunchConfigurationWizard extends Wizard {
   protected static final String DIALOG_SETTINGS_KEY = "RandoopWizard"; //$NON-NLS-1$
@@ -20,27 +26,48 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
   OptionWizardPage fTestInputsPage;
 
   public RandoopLaunchConfigurationWizard(IJavaProject javaProject,
-      List<TypeMnemonic> checkedTypes, List<TypeMnemonic> grayedTypes,
-      Map<IType, List<String>> selectedMethodsByDeclaringTypes,
+      List<String> checkedTypes, List<String> grayedTypes,
+      Map<String, List<String>> selectedMethodsByDeclaringTypes,
       ILaunchConfigurationWorkingCopy config) throws CoreException {
-    
+
     super();
 
     fConfig = config;
 
-    fTestInputsPage = new TestInputsPage("Test Inputs", javaProject, checkedTypes, grayedTypes,
-        selectedMethodsByDeclaringTypes, fConfig);
+    RandoopArgumentCollector.setProjectName(fConfig, javaProject.getElementName());
+
+    Set<String> availableTypesSet = new HashSet<String>();
+    availableTypesSet.addAll(checkedTypes);
+    availableTypesSet.addAll(grayedTypes);
+    
+    List<String> availableTypes = new ArrayList<String>();
+    availableTypes.addAll(availableTypesSet);
+
+    RandoopArgumentCollector.saveClassTree(config, availableTypes, checkedTypes,
+        grayedTypes, null, null, selectedMethodsByDeclaringTypes);
+    
+    fTestInputsPage = new TestInputsPage("Test Inputs", javaProject, fConfig);
     fMainPage = new ParametersPage("Main", javaProject, fConfig);
     fMainPage.setPreviousPage(fMainPage);
+    
+    fMainPage.setDefaults(fConfig);
 
     addPage(fTestInputsPage);
     addPage(fMainPage);
+    
+    setTitleBarColor(new RGB(167, 215, 250));
+    setWindowTitle("New Randoop Launch Configuration");
+  }
+  
+  @Override
+  public void createPageControls(Composite pageContainer) {
+    super.createPageControls(pageContainer);
+
+    fTestInputsPage.initializeFrom(fConfig);
+    fMainPage.initializeFrom(fConfig);
 
     setNeedsProgressMonitor(true);
     setHelpAvailable(false);
-
-    setTitleBarColor(new RGB(167, 215, 250));
-    setWindowTitle("New Randoop Launch Configuration");
   }
 
   @Override

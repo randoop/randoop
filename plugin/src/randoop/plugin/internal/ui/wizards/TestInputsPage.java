@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 import randoop.plugin.internal.core.TypeMnemonic;
+import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
 
@@ -19,13 +20,8 @@ public class TestInputsPage extends OptionWizardPage {
   private IOption fTestInputSelectorOption;
 
   private IJavaProject fJavaProject;
-  private List<TypeMnemonic> fCheckedTypes;
-  private List<TypeMnemonic> fGrayedTypes;
-  private Map<IType, List<String>> fSelectedMethodsByDeclaringTypes;
-
-  protected TestInputsPage(String pageName, IJavaProject project, List<TypeMnemonic> checkedTypes,
-      List<TypeMnemonic> grayedTypes,
-      Map<IType, List<String>> selectedMethodsByDeclaringTypes,
+  
+  protected TestInputsPage(String pageName, IJavaProject project,
       ILaunchConfigurationWorkingCopy config) {
 
     super(pageName, config);
@@ -34,9 +30,6 @@ public class TestInputsPage extends OptionWizardPage {
     setPageComplete(false);
 
     fJavaProject = project;
-    fCheckedTypes = checkedTypes;
-    fGrayedTypes = grayedTypes;
-    fSelectedMethodsByDeclaringTypes = selectedMethodsByDeclaringTypes;
   }
 
   @Override
@@ -44,13 +37,11 @@ public class TestInputsPage extends OptionWizardPage {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(comp);
 
-    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard().getContainer(),
-        getBasicSelectionListener(), fJavaProject, fCheckedTypes, fGrayedTypes,
-        fSelectedMethodsByDeclaringTypes);
+    fTestInputSelectorOption = new ClassSelectorOption(comp, getWizard().getContainer(), fJavaProject);
 
     addOption(fTestInputSelectorOption);
 
-    super.createControl(parent);
+    fTestInputSelectorOption.addChangeListener(getBasicoptionChangeListener());
   }
 
   @Override
