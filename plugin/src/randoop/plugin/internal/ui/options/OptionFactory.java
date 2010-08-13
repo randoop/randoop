@@ -1,6 +1,7 @@
 package randoop.plugin.internal.ui.options;
 
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.events.ModifyEvent;
@@ -256,47 +257,28 @@ public class OptionFactory {
     }
     
     private void setConvertedTime() {
-      final String MINUTES = "minutes";
-      final String HOURS = "hours";
-      final String DAYS = "days";
-      final String YEARS = "years";
     
       try {
         int seconds = Integer.parseInt(fText.getText());
-    
-        DecimalFormat time = new DecimalFormat("#0.0"); //$NON-NLS-1$
-        StringBuilder timeStr = new StringBuilder();
+
+        DecimalFormat twoPlacesFormat = new DecimalFormat("#0.0"); //$NON-NLS-1$
+        String timeStr;
         if (seconds < 60) {
-          fConvertedTimeLimit.setText(""); //$NON-NLS-1$
+          timeStr = ""; //$NON-NLS-1$
         } else if (seconds < 3600) {
-          timeStr.append('(');
-          timeStr.append(time.format(seconds / 60.0));
-          timeStr.append(' ');
-          timeStr.append(MINUTES);
-          timeStr.append(')');
-          fConvertedTimeLimit.setText(timeStr.toString());
+          timeStr = MessageFormat.format("({0} minutes)",
+              twoPlacesFormat.format(seconds / 60.0));
         } else if (seconds < 86400) {
-          timeStr.append('(');
-          timeStr.append(time.format(seconds / 3600.0));
-          timeStr.append(' ');
-          timeStr.append(HOURS);
-          timeStr.append(')');
-          fConvertedTimeLimit.setText(timeStr.toString());
+          timeStr = MessageFormat.format("({0} hours)",
+              twoPlacesFormat.format(seconds / 3600.0));
         } else if (seconds < 31556926) {
-          timeStr.append('(');
-          timeStr.append(time.format(seconds / 86400.0));
-          timeStr.append(' ');
-          timeStr.append(DAYS);
-          timeStr.append(')');
-          fConvertedTimeLimit.setText(timeStr.toString());
+          timeStr = MessageFormat.format("({0} days)",
+              twoPlacesFormat.format(seconds / 86400.0));
         } else {
-          timeStr.append('(');
-          timeStr.append(time.format(seconds / 31556926.0));
-          timeStr.append(' ');
-          timeStr.append(YEARS);
-          timeStr.append(')');
-          fConvertedTimeLimit.setText(timeStr.toString());
+          timeStr = MessageFormat.format("({0} years)",
+              twoPlacesFormat.format(seconds / 31556926.0));
         }
+        fConvertedTimeLimit.setText(timeStr);
       } catch (NumberFormatException e) {
         fConvertedTimeLimit.setText(""); //$NON-NLS-1$
       }
