@@ -1,7 +1,6 @@
 package randoop.plugin.internal.ui.wizards;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +9,10 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
-import randoop.plugin.internal.core.TypeMnemonic;
-import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class RandoopLaunchConfigurationWizard extends Wizard {

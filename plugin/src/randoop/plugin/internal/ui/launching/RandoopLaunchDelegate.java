@@ -37,7 +37,6 @@ import org.eclipse.ui.PlatformUI;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MutableBoolean;
-import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
 import randoop.plugin.internal.core.runtime.IMessageListener;

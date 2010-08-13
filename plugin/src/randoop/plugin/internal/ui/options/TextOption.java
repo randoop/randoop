@@ -8,7 +8,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class TextOption extends Option {
   protected Text fText;
@@ -25,13 +25,13 @@ public abstract class TextOption extends Option {
   
   public IStatus canSave() {
     if (fText == null) {
-      return StatusFactory.createErrorStatus(PositiveIntegerOption.class.getName()
+      return RandoopStatus.createErrorStatus(PositiveIntegerOption.class.getName()
           + " incorrectly initialized"); //$NON-NLS-1$
     }
     
     String text = fText.getText();
     if (text.isEmpty()) {
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     } else {
       return validate(text);
     }

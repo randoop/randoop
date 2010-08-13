@@ -11,8 +11,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 
-import randoop.plugin.internal.core.StatusFactory;
-import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
+import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class EnablementOption extends Option {
   IEnableableOption fEnabledOption;
@@ -47,27 +46,27 @@ public abstract class EnablementOption extends Option {
 
   public IStatus canSave() {
     if(fEnablement == null || fEnabledOption == null) {
-      return StatusFactory.createErrorStatus(EnablementOption.class.getName()
+      return RandoopStatus.createErrorStatus(EnablementOption.class.getName()
           + " incorrectly initialized"); //$NON-NLS-1$
     }
     
     if (isEnabled()) {
       return fEnabledOption.canSave();
     } else {
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     }
   }
 
   public IStatus isValid(ILaunchConfiguration config) {
     if(fEnablement == null || fEnabledOption == null) {
-      return StatusFactory.createErrorStatus(EnablementOption.class.getName()
+      return RandoopStatus.createErrorStatus(EnablementOption.class.getName()
           + " incorrectly initialized"); //$NON-NLS-1$
     }
     
     if (isEnabled()) {
       return fEnabledOption.isValid(config);
     } else {
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     }
   }
 

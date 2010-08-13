@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.RandoopCoreUtil;
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
@@ -75,7 +75,7 @@ public class JUnitTestClassNameOption extends Option {
       String className = fClassName.getText();
       return validate(packageName, className);
     } else {
-      return StatusFactory.createErrorStatus(JUnitTestClassNameOption.class
+      return RandoopStatus.createErrorStatus(JUnitTestClassNameOption.class
           .getName() + " incorrectly initialized"); //$NON-NLS-1$
     }
   }
@@ -89,9 +89,9 @@ public class JUnitTestClassNameOption extends Option {
   
   protected IStatus validate(String packageName, String className) {
     if (packageName.contains("$") || className.contains("$")) {  //$NON-NLS-1$//$NON-NLS-2$
-      return StatusFactory.createErrorStatus("JUnit class name cannot use secondary types");
+      return RandoopStatus.createErrorStatus("JUnit class name cannot use secondary types");
     }
-    IStatus packageStatus = StatusFactory.OK_STATUS;
+    IStatus packageStatus = RandoopStatus.OK_STATUS;
     if (!packageName.isEmpty()) {
       packageStatus = JavaConventions.validatePackageName(packageName,
           IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL);
@@ -107,7 +107,7 @@ public class JUnitTestClassNameOption extends Option {
     }
     
     if (packageStatus.isOK() && classStatus.isOK()) {
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     } else if (packageStatus.isOK()) {
       return classStatus;
     } else {

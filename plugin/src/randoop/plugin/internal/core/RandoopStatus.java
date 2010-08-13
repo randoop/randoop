@@ -12,7 +12,7 @@ import randoop.plugin.RandoopPlugin;
  * 
  * @author Peter Kalauskas
  */
-public class StatusFactory {
+public class RandoopStatus {
   
   public final int fCode;
 
@@ -20,7 +20,7 @@ public class StatusFactory {
 
   public final String fMessage;
 
-  private StatusFactory(int code, int severity, String message) {
+  private RandoopStatus(int code, int severity, String message) {
     fCode = code;
     fSeverity = severity;
     fMessage = message;
@@ -47,10 +47,10 @@ public class StatusFactory {
     return new Status(fSeverity, RandoopPlugin.getPluginId(), fCode, m, t);
   }
   
-  public static final StatusFactory NO_LOCAL_RANDOOPJAR_ERROR = new StatusFactory(
+  public static final RandoopStatus NO_LOCAL_RANDOOPJAR_ERROR = new RandoopStatus(
       1001, IStatus.ERROR, "Error while retreiving Randoop archive (code {0}).");
   
-  public static final StatusFactory NO_LOCAL_PLUMEJAR_ERROR = new StatusFactory(
+  public static final RandoopStatus NO_LOCAL_PLUMEJAR_ERROR = new RandoopStatus(
       1002, IStatus.ERROR, "Error while retreiving Plume archive (code {0}).");
 
   /**

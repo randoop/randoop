@@ -11,7 +11,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 
@@ -296,9 +296,9 @@ public class OptionFactory {
     protected IStatus validate(String testKindArgument) {
       try {
         TestKinds.valueOf(testKindArgument);
-        return StatusFactory.OK_STATUS;
+        return RandoopStatus.OK_STATUS;
       } catch (IllegalArgumentException e) {
-        return StatusFactory
+        return RandoopStatus
             .createErrorStatus("Test Kinds must be of type All, Pass, or Fail.");
       }
     }

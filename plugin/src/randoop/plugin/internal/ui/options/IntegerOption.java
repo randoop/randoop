@@ -7,7 +7,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class IntegerOption extends TextOption {
   
@@ -23,9 +23,9 @@ public abstract class IntegerOption extends TextOption {
     try {
       Integer.parseInt(text);
       
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return StatusFactory.createErrorStatus(getInvalidIntegerErrorMessage());
+      return RandoopStatus.createErrorStatus(getInvalidIntegerErrorMessage());
     }
   }
   
