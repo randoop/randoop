@@ -3,8 +3,6 @@ package randoop.plugin.internal.ui.launching;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.jdt.internal.debug.ui.JavaDebugImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -14,12 +12,21 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import randoop.plugin.internal.ui.ParametersSWTFactory;
+import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.IOption;
+import randoop.plugin.internal.ui.options.OptionFactory;
 
 public class ParametersTab extends OptionLaunchConfigurationTab {
 
+  public ParametersTab() {
+    addOptions(OptionFactory.createAdvancedOptionGroupPlaceholders());
+    addOptions(OptionFactory.createAdvancedOptionGroupPlaceholders());
+    addOptions(OptionFactory.createAdvancedOptionGroupPlaceholders());
+  }
+  
   public void createControl(Composite parent) {
+    removeAllOptions();
+    
     Composite comp = SWTFactory.createComposite(parent, 1, 1, SWT.HORIZONTAL);
     setControl(comp);
     
@@ -29,11 +36,11 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     
     List<IOption> options = new ArrayList<IOption>();
     
-    options.addAll(ParametersSWTFactory.createGenerationLimitComposite(comp, getBasicOptionChangeListener()));
+    options.addAll(OptionFactory.createStoppingCriterionOptionGroup(comp, getBasicOptionChangeListener()));
     createSeparator(comp, 1);
-    options.addAll(ParametersSWTFactory.createOutputParametersComposite(comp, getBasicOptionChangeListener()));
+    options.addAll(OptionFactory.createOutputParametersOptionGroup(comp, getBasicOptionChangeListener()));
     createSeparator(comp, 1);
-    options.addAll(ParametersSWTFactory.createAdvancedComposite(comp, getBasicOptionChangeListener()));
+    options.addAll(OptionFactory.createAdvancedOptionGroup(comp, getBasicOptionChangeListener()));
     
     for (IOption option : options) {
       addOption(option);
@@ -63,7 +70,7 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   
   @Override
   public Image getImage() {
-    return JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
+    return null;//JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
   }
   
 }

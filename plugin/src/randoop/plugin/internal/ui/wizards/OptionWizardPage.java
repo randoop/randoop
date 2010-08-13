@@ -1,6 +1,7 @@
 package randoop.plugin.internal.ui.wizards;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -84,6 +85,18 @@ public abstract class OptionWizardPage extends WizardPage {
    */
   protected boolean addOption(IOption option) {
     return fOptions.add(option);
+  }
+  
+  protected void addOptions(Collection<IOption> options) {
+    fOptions.addAll(options);
+  }
+  
+  protected boolean removeOption(IOption option) {
+    return fOptions.remove(option);
+  }
+  
+  protected void removeAllOptions() {
+    fOptions = new ArrayList<IOption>();
   }
   
   public boolean isValid(ILaunchConfiguration config) {

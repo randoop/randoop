@@ -19,6 +19,13 @@ public class JUnitTestClassNameOption extends Option {
   private Text fPackageName;
   private Text fClassName;
 
+  /**
+   * Empty constructor to create a placeholder
+   * <code>JUnitTestClassNameOption</code> that may be used to set defaults.
+   */
+  public JUnitTestClassNameOption() {
+  }
+  
   public JUnitTestClassNameOption(Text fullyQualifiedTestName) {
     fFullyQualifiedTestName = fullyQualifiedTestName;
     
@@ -115,9 +122,8 @@ public class JUnitTestClassNameOption extends Option {
     }
   }
 
-  public void initializeFrom(ILaunchConfiguration config) {
-    setDisableListeners(true);
-    
+  @Override
+  public void initializeWithoutListenersFrom(ILaunchConfiguration config) {
     if (fFullyQualifiedTestName != null) {
       String packageName = RandoopArgumentCollector.getJUnitPackageName(config);
       String className = RandoopArgumentCollector.getJUnitClassName(config);
@@ -131,8 +137,6 @@ public class JUnitTestClassNameOption extends Option {
       fPackageName.setText(RandoopArgumentCollector.getJUnitPackageName(config));
       fClassName.setText(RandoopArgumentCollector.getJUnitClassName(config));
     }
-    
-    setDisableListeners(false);
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
