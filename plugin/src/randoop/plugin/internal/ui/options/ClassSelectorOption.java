@@ -87,6 +87,7 @@ import randoop.plugin.internal.ui.ClasspathLabelProvider;
 import randoop.plugin.internal.ui.MessageUtil;
 
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
+  
   private static Image IMG_ERROR = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
   private static Image IMG_ENUM = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_ENUM);
   private static Image IMG_CLASS = JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_CLASS);
@@ -526,21 +527,32 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
   }
 
-  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener) {
+  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext) {
     
-    this(parent, runnableContext, listener, true);
+    this(parent, runnableContext, true);
   }
   
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, IJavaProject project) {
-    
-    this(parent, runnableContext, listener, false);
+      IJavaProject project) {
+
+    this(parent, runnableContext, false);
     fJavaProject = project;
+
+    fTreeInput = new TreeInput();
+    fTypeTreeViewer.setInput(fTreeInput);
   }
 
-  private ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, boolean hasResolveButton) {
+  private ClassSelectorOption(Composite parent, IRunnableContext runnableContext, boolean hasResolveButton) {
+    
+    final SelectionListener listener = new SelectionListener() {
+      
+      public void widgetSelected(SelectionEvent e) {
+        notifyListeners(new OptionChangeEvent(null, null));
+      }
+      
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+    };
     
     fRunnableContext = runnableContext;
     Group comp = SWTFactory.createGroup(parent, "Classes/Methods Un&der Test", 2, 1, GridData.FILL_BOTH);
@@ -743,28 +755,6 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fIgnoreJUnitTestCases.setLayoutData(gd);
   }
 
-  public ClassSelectorOption(Composite parent, IRunnableContext runnableContext,
-      final SelectionListener listener, IJavaProject javaProject, List<TypeMnemonic> checkedTypes,
-      List<TypeMnemonic> grayedTypes,
-      Map<IType, List<String>> selectedMethodsByDeclaringTypes) {
-
-    this(parent, runnableContext, listener, false);
-
-    fJavaProject = javaProject;
-
-    fTreeInput = new TreeInput();
-    fTypeTreeViewer.setInput(fTreeInput);
-    
-    for (TypeMnemonic typeMnemonic : checkedTypes) {
-      String pfname = RandoopCoreUtil.getPackageName(typeMnemonic.getFullyQualifiedName());
-      TreeNode pfNode = fTreeInput.addRoot(pfname);
-
-      pfNode.addChild(typeMnemonic, true, grayedTypes.contains(typeMnemonic));
-    }
-    fCheckedMethodsByType = selectedMethodsByDeclaringTypes;
-    
-  }
-  
   private void handleSearchButtonSelected(IJavaSearchScope searchScope) {
     try {
       boolean ignoreJUnit = fIgnoreJUnitTestCases.getSelection();
@@ -860,7 +850,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
       IType type = typeMnemonic.getType();
       
-      if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
+      if (fJavaProject == null || !fJavaProject.equals(typeMnemonic.getJavaProject())) {
         return StatusFactory.createErrorStatus("One of the class-inputs does not exist in the selected project");
       }
       
@@ -887,6 +877,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
 
   public void initializeFrom(ILaunchConfiguration config) {
+    setDisableListeners(true);
+    
     fTreeInput = new TreeInput();
     fTypeTreeViewer.setInput(fTreeInput);
     
@@ -935,6 +927,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
     
     fTypeTreeViewer.refresh();
+    setDisableListeners(false);
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -950,15 +943,17 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     ITreeContentProvider prov = (ITreeContentProvider) fTypeTreeViewer.getContentProvider();
     TreeInput input = (TreeInput) fTypeTreeViewer.getInput();
     fTypeTreeViewer.refresh();
-    
+
+    List<String> availableTypes = new ArrayList<String>();
+    List<String> checkedTypes = new ArrayList<String>();
+    List<String> grayedTypes = new ArrayList<String>();
+    Map<String, List<String>> availableMethodsByDeclaringTypes = new HashMap<String, List<String>>();
+    Map<String, List<String>> checkedMethodsByDeclaringTypes = new HashMap<String, List<String>>();
+
     for (String mnemonic : fDeletedTypeNodes) {
       RandoopArgumentCollector.deleteAvailableMethods(config, mnemonic);
       RandoopArgumentCollector.deleteCheckedMethods(config, mnemonic);
     }
-
-    List<String> availableTypes = new ArrayList<String>();
-    List<String> grayedTypes = new ArrayList<String>();
-    List<String> checkedTypes = new ArrayList<String>();
 
     for (TreeNode packageNode : input.getRoots()) {
       for (Object typeObject : prov.getChildren(packageNode)) {
@@ -987,26 +982,23 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
                 checkedMethods.add(methodMnemonicString);
               }
             }
-
-            RandoopArgumentCollector.setAvailableMethods(config, typeMnemonic, availableMethods);
-            RandoopArgumentCollector.setCheckedMethods(config, typeMnemonic, checkedMethods);
+            
+            availableMethodsByDeclaringTypes.put(typeMnemonic, availableMethods);
+            checkedMethodsByDeclaringTypes.put(typeMnemonic, checkedMethods);
           }
         }
       }
     }
 
-    RandoopArgumentCollector.setAvailableTypes(config, availableTypes);
-    RandoopArgumentCollector.setGrayedTypes(config, grayedTypes);
-    RandoopArgumentCollector.setCheckedTypes(config, checkedTypes);
+    RandoopArgumentCollector.saveClassTree(config, availableTypes, checkedTypes, grayedTypes,
+        fDeletedTypeNodes, availableMethodsByDeclaringTypes, checkedMethodsByDeclaringTypes);
+    
+    fDeletedTypeNodes = new HashSet<String>();
     
     fTypeTreeViewer.refresh();
   }
   
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    writeDefaults(config);
-  }
-  
-  public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
     RandoopArgumentCollector.restoreAvailableTypes(config);
     RandoopArgumentCollector.restoreCheckedTypes(config);
     
@@ -1016,7 +1008,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       RandoopArgumentCollector.deleteCheckedMethods(config, typeMnemonic);
     }
   }
-
+  
   private IClasspathEntry[] chooseClasspathEntry() throws JavaModelException {
     ILabelProvider labelProvider = new ClasspathLabelProvider(fJavaProject);
     ElementListSelectionDialog dialog = new ElementListSelectionDialog(fShell, labelProvider);
@@ -1264,10 +1256,18 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       
     }
   }
-  
-  public void handleEvent(IOptionChangeEvent event) {
-    if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(event.getAttribute())) {
-      fJavaProject = RandoopCoreUtil.getProjectFromName(event.getValue());
+
+  public void attributeChanged(IOptionChangeEvent event) {
+    String attr = event.getAttributeName();
+
+    if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(attr)) {
+      Object value = event.getValue();
+      if (value == null) {
+        fJavaProject = null;
+      } else {
+        Assert.isTrue(value instanceof String, "Project name must be a string");
+        fJavaProject = RandoopCoreUtil.getProjectFromName((String) value);
+      }
 
       boolean enabled = fJavaProject != null && fJavaProject.exists();
       fClassAddFromSources.setEnabled(enabled);

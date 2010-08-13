@@ -6,18 +6,20 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 public interface IOption {
 
-  IStatus canSave();
+  public IStatus canSave();
 
-  IStatus isValid(ILaunchConfiguration config);
+  public IStatus isValid(ILaunchConfiguration config);
 
-  void initializeFrom(ILaunchConfiguration config);
+  public void initializeFrom(ILaunchConfiguration config);
 
-  void performApply(ILaunchConfigurationWorkingCopy config);
+  public void performApply(ILaunchConfigurationWorkingCopy config);
 
-  void setDefaults(ILaunchConfigurationWorkingCopy config);
+  public void setDefaults(ILaunchConfigurationWorkingCopy config);
 
-  void addChangeListener(IOptionChangeListener listener);
+  public void addChangeListener(IOptionChangeListener listener);
+  
+  public void removeChangeListener(IOptionChangeListener listener);
 
-  void restoreDefaults();
+  public void restoreDefaults();
   
 }

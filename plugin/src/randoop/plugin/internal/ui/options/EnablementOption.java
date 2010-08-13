@@ -1,15 +1,18 @@
 package randoop.plugin.internal.ui.options;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Button;
 
 import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 
 public abstract class EnablementOption extends Option {
   IEnableableOption fEnabledOption;
@@ -17,9 +20,18 @@ public abstract class EnablementOption extends Option {
   
   public EnablementOption(IEnableableOption enabledOption, Button enablement) {
     fEnablement = enablement;
+    enablement.addSelectionListener(new SelectionListener() {
+      
+      public void widgetSelected(SelectionEvent e) {
+        notifyListeners(new OptionChangeEvent(getAttribute(), fEnablement.getSelection()));
+      }
+      
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+    });
     fEnabledOption = enabledOption;
     
-    Assert.isTrue(SWT.CHECK == (fEnablement.getStyle() & SWT.CHECK));
+    Assert.isTrue(SWT.CHECK == (fEnablement.getStyle() & SWT.CHECK), "EnablementOption can only use check buttons");
     
     fEnablement.addSelectionListener(new SelectionAdapter() {
       @Override
@@ -30,7 +42,6 @@ public abstract class EnablementOption extends Option {
   }
   
   protected boolean isEnabled() {
-    Assert.isNotNull(fEnablement);
     return fEnablement.getSelection();
   }
 
@@ -61,34 +72,46 @@ public abstract class EnablementOption extends Option {
   }
 
   public void initializeFrom(ILaunchConfiguration config) {
+    setDisableListeners(true);
+    
     if (fEnablement != null && fEnabledOption != null) {
-      boolean enabled = isEnabled(config);
+      boolean enabled;
+      try {
+        enabled = config.getAttribute(getAttribute(), getDefaultValue());
+      } catch (CoreException e) {
+        enabled = getDefaultValue();
+      }
+      
       fEnablement.setSelection(enabled);
       fEnabledOption.initializeFrom(config);
       fEnabledOption.setEnabled(enabled);
     }
+    
+    setDisableListeners(false);
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fEnablement != null && fEnabledOption != null) {
       boolean enabled = fEnablement.getSelection();
 
-      setEnabled(config, enabled);
-      if (enabled) {
-        fEnabledOption.performApply(config);
-      }
+      config.setAttribute(getAttribute(), enabled);
+      fEnabledOption.performApply(config);
     }
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    fEnabledOption.setDefaults(config); 
-    setDefaultEnablement(config);
+    config.setAttribute(getAttribute(), getDefaultValue());
+    fEnabledOption.setDefaults(config);
   }
   
-  protected abstract void setDefaultEnablement(ILaunchConfigurationWorkingCopy config);
+  public void restoreDefaults() {
+    boolean enabled = getDefaultValue();
+    fEnablement.setSelection(enabled);
+    fEnabledOption.setEnabled(enabled);
+  }
   
-  protected abstract boolean isEnabled(ILaunchConfiguration config);
-  
-  protected abstract void setEnabled(ILaunchConfigurationWorkingCopy config, boolean enabled);
+  protected abstract String getAttribute();
+
+  protected abstract boolean getDefaultValue();
   
 }

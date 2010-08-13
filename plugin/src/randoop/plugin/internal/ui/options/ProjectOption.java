@@ -77,6 +77,13 @@ public class ProjectOption extends Option {
     });
 
     fOutputSourceFolderText = outputSourceFolderText;
+    fOutputSourceFolderText.addModifyListener(new ModifyListener() {
+      
+      public void modifyText(ModifyEvent e) {
+        String attr = IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY_NAME;
+        notifyListeners(new OptionChangeEvent(attr, fOutputSourceFolderText.getText()));
+      }
+    });
     
     fSourceFolderBrowseButton = sourceFolderBrowseButton;
     fSourceFolderBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -190,6 +197,8 @@ public class ProjectOption extends Option {
   }
 
   public void initializeFrom(ILaunchConfiguration config) {
+    setDisableListeners(true);
+    
     if (fProjectText != null) {
       String projectName = RandoopArgumentCollector.getProjectName(config);
 
@@ -210,6 +219,8 @@ public class ProjectOption extends Option {
         fSourceFolderBrowseButton.setEnabled(fJavaProject != null);
       }
     }
+    
+    setDisableListeners(false);
   }
   
   public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -223,12 +234,11 @@ public class ProjectOption extends Option {
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    writeDefaults(config);
-  }
-  
-  public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.restoreOutputDirectoryName(config);
-    RandoopArgumentCollector.restoreProjectName(config);
+    if (fProjectText != null)
+      RandoopArgumentCollector.restoreProjectName(config);
+
+    if (fOutputSourceFolderText != null)
+      RandoopArgumentCollector.restoreOutputDirectoryName(config);
   }
   
   /*

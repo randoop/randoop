@@ -10,7 +10,7 @@ public class IRandoopLaunchConfigurationConstants {
   public static final String ATTR_PORT = RandoopPlugin.getPluginId() + ".PORT"; //$NON-NLS-1$
   
   public static final String ATTR_RANDOM_SEED = RandoopPlugin.getPluginId() + ".RANDOM_SEED"; //$NON-NLS-1$
-  
+
   public static final String ATTR_MAXIMUM_TEST_SIZE = RandoopPlugin.getPluginId() + ".MAXIMUM_TEST_SIZE"; //$NON-NLS-1$
   
   public static final String ATTR_USE_THREADS = RandoopPlugin.getPluginId() + ".USE_THREADS"; //$NON-NLS-1$
@@ -21,7 +21,7 @@ public class IRandoopLaunchConfigurationConstants {
   
   public static final String ATTR_NULL_RATIO = RandoopPlugin.getPluginId() + ".NULL_RATIO"; //$NON-NLS-1$
   
-  public static final String ATTR_JUNIT_TEST_INPUTS = RandoopPlugin.getPluginId() + ".JUNIT_TEST_INPUTS"; //$NON-NLS-1$
+  public static final String ATTR_INPUT_LIMIT = RandoopPlugin.getPluginId() + ".INPUT_LIMIT"; //$NON-NLS-1$
   
   public static final String ATTR_TIME_LIMIT = RandoopPlugin.getPluginId() + ".TIME_LIMIT"; //$NON-NLS-1$
   
@@ -63,7 +63,7 @@ public class IRandoopLaunchConfigurationConstants {
   
   public static final String DEFAULT_NULL_RATIO = ""; //$NON-NLS-1$
   
-  public static final String DEFAULT_JUNIT_TEST_INPUTS = "100000000"; //$NON-NLS-1$
+  public static final String DEFAULT_INPUT_LIMIT = "100000000"; //$NON-NLS-1$
   
   public static final String DEFAULT_TIME_LIMIT = "100"; //$NON-NLS-1$
   
@@ -75,7 +75,7 @@ public class IRandoopLaunchConfigurationConstants {
   
   public static final String DEFAULT_MAXIMUM_TESTS_PER_FILE = "500"; //$NON-NLS-1$
   
-  public static final String DEFAULT_TEST_KINDS = TestKinds.ALL.getArgumentName();
+  public static final String DEFAULT_TEST_KINDS = TestKinds.all.getArgumentName();
 
   public static final String DEFAULT_PROJECT = ""; //$NON-NLS-1$
   
