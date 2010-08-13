@@ -4,9 +4,6 @@ PLUGIN BUGS
 * TestGeneratorViewPart initially opens in wrong area. It should open
   in the Package Explorer / JUnit view area 
 
-* Sometimes the "Run with JUnit" action is mistakenly enabled when
-  Randoop throws an error immediately after launching
-  
 * The Randoop 'R' icon appears to be distorted in the launch shortcut
   in Galileo
 
