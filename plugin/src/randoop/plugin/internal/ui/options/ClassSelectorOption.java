@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -999,8 +1000,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.restoreAvailableTypes(config);
-    RandoopArgumentCollector.restoreCheckedTypes(config);
+    RandoopArgumentCollector.setAvailableTypes(config, null);
+    RandoopArgumentCollector.setCheckedTypes(config, null);
+    RandoopArgumentCollector.setGrayedTypes(config, null);
     
     List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
     for (String typeMnemonic : availableTypes) {

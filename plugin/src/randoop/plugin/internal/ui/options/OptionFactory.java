@@ -3,7 +3,6 @@ package randoop.plugin.internal.ui.options;
 import java.text.DecimalFormat;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Button;
@@ -14,7 +13,6 @@ import org.eclipse.swt.widgets.Text;
 import randoop.plugin.internal.core.StatusFactory;
 import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
-import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
 public class OptionFactory {
   
@@ -312,19 +310,12 @@ public class OptionFactory {
       super(testKinds);
     }
 
-    public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-      RandoopArgumentCollector.restoreTestKinds(config);
-    }
-
     @Override
-    protected IStatus validate(String testKinds) {
-      boolean validKind = false;
-      for (TestKinds kindCandidate : TestKinds.values()) {
-        validKind |= kindCandidate.getArgumentName().equals(testKinds);
-      }
-      if (validKind) {
+    protected IStatus validate(String testKindArgument) {
+      try {
+        TestKinds.valueOf(testKindArgument);
         return StatusFactory.OK_STATUS;
-      } else {
+      } catch (IllegalArgumentException e) {
         return StatusFactory
             .createErrorStatus("Test Kinds must be of type All, Pass, or Fail.");
       }

@@ -37,6 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MutableBoolean;
+import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
 import randoop.plugin.internal.core.runtime.IMessageListener;
@@ -114,8 +115,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     
     RandoopLaunchResources launchResources = new RandoopLaunchResources(args, monitor);
     final TestGeneratorSession session = new TestGeneratorSession(launch, args);
-    
+
     fPort = RandoopArgumentCollector.getPort(configuration);
+
     boolean useDefault = (fPort == IConstants.INVALID_PORT);
     
     fMessageReceiver = null;
