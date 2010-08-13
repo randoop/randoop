@@ -4,6 +4,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.IConstants;
@@ -20,6 +22,18 @@ public class JUnitTestClassNameOption extends Option {
   public JUnitTestClassNameOption(Text fullyQualifiedTestName) {
     fFullyQualifiedTestName = fullyQualifiedTestName;
     
+    fFullyQualifiedTestName.addModifyListener(new ModifyListener() {
+      
+      public void modifyText(ModifyEvent e) {
+        String fqname = fFullyQualifiedTestName.getText();
+        String classname = RandoopCoreUtil.getClassName(fqname);
+        String packagename = RandoopCoreUtil.getPackageName(fqname);
+        
+        notifyListeners(new OptionChangeEvent(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME, classname));
+        notifyListeners(new OptionChangeEvent(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME, packagename));
+      }
+    });
+    
     fPackageName = null;
     fClassName = null;
   }
@@ -27,6 +41,21 @@ public class JUnitTestClassNameOption extends Option {
   public JUnitTestClassNameOption(Text packageName, Text className) {
     fPackageName = packageName;
     fClassName = className;
+    
+    
+    fPackageName.addModifyListener(new ModifyListener() {
+      
+      public void modifyText(ModifyEvent e) {
+        notifyListeners(new OptionChangeEvent(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_PACKAGE_NAME, null));
+      }
+    });
+    
+    fClassName.addModifyListener(new ModifyListener() {
+      
+      public void modifyText(ModifyEvent e) {
+        notifyListeners(new OptionChangeEvent(IRandoopLaunchConfigurationConstants.ATTR_JUNIT_CLASS_NAME, null));
+      }
+    });
     
     fFullyQualifiedTestName = null;
   }
@@ -87,6 +116,8 @@ public class JUnitTestClassNameOption extends Option {
   }
 
   public void initializeFrom(ILaunchConfiguration config) {
+    setDisableListeners(true);
+    
     if (fFullyQualifiedTestName != null) {
       String packageName = RandoopArgumentCollector.getJUnitPackageName(config);
       String className = RandoopArgumentCollector.getJUnitClassName(config);
@@ -100,6 +131,8 @@ public class JUnitTestClassNameOption extends Option {
       fPackageName.setText(RandoopArgumentCollector.getJUnitPackageName(config));
       fClassName.setText(RandoopArgumentCollector.getJUnitClassName(config));
     }
+    
+    setDisableListeners(false);
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -117,14 +150,10 @@ public class JUnitTestClassNameOption extends Option {
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    writeDefaults(config);
-  }
-  
-  public static void writeDefaults(ILaunchConfigurationWorkingCopy config) {
     RandoopArgumentCollector.restoreJUnitPackageName(config);
     RandoopArgumentCollector.restoreJUnitClassName(config);
   }
-
+  
   public void restoreDefaults() {
     String packageName = IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_PACKAGE_NAME;
     String className = IRandoopLaunchConfigurationConstants.DEFAULT_JUNIT_CLASS_NAME;

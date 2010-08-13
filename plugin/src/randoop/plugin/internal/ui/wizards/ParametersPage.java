@@ -47,19 +47,15 @@ public class ParametersPage extends OptionWizardPage {
     
     List<IOption> options = new ArrayList<IOption>();
     
-    options.addAll(ParametersSWTFactory.createGenerationLimitComposite(comp, getBasicModifyListener()));
+    options.addAll(ParametersSWTFactory.createGenerationLimitComposite(comp, getBasicoptionChangeListener()));
     createSeperator(comp);
-    options.addAll(ParametersSWTFactory.createOutputParametersComposite(comp, getBasicModifyListener()));
+    options.addAll(ParametersSWTFactory.createOutputParametersComposite(comp, getBasicoptionChangeListener()));
     createSeperator(comp);
-    options.addAll(ParametersSWTFactory.createAdvancedComposite(comp, getBasicModifyListener(), getBasicSelectionListener()));
+    options.addAll(ParametersSWTFactory.createAdvancedComposite(comp, getBasicoptionChangeListener()));
     
     for (IOption option : options) {
       addOption(option);
     }
-    
-    restoreDefualts();
-    
-    super.createControl(parent);
   }
 
   private void createSeperator(Composite comp) {
@@ -89,10 +85,9 @@ public class ParametersPage extends OptionWizardPage {
     addOption(fOutputFolderOption);
     addOption(fClassName);
     
-    outputSourceFolderText.addModifyListener(getBasicModifyListener());
-    packageNameText.addModifyListener(getBasicModifyListener());
-    classNameText.addModifyListener(getBasicModifyListener());
-    
+    fOutputFolderOption.addChangeListener(getBasicoptionChangeListener());
+    fClassName.addChangeListener(getBasicoptionChangeListener());
+
   }
 
   @Override

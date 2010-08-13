@@ -21,23 +21,6 @@ import randoop.plugin.internal.ui.options.IOption;
 
 public class ParametersTab extends OptionLaunchConfigurationTab {
 
-  @Override
-  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.restoreRandomSeed(config);
-    RandoopArgumentCollector.restoreMaxTestSize(config);
-    RandoopArgumentCollector.restoreUseThreads(config);
-    RandoopArgumentCollector.restoreThreadTimeout(config);
-    RandoopArgumentCollector.restoreUseNull(config);
-    RandoopArgumentCollector.restoreNullRatio(config);
-    
-    RandoopArgumentCollector.restoreInputLimit(config);
-    RandoopArgumentCollector.restoreTimeLimit(config);
-
-    RandoopArgumentCollector.restoreTestKinds(config);
-    // RandoopArgumentCollector.restoreMaxTestsWritten(config);
-    RandoopArgumentCollector.restoreMaxTestsPerFile(config);
-  }
-  
   public void createControl(Composite parent) {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, SWT.HORIZONTAL);
     setControl(comp);
@@ -48,11 +31,11 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
     
     List<IOption> options = new ArrayList<IOption>();
     
-    options.addAll(ParametersSWTFactory.createGenerationLimitComposite(comp, getBasicModifyListener()));
+    options.addAll(ParametersSWTFactory.createGenerationLimitComposite(comp, getBasicOptionChangeListener()));
     createSeparator(comp, 1);
-    options.addAll(ParametersSWTFactory.createOutputParametersComposite(comp, getBasicModifyListener()));
+    options.addAll(ParametersSWTFactory.createOutputParametersComposite(comp, getBasicOptionChangeListener()));
     createSeparator(comp, 1);
-    options.addAll(ParametersSWTFactory.createAdvancedComposite(comp, getBasicModifyListener(), getBasicSelectionListener()));
+    options.addAll(ParametersSWTFactory.createAdvancedComposite(comp, getBasicOptionChangeListener()));
     
     for (IOption option : options) {
       addOption(option);
@@ -67,6 +50,7 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
         restoreDefaults();
       }
     });
+    
     restoreDefaults.setEnabled(true);
   }
 
