@@ -34,7 +34,6 @@ public class MessageReceiver implements Runnable {
     return fServerSocket.getLocalPort();
   }
 
-  @Override
   public void run() {
     try {
       Socket sock = fServerSocket.accept();

@@ -1,19 +1,21 @@
 package randoop.plugin.internal.ui.options;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class IntegerOption extends TextOption {
-  protected String fInvalidErrorMsg;
+  
+  private String fInvalidErrorMsg;
   
   public IntegerOption(Text text) {
     super(text);
-  }
-  
-  protected void setInvalidIntErrorMessage(String invalidIntErrorMsg) {
-    fInvalidErrorMsg = invalidIntErrorMsg;
+    fInvalidErrorMsg = MessageFormat.format("{0} is not a valid integer", getName());
   }
   
   @Override
@@ -21,9 +23,37 @@ public abstract class IntegerOption extends TextOption {
     try {
       Integer.parseInt(text);
       
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return StatusFactory.createErrorStatus(fInvalidErrorMsg);
+      return RandoopStatus.createErrorStatus(getInvalidIntegerErrorMessage());
     }
   }
+  
+  @Override
+  protected String getValue(ILaunchConfiguration config) {
+    String value = super.getValue(config);
+    try {
+      return new Integer(value).toString();
+    } catch (NumberFormatException e) {
+      return value;
+    }
+  }
+  
+  @Override
+  public void performApply(ILaunchConfigurationWorkingCopy config) {
+    String value = fText.getText();
+    try {
+      value = new Integer(value).toString();
+    } catch (NumberFormatException e) {
+    }
+
+    config.setAttribute(getAttribute(), value);
+  }
+  
+  protected abstract String getName();
+  
+  protected String getInvalidIntegerErrorMessage() {
+    return fInvalidErrorMsg;
+  }
+  
 }

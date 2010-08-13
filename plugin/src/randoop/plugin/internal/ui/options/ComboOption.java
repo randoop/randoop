@@ -1,23 +1,40 @@
 package randoop.plugin.internal.ui.options;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Combo;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
+import randoop.plugin.internal.core.TestKinds;
 
 public abstract class ComboOption extends Option {
   protected Combo fCombo;
   
   public ComboOption(Combo combo) {
     fCombo = combo;
+    
+    fCombo.addSelectionListener(new SelectionListener() {
+      
+      public void widgetSelected(SelectionEvent e) {
+        notifyListeners(new OptionChangeEvent(getAttributeName(), getValue()));
+      }
+      
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+    });
   }
   
-  @Override
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    config.setAttribute(getAttributeName(), getDefaltValue());
+  }
+  
   public IStatus canSave() {
     if (fCombo == null) {
-      return StatusFactory.createErrorStatus(ComboOption.class.getName()
+      return RandoopStatus.createErrorStatus(ComboOption.class.getName()
           + " incorrectly initialized"); //$NON-NLS-1$
     }
     
@@ -26,28 +43,45 @@ public abstract class ComboOption extends Option {
     return validate(text);
   }
   
-  @Override
   public IStatus isValid(ILaunchConfiguration config) {
     return validate(getValue(config));
   }
   
-  protected abstract IStatus validate(String text);
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
+    setDisableListeners(true);
+    
     if (fCombo != null)
-      fCombo.setText(getValue(config));
+      fCombo.select(TestKinds.valueOf(getValue(config)).getCommandId());
+    
+    setDisableListeners(false);
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fCombo != null)
-      setValue(config, getValue());
+      config.setAttribute(getAttributeName(), getValue());
   }
+  
+  protected String getValue(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(getAttributeName(), getDefaltValue());
+    } catch (CoreException ce) {
+      return getDefaltValue();
+    }
+  }
+
+  public void restoreDefaults() {
+    fCombo.select(getDefaultIndex());
+  }
+  
+  protected abstract IStatus validate(String text);
+  
+  protected abstract String getAttributeName();
   
   protected abstract String getValue();
   
-  protected abstract String getValue(ILaunchConfiguration config);
+  protected abstract String getDefaltValue();
   
-  protected abstract void setValue(ILaunchConfigurationWorkingCopy config, String value);
+  protected abstract int getDefaultIndex();
+  
 }

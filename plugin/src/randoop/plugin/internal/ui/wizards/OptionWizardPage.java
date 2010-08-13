@@ -8,35 +8,21 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 
 import randoop.plugin.internal.ui.options.IOption;
+import randoop.plugin.internal.ui.options.IOptionChangeEvent;
+import randoop.plugin.internal.ui.options.IOptionChangeListener;
 
 public abstract class OptionWizardPage extends WizardPage {
+  
   private List<IOption> fOptions;
   
   private ILaunchConfigurationWorkingCopy fConfig;
 
-  private ModifyListener fBasicModifyListener = new ModifyListener() {
-    @Override
-    public void modifyText(ModifyEvent e) {
-      update();
-    }
-  };
+  private IOptionChangeListener fBasicOptionChangeListener = new IOptionChangeListener() {
 
-  private SelectionListener fBasicSelectionListener = new SelectionListener() {
-    @Override
-    public void widgetSelected(SelectionEvent e) {
-      setErrorMessage(null);
-      update();
-    }
-
-    @Override
-    public void widgetDefaultSelected(SelectionEvent e) {
+    public void attributeChanged(IOptionChangeEvent event) {
       setErrorMessage(null);
       update();
     }
@@ -65,22 +51,17 @@ public abstract class OptionWizardPage extends WizardPage {
       option.restoreDefaults();
     }
   }
-  
-  // public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-  // for (IOption option : fOptions) {
-  // option.setDefaults(config);
-  // }
-  // }
-  
-  // public void initializeFrom(ILaunchConfiguration config) {
-  // for (IOption option : fOptions) {
-  // option.initializeFrom(config);
-  // }
-  // }
-  
-  @Override
-  public void createControl(Composite parent) {
-    update();
+
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    for (IOption option : fOptions) {
+      option.setDefaults(config);
+    }
+  }
+
+  public void initializeFrom(ILaunchConfiguration config) {
+    for (IOption option : fOptions) {
+      option.initializeFrom(config);
+    }
   }
   
   protected OptionWizardPage(String pageName, String title, ImageDescriptor titleImage, ILaunchConfigurationWorkingCopy config) {
@@ -89,12 +70,8 @@ public abstract class OptionWizardPage extends WizardPage {
     fConfig = config;
   }
 
-  protected SelectionListener getBasicSelectionListener() {
-    return fBasicSelectionListener;
-  }
-  
-  protected ModifyListener getBasicModifyListener() {
-    return fBasicModifyListener;
+  protected IOptionChangeListener getBasicoptionChangeListener() {
+    return fBasicOptionChangeListener;
   }
 
   /**
@@ -138,6 +115,8 @@ public abstract class OptionWizardPage extends WizardPage {
     }
   }
   
+  public abstract void createControl(Composite parent);
+  
   /**
    * Sets the message so long as it is non-<code>null</code> and non-empty.
    * 
@@ -155,4 +134,5 @@ public abstract class OptionWizardPage extends WizardPage {
     
     return false;
   }
+
 }

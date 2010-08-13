@@ -1,54 +1,76 @@
 package randoop.plugin.internal.ui.options;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.StatusFactory;
+import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class TextOption extends Option {
   protected Text fText;
   
   public TextOption(Text text) {
     fText = text;
+    fText.addModifyListener(new ModifyListener() {
+      
+      public void modifyText(ModifyEvent e) {
+        notifyListeners(new OptionChangeEvent(getAttribute(), fText.getText()));
+      }
+    });
   }
   
-  @Override
   public IStatus canSave() {
     if (fText == null) {
-      return StatusFactory.createErrorStatus(PositiveIntegerOption.class.getName()
+      return RandoopStatus.createErrorStatus(PositiveIntegerOption.class.getName()
           + " incorrectly initialized"); //$NON-NLS-1$
     }
     
     String text = fText.getText();
     if (text.isEmpty()) {
-      return StatusFactory.OK_STATUS;
+      return RandoopStatus.OK_STATUS;
     } else {
       return validate(text);
     }
   }
-
-  @Override
+  
   public IStatus isValid(ILaunchConfiguration config) {
     return validate(getValue(config));
   }
-  
+
   protected abstract IStatus validate(String text);
 
-  @Override
   public void initializeFrom(ILaunchConfiguration config) {
-    if (fText != null)
-      fText.setText(getValue(config));
+    setDisableListeners(true);
+    fText.setText(getValue(config));
+    setDisableListeners(false);
   }
 
-  @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fText != null)
-      setValue(config, fText.getText());
+    config.setAttribute(getAttribute(), fText.getText());
+  }
+
+  protected String getValue(ILaunchConfiguration config) {
+    try {
+      return config.getAttribute(getAttribute(), getDefaultValue());
+    } catch (CoreException e) {
+      return getDefaultValue();
+    }
   }
   
-  protected abstract String getValue(ILaunchConfiguration config);
+  public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+    config.setAttribute(getAttribute(), getDefaultValue());
+  }
   
-  protected abstract void setValue(ILaunchConfigurationWorkingCopy config, String value);
+  public void restoreDefaults() {
+    fText.setText(getDefaultValue());
+  }
+  
+  protected abstract String getAttribute();
+  
+  protected abstract String getDefaultValue();
+  
 }

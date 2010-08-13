@@ -8,28 +8,15 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.TestKinds;
 import randoop.plugin.internal.ui.ParametersSWTFactory;
 import randoop.plugin.internal.ui.RandoopMessages;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
-import randoop.plugin.internal.ui.options.OptionFactory;
 import randoop.plugin.internal.ui.options.ProjectOption;
 
 public class ParametersPage extends OptionWizardPage {
@@ -43,20 +30,6 @@ public class ParametersPage extends OptionWizardPage {
   private IOption fOutputFolderOption;
   private IOption fClassName;
   
-  private IOption fRandomSeed;
-  private IOption fMaxTestSize;
-  private IOption fUseThreads;
-  private IOption fUseNull;
-
-  private IOption fInputLimit;
-  private IOption fTimeLimit;
-
-  private IOption fTestKinds;
-  // private IOption fMaxTestsWritten;
-  private IOption fMaxTestsPerFile;
-
-  private Font fBoldFont;
-
   protected ParametersPage(String pageName, IJavaProject project, ILaunchConfigurationWorkingCopy config) {
     super(pageName, config);
     
@@ -69,32 +42,20 @@ public class ParametersPage extends OptionWizardPage {
     Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
     setControl(comp);
     
-    // Create and store a reference to a bold font
-    fBoldFont = comp.getFont();
-    FontData[] fontData = fBoldFont.getFontData();
-    for (FontData fd : fontData) {
-      fd.setStyle(fd.getStyle() | SWT.BOLD);
-    }
-    fBoldFont = new Font(fBoldFont.getDevice(), fontData);
-
     createResourcesComposite(comp);
     createSeperator(comp);
     
     List<IOption> options = new ArrayList<IOption>();
     
-    options.addAll(ParametersSWTFactory.createGenerationLimitComposite(comp, getBasicModifyListener()));
+    options.addAll(ParametersSWTFactory.createGenerationLimitComposite(comp, getBasicoptionChangeListener()));
     createSeperator(comp);
-    options.addAll(ParametersSWTFactory.createOutputParametersComposite(comp, getBasicModifyListener()));
+    options.addAll(ParametersSWTFactory.createOutputParametersComposite(comp, getBasicoptionChangeListener()));
     createSeperator(comp);
-    options.addAll(ParametersSWTFactory.createAdvancedComposite(comp, getBasicModifyListener(), getBasicSelectionListener()));
+    options.addAll(ParametersSWTFactory.createAdvancedComposite(comp, getBasicoptionChangeListener()));
     
     for (IOption option : options) {
       addOption(option);
     }
-    
-    restoreDefualts();
-    
-    super.createControl(parent);
   }
 
   private void createSeperator(Composite comp) {
@@ -124,10 +85,9 @@ public class ParametersPage extends OptionWizardPage {
     addOption(fOutputFolderOption);
     addOption(fClassName);
     
-    outputSourceFolderText.addModifyListener(getBasicModifyListener());
-    packageNameText.addModifyListener(getBasicModifyListener());
-    classNameText.addModifyListener(getBasicModifyListener());
-    
+    fOutputFolderOption.addChangeListener(getBasicoptionChangeListener());
+    fClassName.addChangeListener(getBasicoptionChangeListener());
+
   }
 
   @Override
