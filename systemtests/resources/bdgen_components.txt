@@ -1,0 +1,22 @@
+
+START SEQUENCE
+var0 =  method : java2.util2.Collections.reverseOrder() : 
+END SEQUENCE
+
+START SEQUENCE
+var0 =  prim : byte:-1 :
+END SEQUENCE
+
+START SEQUENCE
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  method : java2.util2.ArrayList.toArray() : var0
+END SEQUENCE
+
+START SEQUENCE
+var0 =  cons : java2.util2.Hashtable.<init>() : 
+var1 =  method : java2.util2.Hashtable.keys() : var0
+END SEQUENCE
+
+START SEQUENCE
+var0 =  cons : java2.util2.BitSet.<init>() : 
+END SEQUENCE

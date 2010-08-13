@@ -1,0 +1,7 @@
+Extension-Name: @package@
+Specification-Title: Jakarta Commons Chain
+Specification-Vendor: Apache Software Foundation
+Specification-Version: 1.0
+Implementation-Title: org.apache.commons.chain
+Implementation-Vendor: Apache Software Foundation
+Implementation-Version: @version@
