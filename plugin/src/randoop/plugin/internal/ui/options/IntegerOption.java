@@ -13,6 +13,9 @@ public abstract class IntegerOption extends TextOption {
   
   private String fInvalidErrorMsg;
   
+  public IntegerOption() {
+  }
+  
   public IntegerOption(Text text) {
     super(text);
     fInvalidErrorMsg = MessageFormat.format("{0} is not a valid integer", getName());
@@ -41,13 +44,15 @@ public abstract class IntegerOption extends TextOption {
   
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    String value = fText.getText();
-    try {
-      value = new Integer(value).toString();
-    } catch (NumberFormatException e) {
-    }
+    if (fText != null && !fText.isDisposed()) {
+      String value = fText.getText();
+      try {
+        value = new Integer(value).toString();
+      } catch (NumberFormatException e) {
+      }
 
-    config.setAttribute(getAttribute(), value);
+      config.setAttribute(getAttribute(), value);
+    }
   }
   
   protected abstract String getName();

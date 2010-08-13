@@ -15,14 +15,18 @@ import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class EnablementOption extends Option {
   IEnableableOption fEnabledOption;
-  Button fEnablement;
+  Button fEnablementButton;
+  
+  public EnablementOption(IEnableableOption enabledOption) {
+    fEnabledOption = enabledOption;
+  }
   
   public EnablementOption(IEnableableOption enabledOption, Button enablement) {
-    fEnablement = enablement;
+    fEnablementButton = enablement;
     enablement.addSelectionListener(new SelectionListener() {
       
       public void widgetSelected(SelectionEvent e) {
-        notifyListeners(new OptionChangeEvent(getAttribute(), fEnablement.getSelection()));
+        notifyListeners(new OptionChangeEvent(getAttribute(), fEnablementButton.getSelection()));
       }
       
       public void widgetDefaultSelected(SelectionEvent e) {
@@ -30,50 +34,45 @@ public abstract class EnablementOption extends Option {
     });
     fEnabledOption = enabledOption;
     
-    Assert.isTrue(SWT.CHECK == (fEnablement.getStyle() & SWT.CHECK), "EnablementOption can only use check buttons");
+    Assert.isTrue(SWT.CHECK == (fEnablementButton.getStyle() & SWT.CHECK), "EnablementOption can only use check buttons");
     
-    fEnablement.addSelectionListener(new SelectionAdapter() {
+    fEnablementButton.addSelectionListener(new SelectionAdapter() {
       @Override
       public void widgetSelected(SelectionEvent e) {
         fEnabledOption.setEnabled(isEnabled());
       }
     });
   }
-  
+
   protected boolean isEnabled() {
-    return fEnablement.getSelection();
+    if (fEnablementButton != null) {
+      return fEnablementButton.getSelection();
+    }
+    
+    return true;
   }
 
   public IStatus canSave() {
-    if(fEnablement == null || fEnabledOption == null) {
-      return RandoopStatus.createErrorStatus(EnablementOption.class.getName()
-          + " incorrectly initialized"); //$NON-NLS-1$
+    if (fEnablementButton != null) {
+      if (isEnabled()) {
+        return fEnabledOption.canSave();
+      }
     }
-    
-    if (isEnabled()) {
-      return fEnabledOption.canSave();
-    } else {
-      return RandoopStatus.OK_STATUS;
-    }
+    return RandoopStatus.OK_STATUS;
   }
 
   public IStatus isValid(ILaunchConfiguration config) {
-    if(fEnablement == null || fEnabledOption == null) {
-      return RandoopStatus.createErrorStatus(EnablementOption.class.getName()
-          + " incorrectly initialized"); //$NON-NLS-1$
+    if (fEnablementButton != null) {
+      if (isEnabled()) {
+        return fEnabledOption.isValid(config);
+      }
     }
-    
-    if (isEnabled()) {
-      return fEnabledOption.isValid(config);
-    } else {
-      return RandoopStatus.OK_STATUS;
-    }
+    return RandoopStatus.OK_STATUS;
   }
 
-  public void initializeFrom(ILaunchConfiguration config) {
-    setDisableListeners(true);
-    
-    if (fEnablement != null && fEnabledOption != null) {
+  @Override
+  public void initializeWithoutListenersFrom(ILaunchConfiguration config) {
+    if (fEnablementButton != null && fEnabledOption != null) {
       boolean enabled;
       try {
         enabled = config.getAttribute(getAttribute(), getDefaultValue());
@@ -81,21 +80,19 @@ public abstract class EnablementOption extends Option {
         enabled = getDefaultValue();
       }
       
-      fEnablement.setSelection(enabled);
+      fEnablementButton.setSelection(enabled);
       fEnabledOption.initializeFrom(config);
       fEnabledOption.setEnabled(enabled);
     }
-    
-    setDisableListeners(false);
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fEnablement != null && fEnabledOption != null) {
-      boolean enabled = fEnablement.getSelection();
-
+    if (fEnablementButton != null) {
+      boolean enabled = fEnablementButton.getSelection();
       config.setAttribute(getAttribute(), enabled);
-      fEnabledOption.performApply(config);
     }
+
+    fEnabledOption.performApply(config);
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
@@ -105,7 +102,7 @@ public abstract class EnablementOption extends Option {
   
   public void restoreDefaults() {
     boolean enabled = getDefaultValue();
-    fEnablement.setSelection(enabled);
+    fEnablementButton.setSelection(enabled);
     fEnabledOption.setEnabled(enabled);
   }
   

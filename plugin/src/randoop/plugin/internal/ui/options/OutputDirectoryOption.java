@@ -7,7 +7,6 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -20,8 +19,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -35,49 +32,68 @@ import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
-public class ProjectOption extends Option {
+public class OutputDirectoryOption extends Option implements IOptionChangeListener {
+
   private Shell fShell;
 
-  private Text fProjectText;
   private IJavaProject fJavaProject;
-  private Button fProjectBrowseButton;
+
+  private Text fOutputSourceFolderText;
+  private IPackageFragmentRoot fOutputSourceFolder;
+  private Button fSourceFolderBrowseButton;
 
   /**
-   * Empty constructor to create a placeholder <code>ProjectOption</code> that
-   * may be used to set defaults.
+   * Empty constructor to create a placeholder
+   * <code>OutputDirectoryOption</code> that may be used to set defaults.
    */
-  public ProjectOption() {
+  public OutputDirectoryOption() {
   }
 
-  public ProjectOption(Shell shell, Text projectText, Button projectBrowseButton) {
+  public OutputDirectoryOption(Shell shell, Text outputSourceFolderText,
+      Button sourceFolderBrowseButton) {
+
+    this(shell, null, outputSourceFolderText, sourceFolderBrowseButton);
+  }
+
+  public OutputDirectoryOption(Shell shell, IJavaProject project,
+      Text outputSourceFolderText, Button sourceFolderBrowseButton) {
 
     fShell = shell;
 
-    fProjectText = projectText;
-    fProjectText.addModifyListener(new ModifyListener() {
+    fJavaProject = project;
 
-      public void modifyText(ModifyEvent e) {
-        String projectName = fProjectText.getText();
+    fOutputSourceFolderText = outputSourceFolderText;
 
-        fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
-
-        String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-        notifyListeners(new OptionChangeEvent(attr, projectName));
-      }
-    });
-
-    fProjectBrowseButton = projectBrowseButton;
-    fProjectBrowseButton.addSelectionListener(new SelectionAdapter() {
-
+    fSourceFolderBrowseButton = sourceFolderBrowseButton;
+    fSourceFolderBrowseButton.addSelectionListener(new SelectionAdapter() {
       @Override
-      public void widgetSelected(SelectionEvent evt) {
-        handleProjectBrowseButtonSelected();
+      public void widgetSelected(SelectionEvent e) {
+        IPackageFragmentRoot chosenFolder = chooseSourceFolder();
+
+        if (chosenFolder != null) {
+          fOutputSourceFolder = chosenFolder;
+          fOutputSourceFolderText.setText(fOutputSourceFolder.getElementName());
+        }
       }
     });
+    fSourceFolderBrowseButton.setEnabled(true);
   }
 
   public IStatus canSave() {
+    if (fOutputSourceFolderText == null || fSourceFolderBrowseButton == null) {
+      return RandoopStatus.ERROR_STATUS;
+    }
+
     return RandoopStatus.OK_STATUS;
+  }
+
+  public IStatus isValid(ILaunchConfiguration config) {
+    String projectName = RandoopArgumentCollector.getProjectName(config);
+
+    String outputSourceFolderName = RandoopArgumentCollector
+        .getOutputDirectoryName(config);
+
+    return validate(projectName, outputSourceFolderName);
   }
 
   /**
@@ -89,10 +105,9 @@ public class ProjectOption extends Option {
    * @param outputSourceFolderHandlerId
    * @return
    */
-  public IStatus isValid(ILaunchConfiguration config) {
-    String projectName = RandoopArgumentCollector.getProjectName(config);
-
-    // see org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab.isValid
+  protected static IStatus validate(String projectName, String outputSourceFolderName) {
+    // see
+    // org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab.isValid
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
     IStatus status = workspace.validateName(projectName, IResource.PROJECT);
 
@@ -122,28 +137,47 @@ public class ProjectOption extends Option {
       return RandoopStatus.createErrorStatus(MessageFormat.format(
           "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
-    
+
+    final char[] ILLEGAL_CHARACTERS = { '\\', ':', '*', '`', '?', '"', '<', '>', '|' };
+    for (char c : ILLEGAL_CHARACTERS) {
+      if (outputSourceFolderName.contains(new Character(c).toString())) {
+        status = RandoopStatus
+            .createErrorStatus("Output folder cannot contain any of the following characters: \\ : * ` ? \" < > |");
+        return status;
+      }
+    }
+    IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(javaProject,
+        outputSourceFolderName);
+    if (outputDir == null) {
+      status = RandoopStatus.createOkStatus("Output folder will be created on launch");
+      return status;
+    }
+
     return RandoopStatus.OK_STATUS;
   }
 
   @Override
   public void initializeWithoutListenersFrom(ILaunchConfiguration config) {
-    if (fProjectText != null) {
+    if (fOutputSourceFolderText != null) {
       String projectName = RandoopArgumentCollector.getProjectName(config);
-
       fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
-      fProjectText.setText(projectName);
+      
+      String folderName = RandoopArgumentCollector.getOutputDirectoryName(config);
 
-      String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-      notifyListeners(new OptionChangeEvent(attr, projectName));
+      fOutputSourceFolder = RandoopCoreUtil.getPackageFragmentRoot(fJavaProject,
+          folderName);
+      fOutputSourceFolderText.setText(folderName);
+
+      if (fSourceFolderBrowseButton != null) {
+        fSourceFolderBrowseButton.setEnabled(fJavaProject != null && fJavaProject.exists());
+      }
     }
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    if (fProjectText != null) {
-      RandoopArgumentCollector.setProjectName(config, fProjectText.getText());
-    } else if (fJavaProject != null) {
-      RandoopArgumentCollector.setProjectName(config, fJavaProject.getElementName());
+    if (fOutputSourceFolderText != null) {
+      RandoopArgumentCollector.setOutputDirectoryName(config,
+          fOutputSourceFolderText.getText());
     }
   }
 
@@ -153,80 +187,6 @@ public class ProjectOption extends Option {
 
     RandoopArgumentCollector.setOutputDirectoryName(config,
         IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY_NAME);
-  }
-
-  /*
-   * Show a dialog that lets the user select a project. This in turn provides
-   * context for the main type, allowing the user to key a main type name, or
-   * constraining the search for main types to the specified project.
-   * 
-   * Copied from org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab
-   */
-  private void handleProjectBrowseButtonSelected() {
-    IJavaProject project = chooseJavaProject();
-    if (project == null) {
-      return;
-    }
-
-    fJavaProject = project;
-    fProjectText.setText(fJavaProject.getElementName());
-  }
-
-  /*
-   * Realize a Java Project selection dialog and return the first selected
-   * project, or null if there was none.
-   * 
-   * Copied from org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab
-   */
-  private IJavaProject chooseJavaProject() {
-    IJavaProject[] projects;
-    try {
-      projects = JavaCore.create(getWorkspaceRoot()).getJavaProjects();
-    } catch (JavaModelException e) {
-      RandoopPlugin.log(e.getStatus());
-      projects = new IJavaProject[0];
-    }
-
-    ILabelProvider labelProvider = new JavaElementLabelProvider(
-        JavaElementLabelProvider.SHOW_DEFAULT);
-    ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(),
-        labelProvider);
-    dialog.setTitle("Project Selection");
-    dialog.setMessage("Choose a project to constrain the search for classes to test:");
-    dialog.setElements(projects);
-
-    IJavaProject javaProject = getJavaProject();
-    if (javaProject != null) {
-      dialog.setInitialSelections(new Object[] { javaProject });
-    }
-    if (dialog.open() == Window.OK) {
-      Object element = dialog.getFirstResult();
-      if (element instanceof IJavaProject) {
-        return (IJavaProject) element;
-      }
-    }
-    return null;
-  }
-
-  /*
-   * Return the IJavaProject corresponding to the project name in the project
-   * name text field, or null if the text does not match a project name.
-   * 
-   * Copied from org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab
-   */
-  private IJavaProject getJavaProject() {
-    String projectName = fProjectText.getText().trim();
-    if (projectName.length() < 1) {
-      return null;
-    }
-    return JavaCore.create(getWorkspaceRoot()).getJavaProject(projectName);
-  }
-
-  /*
-   * Convenience method to get the workspace root.
-   */
-  private static IWorkspaceRoot getWorkspaceRoot() {
-    return ResourcesPlugin.getWorkspace().getRoot();
   }
 
   /**
@@ -241,6 +201,11 @@ public class ProjectOption extends Option {
    *         </p>
    */
   private IPackageFragmentRoot chooseSourceFolder() {
+    if (fJavaProject == null) {
+      fSourceFolderBrowseButton.setEnabled(false);
+      return null;
+    }
+
     IPackageFragmentRoot pfRoots[];
     try {
       pfRoots = fJavaProject.getPackageFragmentRoots();
@@ -283,12 +248,24 @@ public class ProjectOption extends Option {
   }
 
   public void restoreDefaults() {
-    if (fProjectText != null) {
-      fProjectText.setText(IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT);
+    if (fOutputSourceFolderText != null) {
+      fOutputSourceFolderText
+          .setText(IRandoopLaunchConfigurationConstants.DEFAULT_OUTPUT_DIRECTORY_NAME);
 
-      String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
-      notifyListeners(new OptionChangeEvent(attr,
-          IRandoopLaunchConfigurationConstants.DEFAULT_PROJECT));
+      if (fSourceFolderBrowseButton != null) {
+        fSourceFolderBrowseButton.setEnabled(fJavaProject != null);
+      }
+    }
+  }
+
+  public void attributeChanged(IOptionChangeEvent event) {
+    String attr = event.getAttributeName();
+    if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(attr)) {
+      String projectName = (String) event.getValue();
+
+      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
+
+      fSourceFolderBrowseButton.setEnabled(fJavaProject != null && fJavaProject.exists());
     }
   }
 

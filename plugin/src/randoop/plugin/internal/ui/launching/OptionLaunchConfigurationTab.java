@@ -1,6 +1,7 @@
 package randoop.plugin.internal.ui.launching;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -34,8 +35,20 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    * @param option
    *          option to be added to this tab
    */
-  protected void addOption(IOption option) {
-    fOptions.add(option);
+  protected boolean addOption(IOption option) {
+    return fOptions.add(option);
+  }
+  
+  protected void addOptions(Collection<IOption> options) {
+    fOptions.addAll(options);
+  }
+  
+  protected boolean removeOption(IOption option) {
+    return fOptions.remove(option);
+  }
+  
+  protected void removeAllOptions() {
+    fOptions = new ArrayList<IOption>();
   }
 
   @Override
@@ -107,7 +120,7 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    for (IOption option : fOptions) {
+   for (IOption option : fOptions) {
       option.performApply(config);
     }
   }
