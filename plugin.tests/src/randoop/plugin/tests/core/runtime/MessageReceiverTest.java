@@ -35,7 +35,6 @@ public class MessageReceiverTest {
     boolean fReceivedLast = false;
     double fLastPercentDone = 0.0;
     
-    @Override
     public void handleMessage(IMessage m) {
       System.out.println(m);
       if (m instanceof RandoopStarted) {
@@ -58,7 +57,6 @@ public class MessageReceiverTest {
       }
     }
 
-    @Override
     public void handleTermination() {
       Assert.fail("Stream terminated unexpectedly");
     }
@@ -100,7 +98,7 @@ public class MessageReceiverTest {
 
     // Launch the configuration from the UI thread
     PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-      @Override
+
       public void run() {
         try {
           config.launch(ILaunchManager.RUN_MODE, null, true);
