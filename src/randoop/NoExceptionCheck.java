@@ -34,6 +34,16 @@ public class NoExceptionCheck implements Check {
     return "no_exception";
   }
 
+  @Override
+  public int get_stmt_no() {
+    return statementIdx;
+  }
+
+  @Override
+  public String get_id() {
+    return "NoExceptionCheck @" + statementIdx;
+  }
+
   /**
    * Returns the empty string: there is no code associated
    * with this check (if an exception occurs, it will

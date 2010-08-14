@@ -203,6 +203,30 @@ public class ExecutableSequence implements Serializable {
             && ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue() != null);
   }
 
+  /** 
+   * Returns an id based on the contents of the sequence alone.  The id
+   * will match for any identical sequences (no matter how they are
+   * constructed).  Used for debugging
+   **/
+  public int seq_id() {
+    StringBuilder b = new StringBuilder();
+    for (int i = 0 ; i < sequence.size() ; i++) {
+      
+      // If short format, don't print out primitive declarations
+      // because primitive values will be directly added to methods
+      // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
+      if (!GenInputsAbstract.long_format
+          && ExecutableSequence.canUseShortFormat(sequence.getStatementKind(i))) {
+        continue;
+      }
+      
+      StringBuilder oneStatement = new StringBuilder();
+      sequence.printStatement(oneStatement, i);
+
+      b.append(oneStatement);
+    }
+    return b.toString().hashCode();
+  }
 
   /**
    * Output this sequence as code. In addition to printing out the statements,
@@ -649,78 +673,149 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-   * Compares the results of the checks of two sequences.  Returns the
-   * number of different checks.  If remove_diffs is true any
-   * differing checks are removed from both sequences.
-   * Prints any differences to stdout if print_diffs is true.
+   * Compares the results of the checks of two sequences (the code in
+   * each sequence should be the same).  Returns the number of
+   * different checks.  If remove_diffs is true any differing checks
+   * are removed from both sequences.  Checks found in one sequence
+   * but not the other are also removed.  Prints any differences to
+   * stdout if print_diffs is true.
+   *
+   * Different checks can be generated for two runs of the same test
+   * sequence because of changes in
+   * the environment (eg, static variables) between runs.  Some
+   * checks are only created when the value involved in the
+   * check meets certain criteria and since the values can
+   * change, the checks may not always be created.  Its
+   * also possible to throw exceptions in one run and not another.
+   *
+   * The get_id() method from the Check
+   * interface) is used to identify check uniquely.  The id contains
+   * both the observer type (primitive, non-null, observer method call,
+   * etc) and the related variables.  When comparing two lists of
+   * Checks, the code presumes that the checks will occur in the same
+   * order on each execution.  Thus if the first remaining check in
+   * the first execution matches the second check from the second execution,
+   * the first check from the second execution is presumed to not match.
+   * The algorithm is far from completely optimized, but it should work
+   * pretty well if the two lists are pretty much the same (which
+   * they usually are).
    */
   public int compare_checks (ExecutableSequence es, boolean remove_diffs,
                                    boolean print_diffs) {
 
     int cnt = 0;
+    List<Integer> diff_obs1 = new ArrayList<Integer>();
+    List<Integer> diff_obs2 = new ArrayList<Integer>();
 
     for (int ii = 0; ii < checks.size(); ii++) {
       // System.out.printf ("Sequence1: %n%s%n", this);
       // System.out.printf ("Sequence2: %n%s%n", es);
       List<Check> obs1 = checks.get(ii);
       List<Check> obs2 = es.checks.get(ii);
-      List<Integer> diff_obs = new ArrayList<Integer>();
       // System.out.printf ("checks 1/%d = %s%n", ii, obs1);
       // System.out.printf ("checks 2/%d = %s%n", ii, obs2);
-      if (obs1.size() != obs2.size()) {
-        if ((ii < (checks.size()-1))
-            && (obs1.size() == 0) && (obs2.size() == 1)) {
-          System.out.printf ("keeping mismatched check %s%n", obs2);
-        } else { // number of checks must match
-          System.out.printf ("obs %d size mismatch %d - %d\n", ii, obs1.size(),
-                             obs2.size());
-          System.out.printf ("Sequence1: %n%s%n", this);
-          System.out.printf ("Sequence2: %n%s%n", es);
-          System.out.printf ("Sequence1: %n%s%n", toCodeString());
-          System.out.printf ("Sequence2: %n%s%n", es.toCodeString());
-          System.out.printf ("obs1: %s%n", obs1);
-          System.out.printf ("obs2: %s%n", obs2);
-          assert false;
-        }
-      }
-      for (int jj = 0; jj < obs1.size(); jj++) {
-        Check ob1 = obs1.get(jj);
-        Check ob2 = obs2.get(jj);
-        if (!ob1.get_value().equals (ob2.get_value())) {
-          diff_obs.add (0, jj);
-          cnt++;
-          if (print_diffs) {
-            System.out.printf ("check mismatch in seq [%b]%n%s%n",
-                               remove_diffs, es);
-            System.out.printf ("Line %d, obs %d%n", ii, jj);
-            System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
-          }
-        } else { // they match
-          if (ob1.get_value().contains ("EquipmentHolder@")) {
-            System.out.printf ("check match in seq [%b]%n%s%n",
-                               remove_diffs, es);
-            System.out.printf ("Line %d, obs %d%n", ii, jj);
-            System.out.printf ("ob1 = %s, ob 2 = %s%n", ob1, ob2);
-            assert false;
+      boolean debug = false;
+      if (false) {
+        if (obs1.size() != obs2.size()) {
+          if ((ii < (checks.size()-1))
+              && (obs1.size() == 0) && (obs2.size() == 1)) {
+            System.out.printf ("keeping mismatched check %s%n", obs2);
+          } else { // number of checks must match
+            System.out.printf ("obs %d size mismatch %d - %d\n", ii,obs1.size(),
+                               obs2.size());
+            System.out.printf ("Sequence1: %n%s%n", this);
+            System.out.printf ("Sequence2: %n%s%n", es);
+            System.out.printf ("Sequence1 [%08x]: %n%s%n", seq_id(), 
+                               toCodeString());
+            System.out.printf ("Sequence2 [%08x]: %n%s%n", seq_id(),
+                               es.toCodeString());
+            System.out.printf ("obs1: %s%n", obs1);
+            System.out.printf ("obs2: %s%n", obs2);
+            debug = true;
+            // assert false;
           }
         }
-
       }
 
+      // Find any checks that mismatch between the two runs of the
+      // Sequence.  
+      int o2i = 0;
+      for (int o1i = 0; o1i < obs1.size(); o1i++) {
+        Check ob1 = obs1.get(o1i);
+        if (o2i >= obs2.size()) {
+          diff_obs1.add (0, o1i);
+          print_diffs (print_diffs, "extra obs1", ob1, null, o1i, -1, es);
+        }
+        boolean match = false;
+        int o2i_start = o2i;
+        while (o2i < obs2.size()) {
+          Check ob2 = obs2.get(o2i);
+          if (ob1.get_id().equals (ob2.get_id())) {
+            assert ob1.getClass().equals (ob2.getClass());
+            if (!ob1.get_value().equals (ob2.get_value())) {
+              diff_obs1.add (0, o1i);
+              diff_obs2.add (0, o2i);
+              cnt++;
+              print_diffs (print_diffs, "mismatch", ob1, ob2, o1i, o2i, es);
+            } else { // values match
+              if (debug)
+                print_diffs (print_diffs, "match", ob1, ob2, o1i, o2i, null);
+            }
+            match = true;
+            break;
+          } else { // Different checks
+            o2i++;
+          }
+        }
+        // If we found a match any skipped checks in obs2 must be non-matched
+        if (match) {
+          for (int jj = o2i_start; jj < o2i; jj++) {
+            diff_obs2.add (0, jj);
+            print_diffs (print_diffs, "obs2 missing", null, obs2.get(jj), o1i, 
+                         o2i, es);
+          }
+          o2i++;
+        } else { // no match for obs1
+          diff_obs1.add (0, o1i);
+          print_diffs (print_diffs, "obs1 missing", ob1, null, o1i, -1, es);
+          o2i = o2i_start;
+        }
+      }
+      for ( ; o2i < obs2.size(); o2i++) {
+        diff_obs2.add (0, o2i);
+        print_diffs (print_diffs, "extra obs2", null, obs2.get(o2i), -1, o2i,
+                     es);
+      }
+            
       // Remove any checks that don't match
-      if (remove_diffs && (diff_obs.size() > 0)) {
-        // System.out.printf ("obs1 size before = %d%n", obs1.size());
-        for (int obs : diff_obs) {
-          // System.out.printf ("Removing obs %d from sequence%n", obs);
+      if (remove_diffs) {
+        for (int obs : diff_obs1) {
           obs1.remove (obs);
+        }
+        for (int obs : diff_obs2) {
           obs2.remove (obs);
         }
-        // System.out.printf ("obs1 size after = %d%n", obs1.size());
       }
     }
 
-    return cnt;
+    return diff_obs2.size() + diff_obs1.size() - cnt;
 
+  }
+
+  /** Prints information about any diffs found when comparing checks **/
+  private void print_diffs (boolean print_diffs, String msg, Check obs1, 
+                         Check obs2, int o1i, int o2i, ExecutableSequence es) {
+
+    if (!print_diffs)
+      return;
+
+    System.out.printf ("Difference in seq %s%n", msg);
+    System.out.printf ("obs1 @%d = %s%n", o1i, obs1);
+    System.out.printf ("obs2 @%d = %s%n", o2i, obs2);
+    if (es != null) {
+      System.out.printf ("Seq 1 [%08X]%n%s%n", seq_id(), toCodeString());
+      System.out.printf ("Seq 2 [%08X]%n%s%n", es.seq_id(), es.toCodeString());
+    }
   }
 
   /**
