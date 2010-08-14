@@ -176,22 +176,26 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         if (o == null) {
 
           // Add observer test for null
-          s.addCheck(idx,new ObjectCheck(new IsNull(), var), true);
+          s.addCheck(idx,new ObjectCheck(new IsNull(), i, var), true);
 
         } else if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(o.getClass())) {
 
           
           if (o instanceof String) {
+            // System.out.printf ("considering String check for seq %08X\n",
+            //                   s.seq_id());
             String str = (String)o;
             // Don't create assertions over strings that look like raw object references.
             if (PrimitiveTypes.looksLikeObjectToString(str)) {
               // System.out.printf ("ignoring Object.toString obs %s%n", str);
               continue;
             }
-            // Don't create assertions over strings that are really long, as this
-            // can cause the generate unit tests to be unreadable and/or non-compilable
-            // due to Java restrictions on String constants.
-            if (!PrimitiveTypes.stringLengthOK(str)) {
+            // Don't create assertions over strings that are really
+            // long, as this can cause the generate unit tests to be
+            // unreadable and/or non-compilable due to Java
+            // restrictions on String constants.
+            if (str.length() > GenInputsAbstract.string_maxlen) {
+              // System.out.printf ("Ignoring too long string%n");
               continue;
             }
           }
@@ -218,7 +222,10 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           } else {
             printMode = PrimValue.PrintMode.EQUALSMETHOD;
           }
-          s.addCheck(idx,new ObjectCheck(new PrimValue(o, printMode), var), true);
+          ObjectCheck oc = new ObjectCheck(new PrimValue(o, printMode), i, var);
+          s.addCheck(idx,oc, true);
+          // System.out.printf ("Adding objectcheck %s to seq %08X\n",
+          //                   oc, s.seq_id());
 
         } else { // its a more complex type with a non-null value
 
@@ -226,7 +233,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           // Exception: if the value comes directly from a constructor call, 
           // not interesting that it's non-null; omit the check.
           if (!(st instanceof RConstructor)) {
-            s.addCheck(idx, new ObjectCheck(new IsNotNull(), var), true);
+            s.addCheck(idx, new ObjectCheck(new IsNotNull(), i, var), true);
           }
 
 
@@ -249,7 +256,8 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
               }
 
               ObjectContract observerEqValue = new ObserverEqValue(m, value);
-              ObjectCheck observerCheck = new ObjectCheck(observerEqValue, var);
+              ObjectCheck observerCheck = new ObjectCheck(observerEqValue, i, 
+                                                          var);
               // System.out.printf ("Adding observer %s%n", observerCheck);
               s.addCheck(idx, observerCheck, true);
             }

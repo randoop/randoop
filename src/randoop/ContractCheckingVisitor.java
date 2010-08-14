@@ -139,7 +139,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
             // Create an check that records the actual value
             // returned by the expression, marking it as invalid
             // behavior.
-            obs = new ObjectCheck(c, s.sequence.getVariable(i), s.sequence.getVariable(j));
+            obs = new ObjectCheck(c, i, s.sequence.getVariable(i), s.sequence.getVariable(j));
             s.addCheck(idx, obs, false);
           }
         } else {
@@ -188,7 +188,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
       // Create an check that records the actual value
       // returned by the expression, marking it as invalid
       // behavior.
-      Check obs = new ObjectCheck(c, s.sequence.getVariable(i));
+      Check obs = new ObjectCheck(c, i, s.sequence.getVariable(i));
       s.addCheck(idx, obs, false);
     }
   }

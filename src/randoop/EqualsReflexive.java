@@ -42,6 +42,11 @@ public final class EqualsReflexive implements ObjectContract {
     return "x0.equals(x0)";
   }
 
+  @Override
+  public String get_observer_str() {
+    return "EqualsReflexive";
+  }
+
   public boolean evalExceptionMeansFailure() {
     return true;
   }
