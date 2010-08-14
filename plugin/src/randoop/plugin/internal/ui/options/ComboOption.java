@@ -14,6 +14,9 @@ import randoop.plugin.internal.core.TestKinds;
 public abstract class ComboOption extends Option {
   protected Combo fCombo;
   
+  public ComboOption() {
+  }
+  
   public ComboOption(Combo combo) {
     fCombo = combo;
     
@@ -33,28 +36,23 @@ public abstract class ComboOption extends Option {
   }
   
   public IStatus canSave() {
-    if (fCombo == null) {
-      return RandoopStatus.createErrorStatus(ComboOption.class.getName()
-          + " incorrectly initialized"); //$NON-NLS-1$
+    if (fCombo != null) {
+      String text = getValue();
+
+      return validate(text);
     }
-    
-    String text = getValue();
-    
-    return validate(text);
+
+    return RandoopStatus.OK_STATUS;
   }
   
   public IStatus isValid(ILaunchConfiguration config) {
     return validate(getValue(config));
   }
   
-
-  public void initializeFrom(ILaunchConfiguration config) {
-    setDisableListeners(true);
-    
+  @Override
+  public void initializeWithoutListenersFrom(ILaunchConfiguration config) {
     if (fCombo != null)
       fCombo.select(TestKinds.valueOf(getValue(config)).getCommandId());
-    
-    setDisableListeners(false);
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -71,7 +69,9 @@ public abstract class ComboOption extends Option {
   }
 
   public void restoreDefaults() {
-    fCombo.select(getDefaultIndex());
+    if (fCombo != null) {
+      fCombo.select(getDefaultIndex());
+    }
   }
   
   protected abstract IStatus validate(String text);

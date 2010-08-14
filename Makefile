@@ -564,9 +564,9 @@ plume-lib-update: utils/plume-lib
 utils/plume-lib/java/plume.jar: plume-lib-update
 	make -C utils/plume-lib/java plume.jar
 
-# NOTE that lib/plume.jar is not necessarily up-to-date with
-# utils/plume-lib/java/.  This step must be done by hand and is not
-# automated nor called from anywhere
+# The lib/plume.jar must be done by hand and is not automated nor called
+# from anywhere.  That means that lib/plume.jar is not necessarily
+# up-to-date with utils/plume-lib/java/.
 .PHONY: update-plume-jar
 update-plume-jar: lib/plume.jar
 lib/plume.jar: utils/plume-lib/java/plume.jar
@@ -589,7 +589,9 @@ GENTESTS_OPTIONS_JAVA = \
 
 # "build" is a prerequisite because javadoc reads .class files to determine
 # annotations.
-manual: plume-lib-update build
+# Consider also running "make plume-lib-update" to get the latest
+# html-update-toc.
+manual: build
 	javadoc -quiet -doclet plume.OptionsDoclet -i -docfile doc/index.html ${GENTESTS_OPTIONS_JAVA}
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html

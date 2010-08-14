@@ -1,11 +1,11 @@
 package randoop.plugin.internal.ui.wizards;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
+import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
 

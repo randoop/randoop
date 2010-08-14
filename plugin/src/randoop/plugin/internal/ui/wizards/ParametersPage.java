@@ -4,20 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.internal.ui.wizards.dialogfields.Separator;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.ui.ParametersSWTFactory;
 import randoop.plugin.internal.ui.RandoopMessages;
+import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
-import randoop.plugin.internal.ui.options.ProjectOption;
+import randoop.plugin.internal.ui.options.OptionFactory;
+import randoop.plugin.internal.ui.options.OutputDirectoryOption;
 
 public class ParametersPage extends OptionWizardPage {
   final int MARGIN = 5;
@@ -43,24 +41,19 @@ public class ParametersPage extends OptionWizardPage {
     setControl(comp);
     
     createResourcesComposite(comp);
-    createSeperator(comp);
+    SWTFactory.createSeperator(comp, 1);
     
     List<IOption> options = new ArrayList<IOption>();
     
-    options.addAll(ParametersSWTFactory.createGenerationLimitComposite(comp, getBasicoptionChangeListener()));
-    createSeperator(comp);
-    options.addAll(ParametersSWTFactory.createOutputParametersComposite(comp, getBasicoptionChangeListener()));
-    createSeperator(comp);
-    options.addAll(ParametersSWTFactory.createAdvancedComposite(comp, getBasicoptionChangeListener()));
+    options.addAll(OptionFactory.createStoppingCriterionOptionGroup(comp, getBasicoptionChangeListener()));
+    SWTFactory.createSeperator(comp, 1);
+    options.addAll(OptionFactory.createOutputParametersOptionGroup(comp, getBasicoptionChangeListener()));
+    SWTFactory.createSeperator(comp, 1);
+    options.addAll(OptionFactory.createAdvancedOptionGroup(comp, getBasicoptionChangeListener()));
     
     for (IOption option : options) {
       addOption(option);
     }
-  }
-
-  private void createSeperator(Composite comp) {
-    new Separator(SWT.SEPARATOR | SWT.HORIZONTAL | SWT.BORDER).doFillIntoGrid(
-        comp, 1, convertHeightInCharsToPixels(1));
   }
   
   private void createResourcesComposite(Composite parent) {
@@ -71,7 +64,7 @@ public class ParametersPage extends OptionWizardPage {
     Button sourceFolderBrowseButton = SWTFactory.createPushButton(comp, "&Browse...", //$NON-NLS-1$
         null);
 
-    fOutputFolderOption = new ProjectOption(getShell(), fProject,
+    fOutputFolderOption = new OutputDirectoryOption(getShell(), fProject,
         outputSourceFolderText, sourceFolderBrowseButton);
     
     SWTFactory.createLabel(comp, RandoopMessages.RandoopOption_junit_package_name, 1);

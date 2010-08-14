@@ -11,7 +11,11 @@ import org.eclipse.swt.widgets.Text;
 import randoop.plugin.internal.core.RandoopStatus;
 
 public abstract class TextOption extends Option {
+
   protected Text fText;
+
+  public TextOption() {
+  }
   
   public TextOption(Text text) {
     fText = text;
@@ -24,17 +28,14 @@ public abstract class TextOption extends Option {
   }
   
   public IStatus canSave() {
-    if (fText == null) {
-      return RandoopStatus.createErrorStatus(PositiveIntegerOption.class.getName()
-          + " incorrectly initialized"); //$NON-NLS-1$
+    if (fText != null && !fText.isDisposed()) {
+      String text = fText.getText();
+      if (!text.isEmpty()) {
+        return validate(text);
+      }
     }
     
-    String text = fText.getText();
-    if (text.isEmpty()) {
-      return RandoopStatus.OK_STATUS;
-    } else {
-      return validate(text);
-    }
+    return RandoopStatus.OK_STATUS;
   }
   
   public IStatus isValid(ILaunchConfiguration config) {
@@ -43,14 +44,17 @@ public abstract class TextOption extends Option {
 
   protected abstract IStatus validate(String text);
 
-  public void initializeFrom(ILaunchConfiguration config) {
-    setDisableListeners(true);
-    fText.setText(getValue(config));
-    setDisableListeners(false);
+  @Override
+  public void initializeWithoutListenersFrom(ILaunchConfiguration config) {
+    if (fText != null && !fText.isDisposed()) {
+      fText.setText(getValue(config));
+    }
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    config.setAttribute(getAttribute(), fText.getText());
+    if (fText != null && !fText.isDisposed()) {
+      config.setAttribute(getAttribute(), fText.getText());
+    }
   }
 
   protected String getValue(ILaunchConfiguration config) {
@@ -66,7 +70,9 @@ public abstract class TextOption extends Option {
   }
   
   public void restoreDefaults() {
-    fText.setText(getDefaultValue());
+    if (fText != null && !fText.isDisposed()) {
+      fText.setText(getDefaultValue());
+    }
   }
   
   protected abstract String getAttribute();

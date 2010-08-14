@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -85,6 +84,7 @@ import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.ui.AdaptablePropertyTester;
 import randoop.plugin.internal.ui.ClasspathLabelProvider;
 import randoop.plugin.internal.ui.MessageUtil;
+import randoop.plugin.internal.ui.SWTFactory;
 
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
   
@@ -526,7 +526,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       return typeNode.getChildren();
     }
   }
-
+  
+  /**
+   * Empty constructor to create a placeholder <code>ClassSelectorOption</code>
+   * that may be used to set defaults.
+   */
+  public ClassSelectorOption() {
+  }
+  
   public ClassSelectorOption(Composite parent, IRunnableContext runnableContext) {
     
     this(parent, runnableContext, true);
@@ -654,7 +661,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       @Override
       public void widgetSelected(SelectionEvent e) {
         IJavaElement[] elements = { fJavaProject };
-        IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements, IJavaSearchScope.SYSTEM_LIBRARIES);
+        IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements);
         handleSearchButtonSelected(searchScope);
       }
     });
@@ -770,15 +777,15 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       // Add all of the types to the type selector
       Object[] results = dialog.getResult();
       if (results != null && results.length > 0) {
-        
         for (Object element : results) {
           if (element instanceof IType) {
             IType type = (IType) element;
+            
             if (type != null) {
               String pfname = type.getPackageFragment().getElementName();
               TreeNode packageNode = fTreeInput.addRoot(pfname);
               
-              TypeMnemonic newTypeMnemonic = new TypeMnemonic(type).reassign(fJavaProject);
+              TypeMnemonic newTypeMnemonic = new TypeMnemonic(type);
               
               boolean typeAlreadyInTree = false;
               for (TreeNode node : packageNode.getChildren()) {
@@ -876,15 +883,11 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     return RandoopStatus.OK_STATUS;
   }
 
-  public void initializeFrom(ILaunchConfiguration config) {
-    setDisableListeners(true);
-    
+  @Override
+  public void initializeWithoutListenersFrom(ILaunchConfiguration config) {
     fTreeInput = new TreeInput();
     fTypeTreeViewer.setInput(fTreeInput);
     
-    String projectName = RandoopArgumentCollector.getProjectName(config);
-    fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
-
     fCheckedMethodsByType = new HashMap<IType, List<String>>();
     
     List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
@@ -927,7 +930,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     }
     
     fTypeTreeViewer.refresh();
-    setDisableListeners(false);
+    
+    String projectName = RandoopArgumentCollector.getProjectName(config);
+    setJavaProject(RandoopCoreUtil.getProjectFromName(projectName));
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -940,8 +945,14 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     // }
     // }
     
+    if (fTypeTreeViewer == null)
+      return;
+
     ITreeContentProvider prov = (ITreeContentProvider) fTypeTreeViewer.getContentProvider();
     TreeInput input = (TreeInput) fTypeTreeViewer.getInput();
+    if (input == null)
+      return;
+
     fTypeTreeViewer.refresh();
 
     List<String> availableTypes = new ArrayList<String>();
@@ -999,9 +1010,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    RandoopArgumentCollector.setAvailableTypes(config, null);
-    RandoopArgumentCollector.setCheckedTypes(config, null);
-    RandoopArgumentCollector.setGrayedTypes(config, null);
+    List<String> emptyList = new ArrayList<String>();
+    RandoopArgumentCollector.setAvailableTypes(config, emptyList);
+    RandoopArgumentCollector.setCheckedTypes(config, emptyList);
+    RandoopArgumentCollector.setGrayedTypes(config, emptyList);
     
     List<String> availableTypes = RandoopArgumentCollector.getAvailableTypes(config);
     for (String typeMnemonic : availableTypes) {
@@ -1272,6 +1284,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
 
       boolean enabled = fJavaProject != null && fJavaProject.exists();
       fClassAddFromSources.setEnabled(enabled);
+      fClassAddFromSystemLibraries.setEnabled(enabled);
       fClassAddFromClasspaths.setEnabled(enabled);
 
       boolean hasMissingClasses = setJavaProject(fJavaProject);
@@ -1280,13 +1293,18 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   }
   
   private boolean setJavaProject(IJavaProject javaProject) {
-    if (fTreeInput == null)
+    if (fTreeInput == null) {
       return false;
+    }
     
     fJavaProject = javaProject;
     boolean hasMissingClasses = false;
     
     if (fJavaProject == null) {
+      fClassAddFromSources.setEnabled(false);
+      fClassAddFromSystemLibraries.setEnabled(false);
+      fClassAddFromClasspaths.setEnabled(false);
+      
       hasMissingClasses = true;
     } else {
       for (TreeNode pfNode : fTreeInput.getRoots()) {

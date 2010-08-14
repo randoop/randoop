@@ -23,7 +23,7 @@
         </ul></li>
       <li><a href="#getting_help">Getting help</a>
         <ul>
-          <li><a href="#troubleshooting">Getting help</a>
+          <li><a href="#troubleshooting">Troubleshooting</a>
             <ul>
               <li><a href="#nontermination">Randoop does not terminate</a></li>
             </ul></li>
@@ -36,6 +36,7 @@
       <li><a href="#cutomize">Customizing Randoop's behavior to your application</a>
         <ul>
           <li><a href="#map_calls">Avoiding calls to specific methods</a></li>
+          <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
           <li><a href="#checkrep">Specifying representation invariant ("checkRep") methods</a></li>
           <li><a href="#primitives">Specifying additional primitive values</a></li>
           <li><a href="#usethreads">Speeding up test generation</a></li>
@@ -197,7 +198,7 @@ the cause of the problem.</p>
       <li><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
  In the file, each each method under test is specified on a separate
  line. [no default]</li>
-      <li><b>--omitmethods=</b><i>regex</i>. Do not exercise methods that match regular expresssion &lt;string&gt; [no default]</li>
+      <li><b>--omitmethods=</b><i>regex</i>. Do not exercise methods that match regular expression &lt;string&gt; [no default]</li>
       <li><b>--init-routine=</b><i>string</i>. specifies initialization routine (class.method) [no default]</li>
       <li><b>--literals-level=</b><i>enum</i>. <ul>
  <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
@@ -298,7 +299,7 @@ the cause of the problem.</p>
 </ul>
 
 
-<h3 id="troubleshooting">Getting help</h3>
+<h3 id="troubleshooting">Troubleshooting</h3>
 
 <h4 id="nontermination">Randoop does not terminate</h4>
 
@@ -306,6 +307,12 @@ the cause of the problem.</p>
 If Randoop does not terminate, run it with the <tt>--log=filename</tt>
 command-line option, and either examine the log or send it to the Randoop
 developers for diagnosis.
+</p>
+
+<p>
+You can also determine which calls are executing by examining the stack
+trace.  On Unix this can be done by typing <tt>Ctrl-\</tt> (hold down the
+Control key, then press the Backslash key).
 </p>
 
 
@@ -496,6 +503,24 @@ methods</a>.
 </p>
 
 
+<h3 id="determining-calls-to-map">Determining which calls to place in the map_calls file</h3>
+
+<p>
+If Randoop is calling methods that it should not (for example, while
+generating tests, a dialog box pops up), then you need to add more calls to
+you map_calls file.  While the dialog box is displayed, determine which
+calls are executing by examining the stack trace.  On Unix this can be done
+by typing <tt>Ctrl-\</tt> (hold down the Control key, then press the
+Backslash key).
+</p>
+
+<p>
+To determine the specific method, examine the application's code where it
+calls the method that puts up the box (or other unwanted activity).  If it
+is a virtual call, the map must specify the name of the type used in the
+call.
+</p>
+
 
 <h3 id="checkrep">Specifying representation invariant ("checkRep") methods</h3>
 
@@ -672,7 +697,9 @@ taking too long to execute and cannot be killed by Randoop.
  -->
 <!--  LocalWords:  args gentest methodlist init inputlimit outputlimit maxsize
  -->
-<!--  LocalWords:  maxlen testsperfile junit classname dir randomseed
+<!--  LocalWords:  maxlen testsperfile junit classname dir randomseed java ABB
  -->
-<!--  LocalWords:  filewriter nonterminating omitmethods
+<!--  LocalWords:  filewriter nonterminating omitmethods ea int TODO KB comm
+ -->
+<!--  LocalWords:  Ctrl var regexp standalone
  -->

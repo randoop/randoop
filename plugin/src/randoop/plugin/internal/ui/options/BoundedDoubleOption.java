@@ -15,6 +15,9 @@ public abstract class BoundedDoubleOption extends TextOption {
   private String fOutOfBoundsMsg;
   private String fInvalidErrorMsg;
 
+  public BoundedDoubleOption() {
+  }
+  
   public BoundedDoubleOption(Text text, double lowerBound, double upperBound) {
     super(text);
     fLowerBound = lowerBound;
@@ -51,13 +54,15 @@ public abstract class BoundedDoubleOption extends TextOption {
   
   @Override
   public void performApply(ILaunchConfigurationWorkingCopy config) {
-    String value = fText.getText();
-    try {
-      value = new Double(value).toString();
-    } catch (NumberFormatException e) {
-    }
+    if (fText != null && !fText.isDisposed()) {
+      String value = fText.getText();
+      try {
+        value = new Double(value).toString();
+      } catch (NumberFormatException e) {
+      }
 
-    config.setAttribute(getAttribute(), value);
+      config.setAttribute(getAttribute(), value);
+    }
   }
   
   protected abstract String getName();
