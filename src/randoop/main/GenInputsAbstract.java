@@ -46,7 +46,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static String methodlist = null;
 
   // TODO: How does this relate to methodlist?
-  @Option("Do not exercise methods that match regular expresssion <string>")
+  @Option("Do not exercise methods that match regular expression <string>")
   public static Pattern omitmethods = null;
 
   @Option("specifies initialization routine (class.method)")
