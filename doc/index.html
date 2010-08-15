@@ -337,30 +337,12 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
  If not specified, no logging is done. [no default]</li>
     </ul>
   </li>
-  <li>Branch-directed generation
-    <ul>
-      <li><b>--long-format=</b><i>boolean</i>. Use long format for outputting JUnit tests. [default false]</li>
-      <li><b>--output-covmap=</b><i>string</i>. Output branch-&gt;witness-sequences map [no default]</li>
-      <li><b>--output-cov-witnesses=</b><i>boolean</i>. Output witness sequences for coverage branches [default false]</li>
-      <li><b>--always-use-ints-as-objects=</b><i>boolean</i>. Whenever an object is called for, use an integer [default false]</li>
-      <li><b>--coverage-instrumented-classes=</b><i>string</i>. The name of a file containing the list of coverage-instrumented classes [no default]</li>
-      <li><b>--output-branches=</b><i>string</i>. Output covered branches to the given text file [no default]</li>
-    </ul>
-  </li>
   <li>Eliminating redundant tests
     <ul>
       <li><b>--remove-subsequences=</b><i>boolean</i>. Remove tests that are subsumed in other tests [default true]</li>
       <li><b>--compare-checks=</b><i>boolean</i>. Run each test twice and compare the checks [default false]</li>
       <li><b>--clean-checks=</b><i>filename</i>. Create clean checks for a serialized sequence [no default]</li>
       <li><b>--print-diff-obs=</b><i>boolean</i>. Print any checks that are different in the clean run [default false]</li>
-    </ul>
-  </li>
-  <li>Pacheco thesis
-    <ul>
-      <li><b>--expfile=</b><i>filewriter</i>. Write experiment results file [no default]</li>
-      <li><b>--offline=</b><i>boolean</i>. Do not do online illegal [default false]</li>
-      <li><b>--repeat-heuristic=</b><i>boolean</i>. Use heuristic that may randomly repeat a method call several times [default false]</li>
-      <li><b>--use-object-cache=</b><i>boolean</i>. Use object cache [default false]</li>
     </ul>
   </li>
   <li>Threading and timeouts
@@ -399,7 +381,7 @@ To print out help for test generation (<tt>gentests</tt> command</a>), type:
 java -ea -classpath randoop.jar randoop.main.Main help gentests
 </pre>
 
-To also include unpublicized (due to being experimantal or unsupported)
+To also include unpublicized (due to being experimental or unsupported)
  options for a command, use the <tt>--unpub</tt> flag:
 
 <pre class="code">
@@ -881,7 +863,15 @@ taking too long to execute and cannot be killed by Randoop.
  -->
 <!--  LocalWords:  maxlen testsperfile junit classname dir randomseed java ABB
  -->
-<!--  LocalWords:  filewriter nonterminating omitmethods ea int TODO KB comm
+<!--  LocalWords:  filewriter nonterminating omitmethods ea int TODO KB comm Dx
  -->
-<!--  LocalWords:  Ctrl var regexp standalone
+<!--  LocalWords:  Ctrl var regexp standalone JUnit JDK LinkedList API runtime
+ -->
+<!--  LocalWords:  enum NullPointerExceptions AssertionErrors dont nonexec JVM
+ -->
+<!--  LocalWords:  mem stdout stderr componentfile ser GZIPPED gz plugin covmap
+ -->
+<!--  LocalWords:  noprogressdisplay progressinterval filename cov ints expfile
+ -->
+<!--  LocalWords:  subsequences online unpub javac TypeN postcondition
  -->
