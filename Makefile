@@ -74,7 +74,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen  results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -112,6 +112,14 @@ ds-coverage: bin
 	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	   randoop.test.ICSE07ContainersTest
+
+# Basic smoke test: help command does not crash.
+randoop-help: 
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help 
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help help
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help gentests 
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help --unpub gentests
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help --unpub help
 
 # Runs Randoop on Collections and TreeSet.
 randoop1: bin
