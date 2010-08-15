@@ -160,7 +160,7 @@ Randoop supports two commands:
 </p>
 
 <ul>
-<li> <b>help</b> prints out a usage message Example use:
+<li> <b>help</b> prints out a usage message For details, see <a href="#getting_help">Getting Help</a>. Example uses:
 
 <pre class="code">
 java -ea -classpath randoop.jar randoop.main.Main help
@@ -169,7 +169,6 @@ java -ea -classpath randoop.jar randoop.main.Main help gentests
 
 <li> <b>gentests</b> generates unit tests. For details,
 see <a href="#generating_tests">Generating Tests</a>. Example use:
-
 
 <pre class="code">
 java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
@@ -272,7 +271,7 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
  
  Randoop stores previously-generated tests in a "component" set, and uses them to
  generate new tests. Setting this variable to a small number can sometimes result
- in a greater variety of tests generated during a single run. [default 2147483647]</li>
+ in a greater variety of tests generated during a single run. [default 100000000]</li>
     </ul>
   </li>
   <li>Creating test oracles
@@ -296,6 +295,15 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
   Randoop's default behavior is to output only tests consisting of
   method call sequences that execute to the end, rather than throwing
   an exception or failing a contract check in the middle of execution. [default false]</li>
+      <li><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests [no default]</li>
+    </ul>
+  </li>
+  <li>Runtime environment
+    <ul>
+      <li><b>-D</b> <b>--system-props=</b><i>string</i> <tt>[+]</tt>. Specify system properties to be set (similar to java -Dx=y) [default []]</li>
+      <li><b>--agent=</b><i>string</i>. Specify agent command for recursive JVM calls [no default]</li>
+      <li><b>--mem-megabytes=</b><i>int</i>. specify the memory size (in megabytes) for recursive JVM calls [default 1000]</li>
+      <li><b>--capture-output=</b><i>boolean</i>. Capture all output to stdout and stderr [default false]</li>
     </ul>
   </li>
   <li>Serialized input/output of generated tests
@@ -339,12 +347,20 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
       <li><b>--output-branches=</b><i>string</i>. Output covered branches to the given text file [no default]</li>
     </ul>
   </li>
-  <li>Carlos Pacheco thesis
+  <li>Eliminating redundant tests
+    <ul>
+      <li><b>--remove-subsequences=</b><i>boolean</i>. Remove tests that are subsumed in other tests [default true]</li>
+      <li><b>--compare-checks=</b><i>boolean</i>. Run each test twice and compare the checks [default false]</li>
+      <li><b>--clean-checks=</b><i>filename</i>. Create clean checks for a serialized sequence [no default]</li>
+      <li><b>--print-diff-obs=</b><i>boolean</i>. Print any checks that are different in the clean run [default false]</li>
+    </ul>
+  </li>
+  <li>Pacheco thesis
     <ul>
       <li><b>--expfile=</b><i>filewriter</i>. Write experiment results file [no default]</li>
       <li><b>--offline=</b><i>boolean</i>. Do not do online illegal [default false]</li>
-      <li><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests [no default]</li>
       <li><b>--repeat-heuristic=</b><i>boolean</i>. Use heuristic that may randomly repeat a method call several times [default false]</li>
+      <li><b>--use-object-cache=</b><i>boolean</i>. Use object cache [default false]</li>
     </ul>
   </li>
   <li>Threading and timeouts
@@ -371,11 +387,26 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
 
 <ul>
 <li><strong>Manual</strong>: what you are currently reading. </li>
+
 <li><strong>Randoop's <tt>help</tt> command</strong>:  For help on
-  usage, use Randoop's <tt>help</tt> command.  For example,
-  to see help on command-line options that is similar to
-  that above, type:
-<pre class="code">java -classpath randoop.jar randoop.main.Main help gentests</pre>
+  usage, use Randoop's <tt>help</tt> command. To print out Randoop's main help message, type:
+
+<pre class="code">java -classpath randoop.jar randoop.main.Main help</pre>
+
+To print out help for test generation (<tt>gentests</tt> command</a>), type:
+
+<pre class="code">
+java -ea -classpath randoop.jar randoop.main.Main help gentests
+</pre>
+
+To also include unpublicized (due to being experimantal or unsupported)
+ options for a command, use the <tt>--unpub</tt> flag:
+
+<pre class="code">
+java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
+</pre>
+
+
 </li>
 <li><strong>Mailing list</strong>: If you don't find your question answered,
   email <tt>randoop-developers@googlegroups.com</tt> with your question. 
@@ -403,7 +434,6 @@ You can also determine which calls are executing by examining the stack
 trace.  On Unix this can be done by typing <tt>Ctrl-\</tt> (hold down the
 Control key, then press the Backslash key).
 </p>
-
 
 <h2 id="generating_tests">Generating tests</h2>
 

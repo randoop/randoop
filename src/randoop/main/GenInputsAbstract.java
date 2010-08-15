@@ -223,7 +223,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * in a greater variety of tests generated during a single run.
    */
   @Option("Clear the component set when it reaches <int> inputs")
-  public static int clear = Integer.MAX_VALUE;
+  public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Creating test oracles")
@@ -288,6 +288,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Output sequences even if they do not complete execution")
   public static boolean output_nonexec = false;
   
+  @Option("specifies regex of classes that must be in any regression tests")
+  public static Pattern test_classes = null;
+  
+  ///////////////////////////////////////////////////////////////////
+  // We do this rather than using java -D so that we can easily pass these
+  // to other JVMs
+  @OptionGroup("Runtime environment")
+  @Option("-D Specify system properties to be set (similar to java -Dx=y)")
+  public static List<String> system_props = new ArrayList<String>();
+  
+  @Option("Specify agent command for recursive JVM calls")
+  public static String agent = null;
+
+  @Option("specify the memory size (in megabytes) for recursive JVM calls")
+  public static int mem_megabytes = 1000;
+
+  @Option("Capture all output to stdout and stderr")
+  public static boolean capture_output = false;
+
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Serialized input/output of generated tests")  
 
@@ -395,11 +414,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   @Option("Output covered branches to the given text file")
   public static String output_branches = null;
+  
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup(value="Eliminating redundant tests")
+
+  @Option("Remove tests that are subsumed in other tests")
+  public static boolean remove_subsequences = true;
+
+  @Option("Run each test twice and compare the checks")
+  public static boolean compare_checks = false;
+
+  @Option("Create clean checks for a serialized sequence")
+  public static File clean_checks = null;
+
+  @Option("Print any checks that are different in the clean run")
+  public static boolean print_diff_obs = false;
 
   ///////////////////////////////////////////////////////////////////
   // These options are useful in the context of Carlos's PhD thesis
   // experiments and shouldn't be needed by external users.
-  @OptionGroup(value="Carlos Pacheco thesis", unpublicized=true)
+  @OptionGroup(value="Pacheco thesis", unpublicized=true)
   
   @Option("Write experiment results file")
   public static FileWriter expfile = null;
@@ -407,61 +441,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Do not do online illegal")
   public static boolean offline = false;
 
-  @Option("specifies regex of classes that must be in any regression tests")
-  public static Pattern test_classes = null;
-  
   @Option("Use heuristic that may randomly repeat a method call several times")
   public static boolean repeat_heuristic = false;
   
-  ///////////////////////////////////////////////////////////////////
-  // OPTIONS THAT NEED DOCUMENTATION
-
-  // Jeff is best person to document this option.
-  @Unpublicized  
-  @Option("Capture all output to stdout and stderr")
-  public static boolean capture_output = false;
-
-  // Jeff is best person to document this option.
-  @Unpublicized  
-  @Option("Remove tests that are subsumed in other tests")
-  public static boolean remove_subsequences = true;
-
-  // Jeff is best person to document this option.
-  @Unpublicized  
-  @Option("Run each test twice and compare the checks")
-  public static boolean compare_checks = false;
-
-  // Jeff is best person to document this option.
-  @Unpublicized  
-  @Option("Create clean checks for a serialized sequence")
-  public static File clean_checks = null;
-
-  // Jeff is best person to document this option.
-  @Unpublicized  
-  @Option("Print any checks that are different in the clean run")
-  public static boolean print_diff_obs = false;
-
-  // Jeff is best person to document this option.
-  @Unpublicized  
-  @Option("Specify agent command for recursive JVM calls")
-  public static String agent = null;
-
-  // Jeff is best person to document this option.
-  @Unpublicized  
-  @Option("specify the memory size (in megabytes) for recursive JVM calls")
-  public static int mem_megabytes = 1000;
-
-  // Jeff is best person to document this option.
-  // We do this rather than using java -D so that we can easily pass these
-  // to other JVMs
-  @Unpublicized  
-  @Option("-D Specify system properties to be set (similar to java -Dx=y)")
-  public static List<String> system_props = new ArrayList<String>();
-
-  @Unpublicized
   @Option("Use object cache")
   public static boolean use_object_cache = false;
-
+  
   /**
    * Check that the options given satisfy any specified constraints, and fail if they do not.
    */
