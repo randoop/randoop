@@ -397,21 +397,27 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * primitive declarations, and uses boxed primitives. This option is used
    * in the branch-directed generation project.
    */
+  @Unpublicized
   @Option("Use long format for outputting JUnit tests.")
   public static boolean long_format = false;
 
+  @Unpublicized
   @Option("Output branch->witness-sequences map")
   public static String output_covmap = null;
 
+  @Unpublicized
   @Option("Output witness sequences for coverage branches")
   public static boolean output_cov_witnesses = false;
 
+  @Unpublicized
   @Option("Whenever an object is called for, use an integer")
   public static boolean always_use_ints_as_objects = false;
   
+  @Unpublicized
   @Option("The name of a file containing the list of coverage-instrumented classes")
   public static String coverage_instrumented_classes = null;
 
+  @Unpublicized
   @Option("Output covered branches to the given text file")
   public static String output_branches = null;
   
@@ -435,15 +441,19 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // experiments and shouldn't be needed by external users.
   @OptionGroup(value="Pacheco thesis", unpublicized=true)
   
+  @Unpublicized
   @Option("Write experiment results file")
   public static FileWriter expfile = null;
 
+  @Unpublicized
   @Option("Do not do online illegal")
   public static boolean offline = false;
 
+  @Unpublicized
   @Option("Use heuristic that may randomly repeat a method call several times")
   public static boolean repeat_heuristic = false;
   
+  @Unpublicized
   @Option("Use object cache")
   public static boolean use_object_cache = false;
   
