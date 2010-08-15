@@ -6,7 +6,7 @@
          point="org.eclipse.ui.views">
       <view
             name="Randoop"
-            icon="icons/randoop.png"
+            icon="icons/eview16/randoop.png"
             category="org.eclipse.jdt.ui.java"
             class="randoop.plugin.internal.ui.views.TestGeneratorViewPart"
             id="randoop.plugin.ui.views.TestGeneratorViewPart">
@@ -54,7 +54,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="randoop.plugin.core.launching.gentestsType"
-            icon="icons/randoop.png"
+            icon="icons/eview16/randoop.png"
             id="randoop.plugin.ui.gentestsTypeImage">
       </launchConfigurationTypeImage>
    </extension>
@@ -71,7 +71,7 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             class="randoop.plugin.internal.ui.launching.RandoopLaunchShortcut"
-            icon="icons/randoop.png"
+            icon="icons/eview16/randoop.png"
             id="randoop.plugin.ui.launching.gentestsShortcut"
             label="Randoop Test Input"
             modes="run">

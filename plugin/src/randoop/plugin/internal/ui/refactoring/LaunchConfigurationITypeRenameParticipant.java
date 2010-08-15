@@ -31,7 +31,7 @@ public class LaunchConfigurationITypeRenameParticipant extends RenameParticipant
 
       return true;
     } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
+      RandoopPlugin.log(e.getStatus());
     }
     return false;
   }

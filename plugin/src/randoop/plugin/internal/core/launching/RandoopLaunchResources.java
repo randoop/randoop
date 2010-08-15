@@ -366,8 +366,9 @@ public class RandoopLaunchResources {
    * Similarly named files match the pattern <ClassName>[0-9]*.java
    * 
    * @return
+   * @throws CoreException 
    */
-  public IResource[] getThreatendedResources() {
+  public IResource[] getThreatendedResources() throws CoreException {
     List<IResource> threatenedFiles = new ArrayList<IResource>();
 
     String testName = getArguments().getJUnitClassName();
@@ -380,21 +381,17 @@ public class RandoopLaunchResources {
     return threatenedFiles.toArray(new IResource[threatenedFiles.size()]);
   }
   
-  private static List<IResource> findResources(IFolder folder, String pattern) {
+  private static List<IResource> findResources(IFolder folder, String pattern) throws CoreException {
     List<IResource> resources = new ArrayList<IResource>();
     
     if (folder != null && folder.exists()) {
-      try {
-        for (IResource resource : folder.members()) {
-          if (resource instanceof IFile) {
-            String resourceName = resource.getName();
-            if (resourceName.matches(pattern)) {
-              resources.add(resource);
-            }
+      for (IResource resource : folder.members()) {
+        if (resource instanceof IFile) {
+          String resourceName = resource.getName();
+          if (resourceName.matches(pattern)) {
+            resources.add(resource);
           }
         }
-      } catch (CoreException e) {
-        RandoopPlugin.log(e);
       }
     }
     

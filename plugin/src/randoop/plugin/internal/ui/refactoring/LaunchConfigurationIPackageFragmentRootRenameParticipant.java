@@ -33,7 +33,7 @@ public class LaunchConfigurationIPackageFragmentRootRenameParticipant extends Re
           return true;
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        RandoopPlugin.log(e.getStatus());
       }
     }
     return false;

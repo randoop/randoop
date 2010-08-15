@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
+import randoop.plugin.internal.ui.RandoopPluginImages;
 import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
@@ -18,9 +19,7 @@ public class TestInputsPage extends OptionWizardPage {
   protected TestInputsPage(String pageName, IJavaProject project,
       ILaunchConfigurationWorkingCopy config) {
 
-    super(pageName, config);
-
-    setTitle("Test Inputs");
+    super(pageName, "Classes and Methods Under Test", RandoopPluginImages.DESC_WIZBAN_NEW_RNDP, config);
     setPageComplete(false);
 
     fJavaProject = project;

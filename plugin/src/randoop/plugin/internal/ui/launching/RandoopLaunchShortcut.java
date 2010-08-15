@@ -12,6 +12,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -39,6 +40,7 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MethodMnemonic;
 import randoop.plugin.internal.core.MutableBoolean;
 import randoop.plugin.internal.core.RandoopCoreUtil;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.TypeMnemonic;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
@@ -48,9 +50,9 @@ import randoop.plugin.internal.ui.wizards.RandoopLaunchConfigurationWizard;
 public class RandoopLaunchShortcut implements ILaunchShortcut {
 
   public void launch(ISelection selection, String mode) {
-   Assert.isTrue(selection instanceof IStructuredSelection);
-   final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-    
+    Assert.isTrue(selection instanceof IStructuredSelection);
+    final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+
     IJavaProject javaProject = null;
     Object[] selected = structuredSelection.toArray();
     final IJavaElement[] elements;
@@ -77,120 +79,132 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
         elements[i] = e;
       }
     }
-    
+
     final List<String> checkedTypeMnemonics = new ArrayList<String>();
     final List<String> grayedTypeMnemonics = new ArrayList<String>();
     final Map<String, List<String>> selectedMethodsByDeclaringTypes = new HashMap<String, List<String>>();
-    
-    try {
-      final MutableBoolean isCancelled = new MutableBoolean(true);
-      
-      IRunnableWithProgress op = new IRunnableWithProgress() {
 
-        public void run(IProgressMonitor monitor) {
-          SubMonitor parentMonitor = SubMonitor.convert(monitor);
-          parentMonitor.beginTask("Searching for class and method inputs in selection...", 2);
-          List<IType> types = new ArrayList<IType>();
-          List<IType> selectedTypes = new ArrayList<IType>();
+    final MutableBoolean isCancelled = new MutableBoolean(true);
 
-          SubMonitor listSearchMonitor = parentMonitor.newChild(1);
-          listSearchMonitor.beginTask("Searching for class inputs in selection...", elements.length);
-          for (IJavaElement element : elements) {
-            SubMonitor elementSearchMonitor = listSearchMonitor.newChild(2);
-            switch (element.getElementType()) {
-            case IJavaElement.JAVA_PROJECT:
+    IRunnableWithProgress op = new IRunnableWithProgress() {
+
+      public void run(IProgressMonitor monitor) {
+        SubMonitor parentMonitor = SubMonitor.convert(monitor);
+        parentMonitor.beginTask("Searching for class and method inputs in selection...",
+            2);
+        List<IType> types = new ArrayList<IType>();
+        List<IType> selectedTypes = new ArrayList<IType>();
+
+        SubMonitor listSearchMonitor = parentMonitor.newChild(1);
+        listSearchMonitor.beginTask("Searching for class inputs in selection...",
+            elements.length);
+        for (IJavaElement element : elements) {
+          SubMonitor elementSearchMonitor = listSearchMonitor.newChild(2);
+          switch (element.getElementType()) {
+          case IJavaElement.JAVA_PROJECT:
+            try {
+              String taskName = MessageFormat.format("Searching for class inputs in {0}",
+                  element.getElementName());
+              IPackageFragmentRoot[] pfrs = ((IJavaProject) element)
+                  .getPackageFragmentRoots();
+              elementSearchMonitor.beginTask(taskName, pfrs.length);
+              for (IPackageFragmentRoot pfr : pfrs) {
+                if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
+                  types.addAll(RandoopCoreUtil.findTypes(pfr, false,
+                      elementSearchMonitor.newChild(1)));
+                } else {
+                  elementSearchMonitor.worked(1);
+                }
+              }
+            } catch (JavaModelException e) {
+              IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+              RandoopPlugin.log(s);
+            }
+            break;
+          case IJavaElement.PACKAGE_FRAGMENT_ROOT:
+          case IJavaElement.PACKAGE_FRAGMENT:
+            List<IType> foundTypes = RandoopCoreUtil.findTypes(element, false,
+                elementSearchMonitor.newChild(1));
+            types.addAll(RandoopCoreUtil.findTypes(element, false,
+                elementSearchMonitor.newChild(1)));
+            selectedTypes.addAll(foundTypes);
+            break;
+          case IJavaElement.COMPILATION_UNIT:
+            foundTypes = RandoopCoreUtil.findTypes(element, false,
+                elementSearchMonitor.newChild(1));
+            types.addAll(foundTypes);
+            selectedTypes.addAll(foundTypes);
+            break;
+          case IJavaElement.TYPE:
+            types.add((IType) element);
+            selectedTypes.add((IType) element);
+
+            selectedMethodsByDeclaringTypes.remove((IType) element);
+            elementSearchMonitor.worked(1);
+            break;
+          case IJavaElement.METHOD:
+            IMethod m = (IMethod) element;
+            IType type = m.getDeclaringType();
+
+            if (!selectedTypes.contains(type)) {
               try {
-                String taskName = MessageFormat.format("Searching for class inputs in {0}",
-                    element.getElementName());
-                IPackageFragmentRoot[] pfrs = ((IJavaProject) element).getPackageFragmentRoots();
-                elementSearchMonitor.beginTask(taskName, pfrs.length);
-                for (IPackageFragmentRoot pfr : pfrs) {
-                  if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
-                    types.addAll(RandoopCoreUtil.findTypes(pfr, false, elementSearchMonitor.newChild(1)));
-                  } else {
-                    elementSearchMonitor.worked(1);
+                if (AdaptablePropertyTester.isTestable(m)) {
+                  List<String> methodMnemonics = selectedMethodsByDeclaringTypes
+                      .get(type);
+
+                  String typeMnemonicString = new TypeMnemonic(type).toString();
+
+                  if (methodMnemonics == null) {
+                    methodMnemonics = new ArrayList<String>();
+                    selectedMethodsByDeclaringTypes.put(typeMnemonicString,
+                        methodMnemonics);
+                  }
+                  methodMnemonics.add(new MethodMnemonic(m).toString());
+                  if (!types.contains(type)) {
+                    types.add(type);
                   }
                 }
               } catch (JavaModelException e) {
-                RandoopPlugin.log(e);
-              }
-              break;
-            case IJavaElement.PACKAGE_FRAGMENT_ROOT:
-            case IJavaElement.PACKAGE_FRAGMENT:
-              List<IType> foundTypes = RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1));
-              types.addAll(RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1)));
-              selectedTypes.addAll(foundTypes);
-              break;
-            case IJavaElement.COMPILATION_UNIT:
-              foundTypes = RandoopCoreUtil.findTypes(element, false, elementSearchMonitor.newChild(1));
-              types.addAll(foundTypes);
-              selectedTypes.addAll(foundTypes);
-              break;
-            case IJavaElement.TYPE:
-              types.add((IType) element);
-              selectedTypes.add((IType) element);
-              
-              selectedMethodsByDeclaringTypes.remove((IType) element);
-              elementSearchMonitor.worked(1);
-              break;
-            case IJavaElement.METHOD:
-              IMethod m = (IMethod) element;
-              IType type = m.getDeclaringType();
-
-              if (!selectedTypes.contains(type)) {
-                try {
-                  if (AdaptablePropertyTester.isTestable(m)) {
-                    List<String> methodMnemonics = selectedMethodsByDeclaringTypes.get(type);
-                    
-                    String typeMnemonicString = new TypeMnemonic(type).toString();
-                    
-                    if (methodMnemonics == null) {
-                      methodMnemonics = new ArrayList<String>();
-                      selectedMethodsByDeclaringTypes.put(typeMnemonicString,methodMnemonics);
-                    }
-                    methodMnemonics.add(new MethodMnemonic(m).toString());
-                    if (!types.contains(type)) {
-                      types.add(type);
-                    }
-                  }
-                } catch (JavaModelException e) {
-                  RandoopPlugin.log(e);
-                }
-              }
-              break;
-            }
-          }
-          listSearchMonitor.done();
-
-          SubMonitor conversionMonitor = parentMonitor.newChild(1);
-          conversionMonitor.beginTask("Converting class inputs...", types.size());
-          try {
-            for (int i = 0; i < types.size() && !listSearchMonitor.isCanceled(); i++) {
-              IType type = types.get(i);
-
-              TypeMnemonic typeMnemonic = new TypeMnemonic(type);
-              checkedTypeMnemonics.add(typeMnemonic.toString());
-
-              List<String> methods = selectedMethodsByDeclaringTypes.get(type);
-              if (methods != null && !methods.isEmpty()) {
-                grayedTypeMnemonics.add(typeMnemonic.toString());
+                IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+                RandoopPlugin.log(s);
               }
             }
-          } catch (JavaModelException e) {
-            RandoopPlugin.log(e);
-          } finally {
-            conversionMonitor.done();
+            break;
           }
-          parentMonitor.done();
-
-          isCancelled.setValue(parentMonitor.isCanceled());
         }
-      };
-      
-      IWorkbench wb = PlatformUI.getWorkbench();
-      IProgressService ps = wb.getProgressService();
+        listSearchMonitor.done();
+
+        SubMonitor conversionMonitor = parentMonitor.newChild(1);
+        conversionMonitor.beginTask("Converting class inputs...", types.size());
+        try {
+          for (int i = 0; i < types.size() && !listSearchMonitor.isCanceled(); i++) {
+            IType type = types.get(i);
+
+            TypeMnemonic typeMnemonic = new TypeMnemonic(type);
+            checkedTypeMnemonics.add(typeMnemonic.toString());
+
+            List<String> methods = selectedMethodsByDeclaringTypes.get(type);
+            if (methods != null && !methods.isEmpty()) {
+              grayedTypeMnemonics.add(typeMnemonic.toString());
+            }
+          }
+        } catch (JavaModelException e) {
+          IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+          RandoopPlugin.log(s);
+        } finally {
+          conversionMonitor.done();
+        }
+        parentMonitor.done();
+
+        isCancelled.setValue(parentMonitor.isCanceled());
+      }
+    };
+
+    IWorkbench wb = PlatformUI.getWorkbench();
+    IProgressService ps = wb.getProgressService();
+    try {
       ps.busyCursorWhile(op);
-      
+
       if (!isCancelled.getValue()) {
         ILaunchConfigurationType randoopLaunchType = getLaunchType();
         ILaunchManager launchManager = getLaunchManager();
@@ -198,25 +212,29 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
         ILaunchConfigurationWorkingCopy config = randoopLaunchType.newInstance(null,
             launchManager.generateUniqueLaunchConfigurationNameFrom("RandoopTest")); //$NON-NLS-1$
 
-        RandoopWizardRunner runner = new RandoopWizardRunner(javaProject, checkedTypeMnemonics,
-            grayedTypeMnemonics, selectedMethodsByDeclaringTypes, config);
+        RandoopWizardRunner runner = new RandoopWizardRunner(javaProject,
+            checkedTypeMnemonics, grayedTypeMnemonics, selectedMethodsByDeclaringTypes,
+            config);
         PlatformUI.getWorkbench().getDisplay().syncExec(runner);
 
         if (runner.getReturnCode() == WizardDialog.OK) {
-          RandoopArgumentCollector args = new RandoopArgumentCollector(config, getWorkspaceRoot());
-          config.rename(launchManager.generateUniqueLaunchConfigurationNameFrom(args.getJUnitClassName()));
+          RandoopArgumentCollector args = new RandoopArgumentCollector(config,
+              getWorkspaceRoot());
+          
+          // Use the depreciated generateUniqueLaunchConfigurationNameFrom since
+          // it is still supported in Galileo
+          config.rename(launchManager.generateUniqueLaunchConfigurationNameFrom(args
+              .getJUnitClassName()));
           config.doSave();
 
           DebugUITools.launch(config, "run"); //$NON-NLS-1$
         }
       }
     } catch (InvocationTargetException e) {
-      RandoopPlugin.log(e);
     } catch (InterruptedException e) {
-      RandoopPlugin.log(e);
     } catch (CoreException e) {
-      RandoopPlugin.log(e);
     }
+      
   }
   
   private class RandoopWizardRunner implements Runnable {
@@ -241,20 +259,17 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     }
 
     public void run() {
-      try {
-        // The shell is not null
-        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        Assert.isNotNull(shell);
+      // The shell is not null
+      Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+      Assert.isNotNull(shell);
 
-        RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(
-            fJavaProject, fCheckedTypes, fGrayedTypes, fSelectedMethodsByDeclaringTypes, fConfig);
-        WizardDialog dialog = new WizardDialog(shell, wizard);
+      RandoopLaunchConfigurationWizard wizard = new RandoopLaunchConfigurationWizard(
+          fJavaProject, fCheckedTypes, fGrayedTypes, fSelectedMethodsByDeclaringTypes,
+          fConfig);
+      WizardDialog dialog = new WizardDialog(shell, wizard);
 
-        dialog.create();
-        fReturnCode = dialog.open();
-      } catch (CoreException e) {
-        RandoopPlugin.log(e);
-      }
+      dialog.create();
+      fReturnCode = dialog.open();
     }
 
     public int getReturnCode() {

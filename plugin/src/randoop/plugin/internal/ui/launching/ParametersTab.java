@@ -12,6 +12,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
+import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.ui.RandoopPluginImages;
 import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.OptionFactory;
@@ -70,7 +72,7 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   
   @Override
   public Image getImage() {
-    return null;//JavaDebugImages.get(JavaDebugImages.IMG_VIEW_ARGUMENTS_TAB);
+    return RandoopPlugin.getDefault().getImageRegistry().get(RandoopPluginImages.IMG_VIEW_ARGUMENTS_TAB);
   }
   
 }

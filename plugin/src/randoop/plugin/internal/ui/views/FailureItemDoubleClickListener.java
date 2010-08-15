@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -38,7 +39,8 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 	    }
 	  }
 	  
-//	  // TODO error message if junit is not in classpath of project under test.
+	  // TODO error message if junit is not in classpath of project under test.
+	  // TODO better yet, open a dialog to add junit and randoop to the classpath
 	  private void createAndOpenFile(FailingMember unitTest) {
 	    IProject project = getJavaProject().getProject();
 	    System.out.println(">>>" + project.getName());
@@ -51,9 +53,10 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 	      junitFilePath = junitFilePath.setDevice(null);
 	    } else {
 	      // Otherwise something is very wrong, the file is not in the project at all!
-	      RandoopPlugin.log(RandoopStatus.createErrorStatus("Generated failure file not in selected project.")); //$NON-NLS-1$
+	      IStatus status = RandoopStatus.GENERATED_FILE_NOT_IN_PROJECT.getStatus(junitFilePath, null);
+	      RandoopPlugin.log(status);
 	    }
-	      
+	    
 	    IFile file = project.getFile(junitFilePath);
 	    
 	    try {
@@ -85,7 +88,7 @@ public class FailureItemDoubleClickListener implements IDoubleClickListener {
 	  private IJavaProject getJavaProject() {
 	    return viewPart.getActiveSession().getArguments().getJavaProject();
 	  }
-//	  
+	  
 //	  private IPath getOutputDir() {
 //	    ILaunchConfiguration iconfig = viewPart.launch.getLaunchConfiguration();
 //	    RandoopLaunchConfiguration config = new RandoopLaunchConfiguration(iconfig);

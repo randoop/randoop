@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -100,26 +101,21 @@ public class ProjectOption extends Option {
     if (status.isOK()) {
       IProject project = workspace.getRoot().getProject(projectName);
       if (!project.exists()) {
-        return RandoopStatus.createErrorStatus(MessageFormat.format(
+        return RandoopStatus.createStatus(IStatus.ERROR, NLS.bind(
             "Project {0} does not exist", new Object[] { projectName }));
       }
       if (!project.isOpen()) {
-        return RandoopStatus.createErrorStatus(MessageFormat.format(
+        return RandoopStatus.createStatus(IStatus.ERROR, NLS.bind(
             "Project {0} is closed", new Object[] { projectName }));
       }
 
-      try {
-        javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
-        if (javaProject == null) {
-          return RandoopStatus.createErrorStatus(MessageFormat.format(
-              "Project {0} is not a Java project", new Object[] { projectName }));
-        }
-      } catch (CoreException e) {
-        RandoopPlugin.log(e);
-        return RandoopStatus.ERROR_STATUS;
+      javaProject = JavaCore.create(project);
+      if (javaProject == null) {
+        return RandoopStatus.createStatus(IStatus.ERROR,
+            NLS.bind("Project {0} is not a Java project", new Object[] { projectName }));
       }
     } else {
-      return RandoopStatus.createErrorStatus(MessageFormat.format(
+      return RandoopStatus.createStatus(IStatus.ERROR, NLS.bind(
           "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
     
