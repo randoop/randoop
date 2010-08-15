@@ -173,8 +173,9 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     assert sequence.size() < GenInputsAbstract.maxsize : sequence.size();
 
-    if (GenInputsAbstract.check_reps)
+    if (GenInputsAbstract.debug_checks) {
       repInvariantCheck();
+    }
 
     int oldsize = sequence.size();
 
