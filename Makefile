@@ -48,7 +48,7 @@ RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
 RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
 
 # Build and run tests
-all: clean build tests results 
+all: clean build tests
 
 # Build, run tests, create manual, create distrubution.
 all-dist: all manual distribution-files 
@@ -140,7 +140,7 @@ randoop1: bin
 	  foo.bar.TestClass
 	cp systemtests/randoop-scratch/foo/bar/TestClass0.java systemtests/resources/TestClass0.java
 
-# Runs Randoop on Collections and TreeSet.
+# Runs Randoop on Collections and TreeSet, capture output.
 randoop2: bin
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
@@ -174,7 +174,7 @@ randoop3: bin
 	   --inputlimit=1000 \
 	   --null-ratio=0.3 \
 	   --alias-ratio=0.3 \
-	   --favor-small-sequences \
+	   --small-tests \
 	   --clear=100 \
 	   --classlist=../resources/jdk_classlist.txt \
 	   --junit-classname=JDK_Tests \
