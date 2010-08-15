@@ -89,4 +89,12 @@ public class Buggy {
     }
   }
 
+  public static void StackOverflowError() {
+    throw new StackOverflowError();
+  }
+
+  public static void AssertionError() {
+    throw new AssertionError();
+  }
+
 }

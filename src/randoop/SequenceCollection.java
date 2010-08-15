@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import randoop.main.GenInputsAbstract;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -59,7 +60,7 @@ public class SequenceCollection {
   public int numActivesequences = 0;
 
   private void checkRep() {
-    if (Globals.nochecks)
+    if (!GenInputsAbstract.debug_checks)
       return;
     if (activeSequences.size() != typesWithSequencesMap.size()) {
       StringBuilder b = new StringBuilder();
