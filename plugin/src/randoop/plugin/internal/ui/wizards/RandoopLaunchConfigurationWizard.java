@@ -25,7 +25,7 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
   public RandoopLaunchConfigurationWizard(IJavaProject javaProject,
       List<String> checkedTypes, List<String> grayedTypes,
       Map<String, List<String>> selectedMethodsByDeclaringTypes,
-      ILaunchConfigurationWorkingCopy config) throws CoreException {
+      ILaunchConfigurationWorkingCopy config) {
 
     super();
 

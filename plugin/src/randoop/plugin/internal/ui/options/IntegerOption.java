@@ -28,7 +28,7 @@ public abstract class IntegerOption extends TextOption {
       
       return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return RandoopStatus.createErrorStatus(getInvalidIntegerErrorMessage());
+      return RandoopStatus.createStatus(IStatus.ERROR, getInvalidIntegerErrorMessage());
     }
   }
   

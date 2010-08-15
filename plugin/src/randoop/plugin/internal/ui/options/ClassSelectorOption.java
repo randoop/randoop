@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -35,6 +36,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -55,6 +57,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -359,7 +362,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           }
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
       return IMG_ERROR;
     }
@@ -381,7 +385,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           return IMG_METHOD_DEFAULT;
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
       return null;
     }
@@ -448,7 +453,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
             return type.getMethods().length != 0;
           }
         } catch (JavaModelException e) {
-          RandoopPlugin.log(e);
+          IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+          RandoopPlugin.log(s);
         }
       }
       return node.hasChildren();
@@ -464,22 +470,22 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
     public Object[] getChildren(Object parentElement) {
       TreeNode typeNode = (TreeNode) parentElement;
-      
+
       if (typeNode.getObject() instanceof TypeMnemonic) {
         if (!typeNode.hasChildren()) {
-          try {
-            final boolean typeChecked = typeNode.isChecked();
-            final boolean typeGrayed = typeNode.isGrayed();
-            
-            boolean allChecked = true;
-            boolean noneChecked = true;
-            
-            IType type = ((TypeMnemonic) typeNode.getObject()).getType();
-  
-            if (type != null){
-              List<String> checkedMethods = fCheckedMethodsByType.get(type);
-              fCheckedMethodsByType.remove(type);
-  
+          final boolean typeChecked = typeNode.isChecked();
+          final boolean typeGrayed = typeNode.isGrayed();
+
+          boolean allChecked = true;
+          boolean noneChecked = true;
+
+          IType type = ((TypeMnemonic) typeNode.getObject()).getType();
+
+          if (type != null) {
+            List<String> checkedMethods = fCheckedMethodsByType.get(type);
+            fCheckedMethodsByType.remove(type);
+
+            try {
               IMethod[] methods = type.getMethods();
               for (IMethod method : methods) {
                 if (AdaptablePropertyTester.isTestable(method)) {
@@ -495,31 +501,33 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
                   } else {
                     methodChecked = typeChecked;
                   }
-                  
+
                   allChecked &= methodChecked;
                   noneChecked &= !methodChecked;
-                  
-                  TreeNode methodNode = typeNode.addChild(methodMnemonic, methodChecked, false);
+
+                  TreeNode methodNode = typeNode.addChild(methodMnemonic, methodChecked,
+                      false);
                   methodNode.updateRelatives();
                 }
               }
-              
-              if (allChecked) {
-                typeNode.setChecked(true);
-                typeNode.setGrayed(false);
-              } else if (noneChecked) {
-                typeNode.setChecked(false);
-                typeNode.setGrayed(false);
-              } else {
-                typeNode.setChecked(true);
-                typeNode.setGrayed(true);
-              }
-              
-              typeNode.updateRelatives();
-              return typeNode.getChildren();
+            } catch (JavaModelException e) {
+              IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+              RandoopPlugin.log(s);
             }
-          } catch (JavaModelException e) {
-            RandoopPlugin.log(e);
+
+            if (allChecked) {
+              typeNode.setChecked(true);
+              typeNode.setGrayed(false);
+            } else if (noneChecked) {
+              typeNode.setChecked(false);
+              typeNode.setGrayed(false);
+            } else {
+              typeNode.setChecked(true);
+              typeNode.setGrayed(true);
+            }
+
+            typeNode.updateRelatives();
+            return typeNode.getChildren();
           }
         }
       }
@@ -685,7 +693,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
             handleSearchButtonSelected(searchScope);
           }
         } catch (JavaModelException jme) {
-          RandoopPlugin.log(jme);
+          IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(jme);
+          RandoopPlugin.log(s);
         }
       }
     });
@@ -704,7 +713,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
             try {
               resolveMissingClasses();
             } catch (JavaModelException jme) {
-              RandoopPlugin.log(jme);
+              IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(jme);
+              RandoopPlugin.log(s);
             }
           }
         }
@@ -818,18 +828,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         fTypeTreeViewer.refresh();
       }
     } catch (JavaModelException jme) {
-      RandoopPlugin.log(jme);
+      IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(jme);
+      RandoopPlugin.log(s);
     }
   }
   
   public IStatus canSave() {
-    if (fRunnableContext == null || fShell == null || fTypeTreeViewer == null || fTreeInput == null
-        || fClassAddFromSources == null || fClassAddFromClasspaths == null || fSelectAll == null
-        || fSelectNone == null || fClassRemove == null) {
-
-      return RandoopStatus.ERROR_STATUS;
-    }
-
     return RandoopStatus.OK_STATUS;
   }
 
@@ -843,25 +847,23 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
    * @return
    */
   public IStatus isValid(ILaunchConfiguration config) {
-    List<?> grayedTypesMnemonic = RandoopArgumentCollector.getGrayedTypes(config);
-    List<?> selectedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(config);
+    
+    List<String> grayedTypesMnemonic = RandoopArgumentCollector.getGrayedTypes(config);
+    List<String> selectedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(config);
 
     if (selectedTypeMnemonics.isEmpty()) {
-      return RandoopStatus.createErrorStatus("No class-input or method-input selected");
+      return RandoopStatus.createStatus(IStatus.ERROR, "No classes or methods selected");
     }
 
-    for (Object o : selectedTypeMnemonics) {
-      Assert.isTrue(o instanceof String, "Non-String arguments stored in class-input list");
-      String typeMnemonicString = (String) o;
-      
+    for (String typeMnemonicString : selectedTypeMnemonics) {
       TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
       IType type = typeMnemonic.getType();
       
       if (fJavaProject == null || !fJavaProject.equals(typeMnemonic.getJavaProject())) {
-        return RandoopStatus.createErrorStatus("One of the class-inputs does not exist in the selected project");
+        return RandoopStatus.createStatus(IStatus.ERROR, "One of the classes does not exist in the selected project");
       }
       
-      if (grayedTypesMnemonic.contains(o)) {
+      if (grayedTypesMnemonic.contains(typeMnemonicString)) {
         List<IMethod> methodList = new ArrayList<IMethod>();
         
         List<?> selectedMethods = RandoopArgumentCollector.getCheckedMethods(config, typeMnemonicString);
@@ -870,9 +872,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           
           IMethod m = new MethodMnemonic(methodMnemonicString).findMethod(type);
           if (m == null) {
-            return RandoopStatus.createErrorStatus("One of the method inputs does not exist");
+            return RandoopStatus.createStatus(IStatus.ERROR, "One of the methods does not exist");
           } else if (!m.exists()) {
-            return RandoopStatus.createErrorStatus(MessageFormat.format("Mmethod '{0}' does not exist", m.getElementName()));
+            String msg = NLS.bind("Mmethod '{0}' does not exist", m.getElementName());
+            return RandoopStatus.createStatus(IStatus.ERROR, msg);
           }
           
           methodList.add(m);
@@ -1064,23 +1067,28 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           IPath filePath = new Path(resourcePath);
           
           IFile file = root.getFile(filePath);
+          try {
+            if (JavaConventions.validateCompilationUnitName(file.getName(),
+                IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
+              ICompilationUnit cu = (ICompilationUnit) JavaCore
+                  .create(file, fJavaProject);
+              if (cu == null || !cu.exists()) {
+                cu = JavaCore.createCompilationUnitFrom(file);
+              }
 
-          if (JavaConventions.validateCompilationUnitName(file.getName(),
-              IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
-            ICompilationUnit cu = (ICompilationUnit) JavaCore.create(file, fJavaProject);
-            if (cu == null || !cu.exists()) {
-              cu = JavaCore.createCompilationUnitFrom(file);
+              collectTypes(cu, types);
+            } else if (JavaConventions.validateClassFileName(file.getName(),
+                IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
+              IClassFile cf = (IClassFile) JavaCore.create(file, fJavaProject);
+              if (cf == null || !cf.exists()) {
+                cf = JavaCore.createClassFileFrom(file);
+              }
+
+              collectTypes(cf, types);
             }
-            collectTypes(cu, types);
-          } else if (JavaConventions.validateClassFileName(file.getName(),
-              IConstants.DEFAULT_SOURCE_LEVEL, IConstants.DEFAULT_COMPLIANCE_LEVEL).isOK()) {
-            IClassFile cf = (IClassFile) JavaCore.create(file, fJavaProject);
-            if (cf == null || !cf.exists()) {
-              cf = JavaCore.createClassFileFrom(file);
-            }
-            collectTypes(cf, types);
-          } else {
-            RandoopPlugin.log(RandoopStatus.createWarningStatus("Unable to get class files or compilation unit from " + file)); //$NON-NLS-1$
+          } catch (JavaModelException e) {
+            IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+            RandoopPlugin.log(s);
           }
         } else {
           IPath filePath = new Path(resourcePath.substring(0, jarFileSeparatorIndex));
@@ -1096,11 +1104,12 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           // First, search for the IPackageFragmentRoot in the workspace
           IFile f = root.getFile(filePath);
           IJavaElement element = JavaCore.create(f, fJavaProject);
-          if (element != null)
+          if (element != null) {
             pfr = (IPackageFragmentRoot) element;
-          else
+          } else {
             // Next, search for the IPackageFragmentRoot in the file system
             pfr = fJavaProject.getPackageFragmentRoot(filePath.toOSString());
+          }
           
           try {
             pfr.open(null);
@@ -1121,13 +1130,9 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
               collectTypes(cu, types);
             }
           } catch (JavaModelException e) {
-            RandoopPlugin.log(e);
+            IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+            RandoopPlugin.log(s);
           }
-        }
-        
-        if (types.isEmpty()) {
-          RandoopPlugin.log(RandoopStatus.createWarningStatus("No classes found in " + resourcePath));
-          return false;
         }
         
         for (IType type : types) {
@@ -1143,36 +1148,28 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     /*
      * Helper method to collect the ITypes from an ICompilationUnit or IClassFile
      */
-    private void collectTypes(IClassFile cf, List<IType> types) {
+    private void collectTypes(IClassFile cf, List<IType> types) throws JavaModelException {
       if (cf == null || !cf.exists())
         return;
 
-      try {
-        cf.open(null);
+      cf.open(null);
 
-        IType type = cf.getType();
-        if (type.exists()) {
-          types.add(type);
-        }
-      } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+      IType type = cf.getType();
+      if (type.exists()) {
+        types.add(type);
       }
     }
     
-    private void collectTypes(ICompilationUnit cu, List<IType> types) {
+    private void collectTypes(ICompilationUnit cu, List<IType> types) throws JavaModelException {
       if (cu == null || !cu.exists())
         return;
 
-      try {
-        cu.open(null);
+      cu.open(null);
 
-        for (IType type : cu.getAllTypes()) {
-          if (type.exists()) {
-            types.add(type);
-          }
+      for (IType type : cu.getAllTypes()) {
+        if (type.exists()) {
+          types.add(type);
         }
-      } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
       }
     }
     
@@ -1251,17 +1248,21 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
               IType type = (IType) obj;
               int flags = type.getFlags();
               if (type.isInterface()) {
-                RandoopStatus.createErrorStatus(MessageFormat.format("'{0}' is an interface", type.getElementName()));
+                String msg = MessageFormat.format("'{0}' is an interface", type.getElementName());
+                return RandoopStatus.createStatus(IStatus.ERROR, msg);
               } else if (Flags.isAbstract(flags)) {
-                RandoopStatus.createErrorStatus(MessageFormat.format("'{0}' is abstract", type.getElementName()));
+                String msg = MessageFormat.format("'{0}' is abstract", type.getElementName());
+                return RandoopStatus.createStatus(IStatus.ERROR, msg);
               } else if (!Flags.isPublic(flags)) {
-                RandoopStatus.createErrorStatus(MessageFormat.format("'{0}' is not public", type.getElementName()));
+                String msg = MessageFormat.format("'{0}' is not public", type.getElementName());
+                return RandoopStatus.createStatus(IStatus.ERROR, msg);
               }
             } else {
-              return RandoopStatus.createErrorStatus("One of the selected elements is not a Java class or enum");
+              return RandoopStatus.createStatus(IStatus.ERROR, "One of the selected elements is not a Java class or enum");
             }
           } catch (JavaModelException e) {
-            RandoopPlugin.log(e, "Error when validating selected elements in type dialog"); //$NON-NLS-1$
+            IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+            RandoopPlugin.log(s);
           }
         }
         return RandoopStatus.OK_STATUS;
@@ -1312,15 +1313,20 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           TypeMnemonic oldMnemonic = (TypeMnemonic) typeNode.getObject();
           
           if (!fJavaProject.equals(oldMnemonic.getJavaProject())) {
-            TypeMnemonic newMnemonic = oldMnemonic.reassign(fJavaProject);
+            try {
+              TypeMnemonic newMnemonic = oldMnemonic.reassign(fJavaProject);
 
-            // If newMnemonic is not null, the IType was found in a classpath
-            // entry of the new Java project
-            if (newMnemonic == null || !newMnemonic.exists()) {
-              hasMissingClasses = true;
-            } else {
-              // Update the mnemonic for this TreeItem
-              typeNode.setObject(newMnemonic);
+              // If newMnemonic is not null, the IType was found in a classpath
+              // entry of the new Java project
+              if (newMnemonic == null || !newMnemonic.exists()) {
+                hasMissingClasses = true;
+              } else {
+                // Update the mnemonic for this TreeItem
+                typeNode.setObject(newMnemonic);
+              }
+            } catch (JavaModelException e) {
+              IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+              RandoopPlugin.log(s);
             }
           }
         }

@@ -2,6 +2,7 @@ package randoop.plugin.internal.core;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
@@ -103,7 +104,8 @@ public class MethodMnemonic {
           }
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
     }
     return null;

@@ -23,12 +23,12 @@ public abstract class PositiveIntegerOption extends IntegerOption {
   protected IStatus validate(String text) {
     try {
       if (Integer.parseInt(text) < 1) {
-        return RandoopStatus.createErrorStatus(getNonpositiveIntegerErrorMessage());
+        return RandoopStatus.createStatus(IStatus.ERROR, getNonpositiveIntegerErrorMessage());
       }
       
       return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return RandoopStatus.createErrorStatus(getInvalidIntegerErrorMessage());
+      return RandoopStatus.createStatus(IStatus.ERROR, getInvalidIntegerErrorMessage());
     }
   }
   

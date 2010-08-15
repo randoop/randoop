@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -26,7 +28,9 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -34,9 +38,11 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import randoop.experiments.Randoop100Stats;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MutableBoolean;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
 import randoop.plugin.internal.core.runtime.IMessageListener;
@@ -111,7 +117,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
         return;
       }
     }
-    
+
     RandoopLaunchResources launchResources = new RandoopLaunchResources(args, monitor);
     final TestGeneratorSession session = new TestGeneratorSession(launch, args);
 
@@ -127,7 +133,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
         fPort = fMessageReceiver.getPort();
       } catch (IOException e) {
         fMessageReceiver = null;
-        RandoopPlugin.log(e, "Could not find free communication port"); //$NON-NLS-1$
+        
+        IStatus s = RandoopStatus.COMM_NO_FREE_PORT.getStatus();
+        throw new CoreException(s);
       }
     }
 
@@ -194,31 +202,30 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     collectProgramArguments(launchResources, programArguments);
 
     // Classpath
-    List<String> cpList = new ArrayList<String>(Arrays.asList(getClasspath(configuration)));
+    List<String> cpList = new ArrayList<String>(Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(args.getJavaProject())));
 
     for (IPath path : launchResources.getClasspathLocations()) {
-      cpList.add(path.makeRelative().toOSString());
+      cpList.add(path.toOSString());
     }
     cpList.add(RandoopPlugin.getRandoopJar().toOSString());
     cpList.add(RandoopPlugin.getPlumeJar().toOSString());
 
     String[] classpath = cpList.toArray(new String[0]);
-
+    
+    // TODO: Sometimes the classpaths do not seem to work...
     for(String str : classpath) {
       System.out.println(str);
     }
-
+    
     // Create VM config
     VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
 
     runConfig.setVMArguments((String[]) vmArguments.toArray(new String[vmArguments.size()]));
     runConfig.setProgramArguments((String[]) programArguments.toArray(new String[programArguments.size()]));
     runConfig.setEnvironment(getEnvironment(configuration));
-    runConfig.setWorkingDirectory(workingDirName);
     runConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
-
-    // Bootpath
     runConfig.setBootClassPath(getBootpath(configuration));
+    runConfig.setWorkingDirectory(workingDirName);
 
     // check for cancellation
     if (monitor.isCanceled()) {
@@ -232,8 +239,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       System.out.println(str);
     }
     
-    if (useDefault)
-      new Thread(fMessageReceiver).start();
+    if (useDefault) {
+      fMessageReceiver.schedule();
+    }
     
     runner.run(runConfig, launch, monitor);
     

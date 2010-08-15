@@ -1,5 +1,7 @@
 package randoop.plugin.internal.core.runtime;
 
+import org.eclipse.core.runtime.CoreException;
+
 import randoop.runtime.IMessage;
 
 /**
