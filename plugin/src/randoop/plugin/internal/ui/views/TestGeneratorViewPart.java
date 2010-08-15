@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -31,8 +32,10 @@ import org.eclipse.ui.part.ViewPart;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MutableObject;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.runtime.ITestGeneratorSessionListener;
 import randoop.plugin.internal.core.runtime.TestGeneratorSession;
+import randoop.plugin.internal.ui.RandoopPluginImages;
 import randoop.runtime.ErrorRevealed;
 
 public class TestGeneratorViewPart extends ViewPart {
@@ -76,7 +79,8 @@ public class TestGeneratorViewPart extends ViewPart {
           // Open the view
           viewPart.setValue(page.showView(TestGeneratorViewPart.ID));
         } catch (PartInitException e) {
-          RandoopPlugin.log(e, "Randoop view could not be initialized"); //$NON-NLS-1$
+          IStatus s = RandoopStatus.PART_INIT_EXCEPTION.getStatus(e);
+          RandoopPlugin.log(s);
         }
         
       }
@@ -146,14 +150,12 @@ public class TestGeneratorViewPart extends ViewPart {
     public DebugWithJUNitAction() {
       super("Debug Tests with JUnit");
       
-      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/debugjunit.png");
-      setImageDescriptor(desc);
+      setImageDescriptor(RandoopPluginImages.DESC_ELCL_DEBUG_JUNIT);
       setEnabled(false);
     }
     
     @Override
     public void run() {
-      System.out.println("Running " + fJUnitDriver);
       if (fJUnitDriver != null) {
         List<IJavaElement> list = new ArrayList<IJavaElement>();
         list.add(fJUnitDriver);
@@ -168,14 +170,12 @@ public class TestGeneratorViewPart extends ViewPart {
     public RunWithJUnitAction() {
       super("Run Tests with JUnit");
       
-      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/runjunit.png");
-      setImageDescriptor(desc);
+      setImageDescriptor(RandoopPluginImages.DESC_ELCL_RUN_JUNIT);
       setEnabled(false);
     }
     
     @Override
     public void run() {
-      System.out.println("Running " + fJUnitDriver);
       if (fJUnitDriver != null) {
         List<IJavaElement> list = new ArrayList<IJavaElement>();
         list.add(fJUnitDriver);
@@ -204,8 +204,7 @@ public class TestGeneratorViewPart extends ViewPart {
     public RelaunchAction () {
       super("Regenerate tests");
       
-      ImageDescriptor desc = RandoopPlugin.getImageDescriptor("icons/runrandoop.png");
-      setImageDescriptor(desc);
+      setImageDescriptor(RandoopPluginImages.DESC_ELCL_RUN_RANDOOP);
     }
     @Override
     public void run() {
@@ -307,7 +306,7 @@ public class TestGeneratorViewPart extends ViewPart {
       try {
         fSession.getLaunch().terminate();
       } catch (DebugException e) {
-        RandoopPlugin.log(e);
+        RandoopPlugin.log(e.getStatus());
         return false;
       }
     }

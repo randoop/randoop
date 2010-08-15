@@ -43,12 +43,12 @@ public abstract class BoundedDoubleOption extends TextOption {
       double d = Double.parseDouble(text);
 
       if (d < fLowerBound || d > fUpperBound) {
-        return RandoopStatus.createErrorStatus(fOutOfBoundsMsg);
+        return RandoopStatus.createStatus(IStatus.ERROR, fOutOfBoundsMsg);
       }
 
       return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return RandoopStatus.createErrorStatus(fInvalidErrorMsg);
+      return RandoopStatus.createStatus(IStatus.ERROR, fInvalidErrorMsg);
     }
   }
   

@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.ui.RandoopMessages;
+import randoop.plugin.internal.ui.RandoopPluginImages;
 import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
@@ -29,10 +30,9 @@ public class ParametersPage extends OptionWizardPage {
   private IOption fClassName;
   
   protected ParametersPage(String pageName, IJavaProject project, ILaunchConfigurationWorkingCopy config) {
-    super(pageName, config);
+    super(pageName, "Launch Configuration Parameters", RandoopPluginImages.DESC_WIZBAN_NEW_RNDP, config);
     
     fProject = project;
-    setTitle("Randoop Launch Configuration");
   }
   
   @Override

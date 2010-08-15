@@ -129,7 +129,8 @@ public class RandoopCoreUtil {
           return pfr;
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
     }
     return null;
@@ -152,11 +153,7 @@ public class RandoopCoreUtil {
       if (!project.exists())
         return null;
       
-      try {
-        return (IJavaProject) project.getNature(JavaCore.NATURE_ID);
-      } catch (CoreException e) {
-        RandoopPlugin.log(e);
-      }
+      return JavaCore.create(project);
     }
     return null;
   }
@@ -175,9 +172,6 @@ public class RandoopCoreUtil {
     case IJavaElement.CLASS_FILE:
       IClassFile cf = (IClassFile) element;
       return findTypes(cf, ignoreJUnitTestCases, monitor);
-    default:
-      RandoopPlugin.log(RandoopStatus.createErrorStatus("Unexpected Java element type: " //$NON-NLS-1$
-          + element.getElementType()));
     }
     return null;
   }
@@ -196,7 +190,8 @@ public class RandoopCoreUtil {
         types.addAll(findTypes(pf, ignoreJUnitTestCases, sm.newChild(1)));
       }
     } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
+      IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+      RandoopPlugin.log(s);
     } finally {
       sm.done();
     }
@@ -235,7 +230,8 @@ public class RandoopCoreUtil {
         break;
       }
     } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
+      IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+      RandoopPlugin.log(s);
     } finally {
       sm.done();
     }
@@ -262,8 +258,8 @@ public class RandoopCoreUtil {
           pm.worked(1);
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
-        sm.done();
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
     }
     
@@ -304,7 +300,8 @@ public class RandoopCoreUtil {
         }
       }
     } catch (JavaModelException e) {
-      RandoopPlugin.log(e);
+      IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+      RandoopPlugin.log(s);
     }
 
     return true;
@@ -321,42 +318,37 @@ public class RandoopCoreUtil {
    * @param javaProject
    * @param classpathEntry
    * @return
+   * @throws JavaModelException 
    * @throws CoreException
    */
   public static IPackageFragmentRoot[] findPackageFragmentRoots(IJavaProject javaProject,
-      IClasspathEntry classpathEntry) {
+      IClasspathEntry classpathEntry) throws JavaModelException {
     
     if (classpathEntry == null) {
       return null;
     }
-    
+
     if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
       IWorkspace workspace = javaProject.getProject().getWorkspace();
-      IProject project = workspace.getRoot().getProject(classpathEntry.getPath().toString());
+      IProject project = workspace.getRoot().getProject(
+          classpathEntry.getPath().toString());
 
       if (project.exists()) {
-        IProjectNature referencedProject;
-        try {
-          referencedProject = project.getNature(JavaCore.NATURE_ID);
-          if (referencedProject != null) {
-            IJavaProject referencedJavaProject = (IJavaProject) referencedProject;
-            List<IPackageFragmentRoot> roots = new ArrayList<IPackageFragmentRoot>();
-            for (IClasspathEntry cpe : referencedJavaProject.getRawClasspath()) {
-              if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE || cpe.isExported()) {
-                roots.addAll(Arrays.asList(findPackageFragmentRoots(referencedJavaProject, cpe)));
-              }
-            }
-            return (IPackageFragmentRoot[]) roots.toArray(new IPackageFragmentRoot[roots.size()]);
+        IJavaProject referencedJavaProject = JavaCore.create(project);
+        List<IPackageFragmentRoot> roots = new ArrayList<IPackageFragmentRoot>();
+        for (IClasspathEntry cpe : referencedJavaProject.getRawClasspath()) {
+          if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE || cpe.isExported()) {
+            roots.addAll(Arrays.asList(findPackageFragmentRoots(referencedJavaProject, cpe)));
           }
-        } catch (CoreException e) {
-          RandoopPlugin.log(e);
         }
+        return (IPackageFragmentRoot[]) roots.toArray(new IPackageFragmentRoot[roots
+            .size()]);
       }
       return null;
     } else {
       return javaProject.findPackageFragmentRoots(classpathEntry);
     }
-    
+
   }
   
 }

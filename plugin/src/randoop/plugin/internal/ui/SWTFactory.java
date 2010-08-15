@@ -10,9 +10,6 @@
  *******************************************************************************/
 package randoop.plugin.internal.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.PixelConverter;
@@ -24,9 +21,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,13 +32,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
 
-import randoop.plugin.internal.core.TestKinds;
-import randoop.plugin.internal.ui.options.IOption;
-import randoop.plugin.internal.ui.options.IOptionChangeListener;
-import randoop.plugin.internal.ui.options.OptionFactory;
-
 /**
  * Factory class to create some SWT resources.
+ * 
+ * Most of the methods of this class have been taken from
  * org.eclipse.debug.internal.ui.SWTFactory
  */
 public class SWTFactory {
@@ -640,22 +631,39 @@ public class SWTFactory {
     return c;
   }
 
+  /**
+   * Computes the width in pixels that the given number of characters will fill
+   * on average in the given <code>Control</code>
+   * 
+   * @param control
+   * @param numChars
+   * @return
+   */
   public static int computeWidth(Control control, int numChars) {
     GC gc = new GC(control);
     FontMetrics fm = gc.getFontMetrics();
     int charWidth = fm.getAverageCharWidth();
     int width = control.computeSize(charWidth * numChars, SWT.DEFAULT).x;
     gc.dispose();
-    
+
     return width;
   }
-  
-  public static Font getBoldFont(Control c) {
-    Font f = c.getFont();
-    FontData[] fontData = f.getFontData();
+
+  /**
+   * Creates a bold version of the specified font. This method has no effect if
+   * the font is already bold. A new <code>Font</code> will always be returned
+   * 
+   * @param font
+   *          the font to return a a bold version of
+   * @return
+   * 
+   * @author Peter Kalauskas
+   */
+  public static Font getBoldFont(Font font) {
+    FontData[] fontData = font.getFontData();
     for (FontData fd : fontData) {
       fd.setStyle(fd.getStyle() | SWT.BOLD);
     }
-    return new Font(f.getDevice(), fontData);
+    return new Font(font.getDevice(), fontData);
   }
 }

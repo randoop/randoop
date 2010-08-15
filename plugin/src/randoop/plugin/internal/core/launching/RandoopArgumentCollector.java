@@ -49,13 +49,27 @@ public class RandoopArgumentCollector {
   private int fMaxTestsWritten;
   private int fMaxTestsPerFile;
 
-  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) throws JavaModelException, NumberFormatException {
+  /**
+   * Constructs a set of objects corresponding to the parameters in this. The
+   * objects are guaranteed to be usable in a launchable Randoop configuration.
+   * 
+   * @param config
+   * @param root
+   * @throws CoreException
+   *           if the there was an error accessing or interpretting data from
+   *           the <code>ILaunchConfiguration</code>, or if launching the
+   *           configuration would most likely cause an error.
+   */
+  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) throws CoreException {
     fName = config.getName();
     Assert.isNotNull(fName, "Configuration name not given");
     
     String projectName = getProjectName(config);
     fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
-    Assert.isNotNull(fJavaProject, "Java project not specified");
+    if (fJavaProject == null) {
+      IStatus s = RandoopStatus.NO_JAVA_PROJECT.getStatus(projectName, null);
+      throw new CoreException(s);
+    }
 
     fSelectedTypes = new ArrayList<IType>();
     fSelectedMethodsByType = new HashMap<IType, List<IMethod>>();
@@ -64,7 +78,7 @@ public class RandoopArgumentCollector {
     List<?> checkedTypes = getCheckedTypes(config);
     List<?> grayedTypes = getGrayedTypes(config);
     
-    Assert.isTrue(!availableTypes.isEmpty(), "No class-input or method-input selected");
+    Assert.isTrue(!availableTypes.isEmpty(), "No classes or methods selected");
     
     
     for (Object typeObject : availableTypes) {
@@ -97,17 +111,22 @@ public class RandoopArgumentCollector {
       }
     }
     
-    fRandomSeed = Integer.parseInt(getRandomSeed(config));
-    fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
-    fUseThreads = getUseThreads(config);
-    if (fUseThreads)
-      fThreadTimeout = Integer.parseInt(getThreadTimeout(config));
-    fUseNull = getUseNull(config);
-    if (fUseNull)
-      fNullRatio = Double.parseDouble(getNullRatio(config));
-    fInputLimit = Integer.parseInt(getInputLimit(config));
-    fTimeLimit = Integer.parseInt(getTimeLimit(config));
-
+    try {
+      fRandomSeed = Integer.parseInt(getRandomSeed(config));
+      fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
+      fUseThreads = getUseThreads(config);
+      if (fUseThreads)
+        fThreadTimeout = Integer.parseInt(getThreadTimeout(config));
+      fUseNull = getUseNull(config);
+      if (fUseNull)
+        fNullRatio = Double.parseDouble(getNullRatio(config));
+      fInputLimit = Integer.parseInt(getInputLimit(config));
+      fTimeLimit = Integer.parseInt(getTimeLimit(config));
+    } catch (NumberFormatException nfe) {
+      IStatus s = RandoopStatus.NUMBER_FORMAT_EXCEPTION_IN_CONFIG.getStatus(nfe);
+      throw new CoreException(s);
+    }
+    
     String outputSourceFolderName = getOutputDirectoryName(config);
     fOutputDirectory = fJavaProject.getPath().append(outputSourceFolderName).makeAbsolute();
     Assert.isNotNull(fOutputDirectory, "Output directory not specified"); //$NON-NLS-1$
@@ -123,32 +142,43 @@ public class RandoopArgumentCollector {
 
     fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
     fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
+    
+    for (IType type : fSelectedMethodsByType.keySet()) {
+      String fqname = type.getFullyQualifiedName().replace('$', '.');
+
+      try {
+        if (!type.equals(getJavaProject().findType(fqname, (IProgressMonitor) null))) {
+          IStatus s = RandoopStatus.METHODS_DECLARING_CLASS_HAS_DUPLICATE.getStatus(type.getElementName(), null);
+          throw new CoreException(s);
+        }
+      } catch (JavaModelException e) {
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
+      }
+    }
   }
   
   public IStatus checkForConflicts() {
     IJavaProject javaProject = getJavaProject();
+
+    if (javaProject == null) {
+      return RandoopStatus.createStatus(IStatus.ERROR, "Java project does not exist");
+    } else if (!javaProject.exists()) {
+      String msg = MessageFormat.format("Java project ''{0}'' was not found or could not be created", javaProject.getElementName());
+      return RandoopStatus.createStatus(IStatus.ERROR, msg);
+    }
     
     for (IType type : getSelectedTypes()) {
       String fqname = type.getFullyQualifiedName().replace('$', '.');
       
       try {
         if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return RandoopStatus.createWarningStatus("One of the selected classes has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
+          IStatus s = RandoopStatus.TYPE_HAS_DUPLICATE.getStatus(type.getElementName(), null);
+          return s;
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
-      }
-    }
-    
-    for (IType type : fSelectedMethodsByType.keySet()) {
-      String fqname = type.getFullyQualifiedName().replace('$', '.');
-      
-      try {
-        if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return RandoopStatus.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class.");
-        }
-      } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
     }
     

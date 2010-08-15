@@ -44,7 +44,7 @@ public class RandoopRefactoringUtil {
 
       return launchManager.getLaunchConfigurations(randoopLaunchType);
     } catch (CoreException e) {
-      RandoopPlugin.log(e);
+      RandoopPlugin.log(e.getStatus());
     }
     return new ILaunchConfiguration[0];
   }
