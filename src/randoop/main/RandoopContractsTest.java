@@ -21,15 +21,25 @@ public class RandoopContractsTest {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     TestRunner runner = new TestRunner(new PrintStream(baos));
     TestResult result = runner.doRun(test, false);
+    
+    int expectedFailures = 7;
+    int expectedErrors = 2;
 
-    if (result.failureCount() != 7) {
-      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE 7 FAILURES BUT GOT " + result.failureCount());
+    if (result.failureCount() != expectedFailures) {
+      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE " + expectedFailures + " FAILURES BUT GOT " + result.failureCount());
       b.append("\n\nJUNIT OUTPUT ON RANDOOP-GENERATED TESTS:");
       b.append(baos.toString());
       throw new RuntimeException(b.toString());
     }
 
-    System.out.println("Test passed; got 7 failures.");
+    if (result.errorCount() != expectedErrors) {
+      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE " + expectedErrors + " ERRORS BUT GOT " + result.errorCount());
+      b.append("\n\nJUNIT OUTPUT ON RANDOOP-GENERATED TESTS:");
+      b.append(baos.toString());
+      throw new RuntimeException(b.toString());
+    }
+
+    System.out.println("Test passed; got " + expectedFailures + " failures and " + expectedErrors + " errors.");
 
   }
 
