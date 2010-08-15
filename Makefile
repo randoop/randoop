@@ -592,7 +592,7 @@ GENTESTS_OPTIONS_JAVA = \
 # Consider also running "make plume-lib-update" to get the latest
 # html-update-toc.  "plume-lib-update" is not a prerequisite of this
 # target, to avoid connecting to the network just to build the manual.
-manual: build plume-lib
+manual: build utils/plume-lib
 	javadoc -quiet -doclet plume.OptionsDoclet -i -docfile doc/index.html ${GENTESTS_OPTIONS_JAVA}
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
