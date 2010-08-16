@@ -42,6 +42,11 @@ public final class HashCodeReturnsNormally implements ObjectContract {
   }
 
   @Override
+  public String get_observer_str() {
+    return "hashCode() throws no Exception";
+  }
+
+  @Override
   public boolean evalExceptionMeansFailure() {
     return true;
   }

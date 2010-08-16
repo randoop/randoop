@@ -85,4 +85,7 @@ public interface ObjectContract extends Serializable {
    */
   String toCodeString();
 
+  /** Returns a string describing the observer **/
+  String get_observer_str();
+
 }
