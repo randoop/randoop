@@ -100,6 +100,11 @@ public final class CheckRepContract implements ObjectContract {
   }
 
   @Override
+  public String get_observer_str() {
+    return "CheckRep " + checkRepMethod.getName();
+  }
+
+  @Override
   public boolean evalExceptionMeansFailure() {
     return true;
   }
