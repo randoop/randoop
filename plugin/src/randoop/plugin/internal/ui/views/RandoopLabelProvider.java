@@ -13,6 +13,8 @@ import randoop.plugin.model.resultstree.RunResultsTree;
 
 /**
  * Provides labels for the various trees displayed in the Randoop view.
+ * 
+ * @author Carlos Pacheco
  */
 public class RandoopLabelProvider extends LabelProvider {
 

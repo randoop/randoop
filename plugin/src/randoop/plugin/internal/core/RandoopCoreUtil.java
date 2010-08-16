@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,9 +31,25 @@ import org.eclipse.jdt.core.Signature;
 
 import randoop.plugin.RandoopPlugin;
 
+/**
+ * Provides methods for various JDT and Java-related tasks that are often
+ * performed by the Randoop plug-in
+ * 
+ * @author Peter Kalauskas
+ */
 public class RandoopCoreUtil {
-  
-  public static String getFullyQualifiedUnresolvedSignature(IMethod method, String typeSignature) throws JavaModelException {
+
+  /**
+   * Returns a method signature in which every type is uses its fully-qualified
+   * name and is written using the identifier for unresolved types.
+   * 
+   * @param method
+   * @param typeSignature
+   * @return
+   * @throws JavaModelException
+   * @see {@link Signature}
+   */
+  public static String getUnresolvedFullyQualifiedMethodSignature(IMethod method, String typeSignature) throws JavaModelException {
     IType type = method.getDeclaringType();
     
     int arrayCount = Signature.getArrayCount(typeSignature);
@@ -63,30 +78,13 @@ public class RandoopCoreUtil {
     
   }
 
-  public static String getFullyQualifiedName(IType type, String typeSignature) throws JavaModelException {
-    String typeName = Signature.toString(typeSignature);
-    String[][] types = type.resolveType(typeName);
-    
-    StringBuilder fqname = new StringBuilder();
-    if (types != null) {
-      // Write the first type that was resolved
-      fqname.append(types[0][0]); // the package name
-      fqname.append('.');
-      fqname.append(types[0][1]); // the class name
-    } else {
-      // Otherwise this is a primitive type, write it as it is
-      fqname.append(typeName);
-    }
-    
-    return fqname.toString();
-  }
-  
-  public static String getPackageName(IType type, String typeSignature) throws JavaModelException {
-    String fqname = RandoopCoreUtil.getFullyQualifiedName(type, typeSignature);
-    return RandoopCoreUtil.getPackageName(fqname);
-  }
-  
-  // expects use of $
+  /**
+   * Returns the package name of the given fully-qualified name. The expected
+   * enclosing type separator is <code>'$'</code>.
+   * 
+   * @param fullyQualifiedName
+   * @return the package name, an empty string for the default package
+   */
   public static String getPackageName(String fullyQualifiedName) {
     int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
     
@@ -96,12 +94,16 @@ public class RandoopCoreUtil {
       return fullyQualifiedName.substring(0, lastDelimiter);
     }
   }
-  
-  public static String getClassName(IType type, String typeSignature) throws JavaModelException {
-    String fqname = RandoopCoreUtil.getFullyQualifiedName(type, typeSignature);
-    return RandoopCoreUtil.getClassName(fqname);
-  }
-  
+
+  /**
+   * Returns the class name of the given fully-qualified name. The expected
+   * enclosing type separator is <code>'$'</code>. The class name will return
+   * all parent types as well. For example,
+   * <code>'com.example.Graph$Node'</code> will return <code>'Graph$Node'</code>
+   * 
+   * @param fullyQualifiedName
+   * @return the class name of the fully-qualified name
+   */
   public static String getClassName(String fullyQualifiedName) {
     int lastDelimiter = fullyQualifiedName.lastIndexOf('.');
     
@@ -112,7 +114,16 @@ public class RandoopCoreUtil {
     }
   }
 
-  public static String getFullyQualifiedName(String packageName, String className) {
+  /**
+   * Creates a fully-qualified type name for the given package name and class
+   * name separated by a <code>'.'</code>. If the package name is empty, only
+   * the class name is returned.
+   * 
+   * @param packageName
+   * @param className
+   * @return
+   */
+ public static String getFullyQualifiedName(String packageName, String className) {
     if (packageName.isEmpty()) {
       return className;
     } else {
@@ -120,6 +131,20 @@ public class RandoopCoreUtil {
     }
   }
 
+  /**
+   * Returns the package fragment root for the given folder path in the project.
+   * The path to the folder is expected to be relative to the project, so to get
+   * the package fragment root for the source folder 'src,' the argument 'src'
+   * should be used, <i>not</i> 'someProejct/src'.
+   * 
+   * @param javaProject
+   *          the java project, may be <code>null</code>
+   * @param folder
+   *          the path to the source folder relative to the project the path to
+   *          the folder, 'src'
+   * @return the package fragment root, or <code>null</code> if it is not found
+   *         or javaProject is <code>null</code> or does not exist
+   */
   public static IPackageFragmentRoot getPackageFragmentRoot(IJavaProject javaProject, String folder) {
     if (javaProject != null && javaProject.exists() && javaProject.isOpen()) {
       try {
@@ -137,11 +162,12 @@ public class RandoopCoreUtil {
   }
 
   /**
+   * Returns the Java project by the specified name in the workspace.
    * 
    * @param projectName
-   * @return the Java project by the specific name in the workspace, or
-   *         <code>null</code> if no Java project by the specified name was
-   *         found
+   *          the name of the project
+   * @return the Java project by the specific name, or <code>null</code> it was
+   *         not found
    */
   public static IJavaProject getProjectFromName(String projectName) {
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -157,26 +183,52 @@ public class RandoopCoreUtil {
     }
     return null;
   }
-  
-  public static List<IType> findTypes(IJavaElement element, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
+
+  /**
+   * Searches for and returns a list of types found in the given java element
+   * that may be used for testing. This is simply a <code>switch</code>
+   * statement that checks the element's type and calls the appropriate method.
+   * 
+   * @param element
+   *          the java element to search for types
+   * @param ignoreJUnitTestCases
+   *          <code>true</code> if JUnit test cases should not be returned in
+   *          the list
+   * @param monitor
+   *          the monitor, or <code>null</code>
+   * @return a list of types found in the Java element
+   */
+  public static List<IType> findTestableTypes(IJavaElement element, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
     switch (element.getElementType()) {
     case IJavaElement.PACKAGE_FRAGMENT_ROOT:
       IPackageFragmentRoot pfr = (IPackageFragmentRoot) element;
-      return findTypes(pfr, ignoreJUnitTestCases, monitor);
+      return findTestableTypes(pfr, ignoreJUnitTestCases, monitor);
     case IJavaElement.PACKAGE_FRAGMENT:
       IPackageFragment pf = (IPackageFragment) element;
-      return findTypes(pf, ignoreJUnitTestCases, monitor);
+      return findTestableTypes(pf, ignoreJUnitTestCases, monitor);
     case IJavaElement.COMPILATION_UNIT:
       ICompilationUnit cu = (ICompilationUnit) element;
-      return findTypes(cu, ignoreJUnitTestCases, monitor);
+      return findTestableTypes(cu, ignoreJUnitTestCases, monitor);
     case IJavaElement.CLASS_FILE:
       IClassFile cf = (IClassFile) element;
-      return findTypes(cf, ignoreJUnitTestCases, monitor);
+      return findTestableTypes(cf, ignoreJUnitTestCases, monitor);
     }
     return null;
   }
 
-  public static List<IType> findTypes(IPackageFragmentRoot pfr, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
+  /**
+   * Searches for and returns a list of types found in the given package
+   * fragment root.
+   * 
+   * @param pfr
+   * @param ignoreJUnitTestCases
+   *          <code>true</code> if JUnit test cases should not be returned in
+   *          the list
+   * @param monitor
+   *          the monitor, or <code>null</code>
+   * @return a list of types found in the package fragment root
+   */
+  public static List<IType> findTestableTypes(IPackageFragmentRoot pfr, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
     SubMonitor sm = SubMonitor.convert(monitor);
 
     List<IType> types = new ArrayList<IType>();
@@ -187,7 +239,7 @@ public class RandoopCoreUtil {
       for (IJavaElement e : children) {
         Assert.isTrue(e instanceof IPackageFragment);
         IPackageFragment pf = (IPackageFragment) e;
-        types.addAll(findTypes(pf, ignoreJUnitTestCases, sm.newChild(1)));
+        types.addAll(findTestableTypes(pf, ignoreJUnitTestCases, sm.newChild(1)));
       }
     } catch (JavaModelException e) {
       IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
@@ -199,7 +251,19 @@ public class RandoopCoreUtil {
     return types;
   }
   
-  public static List<IType> findTypes(IPackageFragment pf, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
+  /**
+   * Searches for and returns a list of types found in the given package
+   * fragment.
+   * 
+   * @param pf
+   * @param ignoreJUnitTestCases
+   *          <code>true</code> if JUnit test cases should not be returned in
+   *          the list
+   * @param monitor
+   *          the monitor, or <code>null</code>
+   * @return a list of types found in the package fragment
+   */
+  public static List<IType> findTestableTypes(IPackageFragment pf, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
     SubMonitor sm = SubMonitor.convert(monitor);
 
     List<IType> types = new ArrayList<IType>();
@@ -210,7 +274,7 @@ public class RandoopCoreUtil {
         IClassFile[] classFiles =  pf.getClassFiles();
         sm.beginTask(taskName, classFiles.length);
         for (IClassFile cf : classFiles) {
-          types.addAll(findTypes(cf, ignoreJUnitTestCases, sm.newChild(1)));
+          types.addAll(findTestableTypes(cf, ignoreJUnitTestCases, sm.newChild(1)));
 
           if (sm.isCanceled()) {
             return types;
@@ -221,7 +285,7 @@ public class RandoopCoreUtil {
         ICompilationUnit[] compilationUnits =  pf.getCompilationUnits();
         sm.beginTask(taskName, compilationUnits.length);
         for (ICompilationUnit cu : compilationUnits) {
-          types.addAll(findTypes(cu, ignoreJUnitTestCases, sm.newChild(1)));
+          types.addAll(findTestableTypes(cu, ignoreJUnitTestCases, sm.newChild(1)));
 
           if (sm.isCanceled()) {
             return types;
@@ -239,7 +303,19 @@ public class RandoopCoreUtil {
     return types;
   }
   
-  public static List<IType> findTypes(ICompilationUnit cu, boolean ignoreJUnitTestCases, IProgressMonitor pm)  {
+  /**
+   * Searches for and returns a list of types found in the given compilation
+   * unit.
+   * 
+   * @param cu
+   * @param ignoreJUnitTestCases
+   *          <code>true</code> if JUnit test cases should not be returned in
+   *          the list
+   * @param monitor
+   *          the monitor, or <code>null</code>
+   * @return a list of types found in the compilation unit
+   */
+  public static List<IType> findTestableTypes(ICompilationUnit cu, boolean ignoreJUnitTestCases, IProgressMonitor pm)  {
     SubMonitor sm = SubMonitor.convert(pm);
     
     List<IType> validTypes = new ArrayList<IType>();
@@ -266,8 +342,20 @@ public class RandoopCoreUtil {
     sm.done();
     return validTypes;
   }
-  
-  public static List<IType> findTypes(IClassFile cf, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
+
+  /**
+   * Searches for and returns a list of types found in the given class file.
+   * The list can only contain one or zero elements.
+   * 
+   * @param cf
+   * @param ignoreJUnitTestCases
+   *          <code>true</code> if JUnit test cases should not be returned in
+   *          the list
+   * @param monitor
+   *          the monitor, or <code>null</code>
+   * @return a list of types found in the class file
+   */
+  public static List<IType> findTestableTypes(IClassFile cf, boolean ignoreJUnitTestCases, IProgressMonitor monitor) {
     SubMonitor sm = SubMonitor.convert(monitor);
 
     List<IType> types = new ArrayList<IType>();
@@ -286,6 +374,16 @@ public class RandoopCoreUtil {
     return types;
   }
 
+  /**
+   * Checks if the given type may be tested with Randoop. Non-public classes,
+   * abstract classes, and interfaces may not be tested.
+   * 
+   * @param type
+   * @param ignoreJUnitTestCases
+   *          <code>true</code> if this method should return <code>false</code>
+   *          if the type is a test case
+   * @return <code>true</code> if the type may be tested with Randoop
+   */
   public static boolean isValidTestInput(IType type, boolean ignoreJUnitTestCases) {
     try {
       int flags = type.getFlags();
@@ -350,5 +448,5 @@ public class RandoopCoreUtil {
     }
 
   }
-  
+
 }

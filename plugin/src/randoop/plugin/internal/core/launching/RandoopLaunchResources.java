@@ -12,7 +12,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -31,14 +29,18 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
+import randoop.StatementKinds;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.ui.MessageUtil;
 
 /**
- * Manages and supplies resources used for generating a test set. Resources
- * include the temporary folder for storing class files, and arguments used for
- * generating the test files.
+ * Creates and supplies resources on the filesystem that are needed for
+ * generating tests with the given arguments. A temporary folder the the Randoop
+ * plug-in's state location stores the method-list used for passing Randoop a
+ * list of specific methods to test.
+ * 
+ * @author Peter Kalauskas
  */
 public class RandoopLaunchResources {
   public static final String LAUNCH_SEGMENT = "/launch"; //$NON-NLS-1$
@@ -54,16 +56,13 @@ public class RandoopLaunchResources {
   private File fResourceFolder;
   private File fMethodsFile;
   private String fId;
-  private IPath[] fClasspath;
   private IPath fOutputLocation;
 
   /**
-   * 
+   * Creates the output directory required by the Randoop launch arguments.
    * 
    * @param args
    *          the arguments from which Java resources will be extracted
-   * @param name
-   *          a name for this set of resources
    * @throws CoreException
    */
   public RandoopLaunchResources(RandoopArgumentCollector args, IProgressMonitor monitor) throws CoreException {
@@ -88,9 +87,6 @@ public class RandoopLaunchResources {
     fResourceFolder = LAUNCH_PATH.append(fId).toFile();
     fResourceFolder.mkdirs();
     
-    // Search the arguments for all necessary classpaths in the workspace
-    fClasspath = findClasspathLocations(args.getJavaProject());
-    
     writeMethods();
     
     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -112,8 +108,7 @@ public class RandoopLaunchResources {
       IFolder folder = root.getFolder(fullOutputDirPath);
       File file = folder.getLocation().toFile();
       if (!file.exists() || !file.isDirectory()) {
-        // On some systems files and directories cannot be named the same
-        // XXX - Handle this situation more elegantly
+        // XXX On some systems files and directories cannot be named the same
         Assert.isTrue(file.mkdirs());
       }
       
@@ -160,7 +155,17 @@ public class RandoopLaunchResources {
     fJUnitOutputFolder = getFolder(root, fullOutputDirPath.append(packagePath));
     fFailureOutputFolder = getFolder(root, fullOutputDirPath.append(FAILURE_PATH));
   }
-  
+
+  /**
+   * Returns a folder with the given path in the workspace root.
+   * 
+   * @param root
+   *          workspace root to make the path relative to
+   * @param path
+   *          path relative to the workspace
+   * @return the folder at the given path, or <code>null</code> if none was
+   *         found
+   */
   private static IFolder getFolder(IWorkspaceRoot root, IPath path) {
     IResource outputDirResource = root.findMember(path);
     if (outputDirResource != null && outputDirResource instanceof IFolder) {
@@ -169,6 +174,10 @@ public class RandoopLaunchResources {
     return null;
   }
   
+  /**
+   * Writes the method-inputs to a methods file in a format that can be
+   * interpreted by {@link StatementKinds}
+   */
   private void writeMethods() {
     try {
       fMethodsFile = new File(fResourceFolder, METHODS_FILE);
@@ -182,7 +191,7 @@ public class RandoopLaunchResources {
       String unusedStatments = new String();
       for (IType type : methods.keySet()) {
         for (IMethod method : methods.get(type)) {
-          // TODO: This blocks the output of any methods that use type variables
+          // XXX: This blocks the output of any methods that use type variables
           boolean hasTypeVariables = false;
           if (method.getTypeParameters().length != 0)
             hasTypeVariables = true;
@@ -191,7 +200,7 @@ public class RandoopLaunchResources {
           potentialTypeVars.add(method.getReturnType());
           potentialTypeVars.addAll(Arrays.asList(method.getParameterTypes()));
           for (String paramType : potentialTypeVars) {
-            String sig = RandoopCoreUtil.getFullyQualifiedUnresolvedSignature(method, paramType);
+            String sig = RandoopCoreUtil.getUnresolvedFullyQualifiedMethodSignature(method, paramType);
 
             int arrayCount = Signature.getArrayCount(sig);
             String sigWithoutArray = sig.substring(arrayCount);
@@ -265,86 +274,10 @@ public class RandoopLaunchResources {
   }
 
   /**
-   * Searches the specified Java project for the classpaths it uses and adds
-   * each to <code>classpaths</code>. This method will recursively call itself
-   * if <code>javaProject</code> references other Java projects. If an error is
-   * encountered, the search operation will not halt; the error status will be
-   * returned once finished.
+   * Returns the arguments that were used to construct this instance.
    * 
-   * @param javaProject
-   *          Java project to search
-   * @param classpaths
-   *          the <code>Collection</code> to add classpaths to
-   * @return the status of this search operation
-   * @throws CoreException
+   * @return arguments used to construct this instance
    */
-  private IPath[] findClasspathLocations(IJavaProject javaProject) throws CoreException {
-    List<IPath> classpaths = new ArrayList<IPath>();
-    classpaths.add(javaProject.getOutputLocation());
-
-    for (IClasspathEntry entry : javaProject.getRawClasspath()) {
-      classpaths.addAll(Arrays.asList(findClasspathLocations(entry)));
-    }
-
-    return classpaths.toArray(new IPath[classpaths.size()]);
-  }
-
-  /**
-   * Adds the classpaths found for the specified <code>IClasspathEntry</code> to
-   * the <code>Collection</code>. <code>IClasspathEntry</code>'s of type
-   * <code>CPE_SOURCE</code> and <code>CPE_SOURCE</code> are immediately added.
-   * Entries of type <code>CPE_PROJECT</code> are added by calling:
-   * <p>
-   * <code>private IStatus findClasspaths(IJavaProject javaProject, HashSet<IPath> classpaths)</code>
-   * <p>
-   * <code>CPE_VARIABLE</code> kinds are resolved before being recursively
-   * passed into this method again.
-   * 
-   * @param entry
-   * @param classpaths
-   * @return
-   * @throws CoreException
-   */
-  private IPath[] findClasspathLocations(IClasspathEntry entry) throws CoreException {
-    List<IPath> classpaths = new ArrayList<IPath>();
-
-    switch (entry.getEntryKind()) {
-    case IClasspathEntry.CPE_SOURCE:
-      IPath outputLocation = entry.getOutputLocation();
-      if (outputLocation != null) {
-        classpaths.add(outputLocation);
-      }
-      break;
-    case IClasspathEntry.CPE_LIBRARY:
-      classpaths.add(entry.getPath());
-      break;
-    case IClasspathEntry.CPE_PROJECT:
-      IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-      IProject resource = root.getProject(entry.getPath().toString());
-      IJavaProject referencedProject = (IJavaProject) resource.getNature(JavaCore.NATURE_ID);
-
-      if (referencedProject != null)
-        classpaths.addAll(Arrays.asList(findClasspathLocations(referencedProject)));
-      break;
-    case IClasspathEntry.CPE_VARIABLE:
-      IClasspathEntry resolved = JavaCore.getResolvedClasspathEntry(entry);
-      if (resolved != null)
-        classpaths.addAll(Arrays.asList(findClasspathLocations(resolved)));
-      break;
-    case IClasspathEntry.CPE_CONTAINER:
-      IClasspathContainer container = JavaCore.getClasspathContainer(entry.getPath(),
-          fArguments.getJavaProject());
-      Assert.isNotNull(container);
-
-      for (IClasspathEntry cpentry : container.getClasspathEntries()) {
-        classpaths.addAll(Arrays.asList(findClasspathLocations(cpentry)));
-      }
-      break;
-    }
-
-    return classpaths.toArray(new IPath[classpaths.size()]);
-  }
-
   public RandoopArgumentCollector getArguments() {
     return fArguments;
   }
@@ -353,20 +286,18 @@ public class RandoopLaunchResources {
     return fMethodsFile;
   }
 
-  public IPath[] getClasspathLocations() {
-    return fClasspath;
-  }
-  
   public IPath getOutputLocation() {
     return fOutputLocation;
   }
   
   /**
-   * Returns a list of IResources that may be overwritten by the generated tests.
-   * Similarly named files match the pattern <ClassName>[0-9]*.java
+   * Returns a list of IResources that may be overwritten by the generated
+   * tests. Similarly named files match the patterns <ClassName>[0-9]*.java or
+   * <ClassName>_failure_[0-9]*.java and are found in the output source folder's
+   * JUnit test package and failures package respectively.
    * 
    * @return
-   * @throws CoreException 
+   * @throws CoreException
    */
   public IResource[] getThreatendedResources() throws CoreException {
     List<IResource> threatenedFiles = new ArrayList<IResource>();
@@ -398,13 +329,17 @@ public class RandoopLaunchResources {
     return resources;
   }
 
+  /**
+   * Removes the temporary folder used for writing all Randoop launch related
+   * resources from the filesystem.
+   */
   public static void deleteAllLaunchResources() {
     File f = LAUNCH_PATH.toFile();
     if (f.exists()) {
       Assert.isTrue(delete(f));
     }
   }
-  
+
   /**
    * Deletes the given <code>File</code>. If the <code>File</code> is a
    * directory, all subdirectories and contained files are deleted. Returns
@@ -412,9 +347,9 @@ public class RandoopLaunchResources {
    * 
    * @param file
    *          <code>File</code> to delete
-   * @return <code>true</code> if all files and subdirectories are successfully
-   *         deleted, <code>false</code> otherwise. If the specified
-   *         <code>File</code> does not exist, <code>false</code> is returned.
+   * @return <code>true</code> if the file exists and all files and
+   *         subdirectories are successfully deleted, <code>false</code>
+   *         otherwise
    */
   private static boolean delete(File file) {
     if(!file.exists())

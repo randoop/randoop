@@ -13,6 +13,10 @@ import org.eclipse.swt.widgets.Button;
 
 import randoop.plugin.internal.core.RandoopStatus;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public abstract class EnablementOption extends Option {
   IEnableableOption fEnabledOption;
   Button fEnablementButton;

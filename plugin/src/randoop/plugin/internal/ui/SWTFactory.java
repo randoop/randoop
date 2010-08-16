@@ -1,13 +1,3 @@
-/*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
- *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  which accompanies this distribution, and is available at
- *  http://www.eclipse.org/legal/epl-v10.html
- * 
- *  Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package randoop.plugin.internal.ui;
 
 import org.eclipse.core.runtime.Assert;
@@ -34,19 +24,78 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Factory class to create some SWT resources.
- * 
- * Most of the methods of this class have been taken from
- * org.eclipse.debug.internal.ui.SWTFactory
+ * <p>
+ * (see org.eclipse.debug.internal.ui.SWTFactory)
  */
 public class SWTFactory {
 
-  public static void createSeperator(Composite comp, int colSpan) {
-    Label label = new Label(comp, SWT.SEPARATOR | SWT.HORIZONTAL);
+  /**
+   * Creates a horizontal separator for a grid layout
+   * 
+   * @param parent
+   *          the parent composite to add the separator to the comp
+   * @param colSpan
+   *          the number of columns the separator should span
+   */
+  public static void createHorizontalSeperator(Composite parent, int colSpan) {
+    Label label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
     GridData gd = new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan = colSpan;
     label.setLayoutData(gd);
   }
+
+  /**
+   * Computes the width in pixels that the given number of characters will fill
+   * on average in the given <code>Control</code>
+   * 
+   * @param control
+   *          control to compute the width on
+   * @param numChars
+   *          the number of chars to measure
+   * @return width in pixels
+   */
+  public static int computeWidth(Control control, int numChars) {
+    GC gc = new GC(control);
+    FontMetrics fm = gc.getFontMetrics();
+    int charWidth = fm.getAverageCharWidth();
+    int width = control.computeSize(charWidth * numChars, SWT.DEFAULT).x;
+    gc.dispose();
+
+    return width;
+  }
+
+  /**
+   * Creates a bold version of the specified font. This method has no effect if
+   * the font is already bold. A new <code>Font</code> will always be returned
+   * 
+   * @param font
+   *          the font to return a a bold version of
+   * @return
+   * 
+   * @author Peter Kalauskas
+   */
+  public static Font getBoldFont(Font font) {
+    FontData[] fontData = font.getFontData();
+    for (FontData fd : fontData) {
+      fd.setStyle(fd.getStyle() | SWT.BOLD);
+    }
+    return new Font(font.getDevice(), fontData);
+  }
   
+  /* ******************************************************************************
+   *  All methods below are copied from org.eclipse.debug.internal.ui.SWTFactory
+   *  
+  /* ******************************************************************************
+   *  Copyright (c) 2000, 2010 IBM Corporation and others.
+   *  All rights reserved. This program and the accompanying materials
+   *  are made available under the terms of the Eclipse Public License v1.0
+   *  which accompanies this distribution, and is available at
+   *  http://www.eclipse.org/legal/epl-v10.html
+   * 
+   *  Contributors:
+   *     IBM Corporation - initial API and implementation
+   *******************************************************************************/
+
   /**
    * Returns a width hint for a button control.
    */
@@ -452,7 +501,7 @@ public class SWTFactory {
       g.setLayoutData(gd);
       return g;
     }
-  
+
   /**
    * Creates a composite that uses the parent's font and has a grid layout
    * @param parent the parent to add the composite to
@@ -631,39 +680,4 @@ public class SWTFactory {
     return c;
   }
 
-  /**
-   * Computes the width in pixels that the given number of characters will fill
-   * on average in the given <code>Control</code>
-   * 
-   * @param control
-   * @param numChars
-   * @return
-   */
-  public static int computeWidth(Control control, int numChars) {
-    GC gc = new GC(control);
-    FontMetrics fm = gc.getFontMetrics();
-    int charWidth = fm.getAverageCharWidth();
-    int width = control.computeSize(charWidth * numChars, SWT.DEFAULT).x;
-    gc.dispose();
-
-    return width;
-  }
-
-  /**
-   * Creates a bold version of the specified font. This method has no effect if
-   * the font is already bold. A new <code>Font</code> will always be returned
-   * 
-   * @param font
-   *          the font to return a a bold version of
-   * @return
-   * 
-   * @author Peter Kalauskas
-   */
-  public static Font getBoldFont(Font font) {
-    FontData[] fontData = font.getFontData();
-    for (FontData fd : fontData) {
-      fd.setStyle(fd.getStyle() | SWT.BOLD);
-    }
-    return new Font(font.getDevice(), fontData);
-  }
 }

@@ -24,6 +24,10 @@ import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.model.resultstree.FailingMember;
 
+/**
+ * 
+ * @author Carlos Pacheco
+ */
 public class FailureItemDoubleClickListener implements IDoubleClickListener {
 
   public TestGeneratorViewPart viewPart;

@@ -11,7 +11,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -19,8 +18,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
@@ -28,17 +25,16 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMRunner;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-import randoop.experiments.Randoop100Stats;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MutableBoolean;
@@ -109,15 +105,18 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       return;
 
     RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
-    IStatus status = args.checkForConflicts();
+    
+    IStatus status = args.getWarnings();
     if (status.getSeverity() == IStatus.ERROR) {
       informAndAbort(status);
     } else if (status.getSeverity() == IStatus.WARNING) {
-      if (!MessageUtil.openQuestion(status.getMessage() + "\n\n" + "Proceed with test generations?")) { //$NON-NLS-1$
+      String qst = NLS.bind("{0}{1}", status.getMessage(),
+          "\n\nProceed with test generations?");
+      if (!MessageUtil.openQuestion(qst)) {
         return;
       }
     }
-
+    
     RandoopLaunchResources launchResources = new RandoopLaunchResources(args, monitor);
     final TestGeneratorSession session = new TestGeneratorSession(launch, args);
 
@@ -204,9 +203,6 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     // Classpath
     List<String> cpList = new ArrayList<String>(Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(args.getJavaProject())));
 
-    for (IPath path : launchResources.getClasspathLocations()) {
-      cpList.add(path.toOSString());
-    }
     cpList.add(RandoopPlugin.getRandoopJar().toOSString());
     cpList.add(RandoopPlugin.getPlumeJar().toOSString());
 
@@ -240,7 +236,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     }
     
     if (useDefault) {
-      fMessageReceiver.schedule();
+      new Thread(fMessageReceiver).start();
     }
     
     runner.run(runConfig, launch, monitor);
