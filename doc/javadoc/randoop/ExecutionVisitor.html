@@ -89,7 +89,7 @@ randoop</FONT>
 <BR>
 Interface ExecutionVisitor</H2>
 <DL>
-<DT><STRONG>All Known Implementing Classes:</STRONG></DT> <DD><A HREF="../randoop/ContractCheckingVisitor.html" title="class in randoop">ContractCheckingVisitor</A>, <A HREF="../randoop/CovWitnessHelperVisitor.html" title="class in randoop">CovWitnessHelperVisitor</A>, <A HREF="../randoop/DummyVisitor.html" title="class in randoop">DummyVisitor</A>, <A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A>, <A HREF="../randoop/RegressionCaptureVisitor.html" title="class in randoop">RegressionCaptureVisitor</A>, <A HREF="../randoop/ReplayVisitor.html" title="class in randoop">ReplayVisitor</A></DD>
+<DT><STRONG>All Known Implementing Classes:</STRONG></DT> <DD><A HREF="../randoop/ContractCheckingVisitor.html" title="class in randoop">ContractCheckingVisitor</A>, <A HREF="../randoop/experiments/CovWitnessHelperVisitor.html" title="class in randoop.experiments">CovWitnessHelperVisitor</A>, <A HREF="../randoop/DummyVisitor.html" title="class in randoop">DummyVisitor</A>, <A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A>, <A HREF="../randoop/RegressionCaptureVisitor.html" title="class in randoop">RegressionCaptureVisitor</A>, <A HREF="../randoop/ReplayVisitor.html" title="class in randoop">ReplayVisitor</A></DD>
 </DL>
 <HR>
 <PRE>public interface <STRONG>ExecutionVisitor</STRONG></PRE>
@@ -129,7 +129,7 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/ExecutionVisitor.html#visitAfter(randoop.ExecutableSequence, int)">visitAfter</A></STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
            int&nbsp;i)</CODE>
 
@@ -178,13 +178,10 @@ void <STRONG>visitBefore</STRONG>(<A HREF="../randoop/ExecutableSequence.html" t
 <A NAME="visitAfter(randoop.ExecutableSequence, int)"><!-- --></A><H3>
 visitAfter</H3>
 <PRE>
-boolean <STRONG>visitAfter</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
-                   int&nbsp;i)</PRE>
+void <STRONG>visitAfter</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
+                int&nbsp;i)</PRE>
 <DL>
 <DD>Invoked by ExecutableSequence.execute after the i-th statement executes.
- The return value signals whether the execution of the sequence should be
- aborted. If this method returns false, the remaining statements in the
- sequence under execution will not be executed.
 
  Precondition: statements 0..i have been executed.
 <P>

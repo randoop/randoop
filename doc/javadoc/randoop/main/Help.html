@@ -119,6 +119,14 @@ Field Summary</CAPTION>
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/main/Help.html#unpub">unpub</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_CommandHandler"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -160,7 +168,7 @@ Method Summary</CAPTION>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/Help.html#handle(java.lang.String[])">handle</A></STRONG>(String[]&nbsp;args)</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/main/Help.html#handle(java.lang.String[])">handle</A></STRONG>(String[]&nbsp;args_raw)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -180,7 +188,7 @@ Method Summary</CAPTION>
 <TH ALIGN="left"><STRONG>Methods inherited from class <A HREF="../../randoop/main/CommandHandler.html" title="class in randoop.main">CommandHandler</A></STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../randoop/main/CommandHandler.html#handles(java.lang.String)">handles</A>, <A HREF="../../randoop/main/CommandHandler.html#printHTML(java.io.PrintStream)">printHTML</A>, <A HREF="../../randoop/main/CommandHandler.html#usageMessage(java.io.PrintStream)">usageMessage</A></CODE></TD>
+<TD><CODE><A HREF="../../randoop/main/CommandHandler.html#handles(java.lang.String)">handles</A>, <A HREF="../../randoop/main/CommandHandler.html#printHTML(java.io.PrintStream)">printHTML</A>, <A HREF="../../randoop/main/CommandHandler.html#usageMessage(java.io.PrintStream, boolean)">usageMessage</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
@@ -209,6 +217,12 @@ Method Summary</CAPTION>
 out</H3>
 <PRE>
 public static PrintStream <STRONG>out</STRONG></PRE>
+<HR>
+
+<A NAME="unpub"><!-- --></A><H3>
+unpub</H3>
+<PRE>
+public static boolean <STRONG>unpub</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -238,7 +252,7 @@ public <STRONG>Help</STRONG>()</PRE>
 <A NAME="handle(java.lang.String[])"><!-- --></A><H3>
 handle</H3>
 <PRE>
-public boolean <STRONG>handle</STRONG>(String[]&nbsp;args)
+public boolean <STRONG>handle</STRONG>(String[]&nbsp;args_raw)
                throws <A HREF="../../randoop/main/RandoopTextuiException.html" title="class in randoop.main">RandoopTextuiException</A></PRE>
 <DL>
 <DD><DL>

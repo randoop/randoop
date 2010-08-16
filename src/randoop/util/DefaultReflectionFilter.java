@@ -49,7 +49,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     if (matchesOmitMethodPattern(m.toString())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: matches regexp specified in -omitmethods option.");
+        Log.logLine("  reason: matches regexp specified in --omitmethods option.");
       }
       return false;
     }
@@ -180,11 +180,12 @@ public class DefaultReflectionFilter implements ReflectionFilter {
      if (omitmethods == null) {
        return false;
      }
+     boolean result = omitmethods.matcher(name).find();
      if (Log.isLoggingOn()) {
        Log.logLine (String.format("Comparing '%s' against pattern '%s' = %b%n", name,
-                    omitmethods, omitmethods.matcher(name).find()));
+                    omitmethods, result));
      }
-    return omitmethods.matcher(name).find();
+     return result;
   }
 
 }

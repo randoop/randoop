@@ -247,6 +247,14 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/util/PrimitiveTypes.html#stringLengthOK(java.lang.String)">stringLengthOK</A></STRONG>(String&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns true if the given string is deemed to be reasonable (i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;String</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../../randoop/util/PrimitiveTypes.html#toCodeString(java.lang.Object)">toCodeString</A></STRONG>(Object&nbsp;value)</CODE>
 
@@ -416,6 +424,30 @@ public static boolean <STRONG>looksLikeObjectToString</STRONG>(String&nbsp;s)</P
  pattern, the method returns false. This almost always works and is a
  faster check.
 <P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="stringLengthOK(java.lang.String)"><!-- --></A><H3>
+stringLengthOK</H3>
+<PRE>
+public static boolean <STRONG>stringLengthOK</STRONG>(String&nbsp;s)</PRE>
+<DL>
+<DD>Returns true if the given string is deemed to be reasonable (i.e. not too long)
+ based on the --string-maxlen=N parameter.
+ <p>
+ If Randoop generates tests using strings that are too long, this can
+ result in non-compilable tests due to the JVM's limit on the length of a string.
+ <p>
+ A string S is too long if, when printed as code in a generated unit test,
+ it may result in a non-compilable test. In order to determine this, we have
+ to consider not the length of s, but the length of the string that would be
+ printed to obtain s, which may be different due to escaped and unicode characters.
+ This method takes this into account.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../randoop/main/GenInputsAbstract.html" title="class in randoop.main"><CODE>GenInputsAbstract</CODE></A></DD></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
