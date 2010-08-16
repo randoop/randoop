@@ -153,7 +153,7 @@ An ExecutableSequence wraps a <A HREF="../randoop/Sequence.html" title="class in
         <li> isExceptionalExecution(i)
         <li> getExecutionResult(i)
         <li> getResult(i)
-        <li> getExecption(i)
+        <li> getExeception(i)
     </ul>
  </ul>
 <P>
@@ -231,20 +231,15 @@ Field Summary</CAPTION>
 <CAPTION CLASS="TableCaption">
 Constructor Summary</CAPTION>
 <TR>
-<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier</TH>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence)">ExecutableSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an executable sequence that executes the given sequence.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected </CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#ExecutableSequence(randoop.Sequence, randoop.Execution, java.util.List)">ExecutableSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
                    <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;exec,
                    List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;&nbsp;checks)</CODE>
@@ -345,7 +340,7 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected static&nbsp;void</CODE></FONT></TD>
+<CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#executeStatement(randoop.Sequence, java.util.List, int, java.lang.Object[])">executeStatement</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
                  List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
                  int&nbsp;index,
@@ -429,7 +424,7 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected static&nbsp;boolean</CODE></FONT></TD>
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#getRuntimeInputs(randoop.Sequence, java.util.List, int, java.util.List, java.lang.Object[])">getRuntimeInputs</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
                  List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
                  int&nbsp;i,
@@ -660,9 +655,9 @@ public <STRONG>ExecutableSequence</STRONG>(<A HREF="../randoop/Sequence.html" ti
 <A NAME="ExecutableSequence(randoop.Sequence, randoop.Execution, java.util.List)"><!-- --></A><H3>
 ExecutableSequence</H3>
 <PRE>
-protected <STRONG>ExecutableSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
-                             <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;exec,
-                             List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;&nbsp;checks)</PRE>
+public <STRONG>ExecutableSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
+                          <A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;exec,
+                          List&lt;List&lt;<A HREF="../randoop/Check.html" title="interface in randoop">Check</A>&gt;&gt;&nbsp;checks)</PRE>
 <DL>
 <DD>Create an executable sequence directly using the given arguments.
 
@@ -791,11 +786,11 @@ public void <STRONG>execute</STRONG>(<A HREF="../randoop/ExecutionVisitor.html" 
 <A NAME="getRuntimeInputs(randoop.Sequence, java.util.List, int, java.util.List, java.lang.Object[])"><!-- --></A><H3>
 getRuntimeInputs</H3>
 <PRE>
-protected static boolean <STRONG>getRuntimeInputs</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
-                                          List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
-                                          int&nbsp;i,
-                                          List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputs,
-                                          Object[]&nbsp;runtimeObjects)</PRE>
+public static boolean <STRONG>getRuntimeInputs</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+                                       List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
+                                       int&nbsp;i,
+                                       List&lt;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&gt;&nbsp;inputs,
+                                       Object[]&nbsp;runtimeObjects)</PRE>
 <HR>
 
 <A NAME="getRuntimeValuesForVars(java.util.List, java.util.List)"><!-- --></A><H3>
@@ -808,10 +803,10 @@ protected static Object[] <STRONG>getRuntimeValuesForVars</STRONG>(List&lt;<A HR
 <A NAME="executeStatement(randoop.Sequence, java.util.List, int, java.lang.Object[])"><!-- --></A><H3>
 executeStatement</H3>
 <PRE>
-protected static void <STRONG>executeStatement</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
-                                       List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
-                                       int&nbsp;index,
-                                       Object[]&nbsp;inputVariables)</PRE>
+public static void <STRONG>executeStatement</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
+                                    List&lt;<A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>&gt;&nbsp;outcome,
+                                    int&nbsp;index,
+                                    Object[]&nbsp;inputVariables)</PRE>
 <HR>
 
 <A NAME="getResult(int)"><!-- --></A><H3>

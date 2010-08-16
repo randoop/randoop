@@ -166,15 +166,10 @@ public class JunitFileWriter {
   public File writeDriverFile(List<Class<?>> allClasses) {
     return writeDriverFile(junitDriverClassName);
   }
-  /** Creates Junit tests for the faults.
+  /**
+   * Creates Junit tests for the faults.
    * Output is a set of .java files.
-   *
-   * @param allClasses List of all classes of interest (this is a workaround for emma missing problem:
-   * we want to compute coverage over all classes, not just those that happened to have been touched during execution.
-   * Otherwise, a bad suite can report good coverage.
-   * The trick is to insert code that will load all those classes;
    */
-  // TODO allClasses is dead. Remove?
   public File writeDriverFile(String driverClassName) {
     return writeDriverFile(getDir(), packageName, driverClassName, getJunitTestSuiteNames());
   }
