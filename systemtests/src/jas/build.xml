@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!-- $Id: build.xml 2122 2008-09-27 09:52:55Z kredel $ -->
+
+
+<project name="jas" default="usage" basedir="." >
+
+  <property name="src"       value="src" />
+  <property name="bin"       value="edu" />
+  <property name="build"     value="." />
+  <property name="doc"       value="doc/api" />
+  <property name="test"      value="test" />
+  <property name="jar"       value="jas.jar" />
+
+  <property name="libs"      value="${basedir}/../lib" />
+  <property name="log4j"     value="${libs}/log4j.jar" />
+  <property name="junit"     value="${libs}/junit.jar" />
+  <property name="jomp"      value="${libs}/jomp1.0b.jar" />
+  <property name="jython"    value="${libs}/jython.jar" />
+  <property name="meditor"   value="${libs}/meditor.jar" />
+  <property name="tnj"       value="${libs}/tnj.jar" />
+  <property name="lint"      value="${libs}/lint4j.jar" />
+  <property name="l4j.level" value="3" />
+  <property name="l4j.exact" value="true" />
+
+  <!--property name="cp"       value="${log4j}:${junit}:${tnj}:." /-->
+  <property name="cp"       value="${log4j}:${junit}:." />
+  <!--property name="doccp"    value="${log4j}:${junit}:${tnj}" /-->
+  <property name="doccp"    value="${log4j}:${junit}" />
+  <property name="version"  value="0.1" />
+
+<!--
+  <taskdef name="lint4j" classname="com.jutils.lint4j.ant.Lint4jAntTask">
+    <classpath>
+      <pathelement location="${lint}"/>
+    </classpath>
+  </taskdef>
+-->
+
+<target name="vorher" >
+  <!-- set properties DSTAMP, TSTAMP -->
+  <tstamp />
+  <mkdir dir="edu/jas"  />
+  <mkdir dir="${test}"  />
+  <mkdir dir="doc"  />
+</target>
+
+<!-- requires ant 1.7 -->
+<target name="symlinks" depends="symlinks.check" if="checklinks" >
+  <symlink resource="${src}/edu/jas/application" link="application" />
+  <symlink resource="${src}/edu/jas/arith"       link="arith" />
+  <symlink resource="${src}/edu/jas/kern"        link="kern" />
+  <symlink resource="${src}/edu/jas/module"      link="module" />
+  <symlink resource="${src}/edu/jas/poly"        link="poly" />
+  <symlink resource="${src}/edu/jas/ps"          link="ps" />
+  <symlink resource="${src}/edu/jas/ring"        link="ring" />
+  <symlink resource="${src}/edu/jas/structure"   link="structure" />
+  <symlink resource="${src}/edu/jas/ufd"         link="ufd" />
+  <symlink resource="${src}/edu/jas/util"        link="util" />
+  <symlink resource="${src}/edu/jas/vector"      link="vector" />
+</target>
+
+<target name="symlinks.check" >
+ <condition property="checklinks" >
+  <not>
+   <and>
+   <available file="application" />
+   <available file="arith" />
+   <available file="kern" />
+   <available file="module" />
+   <available file="poly" />
+   <available file="ps" />
+   <available file="ring" />
+   <available file="structure" />
+   <available file="ufd" />
+   <available file="util" />
+   <available file="vector" />
+   </and>
+  </not>
+ </condition>
+  <delete quiet="true" failonerror="false" file="./application/application" />
+  <delete quiet="true" failonerror="false" file="./arith/arith" />
+  <delete quiet="true" failonerror="false" file="./kern/kern" />
+  <delete quiet="true" failonerror="false" file="./module/module" />
+  <delete quiet="true" failonerror="false" file="./poly/poly" />
+  <delete quiet="true" failonerror="false" file="./ring/ring" />
+  <delete quiet="true" failonerror="false" file="./structure/structure" />
+  <delete quiet="true" failonerror="false" file="./ufd/ufd" />
+  <delete quiet="true" failonerror="false" file="./util/util" />
+  <delete quiet="true" failonerror="false" file="./vector/vector" />
+</target>
+<!-- requires ant 1.7 -->
+
+
+<target name="usage" >
+  <echo message="ant &lt;name&gt; cl='cmd'"  />
+  <echo message="basedir = ${basedir}"  />
+  <echo message="libs = ${libs}"  />
+  <!--echoproperties /-->
+</target>
+
+<target name="recompile" depends="vorher" >
+  <javac srcdir="." destdir="${build}"
+         includes="*/*.java" 
+         debug="on" debuglevel="lines,source"
+         classpath="${cp}" 
+  />
+</target>
+
+<target name="compile" depends="vorher" >
+  <javac srcdir="${src}" destdir="${build}" 
+         debug="on" debuglevel="lines,source"
+         classpath="${cp}"
+         listfiles="true"
+  >
+  <compilerarg value="-Xlint:unchecked" />
+  </javac>
+<!--     listfiles="true"
+-->
+</target>
+
+<target name="doc" >
+  <javadoc sourcepath="${src}" destdir="${doc}" 
+           classpath="${doccp}" 
+           overview="overview.html" 
+           author="true" 
+           linksource="true" 
+           >
+<!--       
+           private="true" 
+           linksource="true" 
+-->
+     <!--tag name="typeparam" description="Type parameter: " scope="all" /-->
+     <!--tag name="param" /-->
+     <!--tag name="return" /-->
+     <tag name="todo"      description="To do"            scope="all" />
+     <tag name="fix"       description="Fix me"           scope="all" />
+     <!--tag name="unused"    description="Not used"         scope="all" /-->
+     <tag name="usage"     description="Usage"            scope="all" />
+     <fileset dir="${src}" includes="**/*.java"  />
+  </javadoc>
+</target>
+
+<target name="time" depends="vorher" >
+  <java  classname="edu.jas.poly.PolynomialTimings" 
+         classpath="${cp}" 
+         fork="yes" />
+</target>
+
+<target name="TestOld" depends="vorher" >
+  <java  classname="edu.jas.SemaphoreTest" 
+         classpath="${cp}" 
+         fork="yes" />
+  <java  classname="edu.jas.arith.BigRationalTest" 
+         classpath="${cp}" 
+         fork="yes" />
+  <java  classname="edu.jas.arith.BigIntegerTest" 
+         classpath="${cp}" 
+         fork="yes" />
+  <java  classname="edu.jas.poly.ExpVectorTest" 
+         classpath="${cp}" 
+         fork="yes" />
+  <java  classname="edu.jas.poly.PolynomialTest" 
+         classpath="${cp}" 
+         fork="yes" />
+  <java  classname="edu.jas.poly.RatPolynomialTest" 
+         classpath="${cp}" 
+         fork="yes" />
+  <java  classname="edu.jas.poly.IntPolynomialTest" 
+         classpath="${cp}" 
+         fork="yes" />
+  <java  classname="edu.jas.poly.RatGBaseTest" 
+         classpath="${cp}" 
+         fork="yes" />
+</target>
+
+<target name="testsingle"
+        if="name" 
+        depends="vorher" >
+  <junit printsummary="yes" 
+         fork="no" 
+         showoutput="yes"
+         haltonfailure="no" >
+     <classpath path="${cp}" />
+     <test name="edu.jas.${name}" 
+           outfile="${name}.lst" />
+  </junit>
+</target>
+
+<target name="test" 
+        depends="vorher" >
+  <junit printsummary="yes" 
+         fork="yes" 
+         showoutput="yes"
+         haltonfailure="no" >
+     <classpath path="${cp}" />
+     <formatter type="plain" /> <!-- plain, xml, brief -->
+     <batchtest todir="${test}" >
+        <fileset dir="${build}">
+          <include name="edu/**/*Test.class"/>
+        </fileset>
+     </batchtest>
+  </junit>
+</target>
+
+<target name="testarith" 
+        depends="vorher" >
+  <junit printsummary="yes" 
+         fork="yes" 
+         showoutput="yes"
+         haltonfailure="no" >
+     <classpath path="${cp}" />
+     <formatter type="plain" /> <!-- plain, xml, brief -->
+     <batchtest todir="${test}" >
+        <fileset dir="${build}">
+          <include name="edu/jas/arith/*Test.class"/>
+        </fileset>
+     </batchtest>
+  </junit>
+</target>
+
+<target name="testpoly" 
+        depends="vorher" >
+  <junit printsummary="yes" 
+         fork="yes" 
+         showoutput="yes"
+         haltonfailure="no" >
+     <classpath path="${cp}" />
+     <formatter type="plain" /> <!-- plain, xml, brief -->
+     <batchtest todir="${test}" >
+        <fileset dir="${build}">
+          <include name="edu/jas/poly/*Test.class"/>
+        </fileset>
+     </batchtest>
+  </junit>
+</target>
+
+<target name="testufd" 
+        depends="vorher" >
+  <junit printsummary="yes" 
+         fork="yes" 
+         showoutput="yes"
+         haltonfailure="no" >
+     <classpath path="${cp}" />
+     <formatter type="plain" /> <!-- plain, xml, brief -->
+     <batchtest todir="${test}" >
+        <fileset dir="${build}">
+          <include name="edu/jas/ufd/*Test.class"/>
+        </fileset>
+     </batchtest>
+  </junit>
+</target>
+
+<target name="lint" depends="vorher" >
+  <lint4j sourcepath="${src}" 
+          classpath="${cp}:${jar}"
+          packages="edu.jas.*" 
+          level="${l4j.level}" 
+          exact="${l4j.exact}" >
+  </lint4j>
+</target>
+
+<target name="jdepend" depends="vorher" >
+  <jdepend outputfile="test/jdepend-report-${DSTAMP}.out" >
+      <exclude name="java.*" />
+      <exclude name="javax.*" />
+      <classespath>
+        <pathelement location="${bin}"/>
+      </classespath>
+  </jdepend>
+</target>
+
+<target name="jar" depends="vorher" >
+  <jar jarfile="/tmp/jas-ant-${DSTAMP}.jar"  >
+     <fileset dir="." includes="**/*.java"  />
+     <fileset dir="." includes="**/*.html"  />
+     <fileset dir="." includes="*.py"  />
+     <fileset dir="." includes="examples/*.py"  />
+     <fileset dir="." includes="**/*.jas"  />
+     <fileset dir="." includes="build.xml Makefile log4j.properties"  />
+  </jar>
+</target>
+<!--
+     <fileset dir="edu/jas" />
+-->
+
+<target name="jar07" depends="vorher" >
+  <jar jarfile="/tmp/jas-ant-${DSTAMP}.jar"  >
+     <fileset dir="." includes="**/*.java" excludes="**/ufd/**" />
+     <fileset dir="." includes="**/*.html"  />
+     <fileset dir="." includes="*.py"  />
+     <fileset dir="." includes="examples/*.py"  />
+     <fileset dir="." includes="**/*.jas"  />
+     <fileset dir="." includes="build.xml Makefile log4j.properties"  />
+     <fileset dir="edu/jas" excludes="**/ufd/**" />
+  </jar>
+</target>
+
+<target name="clean" >
+  <delete verbose="true" >
+    <fileset dir="${src}" defaultexcludes="no" includes="**/*~"  />
+  </delete>
+</target>
+
+<target name="distclean" depends="clean" >
+  <delete verbose="true" >
+    <fileset dir="${src}" includes="**/*.class"  />
+    <fileset dir="${build}" includes="**/*.class"  />
+  </delete>
+</target>
+
+<target name="untabify-isdone" depends="vorher" >
+  <fixcrlf srcdir="${src}"
+       tab="remove"
+       tablength="5"
+       javafiles="yes"
+       includes="**/*.java" 
+  />
+</target>
+
+<target name="sed-isdone" depends="vorher" >
+  <replace dir="${src}"
+       token="@param C coefficient"
+       value="@typeparam C coefficient"
+       summary="true"
+       >
+    <include name="**/*.java" /> 
+  </replace>
+</target>
+
+</project>

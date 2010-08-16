@@ -1,0 +1,81 @@
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project>
+  <!-- TODO: should this inherit commons-build? -->
+  <artifactId>commons-jelly-parent</artifactId>
+
+  <dependencies>
+    <!-- 
+      the common Maven dependencies for Jelly shared by the core
+      build and all individual taglib builds.  Use this
+      file to keep all dependency versions in sync.
+      Does not include CLI (Command Line Interface).
+    -->
+    
+    <dependency>
+      <id>commons-jexl</id>
+      <version>1.0</version>
+    </dependency>
+    
+    <dependency>
+      <id>xml-apis</id>
+      <version>1.0.b2</version>
+    </dependency>
+    
+    <dependency>
+      <id>commons-beanutils</id>
+      <version>1.6</version>
+      <properties>
+        <gump.runtime>true</gump.runtime>
+      </properties>
+    </dependency>
+    
+    <dependency>
+      <id>commons-collections</id>
+      <version>2.1</version>
+      <properties>
+        <gump.runtime>true</gump.runtime>
+      </properties>
+    </dependency>
+    
+    <dependency>
+      <id>commons-logging</id>
+      <version>1.0.3</version>
+      <properties>
+        <gump.runtime>true</gump.runtime>
+      </properties>
+    </dependency>
+    
+    <dependency>
+      <id>dom4j</id>
+      <version>1.5.2</version>
+    </dependency>
+
+    <dependency>
+      <id>jaxen</id>
+      <version>1.1-beta-4</version>
+    </dependency>
+
+    <dependency>
+      <id>xerces</id>
+      <version>2.2.1</version>
+      <properties>
+        <gump.project>xml-xerces</gump.project>
+      </properties>
+    </dependency>
+  </dependencies>
+</project>

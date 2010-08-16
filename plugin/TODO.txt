@@ -1,0 +1,13 @@
+
+behaviors to tests / tests to write:
+
+* Make viewers lazy
+
+* Test for correct behavior if user attempts to launch multiple runs of Randoop at once
+
+* When launching a JUnit test from the Randoop view (by double-clicking an error),
+  JUnit should be run with assertions on.
+
+* do something sensible if randoop runs out of memory (e.g. threads=false and objectcache)
+
+* do something sensible if randoop generates no inputs because of an equals objectcache

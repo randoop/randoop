@@ -1,0 +1,30 @@
+START DFRESULT
+classname=java2.util2.Random,methodname=nextInt,line=253,id=3,direction=false
+var0 =  prim : int:100 : 
+var1 =  prim : java.lang.Object:null : 
+var2 =  method : java2.util2.Collections.nCopies(int,java.lang.Object) : var0 var1 
+var3 =  method : java2.util2.Collections.shuffle(java2.util2.List) : var2 
+VARS 1
+var0 100 4
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.Stack,methodname=peek,line=78,id=0,direction=false
+var0 =  cons : java2.util2.Stack.<init>() : 
+var1 =  prim : int:1 : 
+var2 =  method : java2.util2.Vector.setSize(int) : var0 var1 
+var3 =  method : java2.util2.Stack.peek() : var0 
+VARS 1
+var1 0
+END DFRESULT
+
+START DFRESULT
+classname=java2.util2.AbstractList,methodname=equals,line=599,id=16,direction=false
+var0 =  cons : java2.util2.ArrayList.<init>() : 
+var1 =  prim : short:-1 : 
+var2 =  method : java2.util2.AbstractList.equals(java.lang.Object) : var0 var1 
+VARS 2
+var0 object
+var1 object
+END DFRESULT
+

@@ -1,0 +1,5 @@
+CLASS_DIR=src/classpath
+AUX_JARS_DIR=
+CLASS_OMIT=
+METHOD_OMIT=nCopies\|randomUUID\|IllegalFormatCodePointException
+USETHREADS=false
