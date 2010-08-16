@@ -428,6 +428,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Remove tests that are subsumed in other tests")
   public static boolean remove_subsequences = true;
 
+  /**
+   * Run each test twice and compare the checks.  If the results differ,
+   * then disable the test.
+   */
   @Option("Run each test twice and compare the checks")
   public static boolean compare_checks = false;
 
