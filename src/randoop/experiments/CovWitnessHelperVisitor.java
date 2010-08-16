@@ -42,7 +42,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
 
 
   /**
-   * @param covClasses the classes that are coverage-instrumented.
+   * @param tracker the classes that are coverage-instrumented.
    */
   public CovWitnessHelperVisitor(CodeCoverageTracker tracker) {
     if (tracker == null) {
