@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -21,9 +20,6 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.IConstants;
-
 /**
  * String mnemonic provider and parser for <code>IType</code>s. This class can
  * can be used to store an <code>IType</code> in a <code>String</code> and
@@ -33,8 +29,8 @@ import randoop.plugin.internal.IConstants;
  * classpath entry path, and fully qualified name of an IType in an unspecified
  * format. projects.
  * <p>
- * Note that type mnemonics are constant; none of the methods will mutate the
- * object being operated on.
+ * Note that <code>TypeMnemonic</code> objects are constant; none of the methods
+ * will mutate the object being operated on.
  * <p>
  * This class provides several advantages over using handle identifiers provided
  * by <code>IType</code> as specified by their superclass
@@ -52,9 +48,11 @@ import randoop.plugin.internal.IConstants;
  * @see org.eclipse.jdt.core.IJavaProject
  * @see org.eclipse.jdt.core.IClasspathEntry
  * @see org.eclipse.jdt.core.IType
+ * 
  * @author Peter Kalauskas
  */
 public class TypeMnemonic {
+  private static final char MNEMONIC_DELIMITER = '%';
   private static final int LENGTH = 4;
   
   private final IJavaProject fJavaProject;
@@ -67,7 +65,7 @@ public class TypeMnemonic {
   private final String fFullyQualifiedTypeName;
 
   /**
-   * Constructs a <code>TypeMnemonic</code> from the given IType. The new type
+   * Constructs a <code>TypeMnemonic</code> from the given <code>IType</code>. The new type
    * mnemonic is guaranteed to exist.
    * 
    * @param t
@@ -133,7 +131,7 @@ public class TypeMnemonic {
   public TypeMnemonic(String mnemonic, IWorkspaceRoot root) {
     Assert.isLegal(mnemonic != null);
     
-    String[] s = mnemonic.split(IConstants.MNEMONIC_DELIMITER);
+    String[] s = mnemonic.split(new Character(MNEMONIC_DELIMITER).toString());
     Assert.isLegal(s.length == LENGTH);
 
     fJavaProjectName = s[0];
@@ -443,29 +441,58 @@ public class TypeMnemonic {
   public int getClasspathKind() {
     return fClasspathKind;
   }
-  
+
+  /**
+   * Returns the type's classpath entry's path from when this mnemonic was first
+   * created.
+   * 
+   * @return the path as given by the <code>IClasspathEntry</code>.
+   * @see org.eclipse.jdt.core.IClasspathEntry#getPath()
+   */
   public IPath getClasspath() {
     return fClasspath;
   }
 
+  /**
+   * Returns the fully-qualified name stored in this type-mnemonic, originally
+   * given by {@link IType#getFullyQualifiedName()}. The enclosing type
+   * separator is <code>'$'</code>, not <code>'.'</code>.
+   * 
+   * @return the fully-qualified name
+   */
   public String getFullyQualifiedName() {
     return fFullyQualifiedTypeName;
   }
 
+  /**
+   * Returns <code>true</code> if each of the resources this type mnemonic
+   * stores are not-<code>null</code> and exist.
+   * 
+   * @return <code>true</code> if this type mnemonic's underlying resources are
+   *         not-<code>null</code> and exist
+   * @see org.eclipse.jdt.core.IJavaElement#exists()
+   */
   public boolean exists() {
-    return fJavaProject != null && fClasspathEntry != null && fType != null;
+    return fJavaProject != null && fJavaProject.exists() && fClasspathEntry != null
+        && fType != null && fType.exists();
   }
 
+  /**
+   * Returns the string representation of this mnemonic. Information from the
+   * mnemonic string may be retrieved using
+   * {@link TypeMnemonic#TypeMnemonic(String)} or
+   * {@link TypeMnemonic#TypeMnemonic(String, IWorkspaceRoot)}
+   */
   @Override
   public String toString() {
     StringBuilder mnemonic = new StringBuilder();
 
     mnemonic.append(getJavaProjectName());
-    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
+    mnemonic.append(MNEMONIC_DELIMITER);
     mnemonic.append(getClasspathKind());
-    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
+    mnemonic.append(MNEMONIC_DELIMITER);
     mnemonic.append(getClasspath());
-    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
+    mnemonic.append(MNEMONIC_DELIMITER);
     mnemonic.append(getFullyQualifiedName());
 
     return mnemonic.toString();
@@ -475,7 +502,14 @@ public class TypeMnemonic {
   public int hashCode() {
     return toString().hashCode();
   }
-  
+
+  /**
+   * Returns true if this types mnemonic's string equals another one. Whether or
+   * not the underlying objects (<code>IJavaProject</code>,
+   * <code>IClasspathEntry</code>, and <code>IType</code>) exist has no effect.
+   * 
+   * @return true if this type mnemonic equals another one
+   */
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof TypeMnemonic) {

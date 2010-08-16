@@ -12,6 +12,10 @@ import org.osgi.framework.Bundle;
 
 import randoop.plugin.RandoopPlugin;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class RandoopPluginImages {
 
   public static final String NAME_PREFIX = RandoopPlugin.getPluginId();

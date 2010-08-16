@@ -10,6 +10,10 @@ import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
 import randoop.plugin.internal.ui.options.IOption;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class TestInputsPage extends OptionWizardPage {
   
   private IOption fTestInputSelectorOption;

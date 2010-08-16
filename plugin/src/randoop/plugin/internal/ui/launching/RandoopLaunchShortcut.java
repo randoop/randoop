@@ -110,7 +110,7 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
               elementSearchMonitor.beginTask(taskName, pfrs.length);
               for (IPackageFragmentRoot pfr : pfrs) {
                 if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
-                  types.addAll(RandoopCoreUtil.findTypes(pfr, false,
+                  types.addAll(RandoopCoreUtil.findTestableTypes(pfr, false,
                       elementSearchMonitor.newChild(1)));
                 } else {
                   elementSearchMonitor.worked(1);
@@ -123,14 +123,14 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
             break;
           case IJavaElement.PACKAGE_FRAGMENT_ROOT:
           case IJavaElement.PACKAGE_FRAGMENT:
-            List<IType> foundTypes = RandoopCoreUtil.findTypes(element, false,
+            List<IType> foundTypes = RandoopCoreUtil.findTestableTypes(element, false,
                 elementSearchMonitor.newChild(1));
-            types.addAll(RandoopCoreUtil.findTypes(element, false,
+            types.addAll(RandoopCoreUtil.findTestableTypes(element, false,
                 elementSearchMonitor.newChild(1)));
             selectedTypes.addAll(foundTypes);
             break;
           case IJavaElement.COMPILATION_UNIT:
-            foundTypes = RandoopCoreUtil.findTypes(element, false,
+            foundTypes = RandoopCoreUtil.findTestableTypes(element, false,
                 elementSearchMonitor.newChild(1));
             types.addAll(foundTypes);
             selectedTypes.addAll(foundTypes);

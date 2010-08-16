@@ -27,6 +27,12 @@ import randoop.runtime.PercentDone;
 import randoop.runtime.RandoopFinished;
 import randoop.runtime.RandoopStarted;
 
+/**
+ * Message listener for that updates Randoop sessions.
+ * 
+ * @author Peter Kalauskas
+ * @see TestGeneratorSession
+ */
 public class MessageSessionListener implements IMessageListener {
   TestGeneratorSession fSession;
 
@@ -66,7 +72,7 @@ public class MessageSessionListener implements IMessageListener {
       }
 
       String projectName = path.segment(0);
-      IProject project = root.getProject();
+      IProject project = root.getProject(projectName);
 
       IJavaProject javaProject = JavaCore.create(project);
       if (javaProject == null || !javaProject.exists()) {

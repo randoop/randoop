@@ -14,7 +14,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchShortcut;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -38,6 +37,10 @@ import randoop.plugin.internal.core.runtime.TestGeneratorSession;
 import randoop.plugin.internal.ui.RandoopPluginImages;
 import randoop.runtime.ErrorRevealed;
 
+/**
+ * 
+ * @author Carlos Pacheco
+ */
 public class TestGeneratorViewPart extends ViewPart {
   /**
    * The ID of the view as specified by the extension.
@@ -45,7 +48,9 @@ public class TestGeneratorViewPart extends ViewPart {
   private static final String ID = "randoop.plugin.ui.views.TestGeneratorViewPart"; //$NON-NLS-1$
 
   private TreeViewer fTreeViewer;
+  
   private CounterPanel fCounterPanel;
+  
   private RandoopProgressBar fProgressBar;
 
   ICompilationUnit fJUnitDriver;
@@ -68,13 +73,13 @@ public class TestGeneratorViewPart extends ViewPart {
   
   public static TestGeneratorViewPart openInstance() {
     final MutableObject viewPart = new MutableObject(null);
-    
+
     PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 
       public void run() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         IWorkbenchPage page = window.getActivePage();
-        
+
         try {
           // Open the view
           viewPart.setValue(page.showView(TestGeneratorViewPart.ID));
@@ -82,13 +87,13 @@ public class TestGeneratorViewPart extends ViewPart {
           IStatus s = RandoopStatus.PART_INIT_EXCEPTION.getStatus(e);
           RandoopPlugin.log(s);
         }
-        
+
       }
     });
-    
+
     if (viewPart.getValue() != null) {
       Assert.isTrue(viewPart.getValue() instanceof TestGeneratorViewPart);
-      
+
       return (TestGeneratorViewPart) viewPart.getValue();
     }
     return null;

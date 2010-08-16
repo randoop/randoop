@@ -1,20 +1,16 @@
 package randoop.plugin.internal.ui.options;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -34,6 +30,10 @@ import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class OutputDirectoryOption extends Option implements IOptionChangeListener {
 
   private Shell fShell;
@@ -114,7 +114,7 @@ public class OutputDirectoryOption extends Option implements IOptionChangeListen
     final char[] ILLEGAL_CHARACTERS = { '\\', ':', '*', '`', '?', '"', '<', '>', '|' };
     for (char c : ILLEGAL_CHARACTERS) {
       if (outputSourceFolderName.contains(new Character(c).toString())) {
-        status = RandoopStatus.createStatus(IStatus.ERROR, "Output folder cannot contain any of the following characters: \\ : * ` ? \" < > |");
+        status = RandoopStatus.createUIStatus(IStatus.ERROR, "Output folder cannot contain any of the following characters: \\ : * ` ? \" < > |");
         return status;
       }
     }
@@ -122,7 +122,7 @@ public class OutputDirectoryOption extends Option implements IOptionChangeListen
     IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(fJavaProject,
         outputSourceFolderName);
     if (outputDir == null) {
-      status = RandoopStatus.createStatus(IStatus.OK, "Output folder does not exist and will be created on launch");
+      status = RandoopStatus.createUIStatus(IStatus.OK, "Output folder does not exist and will be created on launch");
       return status;
     }
 

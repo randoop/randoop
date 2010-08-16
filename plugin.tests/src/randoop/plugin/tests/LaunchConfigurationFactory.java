@@ -103,7 +103,7 @@ public class LaunchConfigurationFactory {
     case IPackageFragmentRoot.K_BINARY:
       for (IClassFile cf : pf.getClassFiles()) {
         if (RAND.nextDouble() < ratio) {
-          types.addAll(RandoopCoreUtil.findTypes(cf, true, null));
+          types.addAll(RandoopCoreUtil.findTestableTypes(cf, true, null));
           count++;
         }
 
@@ -115,7 +115,7 @@ public class LaunchConfigurationFactory {
     case IPackageFragmentRoot.K_SOURCE:
       for (ICompilationUnit cu : pf.getCompilationUnits()) {
         if (RAND.nextDouble() < ratio) {
-          types.addAll(RandoopCoreUtil.findTypes(cu, true, null));
+          types.addAll(RandoopCoreUtil.findTestableTypes(cu, true, null));
           count++;
         }
 

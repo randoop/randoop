@@ -23,16 +23,18 @@ import org.eclipse.ui.ide.IDE.SharedImages;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopStatus;
 
+/**
+ * 
+ */
 public class ClasspathLabelProvider extends LabelProvider {
   private IJavaProject fJavaProject;
   
   public ClasspathLabelProvider(IJavaProject javaProject) {
     fJavaProject = javaProject;
   }
+  
   /**
-   * The <code>LabelProvider</code> implementation of this
-   * <code>ILabelProvider</code> method returns <code>null</code>. Subclasses
-   * may override.
+   * (see org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathEntryLabelProvider#getImage(Object))
    */
   @Override
   public Image getImage(Object element) {
@@ -81,9 +83,7 @@ public class ClasspathLabelProvider extends LabelProvider {
   }
 
   /**
-   * The <code>LabelProvider</code> implementation of this
-   * <code>ILabelProvider</code> method returns the element's
-   * <code>toString</code> string. Subclasses may override.
+   * 
    */
   @Override
   public String getText(Object element) {

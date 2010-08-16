@@ -1,6 +1,5 @@
 package randoop.plugin.internal.ui.options;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -36,6 +34,10 @@ import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class ProjectOption extends Option {
   private Shell fShell;
 
@@ -101,21 +103,21 @@ public class ProjectOption extends Option {
     if (status.isOK()) {
       IProject project = workspace.getRoot().getProject(projectName);
       if (!project.exists()) {
-        return RandoopStatus.createStatus(IStatus.ERROR, NLS.bind(
+        return RandoopStatus.createUIStatus(IStatus.ERROR, NLS.bind(
             "Project {0} does not exist", new Object[] { projectName }));
       }
       if (!project.isOpen()) {
-        return RandoopStatus.createStatus(IStatus.ERROR, NLS.bind(
+        return RandoopStatus.createUIStatus(IStatus.ERROR, NLS.bind(
             "Project {0} is closed", new Object[] { projectName }));
       }
 
       javaProject = JavaCore.create(project);
       if (javaProject == null) {
-        return RandoopStatus.createStatus(IStatus.ERROR,
+        return RandoopStatus.createUIStatus(IStatus.ERROR,
             NLS.bind("Project {0} is not a Java project", new Object[] { projectName }));
       }
     } else {
-      return RandoopStatus.createStatus(IStatus.ERROR, NLS.bind(
+      return RandoopStatus.createUIStatus(IStatus.ERROR, NLS.bind(
           "Illegal project name: {0}", new Object[] { status.getMessage() }));
     }
     

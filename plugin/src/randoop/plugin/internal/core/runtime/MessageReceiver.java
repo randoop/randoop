@@ -6,22 +6,14 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.osgi.util.NLS;
 
+import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopStatus;
 import randoop.runtime.ClosingStream;
 import randoop.runtime.IMessage;
 
-public class MessageReceiver extends Job {
-  
-  private static int RECEIVER_ID = 1;
-  
+public class MessageReceiver implements Runnable {
   private IMessageListener fIMessageListener;
   private ServerSocket fServerSocket;
 
@@ -32,7 +24,6 @@ public class MessageReceiver extends Job {
    *           if unable to create socket
    */
   public MessageReceiver(IMessageListener messageListener) throws IOException {
-    super(NLS.bind("Randoop Message Receiver {0}", RECEIVER_ID++));
     
     if (messageListener == null) {
       fIMessageListener = new NullMessageListener();
@@ -48,12 +39,7 @@ public class MessageReceiver extends Job {
     return fServerSocket.getLocalPort();
   }
 
-  @Override
-  public IStatus run(IProgressMonitor monitor) {
-    if (monitor == null) {
-      monitor = new NullProgressMonitor();
-    }
-    
+  public void run() {
     int port = -1;
     try {
       Socket sock = fServerSocket.accept();
@@ -74,17 +60,18 @@ public class MessageReceiver extends Job {
       fIMessageListener.handleTermination();
       
       // We actually end up here if the user presses the stop button, so
-      // don't return an error
-      // return RandoopStatus.COMM_TERMINATED_SESSION.getStatus(port, null);
+      // don't log an error
+      // IStatus s = RandoopStatus.COMM_TERMINATED_SESSION.getStatus(port, null);
+      // RandoopPlugin.log(s);
     } catch (ClassNotFoundException e) {
-      return RandoopStatus.COMM_MESSAGE_CLASS_NOT_FOUND.getStatus(port, null);
+      IStatus s = RandoopStatus.COMM_MESSAGE_CLASS_NOT_FOUND.getStatus(port, null);
+      RandoopPlugin.log(s);
     } finally {
       try {
         fServerSocket.close();
       } catch (IOException ioe) {
       }
     }
-    return RandoopStatus.OK_STATUS;
   }
 
 

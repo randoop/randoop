@@ -27,6 +27,10 @@ import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstan
 import randoop.plugin.internal.ui.RandoopMessages;
 import randoop.plugin.internal.ui.SWTFactory;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class OptionFactory {
 
   private final static int MARGIN = 5;
@@ -583,7 +587,7 @@ public class OptionFactory {
         TestKinds.valueOf(testKindArgument);
         return RandoopStatus.OK_STATUS;
       } catch (IllegalArgumentException e) {
-        return RandoopStatus.createStatus(IStatus.ERROR, "Test Kinds must be of type All, Pass, or Fail.");
+        return RandoopStatus.createUIStatus(IStatus.ERROR, "Test Kinds must be of type All, Pass, or Fail.");
       }
     }
 

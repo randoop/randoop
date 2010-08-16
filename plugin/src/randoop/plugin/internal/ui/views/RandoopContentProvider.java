@@ -7,6 +7,10 @@ import org.eclipse.jface.viewers.Viewer;
 import randoop.plugin.model.resultstree.IRandoopTreeElement;
 import randoop.plugin.model.resultstree.RunResultsTree;
 
+/**
+ * 
+ * @author Carlos Pacheco
+ */
 public class RandoopContentProvider implements ITreeContentProvider {
 
   private RunResultsTree root;

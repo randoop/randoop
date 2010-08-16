@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,7 +35,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -89,6 +87,10 @@ import randoop.plugin.internal.ui.ClasspathLabelProvider;
 import randoop.plugin.internal.ui.MessageUtil;
 import randoop.plugin.internal.ui.SWTFactory;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class ClassSelectorOption extends Option implements IOptionChangeListener {
   
   private static Image IMG_ERROR = PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
@@ -852,7 +854,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     List<String> selectedTypeMnemonics = RandoopArgumentCollector.getCheckedTypes(config);
 
     if (selectedTypeMnemonics.isEmpty()) {
-      return RandoopStatus.createStatus(IStatus.ERROR, "No classes or methods selected");
+      return RandoopStatus.createUIStatus(IStatus.ERROR, "No classes or methods selected");
     }
 
     for (String typeMnemonicString : selectedTypeMnemonics) {
@@ -860,7 +862,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       IType type = typeMnemonic.getType();
       
       if (fJavaProject == null || !fJavaProject.equals(typeMnemonic.getJavaProject())) {
-        return RandoopStatus.createStatus(IStatus.ERROR, "One of the classes does not exist in the selected project");
+        return RandoopStatus.createUIStatus(IStatus.ERROR, "One of the classes does not exist in the selected project");
       }
       
       if (grayedTypesMnemonic.contains(typeMnemonicString)) {
@@ -872,10 +874,10 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
           
           IMethod m = new MethodMnemonic(methodMnemonicString).findMethod(type);
           if (m == null) {
-            return RandoopStatus.createStatus(IStatus.ERROR, "One of the methods does not exist");
+            return RandoopStatus.createUIStatus(IStatus.ERROR, "One of the methods does not exist");
           } else if (!m.exists()) {
             String msg = NLS.bind("Mmethod '{0}' does not exist", m.getElementName());
-            return RandoopStatus.createStatus(IStatus.ERROR, msg);
+            return RandoopStatus.createUIStatus(IStatus.ERROR, msg);
           }
           
           methodList.add(m);
@@ -1249,16 +1251,16 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
               int flags = type.getFlags();
               if (type.isInterface()) {
                 String msg = MessageFormat.format("'{0}' is an interface", type.getElementName());
-                return RandoopStatus.createStatus(IStatus.ERROR, msg);
+                return RandoopStatus.createUIStatus(IStatus.ERROR, msg);
               } else if (Flags.isAbstract(flags)) {
                 String msg = MessageFormat.format("'{0}' is abstract", type.getElementName());
-                return RandoopStatus.createStatus(IStatus.ERROR, msg);
+                return RandoopStatus.createUIStatus(IStatus.ERROR, msg);
               } else if (!Flags.isPublic(flags)) {
                 String msg = MessageFormat.format("'{0}' is not public", type.getElementName());
-                return RandoopStatus.createStatus(IStatus.ERROR, msg);
+                return RandoopStatus.createUIStatus(IStatus.ERROR, msg);
               }
             } else {
-              return RandoopStatus.createStatus(IStatus.ERROR, "One of the selected elements is not a Java class or enum");
+              return RandoopStatus.createUIStatus(IStatus.ERROR, "One of the selected elements is not a Java class or enum");
             }
           } catch (JavaModelException e) {
             IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);

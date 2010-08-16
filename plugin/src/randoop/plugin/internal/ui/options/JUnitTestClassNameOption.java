@@ -14,6 +14,10 @@ import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class JUnitTestClassNameOption extends Option {
   private Text fFullyQualifiedTestName;
   private Text fPackageName;
@@ -95,7 +99,7 @@ public class JUnitTestClassNameOption extends Option {
   
   protected IStatus validate(String packageName, String className) {
     if (packageName.contains("$") || className.contains("$")) {  //$NON-NLS-1$//$NON-NLS-2$
-      return RandoopStatus.createStatus(IStatus.ERROR, "JUnit class name cannot use secondary types");
+      return RandoopStatus.createUIStatus(IStatus.ERROR, "JUnit class name cannot use secondary types");
     }
     IStatus packageStatus = RandoopStatus.OK_STATUS;
     if (!packageName.isEmpty()) {
