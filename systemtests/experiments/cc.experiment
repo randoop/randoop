@@ -1,0 +1,5 @@
+CLASS_DIR=src/collections/src/java
+AUX_JARS_DIR=
+CLASS_OMIT=Looping|Circular|Unbounded|Cursorable|BeanMap|WhileClosure
+METHOD_OMIT=setMaximumSize\|WhileClosure\|looping\|addAll
+USETHREADS=false

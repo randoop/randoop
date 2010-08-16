@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002-2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly 
+    xmlns:j="jelly:core" 
+    xmlns="jelly:swing" 
+    xmlns:log="jelly:log"
+    xmlns:define="jelly:define"
+    xmlns:bsh="jelly:beanshell">
+
+        <!-- 
+            TODO:
+                - an insets tag (CVS ?)
+                - some Font support (CVS ?)
+                - incorporate CollapsablePanel
+                - dragable Label with subclass ItemTitleLabel
+                - CollapsablePanel implementing DropTarget (or approacher at least)
+                - adding relations
+                - DC pane (later with inheritance)
+                - Relations Pane with drop
+            -->
+  <define:script var="onClosing">
+    <log:info>The frame is closing via event: ${event}</log:info>
+  </define:script>
+  
+  <frame title="Metadata start of pane for a definition" var="frame" location="100,100" size="800,400">
+    
+      <panel name="metadata-panel">
+                <gridBagLayout>
+                    <gbc gridx="0" gridy="0" ipadx="20" fill="horizontal"> 
+                        <!-- prefer a title ?? dnd may be harder -->
+                        <panel name="head-panel">
+                        <label text="Definition: Definition of a metrics"/><!-- need fonts ! -->
+                        <!-- this should be a draggable label, being the source to drop a relation -->
+                        </panel>
+                    </gbc>
+                    <gbc gridx="0" gridy="1" fill="both">
+                        <!-- constraints variable definitions... for later use, in the children of the center element -->
+                            <gbc var="labelConstraints" 
+                                    weightx="0" weighty="0" 
+                                    ipadx="5" ipady="2" 
+                                    anchor="west"
+                                    fill="none"/>
+                            <gbc var="pop_up_constraints" basedOn="${labelConstraints}" 
+                                    weightx="1" 
+                                    fill="horizontal"
+                                    anchor="east" />
+                        <gridBagLayout>
+                                <gbc gridy="0">
+                                    <panel name="dc_metadata"><!-- should be a collapasble panel !! -->
+                                        <label text="... still todo..."/>
+                                    </panel>
+                                </gbc>
+                                <gbc gridy="1">
+                                    <panel name="pedagogical metadata"><!-- should be a collapasble panel !! --><gridBagLayout>
+
+                                        <gbc gridx="0" gridy="0" basedOn="${labelConstraints}"><label text="Difficulty:"/>
+                                            </gbc>
+                                            <gbc gridx="1" gridy="0" basedOn="${pop_up_constraints}">
+                                                <comboBox name="comboZero" var="comboZero"/>
+                                                ${comboZero.addItem("easy")}
+                                                ${comboZero.addItem("fair")}
+                                                ${comboZero.addItem("difficult")}
+                                                ${comboZero.setSelectedIndex(1)}$
+                                                </gbc>
+
+                                        <gbc gridx="0" gridy="1" basedOn="${labelConstraints}"><label text="Abstractness:"/>
+                                            </gbc>
+                                            <gbc gridx="1" gridy="1" basedOn="${pop_up_constraints}">
+                                                <comboBox name="c" var="c"/>
+                                                ${c.addItem("concrete")}
+                                                ${c.addItem("medium")}
+                                                ${c.addItem("abstract")}
+                                                ${c.setSelectedIndex(1)}$
+                                                </gbc>
+
+                                        <gbc gridx="2" gridy="0" basedOn="${labelConstraints}" gridheight="2"
+                                                ipadx="10"><panel name="blank"/></gbc>
+                                        <gbc gridx="3" gridy="0" basedOn="${labelConstraints}"><label text="Learning-context:"/>
+                                            </gbc>
+                                            <gbc gridx="4" gridy="0" basedOn="${pop_up_constraints}">
+                                                <comboBox name="c" var="c"/>
+                                                ${c.addItem("primary-education")}
+                                                ${c.addItem("secondary-education")}
+                                                ${c.addItem("higher-education")}
+                                                ${c.addItem("university-first-cycle")}
+                                                ${c.addItem("university-second-cycle")}
+                                                ${c.addItem("university-postgraduate")}
+                                                ${c.addItem("technical-school-first-cycle")}
+                                                ${c.addItem("technical-school-second-cycle")}
+                                                ${c.addItem("professional-formation")}
+                                                ${c.addItem("continuous-formation")}
+                                                </gbc>
+
+                                        <gbc gridx="3" gridy="1" basedOn="${labelConstraints}"><label text="Field:"/>
+                                            </gbc>
+                                            <gbc gridx="4" gridy="1" basedOn="${pop_up_constraints}">
+                                                <comboBox name="c" var="c"/>
+                                                ${c.addItem("mathematics")}
+                                                ${c.addItem("statistics")}
+                                                ${c.addItem("engineering")}
+                                                ${c.addItem("psychology")}
+                                                ${c.addItem("biology")}
+                                                ${c.addItem("chemistry")}
+                                                ${c.addItem("physics")}
+                                                ${c.addItem("computer-science")}
+                                                ${c.addItem("economy")}
+                                                ${c.addItem("historical")}
+                                                ${c.addItem("other")}
+                                                </gbc>
+
+                                            </gridBagLayout></panel>
+                                </gbc>
+                            </gridBagLayout>
+                        </gbc>
+                    <gbc gridx="0" gridy="2" fill="horizontal">
+                        <!-- would need a separator here." -->
+                        </gbc>
+                </gridBagLayout>
+      </panel>
+    
+    <windowListener var="event" closing="${onClosing}"/>
+  </frame>
+  ${frame.show()} 
+
+</j:jelly>
+
+
+

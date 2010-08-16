@@ -1,0 +1,5 @@
+CLASS_DIR=src/chain/src/java
+AUX_JARS_DIR=src/chain/target/lib
+CLASS_OMIT=
+METHOD_OMIT=
+USETHREADS=false
