@@ -3,7 +3,6 @@ package randoop.test;
 import java.io.InputStream;
 import java.util.List;
 
-import randoop.Globals;
 import randoop.StatementKind;
 import randoop.experiments.RandomWalkGenerator;
 import randoop.main.GenInputsAbstract;
@@ -22,7 +21,7 @@ public class NaivePerformanceTest extends AbstractPerformanceTest {
       Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
-    Globals.nochecks = true;
+    GenInputsAbstract.debug_checks = false;
     RandomWalkGenerator explorer = new RandomWalkGenerator(m, Long.MAX_VALUE, 100000, null, null, null, null);
     explorer.explore();
   }

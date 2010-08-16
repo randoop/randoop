@@ -7,6 +7,7 @@ import plume.UtilMDE;
 import randoop.AbstractGenerator;
 import randoop.Globals;
 import randoop.RandoopListenerManager;
+import randoop.main.GenInputsAbstract;
 
 /**
  * Modified from Daikon.FileIOProgress.
@@ -31,7 +32,6 @@ public class ProgressDisplay extends Thread {
   public static enum Mode { SINGLE_LINE_OVERWRITE, MULTILINE, NO_DISPLAY }
 
   private Mode outputMode;
-  private long progressIntervalMillis = 5000;
 
   private RandoopListenerManager listenerMgr;
 
@@ -86,7 +86,7 @@ public class ProgressDisplay extends Thread {
       }
 
       try {
-        sleep(progressIntervalMillis);
+        sleep(GenInputsAbstract.progressinterval);
       } catch (InterruptedException e) {
         // hmm
       }
@@ -135,7 +135,7 @@ public class ProgressDisplay extends Thread {
 
   /** Clear the display; good to do before printing to System.out. * */
   public void clear() {
-    if (progressIntervalMillis == -1)
+    if (GenInputsAbstract.progressinterval == -1)
       return;
     // "display("");" is wrong becuase it leaves the timestamp and writes
     // spaces across the screen.
@@ -150,14 +150,14 @@ public class ProgressDisplay extends Thread {
    * until the next automatic display.
    */
   public void display() {
-    if (progressIntervalMillis == -1)
+    if (GenInputsAbstract.progressinterval == -1)
       return;
     display(message());
   }
 
   /** Displays the given message. * */
   public void display(String message) {
-    if (progressIntervalMillis == -1)
+    if (GenInputsAbstract.progressinterval == -1)
       return;
     String status = message;
     synchronized (print_synchro) {

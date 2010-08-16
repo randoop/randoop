@@ -41,14 +41,14 @@ public class NaiveExplorerPerformanceTest extends TestCase {
       Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
-    Globals.nochecks = true;
+    GenInputsAbstract.debug_checks = false;
     RandomWalkGenerator explorer = new RandomWalkGenerator(m, TIME_LIMIT_SECS*1000, Integer.MAX_VALUE, null, null, null, null);
     
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.explore();
     System.out.println("" + Globals.lineSep + "" + Globals.lineSep + "Expected " + EXPECTED_MIN + " sequences, created " + explorer.numSequences() + " sequences.");
     GenInputsAbstract.dontexecute = false;
-    Globals.nochecks = false;
+    GenInputsAbstract.debug_checks = true;
     if (explorer.numSequences() < EXPECTED_MIN) {
       StringBuilder b = new StringBuilder();
       b.append("Randoop's explorer created fewer than " + EXPECTED_MIN);
