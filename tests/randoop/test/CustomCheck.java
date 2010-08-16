@@ -40,6 +40,17 @@ public class CustomCheck implements Check {
   }
 
   @Override
+  public int get_stmt_no() {
+    throw new RuntimeException("programmatic evaluation of a CustomCheck not supported");
+  }
+
+  @Override
+  public String get_id() {
+    throw new RuntimeException("programmatic evaluation of a CustomCheck not supported");
+  }
+
+
+  @Override
   public String toCodeStringPostStatement() {
     return String.format("%s.a1(%s); Assert.assertEquals(%s.i, %d);", var, var, var, ival);
   }

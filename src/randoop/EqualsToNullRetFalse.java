@@ -41,6 +41,11 @@ public final class EqualsToNullRetFalse implements ObjectContract {
   }
 
   @Override
+  public String get_observer_str() {
+    return "equalsNull @";
+  }
+
+  @Override
   public boolean evalExceptionMeansFailure() {
     return true;
   }
