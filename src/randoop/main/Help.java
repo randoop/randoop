@@ -2,7 +2,12 @@ package randoop.main;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
 
 import randoop.Globals;
 import randoop.util.Util;
@@ -10,6 +15,9 @@ import randoop.util.Util;
 public class Help extends CommandHandler {
 
   public static PrintStream out = System.out;
+  
+  @Option("Also show unpublicized options")
+  public static boolean unpub = false;
 
   public Help() {
     super(
@@ -20,15 +28,22 @@ public class Help extends CommandHandler {
         "Displays a help message for a given command.",
         null,
         "None (for the general help message), or the name of a command (for command-specific help).",
-        "A help message is printed to stdout.", "", null /*
-         * no
-         * options
-         */);
+        "A help message is printed to stdout.", "", new Options(Help.class));
   }
 
   @Override
-  public boolean handle(String[] args) throws RandoopTextuiException {
+  public boolean handle(String[] args_raw) throws RandoopTextuiException {
 
+    String[] args = null;
+    try {
+      args = foptions.parse(args_raw);
+      if (args.length > 1)
+        throw new ArgException("Unrecognized arguments: " + Arrays.toString(args));
+    } catch (ArgException ae) {
+      System.out.println("Error while parsing command-line arguments: " + ae.getMessage());
+      System.exit(1);
+    }
+    
     if (args.length == 0) {
 
       try {
@@ -41,6 +56,9 @@ public class Help extends CommandHandler {
       out.println();
       out.println("Type `help' followed by a command name to see documentation.");
       out.println();
+      out.println("Type `help --unpub' followed by a command name to also see ");
+      out.println("unsupported command-line options.");
+      out.println();
       out.println("Commands:");
       out.println();
       for (CommandHandler h : Main.handlers) {
@@ -50,7 +68,7 @@ public class Help extends CommandHandler {
 
     } else {
 
-      if (args.length > 1) {
+      if (args.length != 1) {
         throw new RandoopTextuiException(
             "The `help' command must be followed by"
             + " exactly one argument: the command that you"
@@ -67,7 +85,7 @@ public class Help extends CommandHandler {
       for (CommandHandler h : allHandlers) {
 
         if (h.fcommand.equals(command)) {
-          h.usageMessage(out);
+          h.usageMessage(out, unpub);
           return true;
         }
       }

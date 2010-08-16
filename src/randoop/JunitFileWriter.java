@@ -120,17 +120,17 @@ public class JunitFileWriter {
       out.println("  public static boolean debug = false;");
       out.println();
       int testCounter = 1;
-      for (ExecutableSequence fault : sequencesForOneFile) {
+      for (ExecutableSequence s : sequencesForOneFile) {
         if (includeParseableString) {
           out.println("/*");
-          out.println(fault.sequence.toString());
+          out.println(s.sequence.toString());
           out.println("*/");
         }
         out.println("  public void test" + testCounter++ + "() throws Throwable {");
         out.println();
         out.println(indent("if (debug) System.out.printf(\"%n" + className + ".test" + (testCounter-1) + "\");"));
         out.println();
-        out.println(indent(fault.toCodeString()));
+        out.println(indent(s.toCodeString()));
         out.println("  }");
         out.println();
       }

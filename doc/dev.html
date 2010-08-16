@@ -70,6 +70,7 @@
 <p>Under Unix:</p>
 
 <ol>
+  <li>To do everything (build <i>and</i> run all tests), type <code>make all</code>, <b><i>OR</i></b>
   <li>From a command prompt, type <code>make build</code> under Randoop's home
     directory (the directory containing this file).</li>
   <li>If you want to rebuild from scratch, type <code>make clean</code> first.</li>
@@ -87,7 +88,6 @@
 
 <ul>
   <li>From a command prompt, type <code>make tests</code> under Randoop's home directory.</li>
-  <li>To do everything (build <i>and</i> run all tests), type <code>make all</code>.</li>
 </ul>
 
 <h2 id="classpath">Randoop classpath</h2>
@@ -108,7 +108,7 @@ following:
   variable in <tt>~/.bashrc</tt> or some other configuration file.
   </li>
 
-  <li>Create a temporary shell script or mini-Makefile for ad-hoc
+  <li>Create a temporary shell script or Makefile for ad-hoc
   use, for instance, a Make file such as:
 
 <pre class="code">
@@ -359,8 +359,8 @@ returns a new sequence rather than modifying its receiver.</li>
 <li> If the above code feels somewhat onerous, keep in mind that the
 Sequences classes were designed for automatic generation, not to
 create individual sequences by hand. The purpose of these examples is
-to show you how sequences are created so you can go forth and create
-new automated techniques for doing so!</li>
+to show you how sequences are created so that, if you need to, you can
+create new automated generation techniques.</li>
 </ul>
 <p>
 A second way to create a sequence is using <code>concatenation</code>:
@@ -663,7 +663,6 @@ in <a href="javadoc/randoop/main/GenInputsAbstract.html">GenInputsAbstract</a>.
 <ul>
 <li>ForwardGenerator is the generator for Randoop's normal operation.</li>
 </ul>
-
 
 </body>
 </html>

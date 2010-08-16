@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import randoop.main.GenInputsAbstract;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
@@ -452,7 +453,7 @@ public final class Sequence implements Serializable, WeightedElement {
    */
   private void checkRep() {
 
-    if (Globals.nochecks)
+    if (!GenInputsAbstract.debug_checks)
       return;
 
     if (statements == null)
@@ -502,23 +503,23 @@ public final class Sequence implements Serializable, WeightedElement {
       return true;
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size())
-      return Globals.randooptestrun ? verifyFalse("size", other) : false;
+      return GenInputsAbstract.debug_checks ? verifyFalse("size", other) : false;
       for (int i = 0; i < this.statements.size(); i++) {
         Statement thisS = null;
         Statement otherS = null;
         thisS = this.statements.get(i);
         otherS = other.statements.get(i);
-        if (Globals.randooptestrun) {
+        if (GenInputsAbstract.debug_checks) {
           assert this.statements.get(i) == thisS;
           assert other.statements.get(i) == otherS;
         }
         if (!thisS.statement.equals(otherS.statement))
-          return Globals.randooptestrun ? verifyFalse("statement index " + i, other) : false;
+          return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i, other) : false;
           if (thisS.inputs.size() != otherS.inputs.size())
-            return Globals.randooptestrun ? verifyFalse("statement index " + i + " inputs size ", other) : false;
+            return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i + " inputs size ", other) : false;
             for (int j = 0; j < thisS.inputs.size(); j++) {
               if (!thisS.inputs.get(j).equals(otherS.inputs.get(j)))
-                return Globals.randooptestrun ? verifyFalse("statement index " + i + " input " + j, other) : false;
+                return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i + " input " + j, other) : false;
             }
       }
       return true;

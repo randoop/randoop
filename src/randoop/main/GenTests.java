@@ -123,10 +123,8 @@ public class GenTests extends GenInputsAbstract {
   public static SimpleLog progress = new SimpleLog (true);
 
   private static Options options = new Options(
-      Globals.class,
       GenTests.class,
       GenInputsAbstract.class,
-      Log.class,
       ReflectionExecutor.class,
       ForwardGenerator.class,
       AbstractGenerator.class);
@@ -153,6 +151,8 @@ public class GenTests extends GenInputsAbstract {
       usage ("while parsing command-line arguments: %s",
              ae.getMessage());
     }
+    
+    checkOptionsValid();
 
     Randomness.reset(randomseed);
 
@@ -203,8 +203,9 @@ public class GenTests extends GenInputsAbstract {
         throw new Error ("Specified class " + c + " is not visible");
       }
     }
-    List<StatementKind> model =
-      Reflection.getStatements(classes, new DefaultReflectionFilter(omitmethods));
+    
+    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods);
+    List<StatementKind> model = Reflection.getStatements(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).
     RConstructor objectConstructor = null;
@@ -221,9 +222,14 @@ public class GenTests extends GenInputsAbstract {
       try {
         for (Member m : Reflection.loadMethodsAndCtorsFromFile(new File(methodlist))) {
           if (m instanceof Method) {
-            statements.add(RMethod.getRMethod((Method)m));
+	      if (reflectionFilter.canUse((Method)m)) {
+                statements.add(RMethod.getRMethod((Method)m));
+	      }
           } else {
             assert m instanceof Constructor<?>;
+            if (reflectionFilter.canUse((Constructor<?>)m)) {
+              statements.add(RMethod.getRMethod((Method)m));
+	    }
             statements.add(RConstructor.getRConstructor((Constructor<?>)m));
           }
         }
@@ -310,32 +316,11 @@ public class GenTests extends GenInputsAbstract {
     LinkedList<ITestFilter> outputTestFilters = new LinkedList<ITestFilter>();
     outputTestFilters.add(new DefaultTestFilter());
     
+    /////////////////////////////////////////
+    // Create the generator for this session.
+    explorer = new ForwardGenerator(model, timelimit * 1000, inputlimit, componentMgr, null, listenerMgr, outputTestFilters);
+    /////////////////////////////////////////
 
-
-
-    if (component_based) {
-      explorer = new ForwardGenerator(
-        model,
-        timelimit * 1000,
-        inputlimit,
-        componentMgr,
-        null,
-        listenerMgr,
-        outputTestFilters);
-
-    } else {
-
-      // Experimental.
-      // Generate inputs using random walk generator.
-      explorer = new RandomWalkGenerator(
-          model,
-          timelimit * 1000,
-          inputlimit,
-          componentMgr,
-          null,
-          listenerMgr,
-          outputTestFilters);
-    }
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf ("Explorer = %s\n", explorer);
     }
