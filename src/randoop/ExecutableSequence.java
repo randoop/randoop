@@ -65,7 +65,7 @@ import randoop.util.Reflection;
  *        <li> isExceptionalExecution(i)
  *        <li> getExecutionResult(i)
  *        <li> getResult(i)
- *        <li> getExecption(i)
+ *        <li> getExeception(i)
  *    </ul>
  * </ul>
  *

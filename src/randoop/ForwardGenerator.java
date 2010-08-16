@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
-import randoop.runtime.MessageSender;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -279,12 +278,9 @@ public class ForwardGenerator extends AbstractGenerator {
       if (Log.isLoggingOn()) Log.log(">>>" + times + newSequence.toCodeString());
     }
 
-    // Heuristic: if parameterless statement, subsequence inputs
-    // will all be redundant, so just remove it from list of
-    // statements.
-    // Note that this can make the list of statements empty, violating its
-    // rep invariant.
-    if (GenInputsAbstract.no_args_statement_heuristic && statement.getInputTypes().size() == 0) {
+    // If parameterless statement, subsequence inputs
+    // will all be redundant, so just remove it from list of statements.
+    if (statement.getInputTypes().size() == 0) {
       statements.remove(statement);
     }
 
@@ -323,19 +319,22 @@ public class ForwardGenerator extends AbstractGenerator {
     return new ExecutableSequence(newSequence);
   }
 
-  // TODO: document.
+  // Adds the string corresponding to the given newSequences to the
+  // set allSequencesAsCode. The latter set is intended to mirror
+  // the set allSequences, but stores strings instead of Sequences.
   protected void randoopConsistencyTest2(Sequence newSequence) {
     // Testing code.
-    if (Globals.randooptestrun) {
+    if (GenInputsAbstract.debug_checks) {
       this.allsequencesAsCode.add(newSequence.toCodeString());
       this.allsequencesAsList.add(newSequence);
     }
   }
 
-  // TODO: document.
+  // Checks that the set allSequencesAsCode contains a set of strings
+  // equivalent to the sequences in allSequences.
   protected void randoopConsistencyTests(Sequence newSequence) {
     // Testing code.
-    if (Globals.randooptestrun) {
+    if (GenInputsAbstract.debug_checks) {
       String code = newSequence.toCodeString();
       if (this.allSequences.contains(newSequence)) {
         if (!this.allsequencesAsCode.contains(code)) {
@@ -431,7 +430,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && (!((RMethod) statement).isStatic()));
 
       // If alias ratio is given, attempt with some probability to use a variable already in S.
-      if (GenInputsAbstract.alias_ratio != null &&
+      if (GenInputsAbstract.alias_ratio != 0 &&
           Randomness.weighedCoinFlip(GenInputsAbstract.alias_ratio)) {
 
         // candidateVars will store the indices that can serve as input to the i-th input in st.
@@ -514,7 +513,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // At this point, we have one or more sequences that create non-null values of type inputTypes[i].
       // However, the user may have requested that we use null values as inputs with some given frequency.
       // If this is the case, then use null instead with some probability. 
-      if (!isReceiver && GenInputsAbstract.null_ratio != null
+      if (!isReceiver&& GenInputsAbstract.null_ratio != 0
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn()) Log.logLine("null-ratio option given. Randomly decided to use null as input.");
         StatementKind st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
@@ -529,7 +528,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
       Sequence chosenSeq = null;
-      if (GenInputsAbstract.weighted_inputs) {
+      if (GenInputsAbstract.small_tests) {
         chosenSeq = Randomness.randomMemberWeighted(l);
       } else {
         chosenSeq = Randomness.randomMember(l);
@@ -557,7 +556,7 @@ public class ForwardGenerator extends AbstractGenerator {
         return new InputsAndSuccessFlag (false, null, null);
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
-      if (GenInputsAbstract.alias_ratio != null) {
+      if (GenInputsAbstract.alias_ratio != 0) {
         // Update types and typesToVars.
         for (int j = 0 ; j < chosenSeq.size() ; j++) {
           StatementKind stk = chosenSeq.getStatementKind(j);

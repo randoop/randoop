@@ -30,6 +30,7 @@
         </ul></li>
       <li><a href="#generating_tests">Generating tests</a>
         <ul>
+          <li><a href="#specifying-methods">Specifying methods and constructors under test</a></li>
           <li><a href="#error_revealing_tests">Error-revealing Tests</a></li>
           <li><a href="#regression_tests">Regression tests</a></li>
         </ul></li>
@@ -147,17 +148,6 @@ java -ea -classpath randoop.jar randoop.main.Main <em>command</em> <em>args...</
 </pre>
 
 <p>
-Currently, Randoop supports only two commands, <tt>help</tt> and
-<tt>gentests</tt>.  To get help, you can run, for example, one of these
-commands:
-</p>
-
-<pre class="code">
-java -ea -classpath randoop.jar randoop.main.Main help
-java -ea -classpath randoop.jar randoop.main.Main help gentests
-</pre>
-
-<p>
 You don't need the <code>-classpath</code> argument if you add
 <tt>randoop.jar</tt> to your classpath.
 We recommend using the <tt>-ea</tt> (enable assertions)
@@ -165,26 +155,27 @@ option to java when running Randoop: if something goes wrong and you
 send us an error report, we will be able better to help you diagnose
 the cause of the problem.</p>
 
+<p>
+Randoop supports two commands:
+</p>
 
-<!-- <h2 id="cutomize">Key command-line options</h2> -->
+<ul>
+<li> <b>help</b> prints out a usage message For details, see <a href="#getting_help">Getting Help</a>. Example uses:
 
-<!-- <h3 id="usethreads">Speeding up generation with <tt>usethreads</tt></h3> -->
+<pre class="code">
+java -ea -classpath randoop.jar randoop.main.Main help
+java -ea -classpath randoop.jar randoop.main.Main help gentests
+</pre>
 
-<!-- Randoop can execute a generated test in two modes: -->
+<li> <b>gentests</b> generates unit tests. For details,
+see <a href="#generating_tests">Generating Tests</a>. Example use:
 
-<!-- <ul> -->
-<!--   <li> <b>Execute each test in a separate thread.</b> If your code -->
+<pre class="code">
+java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.TreeSet --timelimit=60
+</pre>
 
+</ul>
 
-<!-- In the first mode, every time Randoop generates a new test, it creates -->
-<!-- a new thread to execute the test in. The main advantage of doing this -->
-<!-- is that Randoop can kill any test that is taking too long to finish -->
-<!-- executing by killing its corresponding thread; without the option, a -->
-<!-- test resulting in non-terminating behavior will cause Randoop to -->
-<!-- hang. The main disa -->
-
-<!-- By default, Randoop runs with the option <tt>usethreads</tt> set -->
-<!-- to <tt>true</tt>. This means -->
 
 <h3 id="command-line-options">Command-line options</h3>
 
@@ -192,21 +183,35 @@ the cause of the problem.</p>
 <ul>
   <li>Code under test
     <ul>
-      <li><b>--testclass=</b><i>string</i> <tt>[+]</tt>. Each element is the fully-qualified name of a class under test. [default []]</li>
-      <li><b>--classlist=</b><i>string</i>. In the file, each class under test is specified by its fully
+      <li><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class under test [default []]</li>
+      <li><b>--classlist=</b><i>string</i>. The name of a file that lists classes under test.
+ 
+ In the file, each class under test is specified by its fully
  qualified name on a separate line. [no default]</li>
       <li><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
+ 
  In the file, each each method under test is specified on a separate
- line. [no default]</li>
-      <li><b>--omitmethods=</b><i>regex</i>. Do not exercise methods that match regular expression &lt;string&gt; [no default]</li>
-      <li><b>--init-routine=</b><i>string</i>. specifies initialization routine (class.method) [no default]</li>
-      <li><b>--literals-level=</b><i>enum</i>. <ul>
+ line. The list of methods given by this argument will agument
+ any methods derived via the --classlist option.
+ 
+ Also see section on <a href="#specifying-methods">specifying methods 
+ and constructors under test</a>. [no default]</li>
+      <li><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods that match the regular
+ expression given. This does not prevent indirect calls to
+ such methods from other, allowed methods. [no default]</li>
+      <li><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method) [no default]</li>
+      <li><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
+      <li><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE.
+  
+ <ul>
  <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
  <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.</li>
  <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.</li>
  <li> --literals-level=NONE means do not use literals specified in a literals file.</li>
  </ul> [default NONE]</li>
-      <li><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. Literals in these files are used in addition to all other constants in the pool.
+      <li><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
+ 
+ Literals in these files are used in addition to all other constants in the pool.
  May be specified multiple times.
  For the format of this file, see documentation in class <code>randoop.LiteralFileReader</code>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under test. [default []]</li>
@@ -219,24 +224,62 @@ the cause of the problem.</p>
   </li>
   <li>Limiting test generation
     <ul>
-      <li><b>--timelimit=</b><i>int</i>. Used to determine when to stop test generation. Generation stops when
- either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached. [default 100]</li>
-      <li><b>--inputlimit=</b><i>int</i>. Used to determine when to stop test generation. Generation stops when
+      <li><b>--timelimit=</b><i>int</i>. Maximum number of seconds to spend generating tests [default 100]</li>
+      <li><b>--inputlimit=</b><i>int</i>. Maximum number of tests generated.
+ 
+ Used to determine when to stop test generation. Generation stops when
  either the time limit (--timelimit=int) OR the input limit
- (--inputlimit=int) is reached.  Note that the number of tests output
+ (--inputlimit=int) is reached.  The number of tests output
  may be smaller than then number of inputs created, because redundant
  and illegal inputs may be discarded.  Also see --outputlimit. [default 100000000]</li>
       <li><b>--outputlimit=</b><i>int</i>. Determines the maximum number of tests to output, no matter how many
  are generated.  Contrast to --inputlimit. [default 100000000]</li>
       <li><b>--maxsize=</b><i>int</i>. Do not generate tests with more than this many statements [default 100]</li>
-      <li><b>--forbid-null=</b><i>boolean</i>. Even when this option is set to true, Randoop uses null only when
- there is no non-null value available.  This option causes Randoop to
- abandon the method call rather than providing null, when no non-null
- value is available. [default true]</li>
-      <li><b>--null-ratio=</b><i>double</i>. Use null with the given frequency. [TODO explain] [no default]</li>
-      <li><b>--string-maxlen=</b><i>int</i>. Maximum length of strings in generated tests.  Strings longer than
- 65KB (or about 10,000 characters) may be rejected by the Java
- compiler, according to the Java Virtual Machine specification. [default 10000]</li>
+      <li><b>--forbid-null=</b><i>boolean</i>. Never use null as input to methods or constructors.
+ 
+ This option causes Randoop to abandon the method call rather than providing
+ null as an input, when no non-null value of the appropriate type is available.
+ 
+ To ask Randoop to calls methods with null with greater frequency,
+ see option --null-ratio. [default true]</li>
+    </ul>
+  </li>
+  <li>Varying the nature of generated tests
+    <ul>
+      <li><b>--string-maxlen=</b><i>int</i>. Maximum length of Strings in generated tests [default 10000]</li>
+      <li><b>--null-ratio=</b><i>double</i>. Use null with the given frequency.
+ 
+ If a null ratio is given, it should be between 0 and 1. A ratio of X means that
+ null will be used instead of a non-null value as a parameter to method calls,
+ with X frequency (1 means always use null, 0 means never use null). For example,
+ a ratio of 0.5 directs Randoop to use null inputs 50 percent of the time.
+ 
+ Randoop never uses null for receiver values. [default 0.0]</li>
+      <li><b>--alias-ratio=</b><i>double</i>. Try to reuse values from a sequence with the given frequency.
+ 
+ If an alias ratio is given, it should be between 0 and 1.
+ 
+ A ratio of 0 results in tests where each value created within a test input is typically used at most once
+ as an argument in a method call. A ratio of 1 tries to maximize the number of times
+ values are used as inputs to parameters within a test. [default 0.0]</li>
+      <li><b>--small-tests=</b><i>boolean</i>. Favor shorter sequences when assembling new sequences out of old ones.
+
+ Randoop generate new tests by combining old previously-generated tests.
+ If this option is given, tests with fewer calls are given greater weight during
+ its random selection. This has the overall effect of producing smaller JUnit tests. [default false]</li>
+      <li><b>--clear=</b><i>int</i>. Clear the component set each time it reaches <int> inputs.
+ 
+ Randoop stores previously-generated tests in a "component" set, and uses them to
+ generate new tests. Setting this variable to a small number can sometimes result
+ in a greater variety of tests generated during a single run. [default 100000000]</li>
+    </ul>
+  </li>
+  <li>Creating test oracles
+    <ul>
+      <li><b>--check-object-contracts=</b><i>boolean</i>. Use Randoop's default set of object contracts.
+  
+ By default, Randoop checks a set of contracts, e.g.
+ equals(Object) is reflexive, equals(null) returns false, no NullPointerExceptions, no AssertionErrors, etc. [default true]</li>
     </ul>
   </li>
   <li>Outputting the JUnit tests
@@ -246,16 +289,60 @@ the cause of the problem.</p>
       <li><b>--junit-classname=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
       <li><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files [default ]</li>
       <li><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written [no default]</li>
-      <li><b>--comm-port=</b><i>int</i>. If this value is not -1, Randoop relays information about the
- program's execution over a connection to the specified port on the
- local machine. Information is sent using a serialized
- randoop.runtime.Message object. Printing is also suppressed. [default -1]</li>
+      <li><b>--dont-output-tests=</b><i>boolean</i>. Run Randoop but do not create JUnit tests [default false]</li>
+      <li><b>--output-nonexec=</b><i>boolean</i>. Output sequences even if they do not complete execution.
+ 
+  Randoop's default behavior is to output only tests consisting of
+  method call sequences that execute to the end, rather than throwing
+  an exception or failing a contract check in the middle of execution. [default false]</li>
+      <li><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests [no default]</li>
     </ul>
   </li>
-  <li>Logging
+  <li>Runtime environment
     <ul>
+      <li><b>-D</b> <b>--system-props=</b><i>string</i> <tt>[+]</tt>. Specify system properties to be set (similar to java -Dx=y) [default []]</li>
+      <li><b>--agent=</b><i>string</i>. Specify agent command for recursive JVM calls [no default]</li>
+      <li><b>--mem-megabytes=</b><i>int</i>. specify the memory size (in megabytes) for recursive JVM calls [default 1000]</li>
+      <li><b>--capture-output=</b><i>boolean</i>. Capture all output to stdout and stderr [default false]</li>
+    </ul>
+  </li>
+  <li>Serialized input/output of generated tests
+    <ul>
+      <li><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Serialize test inputs to the given file [default []]</li>
+      <li><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Serialize test inputs to the given file (text-based) [default []]</li>
+      <li><b>--output-components=</b><i>string</i>. Output components (serialized, GZIPPED) to the given file.
+ 
+ Suggestion: use a .gz suffix in file name. [no default]</li>
+      <li><b>--output-tests-serialized=</b><i>string</i>. Output tests (sequences plus checkers) in serialized form to the given file.
+ 
+ Suggestion: use a .gz suffix in file name. [no default]</li>
+    </ul>
+  </li>
+  <li>Notifications
+    <ul>
+      <li><b>--comm-port=</b><i>int</i>. Uses the specified port for notifications (used by Eclipse plugin). [default -1]</li>
+      <li><b>--noprogressdisplay=</b><i>boolean</i>. Do not display progress update message to console [default false]</li>
+      <li><b>--progressinterval=</b><i>long</i>. Display progress message every &lt;int&gt; milliseconds [default 5000]</li>
+    </ul>
+  </li>
+  <li>Advanced extension points
+    <ul>
+      <li><b>--visitor=</b><i>string</i> <tt>[+]</tt>. Install the given runtime visitor [default []]</li>
+    </ul>
+  </li>
+  <li>Logging and troubleshooting Randoop
+    <ul>
+      <li><b>--debug-checks=</b><i>boolean</i>. Perform expensive internal checks (for Randoop   debugging) [default false]</li>
       <li><b>--log=</b><i>filename</i>. Name of a file to which to log lots of information.
  If not specified, no logging is done. [no default]</li>
+    </ul>
+  </li>
+  <li>Eliminating redundant tests
+    <ul>
+      <li><b>--remove-subsequences=</b><i>boolean</i>. Remove tests that are subsumed in other tests [default true]</li>
+      <li><b>--compare-checks=</b><i>boolean</i>. Run each test twice and compare the checks [default false]</li>
+      <li><b>--clean-checks=</b><i>filename</i>. Create clean checks for a serialized sequence [no default]</li>
+      <li><b>--print-diff-obs=</b><i>boolean</i>. Print any checks that are different in the clean run [default false]</li>
     </ul>
   </li>
   <li>Threading and timeouts
@@ -282,11 +369,26 @@ the cause of the problem.</p>
 
 <ul>
 <li><strong>Manual</strong>: what you are currently reading. </li>
+
 <li><strong>Randoop's <tt>help</tt> command</strong>:  For help on
-  usage, use Randoop's <tt>help</tt> command.  For example,
-  to see help on command-line options that is similar to
-  that above, type:
-<pre class="code">java -classpath randoop.jar randoop.main.Main help gentests</pre>
+  usage, use Randoop's <tt>help</tt> command. To print out Randoop's main help message, type:
+
+<pre class="code">java -classpath randoop.jar randoop.main.Main help</pre>
+
+To print out help for test generation (<tt>gentests</tt> command</a>), type:
+
+<pre class="code">
+java -ea -classpath randoop.jar randoop.main.Main help gentests
+</pre>
+
+To also include unpublicized (due to being experimental or unsupported)
+ options for a command, use the <tt>--unpub</tt> flag:
+
+<pre class="code">
+java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
+</pre>
+
+
 </li>
 <li><strong>Mailing list</strong>: If you don't find your question answered,
   email <tt>randoop-developers@googlegroups.com</tt> with your question. 
@@ -314,7 +416,6 @@ You can also determine which calls are executing by examining the stack
 trace.  On Unix this can be done by typing <tt>Ctrl-\</tt> (hold down the
 Control key, then press the Backslash key).
 </p>
-
 
 <h2 id="generating_tests">Generating tests</h2>
 
@@ -351,6 +452,69 @@ done.</pre><p>The main test driver is in class <tt>RandoopTest</tt>. You can now
 
 <pre class="code">javac -classpath randoop.jar RandoopTest*.java
 java -classpath .:randoop.jar junit.textui.TestRunner RandoopTest</pre><p>JUnit will execute the generated tests. Most will pass, and some will fail. The next section describes the kinds of tests that Randoop generates, and the reason why they may fail. </p>
+
+<h3 id="specifying-methods">Specifying methods and constructors under test</h3>
+
+<p>
+Randoop creates unit tests by calling a set of <b>methods and
+constructors under test</b>. A method or constructor <i>M</i> is
+considered a member under test if:
+</p>
+
+<ol>
+  <li> <i>M</i> is declared in a public class
+       via <code>--testclass</code> or <code>--classlist</code>, or a
+       member via via <code>--methodlist</code>, <b>AND</b>
+  <li> <i>M</i> is public, has public return type and arguments, and
+       does not match the pattern given
+       via <code>--omitmethods</code>.
+</ol>
+
+<p>Additional notes:</p>
+<ul>
+<li>
+<p>A class list file used with <code>--classlist</code> consists of a
+text file with the fully-qualified name of a class in each line; see
+a <a href="class_list_example.txt">class_list_example.txt</a> file.
+</p>
+
+<li>
+<p>
+A method list file used with <code>--methodlist</code> consists of a
+text file with the name of a method in each line. See
+a <a href="method_list_example.txt">method_list_example.txt</a> file.
+A constructor line begins with <code>"cons :"</code> followed by the
+classname, the string <code>&lt;init&gt;</code> and the constructor's
+parameter types, enclosed in parentheses. Methods are specified in a
+similar way. The following example shows informally the form of a
+constructor and method specification:
+</p>
+
+<pre class="code">
+cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
+
+method : Type0.method_name(Type1, Type2, ..., TypeN)
+</pre>
+
+<p>
+<code>Type0</code>, <code>Type1</code>,
+..., <code>TypeN</code> must be <b>fully-qualified</b> (include package names).
+</p>
+
+<li>
+<p>
+Randoop does not currently support generics. Use raw types when
+specifying classes or methods.
+</p>
+
+<li>
+<p>
+When determining the set of members under test from the
+<code>--testclass</code>, <code>--classlist</code> or
+<code>--methodlist</code> options, non-public classes or members are
+ignored.
+</p>
+</ul>
 
 <h3 id="error_revealing_tests">Error-revealing Tests</h3>
 
@@ -699,7 +863,15 @@ taking too long to execute and cannot be killed by Randoop.
  -->
 <!--  LocalWords:  maxlen testsperfile junit classname dir randomseed java ABB
  -->
-<!--  LocalWords:  filewriter nonterminating omitmethods ea int TODO KB comm
+<!--  LocalWords:  filewriter nonterminating omitmethods ea int TODO KB comm Dx
  -->
-<!--  LocalWords:  Ctrl var regexp standalone
+<!--  LocalWords:  Ctrl var regexp standalone JUnit JDK LinkedList API runtime
+ -->
+<!--  LocalWords:  enum NullPointerExceptions AssertionErrors dont nonexec JVM
+ -->
+<!--  LocalWords:  mem stdout stderr componentfile ser GZIPPED gz plugin covmap
+ -->
+<!--  LocalWords:  noprogressdisplay progressinterval filename cov ints expfile
+ -->
+<!--  LocalWords:  subsequences online unpub javac TypeN postcondition
  -->

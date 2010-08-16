@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import randoop.Globals;
+import randoop.main.GenInputsAbstract;
 
 
 
@@ -35,7 +35,7 @@ public final class MethodReflectionCode extends ReflectionCode {
   }
 
   private void checkRep() {
-    if (Globals.nochecks)
+    if (!GenInputsAbstract.debug_checks)
       return;
     String error= Reflection.checkArgumentTypes(inputs, method.getParameterTypes(), method);
     if (error != null)

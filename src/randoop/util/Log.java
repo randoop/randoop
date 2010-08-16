@@ -1,7 +1,6 @@
 package randoop.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
@@ -9,18 +8,9 @@ import java.util.List;
 import randoop.Globals;
 import randoop.Sequence;
 import randoop.StatementKind;
-import plume.Option;
-import plume.OptionGroup;
+import randoop.main.GenInputsAbstract;
 
 public final class Log {
-
-  /**
-   * Name of a file to which to log lots of information.
-   * If not specified, no logging is done.
-   */
-  @OptionGroup("Logging")
-  @Option("<filename> Name of a file to which to log lots of information")
-  public static FileWriter log = null;
 
   private Log() {
     throw new IllegalStateException("no instance");
@@ -42,8 +32,8 @@ public final class Log {
     if (!isLoggingOn()) return;
 
     try {
-      log.write(s);
-      log.flush();
+      GenInputsAbstract.log.write(s);
+      GenInputsAbstract.log.flush();
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(1);
@@ -54,9 +44,9 @@ public final class Log {
     if (! isLoggingOn()) return;
 
     try {
-      log.write(s);
-      log.write(Globals.lineSep);
-      log.flush();
+      GenInputsAbstract.log.write(s);
+      GenInputsAbstract.log.write(Globals.lineSep);
+      GenInputsAbstract.log.flush();
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(1);
@@ -67,9 +57,9 @@ public final class Log {
     if (!isLoggingOn()) return;
 
     try {
-      log.write(Globals.lineSep + Globals.lineSep);
-      log.write(s.toString());
-      log.flush();
+      GenInputsAbstract.log.write(Globals.lineSep + Globals.lineSep);
+      GenInputsAbstract.log.write(s.toString());
+      GenInputsAbstract.log.flush();
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -81,11 +71,11 @@ public final class Log {
     if (! isLoggingOn()) return;
 
     try {
-      log.write("Statements : " + Globals.lineSep);
+      GenInputsAbstract.log.write("Statements : " + Globals.lineSep);
       for (StatementKind t : model) {
-        log.write(t.toString());
-        log.write(Globals.lineSep);
-        log.flush();
+        GenInputsAbstract.log.write(t.toString());
+        GenInputsAbstract.log.write(Globals.lineSep);
+        GenInputsAbstract.log.flush();
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -94,6 +84,6 @@ public final class Log {
   }
 
   public static boolean isLoggingOn() {
-    return log != null;
+    return GenInputsAbstract.log != null;
   }
 }

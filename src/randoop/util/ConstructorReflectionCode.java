@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
-import randoop.Globals;
+import randoop.main.GenInputsAbstract;
 
 /**
  * This is used to wrap a constructor together with its parameters, ready for execution.
@@ -25,7 +25,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   }
 
   private void checkRep() {
-    if (Globals.nochecks)
+    if (!GenInputsAbstract.debug_checks)
       return;
     String error = Reflection.checkArgumentTypes(inputs, constructor.getParameterTypes(), constructor);
     if (error != null)
