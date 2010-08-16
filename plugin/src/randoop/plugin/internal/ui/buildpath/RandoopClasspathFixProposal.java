@@ -18,6 +18,10 @@ import org.eclipse.swt.graphics.Image;
 
 import randoop.plugin.RandoopPlugin;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class RandoopClasspathFixProposal extends ClasspathFixProposal {
   
   private final IJavaProject fProject;

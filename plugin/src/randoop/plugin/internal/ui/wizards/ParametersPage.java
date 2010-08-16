@@ -18,6 +18,10 @@ import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.OptionFactory;
 import randoop.plugin.internal.ui.options.OutputDirectoryOption;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class ParametersPage extends OptionWizardPage {
   final int MARGIN = 5;
   final int INDENTATION = 5;
@@ -41,14 +45,14 @@ public class ParametersPage extends OptionWizardPage {
     setControl(comp);
     
     createResourcesComposite(comp);
-    SWTFactory.createSeperator(comp, 1);
+    SWTFactory.createHorizontalSeperator(comp, 1);
     
     List<IOption> options = new ArrayList<IOption>();
     
     options.addAll(OptionFactory.createStoppingCriterionOptionGroup(comp, getBasicoptionChangeListener()));
-    SWTFactory.createSeperator(comp, 1);
+    SWTFactory.createHorizontalSeperator(comp, 1);
     options.addAll(OptionFactory.createOutputParametersOptionGroup(comp, getBasicoptionChangeListener()));
-    SWTFactory.createSeperator(comp, 1);
+    SWTFactory.createHorizontalSeperator(comp, 1);
     options.addAll(OptionFactory.createAdvancedOptionGroup(comp, getBasicoptionChangeListener()));
     
     for (IOption option : options) {

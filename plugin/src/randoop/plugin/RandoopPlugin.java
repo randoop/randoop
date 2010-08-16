@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
@@ -28,8 +27,10 @@ import randoop.plugin.internal.ui.RandoopPluginImages;
  * The activator class controls the plug-in life cycle. It stores a shared
  * instance of the plug-in and provides a static method to access it.
  * <code>RandoopActivator</code> also provides static convenience methods for
- * logging statuses and exceptions and for accessing the <code>Shell</code> that
- * the shared instance is running in.
+ * logging statuses and accessing the <code>Shell</code> that the shared
+ * instance is running in.
+ * 
+ * @author Peter Kalauskas
  */
 public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */

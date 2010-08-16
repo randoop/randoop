@@ -13,7 +13,7 @@ import randoop.plugin.RandoopPlugin;
  * handling (as in <code>CoreExceptions</code>) and UI messages for method such
  * as those in <code>IOption</code>.
  * <p>
- * Design pattern taken from com.mountainminds.eclemma.core.EclEmmaStatus
+ * (design pattern taken from com.mountainminds.eclemma.core.EclEmmaStatus)
  * 
  * @see org.eclipse.core.runtime.CoreException
  */
@@ -47,7 +47,7 @@ public class RandoopStatus {
    * An OK status with an empty message. This should only be used for UI methods
    * that return an <code>IStatus</code>.
    */
-  public static final IStatus OK_STATUS = createStatus(IStatus.OK, ""); //$NON-NLS-1$
+  public static final IStatus OK_STATUS = createUIStatus(IStatus.OK, ""); //$NON-NLS-1$
 
   public IStatus getStatus() {
     String m = MessageFormat.format(fMessage, new Integer(fCode));
@@ -100,47 +100,42 @@ public class RandoopStatus {
     new RandoopStatus(10002, IStatus.ERROR,
         "An error occured while trying to refresh a resource. Try running the operation again (code {0})");
 
-  // 20000 ERRORS ARE CONFIG RELATED
-  public static final RandoopStatus NUMBER_FORMAT_EXCEPTION_IN_CONFIG =
-    new RandoopStatus(20000, IStatus.ERROR,
-      "One of the stored attributes in the launch configuration was not formatted as a number as was expected. Try opening the launch configuration dialog and resaving the configuration (code {0}).");
-
-  /**
-   * There is another <code>IType</code> with the same fully-qualified-name as
-   * the given <code>IType</code> in a classpath with a higher priority. The
-   * configuration can still run, but it may not perform as expected by the
-   * user.
-   */
-  public static final RandoopStatus TYPE_HAS_DUPLICATE =
-    new RandoopStatus(20001, IStatus.WARNING,
-        "One of the selected classes has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class (code {0})");
-
-  /**
-   * There is another <code>IType</code> with the same fully-qualified-name as
-   * the given <code>IMethod</code>s declaring <code>IType</code> in a classpath
-   * with a higher priority. The configuration will likely crash after launching
-   * since it is unlikely the two methods have the same exact methods.
-   */
-  public static final RandoopStatus METHODS_DECLARING_CLASS_HAS_DUPLICATE =
-    new RandoopStatus(20001, IStatus.ERROR,
-        "One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class (code {0})");
-  
   public static final RandoopStatus NO_JAVA_PROJECT =
-    new RandoopStatus(20001, IStatus.ERROR,
+    new RandoopStatus(20003, IStatus.ERROR,
         "Java project ''{1}'' was not found or could not be created (code {0})");
+
+  /**
+   * ID of a status to be used internally in Randoop for validation of UI
+   * features only
+   */
+  public static int RANDOOP_VALIDATION_METHOD = 110;
+
+  /**
+   * ID of status to be used for exceptions thrown by
+   * <code>RandoopArgumentCollector</code> and statuses returned by its
+   * validation methods.
+   */
+  public static int RANDOOP_LAUNCH_CONFIGURATION = 111;
 
   /**
    * A new IStatus with the specified message and severity. This method should
    * only be used for by methods needing to provide details of failures (e.g.,
-   * validation methods for the UI). It should <i>never</i> be used for loggin
-   * or throwing a <code>CoreException</code>.
+   * validation methods for the UI). It should <i>never</i> be used for logging
+   * or for throwing an <code>CoreException</code>.
    * 
    * @param message
    *          message to be used for the returned <code>IStatus</code>
    * @return
    */
-  public static IStatus createStatus(int severity, String message) {
-    return new Status(severity, RandoopPlugin.getPluginId(), message);
+  public static IStatus createUIStatus(int severity, String message) {
+    return new Status(severity, RandoopPlugin.getPluginId(),
+        RANDOOP_VALIDATION_METHOD, message, null);
   }
 
+  
+  public static IStatus createLaunchConfigurationStatus(int severity, String message, Throwable exception) {
+    return new Status(severity, RandoopPlugin.getPluginId(), RANDOOP_LAUNCH_CONFIGURATION,
+        message, exception);
+  }
+  
 }

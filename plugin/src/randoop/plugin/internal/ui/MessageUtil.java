@@ -6,6 +6,10 @@ import org.eclipse.ui.PlatformUI;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.MutableBoolean;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class MessageUtil {
   
   public static boolean openQuestion(final String message) {

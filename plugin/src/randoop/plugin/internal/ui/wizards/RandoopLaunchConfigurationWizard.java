@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.wizard.Wizard;
@@ -15,6 +14,10 @@ import org.eclipse.swt.widgets.Composite;
 
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class RandoopLaunchConfigurationWizard extends Wizard {
   protected static final String DIALOG_SETTINGS_KEY = "RandoopWizard"; //$NON-NLS-1$
 

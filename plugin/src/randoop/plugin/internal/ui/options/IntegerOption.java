@@ -1,5 +1,9 @@
 package randoop.plugin.internal.ui.options;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
@@ -28,7 +32,7 @@ public abstract class IntegerOption extends TextOption {
       
       return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return RandoopStatus.createStatus(IStatus.ERROR, getInvalidIntegerErrorMessage());
+      return RandoopStatus.createUIStatus(IStatus.ERROR, getInvalidIntegerErrorMessage());
     }
   }
   

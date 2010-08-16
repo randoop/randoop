@@ -15,6 +15,10 @@ import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.IOptionChangeEvent;
 import randoop.plugin.internal.ui.options.IOptionChangeListener;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public abstract class OptionWizardPage extends WizardPage {
   
   private List<IOption> fOptions;

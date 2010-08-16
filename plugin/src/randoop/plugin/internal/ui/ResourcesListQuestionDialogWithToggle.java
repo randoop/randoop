@@ -33,6 +33,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.RandoopStatus;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class ResourcesListQuestionDialogWithToggle extends MessageDialogWithToggle implements IDoubleClickListener {
   
   static class ResourceLabelProvider extends LabelProvider {
