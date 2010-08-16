@@ -73,9 +73,9 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_CommandHandler">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_top"></A>
@@ -99,6 +99,10 @@ Object
 <HR>
 <PRE>public abstract class <STRONG>GenInputsAbstract</STRONG>
 extends <A HREF="../../randoop/main/CommandHandler.html" title="class in randoop.main">CommandHandler</A></PRE>
+
+<P>
+Container for Randoop options.
+<P>
 
 <P>
 <HR>
@@ -143,11 +147,11 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;Double</CODE></FONT></TD>
+<CODE>static&nbsp;double</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#alias_ratio">alias_ratio</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Try to reuse values from a sequence with the given frequency.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -179,15 +183,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#check_object_contracts">check_object_contracts</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#check_reps">check_reps</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use Randoop's default set of object contracts.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -195,8 +191,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#classlist">classlist</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In the file, each class under test is specified by its fully
- qualified name on a separate line.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of a file that lists classes under test.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -212,7 +207,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#clear">clear</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clear the component set each time it reaches <int> inputs.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -220,22 +215,12 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#comm_port">comm_port</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If this value is not -1, Randoop relays information about the
- program's execution over a connection to the specified port on the
- local machine.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#compare_checks">compare_checks</A></STRONG></CODE>
-
-<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#component_based">component_based</A></STRONG></CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#compare_checks">compare_checks</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -266,16 +251,8 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#covreport">covreport</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#dont_check_contracts">dont_check_contracts</A></STRONG></CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#debug_checks">debug_checks</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -294,15 +271,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#dontexecute">dontexecute</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#experiment">experiment</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create sequences but never execute them.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -322,28 +291,11 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;Integer</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#filter_short_dep">filter_short_dep</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#forbid_null">forbid_null</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Even when this option is set to true, Randoop uses null only when
- there is no non-null value available.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#helpers">helpers</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Never use null as input to methods or constructors.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -359,7 +311,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#inputlimit">inputlimit</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used to determine when to stop test generation.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maximum number of tests generated.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -391,7 +343,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#literals_file">literals_file</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Literals in these files are used in addition to all other constants in the pool.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A file containing literal values to be used as inputs to methods under test.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -399,12 +351,15 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#literals_level">literals_level</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  --literals-level=ALL means each literal is used as input to any method under test.
-  --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.
-  --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.
-  --literals-level=NONE means do not use literals specified in a literals file.
- </TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;FileWriter</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#log">log</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name of a file to which to log lots of information.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -412,7 +367,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#long_format">long_format</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to use the long format for outputting JUnit tests.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -436,24 +391,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#methodlist">methodlist</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In the file, each each method under test is specified on a separate
- line.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#minimize">minimize</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#no_args_statement_heuristic">no_args_statement_heuristic</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of a file that lists methods under test.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -465,19 +403,11 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#noredundancychecks">noredundancychecks</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;Double</CODE></FONT></TD>
+<CODE>static&nbsp;double</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#null_ratio">null_ratio</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use null with the given frequency.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -501,7 +431,8 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#omitmethods">omitmethods</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Randoop will not attempt to directly call methods whose <CODE>Method.toString()</CODE> matches the regular expression
+ given.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -517,20 +448,12 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#output_components">output_components</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output components (serialized, GZIPPED) to the given file.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#output_cov_witnesses">output_cov_witnesses</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#output_coverage_plot">output_coverage_plot</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -549,15 +472,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#output_nonexec">output_nonexec</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#output_stats">output_stats</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output sequences even if they do not complete execution.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -565,7 +480,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#output_tests">output_tests</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;What kinds of tests to output: pass, fail, or all</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -573,7 +488,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#output_tests_serialized">output_tests_serialized</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output tests (sequences plus checkers) in serialized form to the given file.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -602,7 +517,7 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
+<CODE>static&nbsp;long</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#progressinterval">progressinterval</A></STRONG></CODE>
 
 <BR>
@@ -623,7 +538,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#randomseed">randomseed</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The random seed to use in the generation process</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -652,10 +567,10 @@ Field Summary</CAPTION>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#size_equalizer">size_equalizer</A></STRONG></CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#small_tests">small_tests</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Favor shorter sequences when assembling new sequences out of old ones.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -663,8 +578,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#string_maxlen">string_maxlen</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Don't set this greater than 65KB, because strings longer than that may
- be rejected, according to the Java Virtual Machine specification.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -688,7 +602,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#testclass">testclass</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each element is the fully-qualified name of a class under test.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -704,7 +618,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#timelimit">timelimit</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used to determine when to stop test generation.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -718,14 +632,6 @@ Field Summary</CAPTION>
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;List&lt;String&gt;</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#visitor">visitor</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#weighted_inputs">weighted_inputs</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -777,6 +683,14 @@ Method Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
 </TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/main/GenInputsAbstract.html#checkOptionsValid()">checkOptionsValid</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check that the options given satisfy any specified constraints, and fail if they do not.</TD>
+</TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_CommandHandler"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -784,7 +698,7 @@ Method Summary</CAPTION>
 <TH ALIGN="left"><STRONG>Methods inherited from class <A HREF="../../randoop/main/CommandHandler.html" title="class in randoop.main">CommandHandler</A></STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../randoop/main/CommandHandler.html#handle(java.lang.String[])">handle</A>, <A HREF="../../randoop/main/CommandHandler.html#handles(java.lang.String)">handles</A>, <A HREF="../../randoop/main/CommandHandler.html#printHTML(java.io.PrintStream)">printHTML</A>, <A HREF="../../randoop/main/CommandHandler.html#usageMessage(java.io.PrintStream)">usageMessage</A></CODE></TD>
+<TD><CODE><A HREF="../../randoop/main/CommandHandler.html#handle(java.lang.String[])">handle</A>, <A HREF="../../randoop/main/CommandHandler.html#handles(java.lang.String)">handles</A>, <A HREF="../../randoop/main/CommandHandler.html#printHTML(java.io.PrintStream)">printHTML</A>, <A HREF="../../randoop/main/CommandHandler.html#usageMessage(java.io.PrintStream, boolean)">usageMessage</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
@@ -809,48 +723,10 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="all"><!-- --></A><H3>
-all</H3>
-<PRE>
-public static final String <STRONG>all</STRONG></PRE>
-<DL>
-<DD><DL>
-<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../constant-values.html#randoop.main.GenInputsAbstract.all">Constant Field Values</A></DD></DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="fail"><!-- --></A><H3>
-fail</H3>
-<PRE>
-public static final String <STRONG>fail</STRONG></PRE>
-<DL>
-<DD><DL>
-<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../constant-values.html#randoop.main.GenInputsAbstract.fail">Constant Field Values</A></DD></DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="pass"><!-- --></A><H3>
-pass</H3>
-<PRE>
-public static final String <STRONG>pass</STRONG></PRE>
-<DL>
-<DD><DL>
-<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../constant-values.html#randoop.main.GenInputsAbstract.pass">Constant Field Values</A></DD></DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="testclass"><!-- --></A><H3>
 testclass</H3>
 <PRE>
 public static List&lt;String&gt; <STRONG>testclass</STRONG></PRE>
-<DL>
-<DD>Each element is the fully-qualified name of a class under test.
-<P>
-</DD>
-</DL>
 <HR>
 
 <A NAME="classlist"><!-- --></A><H3>
@@ -858,7 +734,9 @@ classlist</H3>
 <PRE>
 public static String <STRONG>classlist</STRONG></PRE>
 <DL>
-<DD>In the file, each class under test is specified by its fully
+<DD>The name of a file that lists classes under test.
+ 
+ In the file, each class under test is specified by its fully
  qualified name on a separate line.
 <P>
 </DD>
@@ -870,8 +748,44 @@ methodlist</H3>
 <PRE>
 public static String <STRONG>methodlist</STRONG></PRE>
 <DL>
-<DD>In the file, each each method under test is specified on a separate
- line.
+<DD>The name of a file that lists methods under test.
+ 
+ In the file, each each method under test is specified on a separate
+ line. The list of methods given by this argument will agument
+ any methods derived via the --classlist option.
+ 
+ Also see section on <a href="#specifying-methods">specifying methods 
+ and constructors under test</a>.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="omitmethods"><!-- --></A><H3>
+omitmethods</H3>
+<PRE>
+public static Pattern <STRONG>omitmethods</STRONG></PRE>
+<DL>
+<DD>Randoop will not attempt to directly call methods whose <CODE>Method.toString()</CODE> matches the regular expression
+ given.  This does not prevent indirect calls to such methods from
+ other, allowed methods.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="public_only"><!-- --></A><H3>
+public_only</H3>
+<PRE>
+public static boolean <STRONG>public_only</STRONG></PRE>
+<DL>
+<DD>If the command line argument public_only is true, only public
+ classes/methods are considered visible.  If public_only is false
+ then any class/method that is not private is considered visible.
+ 
+ FIXME: This option outputs tests that do not compile. Until a fix
+        is done, keep the option @Unpublicized. The option should
+        probably be an enum with PUBLIC, PACKAGE, PUBLIC elements.
 <P>
 </DD>
 </DL>
@@ -883,12 +797,20 @@ init_routine</H3>
 public static String <STRONG>init_routine</STRONG></PRE>
 <HR>
 
+<A NAME="silently_ignore_bad_class_names"><!-- --></A><H3>
+silently_ignore_bad_class_names</H3>
+<PRE>
+public static boolean <STRONG>silently_ignore_bad_class_names</STRONG></PRE>
+<HR>
+
 <A NAME="literals_level"><!-- --></A><H3>
 literals_level</H3>
 <PRE>
 public static <A HREF="../../randoop/main/GenInputsAbstract.ClassLiteralsMode.html" title="enum in randoop.main">GenInputsAbstract.ClassLiteralsMode</A> <STRONG>literals_level</STRONG></PRE>
 <DL>
-<DD><ul>
+<DD>How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE.
+  
+ <ul>
  <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
  <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.</li>
  <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.</li>
@@ -904,7 +826,9 @@ literals_file</H3>
 <PRE>
 public static List&lt;String&gt; <STRONG>literals_file</STRONG></PRE>
 <DL>
-<DD>Literals in these files are used in addition to all other constants in the pool.
+<DD>A file containing literal values to be used as inputs to methods under test.
+ 
+ Literals in these files are used in addition to all other constants in the pool.
  May be specified multiple times.
  For the format of this file, see documentation in class <A HREF="../../randoop/LiteralFileReader.html" title="class in randoop"><CODE>LiteralFileReader</CODE></A>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under test.
@@ -917,23 +841,12 @@ public static List&lt;String&gt; <STRONG>literals_file</STRONG></PRE>
 randomseed</H3>
 <PRE>
 public static int <STRONG>randomseed</STRONG></PRE>
-<DL>
-<DD>The random seed to use in the generation process
-<P>
-</DD>
-</DL>
 <HR>
 
 <A NAME="timelimit"><!-- --></A><H3>
 timelimit</H3>
 <PRE>
 public static int <STRONG>timelimit</STRONG></PRE>
-<DL>
-<DD>Used to determine when to stop test generation. Generation stops when
- either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached.
-<P>
-</DD>
-</DL>
 <HR>
 
 <A NAME="inputlimit"><!-- --></A><H3>
@@ -941,9 +854,11 @@ inputlimit</H3>
 <PRE>
 public static int <STRONG>inputlimit</STRONG></PRE>
 <DL>
-<DD>Used to determine when to stop test generation. Generation stops when
+<DD>Maximum number of tests generated.
+ 
+ Used to determine when to stop test generation. Generation stops when
  either the time limit (--timelimit=int) OR the input limit
- (--inputlimit=int) is reached.  Note that the number of tests output
+ (--inputlimit=int) is reached.  The number of tests output
  may be smaller than then number of inputs created, because redundant
  and illegal inputs may be discarded.  Also see --outputlimit.
 <P>
@@ -979,28 +894,104 @@ forbid_null</H3>
 <PRE>
 public static boolean <STRONG>forbid_null</STRONG></PRE>
 <DL>
-<DD>Even when this option is set to true, Randoop uses null only when
- there is no non-null value available.  This option causes Randoop to
- abandon the method call rather than providing null, when no non-null
- value is available.
+<DD>Never use null as input to methods or constructors.
+ 
+ This option causes Randoop to abandon the method call rather than providing
+ null as an input, when no non-null value of the appropriate type is available.
+ 
+ To ask Randoop to calls methods with null with greater frequency,
+ see option --null-ratio.
 <P>
 </DD>
 </DL>
-<HR>
-
-<A NAME="null_ratio"><!-- --></A><H3>
-null_ratio</H3>
-<PRE>
-public static Double <STRONG>null_ratio</STRONG></PRE>
 <HR>
 
 <A NAME="string_maxlen"><!-- --></A><H3>
 string_maxlen</H3>
 <PRE>
 public static int <STRONG>string_maxlen</STRONG></PRE>
+<HR>
+
+<A NAME="null_ratio"><!-- --></A><H3>
+null_ratio</H3>
+<PRE>
+public static double <STRONG>null_ratio</STRONG></PRE>
 <DL>
-<DD>Don't set this greater than 65KB, because strings longer than that may
- be rejected, according to the Java Virtual Machine specification.
+<DD>Use null with the given frequency.
+ 
+ If a null ratio is given, it should be between 0 and 1. A ratio of X means that
+ null will be used instead of a non-null value as a parameter to method calls,
+ with X frequency (1 means always use null, 0 means never use null). For example,
+ a ratio of 0.5 directs Randoop to use null inputs 50 percent of the time.
+ 
+ Randoop never uses null for receiver values.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="alias_ratio"><!-- --></A><H3>
+alias_ratio</H3>
+<PRE>
+public static double <STRONG>alias_ratio</STRONG></PRE>
+<DL>
+<DD>Try to reuse values from a sequence with the given frequency.
+ 
+ If an alias ratio is given, it should be between 0 and 1.
+ 
+ A ratio of 0 results in tests where each value created within a test input is typically used at most once
+ as an argument in a method call. A ratio of 1 tries to maximize the number of times
+ values are used as inputs to parameters within a test.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="small_tests"><!-- --></A><H3>
+small_tests</H3>
+<PRE>
+public static boolean <STRONG>small_tests</STRONG></PRE>
+<DL>
+<DD>Favor shorter sequences when assembling new sequences out of old ones.
+
+ Randoop generate new tests by combining old previously-generated tests.
+ If this option is given, tests with fewer calls are given greater weight during
+ its random selection. This has the overall effect of producing smaller JUnit tests.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clear"><!-- --></A><H3>
+clear</H3>
+<PRE>
+public static int <STRONG>clear</STRONG></PRE>
+<DL>
+<DD>Clear the component set each time it reaches <int> inputs.
+ 
+ Randoop stores previously-generated tests in a "component" set, and uses them to
+ generate new tests. Setting this variable to a small number can sometimes result
+ in a greater variety of tests generated during a single run.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="observers"><!-- --></A><H3>
+observers</H3>
+<PRE>
+public static File <STRONG>observers</STRONG></PRE>
+<HR>
+
+<A NAME="check_object_contracts"><!-- --></A><H3>
+check_object_contracts</H3>
+<PRE>
+public static boolean <STRONG>check_object_contracts</STRONG></PRE>
+<DL>
+<DD>Use Randoop's default set of object contracts.
+  
+ By default, Randoop checks a set of contracts, e.g.
+ equals(Object) is reflexive, equals(null) returns false, no NullPointerExceptions, no AssertionErrors, etc.
 <P>
 </DD>
 </DL>
@@ -1010,9 +1001,37 @@ public static int <STRONG>string_maxlen</STRONG></PRE>
 output_tests</H3>
 <PRE>
 public static String <STRONG>output_tests</STRONG></PRE>
+<HR>
+
+<A NAME="all"><!-- --></A><H3>
+all</H3>
+<PRE>
+public static final String <STRONG>all</STRONG></PRE>
 <DL>
-<DD>What kinds of tests to output: pass, fail, or all
-<P>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../constant-values.html#randoop.main.GenInputsAbstract.all">Constant Field Values</A></DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fail"><!-- --></A><H3>
+fail</H3>
+<PRE>
+public static final String <STRONG>fail</STRONG></PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../constant-values.html#randoop.main.GenInputsAbstract.fail">Constant Field Values</A></DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="pass"><!-- --></A><H3>
+pass</H3>
+<PRE>
+public static final String <STRONG>pass</STRONG></PRE>
+<DL>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../constant-values.html#randoop.main.GenInputsAbstract.pass">Constant Field Values</A></DD></DL>
 </DD>
 </DL>
 <HR>
@@ -1061,15 +1080,144 @@ public static String <STRONG>junit_output_dir</STRONG></PRE>
 </DL>
 <HR>
 
+<A NAME="dont_output_tests"><!-- --></A><H3>
+dont_output_tests</H3>
+<PRE>
+public static boolean <STRONG>dont_output_tests</STRONG></PRE>
+<HR>
+
+<A NAME="output_nonexec"><!-- --></A><H3>
+output_nonexec</H3>
+<PRE>
+public static boolean <STRONG>output_nonexec</STRONG></PRE>
+<DL>
+<DD>Output sequences even if they do not complete execution.
+ 
+  Randoop's default behavior is to output only tests consisting of
+  method call sequences that execute to the end, rather than throwing
+  an exception or failing a contract check in the middle of execution.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="test_classes"><!-- --></A><H3>
+test_classes</H3>
+<PRE>
+public static Pattern <STRONG>test_classes</STRONG></PRE>
+<HR>
+
+<A NAME="system_props"><!-- --></A><H3>
+system_props</H3>
+<PRE>
+public static List&lt;String&gt; <STRONG>system_props</STRONG></PRE>
+<HR>
+
+<A NAME="agent"><!-- --></A><H3>
+agent</H3>
+<PRE>
+public static String <STRONG>agent</STRONG></PRE>
+<HR>
+
+<A NAME="mem_megabytes"><!-- --></A><H3>
+mem_megabytes</H3>
+<PRE>
+public static int <STRONG>mem_megabytes</STRONG></PRE>
+<HR>
+
+<A NAME="capture_output"><!-- --></A><H3>
+capture_output</H3>
+<PRE>
+public static boolean <STRONG>capture_output</STRONG></PRE>
+<HR>
+
+<A NAME="componentfile_ser"><!-- --></A><H3>
+componentfile_ser</H3>
+<PRE>
+public static List&lt;String&gt; <STRONG>componentfile_ser</STRONG></PRE>
+<HR>
+
+<A NAME="componentfile_txt"><!-- --></A><H3>
+componentfile_txt</H3>
+<PRE>
+public static List&lt;String&gt; <STRONG>componentfile_txt</STRONG></PRE>
+<HR>
+
+<A NAME="output_components"><!-- --></A><H3>
+output_components</H3>
+<PRE>
+public static String <STRONG>output_components</STRONG></PRE>
+<DL>
+<DD>Output components (serialized, GZIPPED) to the given file.
+ 
+ Suggestion: use a .gz suffix in file name.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="output_tests_serialized"><!-- --></A><H3>
+output_tests_serialized</H3>
+<PRE>
+public static String <STRONG>output_tests_serialized</STRONG></PRE>
+<DL>
+<DD>Output tests (sequences plus checkers) in serialized form to the given file.
+ 
+ Suggestion: use a .gz suffix in file name.
+<P>
+</DD>
+</DL>
+<HR>
+
 <A NAME="comm_port"><!-- --></A><H3>
 comm_port</H3>
 <PRE>
 public static int <STRONG>comm_port</STRONG></PRE>
+<HR>
+
+<A NAME="noprogressdisplay"><!-- --></A><H3>
+noprogressdisplay</H3>
+<PRE>
+public static boolean <STRONG>noprogressdisplay</STRONG></PRE>
+<HR>
+
+<A NAME="progressinterval"><!-- --></A><H3>
+progressinterval</H3>
+<PRE>
+public static long <STRONG>progressinterval</STRONG></PRE>
+<HR>
+
+<A NAME="visitor"><!-- --></A><H3>
+visitor</H3>
+<PRE>
+public static List&lt;String&gt; <STRONG>visitor</STRONG></PRE>
+<HR>
+
+<A NAME="debug_checks"><!-- --></A><H3>
+debug_checks</H3>
+<PRE>
+public static boolean <STRONG>debug_checks</STRONG></PRE>
+<HR>
+
+<A NAME="log"><!-- --></A><H3>
+log</H3>
+<PRE>
+public static FileWriter <STRONG>log</STRONG></PRE>
 <DL>
-<DD>If this value is not -1, Randoop relays information about the
- program's execution over a connection to the specified port on the
- local machine. Information is sent using a serialized
- randoop.runtime.Message object. Printing is also suppressed.
+<DD>Name of a file to which to log lots of information.
+ If not specified, no logging is done.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dontexecute"><!-- --></A><H3>
+dontexecute</H3>
+<PRE>
+public static boolean <STRONG>dontexecute</STRONG></PRE>
+<DL>
+<DD>Create sequences but never execute them. Used to test performance of
+ Randoop's sequence generation code.
 <P>
 </DD>
 </DL>
@@ -1079,69 +1227,36 @@ public static int <STRONG>comm_port</STRONG></PRE>
 long_format</H3>
 <PRE>
 public static boolean <STRONG>long_format</STRONG></PRE>
-<DL>
-<DD>Whether to use the long format for outputting JUnit tests.
- The long format emits exactly one line per statement, including
- primitive declarations, and uses boxed primitives. This option is used
- in the branch-directed generation project.
-<P>
-</DD>
-</DL>
 <HR>
 
-<A NAME="size_equalizer"><!-- --></A><H3>
-size_equalizer</H3>
+<A NAME="output_covmap"><!-- --></A><H3>
+output_covmap</H3>
 <PRE>
-public static boolean <STRONG>size_equalizer</STRONG></PRE>
+public static String <STRONG>output_covmap</STRONG></PRE>
 <HR>
 
-<A NAME="expfile"><!-- --></A><H3>
-expfile</H3>
+<A NAME="output_cov_witnesses"><!-- --></A><H3>
+output_cov_witnesses</H3>
 <PRE>
-public static FileWriter <STRONG>expfile</STRONG></PRE>
+public static boolean <STRONG>output_cov_witnesses</STRONG></PRE>
 <HR>
 
-<A NAME="filter_short_dep"><!-- --></A><H3>
-filter_short_dep</H3>
+<A NAME="always_use_ints_as_objects"><!-- --></A><H3>
+always_use_ints_as_objects</H3>
 <PRE>
-public static Integer <STRONG>filter_short_dep</STRONG></PRE>
+public static boolean <STRONG>always_use_ints_as_objects</STRONG></PRE>
 <HR>
 
-<A NAME="test_classes"><!-- --></A><H3>
-test_classes</H3>
+<A NAME="coverage_instrumented_classes"><!-- --></A><H3>
+coverage_instrumented_classes</H3>
 <PRE>
-public static Pattern <STRONG>test_classes</STRONG></PRE>
+public static String <STRONG>coverage_instrumented_classes</STRONG></PRE>
 <HR>
 
-<A NAME="observers"><!-- --></A><H3>
-observers</H3>
+<A NAME="output_branches"><!-- --></A><H3>
+output_branches</H3>
 <PRE>
-public static File <STRONG>observers</STRONG></PRE>
-<HR>
-
-<A NAME="public_only"><!-- --></A><H3>
-public_only</H3>
-<PRE>
-public static boolean <STRONG>public_only</STRONG></PRE>
-<DL>
-<DD>If the command line argument public_only is true, only public
- classes/methods are considered visible.  If public_only is false
- then any class/method that is not private is considered visible.
-<P>
-</DD>
-</DL>
-<HR>
-
-<A NAME="visitor"><!-- --></A><H3>
-visitor</H3>
-<PRE>
-public static List&lt;String&gt; <STRONG>visitor</STRONG></PRE>
-<HR>
-
-<A NAME="capture_output"><!-- --></A><H3>
-capture_output</H3>
-<PRE>
-public static boolean <STRONG>capture_output</STRONG></PRE>
+public static String <STRONG>output_branches</STRONG></PRE>
 <HR>
 
 <A NAME="remove_subsequences"><!-- --></A><H3>
@@ -1168,178 +1283,10 @@ print_diff_obs</H3>
 public static boolean <STRONG>print_diff_obs</STRONG></PRE>
 <HR>
 
-<A NAME="agent"><!-- --></A><H3>
-agent</H3>
+<A NAME="expfile"><!-- --></A><H3>
+expfile</H3>
 <PRE>
-public static String <STRONG>agent</STRONG></PRE>
-<HR>
-
-<A NAME="mem_megabytes"><!-- --></A><H3>
-mem_megabytes</H3>
-<PRE>
-public static int <STRONG>mem_megabytes</STRONG></PRE>
-<HR>
-
-<A NAME="system_props"><!-- --></A><H3>
-system_props</H3>
-<PRE>
-public static List&lt;String&gt; <STRONG>system_props</STRONG></PRE>
-<HR>
-
-<A NAME="output_nonexec"><!-- --></A><H3>
-output_nonexec</H3>
-<PRE>
-public static boolean <STRONG>output_nonexec</STRONG></PRE>
-<HR>
-
-<A NAME="output_coverage_plot"><!-- --></A><H3>
-output_coverage_plot</H3>
-<PRE>
-public static String <STRONG>output_coverage_plot</STRONG></PRE>
-<HR>
-
-<A NAME="use_object_cache"><!-- --></A><H3>
-use_object_cache</H3>
-<PRE>
-public static boolean <STRONG>use_object_cache</STRONG></PRE>
-<HR>
-
-<A NAME="alias_ratio"><!-- --></A><H3>
-alias_ratio</H3>
-<PRE>
-public static Double <STRONG>alias_ratio</STRONG></PRE>
-<HR>
-
-<A NAME="check_reps"><!-- --></A><H3>
-check_reps</H3>
-<PRE>
-public static boolean <STRONG>check_reps</STRONG></PRE>
-<HR>
-
-<A NAME="component_based"><!-- --></A><H3>
-component_based</H3>
-<PRE>
-public static boolean <STRONG>component_based</STRONG></PRE>
-<HR>
-
-<A NAME="output_cov_witnesses"><!-- --></A><H3>
-output_cov_witnesses</H3>
-<PRE>
-public static boolean <STRONG>output_cov_witnesses</STRONG></PRE>
-<HR>
-
-<A NAME="check_object_contracts"><!-- --></A><H3>
-check_object_contracts</H3>
-<PRE>
-public static boolean <STRONG>check_object_contracts</STRONG></PRE>
-<HR>
-
-<A NAME="always_use_ints_as_objects"><!-- --></A><H3>
-always_use_ints_as_objects</H3>
-<PRE>
-public static boolean <STRONG>always_use_ints_as_objects</STRONG></PRE>
-<HR>
-
-<A NAME="helpers"><!-- --></A><H3>
-helpers</H3>
-<PRE>
-public static boolean <STRONG>helpers</STRONG></PRE>
-<HR>
-
-<A NAME="componentfile_ser"><!-- --></A><H3>
-componentfile_ser</H3>
-<PRE>
-public static List&lt;String&gt; <STRONG>componentfile_ser</STRONG></PRE>
-<HR>
-
-<A NAME="componentfile_txt"><!-- --></A><H3>
-componentfile_txt</H3>
-<PRE>
-public static List&lt;String&gt; <STRONG>componentfile_txt</STRONG></PRE>
-<HR>
-
-<A NAME="covreport"><!-- --></A><H3>
-covreport</H3>
-<PRE>
-public static String <STRONG>covreport</STRONG></PRE>
-<HR>
-
-<A NAME="output_components"><!-- --></A><H3>
-output_components</H3>
-<PRE>
-public static String <STRONG>output_components</STRONG></PRE>
-<HR>
-
-<A NAME="output_tests_serialized"><!-- --></A><H3>
-output_tests_serialized</H3>
-<PRE>
-public static String <STRONG>output_tests_serialized</STRONG></PRE>
-<HR>
-
-<A NAME="output_branches"><!-- --></A><H3>
-output_branches</H3>
-<PRE>
-public static String <STRONG>output_branches</STRONG></PRE>
-<HR>
-
-<A NAME="output_covmap"><!-- --></A><H3>
-output_covmap</H3>
-<PRE>
-public static String <STRONG>output_covmap</STRONG></PRE>
-<HR>
-
-<A NAME="output_stats"><!-- --></A><H3>
-output_stats</H3>
-<PRE>
-public static String <STRONG>output_stats</STRONG></PRE>
-<HR>
-
-<A NAME="coverage_instrumented_classes"><!-- --></A><H3>
-coverage_instrumented_classes</H3>
-<PRE>
-public static String <STRONG>coverage_instrumented_classes</STRONG></PRE>
-<HR>
-
-<A NAME="progressinterval"><!-- --></A><H3>
-progressinterval</H3>
-<PRE>
-public static int <STRONG>progressinterval</STRONG></PRE>
-<HR>
-
-<A NAME="noprogressdisplay"><!-- --></A><H3>
-noprogressdisplay</H3>
-<PRE>
-public static boolean <STRONG>noprogressdisplay</STRONG></PRE>
-<HR>
-
-<A NAME="minimize"><!-- --></A><H3>
-minimize</H3>
-<PRE>
-public static boolean <STRONG>minimize</STRONG></PRE>
-<HR>
-
-<A NAME="experiment"><!-- --></A><H3>
-experiment</H3>
-<PRE>
-public static String <STRONG>experiment</STRONG></PRE>
-<HR>
-
-<A NAME="noredundancychecks"><!-- --></A><H3>
-noredundancychecks</H3>
-<PRE>
-public static boolean <STRONG>noredundancychecks</STRONG></PRE>
-<HR>
-
-<A NAME="dontexecute"><!-- --></A><H3>
-dontexecute</H3>
-<PRE>
-public static boolean <STRONG>dontexecute</STRONG></PRE>
-<HR>
-
-<A NAME="clear"><!-- --></A><H3>
-clear</H3>
-<PRE>
-public static int <STRONG>clear</STRONG></PRE>
+public static FileWriter <STRONG>expfile</STRONG></PRE>
 <HR>
 
 <A NAME="offline"><!-- --></A><H3>
@@ -1348,46 +1295,16 @@ offline</H3>
 public static boolean <STRONG>offline</STRONG></PRE>
 <HR>
 
-<A NAME="omitmethods"><!-- --></A><H3>
-omitmethods</H3>
-<PRE>
-public static Pattern <STRONG>omitmethods</STRONG></PRE>
-<HR>
-
-<A NAME="dont_check_contracts"><!-- --></A><H3>
-dont_check_contracts</H3>
-<PRE>
-public static boolean <STRONG>dont_check_contracts</STRONG></PRE>
-<HR>
-
-<A NAME="weighted_inputs"><!-- --></A><H3>
-weighted_inputs</H3>
-<PRE>
-public static boolean <STRONG>weighted_inputs</STRONG></PRE>
-<HR>
-
-<A NAME="no_args_statement_heuristic"><!-- --></A><H3>
-no_args_statement_heuristic</H3>
-<PRE>
-public static boolean <STRONG>no_args_statement_heuristic</STRONG></PRE>
-<HR>
-
 <A NAME="repeat_heuristic"><!-- --></A><H3>
 repeat_heuristic</H3>
 <PRE>
 public static boolean <STRONG>repeat_heuristic</STRONG></PRE>
 <HR>
 
-<A NAME="dont_output_tests"><!-- --></A><H3>
-dont_output_tests</H3>
+<A NAME="use_object_cache"><!-- --></A><H3>
+use_object_cache</H3>
 <PRE>
-public static boolean <STRONG>dont_output_tests</STRONG></PRE>
-<HR>
-
-<A NAME="silently_ignore_bad_class_names"><!-- --></A><H3>
-silently_ignore_bad_class_names</H3>
-<PRE>
-public static boolean <STRONG>silently_ignore_bad_class_names</STRONG></PRE>
+public static boolean <STRONG>use_object_cache</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -1412,6 +1329,26 @@ public <STRONG>GenInputsAbstract</STRONG>(String&nbsp;command,
                          String&nbsp;output,
                          String&nbsp;example,
                          Options&nbsp;options)</PRE>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Method Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="checkOptionsValid()"><!-- --></A><H3>
+checkOptionsValid</H3>
+<PRE>
+public void <STRONG>checkOptionsValid</STRONG>()</PRE>
+<DL>
+<DD>Check that the options given satisfy any specified constraints, and fail if they do not.
+<P>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -1463,9 +1400,9 @@ public <STRONG>GenInputsAbstract</STRONG>(String&nbsp;command,
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#methods_inherited_from_class_CommandHandler">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;METHOD</FONT></TD>
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_bottom"></A>

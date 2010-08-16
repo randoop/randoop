@@ -96,8 +96,17 @@ Interface Summary</CAPTION>
 <TD>A visitor that is invoked as the execution of a sequence unfolds.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/IStoppingCriterion.html" title="interface in randoop">IStoppingCriterion</A></STRONG></TD>
-<TD>&nbsp;</TD>
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/IEventListener.html" title="interface in randoop">IEventListener</A></STRONG></TD>
+<TD>Defines various event during Randoop's generation at which an
+ implementing class can be notified and perform some action.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/IStopper.html" title="interface in randoop">IStopper</A></STRONG></TD>
+<TD>Used by Randoop to determine whether generation should stop.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A></STRONG></TD>
+<TD>Used by Randoop's test generator to determine if a given sequence should be output to the user.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A></STRONG></TD>
@@ -127,15 +136,11 @@ Class Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/AbstractGenerator.html" title="class in randoop">AbstractGenerator</A></STRONG></TD>
-<TD>&nbsp;</TD>
+<TD>Algorithm template for implementing a test generator.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/ArrayDeclaration.html" title="class in randoop">ArrayDeclaration</A></STRONG></TD>
 <TD>Immutable.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/BranchDirMutator.html" title="class in randoop">BranchDirMutator</A></STRONG></TD>
-<TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/CheckRepContract.html" title="class in randoop">CheckRepContract</A></STRONG></TD>
@@ -162,30 +167,9 @@ Class Summary</CAPTION>
  values created by the sequence.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/CovWitnessHelperVisitor.html" title="class in randoop">CovWitnessHelperVisitor</A></STRONG></TD>
-<TD>This class is only used by the branch-directed generation research project.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/DataFlowInput.html" title="class in randoop">DataFlowInput</A></STRONG></TD>
-<TD>A collection of frontier branches and sequences that reach them.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/DataFlowOutput.html" title="class in randoop">DataFlowOutput</A></STRONG></TD>
-<TD>The output created by DataFlow consists of a collection of results, one for
- each sequence.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/DependencyUtils.html" title="class in randoop">DependencyUtils</A></STRONG></TD>
-<TD>&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop">DFResultsOneSeq</A></STRONG></TD>
-<TD>Encapsulates the results of the branch analysis for a given
- sequence and its frontier branch.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="class in randoop">DFResultsOneSeq.VariableInfo</A></STRONG></TD>
-<TD>Class that contains information about the values in the frontier</TD>
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/DefaultTestFilter.html" title="class in randoop">DefaultTestFilter</A></STRONG></TD>
+<TD>Randoop's default test filter determines if a generated test should be output
+ to the user.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/DummyStatement.html" title="class in randoop">DummyStatement</A></STRONG></TD>
@@ -193,7 +177,7 @@ Class Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/DummyVisitor.html" title="class in randoop">DummyVisitor</A></STRONG></TD>
-<TD>A visitor that does nothing and adds no decorations.</TD>
+<TD>A visitor that does nothing and adds no checks.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/EqualsHashcode.html" title="class in randoop">EqualsHashcode</A></STRONG></TD>
@@ -234,19 +218,19 @@ Class Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A></STRONG></TD>
-<TD>Represents the outcome of executing one statement in a sequence, for example
- the value created by the statement, or the exception thrown.</TD>
+<TD>Represents the outcome of executing one statement in a sequence, including
+ the value returned by the statement, or the exception thrown.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A></STRONG></TD>
 <TD>A checker that checks for an expected exception from a method call.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/FailureAnalyzer.html" title="class in randoop">FailureAnalyzer</A></STRONG></TD>
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/FailureSet.html" title="class in randoop">FailureSet</A></STRONG></TD>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/FailureAnalyzer.Failure.html" title="class in randoop">FailureAnalyzer.Failure</A></STRONG></TD>
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/FailureSet.Failure.html" title="class in randoop">FailureSet.Failure</A></STRONG></TD>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -255,7 +239,7 @@ Class Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/Globals.html" title="class in randoop">Globals</A></STRONG></TD>
-<TD>&nbsp;</TD>
+<TD>Various general global variables used throughout Randoop.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/Globals.ErrorStreamAssigner.html" title="class in randoop">Globals.ErrorStreamAssigner</A></STRONG></TD>
@@ -286,10 +270,6 @@ Class Summary</CAPTION>
 <TD>Outputs a collection of sequences as Java files, using the JUnit framework, with one method per sequence.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/LineRemover.html" title="class in randoop">LineRemover</A></STRONG></TD>
-<TD>&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/LiteralFileReader.html" title="class in randoop">LiteralFileReader</A></STRONG></TD>
 <TD>Reads a file specifying literal values to use during generation.</TD>
 </TR>
@@ -312,10 +292,6 @@ Class Summary</CAPTION>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/MVariable.html" title="class in randoop">MVariable</A></STRONG></TD>
 <TD>A variable that is part of a mutable sequence.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/NaiveRandomGenerator.html" title="class in randoop">NaiveRandomGenerator</A></STRONG></TD>
-<TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A></STRONG></TD>
@@ -364,6 +340,10 @@ Class Summary</CAPTION>
  during execution, (e.g.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A></STRONG></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/RConstructor.html" title="class in randoop">RConstructor</A></STRONG></TD>
 <TD>Represents a constructor call.</TD>
 </TR>
@@ -401,10 +381,6 @@ Class Summary</CAPTION>
  all the sequences that create a value of a given type.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop">SequenceGeneratorStats</A></STRONG></TD>
-<TD>&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/SerializableArrayDeclaration.html" title="class in randoop">SerializableArrayDeclaration</A></STRONG></TD>
 <TD>&nbsp;</TD>
 </TR>
@@ -433,17 +409,12 @@ Class Summary</CAPTION>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/Statement.html" title="class in randoop">Statement</A></STRONG></TD>
+<TD>The elements of a Sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/StatementKinds.html" title="class in randoop">StatementKinds</A></STRONG></TD>
 <TD>&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/StatName.html" title="class in randoop">StatName</A></STRONG></TD>
-<TD>Two StatNames are considered equal if their long names are equal.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><STRONG><A HREF="../randoop/StatsForMethod.html" title="class in randoop">StatsForMethod</A></STRONG></TD>
-<TD>Maintains a mapping from StatNames to positive integers; used in various
- places to maintain statistics about Randoop's behavior.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/SubTypeSet.html" title="class in randoop">SubTypeSet</A></STRONG></TD>
@@ -521,7 +492,8 @@ Annotation Types Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/CheckRep.html" title="annotation in randoop">CheckRep</A></STRONG></TD>
-<TD>&nbsp;</TD>
+<TD>An annotation that a user of Randoop can place next to a method to specify
+ that that the method should be used as a representation invariant.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/NotPartOfState.html" title="annotation in randoop">NotPartOfState</A></STRONG></TD>
@@ -534,6 +506,10 @@ Annotation Types Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><STRONG><A HREF="../randoop/Omit.html" title="annotation in randoop">Omit</A></STRONG></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><STRONG><A HREF="../randoop/RandoopStat.html" title="annotation in randoop">RandoopStat</A></STRONG></TD>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">

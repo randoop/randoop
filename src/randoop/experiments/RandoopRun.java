@@ -304,7 +304,7 @@ public class RandoopRun {
     String onlineResultString = onlineResults.toString("online", MultiRunResults.OutputFormat.LATEX);
     String offlineResultString = offlineResults.toString("offline", MultiRunResults.OutputFormat.LATEX);
 
-    // Write experiment results to file, if -resultsfile option was given.
+    // Write experiment results to file, if --resultsfile option was given.
     if (resultsFileName != null) {
       FileWriter writer = new FileWriter(resultsFileName);
       writer.write(onlineResultString + Globals.lineSep);

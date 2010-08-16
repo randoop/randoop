@@ -174,7 +174,7 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected &nbsp;<A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;Statement&gt;</CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Statement.html" title="class in randoop">Statement</A>&gt;</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/Sequence.html#statements">statements</A></STRONG></CODE>
 
 <BR>
@@ -196,6 +196,12 @@ Constructor Summary</CAPTION>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new, empty sequence.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><STRONG><A HREF="../randoop/Sequence.html#Sequence(randoop.util.SimpleList)">Sequence</A></STRONG>(<A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Statement.html" title="class in randoop">Statement</A>&gt;&nbsp;statements)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -379,7 +385,7 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected &nbsp;Statement</CODE></FONT></TD>
+<CODE>protected &nbsp;<A HREF="../randoop/Statement.html" title="class in randoop">Statement</A></CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/Sequence.html#getStatementWithInputs(int)">getStatementWithInputs</A></STRONG>(int&nbsp;index)</CODE>
 
 <BR>
@@ -659,7 +665,7 @@ public double <STRONG>lastTimeUsed</STRONG></PRE>
 <A NAME="statements"><!-- --></A><H3>
 statements</H3>
 <PRE>
-protected final <A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;Statement&gt; <STRONG>statements</STRONG></PRE>
+public final <A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Statement.html" title="class in randoop">Statement</A>&gt; <STRONG>statements</STRONG></PRE>
 <HR>
 
 <A NAME="activeFlags"><!-- --></A><H3>
@@ -692,6 +698,12 @@ public <STRONG>Sequence</STRONG>()</PRE>
 <P>
 </DD>
 </DL>
+<HR>
+
+<A NAME="Sequence(randoop.util.SimpleList)"><!-- --></A><H3>
+Sequence</H3>
+<PRE>
+public <STRONG>Sequence</STRONG>(<A HREF="../randoop/util/SimpleList.html" title="class in randoop.util">SimpleList</A>&lt;<A HREF="../randoop/Statement.html" title="class in randoop">Statement</A>&gt;&nbsp;statements)</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -978,7 +990,7 @@ public final int <STRONG>hashCode</STRONG>()</PRE>
 <A NAME="getStatementWithInputs(int)"><!-- --></A><H3>
 getStatementWithInputs</H3>
 <PRE>
-protected final Statement <STRONG>getStatementWithInputs</STRONG>(int&nbsp;index)</PRE>
+protected final <A HREF="../randoop/Statement.html" title="class in randoop">Statement</A> <STRONG>getStatementWithInputs</STRONG>(int&nbsp;index)</PRE>
 <DL>
 <DD>The statement(+inputs) at the given index.
 <P>

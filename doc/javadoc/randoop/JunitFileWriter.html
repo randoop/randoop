@@ -53,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../randoop/JavaFileWriter.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/LineRemover.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/LiteralFileReader.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../index.html?randoop/JunitFileWriter.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
 &nbsp;<A HREF="JunitFileWriter.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
@@ -118,6 +118,22 @@ Field Summary</CAPTION>
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#includeParseableString">includeParseableString</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#junitDriverClassName">junitDriverClassName</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#packageName">packageName</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -201,6 +217,22 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;File</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#getDir()">getDir</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;String&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#getJunitTestSuiteNames()">getJunitTestSuiteNames</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;String</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#indent(java.lang.String)">indent</A></STRONG>(String&nbsp;codeString)</CODE>
 
@@ -217,6 +249,17 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;File</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#writeDriverFile(java.io.File, java.lang.String, java.lang.String, java.util.List)">writeDriverFile</A></STRONG>(File&nbsp;dir,
+                String&nbsp;packageName,
+                String&nbsp;driverClassName,
+                List&lt;String&gt;&nbsp;junitTestSuiteNames)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;File</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#writeDriverFile(java.util.List)">writeDriverFile</A></STRONG>(List&lt;Class&lt;?&gt;&gt;&nbsp;allClasses)</CODE>
 
@@ -226,8 +269,7 @@ Method Summary</CAPTION>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;File</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#writeDriverFile(java.util.List, java.lang.String)">writeDriverFile</A></STRONG>(List&lt;Class&lt;?&gt;&gt;&nbsp;allClasses,
-                String&nbsp;driverClassName)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/JunitFileWriter.html#writeDriverFile(java.lang.String)">writeDriverFile</A></STRONG>(String&nbsp;driverClassName)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates Junit tests for the faults.</TD>
@@ -254,6 +296,18 @@ Method Summary</CAPTION>
 <STRONG>Field Detail</STRONG></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="junitDriverClassName"><!-- --></A><H3>
+junitDriverClassName</H3>
+<PRE>
+public String <STRONG>junitDriverClassName</STRONG></PRE>
+<HR>
+
+<A NAME="packageName"><!-- --></A><H3>
+packageName</H3>
+<PRE>
+public String <STRONG>packageName</STRONG></PRE>
+<HR>
 
 <A NAME="includeParseableString"><!-- --></A><H3>
 includeParseableString</H3>
@@ -365,23 +419,37 @@ writeDriverFile</H3>
 public File <STRONG>writeDriverFile</STRONG>(List&lt;Class&lt;?&gt;&gt;&nbsp;allClasses)</PRE>
 <HR>
 
-<A NAME="writeDriverFile(java.util.List, java.lang.String)"><!-- --></A><H3>
+<A NAME="writeDriverFile(java.lang.String)"><!-- --></A><H3>
 writeDriverFile</H3>
 <PRE>
-public File <STRONG>writeDriverFile</STRONG>(List&lt;Class&lt;?&gt;&gt;&nbsp;allClasses,
-                            String&nbsp;driverClassName)</PRE>
+public File <STRONG>writeDriverFile</STRONG>(String&nbsp;driverClassName)</PRE>
 <DL>
 <DD>Creates Junit tests for the faults.
  Output is a set of .java files.
 <P>
 </DD>
-<DD><DL>
-<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>allClasses</CODE> - List of all classes of interest (this is a workaround for emma missing problem:
- we want to compute coverage over all classes, not just those that happened to have been touched during execution.
- Otherwise, a bad suite can report good coverage.
- The trick is to insert code that will load all those classes;</DD></DL>
-</DD>
 </DL>
+<HR>
+
+<A NAME="getJunitTestSuiteNames()"><!-- --></A><H3>
+getJunitTestSuiteNames</H3>
+<PRE>
+public List&lt;String&gt; <STRONG>getJunitTestSuiteNames</STRONG>()</PRE>
+<HR>
+
+<A NAME="writeDriverFile(java.io.File, java.lang.String, java.lang.String, java.util.List)"><!-- --></A><H3>
+writeDriverFile</H3>
+<PRE>
+public static File <STRONG>writeDriverFile</STRONG>(File&nbsp;dir,
+                                   String&nbsp;packageName,
+                                   String&nbsp;driverClassName,
+                                   List&lt;String&gt;&nbsp;junitTestSuiteNames)</PRE>
+<HR>
+
+<A NAME="getDir()"><!-- --></A><H3>
+getDir</H3>
+<PRE>
+public File <STRONG>getDir</STRONG>()</PRE>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -413,7 +481,7 @@ public File <STRONG>writeDriverFile</STRONG>(List&lt;Class&lt;?&gt;&gt;&nbsp;all
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../randoop/JavaFileWriter.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/LineRemover.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/LiteralFileReader.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../index.html?randoop/JunitFileWriter.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
 &nbsp;<A HREF="JunitFileWriter.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;

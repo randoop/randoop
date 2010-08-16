@@ -86,7 +86,7 @@ public abstract class AbstractGenerator {
   /**
    * Manages notifications for listeners.
    * 
-   * @see randoop.IEventLister.
+   * @see randoop.IEventListener
    */
   public RandoopListenerManager listenerMgr;
   
