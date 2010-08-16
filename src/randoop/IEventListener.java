@@ -40,7 +40,7 @@ public interface IEventListener {
    * Called by ProgressDisplay at regular intervals to monitor progress.
    * Implementing classes can use this opportunity to update state.
    * 
-   * @sse randoop.util.ProgressDisplay
+   * @see randoop.util.ProgressDisplay
    */
   void progressThreadUpdate();
   

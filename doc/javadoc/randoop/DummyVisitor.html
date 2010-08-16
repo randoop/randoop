@@ -101,7 +101,7 @@ extends Object
 implements <A HREF="../randoop/ExecutionVisitor.html" title="interface in randoop">ExecutionVisitor</A></PRE>
 
 <P>
-A visitor that does nothing and adds no decorations.
+A visitor that does nothing and adds no checks.
 <P>
 
 <P>
@@ -147,7 +147,7 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/DummyVisitor.html#visitAfter(randoop.ExecutableSequence, int)">visitAfter</A></STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
            int&nbsp;i)</CODE>
 
@@ -242,14 +242,11 @@ public void <STRONG>visitBefore</STRONG>(<A HREF="../randoop/ExecutableSequence.
 <A NAME="visitAfter(randoop.ExecutableSequence, int)"><!-- --></A><H3>
 visitAfter</H3>
 <PRE>
-public boolean <STRONG>visitAfter</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
-                          int&nbsp;i)</PRE>
+public void <STRONG>visitAfter</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;sequence,
+                       int&nbsp;i)</PRE>
 <DL>
 <DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/ExecutionVisitor.html#visitAfter(randoop.ExecutableSequence, int)">ExecutionVisitor</A></CODE></STRONG></DD>
 <DD>Invoked by ExecutableSequence.execute after the i-th statement executes.
- The return value signals whether the execution of the sequence should be
- aborted. If this method returns false, the remaining statements in the
- sequence under execution will not be executed.
 
  Precondition: statements 0..i have been executed.
 <P>

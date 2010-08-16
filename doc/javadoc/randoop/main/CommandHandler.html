@@ -93,7 +93,7 @@ Object
   <IMG SRC="../../resources/inherit.gif" ALT="extended by "><STRONG>CommandHandler</STRONG>
 </PRE>
 <DL>
-<DT><STRONG>Direct Known Subclasses:</STRONG></DT> <DD><A HREF="../../randoop/main/CleanObservations.html" title="class in randoop.main">CleanObservations</A>, <A HREF="../../randoop/main/CovUtils.html" title="class in randoop.main">CovUtils</A>, <A HREF="../../randoop/main/ExecuteSequence.html" title="class in randoop.main">ExecuteSequence</A>, <A HREF="../../randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</A>, <A HREF="../../randoop/main/Help.html" title="class in randoop.main">Help</A>, <A HREF="../../randoop/main/RmDiffObservations.html" title="class in randoop.main">RmDiffObservations</A>, <A HREF="../../randoop/main/RunISSTA06Containers.html" title="class in randoop.main">RunISSTA06Containers</A>, <A HREF="../../randoop/main/UniversalDriverHandler.html" title="class in randoop.main">UniversalDriverHandler</A></DD>
+<DT><STRONG>Direct Known Subclasses:</STRONG></DT> <DD><A HREF="../../randoop/main/CleanObservations.html" title="class in randoop.main">CleanObservations</A>, <A HREF="../../randoop/main/CovUtils.html" title="class in randoop.main">CovUtils</A>, <A HREF="../../randoop/main/ExecuteSequence.html" title="class in randoop.main">ExecuteSequence</A>, <A HREF="../../randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</A>, <A HREF="../../randoop/main/Help.html" title="class in randoop.main">Help</A>, <A HREF="../../randoop/main/RmDiffObservations.html" title="class in randoop.main">RmDiffObservations</A>, <A HREF="../../randoop/main/UniversalDriverHandler.html" title="class in randoop.main">UniversalDriverHandler</A></DD>
 </DL>
 <HR>
 <PRE>public abstract class <STRONG>CommandHandler</STRONG>
@@ -264,7 +264,8 @@ Method Summary</CAPTION>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/CommandHandler.html#usageMessage(java.io.PrintStream)">usageMessage</A></STRONG>(PrintStream&nbsp;out)</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/main/CommandHandler.html#usageMessage(java.io.PrintStream, boolean)">usageMessage</A></STRONG>(PrintStream&nbsp;out,
+             boolean&nbsp;showUnpublicized)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -420,10 +421,11 @@ public final void <STRONG>printHTML</STRONG>(PrintStream&nbsp;out)</PRE>
 </DL>
 <HR>
 
-<A NAME="usageMessage(java.io.PrintStream)"><!-- --></A><H3>
+<A NAME="usageMessage(java.io.PrintStream, boolean)"><!-- --></A><H3>
 usageMessage</H3>
 <PRE>
-public final void <STRONG>usageMessage</STRONG>(PrintStream&nbsp;out)</PRE>
+public final void <STRONG>usageMessage</STRONG>(PrintStream&nbsp;out,
+                               boolean&nbsp;showUnpublicized)</PRE>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
