@@ -595,11 +595,12 @@ manual: build utils/plume-lib
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
 
-# A separate target because the "validate" tool may not be installed. 
-# It does not depend on "manual" because that is 
+# A separate target because the "validate" tool might not be installed. 
+# It does not depend on "manual" because that always does a build.
 validate-manual:
 	validate doc/index.html
 	validate doc/dev.html
+	validate plugin/doc/index.html
 
 
 ############################################################
