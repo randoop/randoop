@@ -33,7 +33,6 @@ public class Main {
     invisibleHandlers.add(new ExecuteSequence());
     invisibleHandlers.add(new CleanObservations());
     invisibleHandlers.add(new RmDiffObservations());
-    invisibleHandlers.add(new RunISSTA06Containers());
   }
 
   // The main method simply calls nonStaticMain.

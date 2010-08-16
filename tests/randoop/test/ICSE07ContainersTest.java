@@ -55,7 +55,7 @@ public class ICSE07ContainersTest extends TestCase {
     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
     GenInputsAbstract.repeat_heuristic = true;
     ReflectionExecutor.usethreads  = false;
-    randoop.Globals.nochecks = true;
+    randoop.main.GenInputsAbstract.debug_checks = false;
     explorer.explore();
   }
 

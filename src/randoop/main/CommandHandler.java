@@ -126,7 +126,7 @@ public abstract class CommandHandler {
     }
   }
 
-  public final void usageMessage(PrintStream out) {
+  public final void usageMessage(PrintStream out, boolean showUnpublicized) {
 
     out.println();
 
@@ -170,7 +170,7 @@ public abstract class CommandHandler {
     if (foptions != null) {
       out.println("OPTIONS:");
       out.println();
-      out.println(foptions.usage());
+      out.println(foptions.usage(showUnpublicized));
     }
   }
 

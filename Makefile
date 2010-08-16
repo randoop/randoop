@@ -47,7 +47,11 @@ RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
 RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
 RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
 
-all: clean build tests results 
+# Build and run tests
+all: clean build tests
+
+# Build, run tests, create manual, create distrubution.
+all-dist: all manual distribution-files 
 
 # Remove Randoop classes.
 clean:
@@ -67,10 +71,10 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	touch bin
 
 # Run all tests.
-tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen distribution-files manual results 
+tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen  results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit ds-coverage randoop1 randoop2 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -109,6 +113,14 @@ ds-coverage: bin
 	  junit.textui.TestRunner \
 	   randoop.test.ICSE07ContainersTest
 
+# Basic smoke test: help command does not crash.
+randoop-help: 
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help 
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help help
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help gentests 
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help --unpub gentests
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help --unpub help
+
 # Runs Randoop on Collections and TreeSet.
 randoop1: bin
 	rm -rf systemtests/randoop-scratch
@@ -125,8 +137,7 @@ randoop1: bin
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
-	   --nochecks=false \
-	   --randooptestrun=true \
+	   --debug_checks \
 	   --observers=systemtests/resources/randoop1_observers.txt \
 	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip
 	cd systemtests/randoop-scratch && \
@@ -137,25 +148,20 @@ randoop1: bin
 	  foo.bar.TestClass
 	cp systemtests/randoop-scratch/foo/bar/TestClass0.java systemtests/resources/TestClass0.java
 
-# Runs Randoop on Collections and TreeSet.
+# Runs Randoop on Collections and TreeSet, capture output.
 randoop2: bin
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
-	   --dontexecute \
 	   --output-tests=all \
-	   --check_reps=true \
-	   --component-based=false \
 	   --remove-subsequences=false \
-	   --check-object-contracts=false \
-	   --inputlimit=10000 \
+	   --inputlimit=100 \
 	   --testclass=java2.util2.TreeSet \
 	   --testclass=java2.util2.ArrayList \
 	   --testclass=java2.util2.LinkedList \
 	   --testclass=java2.util2.Collections \
 	   --junit-classname=Naive \
-	   --output-nonexec=true \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
@@ -166,21 +172,22 @@ randoop2: bin
 	  foo/bar/Naive*.java
 	cp systemtests/randoop-scratch/foo/bar/Naive0.java systemtests/resources/Naive0.java
 
-# Runs Randoop on a large collections of classes from the JDK.
-# This run of Randoop ends up creating a bunch of randomly-named files
-# in current directory, so we execute it from scratch directory.
+# Sanity check. Runs Randoop on a large collections of classes from the JDK,
+# with a set of options, and just makes sure that Randoop terminates normally.
 randoop3: bin
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
 	cd systemtests/randoop-scratch && java -ea -classpath $(RANDOOP_HOME):../src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
+	   --null-ratio=0.3 \
+	   --alias-ratio=0.3 \
+	   --small-tests \
+	   --clear=100 \
 	   --classlist=../resources/jdk_classlist.txt \
 	   --junit-classname=JDK_Tests \
 	   --junit-package-name=jdktests \
 	   --junit-output-dir=../randoop-scratch
-	cp systemtests/randoop-scratch/jdktests/JDK_Tests0.java systemtests/resources/JDK_Tests0.java
-	cp systemtests/randoop-scratch/jdktests/JDK_Tests1.java systemtests/resources/JDK_Tests1.java
 
 randoop-contracts: bin
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Buggy.java
@@ -189,7 +196,7 @@ randoop-contracts: bin
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --output-tests=fail \
-	   --timelimit=5 \
+	   --timelimit=10 \
 	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
 	   --junit-classname=BuggyTest \
 	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
@@ -322,15 +329,6 @@ perf2: bin
 	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	  randoop.test.NaivePerformanceTest
-
-# Targets to measure achieved coverage on container data structures.
-# Did not make into Randoop tests because results are highly dependent
-# on the machine that Randoop is run on.
-containers:
-	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.Main issta-containers randoop.test.issta2006.BinTree directed
-	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.Main issta-containers randoop.test.issta2006.BinomialHeap directed
-	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.Main issta-containers randoop.test.issta2006.FibHeap directed
-	java ${XMXHEAP} -classpath $(CLASSPATH) randoop.main.Main issta-containers randoop.test.issta2006.TreeMap directed
 
 ############################################################
 # Targets for testing Randoop/Dyncomp's dataflow analysis.
@@ -592,7 +590,7 @@ GENTESTS_OPTIONS_JAVA = \
 # Consider also running "make plume-lib-update" to get the latest
 # html-update-toc.  "plume-lib-update" is not a prerequisite of this
 # target, to avoid connecting to the network just to build the manual.
-manual: build plume-lib
+manual: build utils/plume-lib
 	javadoc -quiet -doclet plume.OptionsDoclet -i -docfile doc/index.html ${GENTESTS_OPTIONS_JAVA}
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
