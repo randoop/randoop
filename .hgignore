@@ -59,10 +59,13 @@ test.dftargets.txt
 release/
 dist/
 temp.mk
+temp.txt
 
 utils/plume-lib/
 
 plugin/bin/
+
+
 
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.

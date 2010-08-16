@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import randoop.main.GenInputsAbstract;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
@@ -88,7 +87,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
 
     if (s.getResult(idx) instanceof ExceptionalExecution) {
       ExceptionalExecution exec = (ExceptionalExecution) s.getResult(idx);
-      if (exec.getException().getClass().equals(NullPointerException.class) || exec.getException().getClass().equals(AssertionError.class)) {
+      if (failureRevealingException(exec)) {
         NoExceptionCheck obs = new NoExceptionCheck(idx);
         s.addCheck(idx, obs, false);
       }
@@ -109,6 +108,23 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
       }
     }
     return;
+  }
+
+  // Randoop's default behavior is to output as failing test cases sequences
+  // that lead to a few select number of exceptions, including NPEs or assertion
+  // violations; any other exceptions are conservatively assumed to be normal behavior.
+  private boolean failureRevealingException(ExceptionalExecution exec) {
+    
+    if (exec.getException().getClass().equals(NullPointerException.class))
+      return true;
+    
+    if (exec.getException().getClass().equals(AssertionError.class))
+      return true;
+    
+    if (exec.getException().getClass().equals(StackOverflowError.class))
+      return true;
+    
+    return false;
   }
 
   private void checkBinary(ExecutableSequence s, ObjectContract c, Set<Integer> values, int idx) {
