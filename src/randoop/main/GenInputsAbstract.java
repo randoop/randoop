@@ -57,9 +57,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static String methodlist = null;
 
   /**
-   * Randoop will not attempt to directly call methods that match the regular
-   * expression given. This does not prevent indirect calls to
-   * such methods from other, allowed methods.
+   * Randoop will not attempt to directly call methods whose {@link
+   * java.lang.reflect.Method#toString()} matches the regular expression
+   * given.  This does not prevent indirect calls to such methods from
+   * other, allowed methods.
    */
   @Option("Do not call methods that match regular expression <string>")
   public static Pattern omitmethods = null;
