@@ -3,6 +3,11 @@ package randoop.plugin.internal.core.launching;
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.core.TestKinds;
 
+/**
+ * Constant definitions for Randoop launch configurations.
+ * 
+ * @author Peter Kalauskas
+ */
 public class IRandoopLaunchConfigurationConstants {
   
   public static final String ID_RANDOOP_TEST_GENERATION = "randoop.plugin.core.launching.gentestsType"; //$NON-NLS-1$

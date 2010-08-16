@@ -11,12 +11,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.ui.RandoopMessages;
+import randoop.plugin.internal.ui.RandoopPluginImages;
 import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.IOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.OptionFactory;
 import randoop.plugin.internal.ui.options.OutputDirectoryOption;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class ParametersPage extends OptionWizardPage {
   final int MARGIN = 5;
   final int INDENTATION = 5;
@@ -29,10 +34,9 @@ public class ParametersPage extends OptionWizardPage {
   private IOption fClassName;
   
   protected ParametersPage(String pageName, IJavaProject project, ILaunchConfigurationWorkingCopy config) {
-    super(pageName, config);
+    super(pageName, "Launch Configuration Parameters", RandoopPluginImages.DESC_WIZBAN_NEW_RNDP, config);
     
     fProject = project;
-    setTitle("Randoop Launch Configuration");
   }
   
   @Override
@@ -41,14 +45,14 @@ public class ParametersPage extends OptionWizardPage {
     setControl(comp);
     
     createResourcesComposite(comp);
-    SWTFactory.createSeperator(comp, 1);
+    SWTFactory.createHorizontalSeperator(comp, 1);
     
     List<IOption> options = new ArrayList<IOption>();
     
     options.addAll(OptionFactory.createStoppingCriterionOptionGroup(comp, getBasicoptionChangeListener()));
-    SWTFactory.createSeperator(comp, 1);
+    SWTFactory.createHorizontalSeperator(comp, 1);
     options.addAll(OptionFactory.createOutputParametersOptionGroup(comp, getBasicoptionChangeListener()));
-    SWTFactory.createSeperator(comp, 1);
+    SWTFactory.createHorizontalSeperator(comp, 1);
     options.addAll(OptionFactory.createAdvancedOptionGroup(comp, getBasicoptionChangeListener()));
     
     for (IOption option : options) {

@@ -3,6 +3,7 @@ package randoop.plugin.internal.ui;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -30,7 +31,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.RandoopStatus;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class ResourcesListQuestionDialogWithToggle extends MessageDialogWithToggle implements IDoubleClickListener {
   
   static class ResourceLabelProvider extends LabelProvider {
@@ -117,7 +123,8 @@ public class ResourcesListQuestionDialogWithToggle extends MessageDialogWithTogg
       try {
         page.openEditor(new FileEditorInput(file), desc.getId());
       } catch (PartInitException e) {
-        RandoopPlugin.log(e);
+        IStatus s = RandoopStatus.PART_INIT_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
     }
     

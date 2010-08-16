@@ -13,6 +13,8 @@ import randoop.plugin.internal.core.runtime.TestGeneratorSession;
 /**
  * A panel with counters for the number of tests generated and errors revealed
  * during a run of Randoop.
+ * 
+ * (see org.eclipse.jdt.internal.junit.ui.CounterPanel)
  */
 public class CounterPanel extends Composite {
 	protected Text fNumberOfTests;

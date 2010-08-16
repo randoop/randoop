@@ -9,6 +9,10 @@ import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.core.RandoopStatus;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public abstract class BoundedDoubleOption extends TextOption {
   private double fLowerBound;
   private double fUpperBound;
@@ -43,12 +47,12 @@ public abstract class BoundedDoubleOption extends TextOption {
       double d = Double.parseDouble(text);
 
       if (d < fLowerBound || d > fUpperBound) {
-        return RandoopStatus.createErrorStatus(fOutOfBoundsMsg);
+        return RandoopStatus.createUIStatus(IStatus.ERROR, fOutOfBoundsMsg);
       }
 
       return RandoopStatus.OK_STATUS;
     } catch (NumberFormatException nfe) {
-      return RandoopStatus.createErrorStatus(fInvalidErrorMsg);
+      return RandoopStatus.createUIStatus(IStatus.ERROR, fInvalidErrorMsg);
     }
   }
   

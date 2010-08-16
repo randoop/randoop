@@ -1,14 +1,11 @@
 package randoop.plugin.internal.ui.views;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.ui.RandoopPluginImages;
 import randoop.plugin.model.resultstree.FailingMember;
 import randoop.plugin.model.resultstree.FailureKind;
 import randoop.plugin.model.resultstree.Failures;
@@ -16,16 +13,16 @@ import randoop.plugin.model.resultstree.RunResultsTree;
 
 /**
  * Provides labels for the various trees displayed in the Randoop view.
+ * 
+ * @author Carlos Pacheco
  */
 public class RandoopLabelProvider extends LabelProvider {
 
-  private Map<ImageDescriptor, Image> imageCache = new LinkedHashMap<ImageDescriptor, Image>();
-  
   @Override
   public Image getImage(Object element) {
-    ImageDescriptor descriptor = null;
+    Image image = null;
     if (element instanceof FailingMember) {
-      descriptor = RandoopPlugin.getImageDescriptor("icons/methpub_obj.gif");
+      image = RandoopPlugin.getDefault().getImageRegistry().get(RandoopPluginImages.IMG_OBJS_CUNIT);
     } else if (element instanceof FailureKind) {
       // The class icon should come from the platform's shared images as shown below, but
       // doing so returns null, so we're saving the icon under randoop's icons/ directory
@@ -38,31 +35,25 @@ public class RandoopLabelProvider extends LabelProvider {
       // TODO: Failure kinds should be stored in an enum or public static ints 
       FailureKind kind = (FailureKind) element;
       if (kind.getClassName().equals("class randoop.EqualsToNullRetFalse")) {
-        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equalsToNull.png");
+        image = RandoopPlugin.getDefault().getImageRegistry().get(RandoopPluginImages.IMG_OBJS_FAILR_EQNULL);
       } else  if (kind.getClassName().equals("NPEs / Assertion violations")) {
-        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_npe.png");
+        image = RandoopPlugin.getDefault().getImageRegistry().get(RandoopPluginImages.IMG_OBJS_FAILR_NPE);
       } else  if (kind.getClassName().equals("class randoop.EqualsReflexive")) {
-        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equals.png");
+        image = RandoopPlugin.getDefault().getImageRegistry().get(RandoopPluginImages.IMG_OBJS_FAILR_EQ);
       } else  if (kind.getClassName().equals("class randoop.EqualsHashcode")) {
-        descriptor = RandoopPlugin.getImageDescriptor("icons/failure_equalsHashCode.png");
+        image = RandoopPlugin.getDefault().getImageRegistry().get(RandoopPluginImages.IMG_OBJS_FAILR_HASHCD);
       } else {
         // Return a generic error image
         return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_DEC_FIELD_ERROR);
       }
     } else if (element instanceof Failures) {
-      descriptor = RandoopPlugin.getImageDescriptor("icons/bomb.png");
+      image = RandoopPlugin.getDefault().getImageRegistry().get(RandoopPluginImages.IMG_OBJS_FAILRS_PARENT);
     } else if (element instanceof RunResultsTree) {
       return null;
     } else {
       throw new RuntimeException("unknown tree element: " + element.getClass());
     }
 
-    //obtain the cached image corresponding to the descriptor
-    Image image = imageCache.get(descriptor);
-    if (image == null) {
-        image = descriptor.createImage();
-        imageCache.put(descriptor, image);
-    }
     return image;  
   }
 
@@ -82,11 +73,4 @@ public class RandoopLabelProvider extends LabelProvider {
     }
   }
 
-  @Override
-  public void dispose() {
-    for (Image image : imageCache.values()) {
-      image.dispose();
-    }
-    imageCache.clear();
-  }
 }

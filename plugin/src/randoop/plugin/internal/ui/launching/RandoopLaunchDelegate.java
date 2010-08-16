@@ -11,7 +11,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -27,16 +26,19 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IVMRunner;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.VMRunnerConfiguration;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
 import randoop.plugin.internal.core.MutableBoolean;
+import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
 import randoop.plugin.internal.core.runtime.IMessageListener;
@@ -103,11 +105,14 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       return;
 
     RandoopArgumentCollector args = new RandoopArgumentCollector(configuration, getWorkspaceRoot());
-    IStatus status = args.checkForConflicts();
+    
+    IStatus status = args.getWarnings();
     if (status.getSeverity() == IStatus.ERROR) {
       informAndAbort(status);
     } else if (status.getSeverity() == IStatus.WARNING) {
-      if (!MessageUtil.openQuestion(status.getMessage() + "\n\n" + "Proceed with test generations?")) { //$NON-NLS-1$
+      String qst = NLS.bind("{0}{1}", status.getMessage(),
+          "\n\nProceed with test generations?");
+      if (!MessageUtil.openQuestion(qst)) {
         return;
       }
     }
@@ -127,7 +132,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
         fPort = fMessageReceiver.getPort();
       } catch (IOException e) {
         fMessageReceiver = null;
-        RandoopPlugin.log(e, "Could not find free communication port"); //$NON-NLS-1$
+        
+        IStatus s = RandoopStatus.COMM_NO_FREE_PORT.getStatus();
+        throw new CoreException(s);
       }
     }
 
@@ -194,31 +201,27 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     collectProgramArguments(launchResources, programArguments);
 
     // Classpath
-    List<String> cpList = new ArrayList<String>(Arrays.asList(getClasspath(configuration)));
+    List<String> cpList = new ArrayList<String>(Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(args.getJavaProject())));
 
-    for (IPath path : launchResources.getClasspathLocations()) {
-      cpList.add(path.makeRelative().toOSString());
-    }
     cpList.add(RandoopPlugin.getRandoopJar().toOSString());
     cpList.add(RandoopPlugin.getPlumeJar().toOSString());
 
     String[] classpath = cpList.toArray(new String[0]);
-
+    
+    // TODO: Sometimes the classpaths do not seem to work...
     for(String str : classpath) {
       System.out.println(str);
     }
-
+    
     // Create VM config
     VMRunnerConfiguration runConfig = new VMRunnerConfiguration(mainTypeName, classpath);
 
     runConfig.setVMArguments((String[]) vmArguments.toArray(new String[vmArguments.size()]));
     runConfig.setProgramArguments((String[]) programArguments.toArray(new String[programArguments.size()]));
     runConfig.setEnvironment(getEnvironment(configuration));
-    runConfig.setWorkingDirectory(workingDirName);
     runConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
-
-    // Bootpath
     runConfig.setBootClassPath(getBootpath(configuration));
+    runConfig.setWorkingDirectory(workingDirName);
 
     // check for cancellation
     if (monitor.isCanceled()) {
@@ -232,8 +235,9 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
       System.out.println(str);
     }
     
-    if (useDefault)
+    if (useDefault) {
       new Thread(fMessageReceiver).start();
+    }
     
     runner.run(runConfig, launch, monitor);
     

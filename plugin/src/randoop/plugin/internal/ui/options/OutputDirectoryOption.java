@@ -1,24 +1,22 @@
 package randoop.plugin.internal.ui.options;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -32,6 +30,10 @@ import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstants;
 import randoop.plugin.internal.core.launching.RandoopArgumentCollector;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class OutputDirectoryOption extends Option implements IOptionChangeListener {
 
   private Shell fShell;
@@ -63,6 +65,14 @@ public class OutputDirectoryOption extends Option implements IOptionChangeListen
     fJavaProject = project;
 
     fOutputSourceFolderText = outputSourceFolderText;
+    fOutputSourceFolderText.addModifyListener(new ModifyListener() {
+
+      public void modifyText(ModifyEvent e) {
+        notifyListeners(new OptionChangeEvent(
+            IRandoopLaunchConfigurationConstants.ATTR_OUTPUT_DIRECTORY_NAME,
+            fOutputSourceFolderText.getText()));
+      }
+    });
 
     fSourceFolderBrowseButton = sourceFolderBrowseButton;
     fSourceFolderBrowseButton.addSelectionListener(new SelectionAdapter() {
@@ -79,23 +89,6 @@ public class OutputDirectoryOption extends Option implements IOptionChangeListen
     fSourceFolderBrowseButton.setEnabled(true);
   }
 
-  public IStatus canSave() {
-    if (fOutputSourceFolderText == null || fSourceFolderBrowseButton == null) {
-      return RandoopStatus.ERROR_STATUS;
-    }
-
-    return RandoopStatus.OK_STATUS;
-  }
-
-  public IStatus isValid(ILaunchConfiguration config) {
-    String projectName = RandoopArgumentCollector.getProjectName(config);
-
-    String outputSourceFolderName = RandoopArgumentCollector
-        .getOutputDirectoryName(config);
-
-    return validate(projectName, outputSourceFolderName);
-  }
-
   /**
    * Returns an OK <code>IStatus</code> if the specified arguments could be
    * passed to Randoop without raising any error. If the arguments are not
@@ -105,51 +98,31 @@ public class OutputDirectoryOption extends Option implements IOptionChangeListen
    * @param outputSourceFolderHandlerId
    * @return
    */
-  protected static IStatus validate(String projectName, String outputSourceFolderName) {
-    // see
-    // org.eclipse.jdt.debug.ui.launchConfigurations.JavaClasspathTab.isValid
+  public IStatus canSave() {
+    return RandoopStatus.OK_STATUS;
+  }
+
+  public IStatus isValid(ILaunchConfiguration config) {
+    String projectName = RandoopArgumentCollector.getProjectName(config);
+
+    String outputSourceFolderName = RandoopArgumentCollector
+        .getOutputDirectoryName(config);
+
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
     IStatus status = workspace.validateName(projectName, IResource.PROJECT);
-
-    IJavaProject javaProject;
-    if (status.isOK()) {
-      IProject project = workspace.getRoot().getProject(projectName);
-      if (!project.exists()) {
-        return RandoopStatus.createErrorStatus(MessageFormat.format(
-            "Project {0} does not exist", new Object[] { projectName }));
-      }
-      if (!project.isOpen()) {
-        return RandoopStatus.createErrorStatus(MessageFormat.format(
-            "Project {0} is closed", new Object[] { projectName }));
-      }
-
-      try {
-        javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
-        if (javaProject == null) {
-          return RandoopStatus.createErrorStatus(MessageFormat.format(
-              "Project {0} is not a Java project", new Object[] { projectName }));
-        }
-      } catch (CoreException e) {
-        RandoopPlugin.log(e);
-        return RandoopStatus.ERROR_STATUS;
-      }
-    } else {
-      return RandoopStatus.createErrorStatus(MessageFormat.format(
-          "Illegal project name: {0}", new Object[] { status.getMessage() }));
-    }
-
+    
     final char[] ILLEGAL_CHARACTERS = { '\\', ':', '*', '`', '?', '"', '<', '>', '|' };
     for (char c : ILLEGAL_CHARACTERS) {
       if (outputSourceFolderName.contains(new Character(c).toString())) {
-        status = RandoopStatus
-            .createErrorStatus("Output folder cannot contain any of the following characters: \\ : * ` ? \" < > |");
+        status = RandoopStatus.createUIStatus(IStatus.ERROR, "Output folder cannot contain any of the following characters: \\ : * ` ? \" < > |");
         return status;
       }
     }
-    IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(javaProject,
+    
+    IPackageFragmentRoot outputDir = RandoopCoreUtil.getPackageFragmentRoot(fJavaProject,
         outputSourceFolderName);
     if (outputDir == null) {
-      status = RandoopStatus.createOkStatus("Output folder will be created on launch");
+      status = RandoopStatus.createUIStatus(IStatus.OK, "Output folder does not exist and will be created on launch");
       return status;
     }
 

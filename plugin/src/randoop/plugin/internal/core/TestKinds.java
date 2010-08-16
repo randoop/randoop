@@ -1,5 +1,13 @@
 package randoop.plugin.internal.core;
 
+/**
+ * Enums for the different test kinds Randoop can produce. Each test kind has a
+ * unique command identifier based on its ordinal. The ID corresponds to the
+ * order of the readable names given in the list returned by
+ * {@link TestKinds#getTranslatableNames}
+ * 
+ * @author Peter Kalauskas
+ */
 public enum TestKinds {
   all("all", "Pass or Fail"), //$NON-NLS-1$
   pass("pass", "Pass"), //$NON-NLS-1$

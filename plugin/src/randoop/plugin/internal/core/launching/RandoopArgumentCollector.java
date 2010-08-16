@@ -1,6 +1,5 @@
 package randoop.plugin.internal.core.launching;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.osgi.util.NLS;
 
 import randoop.plugin.RandoopPlugin;
 import randoop.plugin.internal.IConstants;
@@ -27,6 +27,14 @@ import randoop.plugin.internal.core.RandoopCoreUtil;
 import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.TypeMnemonic;
 
+/**
+ * Argument collecter for the Randoop launch configuration type. The class may
+ * be instantiated to get the object's represented by the by the values in a
+ * configurations attribute map. The class also has a suite of static methods
+ * that may be used to get and set Randoop launch configuration attributes.
+ * 
+ * @author Peter Kalauskas
+ */
 public class RandoopArgumentCollector {
   private static final List<String> EMPTY_STRING_LIST = new ArrayList<String>();
   
@@ -49,112 +57,174 @@ public class RandoopArgumentCollector {
   private int fMaxTestsWritten;
   private int fMaxTestsPerFile;
 
-  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) throws JavaModelException, NumberFormatException {
+  /**
+   * Constructs a set of objects corresponding to the parameters in the given
+   * launch configuration. The configuration is guaranteed to be runnable if a
+   * <code>CoreException</code> is not thrown, but it may not perform as
+   * expected. For more information,
+   * {@link RandoopArgumentCollector#getWarnings()} must be called.
+   * 
+   * @param config
+   *          the configuration to
+   * @param root
+   * @throws CoreException
+   *           if the there was an error accessing or interpreting data from the
+   *           <code>ILaunchConfiguration</code>, or if the configuration would
+   *           fail when launched
+   */
+  public RandoopArgumentCollector(ILaunchConfiguration config, IWorkspaceRoot root) throws CoreException {
     fName = config.getName();
     Assert.isNotNull(fName, "Configuration name not given");
-    
+
     String projectName = getProjectName(config);
     fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
-    Assert.isNotNull(fJavaProject, "Java project not specified");
+    if (fJavaProject == null) {
+      String msg = NLS.bind("Java project ''{0}'' was not found.", projectName);
+      IStatus s = RandoopStatus.createUIStatus(IStatus.ERROR, msg);
+      throw new CoreException(s);
+    } else if (!fJavaProject.exists()) {
+      String msg = NLS.bind("Java project ''{0}'' does not exist.", projectName);
+      IStatus s = RandoopStatus.createUIStatus(IStatus.ERROR, msg);
+      throw new CoreException(s);
+    }
 
     fSelectedTypes = new ArrayList<IType>();
     fSelectedMethodsByType = new HashMap<IType, List<IMethod>>();
-    
-    List<?> availableTypes = getAvailableTypes(config);
-    List<?> checkedTypes = getCheckedTypes(config);
-    List<?> grayedTypes = getGrayedTypes(config);
-    
-    Assert.isTrue(!availableTypes.isEmpty(), "No class-input or method-input selected");
-    
-    
-    for (Object typeObject : availableTypes) {
-      Assert.isTrue(typeObject instanceof String, "Non-String arguments stored in class-input list");
-      String typeMnemonicString = (String) typeObject;
+
+    List<String> checkedTypes = getCheckedTypes(config);
+    List<String> grayedTypes = getGrayedTypes(config);
+
+    if (checkedTypes.isEmpty()) {
+      IStatus s = RandoopStatus.createLaunchConfigurationStatus(IStatus.ERROR, "No classes or methods have been selected for testing", null);
+      throw new CoreException(s);
+    }
+
+    for (String typeMnemonicString : checkedTypes) {
       
       TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, root);
       IType type = typeMnemonic.getType();
-      
-      Assert.isTrue(fJavaProject.equals(typeMnemonic.getJavaProject()), "One of the class-inputs does not exist in the selected project");
-      
-      if (grayedTypes.contains(typeObject)) {
+
+      if (!fJavaProject.equals(typeMnemonic.getJavaProject())) {
+        String msg = NLS.bind("The class {0} is selected for testing but does not exist in the selected project.", typeMnemonic.getFullyQualifiedName());
+        IStatus s = RandoopStatus.createLaunchConfigurationStatus(IStatus.ERROR, msg, null);
+        throw new CoreException(s);
+      }
+
+      if (grayedTypes.contains(typeMnemonicString)) {
         List<IMethod> methodList = new ArrayList<IMethod>();
-        
-        List<?> selectedMethods = getCheckedMethods(config, new TypeMnemonic(type).toString());
-        for (Object methodObject : selectedMethods) {
-          Assert.isTrue(methodObject instanceof String, "Non-String arguments stored in method-input list");
-          String methodMnemonicString = (String) methodObject;
-          
-          IMethod m = new MethodMnemonic(methodMnemonicString).findMethod(type);
-          Assert.isNotNull(m, "One of the method inputs does not exist");
-          Assert.isTrue(m.exists(), MessageFormat.format("Stored method [{0}] does not exist", m.getElementName()));
-          
-          methodList.add(m);
+
+        try {
+          List<String> selectedMethods = getCheckedMethods(config, new TypeMnemonic(type).toString());
+          for (String methodMnemonicString : selectedMethods) {
+            IMethod m = new MethodMnemonic(methodMnemonicString).findMethod(type);
+            
+            if (m == null || !m.exists()) {
+              String msg;
+              if (m == null) {
+                msg = "One of the methods selected for testing does not exist";
+              } else {
+                msg = NLS.bind("Stored method ''{0}'' does not exist", m.getElementName());
+              }
+              IStatus s = RandoopStatus.createLaunchConfigurationStatus(IStatus.ERROR, msg, null);
+              throw new CoreException(s);
+            }
+
+            methodList.add(m);
+          }
+        } catch (JavaModelException e) {
+          IStatus s = RandoopStatus.createLaunchConfigurationStatus(IStatus.ERROR,
+              "One of the classes selected for testing does not exist.", e);
+          throw new CoreException(s);
         }
-        
         fSelectedMethodsByType.put(type, methodList);
-      } else if (checkedTypes.contains(typeObject)) {
+      } else if (checkedTypes.contains(typeMnemonicString)) {
         fSelectedTypes.add(type);
       }
     }
-    
-    fRandomSeed = Integer.parseInt(getRandomSeed(config));
-    fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
-    fUseThreads = getUseThreads(config);
-    if (fUseThreads)
-      fThreadTimeout = Integer.parseInt(getThreadTimeout(config));
-    fUseNull = getUseNull(config);
-    if (fUseNull)
-      fNullRatio = Double.parseDouble(getNullRatio(config));
-    fInputLimit = Integer.parseInt(getInputLimit(config));
-    fTimeLimit = Integer.parseInt(getTimeLimit(config));
 
+    try {
+      fRandomSeed = Integer.parseInt(getRandomSeed(config));
+      fMaxTestSize = Integer.parseInt(getMaxTestSize(config));
+      fUseThreads = getUseThreads(config);
+      if (fUseThreads)
+        fThreadTimeout = Integer.parseInt(getThreadTimeout(config));
+      fUseNull = getUseNull(config);
+      if (fUseNull)
+        fNullRatio = Double.parseDouble(getNullRatio(config));
+      fInputLimit = Integer.parseInt(getInputLimit(config));
+      fTimeLimit = Integer.parseInt(getTimeLimit(config));
+      fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
+      fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
+    } catch (NumberFormatException nfe) {
+      IStatus s = RandoopStatus.createLaunchConfigurationStatus(
+        IStatus.CANCEL,
+        "One of the stored attributes in the launch configuration was not formatted as a number as was expected. Try opening the launch configuration dialog and resaving the configuration",
+        nfe);
+      throw new CoreException(s);
+    }
+
+    // TODO: Check validaty of these three arguments
     String outputSourceFolderName = getOutputDirectoryName(config);
     fOutputDirectory = fJavaProject.getPath().append(outputSourceFolderName).makeAbsolute();
-    Assert.isNotNull(fOutputDirectory, "Output directory not specified"); //$NON-NLS-1$
-
     fJUnitPackageName = getJUnitPackageName(config);
-    Assert.isNotNull(fJUnitPackageName, "JUnit package name not given"); //$NON-NLS-1$
-
     fJUnitClassName = getJUnitClassName(config);
-    Assert.isNotNull(fJUnitClassName, "JUnit class name not given"); //$NON-NLS-1$
 
     fTestKinds = getTestKinds(config);
-    Assert.isNotNull(fTestKinds, "Test kinds not specified"); //$NON-NLS-1$
 
-    fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
-    fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
-  }
-  
-  public IStatus checkForConflicts() {
-    IJavaProject javaProject = getJavaProject();
-    
-    for (IType type : getSelectedTypes()) {
+    /**
+     * There is another <code>IType</code> with the same fully-qualified-name as
+     * the given <code>IMethod</code>s declaring <code>IType</code> in a classpath
+     * with a higher priority. The configuration will likely crash after launching
+     * since it is unlikely the two methods have the same exact methods.
+     */
+    for (IType type : fSelectedMethodsByType.keySet()) {
       String fqname = type.getFullyQualifiedName().replace('$', '.');
-      
+
       try {
-        if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return RandoopStatus.createWarningStatus("One of the selected classes has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected class.");
+        if (!type.equals(getJavaProject().findType(fqname, (IProgressMonitor) null))) {
+          String msg = NLS.bind("Methods in class {0} are selected for testing, but there is another class by the same fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class.", fqname);
+          IStatus s = RandoopStatus.createLaunchConfigurationStatus(IStatus.ERROR, msg, null);
+          throw new CoreException(s);
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
     }
     
-    for (IType type : fSelectedMethodsByType.keySet()) {
+  }
+
+  /**
+   * Returns a WARNING status if the arguements in the launch configuration may
+   * cause Randoop to behave unexpectedly. The checks this method performs are:
+   * <p>
+   * <ul>
+   * <li>Another type in the project's classpath may exist with the same
+   * fully-qualified-name as the a selected type, and it may have a higher
+   * priority.
+   * </ul>
+   * 
+   * @return a WARNING status with a description of the problem, or an OK status
+   *         with an empty message if there are no warnings
+   */
+  public IStatus getWarnings() {
+    for (IType type : getSelectedTypes()) {
       String fqname = type.getFullyQualifiedName().replace('$', '.');
-      
+
       try {
-        if (!type.equals(javaProject.findType(fqname, (IProgressMonitor) null))) {
-          return RandoopStatus.createErrorStatus("One of the selected method's declaring class has a class with an identical fully-qualified name in the project's classpath that has priority and will be tested instead of the selected method's declaring class.");
+        if (!type.equals(fJavaProject.findType(fqname, (IProgressMonitor) null))) {
+          String msg = NLS.bind("There are two clases by the name ''{0}'' in the project classpath. The selected class is of a lower priority.", fqname);
+          return RandoopStatus.createLaunchConfigurationStatus(IStatus.WARNING, msg, null);
         }
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+        RandoopPlugin.log(s);
       }
     }
     
     return RandoopStatus.OK_STATUS;
   }
-
+  
   public String getName() {
     return fName;
   }

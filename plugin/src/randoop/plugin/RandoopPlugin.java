@@ -9,8 +9,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
@@ -21,13 +21,16 @@ import org.osgi.framework.BundleContext;
 
 import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.launching.RandoopLaunchResources;
+import randoop.plugin.internal.ui.RandoopPluginImages;
 
 /**
  * The activator class controls the plug-in life cycle. It stores a shared
  * instance of the plug-in and provides a static method to access it.
  * <code>RandoopActivator</code> also provides static convenience methods for
- * logging statuses and exceptions and for accessing the <code>Shell</code> that
- * the shared instance is running in.
+ * logging statuses and accessing the <code>Shell</code> that the shared
+ * instance is running in.
+ * 
+ * @author Peter Kalauskas
  */
 public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
@@ -126,36 +129,6 @@ public class RandoopPlugin extends AbstractUIPlugin {
   }
 
   /**
-   * Logs a status with the specified <code>Exception</code> and message in the
-   * shared instance's log. The logged status will have severity of
-   * <code>IStatus.ERROR</code>.
-   * 
-   * @param e
-   *          the <code>Throwable</code> to log
-   * @param message
-   *          the message to log for this exception
-   */
-  public static void log(Throwable e, String message) {
-    log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, e));
-  }
-
-  /**
-   * Logs the given <code>Throwable</code> in the error log using its message as
-   * the logged message. The logged status will have severity of
-   * <code>IStatus.ERROR</code>.
-   * 
-   * <p>
-   * This is a convenience method fully equivilent to
-   * <code>RandoopPlugin.log(e, e.getMessage()</code>
-   * 
-   * @param e
-   *          the <code>Throwable</code> to log
-   */
-  public static void log(Throwable e) {
-    log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, e.getMessage(), e)); //$NON-NLS-1$
-  }
-  
-  /**
    * Logs a status in the shared instance's log
    * 
    * @param status
@@ -252,6 +225,11 @@ public class RandoopPlugin extends AbstractUIPlugin {
     if (display == null)
       display = Display.getDefault();
     return display;
+  }
+
+  @Override
+  protected void initializeImageRegistry(ImageRegistry registry) {
+    RandoopPluginImages.declareImages(registry);
   }
 
 }

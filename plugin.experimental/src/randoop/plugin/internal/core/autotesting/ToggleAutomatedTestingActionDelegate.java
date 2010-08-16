@@ -8,19 +8,15 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public class ToggleAutomatedTestingActionDelegate implements
     IWorkbenchWindowActionDelegate {
 
-  @Override
   public void dispose() {
   }
 
-  @Override
   public void init(IWorkbenchWindow window) {
   }
 
-  @Override
   public void run(IAction action) {
   }
 
-  @Override
   public void selectionChanged(IAction action, ISelection selection) {
   }
   
