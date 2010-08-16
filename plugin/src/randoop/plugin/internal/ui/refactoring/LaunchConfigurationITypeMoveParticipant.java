@@ -33,7 +33,7 @@ public class LaunchConfigurationITypeMoveParticipant extends MoveParticipant {
         
         return true;
       } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        RandoopPlugin.log(e.getStatus());
       }
     }
     return false;

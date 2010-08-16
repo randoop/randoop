@@ -60,6 +60,20 @@ public interface Check extends Serializable {
   String get_value();
   
   /**
+   * Returns a unique string identifier for the check.  Two checks are
+   * the same if these identifers match.  The value is NOT included.
+   * with.  Used to match up checks between the same sequence run at
+   * different times.  Note that because of changes in the environment
+   * (eg, static variables), two executions of the same sequence may
+   * have different checks (because the existence of some checks
+   * depends on the value of variables)
+   */
+  String get_id();
+
+  /** Returns the offset in the sequence of this check **/
+  int get_stmt_no();
+
+  /**
    * Evaluates this check on the given unfolding execution of a sequence,
    * returning <code>true</code> if the check succeeded, and <code>false</code>
    * otherwise.

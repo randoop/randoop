@@ -27,6 +27,10 @@ import randoop.plugin.internal.core.launching.IRandoopLaunchConfigurationConstan
 import randoop.plugin.internal.ui.RandoopMessages;
 import randoop.plugin.internal.ui.SWTFactory;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class OptionFactory {
 
   private final static int MARGIN = 5;
@@ -62,7 +66,7 @@ public class OptionFactory {
     comp.setLayout(formLayout);
 
     List<IOption> options = new ArrayList<IOption>();
-    Font boldFont = SWTFactory.getBoldFont(comp);
+    Font boldFont = SWTFactory.getBoldFont(comp.getFont());
 
     Label stoppingCriterionTitle = new Label(comp, SWT.NONE);
     stoppingCriterionTitle.setText("Stopping criterion.");
@@ -164,7 +168,7 @@ public class OptionFactory {
     comp.setLayout(formLayout);
 
     List<IOption> options = new ArrayList<IOption>();
-    Font boldFont = SWTFactory.getBoldFont(comp);
+    Font boldFont = SWTFactory.getBoldFont(comp.getFont());
 
     Label outputParametersTitle = new Label(comp, SWT.NONE);
     outputParametersTitle.setText("Test output parameters.");
@@ -235,7 +239,7 @@ public class OptionFactory {
     ld.marginBottom = MARGIN;
 
     List<IOption> options = new ArrayList<IOption>();
-    Font boldFont = SWTFactory.getBoldFont(comp);
+    Font boldFont = SWTFactory.getBoldFont(comp.getFont());
 
     Label advancedTitle = SWTFactory.createLabel(comp, "Advanced", 1);
     advancedTitle.setFont(boldFont);
@@ -583,8 +587,7 @@ public class OptionFactory {
         TestKinds.valueOf(testKindArgument);
         return RandoopStatus.OK_STATUS;
       } catch (IllegalArgumentException e) {
-        return RandoopStatus
-            .createErrorStatus("Test Kinds must be of type All, Pass, or Fail.");
+        return RandoopStatus.createUIStatus(IStatus.ERROR, "Test Kinds must be of type All, Pass, or Fail.");
       }
     }
 

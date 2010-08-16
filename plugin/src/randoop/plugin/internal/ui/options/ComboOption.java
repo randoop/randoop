@@ -11,6 +11,10 @@ import org.eclipse.swt.widgets.Combo;
 import randoop.plugin.internal.core.RandoopStatus;
 import randoop.plugin.internal.core.TestKinds;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public abstract class ComboOption extends Option {
   protected Combo fCombo;
   

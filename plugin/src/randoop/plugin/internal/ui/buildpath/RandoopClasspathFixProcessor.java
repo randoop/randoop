@@ -4,6 +4,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.ui.text.java.ClasspathFixProcessor;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class RandoopClasspathFixProcessor extends ClasspathFixProcessor {
   
   @Override

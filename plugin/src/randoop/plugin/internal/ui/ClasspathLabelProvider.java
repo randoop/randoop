@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -20,17 +21,20 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE.SharedImages;
 
 import randoop.plugin.RandoopPlugin;
+import randoop.plugin.internal.core.RandoopStatus;
 
+/**
+ * 
+ */
 public class ClasspathLabelProvider extends LabelProvider {
   private IJavaProject fJavaProject;
   
   public ClasspathLabelProvider(IJavaProject javaProject) {
     fJavaProject = javaProject;
   }
+  
   /**
-   * The <code>LabelProvider</code> implementation of this
-   * <code>ILabelProvider</code> method returns <code>null</code>. Subclasses
-   * may override.
+   * (see org.eclipse.jdt.internal.debug.ui.launcher.RuntimeClasspathEntryLabelProvider#getImage(Object))
    */
   @Override
   public Image getImage(Object element) {
@@ -79,9 +83,7 @@ public class ClasspathLabelProvider extends LabelProvider {
   }
 
   /**
-   * The <code>LabelProvider</code> implementation of this
-   * <code>ILabelProvider</code> method returns the element's
-   * <code>toString</code> string. Subclasses may override.
+   * 
    */
   @Override
   public String getText(Object element) {
@@ -100,7 +102,8 @@ public class ClasspathLabelProvider extends LabelProvider {
           IClasspathContainer cpcontainer = JavaCore.getClasspathContainer(cpentry.getPath(), fJavaProject);
           return cpcontainer.getDescription();
         } catch (JavaModelException e) {
-          RandoopPlugin.log(e);
+          IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
+          RandoopPlugin.log(s);
           return cpentry.getPath().toString();
         }
       }

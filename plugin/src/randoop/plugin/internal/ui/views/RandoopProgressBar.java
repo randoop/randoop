@@ -31,6 +31,8 @@ import randoop.plugin.internal.core.runtime.TestGeneratorSession;
 
 /**
  * A progress bar with a red/green indication for success or failure.
+ * 
+ * (see org.eclipse.jdt.internal.junit.ui.JUnitProgressBar)
  */
 public class RandoopProgressBar extends Canvas {
   private static final int DEFAULT_WIDTH = 160;

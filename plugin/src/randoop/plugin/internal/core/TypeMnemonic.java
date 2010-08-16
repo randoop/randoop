@@ -20,10 +20,39 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-import randoop.plugin.RandoopPlugin;
-import randoop.plugin.internal.IConstants;
-
+/**
+ * String mnemonic provider and parser for <code>IType</code>s. This class can
+ * can be used to store an <code>IType</code> in a <code>String</code> and
+ * reconstruct that <code>IType</code> from a String. The class can also as
+ * identify references to the same <code>IType</code> from other Java projects.
+ * The mnemonic contains the the Java project name, classpath entry kind,
+ * classpath entry path, and fully qualified name of an IType in an unspecified
+ * format. projects.
+ * <p>
+ * Note that <code>TypeMnemonic</code> objects are constant; none of the methods
+ * will mutate the object being operated on.
+ * <p>
+ * This class provides several advantages over using handle identifiers provided
+ * by <code>IType</code> as specified by their superclass
+ * <code>IJavaElement</code>. The format of <code>IJavaElement</code> handle
+ * identifiers is not specified, and there are no classes to retrieve
+ * information from the <code>String</code>s without the identified resource
+ * existing. The method <code>JavaCore.create(java.land.String)</code> will
+ * return null if the resource cannot be found on the filesystem. This means
+ * that all information in the handle identifier is effectively lost.
+ * Contrarily, while <code>TypeMnemonic</code> does not have an
+ * externally-defined format for the <code>String</code> mnemonics it produces,
+ * it provides a suite of methods to retrieve information from mnemonics for
+ * <code>IType</code>s that no longer exist.
+ * 
+ * @see org.eclipse.jdt.core.IJavaProject
+ * @see org.eclipse.jdt.core.IClasspathEntry
+ * @see org.eclipse.jdt.core.IType
+ * 
+ * @author Peter Kalauskas
+ */
 public class TypeMnemonic {
+  private static final char MNEMONIC_DELIMITER = '%';
   private static final int LENGTH = 4;
   
   private final IJavaProject fJavaProject;
@@ -35,19 +64,33 @@ public class TypeMnemonic {
   private final IPath fClasspath;
   private final String fFullyQualifiedTypeName;
 
-  public TypeMnemonic(IType t) throws JavaModelException {
-    Assert.isLegal(t != null);
+  /**
+   * Constructs a <code>TypeMnemonic</code> from the given <code>IType</code>. The new type
+   * mnemonic is guaranteed to exist.
+   * 
+   * @param t
+   * @throws JavaModelException
+   *           if the type mnemonic could not be constructed because of an
+   *           exception thrown while package fragment root
+   * @throws IllegalArgumentException
+   *           if type is null or does not exist
+   * 
+   * @see TypeMnemonic#exists()
+   */
+  public TypeMnemonic(IType type) throws JavaModelException {
+    Assert.isLegal(type != null, "Type is null");
+    Assert.isLegal(type.exists(), "Type does not exist");
 
-    fType = t;
+    fType = type;
     fJavaProject = fType.getJavaProject();
+    Assert.isNotNull(fJavaProject, "Java project is null");
+    Assert.isTrue(fJavaProject.exists(), "Java project does not exist");
 
     IJavaElement pfr = fType.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-    Assert.isNotNull(pfr);
-    Assert.isTrue(pfr.getElementType() == IJavaElement.PACKAGE_FRAGMENT_ROOT);
-    Assert.isTrue(pfr.exists());
+    Assert.isNotNull(pfr, "Package fragment root is null");
+    Assert.isTrue(pfr.exists(), "Package fragment root does not exist");
+    
     fClasspathEntry = ((IPackageFragmentRoot) pfr).getRawClasspathEntry();
-
-    Assert.isNotNull(fJavaProject);
     Assert.isNotNull(fClasspathEntry);
 
     fJavaProjectName = fJavaProject.getElementName();
@@ -56,6 +99,13 @@ public class TypeMnemonic {
     fFullyQualifiedTypeName = fType.getFullyQualifiedName();
   }
 
+  /**
+   * 
+   * @param javaProjectName
+   * @param classpathKind
+   * @param classpath
+   * @param fullyQualifiedTypeName
+   */
   public TypeMnemonic(String javaProjectName, int classpathKind, IPath classpath, String fullyQualifiedTypeName) {
     fJavaProjectName = javaProjectName;
     fClasspathKind = classpathKind;
@@ -81,7 +131,7 @@ public class TypeMnemonic {
   public TypeMnemonic(String mnemonic, IWorkspaceRoot root) {
     Assert.isLegal(mnemonic != null);
     
-    String[] s = mnemonic.split(IConstants.MNEMONIC_DELIMITER);
+    String[] s = mnemonic.split(new Character(MNEMONIC_DELIMITER).toString());
     Assert.isLegal(s.length == LENGTH);
 
     fJavaProjectName = s[0];
@@ -127,145 +177,152 @@ public class TypeMnemonic {
     return new TypeMnemonic(toString(), root);
   }
 
-  public TypeMnemonic reassign(IJavaProject javaProject) {
+  public TypeMnemonic reassign(IJavaProject javaProject) throws JavaModelException {
     if (javaProject != null && exists()) {
       
       // Check if reassignment is necessary first
       if (javaProject.equals(getJavaProject())) {
         return this;
       }
-      
-      try {
-        IWorkspaceRoot root = getJavaProject().getCorrespondingResource().getWorkspace().getRoot();
 
-        // Ensure both this java project and the one we are switching to are in
-        // the same workspace
-        Assert.isTrue(root.equals(javaProject.getCorrespondingResource().getWorkspace().getRoot()));
+      IWorkspaceRoot root = getJavaProject().getCorrespondingResource().getWorkspace()
+          .getRoot();
 
-        IClasspathEntry cpe = getClasspathEntry();
-        IClasspathEntry newCpe = null;
-        switch (cpe.getEntryKind()) {
-        case IClasspathEntry.CPE_SOURCE:
-          // this entry describes a source root (linked or otherwise) in its project
-          IPath cpePath = cpe.getPath().makeRelativeTo(getJavaProject().getPath());
-          IFolder cpeFolder = getJavaProject().getProject().getFolder(cpePath);
+      // Ensure both this java project and the one we are switching to are in
+      // the same workspace
+      Assert.isTrue(root.equals(javaProject.getCorrespondingResource().getWorkspace()
+          .getRoot()));
 
-          if (cpeFolder.isLinked()) {
-            IPath actualPath = cpeFolder.getLocation().makeRelativeTo(root.getLocation());
-            IFolder linkedFolder = root.getFolder(actualPath);
-            Assert.isTrue(linkedFolder.exists());
-            
-            // Check if javaProject also links to the same source folder
-            newCpe = findLinkedFolder(javaProject, actualPath);
-            if (newCpe != null)
-              break;
-              
-            // Check if javaProject contains the source folder
-            if (linkedFolder.getProject().equals(javaProject.getProject())) {
-              IPath path = linkedFolder.getFullPath();
-              newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_SOURCE, path);
+      IClasspathEntry cpe = getClasspathEntry();
+      IClasspathEntry newCpe = null;
+      switch (cpe.getEntryKind()) {
+      case IClasspathEntry.CPE_SOURCE:
+        // this entry describes a source root (linked or otherwise) in its
+        // project
+        IPath cpePath = cpe.getPath().makeRelativeTo(getJavaProject().getPath());
+        IFolder cpeFolder = getJavaProject().getProject().getFolder(cpePath);
 
-              if (newCpe != null)
-                break;
-            }
-          } else {
-            // Check if javaProject links to the same source folder
-            newCpe = findLinkedFolder(javaProject, cpe.getPath());
+        if (cpeFolder.isLinked()) {
+          IPath actualPath = cpeFolder.getLocation().makeRelativeTo(root.getLocation());
+          IFolder linkedFolder = root.getFolder(actualPath);
+          Assert.isTrue(linkedFolder.exists());
+
+          // Check if javaProject also links to the same source folder
+          newCpe = findLinkedFolder(javaProject, actualPath);
+          if (newCpe != null)
+            break;
+
+          // Check if javaProject contains the source folder
+          if (linkedFolder.getProject().equals(javaProject.getProject())) {
+            IPath path = linkedFolder.getFullPath();
+            newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_SOURCE, path);
+
             if (newCpe != null)
               break;
           }
-          
-          // check javaProject has this.project in it's classpath
-          IPath projectPath = getJavaProject().getPath();
-          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, projectPath);
+        } else {
+          // Check if javaProject links to the same source folder
+          newCpe = findLinkedFolder(javaProject, cpe.getPath());
           if (newCpe != null)
             break;
-          
-          // Check if javaProject references the classpaths output location
-          IPath outputLocation = cpe.getOutputLocation();
-          if (cpe.getOutputLocation() == null)
-            outputLocation = getJavaProject().getOutputLocation();
-          
-          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_LIBRARY, outputLocation);
-          
+        }
+
+        // check javaProject has this.project in it's classpath
+        IPath projectPath = getJavaProject().getPath();
+        newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, projectPath);
+        if (newCpe != null)
           break;
-        case IClasspathEntry.CPE_LIBRARY:
-          // this entry describes a folder or JAR containing binaries
-          
-          if (cpe.isExported()) {
-            projectPath = getJavaProject().getPath();
-            newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, projectPath);
-            if (newCpe != null)
-              break;
-          }
-                  
-          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_LIBRARY, cpe.getPath());
+
+        // Check if javaProject references the classpaths output location
+        IPath outputLocation = cpe.getOutputLocation();
+        if (cpe.getOutputLocation() == null)
+          outputLocation = getJavaProject().getOutputLocation();
+
+        newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_LIBRARY,
+            outputLocation);
+
+        break;
+      case IClasspathEntry.CPE_LIBRARY:
+        // this entry describes a folder or JAR containing binaries
+
+        if (cpe.isExported()) {
+          projectPath = getJavaProject().getPath();
+          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT,
+              projectPath);
           if (newCpe != null)
             break;
-          
-          // If this is a folder
-          IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-          if (workspaceLocation.append(cpe.getPath()).toFile().isDirectory()) {
-            
-            // check if this is an output folder of something in this project
-            for(IClasspathEntry classpathEntry : javaProject.getRawClasspath()) {
-              if (cpe.getPath().equals(classpathEntry.getOutputLocation())) {
-                TypeMnemonic tmp = new TypeMnemonic(javaProject.getElementName(), classpathEntry.getEntryKind(), classpathEntry.getPath(), getFullyQualifiedName());
+        }
 
-                if (tmp.getType() != null) {
-                  newCpe = classpathEntry;
-                  break;
-                }
+        newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_LIBRARY,
+            cpe.getPath());
+        if (newCpe != null)
+          break;
+
+        // If this is a folder
+        IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+        if (workspaceLocation.append(cpe.getPath()).toFile().isDirectory()) {
+
+          // check if this is an output folder of something in this project
+          for (IClasspathEntry classpathEntry : javaProject.getRawClasspath()) {
+            if (cpe.getPath().equals(classpathEntry.getOutputLocation())) {
+              TypeMnemonic tmp = new TypeMnemonic(javaProject.getElementName(),
+                  classpathEntry.getEntryKind(), classpathEntry.getPath(),
+                  getFullyQualifiedName());
+
+              if (tmp.getType() != null) {
+                newCpe = classpathEntry;
+                break;
               }
             }
-            
-            if (javaProject.getOutputLocation().equals(cpe.getPath())) {
-              String fqname = getFullyQualifiedName().replace('$', '.');
-              IType type = javaProject.findType(fqname, (IProgressMonitor) null);
-              IJavaElement pfr = type.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
-              
-              newCpe = ((IPackageFragmentRoot) pfr).getRawClasspathEntry();
-              break;
-            }
           }
-          break;
-        case IClasspathEntry.CPE_PROJECT:
-          // this entry describes another project
-          
-          // check if this type's project is the same as javaProject
-          if (getClasspath().equals(javaProject.getPath())) {
-            // search for the type in the java project - it should exist
-            IType type = javaProject.findType(getFullyQualifiedName());
-            if (type != null)
-              return new TypeMnemonic(type);
-          } else {
-            // check for the exact same project in javaProject's classpath
-            newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT, getClasspath());
-          }
-          break;
-        case IClasspathEntry.CPE_VARIABLE:
-          // this entry describes a project or library indirectly via a
-          // classpath variable in the first segment of the path *
-        case IClasspathEntry.CPE_CONTAINER:
-          // this entry describes set of entries referenced indirectly via a
-          // classpath. Check for the exact same variable/container in
-          // javaProject's classpath
-          newCpe = findClasspathEntry(javaProject, cpe.getEntryKind(), cpe.getPath());
-          break;
-        }
 
-        if (newCpe != null) {
-          TypeMnemonic tmp = new TypeMnemonic(javaProject.getElementName(), newCpe.getEntryKind(), newCpe.getPath(), getFullyQualifiedName());
-          return new TypeMnemonic(tmp.toString(), root);
+          if (javaProject.getOutputLocation().equals(cpe.getPath())) {
+            String fqname = getFullyQualifiedName().replace('$', '.');
+            IType type = javaProject.findType(fqname, (IProgressMonitor) null);
+            IJavaElement pfr = type.getAncestor(IJavaElement.PACKAGE_FRAGMENT_ROOT);
+
+            newCpe = ((IPackageFragmentRoot) pfr).getRawClasspathEntry();
+            break;
+          }
         }
-      } catch (JavaModelException e) {
-        RandoopPlugin.log(e);
+        break;
+      case IClasspathEntry.CPE_PROJECT:
+        // this entry describes another project
+
+        // check if this type's project is the same as javaProject
+        if (getClasspath().equals(javaProject.getPath())) {
+          // search for the type in the java project - it should exist
+          IType type = javaProject.findType(getFullyQualifiedName());
+          if (type != null)
+            return new TypeMnemonic(type);
+        } else {
+          // check for the exact same project in javaProject's classpath
+          newCpe = findClasspathEntry(javaProject, IClasspathEntry.CPE_PROJECT,
+              getClasspath());
+        }
+        break;
+      case IClasspathEntry.CPE_VARIABLE:
+        // this entry describes a project or library indirectly via a
+        // classpath variable in the first segment of the path *
+      case IClasspathEntry.CPE_CONTAINER:
+        // this entry describes set of entries referenced indirectly via a
+        // classpath. Check for the exact same variable/container in
+        // javaProject's classpath
+        newCpe = findClasspathEntry(javaProject, cpe.getEntryKind(), cpe.getPath());
+        break;
+      }
+
+      if (newCpe != null) {
+        TypeMnemonic tmp = new TypeMnemonic(javaProject.getElementName(),
+            newCpe.getEntryKind(), newCpe.getPath(), getFullyQualifiedName());
+        return new TypeMnemonic(tmp.toString(), root);
       }
     }
     return null;
   }
-  
+
   private IClasspathEntry findLinkedFolder(IJavaProject javaProject, IPath actualPath) throws JavaModelException {
+    
     IWorkspaceRoot root = getJavaProject().getCorrespondingResource().getWorkspace().getRoot();
     actualPath = actualPath.makeAbsolute();
 
@@ -384,29 +441,58 @@ public class TypeMnemonic {
   public int getClasspathKind() {
     return fClasspathKind;
   }
-  
+
+  /**
+   * Returns the type's classpath entry's path from when this mnemonic was first
+   * created.
+   * 
+   * @return the path as given by the <code>IClasspathEntry</code>.
+   * @see org.eclipse.jdt.core.IClasspathEntry#getPath()
+   */
   public IPath getClasspath() {
     return fClasspath;
   }
 
+  /**
+   * Returns the fully-qualified name stored in this type-mnemonic, originally
+   * given by {@link IType#getFullyQualifiedName()}. The enclosing type
+   * separator is <code>'$'</code>, not <code>'.'</code>.
+   * 
+   * @return the fully-qualified name
+   */
   public String getFullyQualifiedName() {
     return fFullyQualifiedTypeName;
   }
 
+  /**
+   * Returns <code>true</code> if each of the resources this type mnemonic
+   * stores are not-<code>null</code> and exist.
+   * 
+   * @return <code>true</code> if this type mnemonic's underlying resources are
+   *         not-<code>null</code> and exist
+   * @see org.eclipse.jdt.core.IJavaElement#exists()
+   */
   public boolean exists() {
-    return fJavaProject != null && fClasspathEntry != null && fType != null;
+    return fJavaProject != null && fJavaProject.exists() && fClasspathEntry != null
+        && fType != null && fType.exists();
   }
 
+  /**
+   * Returns the string representation of this mnemonic. Information from the
+   * mnemonic string may be retrieved using
+   * {@link TypeMnemonic#TypeMnemonic(String)} or
+   * {@link TypeMnemonic#TypeMnemonic(String, IWorkspaceRoot)}
+   */
   @Override
   public String toString() {
     StringBuilder mnemonic = new StringBuilder();
 
     mnemonic.append(getJavaProjectName());
-    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
+    mnemonic.append(MNEMONIC_DELIMITER);
     mnemonic.append(getClasspathKind());
-    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
+    mnemonic.append(MNEMONIC_DELIMITER);
     mnemonic.append(getClasspath());
-    mnemonic.append(IConstants.MNEMONIC_DELIMITER);
+    mnemonic.append(MNEMONIC_DELIMITER);
     mnemonic.append(getFullyQualifiedName());
 
     return mnemonic.toString();
@@ -416,7 +502,14 @@ public class TypeMnemonic {
   public int hashCode() {
     return toString().hashCode();
   }
-  
+
+  /**
+   * Returns true if this types mnemonic's string equals another one. Whether or
+   * not the underlying objects (<code>IJavaProject</code>,
+   * <code>IClasspathEntry</code>, and <code>IType</code>) exist has no effect.
+   * 
+   * @return true if this type mnemonic equals another one
+   */
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof TypeMnemonic) {

@@ -6,6 +6,10 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 
+/**
+ * 
+ * @author Peter Kalauskas
+ */
 public class ListPropertyTester extends PropertyTester {
   private static final String PROPERTY_IS_ALL_IN_SAME_PROJECT = "isAllInSameProject"; //$NON-NLS-1$
   

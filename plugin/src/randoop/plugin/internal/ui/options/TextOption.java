@@ -10,10 +10,20 @@ import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.core.RandoopStatus;
 
+/**
+ * Option for a single SWT Text widget.
+ * 
+ * @author Peter Kalauskas
+ */
 public abstract class TextOption extends Option {
 
   protected Text fText;
 
+  /**
+   * Creates a placeholder instance of this text option that may be used to set
+   * defaults. Other operations will have no effect on the object or launch
+   * configuration it is passed.
+   */
   public TextOption() {
   }
   
@@ -64,19 +74,31 @@ public abstract class TextOption extends Option {
       return getDefaultValue();
     }
   }
-  
+
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
     config.setAttribute(getAttribute(), getDefaultValue());
   }
-  
+
   public void restoreDefaults() {
     if (fText != null && !fText.isDisposed()) {
       fText.setText(getDefaultValue());
     }
   }
-  
+
+  /**
+   * Returns the attribute used to get and set this text option to a launch
+   * configuration
+   * 
+   * @return
+   */
   protected abstract String getAttribute();
-  
+
+  /**
+   * Returns the default value of this text. This is used set and restore
+   * defaults.
+   * 
+   * @return the default value of this text option
+   */
   protected abstract String getDefaultValue();
   
 }
