@@ -131,14 +131,6 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/experiments/StatsWriter.html#branches_str">branches_str</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int[]</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../../randoop/experiments/StatsWriter.html#classifdepsizes">classifdepsizes</A></STRONG></CODE>
 
@@ -290,10 +282,9 @@ Method Summary</CAPTION>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/experiments/StatsWriter.html#write(java.io.FileWriter, randoop.ExecutableSequence, java.util.Set, randoop.FailureAnalyzer)">write</A></STRONG>(FileWriter&nbsp;writer,
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/StatsWriter.html#write(java.io.FileWriter, randoop.ExecutableSequence, randoop.FailureSet)">write</A></STRONG>(FileWriter&nbsp;writer,
       <A HREF="../../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;seq,
-      Set&lt;Branch&gt;&nbsp;cov,
-      <A HREF="../../randoop/FailureAnalyzer.html" title="class in randoop">FailureAnalyzer</A>&nbsp;fa)</CODE>
+      <A HREF="../../randoop/FailureSet.html" title="class in randoop">FailureSet</A>&nbsp;fa)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -361,12 +352,6 @@ public long <STRONG>exectime</STRONG></PRE>
 seq_str</H3>
 <PRE>
 public String <STRONG>seq_str</STRONG></PRE>
-<HR>
-
-<A NAME="branches_str"><!-- --></A><H3>
-branches_str</H3>
-<PRE>
-public String <STRONG>branches_str</STRONG></PRE>
 <HR>
 
 <A NAME="numclassifs"><!-- --></A><H3>
@@ -442,13 +427,12 @@ public static void <STRONG>main</STRONG>(String[]&nbsp;args2)
 </DL>
 <HR>
 
-<A NAME="write(java.io.FileWriter, randoop.ExecutableSequence, java.util.Set, randoop.FailureAnalyzer)"><!-- --></A><H3>
+<A NAME="write(java.io.FileWriter, randoop.ExecutableSequence, randoop.FailureSet)"><!-- --></A><H3>
 write</H3>
 <PRE>
 public static void <STRONG>write</STRONG>(FileWriter&nbsp;writer,
                          <A HREF="../../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;seq,
-                         Set&lt;Branch&gt;&nbsp;cov,
-                         <A HREF="../../randoop/FailureAnalyzer.html" title="class in randoop">FailureAnalyzer</A>&nbsp;fa)
+                         <A HREF="../../randoop/FailureSet.html" title="class in randoop">FailureSet</A>&nbsp;fa)
                   throws IOException</PRE>
 <DL>
 <DD><DL>

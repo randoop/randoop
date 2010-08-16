@@ -93,13 +93,24 @@ Object
   <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>AbstractGenerator</STRONG>
 </PRE>
 <DL>
-<DT><STRONG>Direct Known Subclasses:</STRONG></DT> <DD><A HREF="../randoop/ForwardGenerator.html" title="class in randoop">ForwardGenerator</A>, <A HREF="../randoop/NaiveRandomGenerator.html" title="class in randoop">NaiveRandomGenerator</A></DD>
+<DT><STRONG>Direct Known Subclasses:</STRONG></DT> <DD><A HREF="../randoop/ForwardGenerator.html" title="class in randoop">ForwardGenerator</A>, <A HREF="../randoop/experiments/RandomWalkGenerator.html" title="class in randoop.experiments">RandomWalkGenerator</A></DD>
 </DL>
 <HR>
 <PRE>public abstract class <STRONG>AbstractGenerator</STRONG>
 extends Object</PRE>
 
 <P>
+Algorithm template for implementing a test generator.
+ 
+ The main generation loop is defined in method <code>explore()</code>,
+ which repeatedly generates a new sequence, determines if it a failing
+ sequence, and stops the process when the time or sequence limit expires.
+ The process of generating a new sequences is left abstract.
+<P>
+
+<P>
+<DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/ForwardGenerator.html" title="class in randoop"><CODE>ForwardGenerator</CODE></A></DD></DL>
 <HR>
 
 <P>
@@ -115,27 +126,19 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;Map&lt;CoverageAtom,Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#branchesToCoveringSeqs">branchesToCoveringSeqs</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A></CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#componentManager">componentManager</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Component manager responsible for storing previously-generated sequences.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;List&lt;Class&lt;?&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#covClasses">covClasses</A></STRONG></CODE>
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#currSeq">currSeq</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This field is set by Randoop to point to the sequence currently being executed.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -147,27 +150,68 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;Set&lt;Pair&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>,Class&lt;?&gt;&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#errors">errors</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A></CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#executionVisitor">executionVisitor</A></STRONG></CODE>
 
 <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Container for execution visitors used during execution of sequences.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#listenerMgr">listenerMgr</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manages notifications for listeners.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#maxSequences">maxSequences</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sequence limit for generation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#maxTimeMillis">maxTimeMillis</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time limit for generation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#num_failing_sequences">num_failing_sequences</A></STRONG></CODE>
+
+<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected &nbsp;int</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#maxSequences">maxSequences</A></STRONG></CODE>
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#num_sequences_generated">num_sequences_generated</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#num_steps">num_steps</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#outputTestFilters">outputTestFilters</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list of filters that can be installed to help determine if a sequence
+ should be added to the final sequence list outSeqs.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -175,23 +219,7 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#outSeqs">outSeqs</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#print_stats">print_stats</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../randoop/experiments/SizeEqualizer.html" title="class in randoop.experiments">SizeEqualizer</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#sizeEqualizer">sizeEqualizer</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The list of final sequences that are printed out as JUnit tests (i.e.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -199,31 +227,17 @@ Field Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#statements">statements</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The list of statement kinds (methods, constructors, primitive value declarations, etc.)
+ used to generate sequences.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop">SequenceGeneratorStats</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#stats">stats</A></STRONG></CODE>
+<CODE>&nbsp;<A HREF="../randoop/util/Timer.html" title="class in randoop.util">Timer</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#timer">timer</A></STRONG></CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#stop_when_plateau">stop_when_plateau</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected &nbsp;long</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#timeMillis">timeMillis</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The timer used to determine how much time has elapsed since the start of
+ generator and whether generation should stop.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -237,27 +251,16 @@ Constructor Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#AbstractGenerator(java.util.List, java.util.List, long, int, randoop.ComponentManager, randoop.IStoppingCriterion)">AbstractGenerator</A></STRONG>(List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;&nbsp;statements,
-                  List&lt;Class&lt;?&gt;&gt;&nbsp;covClasses,
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#AbstractGenerator(java.util.List, long, int, randoop.ComponentManager, randoop.IStopper, randoop.RandoopListenerManager, java.util.List)">AbstractGenerator</A></STRONG>(List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;&nbsp;statements,
                   long&nbsp;timeMillis,
                   int&nbsp;maxSequences,
                   <A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A>&nbsp;componentManager,
-                  <A HREF="../randoop/IStoppingCriterion.html" title="interface in randoop">IStoppingCriterion</A>&nbsp;stopper)</CODE>
+                  <A HREF="../randoop/IStopper.html" title="interface in randoop">IStopper</A>&nbsp;stopper,
+                  <A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A>&nbsp;listenerManager,
+                  List&lt;<A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A>&gt;&nbsp;testfilters)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#AbstractGenerator(java.util.List, java.util.List, long, int, randoop.ComponentManager, randoop.runtime.MessageSender, randoop.IStoppingCriterion)">AbstractGenerator</A></STRONG>(List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;&nbsp;statements,
-                  List&lt;Class&lt;?&gt;&gt;&nbsp;covClasses,
-                  long&nbsp;timeMillis,
-                  int&nbsp;maxSequences,
-                  <A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A>&nbsp;componentMgr,
-                  <A HREF="../randoop/runtime/MessageSender.html" title="class in randoop.runtime">MessageSender</A>&nbsp;msgSender,
-                  <A HREF="../randoop/IStoppingCriterion.html" title="interface in randoop">IStoppingCriterion</A>&nbsp;stopper)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructs a generator with the given parameters.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -277,8 +280,7 @@ Method Summary</CAPTION>
 <TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#explore()">explore</A></STRONG>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates and executes new sequences in a loop, using the sequences
- in s.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates and executes new sequences in a loop.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -313,17 +315,6 @@ Method Summary</CAPTION>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the set of sequences that are used as inputs in other sequences
  (and can thus be thought of as subsumed by another sequence).</TD>
 </TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#updateStatistics(randoop.SequenceGeneratorStats, randoop.ExecutableSequence, java.util.Set, randoop.FailureAnalyzer)">updateStatistics</A></STRONG>(<A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop">SequenceGeneratorStats</A>&nbsp;stats,
-                 <A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
-                 Set&lt;Branch&gt;&nbsp;coveredBranches,
-                 <A HREF="../randoop/FailureAnalyzer.html" title="class in randoop">FailureAnalyzer</A>&nbsp;fa)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -347,88 +338,149 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="print_stats"><!-- --></A><H3>
-print_stats</H3>
-<PRE>
-public static boolean <STRONG>print_stats</STRONG></PRE>
-<HR>
-
-<A NAME="stop_when_plateau"><!-- --></A><H3>
-stop_when_plateau</H3>
-<PRE>
-public static int <STRONG>stop_when_plateau</STRONG></PRE>
-<HR>
-
 <A NAME="dump_sequences"><!-- --></A><H3>
 dump_sequences</H3>
 <PRE>
 public static boolean <STRONG>dump_sequences</STRONG></PRE>
 <HR>
 
-<A NAME="timeMillis"><!-- --></A><H3>
-timeMillis</H3>
+<A NAME="num_steps"><!-- --></A><H3>
+num_steps</H3>
 <PRE>
-protected final long <STRONG>timeMillis</STRONG></PRE>
+public int <STRONG>num_steps</STRONG></PRE>
+<HR>
+
+<A NAME="num_sequences_generated"><!-- --></A><H3>
+num_sequences_generated</H3>
+<PRE>
+public int <STRONG>num_sequences_generated</STRONG></PRE>
+<HR>
+
+<A NAME="num_failing_sequences"><!-- --></A><H3>
+num_failing_sequences</H3>
+<PRE>
+public int <STRONG>num_failing_sequences</STRONG></PRE>
+<HR>
+
+<A NAME="timer"><!-- --></A><H3>
+timer</H3>
+<PRE>
+public final <A HREF="../randoop/util/Timer.html" title="class in randoop.util">Timer</A> <STRONG>timer</STRONG></PRE>
+<DL>
+<DD>The timer used to determine how much time has elapsed since the start of
+ generator and whether generation should stop.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="maxTimeMillis"><!-- --></A><H3>
+maxTimeMillis</H3>
+<PRE>
+public final long <STRONG>maxTimeMillis</STRONG></PRE>
+<DL>
+<DD>Time limit for generation. If generation reaches the specified time
+ limit (in milliseconds), the generator stops generating sequences.
+<P>
+</DD>
+</DL>
 <HR>
 
 <A NAME="maxSequences"><!-- --></A><H3>
 maxSequences</H3>
 <PRE>
-protected final int <STRONG>maxSequences</STRONG></PRE>
-<HR>
-
-<A NAME="branchesToCoveringSeqs"><!-- --></A><H3>
-branchesToCoveringSeqs</H3>
-<PRE>
-public final Map&lt;CoverageAtom,Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt; <STRONG>branchesToCoveringSeqs</STRONG></PRE>
-<HR>
-
-<A NAME="executionVisitor"><!-- --></A><H3>
-executionVisitor</H3>
-<PRE>
-public final <A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A> <STRONG>executionVisitor</STRONG></PRE>
+public final int <STRONG>maxSequences</STRONG></PRE>
+<DL>
+<DD>Sequence limit for generation. If generation reaches the specified sequence
+ limit, the generator stops generating sequences.
+<P>
+</DD>
+</DL>
 <HR>
 
 <A NAME="statements"><!-- --></A><H3>
 statements</H3>
 <PRE>
 public List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt; <STRONG>statements</STRONG></PRE>
+<DL>
+<DD>The list of statement kinds (methods, constructors, primitive value declarations, etc.)
+ used to generate sequences. In other words, statements specifies the universe
+ of operations from which sequences are generated.
+<P>
+</DD>
+</DL>
 <HR>
 
-<A NAME="stats"><!-- --></A><H3>
-stats</H3>
+<A NAME="executionVisitor"><!-- --></A><H3>
+executionVisitor</H3>
 <PRE>
-public <A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop">SequenceGeneratorStats</A> <STRONG>stats</STRONG></PRE>
-<HR>
-
-<A NAME="covClasses"><!-- --></A><H3>
-covClasses</H3>
-<PRE>
-public List&lt;Class&lt;?&gt;&gt; <STRONG>covClasses</STRONG></PRE>
-<HR>
-
-<A NAME="sizeEqualizer"><!-- --></A><H3>
-sizeEqualizer</H3>
-<PRE>
-public <A HREF="../randoop/experiments/SizeEqualizer.html" title="class in randoop.experiments">SizeEqualizer</A> <STRONG>sizeEqualizer</STRONG></PRE>
+public final <A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A> <STRONG>executionVisitor</STRONG></PRE>
+<DL>
+<DD>Container for execution visitors used during execution of sequences.
+<P>
+</DD>
+</DL>
 <HR>
 
 <A NAME="componentManager"><!-- --></A><H3>
 componentManager</H3>
 <PRE>
 public <A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A> <STRONG>componentManager</STRONG></PRE>
+<DL>
+<DD>Component manager responsible for storing previously-generated sequences.
+<P>
+</DD>
+</DL>
 <HR>
 
-<A NAME="errors"><!-- --></A><H3>
-errors</H3>
+<A NAME="listenerMgr"><!-- --></A><H3>
+listenerMgr</H3>
 <PRE>
-public Set&lt;Pair&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>,Class&lt;?&gt;&gt;&gt; <STRONG>errors</STRONG></PRE>
+public <A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A> <STRONG>listenerMgr</STRONG></PRE>
+<DL>
+<DD>Manages notifications for listeners.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/IEventListener.html" title="interface in randoop"><CODE>IEventListener</CODE></A></DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="currSeq"><!-- --></A><H3>
+currSeq</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>currSeq</STRONG></PRE>
+<DL>
+<DD>This field is set by Randoop to point to the sequence currently being executed.
+ In the event that Randoop appears to hang, this sequence is printed out to console
+ to help the user debug the cause of the hanging behavior.
+<P>
+</DD>
+</DL>
 <HR>
 
 <A NAME="outSeqs"><!-- --></A><H3>
 outSeqs</H3>
 <PRE>
 public List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt; <STRONG>outSeqs</STRONG></PRE>
+<DL>
+<DD>The list of final sequences that are printed out as JUnit tests (i.e. Randoop's output).
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="outputTestFilters"><!-- --></A><H3>
+outputTestFilters</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A>&gt; <STRONG>outputTestFilters</STRONG></PRE>
+<DL>
+<DD>A list of filters that can be installed to help determine if a sequence
+ should be added to the final sequence list outSeqs.
+<P>
+</DD>
+</DL>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -440,32 +492,25 @@ public List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in rand
 </TR>
 </TABLE>
 
-<A NAME="AbstractGenerator(java.util.List, java.util.List, long, int, randoop.ComponentManager, randoop.IStoppingCriterion)"><!-- --></A><H3>
+<A NAME="AbstractGenerator(java.util.List, long, int, randoop.ComponentManager, randoop.IStopper, randoop.RandoopListenerManager, java.util.List)"><!-- --></A><H3>
 AbstractGenerator</H3>
 <PRE>
 public <STRONG>AbstractGenerator</STRONG>(List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;&nbsp;statements,
-                         List&lt;Class&lt;?&gt;&gt;&nbsp;covClasses,
                          long&nbsp;timeMillis,
                          int&nbsp;maxSequences,
                          <A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A>&nbsp;componentManager,
-                         <A HREF="../randoop/IStoppingCriterion.html" title="interface in randoop">IStoppingCriterion</A>&nbsp;stopper)</PRE>
+                         <A HREF="../randoop/IStopper.html" title="interface in randoop">IStopper</A>&nbsp;stopper,
+                         <A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A>&nbsp;listenerManager,
+                         List&lt;<A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A>&gt;&nbsp;testfilters)</PRE>
 <DL>
+<DD>Constructs a generator with the given parameters.
+<P>
+</DD>
 <DD><DL>
-<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>statements</CODE> - </DD><DD><CODE>covClasses</CODE> - can be null.</DD><DD><CODE>timeMillis</CODE> - </DD><DD><CODE>maxSequences</CODE> - </DD><DD><CODE>componentManager</CODE> - </DD><DD><CODE>stopper</CODE> - </DD></DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>statements</CODE> - Statements (e.g. methods and constructors) used to create sequences. Cannot be null.</DD><DD><CODE>timeMillis</CODE> - maximum time to spend in generation. Must be non-negative.</DD><DD><CODE>maxSequences</CODE> - maximum number of sequences to generate. Must be non-negative.</DD><DD><CODE>componentManager</CODE> - component manager to use to store sequences during component-based generation.
+        Can be null, in which case the generator's component manager is initialized as <code>new ComponentManager()</code>.</DD><DD><CODE>stopper</CODE> - Optional, additional stopping criterion for the generator. Can be null.</DD><DD><CODE>listenerManager</CODE> - Manager that stores and calls any listeners to use during generation. Can be null.</DD><DD><CODE>testfilters</CODE> - List of filters to determine which sequences to output. Can be null or empty.</DD></DL>
 </DD>
 </DL>
-<HR>
-
-<A NAME="AbstractGenerator(java.util.List, java.util.List, long, int, randoop.ComponentManager, randoop.runtime.MessageSender, randoop.IStoppingCriterion)"><!-- --></A><H3>
-AbstractGenerator</H3>
-<PRE>
-public <STRONG>AbstractGenerator</STRONG>(List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;&nbsp;statements,
-                         List&lt;Class&lt;?&gt;&gt;&nbsp;covClasses,
-                         long&nbsp;timeMillis,
-                         int&nbsp;maxSequences,
-                         <A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A>&nbsp;componentMgr,
-                         <A HREF="../randoop/runtime/MessageSender.html" title="class in randoop.runtime">MessageSender</A>&nbsp;msgSender,
-                         <A HREF="../randoop/IStoppingCriterion.html" title="interface in randoop">IStoppingCriterion</A>&nbsp;stopper)</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -500,21 +545,10 @@ explore</H3>
 <PRE>
 public void <STRONG>explore</STRONG>()</PRE>
 <DL>
-<DD>Creates and executes new sequences in a loop, using the sequences
- in s. New sequences are themselves added to s. Stops when timer
- says it's testtime to stop.
+<DD>Creates and executes new sequences in a loop.
 <P>
 </DD>
 </DL>
-<HR>
-
-<A NAME="updateStatistics(randoop.SequenceGeneratorStats, randoop.ExecutableSequence, java.util.Set, randoop.FailureAnalyzer)"><!-- --></A><H3>
-updateStatistics</H3>
-<PRE>
-public void <STRONG>updateStatistics</STRONG>(<A HREF="../randoop/SequenceGeneratorStats.html" title="class in randoop">SequenceGeneratorStats</A>&nbsp;stats,
-                             <A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es,
-                             Set&lt;Branch&gt;&nbsp;coveredBranches,
-                             <A HREF="../randoop/FailureAnalyzer.html" title="class in randoop">FailureAnalyzer</A>&nbsp;fa)</PRE>
 <HR>
 
 <A NAME="subsumed_sequences()"><!-- --></A><H3>
