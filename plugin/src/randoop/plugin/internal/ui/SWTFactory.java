@@ -82,6 +82,14 @@ public class SWTFactory {
     return new Font(font.getDevice(), fontData);
   }
   
+  public static Font getItalicFont(Font font) {
+    FontData[] fontData = font.getFontData();
+    for (FontData fd : fontData) {
+      fd.setStyle(fd.getStyle() | SWT.ITALIC);
+    }
+    return new Font(font.getDevice(), fontData);
+  }
+  
   /* ******************************************************************************
    *  All methods below are copied from org.eclipse.debug.internal.ui.SWTFactory
    *  
