@@ -419,6 +419,11 @@ Control key, then press the Backslash key).
 
 <h2 id="generating_tests">Generating tests</h2>
 
+<p><b><i>WARNING: Testing code that modifies your file system might result in
+Randoop generating tests that modify your file system! Be careful when choosing
+classes and methods to test.</i></b>
+</p>
+
 <p>Randoop can be used to generate two kinds of unit
 tests. <i>Error-revealing tests</i> are tests that fail when executed,
 indicating a potential error in one or more classes under
