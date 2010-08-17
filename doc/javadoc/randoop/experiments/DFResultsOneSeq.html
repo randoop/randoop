@@ -3,7 +3,7 @@
 <HTML lang="en">
 <HEAD>
 <TITLE>
-PrintStats
+DFResultsOneSeq
 </TITLE>
 
 
@@ -13,7 +13,7 @@ PrintStats
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="PrintStats";
+        parent.document.title="DFResultsOneSeq";
     }
 }
 </SCRIPT>
@@ -52,11 +52,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../randoop/main/Main.html" title="class in randoop.main"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../../randoop/main/RandoopCheckRepTest.html" title="class in randoop.main"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../../randoop/experiments/DFOneFile.html" title="class in randoop.experiments"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/experiments/DFResultsOneSeq.VariableInfo.html" title="class in randoop.experiments"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../index.html?randoop/main/PrintStats.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="PrintStats.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../../index.html?randoop/experiments/DFResultsOneSeq.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="DFResultsOneSeq.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -73,7 +73,7 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
 DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
@@ -85,37 +85,52 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
-randoop.main</FONT>
+randoop.experiments</FONT>
 <BR>
-Class PrintStats</H2>
+Class DFResultsOneSeq</H2>
 <PRE>
 Object
-  <IMG SRC="../../resources/inherit.gif" ALT="extended by "><STRONG>PrintStats</STRONG>
+  <IMG SRC="../../resources/inherit.gif" ALT="extended by "><STRONG>DFResultsOneSeq</STRONG>
 </PRE>
+<DL>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable</DD>
+</DL>
 <HR>
-<PRE>public class <STRONG>PrintStats</STRONG>
-extends Object</PRE>
+<PRE>public class <STRONG>DFResultsOneSeq</STRONG>
+extends Object
+implements Serializable</PRE>
 
 <P>
-Usage: PrintStats COVCLASSES RESULT_1 ... RESULT_N
- 
- There must be at least one RESULT_i argument.
- 
- COVCLASSES is a text file with a class name in each line. The total branches
- reported are the branches across these classes. These classes must be
- instrumented for coverage.
- 
- RESULT_i is a file containing a single SequenceGeneratorStats object, created
- by a run of Randoop. This object contains the covered branches during the
- specific run of Randoop. The classes covered must be a subset of the classes
- in COVCLASSES.
+Encapsulates the results of the branch analysis for a given
+ sequence and its frontier branch.
 <P>
 
 <P>
+<DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../serialized-form.html#randoop.experiments.DFResultsOneSeq">Serialized Form</A></DD></DL>
 <HR>
 
 <P>
-<!-- =========== FIELD SUMMARY =========== -->
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Nested Class Summary table, listing nested classes, and an explanation">
+<CAPTION CLASS="TableCaption">
+Nested Class Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Class and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DFResultsOneSeq.VariableInfo.html" title="class in randoop.experiments">DFResultsOneSeq.VariableInfo</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Class that contains information about the values in the frontier</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
@@ -127,24 +142,24 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/PrintStats.html#cov_classes">cov_classes</A></STRONG></CODE>
+<CODE>&nbsp;CoverageAtom</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DFResultsOneSeq.html#frontierBranch">frontierBranch</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/PrintStats.html#print_branches">print_branches</A></STRONG></CODE>
+<CODE>&nbsp;<A HREF="../../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DFResultsOneSeq.html#sequence">sequence</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;List&lt;String&gt;</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/PrintStats.html#stats_file">stats_file</A></STRONG></CODE>
+<CODE>&nbsp;Set&lt;<A HREF="../../randoop/experiments/DFResultsOneSeq.VariableInfo.html" title="class in randoop.experiments">DFResultsOneSeq.VariableInfo</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DFResultsOneSeq.html#values">values</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -161,7 +176,9 @@ Constructor Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../../randoop/main/PrintStats.html#PrintStats()">PrintStats</A></STRONG>()</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DFResultsOneSeq.html#DFResultsOneSeq(randoop.Sequence, cov.CoverageAtom, java.util.Set)">DFResultsOneSeq</A></STRONG>(<A HREF="../../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
+                CoverageAtom&nbsp;frontierBranch,
+                Set&lt;<A HREF="../../randoop/experiments/DFResultsOneSeq.VariableInfo.html" title="class in randoop.experiments">DFResultsOneSeq.VariableInfo</A>&gt;&nbsp;values)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -180,11 +197,29 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../../randoop/main/PrintStats.html#main(java.lang.String[])">main</A></STRONG>(String[]&nbsp;args)</CODE>
+<CODE>static&nbsp;<A HREF="../../randoop/experiments/DFResultsOneSeq.html" title="class in randoop.experiments">DFResultsOneSeq</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DFResultsOneSeq.html#parse(java.util.List)">parse</A></STRONG>(List&lt;String&gt;&nbsp;lines)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a DFResultsOneSeq from a list of lines (presumably generated via
+ the toParseableString() method).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DFResultsOneSeq.html#toParseableString()">toParseableString</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outputs this object as a String that can be parsed
+ by method DFResultsOneSeq.parse(List<String>).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DFResultsOneSeq.html#toString()">toString</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as toParseableString().</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
@@ -193,7 +228,7 @@ Method Summary</CAPTION>
 <TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -209,22 +244,22 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="print_branches"><!-- --></A><H3>
-print_branches</H3>
+<A NAME="sequence"><!-- --></A><H3>
+sequence</H3>
 <PRE>
-public static String <STRONG>print_branches</STRONG></PRE>
+public <A HREF="../../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>sequence</STRONG></PRE>
 <HR>
 
-<A NAME="cov_classes"><!-- --></A><H3>
-cov_classes</H3>
+<A NAME="frontierBranch"><!-- --></A><H3>
+frontierBranch</H3>
 <PRE>
-public static String <STRONG>cov_classes</STRONG></PRE>
+public CoverageAtom <STRONG>frontierBranch</STRONG></PRE>
 <HR>
 
-<A NAME="stats_file"><!-- --></A><H3>
-stats_file</H3>
+<A NAME="values"><!-- --></A><H3>
+values</H3>
 <PRE>
-public static List&lt;String&gt; <STRONG>stats_file</STRONG></PRE>
+public Set&lt;<A HREF="../../randoop/experiments/DFResultsOneSeq.VariableInfo.html" title="class in randoop.experiments">DFResultsOneSeq.VariableInfo</A>&gt; <STRONG>values</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -236,10 +271,12 @@ public static List&lt;String&gt; <STRONG>stats_file</STRONG></PRE>
 </TR>
 </TABLE>
 
-<A NAME="PrintStats()"><!-- --></A><H3>
-PrintStats</H3>
+<A NAME="DFResultsOneSeq(randoop.Sequence, cov.CoverageAtom, java.util.Set)"><!-- --></A><H3>
+DFResultsOneSeq</H3>
 <PRE>
-public <STRONG>PrintStats</STRONG>()</PRE>
+public <STRONG>DFResultsOneSeq</STRONG>(<A HREF="../../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
+                       CoverageAtom&nbsp;frontierBranch,
+                       Set&lt;<A HREF="../../randoop/experiments/DFResultsOneSeq.VariableInfo.html" title="class in randoop.experiments">DFResultsOneSeq.VariableInfo</A>&gt;&nbsp;values)</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -251,15 +288,43 @@ public <STRONG>PrintStats</STRONG>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="main(java.lang.String[])"><!-- --></A><H3>
-main</H3>
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
 <PRE>
-public static void <STRONG>main</STRONG>(String[]&nbsp;args)
-                 throws IOException</PRE>
+public String <STRONG>toString</STRONG>()</PRE>
 <DL>
+<DD>Same as toParseableString().
+<P>
+</DD>
 <DD><DL>
-<DT><STRONG>Throws:</STRONG></DT>
-<DD><CODE>IOException</CODE></DD></DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toParseableString()"><!-- --></A><H3>
+toParseableString</H3>
+<PRE>
+public String <STRONG>toParseableString</STRONG>()</PRE>
+<DL>
+<DD>Outputs this object as a String that can be parsed
+ by method DFResultsOneSeq.parse(List<String>).
+ 
+ See documentation for DataFlowOutput.parse(String filename).
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="parse(java.util.List)"><!-- --></A><H3>
+parse</H3>
+<PRE>
+public static <A HREF="../../randoop/experiments/DFResultsOneSeq.html" title="class in randoop.experiments">DFResultsOneSeq</A> <STRONG>parse</STRONG>(List&lt;String&gt;&nbsp;lines)</PRE>
+<DL>
+<DD>Creates a DFResultsOneSeq from a list of lines (presumably generated via
+ the toParseableString() method).
+<P>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -292,11 +357,11 @@ public static void <STRONG>main</STRONG>(String[]&nbsp;args)
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../randoop/main/Main.html" title="class in randoop.main"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../../randoop/main/RandoopCheckRepTest.html" title="class in randoop.main"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../../randoop/experiments/DFOneFile.html" title="class in randoop.experiments"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/experiments/DFResultsOneSeq.VariableInfo.html" title="class in randoop.experiments"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../index.html?randoop/main/PrintStats.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="PrintStats.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../../index.html?randoop/experiments/DFResultsOneSeq.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="DFResultsOneSeq.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -313,7 +378,7 @@ public static void <STRONG>main</STRONG>(String[]&nbsp;args)
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
 DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>

@@ -163,6 +163,22 @@ Method Summary</CAPTION>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/Check.html#get_id()">get_id</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a unique string identifier for the check.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/Check.html#get_stmt_no()">get_stmt_no</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the offset in the sequence of this check</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/Check.html#get_value()">get_value</A></STRONG>()</CODE>
 
 <BR>
@@ -232,6 +248,34 @@ String <STRONG>get_value</STRONG>()</PRE>
 <DL>
 <DD>Returns a short string that can be used to uniquely identify
  this check.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get_id()"><!-- --></A><H3>
+get_id</H3>
+<PRE>
+String <STRONG>get_id</STRONG>()</PRE>
+<DL>
+<DD>Returns a unique string identifier for the check.  Two checks are
+ the same if these identifers match.  The value is NOT included.
+ with.  Used to match up checks between the same sequence run at
+ different times.  Note that because of changes in the environment
+ (eg, static variables), two executions of the same sequence may
+ have different checks (because the existence of some checks
+ depends on the value of variables)
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get_stmt_no()"><!-- --></A><H3>
+get_stmt_no</H3>
+<PRE>
+int <STRONG>get_stmt_no</STRONG>()</PRE>
+<DL>
+<DD>Returns the offset in the sequence of this check
 <P>
 </DD>
 </DL>
