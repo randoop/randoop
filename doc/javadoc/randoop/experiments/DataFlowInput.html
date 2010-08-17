@@ -3,17 +3,17 @@
 <HTML lang="en">
 <HEAD>
 <TITLE>
-LineRemover
+DataFlowInput
 </TITLE>
 
 
-<LINK REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="LineRemover";
+        parent.document.title="DataFlowInput";
     }
 }
 </SCRIPT>
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/JunitFileWriter.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/LiteralFileReader.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../../randoop/experiments/DataFlow.html" title="class in randoop.experiments"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/experiments/DataFlowOutput.html" title="class in randoop.experiments"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/LineRemover.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="LineRemover.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../../index.html?randoop/experiments/DataFlowInput.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="DataFlowInput.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -85,18 +85,29 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
-randoop</FONT>
+randoop.experiments</FONT>
 <BR>
-Class LineRemover</H2>
+Class DataFlowInput</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>LineRemover</STRONG>
+  <IMG SRC="../../resources/inherit.gif" ALT="extended by "><STRONG>DataFlowInput</STRONG>
 </PRE>
+<DL>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable</DD>
+</DL>
 <HR>
-<PRE>public class <STRONG>LineRemover</STRONG>
-extends Object</PRE>
+<PRE>public class <STRONG>DataFlowInput</STRONG>
+extends Object
+implements Serializable</PRE>
 
 <P>
+A collection of frontier branches and sequences that reach them.
+ A DataFlowInput is the input to the DataFlow analysis.
+<P>
+
+<P>
+<DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../serialized-form.html#randoop.experiments.DataFlowInput">Serialized Form</A></DD></DL>
 <HR>
 
 <P>
@@ -112,24 +123,8 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/LineRemover.html#minimized_sequence_size_accum">minimized_sequence_size_accum</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/LineRemover.html#original_sequence_size_accum">original_sequence_size_accum</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>protected static&nbsp;int</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/LineRemover.html#times_minimize_was_called">times_minimize_was_called</A></STRONG></CODE>
+<CODE>&nbsp;Map&lt;Branch,Set&lt;<A HREF="../../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowInput.html#frontierMap">frontierMap</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -146,7 +141,7 @@ Constructor Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../randoop/LineRemover.html#LineRemover()">LineRemover</A></STRONG>()</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowInput.html#DataFlowInput(java.util.Map)">DataFlowInput</A></STRONG>(Map&lt;Branch,Set&lt;<A HREF="../../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt;&nbsp;frontierMap)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -165,28 +160,20 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;double</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/LineRemover.html#averageMinimizedSize()">averageMinimizedSize</A></STRONG>()</CODE>
+<CODE>static&nbsp;<A HREF="../../randoop/experiments/DataFlowInput.html" title="class in randoop.experiments">DataFlowInput</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowInput.html#parse(java.lang.String)">parse</A></STRONG>(String&nbsp;inFile)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The average size (number of method calls) of a minimized sequence.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new DataFlowInput from a text file.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;double</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/LineRemover.html#averageOriginalSize()">averageOriginalSize</A></STRONG>()</CODE>
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowInput.html#toParseableFile(java.lang.String, boolean)">toParseableFile</A></STRONG>(String&nbsp;outFile,
+                boolean&nbsp;outputCodeRep)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The average size (number of method calls) of a sequence on which
- minize() was called.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/LineRemover.html#minimize(randoop.ExecutableSequence)">minimize</A></STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;seq)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Minimized the sequence by removing all statements that do not contribute to the given violations.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output this DataFlowInput as a text file.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
@@ -211,22 +198,10 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="original_sequence_size_accum"><!-- --></A><H3>
-original_sequence_size_accum</H3>
+<A NAME="frontierMap"><!-- --></A><H3>
+frontierMap</H3>
 <PRE>
-protected static int <STRONG>original_sequence_size_accum</STRONG></PRE>
-<HR>
-
-<A NAME="minimized_sequence_size_accum"><!-- --></A><H3>
-minimized_sequence_size_accum</H3>
-<PRE>
-protected static int <STRONG>minimized_sequence_size_accum</STRONG></PRE>
-<HR>
-
-<A NAME="times_minimize_was_called"><!-- --></A><H3>
-times_minimize_was_called</H3>
-<PRE>
-protected static int <STRONG>times_minimize_was_called</STRONG></PRE>
+public Map&lt;Branch,Set&lt;<A HREF="../../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt; <STRONG>frontierMap</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -238,10 +213,10 @@ protected static int <STRONG>times_minimize_was_called</STRONG></PRE>
 </TR>
 </TABLE>
 
-<A NAME="LineRemover()"><!-- --></A><H3>
-LineRemover</H3>
+<A NAME="DataFlowInput(java.util.Map)"><!-- --></A><H3>
+DataFlowInput</H3>
 <PRE>
-public <STRONG>LineRemover</STRONG>()</PRE>
+public <STRONG>DataFlowInput</STRONG>(Map&lt;Branch,Set&lt;<A HREF="../../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt;&nbsp;frontierMap)</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -253,38 +228,55 @@ public <STRONG>LineRemover</STRONG>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="minimize(randoop.ExecutableSequence)"><!-- --></A><H3>
-minimize</H3>
+<A NAME="parse(java.lang.String)"><!-- --></A><H3>
+parse</H3>
 <PRE>
-public static <A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A> <STRONG>minimize</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;seq)</PRE>
+public static <A HREF="../../randoop/experiments/DataFlowInput.html" title="class in randoop.experiments">DataFlowInput</A> <STRONG>parse</STRONG>(String&nbsp;inFile)</PRE>
 <DL>
-<DD>Minimized the sequence by removing all statements that do not contribute to the given violations.
- Returns the modified sequence or the original sequence if minimization fails.
+<DD>Create a new DataFlowInput from a text file.
+ 
+ The text file consists of a list of records. Each record is as follows:
+ 
+ START RECORD
+ BRANCH
+ <branch-description>
+ SEQUENCE
+ <sequence-description>
+ END RECORD
+
+ Where <branch-description> is a string that can be parsed
+ by the method cov.OneBranchInfo.parse(String), and <sequence-description>
+ is a string that can be parsed by the method
+ randoop.SequenceParser.parse(String).
+ 
+ Blank lines and comments between records are allowed and ignored.
+ Comments are lines starting with "#".
+ 
+ The records are read and used to populate the frontierMap field of the
+ new DataFlowInput object. If two records specify the same branch, the
+ two sequences are added to the same set.
 <P>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>inFile</CODE> - A text file containing a description of branches and sequences.
+        If inFile ends in ".gz" it will be read as a compressed file.</DD></DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="averageOriginalSize()"><!-- --></A><H3>
-averageOriginalSize</H3>
+<A NAME="toParseableFile(java.lang.String, boolean)"><!-- --></A><H3>
+toParseableFile</H3>
 <PRE>
-public static double <STRONG>averageOriginalSize</STRONG>()</PRE>
+public void <STRONG>toParseableFile</STRONG>(String&nbsp;outFile,
+                            boolean&nbsp;outputCodeRep)</PRE>
 <DL>
-<DD>The average size (number of method calls) of a sequence on which
- minize() was called. Average is over all calls of minimize().
+<DD>Output this DataFlowInput as a text file.
 <P>
 </DD>
-</DL>
-<HR>
-
-<A NAME="averageMinimizedSize()"><!-- --></A><H3>
-averageMinimizedSize</H3>
-<PRE>
-public static double <STRONG>averageMinimizedSize</STRONG>()</PRE>
-<DL>
-<DD>The average size (number of method calls) of a minimized sequence.
- Average is over all calls of minimize().
-<P>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>outFile</CODE> - The file where output is to be written.
+ If outFile ends in ".gz" it will be output as a compressed file.</DD><DD><CODE>outputCodeRep</CODE> - If true, also output the code representation of
+ each sequence,  as a comment following each record.</DD></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -300,13 +292,13 @@ public static double <STRONG>averageMinimizedSize</STRONG>()</PRE>
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -317,20 +309,20 @@ public static double <STRONG>averageMinimizedSize</STRONG>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/JunitFileWriter.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/LiteralFileReader.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../../randoop/experiments/DataFlow.html" title="class in randoop.experiments"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/experiments/DataFlowOutput.html" title="class in randoop.experiments"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/LineRemover.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="LineRemover.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../../index.html?randoop/experiments/DataFlowInput.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="DataFlowInput.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 

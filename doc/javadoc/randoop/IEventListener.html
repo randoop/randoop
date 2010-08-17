@@ -3,7 +3,7 @@
 <HTML lang="en">
 <HEAD>
 <TITLE>
-Check
+IEventListener
 </TITLE>
 
 
@@ -13,7 +13,7 @@ Check
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="Check";
+        parent.document.title="IEventListener";
     }
 }
 </SCRIPT>
@@ -52,11 +52,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/BugInRandoopException.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/CheckRep.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/HelperSequenceCreator.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/IsNotNull.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/Check.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="Check.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../index.html?randoop/IEventListener.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="IEventListener.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -87,52 +87,16 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHO
 <FONT SIZE="-1">
 randoop</FONT>
 <BR>
-Interface Check</H2>
+Interface IEventListener</H2>
 <DL>
-<DT><STRONG>All Superinterfaces:</STRONG></DT> <DD>Serializable</DD>
-</DL>
-<DL>
-<DT><STRONG>All Known Implementing Classes:</STRONG></DT> <DD><A HREF="../randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>, <A HREF="../randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>, <A HREF="../randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A></DD>
+<DT><STRONG>All Known Implementing Classes:</STRONG></DT> <DD><A HREF="../randoop/experiments/CodeCoverageTracker.html" title="class in randoop.experiments">CodeCoverageTracker</A>, <A HREF="../randoop/runtime/PluginBridge.html" title="class in randoop.runtime">PluginBridge</A></DD>
 </DL>
 <HR>
-<PRE>public interface <STRONG>Check</STRONG>
-extends Serializable</PRE>
+<PRE>public interface <STRONG>IEventListener</STRONG></PRE>
 
 <P>
-A correctness check performed on some aspect of a unit test's execution.
- Examples include assertions, calls to invariant or "checkRep" methods,
- or try-catch clauses that check for expected exceptions.
- 
- <p>
- 
- <code>Check</code> objects are inserted as a decorations on
- specific indices of an <A HREF="../randoop/ExecutableSequence.html" title="class in randoop"><CODE>ExecutableSequence</CODE></A>. Thus, a check is
- always associated with a specific index in a sequence. A check at
- index i means that the check is to performed after statement i
- finishes executing.
- 
- <p>
-
- A check implements two methods that specify the code to be
- emitted before and/or after a statement in a <code>Sequence</code>
- is executed.
-
- <p>
- 
- A check may require some code to be emitted before and/or after the
- statement is printed. For example, a check for checking that
- <code>x</code> is not null after the statement "<code>Foo x =
- m()</code>" is executed might emit the assertion code
- "<code>assertNotNull(x);</code>", and would do so after the
- statement is printed. As a second example, a check for checking
- that an expected exception is thrown by a statement would need to
- emit something like "<code>try {</code>" before the statement, and
- the catch clause after the statement.
- 
- <p>
- 
- Checks are Serializable so that an <code>ExecutableSequence</code> can be
- serialized along with its associated checks.
+Defines various event during Randoop's generation at which an
+ implementing class can be notified and perform some action.
 <P>
 
 <P>
@@ -152,56 +116,53 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/IEventListener.html#explorationEnd()">explorationEnd</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called immediately after the end of test generation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/IEventListener.html#explorationStart()">explorationStart</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called immediately at the start of test generation, before any generation steps have occurred.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/IEventListener.html#generationStepPost(randoop.ExecutableSequence)">generationStepPost</A></STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called by the AbstractGenerator during each generation iteration,
+ immediately after a generation <code>step()</code> has completed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/IEventListener.html#generationStepPre()">generationStepPre</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called by the AbstractGenerator during each generation iteration,
+ immediately before a generation <code>step()</code> is performed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/IEventListener.html#progressThreadUpdate()">progressThreadUpdate</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called by ProgressDisplay at regular intervals to monitor progress.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">evaluate</A></STRONG>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/IEventListener.html#stopGeneration()">stopGeneration</A></STRONG>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates this check on the given unfolding execution of a sequence,
- returning <code>true</code> if the check succeeded, and <code>false</code>
- otherwise.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/Check.html#get_id()">get_id</A></STRONG>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a unique string identifier for the check.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;int</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/Check.html#get_stmt_no()">get_stmt_no</A></STRONG>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the offset in the sequence of this check</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/Check.html#get_value()">get_value</A></STRONG>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a short string that can be used to uniquely identify
- this check.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/Check.html#toCodeStringPostStatement()">toCodeStringPostStatement</A></STRONG>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted after a
- statement containing this check.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/Check.html#toCodeStringPreStatement()">toCodeStringPreStatement</A></STRONG>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string of Java source code to be emitted before a
- statement containing this check.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called by AbstractGenerator to determine if generation should stop.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -217,79 +178,86 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="toCodeStringPreStatement()"><!-- --></A><H3>
-toCodeStringPreStatement</H3>
+<A NAME="explorationStart()"><!-- --></A><H3>
+explorationStart</H3>
 <PRE>
-String <STRONG>toCodeStringPreStatement</STRONG>()</PRE>
+void <STRONG>explorationStart</STRONG>()</PRE>
 <DL>
-<DD>Returns a string of Java source code to be emitted before a
- statement containing this check.
+<DD>Called immediately at the start of test generation, before any generation steps have occurred.
 <P>
 </DD>
 </DL>
 <HR>
 
-<A NAME="toCodeStringPostStatement()"><!-- --></A><H3>
-toCodeStringPostStatement</H3>
+<A NAME="explorationEnd()"><!-- --></A><H3>
+explorationEnd</H3>
 <PRE>
-String <STRONG>toCodeStringPostStatement</STRONG>()</PRE>
+void <STRONG>explorationEnd</STRONG>()</PRE>
 <DL>
-<DD>Returns a string of Java source code to be emitted after a
- statement containing this check.
+<DD>Called immediately after the end of test generation.
 <P>
 </DD>
 </DL>
 <HR>
 
-<A NAME="get_value()"><!-- --></A><H3>
-get_value</H3>
+<A NAME="generationStepPre()"><!-- --></A><H3>
+generationStepPre</H3>
 <PRE>
-String <STRONG>get_value</STRONG>()</PRE>
+void <STRONG>generationStepPre</STRONG>()</PRE>
 <DL>
-<DD>Returns a short string that can be used to uniquely identify
- this check.
+<DD>Called by the AbstractGenerator during each generation iteration,
+ immediately before a generation <code>step()</code> is performed.
 <P>
+</DD>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/AbstractGenerator.html" title="class in randoop"><CODE>AbstractGenerator</CODE></A></DD></DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="get_id()"><!-- --></A><H3>
-get_id</H3>
+<A NAME="generationStepPost(randoop.ExecutableSequence)"><!-- --></A><H3>
+generationStepPost</H3>
 <PRE>
-String <STRONG>get_id</STRONG>()</PRE>
+void <STRONG>generationStepPost</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s)</PRE>
 <DL>
-<DD>Returns a unique string identifier for the check.  Two checks are
- the same if these identifers match.  The value is NOT included.
- with.  Used to match up checks between the same sequence run at
- different times.  Note that because of changes in the environment
- (eg, static variables), two executions of the same sequence may
- have different checks (because the existence of some checks
- depends on the value of variables)
+<DD>Called by the AbstractGenerator during each generation iteration,
+ immediately after a generation <code>step()</code> has completed.
 <P>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>s</CODE> - sequence that was generated and executed in the last generation step.
+        Can b null, which means the last step was unable to generate a sequence
+        (e.g. due to a bad random choice).</DD><DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/AbstractGenerator.html" title="class in randoop"><CODE>AbstractGenerator</CODE></A></DD></DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="get_stmt_no()"><!-- --></A><H3>
-get_stmt_no</H3>
+<A NAME="progressThreadUpdate()"><!-- --></A><H3>
+progressThreadUpdate</H3>
 <PRE>
-int <STRONG>get_stmt_no</STRONG>()</PRE>
+void <STRONG>progressThreadUpdate</STRONG>()</PRE>
 <DL>
-<DD>Returns the offset in the sequence of this check
+<DD>Called by ProgressDisplay at regular intervals to monitor progress.
+ Implementing classes can use this opportunity to update state.
 <P>
+</DD>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/util/ProgressDisplay.html" title="class in randoop.util"><CODE>ProgressDisplay</CODE></A></DD></DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="evaluate(randoop.Execution)"><!-- --></A><H3>
-evaluate</H3>
+<A NAME="stopGeneration()"><!-- --></A><H3>
+stopGeneration</H3>
 <PRE>
-boolean <STRONG>evaluate</STRONG>(<A HREF="../randoop/Execution.html" title="class in randoop">Execution</A>&nbsp;execution)</PRE>
+boolean <STRONG>stopGeneration</STRONG>()</PRE>
 <DL>
-<DD>Evaluates this check on the given unfolding execution of a sequence,
- returning <code>true</code> if the check succeeded, and <code>false</code>
- otherwise.
+<DD>Called by AbstractGenerator to determine if generation should stop.
+ True signals to the generator that generation should stop.
 <P>
+</DD>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/AbstractGenerator.html" title="class in randoop"><CODE>AbstractGenerator</CODE></A></DD></DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -322,11 +290,11 @@ boolean <STRONG>evaluate</STRONG>(<A HREF="../randoop/Execution.html" title="cla
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/BugInRandoopException.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/CheckRep.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/HelperSequenceCreator.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/IsNotNull.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/Check.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="Check.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../index.html?randoop/IEventListener.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="IEventListener.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
