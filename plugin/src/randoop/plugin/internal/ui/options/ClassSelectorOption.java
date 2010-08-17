@@ -62,13 +62,16 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
@@ -573,6 +576,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     
     fRunnableContext = runnableContext;
     Group comp = SWTFactory.createGroup(parent, "Classes/Methods Un&der Test", 2, 1, GridData.FILL_BOTH);
+    
     fShell = comp.getShell();
 
     final Composite leftcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_BOTH);
@@ -583,7 +587,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     gd.grabExcessHorizontalSpace = true;
     gd.grabExcessVerticalSpace = true;
 
-    final Composite rightcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL);
+    final Composite rightcomp = SWTFactory.createComposite(comp, 1, 1, SWT.END);
     gd = (GridData) rightcomp.getLayoutData();
     gd.horizontalAlignment = SWT.LEFT;
     gd.verticalAlignment = SWT.TOP;
@@ -594,7 +598,8 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeContentProvider = new TreeContentProvider();
 
     fTypeTreeViewer = new CheckboxTreeViewer(leftcomp, SWT.MULTI | SWT.BORDER);
-    fTypeTreeViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+    gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+    fTypeTreeViewer.getControl().setLayoutData(gd);
     fTypeTreeViewer.setLabelProvider(fTreeLabelProvider);
     fTypeTreeViewer.setContentProvider(fTypeTreeContentProvider);
     fTypeTreeViewer.setSorter(new ViewerSorter());
@@ -772,6 +777,18 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     gd = (GridData) fIgnoreJUnitTestCases.getLayoutData();
     gd.horizontalIndent = 5;
     fIgnoreJUnitTestCases.setLayoutData(gd);
+    
+    Label label = new Label(comp, SWT.WRAP);
+    gd = new GridData();
+    gd.widthHint = SWTFactory.computeWidth(parent, 45);
+    gd.horizontalIndent = 5;
+    gd.horizontalSpan = 2;
+    gd.horizontalAlignment = SWT.FILL;
+    label.setLayoutData(gd);
+    label.setText("Testing code that modifies your file system might result in Randoop generating tests that modify your file system! Be careful when choosing classes and methods to test.");
+    Font boldItalicFont = SWTFactory.getBoldFont(leftcomp.getFont());
+    boldItalicFont = SWTFactory.getItalicFont(boldItalicFont);
+    label.setFont(boldItalicFont);
   }
 
   private void handleSearchButtonSelected(IJavaSearchScope searchScope) {
