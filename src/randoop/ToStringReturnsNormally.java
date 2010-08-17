@@ -42,6 +42,11 @@ public final class ToStringReturnsNormally implements ObjectContract {
   }
 
   @Override
+  public String get_observer_str() {
+    return "toString throws no Exception";
+  }
+
+  @Override
   public boolean evalExceptionMeansFailure() {
     return true;
   }
