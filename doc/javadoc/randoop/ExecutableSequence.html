@@ -285,7 +285,8 @@ Method Summary</CAPTION>
                boolean&nbsp;print_diffs)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compares the results of the checks of two sequences.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compares the results of the checks of two sequences (the code in
+ each sequence should be the same).</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -543,6 +544,14 @@ List&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#seq_id()">seq_id</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an id based on the contents of the sequence alone.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/ExecutableSequence.html#throwsException()">throwsException</A></STRONG>()</CODE>
 
@@ -716,6 +725,19 @@ public String <STRONG>toString</STRONG>()</PRE>
 <DD><DL>
 <DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="seq_id()"><!-- --></A><H3>
+seq_id</H3>
+<PRE>
+public int <STRONG>seq_id</STRONG>()</PRE>
+<DL>
+<DD>Returns an id based on the contents of the sequence alone.  The id
+ will match for any identical sequences (no matter how they are
+ constructed).  Used for debugging
+<P>
 </DD>
 </DL>
 <HR>
@@ -1041,10 +1063,32 @@ public int <STRONG>compare_checks</STRONG>(<A HREF="../randoop/ExecutableSequenc
                           boolean&nbsp;remove_diffs,
                           boolean&nbsp;print_diffs)</PRE>
 <DL>
-<DD>Compares the results of the checks of two sequences.  Returns the
- number of different checks.  If remove_diffs is true any
- differing checks are removed from both sequences.
- Prints any differences to stdout if print_diffs is true.
+<DD>Compares the results of the checks of two sequences (the code in
+ each sequence should be the same).  Returns the number of
+ different checks.  If remove_diffs is true any differing checks
+ are removed from both sequences.  Checks found in one sequence
+ but not the other are also removed.  Prints any differences to
+ stdout if print_diffs is true.
+
+ Different checks can be generated for two runs of the same test
+ sequence because of changes in
+ the environment (eg, static variables) between runs.  Some
+ checks are only created when the value involved in the
+ check meets certain criteria and since the values can
+ change, the checks may not always be created.  Its
+ also possible to throw exceptions in one run and not another.
+
+ The get_id() method from the Check
+ interface) is used to identify check uniquely.  The id contains
+ both the observer type (primitive, non-null, observer method call,
+ etc) and the related variables.  When comparing two lists of
+ Checks, the code presumes that the checks will occur in the same
+ order on each execution.  Thus if the first remaining check in
+ the first execution matches the second check from the second execution,
+ the first check from the second execution is presumed to not match.
+ The algorithm is far from completely optimized, but it should work
+ pretty well if the two lists are pretty much the same (which
+ they usually are).
 <P>
 </DD>
 </DL>

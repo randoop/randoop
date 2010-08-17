@@ -3,17 +3,17 @@
 <HTML lang="en">
 <HEAD>
 <TITLE>
-DFResultsOneSeq.VariableInfo
+DataFlowOutput
 </TITLE>
 
 
-<LINK REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="DFResultsOneSeq.VariableInfo";
+        parent.document.title="DataFlowOutput";
     }
 }
 </SCRIPT>
@@ -35,13 +35,13 @@ function windowTitle()
 <A NAME="navbar_top_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -52,20 +52,20 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/DummyStatement.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../../randoop/experiments/DataFlowInput.html" title="class in randoop.experiments"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/experiments/DFOneFile.html" title="class in randoop.experiments"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/DFResultsOneSeq.VariableInfo.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="DFResultsOneSeq.VariableInfo.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../../index.html?randoop/experiments/DataFlowOutput.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="DataFlowOutput.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
@@ -85,31 +85,31 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <!-- ======== START OF CLASS DATA ======== -->
 <H2>
 <FONT SIZE="-1">
-randoop</FONT>
+randoop.experiments</FONT>
 <BR>
-Class DFResultsOneSeq.VariableInfo</H2>
+Class DataFlowOutput</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>DFResultsOneSeq.VariableInfo</STRONG>
+  <IMG SRC="../../resources/inherit.gif" ALT="extended by "><STRONG>DataFlowOutput</STRONG>
 </PRE>
 <DL>
 <DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable</DD>
 </DL>
-<DL>
-<DT><STRONG>Enclosing class:</STRONG></DT><DD><A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop">DFResultsOneSeq</A></DD>
-</DL>
 <HR>
-<PRE>public static class <STRONG>DFResultsOneSeq.VariableInfo</STRONG>
+<PRE>public class <STRONG>DataFlowOutput</STRONG>
 extends Object
 implements Serializable</PRE>
 
 <P>
-Class that contains information about the values in the frontier
+The output created by DataFlow consists of a collection of results, one for
+ each sequence. Each result contains the sequence analyzed, the frontier
+ branch that the sequence reaches, and the set of "interesting" variables
+ affecting the outcome of the frontier branch.
 <P>
 
 <P>
 <DL>
-<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../serialized-form.html#randoop.DFResultsOneSeq.VariableInfo">Serialized Form</A></DD></DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../../serialized-form.html#randoop.experiments.DataFlowOutput">Serialized Form</A></DD></DL>
 <HR>
 
 <P>
@@ -125,16 +125,8 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;Set&lt;String&gt;</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.VariableInfo.html#branch_compares">branch_compares</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.VariableInfo.html#value">value</A></STRONG></CODE>
+<CODE>&nbsp;List&lt;<A HREF="../../randoop/experiments/DFResultsOneSeq.html" title="class in randoop.experiments">DFResultsOneSeq</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowOutput.html#results">results</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -151,7 +143,7 @@ Constructor Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.VariableInfo.html#DFResultsOneSeq.VariableInfo(randoop.Variable)">DFResultsOneSeq.VariableInfo</A></STRONG>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;value)</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowOutput.html#DataFlowOutput(java.util.List)">DataFlowOutput</A></STRONG>(List&lt;<A HREF="../../randoop/experiments/DFResultsOneSeq.html" title="class in randoop.experiments">DFResultsOneSeq</A>&gt;&nbsp;results)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -170,16 +162,24 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.VariableInfo.html#add_branch_compare(java.lang.String)">add_branch_compare</A></STRONG>(String&nbsp;compared_to)</CODE>
+<CODE>static&nbsp;<A HREF="../../randoop/experiments/DataFlowOutput.html" title="class in randoop.experiments">DataFlowOutput</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowOutput.html#parse(java.lang.String)">parse</A></STRONG>(String&nbsp;filename)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new DataFlowOutput from a test file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowOutput.html#toParseableFile(java.lang.String)">toParseableFile</A></STRONG>(String&nbsp;outFile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output this DataFlowOutput object as a text file.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.VariableInfo.html#toString()">toString</A></STRONG>()</CODE>
+<TD><CODE><STRONG><A HREF="../../randoop/experiments/DataFlowOutput.html#toString()">toString</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -207,16 +207,10 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="value"><!-- --></A><H3>
-value</H3>
+<A NAME="results"><!-- --></A><H3>
+results</H3>
 <PRE>
-public <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A> <STRONG>value</STRONG></PRE>
-<HR>
-
-<A NAME="branch_compares"><!-- --></A><H3>
-branch_compares</H3>
-<PRE>
-public Set&lt;String&gt; <STRONG>branch_compares</STRONG></PRE>
+public List&lt;<A HREF="../../randoop/experiments/DFResultsOneSeq.html" title="class in randoop.experiments">DFResultsOneSeq</A>&gt; <STRONG>results</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -228,10 +222,10 @@ public Set&lt;String&gt; <STRONG>branch_compares</STRONG></PRE>
 </TR>
 </TABLE>
 
-<A NAME="DFResultsOneSeq.VariableInfo(randoop.Variable)"><!-- --></A><H3>
-DFResultsOneSeq.VariableInfo</H3>
+<A NAME="DataFlowOutput(java.util.List)"><!-- --></A><H3>
+DataFlowOutput</H3>
 <PRE>
-public <STRONG>DFResultsOneSeq.VariableInfo</STRONG>(<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>&nbsp;value)</PRE>
+public <STRONG>DataFlowOutput</STRONG>(List&lt;<A HREF="../../randoop/experiments/DFResultsOneSeq.html" title="class in randoop.experiments">DFResultsOneSeq</A>&gt;&nbsp;results)</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -243,10 +237,63 @@ public <STRONG>DFResultsOneSeq.VariableInfo</STRONG>(<A HREF="../randoop/Variabl
 </TR>
 </TABLE>
 
-<A NAME="add_branch_compare(java.lang.String)"><!-- --></A><H3>
-add_branch_compare</H3>
+<A NAME="parse(java.lang.String)"><!-- --></A><H3>
+parse</H3>
 <PRE>
-public void <STRONG>add_branch_compare</STRONG>(String&nbsp;compared_to)</PRE>
+public static <A HREF="../../randoop/experiments/DataFlowOutput.html" title="class in randoop.experiments">DataFlowOutput</A> <STRONG>parse</STRONG>(String&nbsp;filename)</PRE>
+<DL>
+<DD>Create a new DataFlowOutput from a test file.
+ 
+ The text file consists of a list of records, each as follows:
+ 
+ START DFRESULT
+ <branch-description>
+ <sequence-description>
+ VARS <num-vars>
+ <var> <val> ... <val>
+ ...
+ <var> <val> ... <val>
+ END DFRESULT
+ 
+ Where:
+ 
+ <branch-description> is a string that can be parsed by the method
+ cov.OneBranchInfo.parse(String).
+ 
+ <sequence-description> is a string that can be parsed by the method
+ randoop.SequenceParser.parse(String).
+ 
+ <num-vars> is the number of "interesting" variables in the sequence.
+ 
+ Each <var> <val> ... <val> is an interesting variable followed by
+ interesting values for the variable, all on a single line and separated
+ with whitespace. There are <num-vars> lines.
+ 
+ Blank lines and comments between records are allowed and ignored. Comments
+ are lines starting with "#".
+ 
+ The records are used to create the list of DFResultsOneSeq objects.
+ 
+ TODO potential problems: (1) last statement is sequence begins with "VARS";
+      (2) some <val> is a string with whitespace.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toParseableFile(java.lang.String)"><!-- --></A><H3>
+toParseableFile</H3>
+<PRE>
+public void <STRONG>toParseableFile</STRONG>(String&nbsp;outFile)</PRE>
+<DL>
+<DD>Output this DataFlowOutput object as a text file.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>outFile</CODE> - The file where output is to be written.
+ If outFile ends in ".gz" it will be output as a compressed file.</DD></DL>
+</DD>
+</DL>
 <HR>
 
 <A NAME="toString()"><!-- --></A><H3>
@@ -272,13 +319,13 @@ public String <STRONG>toString</STRONG>()</PRE>
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -289,20 +336,20 @@ public String <STRONG>toString</STRONG>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/DummyStatement.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../../randoop/experiments/DataFlowInput.html" title="class in randoop.experiments"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../../randoop/experiments/DFOneFile.html" title="class in randoop.experiments"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/DFResultsOneSeq.VariableInfo.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="DFResultsOneSeq.VariableInfo.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../../index.html?randoop/experiments/DataFlowOutput.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="DataFlowOutput.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+    document.writeln('<A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+  <A HREF="../../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
 </NOSCRIPT>
 
 
