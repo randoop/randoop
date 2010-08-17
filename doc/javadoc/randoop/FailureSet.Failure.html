@@ -3,7 +3,7 @@
 <HTML lang="en">
 <HEAD>
 <TITLE>
-DataFlowInput
+FailureSet.Failure
 </TITLE>
 
 
@@ -13,7 +13,7 @@ DataFlowInput
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="DataFlowInput";
+        parent.document.title="FailureSet.Failure";
     }
 }
 </SCRIPT>
@@ -52,11 +52,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/CovWitnessHelperVisitor.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/DataFlowOutput.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/FailureSet.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/ForwardGenerator.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/DataFlowInput.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="DataFlowInput.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../index.html?randoop/FailureSet.Failure.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="FailureSet.Failure.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -87,27 +87,19 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 randoop</FONT>
 <BR>
-Class DataFlowInput</H2>
+Class FailureSet.Failure</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>DataFlowInput</STRONG>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>FailureSet.Failure</STRONG>
 </PRE>
 <DL>
-<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable</DD>
+<DT><STRONG>Enclosing class:</STRONG></DT><DD><A HREF="../randoop/FailureSet.html" title="class in randoop">FailureSet</A></DD>
 </DL>
 <HR>
-<PRE>public class <STRONG>DataFlowInput</STRONG>
-extends Object
-implements Serializable</PRE>
+<PRE>public static class <STRONG>FailureSet.Failure</STRONG>
+extends Object</PRE>
 
 <P>
-A collection of frontier branches and sequences that reach them.
- A DataFlowInput is the input to the DataFlow analysis.
-<P>
-
-<P>
-<DL>
-<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../serialized-form.html#randoop.DataFlowInput">Serialized Form</A></DD></DL>
 <HR>
 
 <P>
@@ -123,8 +115,16 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;Map&lt;Branch,Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt;</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DataFlowInput.html#frontierMap">frontierMap</A></STRONG></CODE>
+<CODE>&nbsp;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/FailureSet.Failure.html#st">st</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;Class&lt;?&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/FailureSet.Failure.html#viocls">viocls</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -141,7 +141,8 @@ Constructor Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../randoop/DataFlowInput.html#DataFlowInput(java.util.Map)">DataFlowInput</A></STRONG>(Map&lt;Branch,Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt;&nbsp;frontierMap)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/FailureSet.Failure.html#FailureSet.Failure(randoop.StatementKind, java.lang.Class)">FailureSet.Failure</A></STRONG>(<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&nbsp;st,
+                   Class&lt;?&gt;&nbsp;viocls)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -160,20 +161,19 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../randoop/DataFlowInput.html" title="class in randoop">DataFlowInput</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DataFlowInput.html#parse(java.lang.String)">parse</A></STRONG>(String&nbsp;inFile)</CODE>
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/FailureSet.Failure.html#equals(java.lang.Object)">equals</A></STRONG>(Object&nbsp;o)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new DataFlowInput from a text file.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DataFlowInput.html#toParseableFile(java.lang.String, boolean)">toParseableFile</A></STRONG>(String&nbsp;outFile,
-                boolean&nbsp;outputCodeRep)</CODE>
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/FailureSet.Failure.html#hashCode()">hashCode</A></STRONG>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Output this DataFlowInput as a text file.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
@@ -182,7 +182,7 @@ Method Summary</CAPTION>
 <TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -198,10 +198,16 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="frontierMap"><!-- --></A><H3>
-frontierMap</H3>
+<A NAME="st"><!-- --></A><H3>
+st</H3>
 <PRE>
-public Map&lt;Branch,Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt; <STRONG>frontierMap</STRONG></PRE>
+public final <A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A> <STRONG>st</STRONG></PRE>
+<HR>
+
+<A NAME="viocls"><!-- --></A><H3>
+viocls</H3>
+<PRE>
+public final Class&lt;?&gt; <STRONG>viocls</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -213,10 +219,11 @@ public Map&lt;Branch,Set&lt;<A HREF="../randoop/Sequence.html" title="class in r
 </TR>
 </TABLE>
 
-<A NAME="DataFlowInput(java.util.Map)"><!-- --></A><H3>
-DataFlowInput</H3>
+<A NAME="FailureSet.Failure(randoop.StatementKind, java.lang.Class)"><!-- --></A><H3>
+FailureSet.Failure</H3>
 <PRE>
-public <STRONG>DataFlowInput</STRONG>(Map&lt;Branch,Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;&gt;&nbsp;frontierMap)</PRE>
+public <STRONG>FailureSet.Failure</STRONG>(<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&nbsp;st,
+                          Class&lt;?&gt;&nbsp;viocls)</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -228,55 +235,26 @@ public <STRONG>DataFlowInput</STRONG>(Map&lt;Branch,Set&lt;<A HREF="../randoop/S
 </TR>
 </TABLE>
 
-<A NAME="parse(java.lang.String)"><!-- --></A><H3>
-parse</H3>
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
 <PRE>
-public static <A HREF="../randoop/DataFlowInput.html" title="class in randoop">DataFlowInput</A> <STRONG>parse</STRONG>(String&nbsp;inFile)</PRE>
+public boolean <STRONG>equals</STRONG>(Object&nbsp;o)</PRE>
 <DL>
-<DD>Create a new DataFlowInput from a text file.
- 
- The text file consists of a list of records. Each record is as follows:
- 
- START RECORD
- BRANCH
- <branch-description>
- SEQUENCE
- <sequence-description>
- END RECORD
-
- Where <branch-description> is a string that can be parsed
- by the method cov.OneBranchInfo.parse(String), and <sequence-description>
- is a string that can be parsed by the method
- randoop.SequenceParser.parse(String).
- 
- Blank lines and comments between records are allowed and ignored.
- Comments are lines starting with "#".
- 
- The records are read and used to populate the frontierMap field of the
- new DataFlowInput object. If two records specify the same branch, the
- two sequences are added to the same set.
-<P>
-</DD>
 <DD><DL>
-<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>inFile</CODE> - A text file containing a description of branches and sequences.
-        If inFile ends in ".gz" it will be read as a compressed file.</DD></DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>equals</CODE> in class <CODE>Object</CODE></DD>
+</DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="toParseableFile(java.lang.String, boolean)"><!-- --></A><H3>
-toParseableFile</H3>
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
 <PRE>
-public void <STRONG>toParseableFile</STRONG>(String&nbsp;outFile,
-                            boolean&nbsp;outputCodeRep)</PRE>
+public int <STRONG>hashCode</STRONG>()</PRE>
 <DL>
-<DD>Output this DataFlowInput as a text file.
-<P>
-</DD>
 <DD><DL>
-<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>outFile</CODE> - The file where output is to be written.
- If outFile ends in ".gz" it will be output as a compressed file.</DD><DD><CODE>outputCodeRep</CODE> - If true, also output the code representation of
- each sequence,  as a comment following each record.</DD></DL>
+<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>hashCode</CODE> in class <CODE>Object</CODE></DD>
+</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -309,11 +287,11 @@ public void <STRONG>toParseableFile</STRONG>(String&nbsp;outFile,
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/CovWitnessHelperVisitor.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/DataFlowOutput.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/FailureSet.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/ForwardGenerator.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/DataFlowInput.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="DataFlowInput.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../index.html?randoop/FailureSet.Failure.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="FailureSet.Failure.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {

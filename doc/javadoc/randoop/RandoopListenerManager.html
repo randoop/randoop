@@ -3,7 +3,7 @@
 <HTML lang="en">
 <HEAD>
 <TITLE>
-DependencyUtils
+RandoopListenerManager
 </TITLE>
 
 
@@ -13,7 +13,7 @@ DependencyUtils
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="DependencyUtils";
+        parent.document.title="RandoopListenerManager";
     }
 }
 </SCRIPT>
@@ -52,11 +52,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/DataFlowOutput.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/PrimValue.PrintMode.html" title="enum in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/RandoopStat.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/DependencyUtils.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="DependencyUtils.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../index.html?randoop/RandoopListenerManager.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="RandoopListenerManager.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -87,13 +87,13 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&n
 <FONT SIZE="-1">
 randoop</FONT>
 <BR>
-Class DependencyUtils</H2>
+Class RandoopListenerManager</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>DependencyUtils</STRONG>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>RandoopListenerManager</STRONG>
 </PRE>
 <HR>
-<PRE>public class <STRONG>DependencyUtils</STRONG>
+<PRE>public class <STRONG>RandoopListenerManager</STRONG>
 extends Object</PRE>
 
 <P>
@@ -111,7 +111,7 @@ Constructor Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../randoop/DependencyUtils.html#DependencyUtils()">DependencyUtils</A></STRONG>()</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/RandoopListenerManager.html#RandoopListenerManager()">RandoopListenerManager</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -130,43 +130,56 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DependencyUtils.html#getLongestDepSetSubSequence(randoop.Sequence)">getLongestDepSetSubSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s)</CODE>
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/RandoopListenerManager.html#addListener(randoop.IEventListener)">addListener</A></STRONG>(<A HREF="../randoop/IEventListener.html" title="interface in randoop">IEventListener</A>&nbsp;listener)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;BitSet</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DependencyUtils.html#longestDepSet(randoop.Sequence)">longestDepSet</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s)</CODE>
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/RandoopListenerManager.html#explorationEnd()">explorationEnd</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;BitSet</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DependencyUtils.html#longestDepSet(randoop.Sequence, int)">longestDepSet</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
-              int&nbsp;idx)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The longest dep set of the sub-sequence s[0..idx].</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;Set&lt;Integer&gt;</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DependencyUtils.html#predecessors(randoop.Sequence, int)">predecessors</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
-             int&nbsp;idx)</CODE>
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/RandoopListenerManager.html#explorationStart()">explorationStart</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DependencyUtils.html#predecessorSequence(randoop.Sequence, int)">predecessorSequence</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
-                    int&nbsp;idx)</CODE>
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/RandoopListenerManager.html#generationStepPost(randoop.ExecutableSequence)">generationStepPost</A></STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/RandoopListenerManager.html#generationStepPre()">generationStepPre</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/RandoopListenerManager.html#progressThreadUpdateNotify()">progressThreadUpdateNotify</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/RandoopListenerManager.html#stopGeneration()">stopGeneration</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -194,10 +207,10 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="DependencyUtils()"><!-- --></A><H3>
-DependencyUtils</H3>
+<A NAME="RandoopListenerManager()"><!-- --></A><H3>
+RandoopListenerManager</H3>
 <PRE>
-public <STRONG>DependencyUtils</STRONG>()</PRE>
+public <STRONG>RandoopListenerManager</STRONG>()</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -209,42 +222,46 @@ public <STRONG>DependencyUtils</STRONG>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="predecessors(randoop.Sequence, int)"><!-- --></A><H3>
-predecessors</H3>
+<A NAME="addListener(randoop.IEventListener)"><!-- --></A><H3>
+addListener</H3>
 <PRE>
-public static Set&lt;Integer&gt; <STRONG>predecessors</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
-                                        int&nbsp;idx)</PRE>
+public void <STRONG>addListener</STRONG>(<A HREF="../randoop/IEventListener.html" title="interface in randoop">IEventListener</A>&nbsp;listener)</PRE>
 <HR>
 
-<A NAME="predecessorSequence(randoop.Sequence, int)"><!-- --></A><H3>
-predecessorSequence</H3>
+<A NAME="generationStepPre()"><!-- --></A><H3>
+generationStepPre</H3>
 <PRE>
-public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>predecessorSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
-                                           int&nbsp;idx)</PRE>
+public void <STRONG>generationStepPre</STRONG>()</PRE>
 <HR>
 
-<A NAME="longestDepSet(randoop.Sequence, int)"><!-- --></A><H3>
-longestDepSet</H3>
+<A NAME="generationStepPost(randoop.ExecutableSequence)"><!-- --></A><H3>
+generationStepPost</H3>
 <PRE>
-public static BitSet <STRONG>longestDepSet</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s,
-                                   int&nbsp;idx)</PRE>
-<DL>
-<DD>The longest dep set of the sub-sequence s[0..idx].
-<P>
-</DD>
-</DL>
+public void <STRONG>generationStepPost</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;es)</PRE>
 <HR>
 
-<A NAME="longestDepSet(randoop.Sequence)"><!-- --></A><H3>
-longestDepSet</H3>
+<A NAME="progressThreadUpdateNotify()"><!-- --></A><H3>
+progressThreadUpdateNotify</H3>
 <PRE>
-public static BitSet <STRONG>longestDepSet</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s)</PRE>
+public void <STRONG>progressThreadUpdateNotify</STRONG>()</PRE>
 <HR>
 
-<A NAME="getLongestDepSetSubSequence(randoop.Sequence)"><!-- --></A><H3>
-getLongestDepSetSubSequence</H3>
+<A NAME="stopGeneration()"><!-- --></A><H3>
+stopGeneration</H3>
 <PRE>
-public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>getLongestDepSetSubSequence</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;s)</PRE>
+public boolean <STRONG>stopGeneration</STRONG>()</PRE>
+<HR>
+
+<A NAME="explorationStart()"><!-- --></A><H3>
+explorationStart</H3>
+<PRE>
+public void <STRONG>explorationStart</STRONG>()</PRE>
+<HR>
+
+<A NAME="explorationEnd()"><!-- --></A><H3>
+explorationEnd</H3>
+<PRE>
+public void <STRONG>explorationEnd</STRONG>()</PRE>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -275,11 +292,11 @@ public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequen
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/DataFlowOutput.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/PrimValue.PrintMode.html" title="enum in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/RandoopStat.html" title="annotation in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/DependencyUtils.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="DependencyUtils.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../index.html?randoop/RandoopListenerManager.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="RandoopListenerManager.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
