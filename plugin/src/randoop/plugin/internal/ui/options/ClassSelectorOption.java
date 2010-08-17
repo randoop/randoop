@@ -671,7 +671,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       @Override
       public void widgetSelected(SelectionEvent e) {
         IJavaElement[] elements = { fJavaProject };
-        IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements);
+        IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(elements, IJavaSearchScope.SYSTEM_LIBRARIES);
         handleSearchButtonSelected(searchScope);
       }
     });
