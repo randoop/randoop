@@ -629,6 +629,14 @@ option to <tt>java</tt> when running Randoop:
     -javaagent:$(randoop)/randoop_agent.jar=--map_calls=map_calls.txt
 </pre>
 <p>
+(<b>Note:</b> If you supply the <tt>-javaagent</tt> option to <tt>java</tt>
+when running Randoop, and there is any chance that Randoop may spawn
+another process (for example, if the <tt>--compare-checks</tt> command-line
+option is specified), then then you should also specify the
+<tt>--agent</tt> argument to Randoop.)
+</p>
+
+<p>
 You need to supply the <tt>map_calls.txt</tt> file, and also a definition
 of the replacement methods.  When you run the generated tests, you will
 also need to supply the same <tt>-javaagent:...</tt> argument.  (In the
