@@ -252,14 +252,12 @@ public class OptionFactory {
         RandoopMessages.RandoopOption_randomseed, 1);
     Text randomSeedText = SWTFactory.createSingleText(comp, 1);
     randomSeedLabel.setToolTipText(RandoopMessages.RandoopOption_randomseed_tooltip);
-    randomSeedText.setToolTipText(RandoopMessages.RandoopOption_randomseed_tooltip);
     IOption randomSeed = new RandomSeedOption(randomSeedText);
 
     Label maxTestSizeLabel = SWTFactory.createLabel(comp,
         RandoopMessages.RandoopOption_maxsize, 1);
     Text maxTestSizeText = SWTFactory.createSingleText(comp, 1);
     maxTestSizeLabel.setToolTipText(RandoopMessages.RandoopOption_maxsize_tooltip);
-    maxTestSizeText.setToolTipText(RandoopMessages.RandoopOption_maxsize_tooltip);
     IOption maxTestSize = new MaximumTestSizeOption(maxTestSizeText);
 
     Button threadTimeoutButton = SWTFactory.createCheckButton(comp,
@@ -286,8 +284,6 @@ public class OptionFactory {
         RandoopMessages.RandoopOption_testsperfile, 1);
     Text maxTestsPerFileText = SWTFactory.createSingleText(comp, 1);
     maxTestsPerFileLabel
-        .setToolTipText(RandoopMessages.RandoopOption_testsperfile_tooltip);
-    maxTestsPerFileText
         .setToolTipText(RandoopMessages.RandoopOption_testsperfile_tooltip);
     IOption maxTestsPerFile = new MaximumTestsPerFileOption(maxTestsPerFileText);
 
