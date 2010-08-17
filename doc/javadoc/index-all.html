@@ -925,11 +925,12 @@ Method in class <A HREF="./randoop/util/InformationalComparator.html" title="cla
 
 <DT><A HREF="./randoop/ExecutableSequence.html#compare_checks(randoop.ExecutableSequence, boolean, boolean)"><STRONG>compare_checks(ExecutableSequence, boolean, boolean)</STRONG></A> - 
 Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
-</DT><DD>Compares the results of the checks of two sequences.</DD>
+</DT><DD>Compares the results of the checks of two sequences (the code in
+ each sequence should be the same).</DD>
 
 <DT><A HREF="./randoop/main/GenInputsAbstract.html#compare_checks"><STRONG>compare_checks</STRONG></A> - 
 Static variable in class <A HREF="./randoop/main/GenInputsAbstract.html" title="class in randoop.main">GenInputsAbstract</A>
-</DT><DD>&nbsp;</DD>
+</DT><DD>Run each test twice and compare the checks.</DD>
 
 <DT><A HREF="./randoop/Variable.html#compareTo(randoop.Variable)"><STRONG>compareTo(Variable)</STRONG></A> - 
 Method in class <A HREF="./randoop/Variable.html" title="class in randoop">Variable</A>
@@ -1334,6 +1335,10 @@ Constructor for class <A HREF="./randoop/DummyVisitor.html" title="class in rand
 <DT><A HREF="./randoop/instrument/Instrument.html#dump_map_list()"><STRONG>dump_map_list()</STRONG></A> - 
 Static method in class <A HREF="./randoop/instrument/Instrument.html" title="class in randoop.instrument">Instrument</A>
 </DT><DD>Dumps out the map list to the debug_map logger</DD>
+
+<DT><A HREF="./randoop/main/GenTests.html#dump_seqs(java.lang.String, java.util.List)"><STRONG>dump_seqs(String, List&lt;ExecutableSequence&gt;)</STRONG></A> - 
+Static method in class <A HREF="./randoop/main/GenTests.html" title="class in randoop.main">GenTests</A>
+</DT><DD>&nbsp;</DD>
 
 <DT><A HREF="./randoop/AbstractGenerator.html#dump_sequences"><STRONG>dump_sequences</STRONG></A> - 
 Static variable in class <A HREF="./randoop/AbstractGenerator.html" title="class in randoop">AbstractGenerator</A>
@@ -2127,9 +2132,89 @@ Method in class <A HREF="./randoop/util/SimpleList.html" title="class in randoop
 Method in class <A HREF="./randoop/instrument/Instrument.html" title="class in randoop.instrument">Instrument</A>
 </DT><DD>Returns the attribute name for the specified attribute</DD>
 
+<DT><A HREF="./randoop/Check.html#get_id()"><STRONG>get_id()</STRONG></A> - 
+Method in interface <A HREF="./randoop/Check.html" title="interface in randoop">Check</A>
+</DT><DD>Returns a unique string identifier for the check.</DD>
+
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#get_id()"><STRONG>get_id()</STRONG></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/NoExceptionCheck.html#get_id()"><STRONG>get_id()</STRONG></A> - 
+Method in class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/ObjectCheck.html#get_id()"><STRONG>get_id()</STRONG></A> - 
+Method in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/CheckRepContract.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/CheckRepContract.html" title="class in randoop">CheckRepContract</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/EqualsHashcode.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/EqualsHashcode.html" title="class in randoop">EqualsHashcode</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/EqualsReflexive.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/EqualsReflexive.html" title="class in randoop">EqualsReflexive</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/EqualsSymmetric.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/EqualsSymmetric.html" title="class in randoop">EqualsSymmetric</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/EqualsToNullRetFalse.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/EqualsToNullRetFalse.html" title="class in randoop">EqualsToNullRetFalse</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/HashCodeReturnsNormally.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/HashCodeReturnsNormally.html" title="class in randoop">HashCodeReturnsNormally</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/IsNotNull.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/IsNotNull.html" title="class in randoop">IsNotNull</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/IsNull.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/IsNull.html" title="class in randoop">IsNull</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/ObjectContract.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in interface <A HREF="./randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A>
+</DT><DD>Returns a string describing the observer</DD>
+
+<DT><A HREF="./randoop/ObserverEqValue.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/ObserverEqValue.html" title="class in randoop">ObserverEqValue</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/PrimValue.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/PrimValue.html" title="class in randoop">PrimValue</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/ToStringReturnsNormally.html#get_observer_str()"><STRONG>get_observer_str()</STRONG></A> - 
+Method in class <A HREF="./randoop/ToStringReturnsNormally.html" title="class in randoop">ToStringReturnsNormally</A>
+</DT><DD>&nbsp;</DD>
+
 <DT><A HREF="./randoop/ExecutionOutcome.html#get_output()"><STRONG>get_output()</STRONG></A> - 
 Method in class <A HREF="./randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</A>
 </DT><DD>Retrieve the output of the statement</DD>
+
+<DT><A HREF="./randoop/Check.html#get_stmt_no()"><STRONG>get_stmt_no()</STRONG></A> - 
+Method in interface <A HREF="./randoop/Check.html" title="interface in randoop">Check</A>
+</DT><DD>Returns the offset in the sequence of this check</DD>
+
+<DT><A HREF="./randoop/ExpectedExceptionCheck.html#get_stmt_no()"><STRONG>get_stmt_no()</STRONG></A> - 
+Method in class <A HREF="./randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</A>
+</DT><DD>return the offset of this statement in the sequence</DD>
+
+<DT><A HREF="./randoop/NoExceptionCheck.html#get_stmt_no()"><STRONG>get_stmt_no()</STRONG></A> - 
+Method in class <A HREF="./randoop/NoExceptionCheck.html" title="class in randoop">NoExceptionCheck</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/ObjectCheck.html#get_stmt_no()"><STRONG>get_stmt_no()</STRONG></A> - 
+Method in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
+</DT><DD>&nbsp;</DD>
 
 <DT><A HREF="./randoop/Check.html#get_value()"><STRONG>get_value()</STRONG></A> - 
 Method in interface <A HREF="./randoop/Check.html" title="interface in randoop">Check</A>
@@ -4237,7 +4322,7 @@ Constructor for class <A HREF="./randoop/ObjectCache.html" title="class in rando
 
 <DT><A HREF="./randoop/ObjectCheck.html" title="class in randoop"><STRONG>ObjectCheck</STRONG></A> - Class in <A HREF="./randoop/package-summary.html">randoop</A></DT><DD>A check that checks for expected properties of one or more objects
  generated during the execution of a <A HREF="./randoop/Sequence.html" title="class in randoop"><CODE>Sequence</CODE></A>, for example:</DD>
-<DT><A HREF="./randoop/ObjectCheck.html#ObjectCheck(randoop.ObjectContract, randoop.Variable...)"><STRONG>ObjectCheck(ObjectContract, Variable...)</STRONG></A> - 
+<DT><A HREF="./randoop/ObjectCheck.html#ObjectCheck(randoop.ObjectContract, int, randoop.Variable...)"><STRONG>ObjectCheck(ObjectContract, int, Variable...)</STRONG></A> - 
 Constructor for class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
 </DT><DD>&nbsp;</DD>
 
@@ -5285,6 +5370,10 @@ Static variable in class <A HREF="./randoop/util/Randomness.html" title="class i
 Method in class <A HREF="./randoop/runtime/MessageSender.html" title="class in randoop.runtime">MessageSender</A>
 </DT><DD>&nbsp;</DD>
 
+<DT><A HREF="./randoop/ExecutableSequence.html#seq_id()"><STRONG>seq_id()</STRONG></A> - 
+Method in class <A HREF="./randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>
+</DT><DD>Returns an id based on the contents of the sequence alone.</DD>
+
 <DT><A HREF="./randoop/experiments/StatsWriter.html#seq_str"><STRONG>seq_str</STRONG></A> - 
 Variable in class <A HREF="./randoop/experiments/StatsWriter.html" title="class in randoop.experiments">StatsWriter</A>
 </DT><DD>&nbsp;</DD>
@@ -5634,6 +5723,10 @@ Method in class <A HREF="./randoop/experiments/RandomWalkGenerator.html" title="
 
 <DT><A HREF="./randoop/ForwardGenerator.html#step()"><STRONG>step()</STRONG></A> - 
 Method in class <A HREF="./randoop/ForwardGenerator.html" title="class in randoop">ForwardGenerator</A>
+</DT><DD>&nbsp;</DD>
+
+<DT><A HREF="./randoop/ObjectCheck.html#stmt_no"><STRONG>stmt_no</STRONG></A> - 
+Variable in class <A HREF="./randoop/ObjectCheck.html" title="class in randoop">ObjectCheck</A>
 </DT><DD>&nbsp;</DD>
 
 <DT><A HREF="./randoop/AbstractGenerator.html#stop()"><STRONG>stop()</STRONG></A> - 

@@ -3,7 +3,7 @@
 <HTML lang="en">
 <HEAD>
 <TITLE>
-DFResultsOneSeq
+DefaultTestFilter
 </TITLE>
 
 
@@ -13,7 +13,7 @@ DFResultsOneSeq
 function windowTitle()
 {
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="DFResultsOneSeq";
+        parent.document.title="DefaultTestFilter";
     }
 }
 </SCRIPT>
@@ -52,11 +52,11 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/DependencyUtils.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ContractCheckingVisitor.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/DummyStatement.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/DFResultsOneSeq.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="DFResultsOneSeq.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../index.html?randoop/DefaultTestFilter.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="DefaultTestFilter.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -73,7 +73,7 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
 DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
@@ -87,50 +87,41 @@ DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor
 <FONT SIZE="-1">
 randoop</FONT>
 <BR>
-Class DFResultsOneSeq</H2>
+Class DefaultTestFilter</H2>
 <PRE>
 Object
-  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>DFResultsOneSeq</STRONG>
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>DefaultTestFilter</STRONG>
 </PRE>
 <DL>
-<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD>Serializable</DD>
+<DT><STRONG>All Implemented Interfaces:</STRONG></DT> <DD><A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A></DD>
 </DL>
 <HR>
-<PRE>public class <STRONG>DFResultsOneSeq</STRONG>
+<PRE>public class <STRONG>DefaultTestFilter</STRONG>
 extends Object
-implements Serializable</PRE>
+implements <A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A></PRE>
 
 <P>
-Encapsulates the results of the branch analysis for a given
- sequence and its frontier branch.
+<p>Randoop's default test filter determines if a generated test should be output
+ to the user. This determination is made by following these steps in order:</p>
+
+ <ul>
+ <li> First, if the method sequence did not execute to completion (i.e. an exception occurred in the middle),
+      do not output, unless the user asked for such tests to be output via --output-nonexec option.
+ <li> Else, if user specified --output-tests=all, output the test.
+ <li> Else, if test revealed no failures, output if user specified --output-tests=pass, otherwise do not output.
+ <li>Else, if test revealed a new failure, output if user specified --output-tests=fail, otherwise do not output.
+     A test is said to reveal a new failure if its associated FailureSet contains a Failure that is dictinct (via
+     the equals method) from a failure revealed by any previously-generated tests.
+ </ul>
 <P>
 
 <P>
 <DL>
-<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../serialized-form.html#randoop.DFResultsOneSeq">Serialized Form</A></DD></DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/FailureSet.html" title="class in randoop"><CODE>FailureSet</CODE></A></DD></DL>
 <HR>
 
 <P>
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-
-<A NAME="nested_class_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Nested Class Summary table, listing nested classes, and an explanation">
-<CAPTION CLASS="TableCaption">
-Nested Class Summary</CAPTION>
-<TR>
-<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
-<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Class and Description</TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;class</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="class in randoop">DFResultsOneSeq.VariableInfo</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Class that contains information about the values in the frontier</TD>
-</TR>
-</TABLE>
-&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+<!-- =========== FIELD SUMMARY =========== -->
 
 <A NAME="field_summary"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
@@ -142,24 +133,8 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;CoverageAtom</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.html#frontierBranch">frontierBranch</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.html#sequence">sequence</A></STRONG></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;Set&lt;<A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="class in randoop">DFResultsOneSeq.VariableInfo</A>&gt;</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.html#values">values</A></STRONG></CODE>
+<CODE>&nbsp;Set&lt;<A HREF="../randoop/FailureSet.Failure.html" title="class in randoop">FailureSet.Failure</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/DefaultTestFilter.html#errors">errors</A></STRONG></CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -176,9 +151,7 @@ Constructor Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.html#DFResultsOneSeq(randoop.Sequence, cov.CoverageAtom, java.util.Set)">DFResultsOneSeq</A></STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
-                CoverageAtom&nbsp;frontierBranch,
-                Set&lt;<A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="class in randoop">DFResultsOneSeq.VariableInfo</A>&gt;&nbsp;values)</CODE>
+<TD><CODE><STRONG><A HREF="../randoop/DefaultTestFilter.html#DefaultTestFilter()">DefaultTestFilter</A></STRONG>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -197,29 +170,13 @@ Method Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop">DFResultsOneSeq</A></CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.html#parse(java.util.List)">parse</A></STRONG>(List&lt;String&gt;&nbsp;lines)</CODE>
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/DefaultTestFilter.html#outputSequence(randoop.ExecutableSequence, randoop.FailureSet)">outputSequence</A></STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s,
+               <A HREF="../randoop/FailureSet.html" title="class in randoop">FailureSet</A>&nbsp;f)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a DFResultsOneSeq from a list of lines (presumably generated via
- the toParseableString() method).</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.html#toParseableString()">toParseableString</A></STRONG>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Outputs this object as a String that can be parsed
- by method DFResultsOneSeq.parse(List<String>).</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;String</CODE></FONT></TD>
-<TD><CODE><STRONG><A HREF="../randoop/DFResultsOneSeq.html#toString()">toString</A></STRONG>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as toParseableString().</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given sequence s and associated failure set f, returns true if
+ s should be output to the user as a test case.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
@@ -228,7 +185,7 @@ Method Summary</CAPTION>
 <TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -244,22 +201,10 @@ Method Summary</CAPTION>
 </TR>
 </TABLE>
 
-<A NAME="sequence"><!-- --></A><H3>
-sequence</H3>
+<A NAME="errors"><!-- --></A><H3>
+errors</H3>
 <PRE>
-public <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>sequence</STRONG></PRE>
-<HR>
-
-<A NAME="frontierBranch"><!-- --></A><H3>
-frontierBranch</H3>
-<PRE>
-public CoverageAtom <STRONG>frontierBranch</STRONG></PRE>
-<HR>
-
-<A NAME="values"><!-- --></A><H3>
-values</H3>
-<PRE>
-public Set&lt;<A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="class in randoop">DFResultsOneSeq.VariableInfo</A>&gt; <STRONG>values</STRONG></PRE>
+public Set&lt;<A HREF="../randoop/FailureSet.Failure.html" title="class in randoop">FailureSet.Failure</A>&gt; <STRONG>errors</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -271,12 +216,10 @@ public Set&lt;<A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="clas
 </TR>
 </TABLE>
 
-<A NAME="DFResultsOneSeq(randoop.Sequence, cov.CoverageAtom, java.util.Set)"><!-- --></A><H3>
-DFResultsOneSeq</H3>
+<A NAME="DefaultTestFilter()"><!-- --></A><H3>
+DefaultTestFilter</H3>
 <PRE>
-public <STRONG>DFResultsOneSeq</STRONG>(<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&nbsp;sequence,
-                       CoverageAtom&nbsp;frontierBranch,
-                       Set&lt;<A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="class in randoop">DFResultsOneSeq.VariableInfo</A>&gt;&nbsp;values)</PRE>
+public <STRONG>DefaultTestFilter</STRONG>()</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
 
@@ -288,43 +231,20 @@ public <STRONG>DFResultsOneSeq</STRONG>(<A HREF="../randoop/Sequence.html" title
 </TR>
 </TABLE>
 
-<A NAME="toString()"><!-- --></A><H3>
-toString</H3>
+<A NAME="outputSequence(randoop.ExecutableSequence, randoop.FailureSet)"><!-- --></A><H3>
+outputSequence</H3>
 <PRE>
-public String <STRONG>toString</STRONG>()</PRE>
+public boolean <STRONG>outputSequence</STRONG>(<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&nbsp;s,
+                              <A HREF="../randoop/FailureSet.html" title="class in randoop">FailureSet</A>&nbsp;f)</PRE>
 <DL>
-<DD>Same as toParseableString().
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/ITestFilter.html#outputSequence(randoop.ExecutableSequence, randoop.FailureSet)">ITestFilter</A></CODE></STRONG></DD>
+<DD>Given sequence s and associated failure set f, returns true if
+ s should be output to the user as a test case.
 <P>
 </DD>
 <DD><DL>
-<DT><STRONG>Overrides:</STRONG></DT><DD><CODE>toString</CODE> in class <CODE>Object</CODE></DD>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/ITestFilter.html#outputSequence(randoop.ExecutableSequence, randoop.FailureSet)">outputSequence</A></CODE> in interface <CODE><A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A></CODE></DD>
 </DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="toParseableString()"><!-- --></A><H3>
-toParseableString</H3>
-<PRE>
-public String <STRONG>toParseableString</STRONG>()</PRE>
-<DL>
-<DD>Outputs this object as a String that can be parsed
- by method DFResultsOneSeq.parse(List<String>).
- 
- See documentation for DataFlowOutput.parse(String filename).
-<P>
-</DD>
-</DL>
-<HR>
-
-<A NAME="parse(java.util.List)"><!-- --></A><H3>
-parse</H3>
-<PRE>
-public static <A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop">DFResultsOneSeq</A> <STRONG>parse</STRONG>(List&lt;String&gt;&nbsp;lines)</PRE>
-<DL>
-<DD>Creates a DFResultsOneSeq from a list of lines (presumably generated via
- the toParseableString() method).
-<P>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -357,11 +277,11 @@ public static <A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop"
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../randoop/DependencyUtils.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
-&nbsp;<A HREF="../randoop/DFResultsOneSeq.VariableInfo.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+&nbsp;<A HREF="../randoop/ContractCheckingVisitor.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/DummyStatement.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../index.html?randoop/DFResultsOneSeq.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
-&nbsp;<A HREF="DFResultsOneSeq.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+  <A HREF="../index.html?randoop/DefaultTestFilter.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="DefaultTestFilter.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
@@ -378,7 +298,7 @@ public static <A HREF="../randoop/DFResultsOneSeq.html" title="class in randoop"
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
 DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
