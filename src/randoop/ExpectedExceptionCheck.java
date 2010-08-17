@@ -56,9 +56,19 @@ public class ExpectedExceptionCheck implements Check {
     return "// throws exception of type " + exceptionClass.getName() + Globals.lineSep;
   }
 
+  @Override
+  public String get_id() {
+    return "Throws exception @" + statementIdx;
+  }
+
   /** Returns the class of the exception thrown**/
   public String get_value() {
     return exceptionClass.getName();
+  }
+
+  /** return the offset of this statement in the sequence **/
+  public int get_stmt_no() {
+    return statementIdx;
   }
 
   /**

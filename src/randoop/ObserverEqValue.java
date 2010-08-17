@@ -141,6 +141,11 @@ public final class ObserverEqValue implements ObjectContract {
     return true;
   }
 
+  @Override
+  public String get_observer_str() {
+    return observer.toString();
+  }
+
   public String toString() {
     return String.format ("<ObserverEqValue %s, value = '%s'", observer, value);
   }

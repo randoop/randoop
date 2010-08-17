@@ -71,6 +71,8 @@ public class CleanObservations extends CommandHandler {
     RegressionCaptureVisitor rcv = new RegressionCaptureVisitor();
     List<ExecutableSequence> clean_seq = new ArrayList<ExecutableSequence>();
     for (ExecutableSequence es : seqs) {
+      // System.out.printf ("Seq %08X from file:\n %s\n", es.seq_id(), 
+      //                   es.toCodeString());
       ExecutableSequence es2 = new ExecutableSequence (es.sequence);
       es2.execute (rcv);
       if (es2.hasNonExecutedStatements()) {
