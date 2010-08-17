@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<j:jelly
+    xmlns:j="jelly:core"
+    xmlns="jelly:jetty"
+    xmlns:http="jelly:http"
+    trim="false">
+
+    <j:set var="contextPathVar" value="/resourceHandlerTest"/>
+    <j:set var="testPort1" value="8100"/>
+    <j:set var="testPort2" value="8200"/>
+    <j:set var="testUri1" value="http://localhost:${testPort1}${contextPathVar}/resourceHandlerTest.txt"/>
+    <j:set var="testUri2" value="http://localhost:${testPort2}${contextPathVar}/resourceHandlerTest.txt"/>
+
+    <jettyHttpServer var="httpServerNoOp">
+      <socketListener port="${testPort1}"/>
+      <httpContext contextPath="${contextPathVar}" resourceBase="./docRoot/resourceHandlerTest">
+          <jellyResourceHandler/>
+      </httpContext>
+    </jettyHttpServer>
+
+    <jettyHttpServer var="httpServerOp">
+      <socketListener port="${testPort2}"/>
+      <httpContext contextPath="${contextPathVar}" resourceBase="./docRoot/resourceHandlerTest">
+          <jellyResourceHandler>
+
+            <getRequest>
+                <j:set var="new.content.type" value="text/plain"/>
+                <j:set var="new.location" value="new location"/>
+
+                <responseHeader name="Content-Type" value="${new.content.type}"/>
+                <responseHeader name="Location" value="${new.location}"/>
+                <responseBody>
+                    It works!
+                </responseBody>
+
+            </getRequest>
+
+          </jellyResourceHandler>
+      </httpContext>
+    </jettyHttpServer>
+
+    <http:get var="mtc1" uri="${testUri1}"/>
+    <j:choose>
+      <j:when test="${mtc1.statusCode == 404}">
+          <http:get var="mtc2" uri="${testUri2}"/>
+          <j:choose>
+              <j:when test="${mtc2.statusCode == 200}">
+                It works!
+              </j:when>
+              <j:otherwise>
+                Results for mtc2 url are:
+                http return code = ${mtc2.statusCode}
+                http status text = '${mtc2.statusText}'
+                Content-Type = ${mtc2.getResponseHeader("Content-Type")}
+                Location = ${mtc2.getResponseHeader("Location")}
+              </j:otherwise>
+            </j:choose>
+      </j:when>
+
+      <j:otherwise>
+        Results for mtc1 url are:
+        http return code = ${mtc1.statusCode}
+        http status text = '${mtc1.statusText}'
+      </j:otherwise>
+    </j:choose>
+
+    ${httpServerNoOp.stop(false)}
+    ${httpServerOp.stop(false)}
+
+</j:jelly>
