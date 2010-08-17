@@ -228,8 +228,8 @@ public class GenTests extends GenInputsAbstract {
           } else {
             assert m instanceof Constructor<?>;
             if (reflectionFilter.canUse((Constructor<?>)m)) {
-              statements.add(RMethod.getRMethod((Method)m));
-	    }
+              statements.add(RConstructor.getRConstructor((Constructor<?>)m));
+	          }
             statements.add(RConstructor.getRConstructor((Constructor<?>)m));
           }
         }

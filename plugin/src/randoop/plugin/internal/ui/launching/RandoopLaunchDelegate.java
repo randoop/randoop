@@ -201,7 +201,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     collectProgramArguments(launchResources, programArguments);
 
     // Classpath
-    List<String> cpList = new ArrayList<String>();//(Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(args.getJavaProject())));
+    List<String> cpList = new ArrayList(Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(args.getJavaProject())));
 
     cpList.add(RandoopPlugin.getRandoopJar().toOSString());
     cpList.add(RandoopPlugin.getPlumeJar().toOSString());
@@ -288,24 +288,24 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     // TODO - Fix ERROR: while parsing command-line arguments: unknown option '--comm-port=
     // TODO - Fix java.lang.Error: Unexpected type long when --timeout is uncommented
-//    programArguments.add("--randomseed=" + args.getRandomSeed());//$NON-NLS-1$
-//    programArguments.add("--maxsize=" + args.getMaxTestSize());//$NON-NLS-1$
-//    programArguments.add("--usethreads=" + args.getUseThreads());//$NON-NLS-1$
-//    programArguments.add("--timeout=" + args.getThreadTimeout());//$NON-NLS-1$
-//    programArguments.add("--forbid-null=" + !args.getUseNull());//$NON-NLS-1$
-//    programArguments.add("--null-ratio=" + args.getNullRatio());//$NON-NLS-1$
-//    programArguments.add("--inputlimit=" + args.getInputLimit());//$NON-NLS-1$
-//    programArguments.add("--timelimit=" + args.getTimeLimit());//$NON-NLS-1$
-//    programArguments.add("--junit-output-dir=" + launchResources.getOutputLocation().toOSString());//$NON-NLS-1$
-//    programArguments.add("--junit-package-name=" + args.getJUnitPackageName());//$NON-NLS-1$
-//    programArguments.add("--junit-classname=" + args.getJUnitClassName());//$NON-NLS-1$
-//    programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$
-//    programArguments.add("--outputlimit=" + args.getMaxTestsWritten());//$NON-NLS-1$
-//    programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
+    programArguments.add("--randomseed=" + args.getRandomSeed());//$NON-NLS-1$
+    programArguments.add("--maxsize=" + args.getMaxTestSize());//$NON-NLS-1$
+    programArguments.add("--usethreads=" + args.getUseThreads());//$NON-NLS-1$
+    programArguments.add("--timeout=" + args.getThreadTimeout());//$NON-NLS-1$
+    programArguments.add("--forbid-null=" + !args.getUseNull());//$NON-NLS-1$
+    programArguments.add("--null-ratio=" + args.getNullRatio());//$NON-NLS-1$
+    programArguments.add("--inputlimit=" + args.getInputLimit());//$NON-NLS-1$
+    programArguments.add("--timelimit=" + args.getTimeLimit());//$NON-NLS-1$
+    programArguments.add("--junit-output-dir=" + launchResources.getOutputLocation().toOSString());//$NON-NLS-1$
+    programArguments.add("--junit-package-name=" + args.getJUnitPackageName());//$NON-NLS-1$
+    programArguments.add("--junit-classname=" + args.getJUnitClassName());//$NON-NLS-1$
+    programArguments.add("--output-tests=" + args.getTestKinds());//$NON-NLS-1$
+    programArguments.add("--outputlimit=" + args.getMaxTestsWritten());//$NON-NLS-1$
+    programArguments.add("--testsperfile=" + args.getMaxTestsPerFile());//$NON-NLS-1$
     programArguments.add("--methodlist=" + launchResources.getMethodFile().getAbsolutePath());//$NON-NLS-1$
-//    programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
-//    programArguments.add("--noprogressdisplay"); //$NON-NLS-1$
-//    programArguments.add("--log=randooplog.txt"); // XXX remove
+    programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
+    programArguments.add("--noprogressdisplay"); //$NON-NLS-1$
+    programArguments.add("--log=randooplog.txt"); // XXX remove
   }
 
   private void informAndAbort(String message, Throwable exception, int code) throws CoreException {
