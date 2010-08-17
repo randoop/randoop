@@ -1,0 +1,627 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML lang="en">
+<HEAD>
+<TITLE>
+AbstractGenerator
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="AbstractGenerator";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../randoop/ArrayDeclaration.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/AbstractGenerator.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="AbstractGenerator.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop</FONT>
+<BR>
+Class AbstractGenerator</H2>
+<PRE>
+Object
+  <IMG SRC="../resources/inherit.gif" ALT="extended by "><STRONG>AbstractGenerator</STRONG>
+</PRE>
+<DL>
+<DT><STRONG>Direct Known Subclasses:</STRONG></DT> <DD><A HREF="../randoop/ForwardGenerator.html" title="class in randoop">ForwardGenerator</A>, <A HREF="../randoop/experiments/RandomWalkGenerator.html" title="class in randoop.experiments">RandomWalkGenerator</A></DD>
+</DL>
+<HR>
+<PRE>public abstract class <STRONG>AbstractGenerator</STRONG>
+extends Object</PRE>
+
+<P>
+Algorithm template for implementing a test generator.
+ 
+ The main generation loop is defined in method <code>explore()</code>,
+ which repeatedly generates a new sequence, determines if it a failing
+ sequence, and stops the process when the time or sequence limit expires.
+ The process of generating a new sequences is left abstract.
+<P>
+
+<P>
+<DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/ForwardGenerator.html" title="class in randoop"><CODE>ForwardGenerator</CODE></A></DD></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Field Summary table, listing fields, and an explanation">
+<CAPTION CLASS="TableCaption">
+Field Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Field and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#componentManager">componentManager</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Component manager responsible for storing previously-generated sequences.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#currSeq">currSeq</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This field is set by Randoop to point to the sequence currently being executed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#dump_sequences">dump_sequences</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#executionVisitor">executionVisitor</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Container for execution visitors used during execution of sequences.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#listenerMgr">listenerMgr</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manages notifications for listeners.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#maxSequences">maxSequences</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sequence limit for generation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#maxTimeMillis">maxTimeMillis</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time limit for generation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#num_failing_sequences">num_failing_sequences</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#num_sequences_generated">num_sequences_generated</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#num_steps">num_steps</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#outputTestFilters">outputTestFilters</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A list of filters that can be installed to help determine if a sequence
+ should be added to the final sequence list outSeqs.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#outSeqs">outSeqs</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The list of final sequences that are printed out as JUnit tests (i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#statements">statements</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The list of statement kinds (methods, constructors, primitive value declarations, etc.)
+ used to generate sequences.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../randoop/util/Timer.html" title="class in randoop.util">Timer</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#timer">timer</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The timer used to determine how much time has elapsed since the start of
+ generator and whether generation should stop.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Constructor Summary table, listing constructors, and an explanation">
+<CAPTION CLASS="TableCaption">
+Constructor Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#AbstractGenerator(java.util.List, long, int, randoop.ComponentManager, randoop.IStopper, randoop.RandoopListenerManager, java.util.List)">AbstractGenerator</A></STRONG>(List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;&nbsp;statements,
+                  long&nbsp;timeMillis,
+                  int&nbsp;maxSequences,
+                  <A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A>&nbsp;componentManager,
+                  <A HREF="../randoop/IStopper.html" title="interface in randoop">IStopper</A>&nbsp;stopper,
+                  <A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A>&nbsp;listenerManager,
+                  List&lt;<A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A>&gt;&nbsp;testfilters)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructs a generator with the given parameters.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#explore()">explore</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates and executes new sequences in a loop.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#numSequences()">numSequences</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A></CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#step()">step</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#stop()">stop</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt;</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/AbstractGenerator.html#subsumed_sequences()">subsumed_sequences</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the set of sequences that are used as inputs in other sequences
+ (and can thus be thought of as subsumed by another sequence).</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><STRONG>Methods inherited from class Object</STRONG></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Field Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="dump_sequences"><!-- --></A><H3>
+dump_sequences</H3>
+<PRE>
+public static boolean <STRONG>dump_sequences</STRONG></PRE>
+<HR>
+
+<A NAME="num_steps"><!-- --></A><H3>
+num_steps</H3>
+<PRE>
+public int <STRONG>num_steps</STRONG></PRE>
+<HR>
+
+<A NAME="num_sequences_generated"><!-- --></A><H3>
+num_sequences_generated</H3>
+<PRE>
+public int <STRONG>num_sequences_generated</STRONG></PRE>
+<HR>
+
+<A NAME="num_failing_sequences"><!-- --></A><H3>
+num_failing_sequences</H3>
+<PRE>
+public int <STRONG>num_failing_sequences</STRONG></PRE>
+<HR>
+
+<A NAME="timer"><!-- --></A><H3>
+timer</H3>
+<PRE>
+public final <A HREF="../randoop/util/Timer.html" title="class in randoop.util">Timer</A> <STRONG>timer</STRONG></PRE>
+<DL>
+<DD>The timer used to determine how much time has elapsed since the start of
+ generator and whether generation should stop.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="maxTimeMillis"><!-- --></A><H3>
+maxTimeMillis</H3>
+<PRE>
+public final long <STRONG>maxTimeMillis</STRONG></PRE>
+<DL>
+<DD>Time limit for generation. If generation reaches the specified time
+ limit (in milliseconds), the generator stops generating sequences.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="maxSequences"><!-- --></A><H3>
+maxSequences</H3>
+<PRE>
+public final int <STRONG>maxSequences</STRONG></PRE>
+<DL>
+<DD>Sequence limit for generation. If generation reaches the specified sequence
+ limit, the generator stops generating sequences.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="statements"><!-- --></A><H3>
+statements</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt; <STRONG>statements</STRONG></PRE>
+<DL>
+<DD>The list of statement kinds (methods, constructors, primitive value declarations, etc.)
+ used to generate sequences. In other words, statements specifies the universe
+ of operations from which sequences are generated.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="executionVisitor"><!-- --></A><H3>
+executionVisitor</H3>
+<PRE>
+public final <A HREF="../randoop/MultiVisitor.html" title="class in randoop">MultiVisitor</A> <STRONG>executionVisitor</STRONG></PRE>
+<DL>
+<DD>Container for execution visitors used during execution of sequences.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="componentManager"><!-- --></A><H3>
+componentManager</H3>
+<PRE>
+public <A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A> <STRONG>componentManager</STRONG></PRE>
+<DL>
+<DD>Component manager responsible for storing previously-generated sequences.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="listenerMgr"><!-- --></A><H3>
+listenerMgr</H3>
+<PRE>
+public <A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A> <STRONG>listenerMgr</STRONG></PRE>
+<DL>
+<DD>Manages notifications for listeners.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>See Also:</STRONG></DT><DD><A HREF="../randoop/IEventListener.html" title="interface in randoop"><CODE>IEventListener</CODE></A></DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="currSeq"><!-- --></A><H3>
+currSeq</H3>
+<PRE>
+public static <A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A> <STRONG>currSeq</STRONG></PRE>
+<DL>
+<DD>This field is set by Randoop to point to the sequence currently being executed.
+ In the event that Randoop appears to hang, this sequence is printed out to console
+ to help the user debug the cause of the hanging behavior.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="outSeqs"><!-- --></A><H3>
+outSeqs</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A>&gt; <STRONG>outSeqs</STRONG></PRE>
+<DL>
+<DD>The list of final sequences that are printed out as JUnit tests (i.e. Randoop's output).
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="outputTestFilters"><!-- --></A><H3>
+outputTestFilters</H3>
+<PRE>
+public List&lt;<A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A>&gt; <STRONG>outputTestFilters</STRONG></PRE>
+<DL>
+<DD>A list of filters that can be installed to help determine if a sequence
+ should be added to the final sequence list outSeqs.
+<P>
+</DD>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Constructor Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="AbstractGenerator(java.util.List, long, int, randoop.ComponentManager, randoop.IStopper, randoop.RandoopListenerManager, java.util.List)"><!-- --></A><H3>
+AbstractGenerator</H3>
+<PRE>
+public <STRONG>AbstractGenerator</STRONG>(List&lt;<A HREF="../randoop/StatementKind.html" title="interface in randoop">StatementKind</A>&gt;&nbsp;statements,
+                         long&nbsp;timeMillis,
+                         int&nbsp;maxSequences,
+                         <A HREF="../randoop/ComponentManager.html" title="class in randoop">ComponentManager</A>&nbsp;componentManager,
+                         <A HREF="../randoop/IStopper.html" title="interface in randoop">IStopper</A>&nbsp;stopper,
+                         <A HREF="../randoop/RandoopListenerManager.html" title="class in randoop">RandoopListenerManager</A>&nbsp;listenerManager,
+                         List&lt;<A HREF="../randoop/ITestFilter.html" title="interface in randoop">ITestFilter</A>&gt;&nbsp;testfilters)</PRE>
+<DL>
+<DD>Constructs a generator with the given parameters.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Parameters:</STRONG></DT><DD><CODE>statements</CODE> - Statements (e.g. methods and constructors) used to create sequences. Cannot be null.</DD><DD><CODE>timeMillis</CODE> - maximum time to spend in generation. Must be non-negative.</DD><DD><CODE>maxSequences</CODE> - maximum number of sequences to generate. Must be non-negative.</DD><DD><CODE>componentManager</CODE> - component manager to use to store sequences during component-based generation.
+        Can be null, in which case the generator's component manager is initialized as <code>new ComponentManager()</code>.</DD><DD><CODE>stopper</CODE> - Optional, additional stopping criterion for the generator. Can be null.</DD><DD><CODE>listenerManager</CODE> - Manager that stores and calls any listeners to use during generation. Can be null.</DD><DD><CODE>testfilters</CODE> - List of filters to determine which sequences to output. Can be null or empty.</DD></DL>
+</DD>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Method Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="stop()"><!-- --></A><H3>
+stop</H3>
+<PRE>
+protected boolean <STRONG>stop</STRONG>()</PRE>
+<HR>
+
+<A NAME="step()"><!-- --></A><H3>
+step</H3>
+<PRE>
+public abstract <A HREF="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</A> <STRONG>step</STRONG>()</PRE>
+<HR>
+
+<A NAME="numSequences()"><!-- --></A><H3>
+numSequences</H3>
+<PRE>
+public abstract int <STRONG>numSequences</STRONG>()</PRE>
+<HR>
+
+<A NAME="explore()"><!-- --></A><H3>
+explore</H3>
+<PRE>
+public void <STRONG>explore</STRONG>()</PRE>
+<DL>
+<DD>Creates and executes new sequences in a loop.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="subsumed_sequences()"><!-- --></A><H3>
+subsumed_sequences</H3>
+<PRE>
+public Set&lt;<A HREF="../randoop/Sequence.html" title="class in randoop">Sequence</A>&gt; <STRONG>subsumed_sequences</STRONG>()</PRE>
+<DL>
+<DD>Returns the set of sequences that are used as inputs in other sequences
+ (and can thus be thought of as subsumed by another sequence). This should
+ only be called for subclasses that support this.
+<P>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../randoop/ArrayDeclaration.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/AbstractGenerator.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="AbstractGenerator.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>
