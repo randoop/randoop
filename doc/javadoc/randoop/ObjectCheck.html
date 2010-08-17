@@ -150,6 +150,14 @@ Field Summary</CAPTION>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectCheck.html#stmt_no">stmt_no</A></STRONG></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>[]</CODE></FONT></TD>
 <TD><CODE><STRONG><A HREF="../randoop/ObjectCheck.html#vars">vars</A></STRONG></CODE>
 
@@ -168,7 +176,8 @@ Constructor Summary</CAPTION>
 <TH CLASS="TableHeader" SCOPE="col" NOWRAP>Constructor and Description</TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><STRONG><A HREF="../randoop/ObjectCheck.html#ObjectCheck(randoop.ObjectContract, randoop.Variable...)">ObjectCheck</A></STRONG>(<A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A>&nbsp;cc,
+<TD><CODE><STRONG><A HREF="../randoop/ObjectCheck.html#ObjectCheck(randoop.ObjectContract, int, randoop.Variable...)">ObjectCheck</A></STRONG>(<A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A>&nbsp;cc,
+            int&nbsp;stmt_no,
             <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>...&nbsp;vars)</CODE>
 
 <BR>
@@ -203,6 +212,22 @@ Method Summary</CAPTION>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates this check on the given unfolding execution of a sequence,
  returning <code>true</code> if the check succeeded, and <code>false</code>
  otherwise.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectCheck.html#get_id()">get_id</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a unique string identifier for the check.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectCheck.html#get_stmt_no()">get_stmt_no</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the offset in the sequence of this check</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -280,6 +305,12 @@ public final <A HREF="../randoop/ObjectContract.html" title="interface in randoo
 vars</H3>
 <PRE>
 public final <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>[] <STRONG>vars</STRONG></PRE>
+<HR>
+
+<A NAME="stmt_no"><!-- --></A><H3>
+stmt_no</H3>
+<PRE>
+public final int <STRONG>stmt_no</STRONG></PRE>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -291,10 +322,11 @@ public final <A HREF="../randoop/Variable.html" title="class in randoop">Variabl
 </TR>
 </TABLE>
 
-<A NAME="ObjectCheck(randoop.ObjectContract, randoop.Variable...)"><!-- --></A><H3>
+<A NAME="ObjectCheck(randoop.ObjectContract, int, randoop.Variable...)"><!-- --></A><H3>
 ObjectCheck</H3>
 <PRE>
 public <STRONG>ObjectCheck</STRONG>(<A HREF="../randoop/ObjectContract.html" title="interface in randoop">ObjectContract</A>&nbsp;cc,
+                   int&nbsp;stmt_no,
                    <A HREF="../randoop/Variable.html" title="class in randoop">Variable</A>...&nbsp;vars)</PRE>
 
 <!-- ============ METHOD DETAIL ========== -->
@@ -407,6 +439,44 @@ public boolean <STRONG>evaluate</STRONG>(<A HREF="../randoop/Execution.html" tit
 </DD>
 <DD><DL>
 <DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/Check.html#evaluate(randoop.Execution)">evaluate</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get_stmt_no()"><!-- --></A><H3>
+get_stmt_no</H3>
+<PRE>
+public int <STRONG>get_stmt_no</STRONG>()</PRE>
+<DL>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/Check.html#get_stmt_no()">Check</A></CODE></STRONG></DD>
+<DD>Returns the offset in the sequence of this check
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/Check.html#get_stmt_no()">get_stmt_no</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get_id()"><!-- --></A><H3>
+get_id</H3>
+<PRE>
+public String <STRONG>get_id</STRONG>()</PRE>
+<DL>
+<DD><STRONG>Description copied from interface: <CODE><A HREF="../randoop/Check.html#get_id()">Check</A></CODE></STRONG></DD>
+<DD>Returns a unique string identifier for the check.  Two checks are
+ the same if these identifers match.  The value is NOT included.
+ with.  Used to match up checks between the same sequence run at
+ different times.  Note that because of changes in the environment
+ (eg, static variables), two executions of the same sequence may
+ have different checks (because the existence of some checks
+ depends on the value of variables)
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Specified by:</STRONG></DT><DD><CODE><A HREF="../randoop/Check.html#get_id()">get_id</A></CODE> in interface <CODE><A HREF="../randoop/Check.html" title="interface in randoop">Check</A></CODE></DD>
 </DL>
 </DD>
 </DL>
