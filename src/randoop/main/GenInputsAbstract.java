@@ -217,13 +217,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean small_tests = false;
 
   /**
-   * Clear the component set each time it reaches <int> inputs.
-   * 
+   * Clear the component set each time it contains the given number of inputs.
+   * <br />
    * Randoop stores previously-generated tests in a "component" set, and uses them to
    * generate new tests. Setting this variable to a small number can sometimes result
    * in a greater variety of tests generated during a single run.
    */
-  @Option("Clear the component set when it reaches <int> inputs")
+  @Option("Clear the component set when gets this big")
   public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
@@ -299,7 +299,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
   public static List<String> system_props = new ArrayList<String>();
   
-  @Option("Specify agent command for recursive JVM calls")
+  /**
+   * Specify an extra command for recursive JVM calls that Randoop spawns.
+   * The argument to the --agent option is the entire extra JVM command.  A
+   * typical invocation of Randoop might be:
+   * <pre>java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"</pre>
+   */
+  @Option("Specify an extra command for recursive JVM calls")
   public static String agent = null;
 
   @Option("specify the memory size (in megabytes) for recursive JVM calls")
