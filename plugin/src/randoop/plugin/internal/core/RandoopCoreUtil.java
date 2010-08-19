@@ -322,16 +322,16 @@ public class RandoopCoreUtil {
     if (cu != null && cu.exists()) {
       try {
         IType[] allTypes = cu.getAllTypes();
-        pm.beginTask(MessageFormat.format("Searching for valid Java types in {0}", cu.getElementName()), allTypes.length);
+        sm.beginTask(MessageFormat.format("Searching for valid Java types in {0}", cu.getElementName()), allTypes.length);
         for (IType t : allTypes) {
           if (isValidTestInput(t, ignoreJUnitTestCases)) {
             validTypes.add(t);
 
-            if (pm.isCanceled()) {
+            if (sm.isCanceled()) {
               return validTypes;
             }
           }
-          pm.worked(1);
+          sm.worked(1);
         }
       } catch (JavaModelException e) {
         IStatus s = RandoopStatus.JAVA_MODEL_EXCEPTION.getStatus(e);
