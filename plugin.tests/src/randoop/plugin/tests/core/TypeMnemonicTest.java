@@ -7,10 +7,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.Flags;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import randoop.plugin.internal.core.TypeMnemonic;
@@ -24,8 +31,6 @@ public class TypeMnemonicTest {
   
   @BeforeClass
   public static void beforeClass() throws IOException, CoreException {
-    WorkspaceManager.setupDemoWorkspace();
-    
     boundaryProject = WorkspaceManager.getJavaProject(WorkspaceManager.BOUNDARY);
     kenkenProject = WorkspaceManager.getJavaProject(WorkspaceManager.KENKEN);
     pathplannerProject = WorkspaceManager.getJavaProject(WorkspaceManager.PATH_PLANNER);
@@ -125,5 +130,35 @@ public class TypeMnemonicTest {
       assertNotNull(typeMnemonic.reassign(kenkenProject));
     }
   }
+  
+  private static List<String> getAllSourceTypeMnemonics(IJavaProject javaproject) throws JavaModelException {
+    List<String> mnemonics = new ArrayList<String>();
+    for (IClasspathEntry classpathEntry : javaproject.getRawClasspath()) {
+      for (IPackageFragmentRoot packageFragmentRoot : javaproject.findPackageFragmentRoots(classpathEntry)) {
+        // Find each IMethod in each IType in the src folder and compute its
+        // mnemonic. Then store each mnemonic-IMethod pair in a HashMap
+        for (IJavaElement e : packageFragmentRoot.getChildren()) {
+          assertTrue(e instanceof IPackageFragment);
+          IPackageFragment pf = (IPackageFragment) e;
+          pf.open(null);
 
+          if (pf.getKind() == IPackageFragmentRoot.K_SOURCE) {
+            for (ICompilationUnit cu : pf.getCompilationUnits()) {
+              for (IType type : cu.getTypes()) {
+                if (!type.isAnonymous()) {
+                  int flags = type.getFlags();
+                  if (!(Flags.isInterface(flags) || Flags.isAbstract(flags))) {
+                    mnemonics.add(new TypeMnemonic(type).toString());
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return mnemonics;
+  }
+  
 }
