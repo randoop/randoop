@@ -46,29 +46,32 @@ public class RandoopClasspathFixProposal extends ClasspathFixProposal {
     monitor.beginTask("Adding Randoop library", 1);
     
     try {
-      IClasspathEntry entry = JavaCore.newLibraryEntry(RandoopPlugin.getRandoopJar(), null, null);
-      
       IClasspathEntry[] oldEntries = fProject.getRawClasspath();
       ArrayList<IClasspathEntry> newEntries = new ArrayList<IClasspathEntry>(oldEntries.length + 1);
-      
-      for (int i = 0; i < oldEntries.length; i++) {
-        IClasspathEntry curr = oldEntries[i];
-        
-        // Check if Randoop is already in the build path
-        if (curr.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
-          IPath path = curr.getPath();
-          if (path.equals(entry.getPath())) {
-            return new NullChange();
+
+      for (IPath classpath : RandoopPlugin.getRandoopClasspaths()) {
+        IClasspathEntry cpentry = JavaCore.newLibraryEntry(classpath, null, null);
+
+        for (int i = 0; i < oldEntries.length; i++) {
+          IClasspathEntry curr = oldEntries[i];
+
+          // Check if Randoop is already in the build path
+          if (curr.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+            IPath path = curr.getPath();
+            if (path.equals(cpentry.getPath())) {
+              return new NullChange();
+            }
+          }
+
+          if (curr != null) {
+            newEntries.add(curr);
           }
         }
         
-        if (curr != null) {
-          newEntries.add(curr);
-        }
+        // add the entry
+        newEntries.add(cpentry);
       }
       
-      // add Randoop.jar
-      newEntries.add(entry);
       
       // Convert newEntries to an array
       IClasspathEntry[] newCPEntries = (IClasspathEntry[]) newEntries.toArray(new IClasspathEntry[newEntries.size()]);
