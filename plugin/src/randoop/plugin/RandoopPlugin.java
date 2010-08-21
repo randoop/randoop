@@ -2,6 +2,8 @@ package randoop.plugin;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -36,14 +38,9 @@ public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
 
-  // TODO: Use archives when building update site
+  public final static boolean USE_JAR = false;
+  
   private static final IPath RANDOOP_JAR = new Path("randoop.jar"); //$NON-NLS-1$
-
-  // private static final IPath RANDOOP_JAR = new Path("../bin/"); //$NON-NLS-1$
-
-  private static final IPath PLUME_JAR = new Path("plume.jar"); //$NON-NLS-1$
-
-  // private static final IPath PLUME_JAR = new Path("../lib/plume.jar"); //$NON-NLS-1$
 
   /** The shared instance */
   private static RandoopPlugin plugin = null;
@@ -173,27 +170,27 @@ public class RandoopPlugin extends AbstractUIPlugin {
    *         <code>IPath</code> could not be created
    * @throws CoreException 
    */
-  public static IPath getRandoopJar() throws CoreException {
-    try {
-      return getFullPath(RANDOOP_JAR);
-    } catch (IOException e) {
-      throw new CoreException(RandoopStatus.NO_LOCAL_RANDOOPJAR_ERROR.getStatus(e));
+  public static List<IPath> getRandoopClasspaths() throws CoreException {
+    ArrayList<IPath> cp = new ArrayList<IPath>();
+    if (USE_JAR) {
+      try {
+        cp.add(getFullPath(RANDOOP_JAR));
+      } catch (IOException e) {
+        throw new CoreException(RandoopStatus.NO_LOCAL_RANDOOPJAR_ERROR.getStatus(e));
+      }
+    } else {
+      // Hard-coded location of Randoop class files and plume.jar, this is
+      // only for development purposes. USE_JAR should always be true when
+      // exporting the plug-in to the update site.
+      try {
+        cp.add(getFullPath(new Path("../bin"))); //$NON-NLS-1$
+        cp.add(getFullPath(new Path("../lib/plume.jar"))); //$NON-NLS-1$
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
-  }
-
-  /**
-   * Returns the full path to the plume.jar runtime archive.
-   * 
-   * @return full path to plume.jar, or <code>null</code> if no the
-   *         <code>IPath</code> could not be created
-   * @throws CoreException 
-   */
-  public static IPath getPlumeJar() throws CoreException {
-    try {
-      return getFullPath(PLUME_JAR);
-    } catch (IOException e) {
-      throw new CoreException(RandoopStatus.NO_LOCAL_PLUMEJAR_ERROR.getStatus(e));
-    }
+    
+    return cp;
   }
 
   /**

@@ -68,10 +68,6 @@ public class RandoopStatus {
     new RandoopStatus(1001, IStatus.ERROR,
         "Error while retreiving Randoop archive (code {0}).");
 
-  public static final RandoopStatus NO_LOCAL_PLUMEJAR_ERROR =
-    new RandoopStatus(1002, IStatus.ERROR,
-        "Error while retreiving Plume archive (code {0}).");
-  
   public static final RandoopStatus COMM_NO_FREE_PORT =
     new RandoopStatus(5000, IStatus.ERROR,
         "Randoop plug-in could not find a free communication port. Check your firewall settings (code {0}).");
