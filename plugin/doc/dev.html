@@ -26,10 +26,7 @@
     </ul></li>
   <li><a href="#randoop_internals">Randoop Internals</a>
     <ul>
-      <li><a href="#">Running Randoop from Eclipse</a>
-        <ul>
-          <li><a href="#exporting_randoop">Exporting Randoop Jar</a></li>
-        </ul></li>
+      <li><a href="#randoop_exec">Running Randoop from Eclipse</a></li>
       <li><a href="#">Tests Fragment</a></li>
       <li><a href="#">Experimental Fragment</a></li>
     </ul></li>
@@ -134,8 +131,8 @@ to compile the projects.</p>
 
 <p>
 <ol>
-  <li>Change the value of the constant <tt>RANDOOP_JAR</tt> in <tt>randoop.plugin.RandoopPlugin</tt> from "../bin" to "randoop.jar"</li>
-  <li>If necessary, <a href="exporting_randoop">re-export the randoop jar to the plugin folder</a></li>
+  <li>Change the value of the constant <tt>USE_RANDOOP_ARCHIVE</tt> in <tt>randoop.plugin.RandoopPlugin</tt> to <tt>true</tt></li>
+  <li>Run <tt>build-randoop.launch</tt> to build a minimal Randoop archive with plume included in the plugin directory.</li>
   <li>Right click on the 'plugin' project and select <b>Export</b> from the context menu</li>
   <li>Select <b>Deployable features</b>, click 'Next'</li>
   <li>Check 'randoop' from the list of available features</li>
@@ -148,20 +145,31 @@ to compile the projects.</p>
 	<li>Check 'Allow for binary cycles in target platform'</li>
 	<li>Uncheck all other options</li>
   </ol></li>
+  <li>Set <tt>USE_RANDOOP_ARCHIVE</tt> back to <tt>false</tt></li>
+  <li>Commit and push changes</li>
 </ol>
+
 </p>
 
 <h1 id="randoop_internals">Randoop Internals</h1>
 
-<p>
-This section describes the Randoop Eclipse plug-in's . . . 
+<p>This section describes the Randoop Eclipse plug-in's . . . 
 </p>
 
-<h2 id="">Running Randoop from Eclipse</h2>
+<h2 id="randoop_exec">Running Randoop from Eclipse</h2>
 
-[bin folder vs randoop.jar]
+<p>The plug-in needs to have a classpath for Randoop in order to generate tests. There
+are two ways to provide this: the Randoop project's output directory or a Randoop archive.
+</p>
 
-<h3 id="exporting_randoop">Exporting Randoop Jar</h3>
+<p>When developing, you should use the Randoop project's output directory in the
+classpath to use the most recent Randoop revisions. To do this, simply set the
+value of <tt>USE_RANDOOP_ARCHIVE</tt> to <tt>false</tt>. However, when exporting the
+plug-in you will need to use a Randoop archive. The ant file
+plugin/build-randoop.xml is provided to make exporting the archive easy. To run
+the ant file from Eclipse, simply run the launch
+configuration plugin/build-randoop.config.
+</p>
 
 <h2 id="">Tests Fragment</h2>
 
