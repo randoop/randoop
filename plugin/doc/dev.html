@@ -100,14 +100,14 @@ from the repository. To do this:</p>
   <li>Go to <b>File > Import...</b></li>
   <li>Select <b>Existing projects into Workspace</b>, click 'Next'</li>
   <li>Select the working directory of your cloned Randoop repository as the root directory</li>
-  <li>Check 'randoop' from the list and click 'Finish'</li>
+  <li>Check 'randoop' from the list of projects and click 'Finish'</li>
   <li>Repeat these steps for the 'plugin,' 'plugin.feature,'
   'plugin.updateSite,' 'plugin.tests,' and 'plugin.experimental' folders in your
   clone's working directory.</li>
 </ol>
 
 <p>After adding all projects, you may need to run <b>Project > Clean...</b>
-to get the projects to compile.</p>
+to compile the projects.</p>
 
 <h2 id="running">Running Plug-in Tests</h2>
 
@@ -134,7 +134,7 @@ to get the projects to compile.</p>
 
 <p>
 <ol>
-  <li>Ensure that the field <tt>RANDOOP_JAR</tt> equals "randoop.jar" and not "../bin" in the class <tt>randoop.plugin.RandoopPlugin</tt> </li>
+  <li>Change the value of the constant <tt>RANDOOP_JAR</tt> in <tt>randoop.plugin.RandoopPlugin</tt> from "../bin" to "randoop.jar"</li>
   <li>If necessary, <a href="exporting_randoop">re-export the randoop jar to the plugin folder</a></li>
   <li>Right click on the 'plugin' project and select <b>Export</b> from the context menu</li>
   <li>Select <b>Deployable features</b>, click 'Next'</li>

@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -203,9 +204,10 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     // Classpath
     List<String> cpList = new ArrayList(Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(args.getJavaProject())));
 
-    cpList.add(RandoopPlugin.getRandoopJar().toOSString());
-    cpList.add(RandoopPlugin.getPlumeJar().toOSString());
-
+    for (IPath path : RandoopPlugin.getRandoopClasspaths()) {
+      cpList.add(path.toOSString());
+    }
+    
     String[] classpath = cpList.toArray(new String[0]);
     
     // TODO: Sometimes the classpaths do not seem to work...
