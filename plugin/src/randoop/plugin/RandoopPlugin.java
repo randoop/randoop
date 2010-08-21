@@ -38,7 +38,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
 
-  public final static boolean USE_JAR = false;
+  public final static boolean USE_RANDOOP_ARCHIVE = false;
   
   private static final IPath RANDOOP_JAR = new Path("randoop.jar"); //$NON-NLS-1$
 
@@ -172,7 +172,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
    */
   public static List<IPath> getRandoopClasspaths() throws CoreException {
     ArrayList<IPath> cp = new ArrayList<IPath>();
-    if (USE_JAR) {
+    if (USE_RANDOOP_ARCHIVE) {
       try {
         cp.add(getFullPath(RANDOOP_JAR));
       } catch (IOException e) {
