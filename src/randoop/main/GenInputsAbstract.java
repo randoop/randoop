@@ -105,7 +105,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * A file containing literal values to be used as inputs to methods under test.
    * 
    * Literals in these files are used in addition to all other constants in the pool.
-   * May be specified multiple times.
    * For the format of this file, see documentation in class {@link randoop.LiteralFileReader}.
    * The special value "CLASSES" (with no quotes) means to read literals from all classes under test.
    */
