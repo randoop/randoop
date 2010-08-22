@@ -9,7 +9,8 @@ import java.io.PrintStream;
  */
 public class Globals {
 
-  public static final String RANDOOP_VERSION = "1.3.1";
+  // Version 1.3.2 corresponds to changeset dd255807259d.
+  public static final String RANDOOP_VERSION = "1.3.2";
 
   public static final String lineSep = System.getProperty("line.separator");
 
