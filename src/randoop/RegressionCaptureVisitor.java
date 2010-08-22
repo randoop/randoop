@@ -267,8 +267,19 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
       } else if (result instanceof ExceptionalExecution) {
 
         ExceptionalExecution e = (ExceptionalExecution)result;
-        s.addCheck(i, new ExpectedExceptionCheck(e.getException(), i), true);
-
+        
+        Throwable exception = e.getException();
+        
+        // FIXME Tests that lead to a TimeOutException should be output to the user,
+        // since they came from sequences that failed to terminate within a reasonable
+        // time and can thus point to a potential infinite loops. Currently, Randoop outputs
+        // tests asserting that a TimeOutException is thrown, which will not occur when the
+        // generated JUnit test is executed. The appropriate way of outputting tests that
+        // led to a TimeOutException is documented in Issue 11 in Randoop's web page;
+        // it only needs to be implemented.
+        if (!(exception instanceof TimeOutException)) {
+          s.addCheck(i, new ExpectedExceptionCheck(exception, i), true);
+        }
       } else {
         assert s.getResult(i) instanceof NotExecuted;
         assert false : "Randoop should not have gotten here (bug in Randoop)";
