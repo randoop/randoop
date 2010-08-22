@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import randoop.main.GenInputsAbstract;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
 import randoop.util.SimpleList;
@@ -32,19 +33,31 @@ public class HelperSequenceCreator {
       s = randPrimitiveArray(cls.getComponentType());
     } else {
       SimpleList<Sequence> candidates = components.getSequencesForType(cls.getComponentType(), false);
-      ArrayDeclaration decl = new ArrayDeclaration(cls.getComponentType(), 1);
       if (candidates.isEmpty()) {
-        // Return the array [ null ]
-        s = new Sequence();
-        s = s.extend(PrimitiveOrStringOrNullDecl.nullOrZeroDecl(cls.getComponentType()));
-        List<Variable> ins = new ArrayList<Variable>();
-        ins.add(s.getVariable(0));
-        s = s.extend(decl, ins);
+        if (GenInputsAbstract.forbid_null) {
+          // No sequences that produce appropriate component values found, and null forbidden.
+          // Return the empty array.
+          ArrayDeclaration decl = new ArrayDeclaration(cls.getComponentType(), 0);
+          s = new Sequence();
+          s = s.extend(decl);
+        } else {
+          // No sequences that produce appropriate component values found, and null allowed.
+          // TODO: We should also randomly return the empty array--it's a perfectly good case
+          //       even if null is allowed.
+          // Return the array [ null ].
+          ArrayDeclaration decl = new ArrayDeclaration(cls.getComponentType(), 1);
+          s = new Sequence();
+          s = s.extend(PrimitiveOrStringOrNullDecl.nullOrZeroDecl(cls.getComponentType()));
+          List<Variable> ins = new ArrayList<Variable>();
+          ins.add(s.getVariable(0));
+          s = s.extend(decl, ins);
+        }
       } else {
         // Return the array [ x ] where x is the last value in the sequence.
+        ArrayDeclaration decl = new ArrayDeclaration(cls.getComponentType(), 1);
         s = candidates.get(Randomness.nextRandomInt(candidates.size()));
         List<Variable> ins = new ArrayList<Variable>();
-        // XXX this assumes that last statement will have such a var,
+        // XXX IS THIS OLD COMMENT TRUE? : this assumes that last statement will have such a var,
         // which I know is currently true because of SequenceCollection implementation.
         ins.add(s.randomVariableForTypeLastStatement(cls.getComponentType(), Match.COMPATIBLE_TYPE));
         s = s.extend(decl, ins);
