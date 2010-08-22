@@ -779,22 +779,16 @@ addition to the above values, any primitive value returned at runtime
 from a method call under test may be later used as input to another
 method call.</p>
 
-<p>
-The easiest way to specify additional seed values in to use the 
-<tt>--literals-file</tt> command-line option to either use literals from a
-file you specify or to read literals out of the source code you that
-Randoop is analyzing.
-</p>
+<p>There are two ways of specifying additional seed values to Randoop.</p>
 
-<p>
-An alternate approach, that may in the future be able to specify values of
-arbitrary values instead of just primitives and <tt>String</tt>s, is to use
-the <tt>@TestValue</tt> annotation.  The rest of this section describes
-that annotation.
-</p>
+<ul>
+<li><b>Command line.</b> An easy way to specify additional seed
+values in to use the <tt>--literals-file</tt> command-line option to
+either use literals from a file you specify or to read literals out of
+the source code you that Randoop is analyzing.</li>
 
-<p>To explicitly specify additional seed values, use
-the <tt>@TestValue</tt> annotation as follows:</p>
+<li><b>Programmatically.</b>You can declare a class that stores
+primitive values, using the <tt>@TestValue</tt> annotation:
 
 <ol>
 
@@ -863,6 +857,8 @@ classes under test
 
   }
 </pre>
+</li>
+</ul>
 
 <h3 id="usethreads">Speeding up test generation</h3>
 
