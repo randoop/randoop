@@ -21,6 +21,7 @@ default:
 	@echo "manual         update the user manual."
 	@echo "jdoc           update the javadoc."
 	@echo "distribution-files  create distribution zip and jar files, in dist/ dir."
+	@echo "                    (also updates manual)."                              
 
 # Put user-specific changes in your own Makefile.user.
 # Make will silently continue if that file does not exist.
