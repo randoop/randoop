@@ -149,7 +149,7 @@ public final class ReflectionExecutor {
         e = e.getCause();
       }
 
-      // Debugging
+      // Debugging -- prints unconditionally, to System.out.
       // printExceptionDetails(e, System.out);
       // if (orig_e != null) {
       //   System.out.println("Original exception: " + orig_e);
@@ -169,25 +169,15 @@ public final class ReflectionExecutor {
     out.println("Message: " + e.getMessage());
     out.println("Stack trace: ");
     try {
-      e.printStackTrace(out);
-    } catch (Throwable t) {
-      // One reason this can happen is that somehow, private field
-      // e.suppressedExceptions is null.  I'm seeing this when using JDK
-      // 1.7.0 b104, but not with JDK 1.7.0 b92.
-      // See: http://bugs.sun.com/view_bug.do?bug_id=6973831
-      // I could work around by checking for OutOfMemoryError and doing
-      // special processing for it.  Or just check if the value is null and
-      // set it to an empty list before calling printStackTrace.
-      out.println("Exception while trying to print stack trace for " + e + ": " + t);
-      try {
-        Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");
-        out.println("Original exception's suppressedExceptions field = " + eSuppressedExceptions);
-      } catch (NoSuchFieldException nsfe) {
-        // Didn't find the suppressedExceptions field.  There is no need
-        // to print anything about it, as the problem must be elsewhere.
-      } catch (IllegalAccessException iae) {
-        out.println("This can't happen: IllegalAccessException " + iae);
+      // Workaround for http://bugs.sun.com/view_bug.do?bug_id=6973831
+      Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");    
+      if (eSuppressedExceptions == null) {
+        UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<?>());
       }
+    } catch (NoSuchFieldException nsfe) {
+      out.println("This can't happen: NoSuchFieldException " + nsfe);
+    } catch (IllegalAccessException iae) {
+      out.println("This can't happen: IllegalAccessException " + iae);
     }
   }
 
