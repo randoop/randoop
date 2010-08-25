@@ -176,8 +176,6 @@ public final class ReflectionExecutor {
       }
     } catch (NoSuchFieldException nsfe) {
       out.println("This can't happen: NoSuchFieldException " + nsfe);
-    } catch (IllegalAccessException iae) {
-      out.println("This can't happen: IllegalAccessException " + iae);
     }
   }
 
