@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<fragment>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="randoop.plugin.autoTestRunnerActionSet"
+            label="Randoop Auto-Test Runner"
+            visible="true">
+         <action
+               class="randoop.plugin.internal.core.autotesting.ToggleAutomatedTestingActionDelegate"
+               icon="../plugin/icons/autorun.png"
+               id="randoop.plugin.toggleAutoTestRunner"
+               label="Randoop Auto-Test Runner"
+               style="toggle"
+               toolbarPath="Normal"
+               tooltip="Automate execution of tests">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            class="randoop.plugin.internal.ui.properties.ProjectPropertyPage"
+            id="randoop.plugin.ui.projectPage"
+            name="Randoop"
+            objectClass="org.eclipse.core.resources.IProject">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="randoop.plugin.internal.ui.preferences.SamplePreferencePage"
+            id="randoop.plugin.ui.preferences.randoopPreferencePage"
+            name="Randoop">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="randoop.plugin.internal.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.compilationParticipant">
+      <compilationParticipant
+            class="randoop.plugin.internal.core.autotesting.TestingCompilationParticipant"
+            id="randoop.plugin.internal.core.testingCompilationParticipant">
+      </compilationParticipant>
+   </extension>
+</fragment>

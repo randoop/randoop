@@ -1,0 +1,32 @@
+digraph "Palulu Model" {
+    orientation=landscape;
+    "graph.Graph"
+    "ss0"
+    "graph.Graph"->"ss0" [label="graph.Graph.generateGraph() RV",];
+    "ss1"
+    "graph.Graph"->"ss1" [label="graph.Graph.<init>() RC",];
+    "ss2"
+    "ss0"->"ss2" [label="graph.Node.setOwner(graph.Graph) 0",];
+    "ss2"->"ss2" [label="graph.Node.setOwner(graph.Graph) 0",];
+    "ss3"
+    "ss2"->"ss3" [label="graph.Graph.addNode(graph.Node) RC",];
+    "ss3"->"ss3" [label="graph.Graph.addNode(graph.Node) RC",];
+    "ss4"
+    "ss3"->"ss4" [label="graph.Graph.addEdge(graph.Node,graph.Node) RC",];
+    "ss6"
+    "ss4"->"ss6" [label="graph.Graph.getDegree(graph.Node) RC",];
+    "ss1"->"ss0" [label="graph.Graph.init() RC",];
+    "graph.Node"
+    "ss7"
+    "graph.Node"->"ss7" [label="graph.Node.<init>(java.lang.String) RC{[NYC, Boston]}",];
+    "ss8"
+    "ss7"->"ss8" [label="graph.Node.setOwner(graph.Graph) RC",];
+    "ss9"
+    "ss8"->"ss9" [label="graph.Graph.addNode(graph.Node) 0",];
+    "ss10"
+    "ss9"->"ss10" [label="graph.Node.addEdge(graph.Node) RC",];
+    "ss9"->"ss10" [label="graph.Graph.addEdge(graph.Node,graph.Node) 0",];
+    "ss12"
+    "ss9"->"ss12" [label="graph.Node.addEdge(graph.Node) 0",];
+    "ss9"->"ss12" [label="graph.Graph.addEdge(graph.Node,graph.Node) 1",];
+}

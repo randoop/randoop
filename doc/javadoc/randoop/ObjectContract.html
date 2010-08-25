@@ -1,0 +1,365 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML lang="en">
+<HEAD>
+<TITLE>
+ObjectContract
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ObjectContract";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../randoop/ObjectCheck.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/ObjectContractUtils.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/ObjectContract.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ObjectContract.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+randoop</FONT>
+<BR>
+Interface ObjectContract</H2>
+<DL>
+<DT><STRONG>All Superinterfaces:</STRONG></DT> <DD>Serializable</DD>
+</DL>
+<DL>
+<DT><STRONG>All Known Implementing Classes:</STRONG></DT> <DD><A HREF="../randoop/CheckRepContract.html" title="class in randoop">CheckRepContract</A>, <A HREF="../randoop/EqualsHashcode.html" title="class in randoop">EqualsHashcode</A>, <A HREF="../randoop/EqualsReflexive.html" title="class in randoop">EqualsReflexive</A>, <A HREF="../randoop/EqualsSymmetric.html" title="class in randoop">EqualsSymmetric</A>, <A HREF="../randoop/EqualsToNullRetFalse.html" title="class in randoop">EqualsToNullRetFalse</A>, <A HREF="../randoop/HashCodeReturnsNormally.html" title="class in randoop">HashCodeReturnsNormally</A>, <A HREF="../randoop/IsNotNull.html" title="class in randoop">IsNotNull</A>, <A HREF="../randoop/IsNull.html" title="class in randoop">IsNull</A>, <A HREF="../randoop/ObserverEqValue.html" title="class in randoop">ObserverEqValue</A>, <A HREF="../randoop/PrimValue.html" title="class in randoop">PrimValue</A>, <A HREF="../randoop/ToStringReturnsNormally.html" title="class in randoop">ToStringReturnsNormally</A></DD>
+</DL>
+<HR>
+<PRE>public interface <STRONG>ObjectContract</STRONG>
+extends Serializable</PRE>
+
+<P>
+An object contract provides the core functionality for the checking
+ code of unit tests, i.e. the code that checks for expected behavior.
+ An object contract checks a specific property for one or more objects.
+ Implementing classes provide two key pieces functionality:
+ 
+ <p>
+ <ul>
+ <li> A method <code>evaluate(Object... objects)</code> that
+      evaluates ones or more objects at runtime and determines if the
+      given object(s) satisfy the property. The arity will depend
+      on the specific property being checked.
+ <li> A method <code>toCodeString()</code> that emits Java code 
+      that can be inserted into a unit test to check for the given
+      property.
+ </ul>
+ 
+ <p>
+ Randoop outputs sequences that lead to failing properties as 
+ error-revealing test cases.
+ 
+ <p>
+ 
+ See the various implementing classes for examples
+ (for an example, see the <A HREF="../randoop/EqualsReflexive.html" title="class in randoop"><CODE>EqualsReflexive</CODE></A>).
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="Method Summary table, listing methods, and an explanation">
+<CAPTION CLASS="TableCaption">
+Method Summary</CAPTION>
+<TR>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Modifier and Type</TH>
+<TH CLASS="TableHeader" SCOPE="col" NOWRAP>Method and Description</TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectContract.html#evalExceptionMeansFailure()">evalExceptionMeansFailure</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Communicates to Randoop how to interpret exceptional behavior
+ from the <code>evaluate</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectContract.html#evaluate(java.lang.Object...)">evaluate</A></STRONG>(Object...&nbsp;objects)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Evaluates the contract on the given values.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectContract.html#get_observer_str()">get_observer_str</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a string describing the observer</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectContract.html#getArity()">getArity</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The number of values that this contract is over.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectContract.html#toCodeString()">toCodeString</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A string that can be used as Java source code and will result in the
+ expression being evaluated.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;String</CODE></FONT></TD>
+<TD><CODE><STRONG><A HREF="../randoop/ObjectContract.html#toCommentString()">toCommentString</A></STRONG>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A string that will be inserted as a comment in the test before
+ the code corresponding to this contract.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<STRONG>Method Detail</STRONG></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getArity()"><!-- --></A><H3>
+getArity</H3>
+<PRE>
+int <STRONG>getArity</STRONG>()</PRE>
+<DL>
+<DD>The number of values that this contract is over.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(java.lang.Object...)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+boolean <STRONG>evaluate</STRONG>(Object...&nbsp;objects)
+                 throws Throwable</PRE>
+<DL>
+<DD>Evaluates the contract on the given values.
+ <p>
+ When calling this method during execution of a test, Randoop
+ guarantees that <code>objects</code> does not contain any
+ <code>null</code> objects, and that
+ <code>objects.length == getArity()</code>.
+ <p>
+ This method should return <code>true</code> if the contract was 
+ satisfied and <code>false</code> if it was violated.
+<P>
+</DD>
+<DD><DL>
+<DT><STRONG>Throws:</STRONG></DT>
+<DD><CODE>Throwable</CODE></DD></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evalExceptionMeansFailure()"><!-- --></A><H3>
+evalExceptionMeansFailure</H3>
+<PRE>
+boolean <STRONG>evalExceptionMeansFailure</STRONG>()</PRE>
+<DL>
+<DD>Communicates to Randoop how to interpret exceptional behavior
+ from the <code>evaluate</code> method.
+ <p>
+ If this method returns <code>true</code>, Randoop will interpret
+ an exception that escapes during evaluation as a failure of the
+ contract.
+ <p>
+ If the method returns <code>false</code>, Randoop will interpret
+ an exception as passing behavior.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toCommentString()"><!-- --></A><H3>
+toCommentString</H3>
+<PRE>
+String <STRONG>toCommentString</STRONG>()</PRE>
+<DL>
+<DD>A string that will be inserted as a comment in the test before
+ the code corresponding to this contract.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toCodeString()"><!-- --></A><H3>
+toCodeString</H3>
+<PRE>
+String <STRONG>toCodeString</STRONG>()</PRE>
+<DL>
+<DD>A string that can be used as Java source code and will result in the
+ expression being evaluated.
+ <p>
+ The string should be formatted as follows: the N-th object that
+ participates in the contract check should be referred to as "xN" (for N one of
+ 0, ... , 9). For example, if the expression or arity 2 represents a call of
+ the equals method between two objects, the comment should be something like
+ "x0.equals(x1)".
+ <p>
+ The returned string should not be null.
+<P>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get_observer_str()"><!-- --></A><H3>
+get_observer_str</H3>
+<PRE>
+String <STRONG>get_observer_str</STRONG>()</PRE>
+<DL>
+<DD>Returns a string describing the observer
+<P>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../overview-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Overview</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><STRONG>Package</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><STRONG>Class</STRONG></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><STRONG>Tree</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../deprecated-list.html"><FONT CLASS="NavBarFont1"><STRONG>Deprecated</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../index-all.html"><FONT CLASS="NavBarFont1"><STRONG>Index</STRONG></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../help-doc.html"><FONT CLASS="NavBarFont1"><STRONG>Help</STRONG></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../randoop/ObjectCheck.html" title="class in randoop"><STRONG>PREV CLASS</STRONG></A>&nbsp;
+&nbsp;<A HREF="../randoop/ObjectContractUtils.html" title="class in randoop"><STRONG>NEXT CLASS</STRONG></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../index.html?randoop/ObjectContract.html" target="_top"><STRONG>FRAMES</STRONG></A>  &nbsp;
+&nbsp;<A HREF="ObjectContract.html" target="_top"><STRONG>NO FRAMES</STRONG></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../allclasses-noframe.html"><STRONG>All Classes</STRONG></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

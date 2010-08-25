@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" />
+<link rel="stylesheet" href="main.css" type="text/css" />
+<title>Randoop Eclipse Plug-in Manual</title>
+</head>
+<body>
+
+<h1 id="Randoop_Eclipse_Plug-in_Manual">Randoop Eclipse Plug-in Manual</h1> <!-- omit from toc -->
+<!-- start toc.  do not edit; run html-update-toc instead -->
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#Installation_Instructions">Installation Instructions</a>
+        <ul>
+          <li><a href="#Update_Site">Update Site</a></li>
+        </ul></li>
+      <li><a href="#generating_tests">Generating Tests</a>
+        <ul>
+          <li><a href="#Launch_shortcut">Launch shortcut</a></li>
+          <li><a href="#Launch_configuration_dialog">Launch configuration dialog</a></li>
+          <li><a href="#Randoop_View">Randoop View</a></li>
+          <li><a href="#Output">Output</a></li>
+        </ul></li>
+      <li><a href="#Feedback">Feedback</a></li>
+      <li><a href="#Known_Issues">Known Issues</a></li>
+      <li><a href="#Future_Development">Future Development</a></li>
+    </ul>
+<!-- end toc -->
+
+<p>(Also see the <a href="../../doc/index.html">Randoop Manual</a>.)</p>
+<p>(Also see the <a href="../../doc/dev.html">Randoop Eclipse Plug-in Developer's Manual</a>.)</p>
+
+<h2 id="intro">Introduction</h2>
+
+<p><a href="../../doc/index.html">Randoop</a> is an open source tool that
+automatically generates units tests for Java classes. Tests are written in the
+<a href="http://junit.sourceforge.net/doc/cookbook/cookbook.htm">JUnit format</a>
+and consist of a sequence of constructor and method calls intermixed with
+assersions about the expected return values of method calls.</p>
+
+<p>Randoop executes the sequences it generates to create two kinds of tests:
+regression tests and error-revealing tests. Regression tests always pass at the
+time of creation and capture the current behavior of the program, whereas
+error-revealing tests sometimes fail at the time of creation and show a specific
+use of a class under test that leads to a contract violation. Randoop uses both
+<a href="../../doc/index.html#error_revealing_tests">Java API contract checks</a>
+and user-specified <a href="../../doc/index.html#checkrep">representation
+invariant methods</a> to make assertions for error-revealing tests.</p>
+
+<p>The Eclipse plug-in for Randoop aims to make it easy to rapidly configure
+Randoop to generate tests. The plug-in shows Randoop's progress as well as any
+contract failures that are discovered during execution. Each sequence that
+uncovers a contract failure is written to a JUnit test file to ease debugging.
+Randoop also outputs a set of JUnit tests, most of which are regression tests
+that will pass on a first run with JUnit.</p>
+
+<h2 id="Installation_Instructions">Installation Instructions</h2>
+<p>The Randoop Eclipse plug-in supports
+<a href="http://www.eclipse.org/ganymede/">Eclipse 3.5 (Ganymede)</a> and
+<a href="http://www.eclipse.org/helios/">Eclipse 3.6 (Helios)</a>.
+Other versions of Eclipse have not been tested, and may fail to install the
+plug-in.</p>
+
+<h3 id="Update_Site">Update Site</h3>
+<p>
+To install the plug-in, navigate to <b>Help > Install New Software</b> and 
+add the Randoop update site to the available repositories:</p>
+<pre class="code">
+http://randoop.googlecode.com/hg/plugin.updateSite/
+</pre>
+<p>For more information on
+adding new software, see the <a href="http://help.eclipse.org/helios/topic/org.eclipse.platform.doc.user/tasks/tasks-127.htm">
+Eclipse documentation</a>.</p>
+
+<h2 id="generating_tests">Generating Tests</h2>
+
+<p><b><i>WARNING: the Randoop Eclipse plug-in does not restrict Randoop's
+behavior. Testing code that modifies your file system might result in
+Randoop generating tests that modify your file system! Be careful when choosing
+classes and methods to test.</i></b>
+</p>
+
+<p>When creating a launch configuration, keep in mind that Randoop will only
+generate tests using classes you specify. If some of your methods under test
+take <tt>java.util.Collection</tt>s as parameters, then it is a good idea to
+add Java collections such as <tt>ArrayList</tt> and <tt>HashSet</tt> to your
+classes under test.</p>
+
+<p>The Eclipse plug-in uses Randoop launch configurations to store classes and
+methods under test as well as other parameters such as the time limit. New
+launch configurations can be created and launched with the Randoop launch
+shortcut or the Eclipse launch configuration dialog.</p>
+
+<h3 id="Launch_shortcut">Launch shortcut</h3>
+<p>The launch shortcut is the easiest way to create and launch a new Randoop
+launch configuration. To launch with the shortcut, simply select elements to
+test from the package explorer view, right click, and navigate to <b>Run As >
+Randoop Test Input</b>.
+
+The following elements may be used for test-input:
+</p>
+
+<ul>
+<li>Methods of non-abstract classes.
+</li>
+<li>Non-abstract classes
+</li>
+<li>Enums
+</li>
+<li>Compilation units (<tt>.java</tt> files) containing <i>at least one</i> of
+the above elements 
+</li>
+<li>Packages containing containing <i>at least one</i> of the above elements
+</li>
+<li>Source folders containing containing <i>at least one</i> of the above elements
+</li>
+</ul>
+
+<p>If <i>all</i> of the selected Java elements are in the same project and <i>at
+least one</i> of the selected elements is valid, the launch shortcut will be
+visible. Alternatively, you can select a single Java project, which will add
+every valid element in the project into the new launch configuration.
+</p>
+
+<div class="image">
+<img src="img/launch_shortcut.png" alt="Launch shortcut with selection" />
+<br />Selecting test input and launching Randoop from the package explorer</div>
+
+<p>After you have made a selection and pressed the shortcut, the plug-in
+will open a wizard that allows further fine-tuning of the Randoop options
+before launching Randoop. On the first page of the wizard, you can review your
+selected class and method inputs. When adding new classes, the plug-in will open
+a filtered class selection dialog. The class selection dialog will remain empty
+until a pattern is typed into the text bar. You can use the string '*?' to show
+all available classes, but the operation may take several seconds to complete.
+</p>
+
+<div class="image">
+<img src="img/add_class.png" alt="Filtered class selection dialog" />
+<br />The filtered class selection dialog, showing all classes containing "List"
+in the java.util package.</div>
+
+<p>The Randoop wizard also allows you to edit the time limit and input limit as
+well as more advanced parameters such as the random seed. For more information
+on each option, simply hover over the option to read its tooltip, or consult the
+<a href="../../doc/index.html">Randoop Manual</a>. Note that some options in the
+plug-in are named slightly differently than those in the manual.
+</p>
+
+<table border="1">
+<tr>
+<td><b>Randoop Name</b></td>
+<td><b>Plug-in Name</b></td>
+</tr>
+<tr>
+<td>radom-seed</td>
+<td>Random Seed</td>
+</tr>
+<tr>
+<td>maxsize</td>
+<td>Maximum Test Size</td>
+</tr>
+<tr>
+<td>usethreads</td>
+<td>Thread Timeout</td>
+</tr>
+<tr>
+<td>!forbidnull</td>
+<td>Use Null</td>
+</tr>
+<tr>
+<td>testsperfile</td>
+<td>Maximum Tests per File</td>
+</tr>
+</table>
+
+<h3 id="Launch_configuration_dialog">Launch configuration dialog</h3>
+<p>Another way to create a new Randoop launch configuration is through the
+launch configuration dialog. To open the dialog, navigate to <b>Run >
+Run Configurations...</b>, and click <b>'Randoop Launcher'</b> from the filtered
+tree pane at left. From here, you can edit launch configurations using a similar
+user interface to that used in the Randoop launch wizard. The only difference
+between the two user interfaces is that the launch configuration dialog adds
+an option to choose a project and slightly rearranges the options so they fit
+better in the smaller window. Launch configurations that are created using the
+launch shortcut are automatically added to the launch configuration dialog.
+</p>
+
+<p>You can specify the Java project in the 'General' tab to change which
+classpaths are used for searching for classes and change what source folder is
+used for outputing tests. Each class in the launch configuration is stored along
+with the classpath it was found in. If you change the project, the
+plug-in will search for the same exact classpath in the new project. For
+example, if the classpath is a source folder, the plug-in will check if the new
+project links to the same folder or has that folder's containing project in its
+classpath. If the type cannot be found in the new project it is considered
+missing. If you know there are copies of the missing classes in the new project,
+you can use the 'Resolve Missing Classes' button to search for classes with the
+same full-qualified name as those that are missing.
+</p>
+
+<div class="image">
+<img src="img/manager.png" alt="Run configuration dialog" />
+<br />Changing the project or deleting compilation units might render some launch
+configurations unlaunchable.</div>
+
+<p>The Randoop Eclipse plug-in supports refactoring of source folder names,
+package names, class names, and method names. If you use Eclipe's built in
+refactoring tools, the changes should be reflected in your Randoop launch
+confurations as well.
+</p>
+
+<h3 id="Randoop_View">Randoop View</h3>
+<p>Once you launch Randoop by either pressing 'Finish' in the wizard or 'Run' in
+the launch configuration dialog, the plug-in will open the Randoop view. The
+Randoop view shows the progress of the test generation and a tree with any
+failures that Randoop uncovers. You can double click on a failure to open a
+JUnit test that isolates the cause of the failure.</p>
+
+<p>It is also possible to run two Randoop configurations simultaniously.
+However, only the results of the last one to run will be displayed in the view.
+Once the view's contents have been replaced, the old contents are lost forever,
+but the files will remain in the project. You can view and terminate active
+Randoop launches from the Eclipse 
+<a href="http://help.eclipse.org/helios/topic/org.eclipse.cdt.doc.user/reference/cdt_u_dbg_view.htm">debug view</a>.
+</p>
+
+<p>The view can also be manually opened though <b>Window > Show View >
+Other...</b> under Java > Randoop. When opened, the dialog will show the results
+of the last Randoop launch unless Eclipse has been closed since then.
+</p>
+
+<div class="image">
+<img src="img/view.png" alt="Run configuration dialog" /></div>
+
+<h3 id="Output">Output</h3>
+
+<p>Randoop will output all files to the selected source folder in the Java
+project the tests are being generated for. The source folder will be created and
+added to the Java project's classpath if it does not already exist. Randoop
+outputs two sets of JUnit tests: a set of regression tests mixed with
+error-revealing tests and a set of isolated error-revealing tests. The first set
+of tests will be placed in
+</p>
+
+<pre class="code">
+[project]/[outputdir]/[package/name]
+</pre>
+
+<p>and the files will be named <tt>[ClassName].java</tt>, <tt>[ClassName].java</tt>,
+<tt>[ClassName].java</tt>, and so forth, where each <tt>[project]</tt>,
+<tt>[outputdir]</tt>, <tt>[package/name]</tt>, and <tt>[ClassName]</tt> are
+specified in the launch configuration. The second set of tests will be placed in
+</p>
+
+<pre class="code">
+[project]/[outputdir]/randoopFailures
+</pre>
+
+<p>and be named <tt>[ClassName]_failure_1.java</tt>,
+<tt>[ClassName]_failure_2.java</tt>, and so forth. These JUnit files will contain
+one test each and be linked to by the Randoop view.
+</p>
+
+<div class="image">
+<img src="img/output.png" alt="Files written to the output directory" />
+<br />Files output as a result of running Randoop with default parameters.</div>
+
+<h2 id="Feedback">Feedback</h2>
+<p>To make the plugin most effective, we would like to learn about your
+experience using the plug-in. What features have you found most useful? What
+features would you like added to the plug-in? Did you find any
+<a href="#bugs">bugs</a> or strange behavior?
+</p>
+
+<p>Please email feedback to
+<a href="mailto:randoop-developers@googlegroups.com">randoop-developers@googlegroups.com</a>,
+and submit bug reports to the <a href="http://code.google.com/p/randoop/issues/">issue tracker.</a>
+</p>
+
+<p>When reporting bugs, please include any possibly relevant event details from your
+<a href="http://help.eclipse.org/helios/topic/org.eclipse.pde.doc.user/guide/tools/views/error_log.htm">error log</a>.
+In general, a logged event will only be relevant if it is logged during the same
+minute that your bug occured.
+</p>
+
+<h2 id="Known_Issues">Known Issues</h2>
+
+<ul>
+<li>The dialog for choosing a classpath sorts classpaths in alphabetical order
+instead of their actual order in the project
+</li>
+</ul>
+
+<h2 id="Future_Development">Future Development</h2>
+
+<p>
+<i>A short list of ideas for feautures for future versions of the plug-in.</i>
+</p>
+<ul>
+<li>Support of Randoop sessions similar to JUnit's sessions - with options to
+export and import the results of a launch.
+</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" />
+<link rel="stylesheet" href="main.css" type="text/css" />
+<title>Randoop Developer's Manual</title>
+</head>
+<body>
+
+<h1>Randoop Developer's Manual</h1> <!-- omit from toc -->
+
+<!-- start toc.  do not edit; run html-update-toc instead -->
+<ul>
+  <li><a href="#tasks">Compiling, testing, releasing, etc.</a>
+    <ul>
+      <li><a href="#setup_eclipse">Setup Eclipse</a>
+        <ul>
+          <li><a href="#downloading_eclipse">Download a New Eclipse Installation</a></li>
+          <li><a href="#installing_addons">Install Required Add-ons</a></li>
+        </ul></li>
+      <li><a href="#compiling">Compiling Randoop Plug-in</a></li>
+      <li><a href="#running">Running Plug-in Tests</a></li>
+      <li><a href="#modmanual">Modifying the manual</a></li>
+      <li><a href="#making_new_dist">Making a new distribution</a></li>
+    </ul></li>
+  <li><a href="#randoop_internals">Randoop Internals</a>
+    <ul>
+      <li><a href="#randoop_exec">Running Randoop from Eclipse</a></li>
+      <li><a href="#">Tests Fragment</a></li>
+      <li><a href="#">Experimental Fragment</a></li>
+    </ul></li>
+</ul>
+<!-- end toc -->
+
+<p>
+(Also see the <a href="index.html">Randoop Plug-in Manual</a>.)
+</p>
+
+<hr />
+
+<h1 id="tasks">Compiling, testing, releasing, etc.</h1>
+ 
+<p>Prerequisites for compiling and testing:</p>
+
+<ul>
+  <li>Java 5.0 or greater</li>
+  <li>Eclipse 3.5 (Galileo) or Eclipse 3.6 (Helios)</li>
+  <li>Plug-in Development Environment for Eclipse</li>
+  <li>SWTBot for Eclipse</li>
+</ul>
+
+<h2 id="setup_eclipse">Setup Eclipse</h2>
+
+<p>First, you will need to download Eclipse or install the required features to
+your pre-existing Eclipse installation.</p>
+
+<h3 id="downloading_eclipse">Download a New Eclipse Installation</h3>
+<p>Visit the <a href="http://www.eclipse.org/downloads/">Eclipse Downloads</a>
+page and install 'Eclipse Classic.' Next, follow the instuctions below to
+install SWTBot from its <a href="http://eclipse.org/swtbot/downloads.php">update
+site</a>. The Classic distribution already comes packaged with the Plug-in
+Development Environment and sources for many Eclipse plug-ins. </p>
+
+<h3 id="installing_addons">Install Required Add-ons</h3>
+
+<p>If you already have Eclipse installed, you can install the necessary features
+in a few easy steps:</p>
+
+<p><ul>
+  <li>Install The Eclipse <a href="http://www.eclipse.org/pde/">Plug-in Development Environment</a>
+  <ol>
+    <li>Go to <b>Help > Install New Software...</b></li>
+    <li>Select the update site for your Eclipse version from the pull down list. For Helios this is http://download.eclipse.org/releases/helios</li>
+    <li>Check <b>Eclipse Plug-in Development Environment</b> from the 'General Purpose Tools' category.</li>
+	<li>Press <b>Next</b> to install the feature</li>
+  </ol>
+  <li>Install <a href="http://swtbot.org/">SWTBot</a>
+  <ol>
+    <li>Go to <b>Help > Install New Software...</b></li>
+    <li>Add the appropriate <a href="http://eclipse.org/swtbot/downloads.php">
+	SWTBot update-site</a> for your Eclipse version to the available repositories</li>
+    <li>Select all plug-ins except for 'SWTBot for GEF Testing'</li>
+	<li>Press <b>Next</b> to install the features</li>
+  </ol>
+</ul></p>
+
+
+<h2 id="compiling">Compiling Randoop Plug-in</h2>
+
+<p>Make a local clone of the Randoop repository in your Eclipse workspace
+folder. Open Eclipse, and import the projects 'randoop,' 'plugin,'
+'plugin.feature,' 'plugin.updateSite,' 'plugin.tests,' and 'plugin.experimental'
+from the repository. To do this:</p>
+
+<ol>
+  <li>Go to <b>File > Import...</b></li>
+  <li>Select <b>Existing projects into Workspace</b>, click 'Next'</li>
+  <li>Select the working directory of your cloned Randoop repository as the root directory</li>
+  <li>Check 'randoop' from the list of projects and click 'Finish'</li>
+  <li>Repeat these steps for the 'plugin,' 'plugin.feature,'
+  'plugin.updateSite,' 'plugin.tests,' and 'plugin.experimental' folders in your
+  clone's working directory.</li>
+</ol>
+
+<p>After adding all projects, you may need to run <b>Project > Clean...</b>
+to compile the projects.</p>
+
+<h2 id="running">Running Plug-in Tests</h2>
+
+<p>In the fragment plugin.tests, run each launch configuration in the 'launchConfigurations' folder.</p>
+
+<h2 id="modmanual">Modifying the manual</h2>
+
+<p>To modify the Randoop manual, edit directly the HTML files:
+</p>
+
+<ul>
+<li> <code>plugin/doc/index.html</code> has the user manual.</li>
+<li> <code>plugin/doc/dev.html</code> has the developer manual</li>
+</ul>
+
+<p>Then, run under Randoop's home directory:
+</p>
+
+<pre class="code">
+% make plugin-manual
+</pre>
+
+<h2 id="making_new_dist">Making a new distribution</h2>
+
+<p>
+<ol>
+  <li>Change the value of the constant <tt>USE_RANDOOP_ARCHIVE</tt> in <tt>randoop.plugin.RandoopPlugin</tt> to <tt>true</tt></li>
+  <li>Run <tt>build-randoop.launch</tt> to build a minimal Randoop archive with plume included in the plugin directory.</li>
+  <li>Right click on the 'plugin' project and select <b>Export</b> from the context menu</li>
+  <li>Select <b>Deployable features</b>, click 'Next'</li>
+  <li>Check 'randoop' from the list of available features</li>
+  <li>Under the 'Destination' tab, select 'Directory' and browse for the 'plugin.updateSite' directory</li>
+  <li>Under the 'Options' tab: 
+  <ol>
+	<li>Check 'Package as individual JAR archives'</li>
+    <li>Check 'Generate metadata repository'</li>
+	<li>Check 'Categorize repository' and browse for 'category.xml' in the 'plugin.updateSite' directory</li>
+	<li>Check 'Allow for binary cycles in target platform'</li>
+	<li>Uncheck all other options</li>
+  </ol></li>
+  <li>Set <tt>USE_RANDOOP_ARCHIVE</tt> back to <tt>false</tt></li>
+  <li>Commit and push changes</li>
+</ol>
+
+</p>
+
+<h1 id="randoop_internals">Randoop Internals</h1>
+
+<p>This section describes the Randoop Eclipse plug-in's . . . 
+</p>
+
+<h2 id="randoop_exec">Running Randoop from Eclipse</h2>
+
+<p>The plug-in needs to have a classpath for Randoop in order to generate tests. There
+are two ways to provide this: the Randoop project's output directory or a Randoop archive.
+</p>
+
+<p>When developing, you should use the Randoop project's output directory in the
+classpath to use the most recent Randoop revisions. To do this, simply set the
+value of <tt>USE_RANDOOP_ARCHIVE</tt> to <tt>false</tt>. However, when exporting the
+plug-in you will need to use a Randoop archive. The ant file
+plugin/build-randoop.xml is provided to make exporting the archive easy. To run
+the ant file from Eclipse, simply run the launch
+configuration plugin/build-randoop.config.
+</p>
+
+<h2 id="">Tests Fragment</h2>
+
+[How to run tests, ui thread, demo workspace]
+
+<h2 id="">Experimental Fragment</h2>
+
+[Purpose, why it exists]
