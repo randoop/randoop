@@ -106,7 +106,7 @@ width="50" alt="lightbulb" /> Like any tool attempting to solve a challenging pr
 there are also many areas for improvement. Below, we will point out
 potential limitations and opportunities for improvement for Randoop,
 indicated with the light bulb image on the left. Also, take a look at
-our <a href="/p/randoop/wiki/ProjectIdeas">ProjectIdeas</a> page if
+our <a href="https://code.google.com/p/randoop/wiki/ProjectIdeas">ProjectIdeas</a> page if
 you are interested to contributing to Randoop or the field of
 automated test generation. </p>
 
@@ -542,7 +542,7 @@ to a runtime violation of a contract; a <i>contracts</i> is just a
 property that a class, object or method is expected to preserve,
 e.g. an object invariant or a method postcondition. Contract
 violations suggest errors in the code. For example, the test shown in
-the <a href="/p/randoop/wiki/UserManual#Introduction">Introduction</a>
+the <a href="#Introduction">Introduction</a>
 represents a violation of <i>reflexivity of equality</i>, an expected
 property of Java objects stating that for every
 object <tt>o</tt>, <tt>o.equals(o)</tt> should
@@ -601,7 +601,7 @@ are regression tests: they record the current behavior of the classes
 under test. Regression tests are useful because they can alert you in
 the future if you make a change to your code that changes the external
 behavior of the classes. Here is an example of a regression test for
-the TreeSet<a href="/p/randoop/w/edit/TreeSet">?</a> class we
+the TreeSet class we
 generated tests for in the previous section. </p>
 
 <pre class="code">// This test passes when executed
@@ -613,7 +613,7 @@ public void test10() throws Throwable {
     
   // Regression assertion (captures the current behavior of the code)
   assertTrue(var2 == false);
-}</pre><p>This test will pass when you run it right after executing it. But notice that it captures an important behavior of the method TreeSet<a href="/p/randoop/w/edit/TreeSet">?</a>.contains: it returns false if the set is empty. If later, as the developers of this class, we introduced an error that caused contains to return true on an empty set, the test would fail and thus alert us to the error. </p>
+}</pre><p>This test will pass when you run it right after executing it. But notice that it captures an important behavior of the method TreeSet.contains: it returns false if the set is empty. If later, as the developers of this class, we introduced an error that caused contains to return true on an empty set, the test would fail and thus alert us to the error. </p>
 
 <h2 id="cutomize">Customizing Randoop's behavior to your application</h2>
 
