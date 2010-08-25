@@ -172,7 +172,7 @@ public final class ReflectionExecutor {
       // Workaround for http://bugs.sun.com/view_bug.do?bug_id=6973831
       Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");    
       if (eSuppressedExceptions == null) {
-        UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<?>());
+        UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<Object>());
       }
     } catch (NoSuchFieldException nsfe) {
       out.println("This can't happen: NoSuchFieldException " + nsfe);
