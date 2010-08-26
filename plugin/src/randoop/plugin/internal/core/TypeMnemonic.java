@@ -292,7 +292,7 @@ public class TypeMnemonic {
         // check if this type's project is the same as javaProject
         if (getClasspath().equals(javaProject.getPath())) {
           // search for the type in the java project - it should exist
-          IType type = javaProject.findType(getFullyQualifiedName());
+          IType type = javaProject.findType(getFullyQualifiedName().replace('$', '.'));
           if (type != null)
             return new TypeMnemonic(type);
         } else {
