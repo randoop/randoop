@@ -235,7 +235,8 @@ public class RandoopCoreUtil {
     try {
       IJavaElement[] children = pfr.getChildren();
       String taskName = MessageFormat.format("Searching for Java types in {0}", pfr.getElementName()); 
-      sm.beginTask(taskName, children.length);
+      sm.beginTask("", children.length); //$NON-NLS-1$
+      sm.subTask(taskName);
       for (IJavaElement e : children) {
         Assert.isTrue(e instanceof IPackageFragment);
         IPackageFragment pf = (IPackageFragment) e;
@@ -272,7 +273,8 @@ public class RandoopCoreUtil {
       switch (pf.getKind()) {
       case IPackageFragmentRoot.K_BINARY:
         IClassFile[] classFiles =  pf.getClassFiles();
-        sm.beginTask(taskName, classFiles.length);
+        sm.beginTask("", classFiles.length); //$NON-NLS-1$
+        sm.subTask(taskName);
         for (IClassFile cf : classFiles) {
           types.addAll(findTestableTypes(cf, ignoreJUnitTestCases, sm.newChild(1)));
 
@@ -283,7 +285,8 @@ public class RandoopCoreUtil {
         break;
       case IPackageFragmentRoot.K_SOURCE:
         ICompilationUnit[] compilationUnits =  pf.getCompilationUnits();
-        sm.beginTask(taskName, compilationUnits.length);
+        sm.beginTask("", compilationUnits.length); //$NON-NLS-1$
+        sm.subTask(taskName);
         for (ICompilationUnit cu : compilationUnits) {
           types.addAll(findTestableTypes(cu, ignoreJUnitTestCases, sm.newChild(1)));
 
@@ -322,7 +325,8 @@ public class RandoopCoreUtil {
     if (cu != null && cu.exists()) {
       try {
         IType[] allTypes = cu.getAllTypes();
-        sm.beginTask(MessageFormat.format("Searching for valid Java types in {0}", cu.getElementName()), allTypes.length);
+        sm.beginTask("", allTypes.length); //$NON-NLS-1$
+        sm.subTask(MessageFormat.format("Searching for valid Java types in {0}", cu.getElementName()));
         for (IType t : allTypes) {
           if (isValidTestInput(t, ignoreJUnitTestCases)) {
             validTypes.add(t);
@@ -360,7 +364,8 @@ public class RandoopCoreUtil {
 
     List<IType> types = new ArrayList<IType>();
 
-    sm.beginTask(MessageFormat.format("Checking if Java type for {0} is valid", cf.getElementName()), 1);
+    sm.beginTask("", 1); //$NON-NLS-1$
+    sm.subTask(MessageFormat.format("Checking if Java type for {0} is valid", cf.getElementName()));
     if (cf != null && cf.exists()) {
       IType t = cf.getType();
       if (isValidTestInput(t, ignoreJUnitTestCases)) {
