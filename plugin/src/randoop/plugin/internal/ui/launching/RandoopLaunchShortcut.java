@@ -222,7 +222,7 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
               getWorkspaceRoot());
           
           // Use the depreciated generateUniqueLaunchConfigurationNameFrom since
-          // it is still supported in Galileo
+          // it is the only supported version of this method in Galileo
           config.rename(launchManager.generateUniqueLaunchConfigurationNameFrom(args
               .getJUnitClassName()));
           config.doSave();
