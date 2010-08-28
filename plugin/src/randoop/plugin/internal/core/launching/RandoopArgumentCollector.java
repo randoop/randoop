@@ -346,10 +346,9 @@ public class RandoopArgumentCollector {
   }
 
   public static boolean getUseThreads(ILaunchConfiguration config) {
-    return getAttribute(
-        config,
+    return Boolean.parseBoolean(getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS,
-        Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
+        IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS));
   }
 
   public static String getThreadTimeout(ILaunchConfiguration config) {
@@ -359,9 +358,9 @@ public class RandoopArgumentCollector {
   }
 
   public static boolean getUseNull(ILaunchConfiguration config) {
-    return getAttribute(config,
+    return Boolean.parseBoolean(getAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_USE_NULL,
-        Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+        IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
   }
 
   public static String getNullRatio(ILaunchConfiguration config) {
@@ -475,7 +474,7 @@ public class RandoopArgumentCollector {
   }
 
   public static void setUseThreads(ILaunchConfigurationWorkingCopy config, boolean useThreads) {
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, useThreads);
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, Boolean.toString(useThreads));
   }
 
   public static void setThreadTimeout(ILaunchConfigurationWorkingCopy config, String threadTimeout) {
@@ -483,7 +482,7 @@ public class RandoopArgumentCollector {
   }
 
   public static void setUseNull(ILaunchConfigurationWorkingCopy config, boolean useNull) {
-    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, useNull);
+    setAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean.toString(useNull));
   }
 
   public static void setNullRatio(ILaunchConfigurationWorkingCopy config, String nullRatio) {
@@ -544,15 +543,6 @@ public class RandoopArgumentCollector {
     }
   }
 
-  private static boolean getAttribute(ILaunchConfiguration config,
-      String attributeName, boolean defaultValue) {
-    try {
-      return config.getAttribute(attributeName, defaultValue);
-    } catch (CoreException ce) {
-      return defaultValue;
-    }
-  }
-
   @SuppressWarnings("unchecked")
   private static List<String> getAttribute(ILaunchConfiguration config,
       String attributeName, List<String> defaultValue) {
@@ -571,11 +561,6 @@ public class RandoopArgumentCollector {
   
   private static void setAttribute(ILaunchConfigurationWorkingCopy config,
       String attributeName, String value) {
-    config.setAttribute(attributeName, value);
-  }
-
-  private static void setAttribute(ILaunchConfigurationWorkingCopy config,
-      String attributeName, boolean value) {
     config.setAttribute(attributeName, value);
   }
 
