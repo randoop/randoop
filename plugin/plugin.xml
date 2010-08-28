@@ -316,6 +316,31 @@
       </moveParticipant>
    </extension>
    <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="randoop.plugin.internal.ui.preferences.RandoopPreferences">
+      </initializer>
+   </extension>
+ 
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.jdt.ui.preferences.JavaBasePreferencePage"
+            class="randoop.plugin.internal.ui.preferences.RandoopPreferencePage"
+            id="randoop.plugin.ui.preferences.randoopPreferencePage"
+            name="Randoop">
+         <keywordReference
+               id="randoop.plugin.ui.Randoop">
+         </keywordReference>
+      </page>
+   </extension>  <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            id="randoop.plugin.ui.Randoop"
+            label="Java Randoop testing launching">
+      </keyword>
+   </extension>
+   <extension
          point="org.eclipse.help.contexts">
       <contexts
             file="contexts.xml">
