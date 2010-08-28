@@ -65,7 +65,7 @@ public abstract class BoundedDoubleOption extends TextOption {
       } catch (NumberFormatException e) {
       }
 
-      config.setAttribute(getAttribute(), value);
+      config.setAttribute(getAttributeName(), value);
     }
   }
   

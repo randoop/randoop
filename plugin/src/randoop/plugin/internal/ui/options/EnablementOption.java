@@ -30,7 +30,7 @@ public abstract class EnablementOption extends Option {
     enablement.addSelectionListener(new SelectionListener() {
       
       public void widgetSelected(SelectionEvent e) {
-        notifyListeners(new OptionChangeEvent(getAttribute(), fEnablementButton.getSelection()));
+        notifyListeners(new OptionChangeEvent(getAttributeName(), fEnablementButton.getSelection()));
       }
       
       public void widgetDefaultSelected(SelectionEvent e) {
@@ -79,7 +79,7 @@ public abstract class EnablementOption extends Option {
     if (fEnablementButton != null && fEnabledOption != null) {
       boolean enabled;
       try {
-        enabled = config.getAttribute(getAttribute(), getDefaultValue());
+        enabled = Boolean.parseBoolean(config.getAttribute(getAttributeName(), Boolean.toString(getDefaultValue())));
       } catch (CoreException e) {
         enabled = getDefaultValue();
       }
@@ -93,14 +93,14 @@ public abstract class EnablementOption extends Option {
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fEnablementButton != null) {
       boolean enabled = fEnablementButton.getSelection();
-      config.setAttribute(getAttribute(), enabled);
+      config.setAttribute(getAttributeName(), Boolean.toString(enabled));
     }
 
     fEnabledOption.performApply(config);
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    config.setAttribute(getAttribute(), getDefaultValue());
+    config.setAttribute(getAttributeName(), Boolean.toString(getDefaultValue()));
     fEnabledOption.setDefaults(config);
   }
   
@@ -110,7 +110,7 @@ public abstract class EnablementOption extends Option {
     fEnabledOption.setEnabled(enabled);
   }
   
-  protected abstract String getAttribute();
+  protected abstract String getAttributeName();
 
   protected abstract boolean getDefaultValue();
   
