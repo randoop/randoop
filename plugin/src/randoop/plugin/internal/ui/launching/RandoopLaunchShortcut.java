@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.progress.IProgressService;
 
 import randoop.plugin.RandoopPlugin;
@@ -85,29 +87,43 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     final Map<String, List<String>> selectedMethodsByDeclaringTypes = new HashMap<String, List<String>>();
 
     final MutableBoolean isCancelled = new MutableBoolean(true);
+    final IJavaProject finalJavaProject = javaProject;
 
     IRunnableWithProgress op = new IRunnableWithProgress() {
 
       public void run(IProgressMonitor monitor) {
         SubMonitor parentMonitor = SubMonitor.convert(monitor);
-        parentMonitor.beginTask("Searching for class and method inputs in selection...",
-            2);
+        parentMonitor.beginTask("Searching for classes and methods in selection...", 3);
+        
+        try {
+          finalJavaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE,
+              parentMonitor.newChild(1));
+        } catch (CoreException e1) {
+        }
+        
+        if (parentMonitor.isCanceled()) {
+          isCancelled.setValue(true);
+          return;
+        }
+        
         List<IType> types = new ArrayList<IType>();
         List<IType> selectedTypes = new ArrayList<IType>();
 
         SubMonitor listSearchMonitor = parentMonitor.newChild(1);
-        listSearchMonitor.beginTask("Searching for class inputs in selection...",
-            elements.length);
+        listSearchMonitor.beginTask("", elements.length); //$NON-NLS-1$
+        listSearchMonitor.subTask("Searching for classes in selection...");
+        
         for (IJavaElement element : elements) {
           SubMonitor elementSearchMonitor = listSearchMonitor.newChild(2);
           switch (element.getElementType()) {
           case IJavaElement.JAVA_PROJECT:
             try {
-              String taskName = MessageFormat.format("Searching for class inputs in {0}",
+              String taskName = MessageFormat.format("Searching for classes in {0}",
                   element.getElementName());
               IPackageFragmentRoot[] pfrs = ((IJavaProject) element)
                   .getPackageFragmentRoots();
-              elementSearchMonitor.beginTask(taskName, pfrs.length);
+              elementSearchMonitor.beginTask("", pfrs.length); //$NON-NLS-1$
+              elementSearchMonitor.subTask(taskName);
               for (IPackageFragmentRoot pfr : pfrs) {
                 if (pfr.getKind() == IPackageFragmentRoot.K_SOURCE) {
                   types.addAll(RandoopCoreUtil.findTestableTypes(pfr, false,
@@ -175,7 +191,8 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
         listSearchMonitor.done();
 
         SubMonitor conversionMonitor = parentMonitor.newChild(1);
-        conversionMonitor.beginTask("Converting class inputs...", types.size());
+        conversionMonitor.beginTask("", types.size()); //$NON-NLS-1$
+        conversionMonitor.subTask("Converting class inputs...");
         try {
           for (int i = 0; i < types.size() && !listSearchMonitor.isCanceled(); i++) {
             IType type = types.get(i);
