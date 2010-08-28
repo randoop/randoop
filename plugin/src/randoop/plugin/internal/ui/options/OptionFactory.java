@@ -326,7 +326,7 @@ public class OptionFactory {
     }
 
     @Override
-    protected String getAttribute() {
+    protected String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED;
     }
 
@@ -352,7 +352,7 @@ public class OptionFactory {
     }
 
     @Override
-    protected String getAttribute() {
+    protected String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE;
     }
 
@@ -374,7 +374,7 @@ public class OptionFactory {
     }
 
     @Override
-    protected String getAttribute() {
+    protected String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS;
     }
 
@@ -402,7 +402,7 @@ public class OptionFactory {
     }
 
     @Override
-    protected String getAttribute() {
+    protected String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT;
     }
 
@@ -430,7 +430,7 @@ public class OptionFactory {
     }
 
     @Override
-    protected String getAttribute() {
+    protected String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_USE_NULL;
     }
 
@@ -457,7 +457,7 @@ public class OptionFactory {
     }
 
     @Override
-    protected String getAttribute() {
+    protected String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO;
     }
 
@@ -489,7 +489,7 @@ public class OptionFactory {
     }
 
     @Override
-    public String getAttribute() {
+    public String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT;
     }
 
@@ -525,7 +525,7 @@ public class OptionFactory {
     }
 
     @Override
-    protected String getAttribute() {
+    protected String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT;
     }
 
@@ -621,7 +621,7 @@ public class OptionFactory {
     }
 
     @Override
-    public String getAttribute() {
+    public String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_WRITTEN;
     }
 
@@ -647,7 +647,7 @@ public class OptionFactory {
     }
 
     @Override
-    public String getAttribute() {
+    public String getAttributeName() {
       return IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TESTS_PER_FILE;
     }
 

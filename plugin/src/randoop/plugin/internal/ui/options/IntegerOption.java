@@ -55,7 +55,7 @@ public abstract class IntegerOption extends TextOption {
       } catch (NumberFormatException e) {
       }
 
-      config.setAttribute(getAttribute(), value);
+      config.setAttribute(getAttributeName(), value);
     }
   }
   

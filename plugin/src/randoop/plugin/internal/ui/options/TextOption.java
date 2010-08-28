@@ -32,7 +32,7 @@ public abstract class TextOption extends Option {
     fText.addModifyListener(new ModifyListener() {
       
       public void modifyText(ModifyEvent e) {
-        notifyListeners(new OptionChangeEvent(getAttribute(), fText.getText()));
+        notifyListeners(new OptionChangeEvent(getAttributeName(), fText.getText()));
       }
     });
   }
@@ -63,20 +63,20 @@ public abstract class TextOption extends Option {
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
     if (fText != null && !fText.isDisposed()) {
-      config.setAttribute(getAttribute(), fText.getText());
+      config.setAttribute(getAttributeName(), fText.getText());
     }
   }
 
   protected String getValue(ILaunchConfiguration config) {
     try {
-      return config.getAttribute(getAttribute(), getDefaultValue());
+      return config.getAttribute(getAttributeName(), getDefaultValue());
     } catch (CoreException e) {
       return getDefaultValue();
     }
   }
 
   public void setDefaults(ILaunchConfigurationWorkingCopy config) {
-    config.setAttribute(getAttribute(), getDefaultValue());
+    config.setAttribute(getAttributeName(), getDefaultValue());
   }
 
   public void restoreDefaults() {
@@ -91,7 +91,7 @@ public abstract class TextOption extends Option {
    * 
    * @return
    */
-  protected abstract String getAttribute();
+  protected abstract String getAttributeName();
 
   /**
    * Returns the default value of this text. This is used set and restore

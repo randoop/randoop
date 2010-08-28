@@ -90,9 +90,9 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
         
         setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED, IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
         setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE, IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TEST_SIZE);
-        setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS)); 
+        setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS); 
         setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT, IRandoopLaunchConfigurationConstants.DEFAULT_THREAD_TIMEOUT);
-        setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+        setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL);
         setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO, IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
         setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT, IRandoopLaunchConfigurationConstants.DEFAULT_INPUT_LIMIT); 
         setConfigAttribute(prefs, IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT, IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
@@ -148,9 +148,9 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
       case RandoopPreferences.WORKSPACE:        
         setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED, IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
         setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE, IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TEST_SIZE);
-        setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS)); 
+        setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS); 
         setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT, IRandoopLaunchConfigurationConstants.DEFAULT_THREAD_TIMEOUT);
-        setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+        setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL);
         setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO, IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
         setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT, IRandoopLaunchConfigurationConstants.DEFAULT_INPUT_LIMIT); 
         setValueFromConfig(store, IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT, IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
@@ -170,9 +170,9 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
         
         setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_RANDOM_SEED, IRandoopLaunchConfigurationConstants.DEFAULT_RANDOM_SEED);
         setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_MAXIMUM_TEST_SIZE, IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TEST_SIZE);
-        setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS)); 
+        setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_USE_THREADS, IRandoopLaunchConfigurationConstants.DEFAULT_USE_THREADS); 
         setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_THREAD_TIMEOUT, IRandoopLaunchConfigurationConstants.DEFAULT_THREAD_TIMEOUT);
-        setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL));
+        setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_USE_NULL, IRandoopLaunchConfigurationConstants.DEFAULT_USE_NULL);
         setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_NULL_RATIO, IRandoopLaunchConfigurationConstants.DEFAULT_NULL_RATIO);
         setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_INPUT_LIMIT, IRandoopLaunchConfigurationConstants.DEFAULT_INPUT_LIMIT); 
         setValueFromConfig(prefs, IRandoopLaunchConfigurationConstants.ATTR_TIME_LIMIT, IRandoopLaunchConfigurationConstants.DEFAULT_TIME_LIMIT);
@@ -200,10 +200,6 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
     fConfig.setAttribute(attributeName, prefs.get(attributeName, def));
   }
   
-  private void setConfigAttribute(Preferences prefs, String attributeName, boolean def) {
-    fConfig.setAttribute(attributeName, prefs.getBoolean(attributeName, def));
-  }
-  
   private void setConfigAttribute(IPreferenceStore store, String attributeName) {
     fConfig.setAttribute(attributeName, store.getString(attributeName));
   }
@@ -216,23 +212,7 @@ public class RandoopLaunchConfigurationWizard extends Wizard {
     }
   }
   
-  private void setValueFromConfig(Preferences prefs, String attributeName, boolean def) {
-    try {
-      prefs.putBoolean(attributeName, fConfig.getAttribute(attributeName, def));
-    } catch (CoreException e) {
-      prefs.putBoolean(attributeName, def);
-    }
-  }
-  
   private void setValueFromConfig(IPreferenceStore store, String attributeName, String def) {
-    try {
-      store.setValue(attributeName, fConfig.getAttribute(attributeName, def));
-    } catch (CoreException e) {
-      store.setValue(attributeName, def);
-    }
-  }
-  
-  private void setValueFromConfig(IPreferenceStore store, String attributeName, boolean def) {
     try {
       store.setValue(attributeName, fConfig.getAttribute(attributeName, def));
     } catch (CoreException e) {
