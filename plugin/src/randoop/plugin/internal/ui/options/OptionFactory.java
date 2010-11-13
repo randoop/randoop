@@ -298,7 +298,7 @@ public class OptionFactory {
 
     Label cliArgumentsLabel = SWTFactory.createLabel(comp, "Additional Command-line Arguments:", 2);
     Text cliArgumentsText = SWTFactory.createText(comp, SWT.MULTI | SWT.BORDER, 2, GridData.FILL_BOTH);
-    cliArgumentsLabel.setToolTipText("Specifies addition command-line arguments to pass to Randoop. These" +
+    cliArgumentsLabel.setToolTipText("Specifies addition command-line arguments to pass to Randoop. These\n" +
     		                         "arguments will override any of the specified arguments above.");
     CliAgrumentsOption cliArgumentsOption = new CliAgrumentsOption(cliArgumentsText);
     Button cliArgumentsbutton = SWTFactory.createCheckButton(comp, "Use additional arguments",
