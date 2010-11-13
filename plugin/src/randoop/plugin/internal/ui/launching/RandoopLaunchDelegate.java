@@ -307,7 +307,7 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.add("--methodlist=" + launchResources.getMethodFile().getAbsolutePath());//$NON-NLS-1$
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
     programArguments.add("--noprogressdisplay"); //$NON-NLS-1$
-    programArguments.add("--log=randooplog.txt"); // XXX remove
+    // programArguments.add("--log=randooplog.txt"); // XXX remove
     
     if (args.getUseCliArguments()) {
       // Split the arguments by whitespace characters and new lines
