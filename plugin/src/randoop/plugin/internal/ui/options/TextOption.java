@@ -15,7 +15,7 @@ import randoop.plugin.internal.core.RandoopStatus;
  * 
  * @author Peter Kalauskas
  */
-public abstract class TextOption extends Option {
+public abstract class TextOption extends Option implements IEnableableOption {
 
   protected Text fText;
 
@@ -83,6 +83,10 @@ public abstract class TextOption extends Option {
     if (fText != null && !fText.isDisposed()) {
       fText.setText(getDefaultValue());
     }
+  }
+  
+  public void setEnabled(boolean enabled) {
+    fText.setEnabled(enabled);
   }
 
   /**
