@@ -38,7 +38,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
 
-  public final static boolean USE_RANDOOP_ARCHIVE = false;
+  public final static boolean USE_RANDOOP_ARCHIVE = true;
   
   private static final IPath RANDOOP_JAR = new Path("randoop.jar"); //$NON-NLS-1$
 
