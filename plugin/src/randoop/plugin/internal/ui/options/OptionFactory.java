@@ -69,7 +69,7 @@ public class OptionFactory {
     Font boldFont = SWTFactory.getBoldFont(comp.getFont());
 
     Label stoppingCriterionTitle = new Label(comp, SWT.NONE);
-    stoppingCriterionTitle.setText("Stopping criterion.");
+    stoppingCriterionTitle.setText("Stopping Criterion");
     stoppingCriterionTitle.setFont(boldFont);
     Label stoppingCriterionSubtitle = new Label(comp, SWT.NONE);
     stoppingCriterionSubtitle.setText("Stop test generation after:");
@@ -171,7 +171,7 @@ public class OptionFactory {
     Font boldFont = SWTFactory.getBoldFont(comp.getFont());
 
     Label outputParametersTitle = new Label(comp, SWT.NONE);
-    outputParametersTitle.setText("Test output parameters.");
+    outputParametersTitle.setText("Test Output Parameters");
     outputParametersTitle.setFont(boldFont);
 
     Label testKindsLabel = new Label(comp, SWT.NONE);
