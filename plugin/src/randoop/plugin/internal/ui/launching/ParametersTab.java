@@ -21,8 +21,8 @@ import randoop.plugin.internal.ui.options.OptionFactory;
 public class ParametersTab extends OptionLaunchConfigurationTab {
 
   public ParametersTab() {
-    addOptions(OptionFactory.createAdvancedOptionGroupPlaceholders());
-    addOptions(OptionFactory.createAdvancedOptionGroupPlaceholders());
+    addOptions(OptionFactory.createStoppingCriterionOptionGroupPlaceholders());
+    addOptions(OptionFactory.createOutputParametersOptionGroupPlaceholders());
     addOptions(OptionFactory.createAdvancedOptionGroupPlaceholders());
   }
   
