@@ -308,6 +308,17 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     programArguments.add("--comm-port=" + fPort); //$NON-NLS-1$
     programArguments.add("--noprogressdisplay"); //$NON-NLS-1$
     programArguments.add("--log=randooplog.txt"); // XXX remove
+    
+    if (args.getUseCliArguments()) {
+      // Split the arguments by whitespace characters and new lines
+      String extraArgs[] = args.getCliArguments().split("\\s\\-");
+      for (int i = 0; i < extraArgs.length; i++) {
+        if (i != 0)
+          extraArgs[i] = '-' + extraArgs[i];
+        extraArgs[i] = extraArgs[i].replaceAll("\n|\r|\u0085|\u2028|\u2029", "");
+      }
+      programArguments.addAll(Arrays.asList(extraArgs));
+    }
   }
 
   private void informAndAbort(String message, Throwable exception, int code) throws CoreException {

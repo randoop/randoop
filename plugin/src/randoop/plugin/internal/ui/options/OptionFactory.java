@@ -300,12 +300,12 @@ public class OptionFactory {
     Text cliArgumentsText = SWTFactory.createText(comp, SWT.MULTI | SWT.BORDER, 2, GridData.FILL_BOTH);
     cliArgumentsLabel.setToolTipText("Specifies addition command-line arguments to pass to Randoop. These" +
     		                         "arguments will override any of the specified arguments above.");
-    CliAgrumentsOption cliArgumentsOptions = new CliAgrumentsOption(cliArgumentsText);
+    CliAgrumentsOption cliArgumentsOption = new CliAgrumentsOption(cliArgumentsText);
     Button cliArgumentsbutton = SWTFactory.createCheckButton(comp, "Use additional arguments",
         null, false, 2);
-    IOption useCliArgumentsOption = new UseCliAgrumentsOption(cliArgumentsOptions,
+    IOption useCliArgumentsOption = new UseCliAgrumentsOption(cliArgumentsOption,
         cliArgumentsbutton);
-
+    
     options.add(randomSeed);
     options.add(maxTestSize);
     options.add(useThreads);
@@ -316,6 +316,7 @@ public class OptionFactory {
     
     threadTimeout.addChangeListener(changeListener);
     nullRatio.addChangeListener(changeListener);
+    cliArgumentsOption.addChangeListener(changeListener);
     for (IOption option : options) {
       option.addChangeListener(changeListener);
     }
