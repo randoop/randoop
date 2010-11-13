@@ -29,7 +29,7 @@ public class ParametersTab extends OptionLaunchConfigurationTab {
   public void createControl(Composite parent) {
     removeAllOptions();
     
-    Composite comp = SWTFactory.createComposite(parent, 1, 1, SWT.HORIZONTAL);
+    Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
     setControl(comp);
     
     GridLayout ld = (GridLayout) comp.getLayout();
