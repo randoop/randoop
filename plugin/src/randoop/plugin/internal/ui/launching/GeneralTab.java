@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Text;
 
 import randoop.plugin.internal.ui.SWTFactory;
 import randoop.plugin.internal.ui.options.ClassSelectorOption;
+import randoop.plugin.internal.ui.options.InitRoutineSelectorOption;
 import randoop.plugin.internal.ui.options.JUnitTestClassNameOption;
 import randoop.plugin.internal.ui.options.OutputDirectoryOption;
 import randoop.plugin.internal.ui.options.ProjectOption;
@@ -19,12 +20,14 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
   private ProjectOption fProjectOption;
   private OutputDirectoryOption fOutputDirectory;
   private JUnitTestClassNameOption fJUnitTestClassNameOption;
+//  private InitRoutineSelectorOption fInitRoutineSelectorOption;
   private ClassSelectorOption fTestInputSelectorOption;
   
   public GeneralTab() {
     addOption(new ProjectOption());
     addOption(new OutputDirectoryOption());
     addOption(new JUnitTestClassNameOption());
+//    addOption(new InitRoutineSelectorOption());
     addOption(new ClassSelectorOption());
   }
   
@@ -63,25 +66,33 @@ public class GeneralTab extends OptionLaunchConfigurationTab {
 
     fJUnitTestClassNameOption = new JUnitTestClassNameOption(fullyQualifiedTestName);
 
+    // SWTFactory.createLabel(comp, "&Initialize Routine:", 1); XXX
+    // Text initRoutineText = SWTFactory.createSingleText(comp, 1);
+    //
+    // Button initRoutineSearchButton = SWTFactory.createPushButton(comp, "&Search...", null);
+    // fInitRoutineSelectorOption = new InitRoutineSelectorOption(getShell(),
+    // null, initRoutineText, initRoutineSearchButton);
+    
     // Test inputs option:
     fTestInputSelectorOption = new ClassSelectorOption(tabcomp, getLaunchConfigurationDialog());
 
-    fProjectOption.addChangeListener(fTestInputSelectorOption);
-
-    addOption(fProjectOption);
-    addOption(fOutputDirectory);
-    addOption(fJUnitTestClassNameOption);
-    addOption(fTestInputSelectorOption);
-
-    fProjectOption.addChangeListener(getBasicOptionChangeListener());
-    
     // Add the outputdir option as a change listener to the project
     // option so it knows when the project changes
     fProjectOption.addChangeListener(fOutputDirectory);
+    // fProjectOption.addChangeListener(fInitRoutineSelectorOption); XXX
+    fProjectOption.addChangeListener(fTestInputSelectorOption);
+    
+    addOption(fProjectOption);
+    addOption(fOutputDirectory);
+    addOption(fJUnitTestClassNameOption);
+    // addOption(fInitRoutineSelectorOption); XXX
+    addOption(fTestInputSelectorOption);
+    
+    fProjectOption.addChangeListener(getBasicOptionChangeListener());
     fOutputDirectory.addChangeListener(getBasicOptionChangeListener());
     fJUnitTestClassNameOption.addChangeListener(getBasicOptionChangeListener());
     fTestInputSelectorOption.addChangeListener(getBasicOptionChangeListener());
-    
+    // fInitRoutineSelectorOption.addChangeListener(getBasicOptionChangeListener()); XXX
   }
 
   public String getName() {
