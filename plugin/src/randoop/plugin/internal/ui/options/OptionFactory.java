@@ -221,7 +221,6 @@ public class OptionFactory {
     options.add(new UseNullOption(new NullRatioOption()));
     options.add(new MaximumTestsPerFileOption());
     // addOption(fMaxTestsWritten);
-    options.add(new UseCliAgrumentsOption(new CliAgrumentsOption()));
     
     return options;
   }
@@ -296,27 +295,15 @@ public class OptionFactory {
     // fMaxTestsWritten =
     // new MaximumTestsWrittenOption(maxTestsWrittenText);
 
-    Label cliArgumentsLabel = SWTFactory.createLabel(comp, "Additional Command-line Arguments:", 2);
-    Text cliArgumentsText = SWTFactory.createText(comp, SWT.MULTI | SWT.BORDER, 2, GridData.FILL_BOTH);
-    cliArgumentsLabel.setToolTipText("Specifies addition command-line arguments to pass to Randoop. These\n" +
-    		                         "arguments will override any of the specified arguments above.");
-    CliAgrumentsOption cliArgumentsOption = new CliAgrumentsOption(cliArgumentsText);
-    Button cliArgumentsbutton = SWTFactory.createCheckButton(comp, "Use additional arguments",
-        null, false, 2);
-    IOption useCliArgumentsOption = new UseCliAgrumentsOption(cliArgumentsOption,
-        cliArgumentsbutton);
-    
     options.add(randomSeed);
     options.add(maxTestSize);
     options.add(useThreads);
     options.add(useNull);
     options.add(maxTestsPerFile);
     // addOption(fMaxTestsWritten);
-    options.add(useCliArgumentsOption);
     
     threadTimeout.addChangeListener(changeListener);
     nullRatio.addChangeListener(changeListener);
-    cliArgumentsOption.addChangeListener(changeListener);
     for (IOption option : options) {
       option.addChangeListener(changeListener);
     }
@@ -671,52 +658,4 @@ public class OptionFactory {
 
   }
   
-  private static class CliAgrumentsOption extends TextOption {
-
-    public CliAgrumentsOption() {
-      super();
-    }
-
-    public CliAgrumentsOption(Text text) {
-      super(text);
-    }
-
-    @Override
-    protected IStatus validate(String text) {
-      return RandoopStatus.OK_STATUS;
-    }
-
-    @Override
-    protected String getAttributeName() {
-      return IRandoopLaunchConfigurationConstants.ATTR_CLI_ARGUMENTS;
-    }
-
-    @Override
-    protected String getDefaultValue() {
-      return "";
-    }
-
-  }
-
-  private static class UseCliAgrumentsOption extends EnablementOption {
-
-    public UseCliAgrumentsOption(CliAgrumentsOption cliAgrumentsOption) {
-      super(cliAgrumentsOption);
-    }
-
-    public UseCliAgrumentsOption(CliAgrumentsOption option, Button enablement) {
-      super(option, enablement);
-    }
-
-    @Override
-    protected String getAttributeName() {
-      return IRandoopLaunchConfigurationConstants.ATTR_USE_CLI_ARGUMENTS;
-    }
-
-    @Override
-    protected boolean getDefaultValue() {
-      return Boolean.parseBoolean(IRandoopLaunchConfigurationConstants.DEFAULT_USE_CLI_ARGUMENTS);
-    }
-  }
-
 }
