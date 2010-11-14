@@ -56,8 +56,6 @@ public class RandoopArgumentCollector {
   private String fTestKinds;
   private int fMaxTestsWritten;
   private int fMaxTestsPerFile;
-  private String fAdditionalCliArguments;
-  private boolean fUseAdditionalCliArguments;
 
   /**
    * Constructs a set of objects corresponding to the parameters in the given
@@ -157,8 +155,6 @@ public class RandoopArgumentCollector {
       fTimeLimit = Integer.parseInt(getTimeLimit(config));
       fMaxTestsWritten = Integer.parseInt(getMaxTestsWritten(config));
       fMaxTestsPerFile = Integer.parseInt(getMaxTestsPerFile(config));
-      fUseAdditionalCliArguments = getUseCliArguments(config);
-      fAdditionalCliArguments = getCliArguments(config);
     } catch (NumberFormatException nfe) {
       IStatus s = RandoopStatus.createLaunchConfigurationStatus(
         IStatus.CANCEL,
@@ -301,14 +297,6 @@ public class RandoopArgumentCollector {
     return fMaxTestsPerFile;
   }
 
-  public String getCliArguments() {
-    return fAdditionalCliArguments;
-  }
-  
-  public boolean getUseCliArguments() {
-    return fUseAdditionalCliArguments;
-  }
-
   public static int getPort(ILaunchConfiguration config) {
     return getAttribute(config, IRandoopLaunchConfigurationConstants.ATTR_PORT,
         IConstants.INVALID_PORT);
@@ -436,18 +424,6 @@ public class RandoopArgumentCollector {
         IRandoopLaunchConfigurationConstants.DEFAULT_MAXIMUM_TESTS_PER_FILE);
   }
   
-  public static boolean getUseCliArguments(ILaunchConfiguration config) {
-    return Boolean.parseBoolean(getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_USE_CLI_ARGUMENTS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_USE_CLI_ARGUMENTS));
-  }
-  
-  public static String getCliArguments(ILaunchConfiguration config) {
-    return getAttribute(config,
-        IRandoopLaunchConfigurationConstants.ATTR_CLI_ARGUMENTS,
-        IRandoopLaunchConfigurationConstants.DEFAULT_CLI_ARGUMENTS);
-  }
-
   public static void deleteAvailableMethods(ILaunchConfigurationWorkingCopy config, String typeMnemonic) {
     setAttribute(config,
         IRandoopLaunchConfigurationConstants.ATTR_AVAILABLE_METHODS_PREFIX + typeMnemonic,
@@ -646,9 +622,7 @@ public class RandoopArgumentCollector {
           && getJUnitClassName().equals(other.getJUnitClassName())
           && getTestKinds().equals(other.getTestKinds())
           && getMaxTestsWritten() == other.getMaxTestsWritten()
-          && getMaxTestsPerFile() == other.getMaxTestsPerFile()
-          && getUseCliArguments() == other.getUseCliArguments()
-          && getCliArguments().equals(other.getCliArguments());
+          && getMaxTestsPerFile() == other.getMaxTestsPerFile();
     }
 
     return super.equals(obj);
@@ -661,8 +635,7 @@ public class RandoopArgumentCollector {
         + getUseThreads() + getThreadTimeout() + getUseNull() + getNullRatio()
         + getInputLimit() + getTimeLimit() + getOutputDirectory()
         + getJUnitPackageName() + getJUnitClassName() + getTestKinds()
-        + getMaxTestsWritten() + getMaxTestsPerFile() + getUseCliArguments()
-        + getCliArguments()).hashCode();
+        + getMaxTestsWritten() + getMaxTestsPerFile()).hashCode();
   }
 
 }
