@@ -198,8 +198,8 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
 
     ArrayList<String> vmArguments = new ArrayList<String>();
     ArrayList<String> programArguments = new ArrayList<String>();
-    collectExecutionArguments(configuration, vmArguments, programArguments);
     collectProgramArguments(launchResources, programArguments);
+    collectExecutionArguments(configuration, vmArguments, programArguments);
 
     // Classpath
     List<String> cpList = new ArrayList(Arrays.asList(JavaRuntime.computeDefaultRuntimeClassPath(args.getJavaProject())));
@@ -223,7 +223,16 @@ public class RandoopLaunchDelegate extends AbstractJavaLaunchConfigurationDelega
     runConfig.setEnvironment(getEnvironment(configuration));
     runConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
     runConfig.setBootClassPath(getBootpath(configuration));
-    runConfig.setWorkingDirectory(workingDirName);
+
+    String path = workingDirName;
+    try {
+      File specifiedWorkingDir = getWorkingDirectory(configuration);
+      if (specifiedWorkingDir != null) {
+        path = specifiedWorkingDir.getAbsolutePath();
+      }
+    } catch (CoreException ce) {
+    }
+    runConfig.setWorkingDirectory(path);
 
     // check for cancellation
     if (monitor.isCanceled()) {
