@@ -66,7 +66,7 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
         setErrorMessage(message);
         return false;
       } else {
-        if (message != null && !message.isEmpty()) {
+        if (message != null && message.length() != 0) {
           if (!isMessageSet) {
             isMessageSet = setReadableMessage(message);
           }
@@ -111,7 +111,7 @@ public abstract class OptionLaunchConfigurationTab extends AbstractLaunchConfigu
    */
   protected boolean setReadableMessage(String message) {
     String msg = message;
-    if (msg != null && !msg.isEmpty()) {
+    if (msg != null && msg.length() != 0) {
       setMessage(message);
       return true;
     }
