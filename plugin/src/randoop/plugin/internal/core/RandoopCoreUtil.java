@@ -124,7 +124,7 @@ public class RandoopCoreUtil {
    * @return
    */
  public static String getFullyQualifiedName(String packageName, String className) {
-    if (packageName.isEmpty()) {
+    if (packageName.length() == 0) {
       return className;
     } else {
       return packageName + '.' + className;

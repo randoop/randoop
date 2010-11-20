@@ -402,7 +402,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
   
       if (obj instanceof String) {
         String pfname = (String) obj;
-        return pfname.isEmpty() ? DEFAULT_PACKAGE_DISPLAY_NAME : pfname;
+        return pfname.length() == 0 ? DEFAULT_PACKAGE_DISPLAY_NAME : pfname;
       } else if (obj instanceof TypeMnemonic) {
         return RandoopCoreUtil.getClassName(((TypeMnemonic) obj).getFullyQualifiedName());
       } else if (obj instanceof MethodMnemonic) {
