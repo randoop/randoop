@@ -31,6 +31,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
@@ -69,7 +70,10 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
       elements = new IJavaElement[selected.length];
 
       for (int i = 0; i < selected.length; i++) {
-        Assert.isTrue(selected[i] instanceof IJavaElement);
+        Assert.isTrue(selected[i] instanceof IJavaElement,
+            NLS.bind("Selected element ({0}) is not an instanceof IJavaElement",
+                     selected[i].getClass().toString()));
+        
         IJavaElement e = (IJavaElement) selected[i];
 
         if (javaProject == null) {
