@@ -40,7 +40,7 @@ public abstract class TextOption extends Option implements IEnableableOption {
   public IStatus canSave() {
     if (fText != null && !fText.isDisposed()) {
       String text = fText.getText();
-      if (!text.isEmpty()) {
+      if (text.length() != 0) {
         return validate(text);
       }
     }

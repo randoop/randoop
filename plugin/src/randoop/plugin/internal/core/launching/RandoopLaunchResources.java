@@ -261,7 +261,7 @@ public class RandoopLaunchResources {
       
       bw.close();
       
-      if (!unusedStatments.isEmpty()) {
+      if (unusedStatments.length() != 0) {
         unusedStatments = "The Randoop Eclipse plugin does not currently support selectively testing methods that use type variables. The following methods will not be tested:\n\n" //$NON-NLS-1$
             + unusedStatments;
         MessageUtil.openInformation(unusedStatments);

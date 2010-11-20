@@ -102,7 +102,7 @@ public class JUnitTestClassNameOption extends Option {
       return RandoopStatus.createUIStatus(IStatus.ERROR, "JUnit class name cannot use secondary types");
     }
     IStatus packageStatus = RandoopStatus.OK_STATUS;
-    if (!packageName.isEmpty()) {
+    if (packageName.length() != 0) {
       packageStatus = JavaConventions.validatePackageName(packageName,
           IConstants.DEFAULT_COMPLIANCE_LEVEL, IConstants.DEFAULT_SOURCE_LEVEL);
       if (packageStatus.getSeverity() == IStatus.ERROR) {
@@ -131,7 +131,7 @@ public class JUnitTestClassNameOption extends Option {
       String packageName = RandoopArgumentCollector.getJUnitPackageName(config);
       String className = RandoopArgumentCollector.getJUnitClassName(config);
 
-      if (packageName.isEmpty()) {
+      if (packageName.length() == 0) {
         fFullyQualifiedTestName.setText(className);
       } else {
         fFullyQualifiedTestName.setText(packageName + '.' + className);
