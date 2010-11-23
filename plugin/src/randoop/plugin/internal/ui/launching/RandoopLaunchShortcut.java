@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,6 +27,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -60,8 +62,19 @@ public class RandoopLaunchShortcut implements ILaunchShortcut {
     Object[] selected = structuredSelection.toArray();
     final IJavaElement[] elements;
 
-    if (selected.length == 1 && selected[0] instanceof IJavaProject) {
-      javaProject = (IJavaProject) selected[0];
+    if (selected.length == 1 && selected[0] instanceof IProject) {
+      IProject project = (IProject) selected[0];
+      try {
+        javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
+      } catch (CoreException e) {
+
+        RandoopPlugin.log(RandoopStatus.NO_JAVA_PROJECT.getStatus(project, e));
+        return;
+      }
+    }
+    
+    if (javaProject != null) {
+      // Initialize elements as an array of length 1 containing the Java project
       elements = new IJavaElement[1];
       elements[0] = javaProject;
     } else {
