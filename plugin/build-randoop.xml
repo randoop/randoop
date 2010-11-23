@@ -20,7 +20,7 @@
 
 	<target name="compile" depends="clean">
 		<mkdir dir="bin" />
-		<javac source="1.6" target="1.6" srcdir="${src.dir}" classpathref="build.classpath" destdir="${output.dir}" />
+		<javac source="1.5" target="1.5" srcdir="${src.dir}" classpathref="build.classpath" destdir="${output.dir}" />
 	</target>
 
 	<target name="makejar" description="Create a minimal jar for Randoop with plume.jar included" depends="compile">
