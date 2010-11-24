@@ -20,7 +20,8 @@
           <li><a href="#installing_addons">Install Required Add-ons</a></li>
         </ul></li>
       <li><a href="#compiling">Compiling Randoop Plug-in</a></li>
-      <li><a href="#running">Running Plug-in Tests</a></li>
+      <li><a href="#running_plugin">Running the Randoop Plug-in</a></li>
+      <li><a href="#running_tests">Running Plug-in Tests</a></li>
       <li><a href="#modmanual">Modifying the manual</a></li>
       <li><a href="#making_new_dist">Making a new distribution</a></li>
     </ul></li>
@@ -55,10 +56,11 @@ your pre-existing Eclipse installation.</p>
 
 <h3 id="downloading_eclipse">Download a New Eclipse Installation</h3>
 <p>Visit the <a href="http://www.eclipse.org/downloads/">Eclipse Downloads</a>
-page and install 'Eclipse Classic.' Next, follow the instuctions below to
-install SWTBot from its <a href="http://eclipse.org/swtbot/downloads.php">update
-site</a>. The Classic distribution already comes packaged with the Plug-in
-Development Environment and sources for many Eclipse plug-ins. </p>
+page and get "Eclipse Classic." The Classic package comes with the Plug-in
+Development Environment (PDE) as well as sources for many Eclipse plug-ins.
+Next, if you plan on running tests for the plugin, follow the instuctions
+below to install SWTBot from its <a href="http://eclipse.org/swtbot/downloads.php">update
+site</a>.</p>
 
 <h3 id="installing_addons">Install Required Add-ons</h3>
 
@@ -70,15 +72,15 @@ in a few easy steps:</p>
   <ol>
     <li>Go to <b>Help > Install New Software...</b></li>
     <li>Select the update site for your Eclipse version from the pull down list. For Helios this is http://download.eclipse.org/releases/helios</li>
-    <li>Check <b>Eclipse Plug-in Development Environment</b> from the 'General Purpose Tools' category.</li>
+    <li>Check <b>Eclipse Plug-in Development Environment</b> from the "General Purpose Tools" category.</li>
 	<li>Press <b>Next</b> to install the feature</li>
   </ol>
-  <li>Install <a href="http://swtbot.org/">SWTBot</a>
+  <li>Install <a href="http://swtbot.org/">SWTBot</a> if you plan on running tests for the plugin.
   <ol>
     <li>Go to <b>Help > Install New Software...</b></li>
     <li>Add the appropriate <a href="http://eclipse.org/swtbot/downloads.php">
 	SWTBot update-site</a> for your Eclipse version to the available repositories</li>
-    <li>Select all plug-ins except for 'SWTBot for GEF Testing'</li>
+    <li>Select all plug-ins except for "SWTBot for GEF Testing"</li>
 	<li>Press <b>Next</b> to install the features</li>
   </ol>
 </ul></p>
@@ -87,26 +89,38 @@ in a few easy steps:</p>
 <h2 id="compiling">Compiling Randoop Plug-in</h2>
 
 <p>Make a local clone of the Randoop repository in your Eclipse workspace
-folder. Open Eclipse, and import the projects 'randoop,' 'plugin,'
-'plugin.feature,' 'plugin.updateSite,' 'plugin.tests,' and 'plugin.experimental'
-from the repository. To do this:</p>
+folder:</p>
+<pre class="code">
+hg clone https://randoop.googlecode.com/hg/ randoop 
+</pre>
+<p>Open Eclipse, and import the projects "randoop" and "plugin." You may
+optionally also import the "plugin.feature," "plugin.updateSite," "plugin.tests,"
+and "plugin.experimental" projects from the repository as well. To do this:</p>
 
 <ol>
   <li>Go to <b>File > Import...</b></li>
-  <li>Select <b>Existing projects into Workspace</b>, click 'Next'</li>
+  <li>Select <b>Existing projects into Workspace</b>, click "Next"</li>
   <li>Select the working directory of your cloned Randoop repository as the root directory</li>
-  <li>Check 'randoop' from the list of projects and click 'Finish'</li>
-  <li>Repeat these steps for the 'plugin,' 'plugin.feature,'
-  'plugin.updateSite,' 'plugin.tests,' and 'plugin.experimental' folders in your
-  clone's working directory.</li>
+  <li>Check "randoop" from the list of projects and click "Finish"</li>
+  <li>Repeat these steps for the "plugin" folder in your clone's working
+      directory. You may also wish to add the "plugin.feature,"
+     "plugin.updateSite," "plugin.tests," and "plugin.experimental" folders
+	 as well.</li>
 </ol>
 
 <p>After adding all projects, you may need to run <b>Project > Clean...</b>
 to compile the projects.</p>
 
-<h2 id="running">Running Plug-in Tests</h2>
+<h2 id="running_plugin">Running the Randoop Plug-in</h2>
 
-<p>In the fragment plugin.tests, run each launch configuration in the 'launchConfigurations' folder.</p>
+<p>To run the Randoop plug-in for the first time, right click on the "plugin" project
+select <b>Run As > Eclipse Application</b>. If you added the plugin.experiminal
+plug-in fragment to your workspace, you may wish to disable it by navigating to the
+"Plug-ins" tab of the run configuration and unchecking it.</p>
+
+<h2 id="running_tests">Running Plug-in Tests</h2>
+
+<p>In the plugin.tests fragment, run each launch configuration in the "launchConfigurations" folder.</p>
 
 <h2 id="modmanual">Modifying the manual</h2>
 
