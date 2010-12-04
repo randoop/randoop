@@ -878,7 +878,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
       TypeMnemonic typeMnemonic = new TypeMnemonic(typeMnemonicString, getWorkspaceRoot());
       IType type = typeMnemonic.getType();
       
-      if (fJavaProject == null || !fJavaProject.equals(typeMnemonic.getJavaProject())) {
+      if (fJavaProject == null || !fJavaProject.equals(typeMnemonic.getJavaProject()) || !typeMnemonic.exists()) {
         return RandoopStatus.createUIStatus(IStatus.ERROR, "One of the classes does not exist in the selected project");
       }
       
