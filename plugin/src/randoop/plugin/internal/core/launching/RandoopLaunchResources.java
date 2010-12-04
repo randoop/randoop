@@ -145,7 +145,16 @@ public class RandoopLaunchResources {
           }
         }
       }
-      IClasspathEntry newEntry = JavaCore.newSourceEntry(folder.getFullPath());
+
+      IResource[] resources = folder.members();
+      IPath[] excludedItems = new IPath[resources.length];
+      // Exclude any pre-existing files from the source folder we are about to create
+      for (int i = 0; i < resources.length; i++) {
+        excludedItems[i] = resources[i].getFullPath().makeRelativeTo(folder.getFullPath())
+            .addTrailingSeparator();
+      }
+      
+      IClasspathEntry newEntry = JavaCore.newSourceEntry(folder.getFullPath(), excludedItems);
       entries.add(newEntry);
       
       javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
