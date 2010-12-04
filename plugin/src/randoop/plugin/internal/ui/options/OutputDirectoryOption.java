@@ -82,7 +82,7 @@ public class OutputDirectoryOption extends Option implements IOptionChangeListen
 
         if (chosenFolder != null) {
           fOutputSourceFolder = chosenFolder;
-          fOutputSourceFolderText.setText(fOutputSourceFolder.getElementName());
+          fOutputSourceFolderText.setText(fOutputSourceFolder.getPath().makeRelativeTo(fJavaProject.getPath()).toString());
         }
       }
     });
