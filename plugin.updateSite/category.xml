@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/randoop_0.1.0.qualifier.jar" id="randoop" version="0.1.0.qualifier">
+      <category name="randoop"/>
+   </feature>
+   <category-def name="randoop" label="Randoop">
+      <description>
+         Eclipse plugins for Randoop.
+      </description>
+   </category-def>
+</site>

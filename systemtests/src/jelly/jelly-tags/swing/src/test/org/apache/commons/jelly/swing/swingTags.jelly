@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<j:jelly 
+    xmlns:j="jelly:core" 
+    xmlns="jelly:swing">
+	
+    <!--for the basic component assembly-->
+    <j:if test="${test.simple}">
+        <frame name="frame" var="frame" size="100,100" location="200,200">
+            <panel name="panel" debugGraphics="log|flash">
+                <button name="button" background="#112233" foreground="#445566" debugGraphicsOptions="buffered"/>
+            </panel>
+        </frame>
+    </j:if>
+    
+    <!--for the GridBag test-->
+    <j:if test="${test.gbc}">
+        <frame name="frame" var="frame">
+            <gridBagLayout>
+                <gbc anchor="north" fill="vertical" gridheight="3" 
+                    gridwidth="2" gridx="4" gridy="5" insets="1,2,3,4"
+                    ipadx="7" ipady="8" weightx=".3" weighty=".6">
+                    
+                    <button name="button"/>
+                </gbc>
+                
+                <gbc gridx="1" gridy="2" insets="3,4,5,6"
+                    ipadx="8" ipady="9">
+                
+                    <gbc ipadx="2">
+                        <button name="button2" />
+                    </gbc>
+                </gbc>
+                
+            </gridBagLayout>
+        </frame>
+    </j:if>
+    
+    <!--for the GridBag 1.4 test-->
+    <j:if test="${test.gbc14}">
+        <frame name="frame" var="frame">
+            <gridBagLayout>
+                <gbc anchor="line_start">
+                    <button name="button"/>
+                </gbc>
+            </gridBagLayout>
+        </frame>
+    </j:if>
+    
+    <!--for the GridBag invalid anchor test-->
+    <j:if test="${test.gbcBad}">
+        <frame name="frame" var="frame">
+            <gridBagLayout>
+                <gbc anchor="foo">
+                    <button name="button"/>
+                </gbc>
+            </gridBagLayout>
+        </frame>
+    </j:if>
+
+    <!--for the ButtonGroup test-->
+    <j:if test="${test.buttonGroup}">
+        <frame name="frame" var="frame">
+            <buttonGroup var="bg">
+                <checkBox name="cb1"/>
+				<checkBox name="cb2" selected="true"/>
+				<checkBox name="cb3"/>
+            </buttonGroup>
+        </frame>
+    </j:if>
+    
+	<!--tries to set a bean property that doesn't exist-->
+    <j:if test="${test.invalidProperty}">
+        <frame name="frame" var="frame" size="100,100" location="200,200" foo="bar">
+            <panel name="panel">
+            </panel>
+        </frame>
+    </j:if>
+	
+</j:jelly>
