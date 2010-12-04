@@ -93,8 +93,8 @@ folder:</p>
 <pre class="code">
 hg clone https://randoop.googlecode.com/hg/ randoop 
 </pre>
-<p>Open Eclipse, and import the projects "randoop" and "plugin." You may
-optionally also import the "plugin.feature," "plugin.updateSite," "plugin.tests,"
+<p>Open Eclipse, and import the projects "randoop," "plugin," "plugin.feature,"
+and "plugin.updateSite." You may optionally also import the "plugin.tests"
 and "plugin.experimental" projects from the repository as well. To do this:</p>
 
 <ol>
@@ -102,10 +102,9 @@ and "plugin.experimental" projects from the repository as well. To do this:</p>
   <li>Select <b>Existing projects into Workspace</b>, click "Next"</li>
   <li>Select the working directory of your cloned Randoop repository as the root directory</li>
   <li>Check "randoop" from the list of projects and click "Finish"</li>
-  <li>Repeat these steps for the "plugin" folder in your clone's working
-      directory. You may also wish to add the "plugin.feature,"
-     "plugin.updateSite," "plugin.tests," and "plugin.experimental" folders
-	 as well.</li>
+  <li>Repeat these steps for the "plugin," "plugin.feature," and "plugin.updateSite"
+      folders in your clone's working directory. You can also add the 
+      "plugin.tests" and "plugin.experimental" projects using the same steps.</li>
 </ol>
 
 <p>After adding all projects, you may need to run <b>Project > Clean...</b>
@@ -113,7 +112,7 @@ to compile the projects.</p>
 
 <h2 id="running_plugin">Running the Randoop Plug-in</h2>
 
-<p>To run the Randoop plug-in for the first time, right click on the "plugin" project
+<p>To run the Randoop plug-in for the first time, right click the plugin project
 select <b>Run As > Eclipse Application</b>. If you added the plugin.experiminal
 plug-in fragment to your workspace, you may wish to disable it by navigating to the
 "Plug-ins" tab of the run configuration and unchecking it.</p>
@@ -143,9 +142,10 @@ plug-in fragment to your workspace, you may wish to disable it by navigating to 
 
 <p>
 <ol>
-  <li>Change the value of the constant <tt>USE_RANDOOP_ARCHIVE</tt> in <tt>randoop.plugin.RandoopPlugin</tt> to <tt>true</tt></li>
-  <li>Run <tt>build-randoop.launch</tt> to build a minimal Randoop jar file (including plume) in the plugin project's base directory.</li>
-  <li>Right click on the plugin project and select <b>Export</b> from the context menu</li>
+  <li>Change the value of the constant <tt>USE_RANDOOP_ARCHIVE</tt> in <tt>randoop.plugin.RandoopPlugin</tt> class to <tt>true</tt></li>
+  <li>Run <tt>build-randoop.launch</tt> to build a minimal Randoop jar file (including plume) in the plugin project's base directory.
+      To do this, right click build-randoop.launch and select  <b>Run As... > build-randoop</b> </li>
+  <li>Right click the plugin project and select <b>Export</b> from the context menu</li>
   <li>Select <b>Deployable features</b>, click Next</li>
   <li>Check <b>randoop</b> from the list of available features</li>
   <li>Under the <b>Destination</b> tab, select <b>Directory</b> and browse for the <b>plugin.updateSite</b> directory</li>
