@@ -1,7 +1,22 @@
-Randoop License
-===============
 
-Copyright @ 2008 Massachusetts Institute of Technology
+Unless otherwise noted, Randoop is distributed under the MIT license,
+which appears below.  Some files in Randoop's distribution are
+distributed under a different license. These exceptions are:
+
+Randoop source code:
+  src/randoop/util/StreamRedirectThread.java (License in file)
+  src/randoop/util/StringEscapeUtils.java (Apache License 2.0)
+  src/randoop/util/StringPrintWriter.java (Apache License 2.0)
+  plugin/src/randoop/plugin/util/ReaderInputStream.java (Apache License 2.0)
+
+Libraries used by Randoop:
+  lib/ (various licenses, see individual jar files)
+
+Experimental subject programs (not part of Randoop's implementation)
+  systemtests/ (various licenses)
+  tests/ (various licenses)
+
+Copyright @ 2010 Massachusetts Institute of Technology
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
