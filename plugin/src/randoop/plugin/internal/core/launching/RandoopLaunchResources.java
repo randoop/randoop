@@ -98,18 +98,21 @@ public class RandoopLaunchResources {
     String packagePath = args.getJUnitPackageName().replace('.', '/');
     IJavaProject javaProject = args.getJavaProject();
     Assert.isTrue(javaProject.getPath().isPrefixOf(fullOutputDirPath));
+    javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+    
     fOutputLocation = root.getLocation().append(fullOutputDirPath);
     
-    IPath outputDirPath = fullOutputDirPath.removeFirstSegments(1);
+    IPath outputDirPath = fullOutputDirPath.makeRelativeTo(javaProject.getPath());
     
     IPackageFragmentRoot pfr = RandoopCoreUtil.getPackageFragmentRoot(javaProject, outputDirPath.toString());
     if (pfr == null) {
       // Make the directory
       IFolder folder = root.getFolder(fullOutputDirPath);
       File file = folder.getLocation().toFile();
-      if (!file.exists() || !file.isDirectory()) {
+      if (!file.exists()) {
         // XXX On some systems files and directories cannot be named the same
         Assert.isTrue(file.mkdirs());
+        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
       }
       
       List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>(Arrays.asList(javaProject.getRawClasspath()));
@@ -127,7 +130,8 @@ public class RandoopLaunchResources {
         Assert.isTrue(originalEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE);
 
         IPath suffix = folder.getFullPath()
-            .removeFirstSegments(container.getFullPath().segmentCount()).addTrailingSeparator();
+            .removeFirstSegments(container.getFullPath().segmentCount());
+        suffix = suffix.removeLastSegments(suffix.segments().length - 1).addTrailingSeparator();
         List<IPath> exclusionPatterns = new ArrayList<IPath>(Arrays.asList(originalEntry
             .getExclusionPatterns()));
         if (!exclusionPatterns.contains(suffix)) {
@@ -144,8 +148,13 @@ public class RandoopLaunchResources {
             entries.set(i, replacementEntry);
           }
         }
+        
+        // Update the classpath for the project
+        javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
+        javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
       }
-
+      
+      
       IResource[] resources = folder.members();
       IPath[] excludedItems = new IPath[resources.length];
       // Exclude any pre-existing files from the source folder we are about to create
@@ -158,7 +167,7 @@ public class RandoopLaunchResources {
       entries.add(newEntry);
       
       javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
-      javaProject.getProject().refreshLocal(IResource.DEPTH_ONE, monitor);
+      javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
     }
 
     fJUnitOutputFolder = getFolder(root, fullOutputDirPath.append(packagePath));
