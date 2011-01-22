@@ -813,11 +813,13 @@ td.noformatting {
  * The shadow at the bottom of the page between the main content and the
  * "powered by" section.
  */
+/*
 .bottomshadow {
     height: 12px;
     background-image: url("/wiki/images/border/border_bottom.gif");
     background-repeat: repeat-x;
 }
+*/
 
 /*
  * Styling of the operations box
