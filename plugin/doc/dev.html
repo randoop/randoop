@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="main.css" type="text/css" />
 <title>Randoop Developer's Manual</title>
 </head>
-<body>
+	<body>
 
 <h1>Randoop Eclipse Plug-in Developer's Manual</h1> <!-- omit from toc -->
 
@@ -67,23 +67,25 @@ site</a>.</p>
 <p>If you already have Eclipse installed, you can install the necessary features
 in a few easy steps:</p>
 
-<p><ul>
+<ul>
   <li>Install The Eclipse <a href="http://www.eclipse.org/pde/">Plug-in Development Environment</a>
   <ol>
     <li>Go to <b>Help > Install New Software...</b></li>
     <li>Select the update site for your Eclipse version from the pull down list. For Helios this is http://download.eclipse.org/releases/helios</li>
     <li>Check <b>Eclipse Plug-in Development Environment</b> from the "General Purpose Tools" category.</li>
-	<li>Press <b>Next</b> to install the feature</li>
+    <li>Press <b>Next</b> to install the feature</li>
   </ol>
+  </li>
   <li>Install <a href="http://swtbot.org/">SWTBot</a> if you plan on running tests for the plugin.
   <ol>
     <li>Go to <b>Help > Install New Software...</b></li>
     <li>Add the appropriate <a href="http://eclipse.org/swtbot/downloads.php">
-	SWTBot update-site</a> for your Eclipse version to the available repositories</li>
+    SWTBot update-site</a> for your Eclipse version to the available repositories</li>
     <li>Select all plug-ins except for "SWTBot for GEF Testing"</li>
-	<li>Press <b>Next</b> to install the features</li>
+    <li>Press <b>Next</b> to install the features</li>
   </ol>
-</ul></p>
+  </li>
+</ul>
 
 
 <h2 id="compiling">Compiling Randoop Plug-in</h2>
@@ -140,7 +142,6 @@ plug-in fragment to your workspace, you may wish to disable it by navigating to 
 
 <h2 id="making_new_dist">Making a new distribution</h2>
 
-<p>
 <ol>
   <li>Change the value of the constant <tt>USE_RANDOOP_ARCHIVE</tt> in <tt>randoop.plugin.RandoopPlugin</tt> class to <tt>true</tt></li>
   <li>Run <tt>build-randoop.launch</tt> to build a minimal Randoop jar file (including plume) in the plugin project's base directory.
@@ -151,18 +152,17 @@ plug-in fragment to your workspace, you may wish to disable it by navigating to 
   <li>Under the <b>Destination</b> tab, select <b>Directory</b> and browse for the <b>plugin.updateSite</b> directory</li>
   <li>Under the <b>Options</b> tab: 
   <ol>
-	<li>Check <b>Package as individual JAR archives</b></li>
+    <li>Check <b>Package as individual JAR archives</b></li>
     <li>Check <b>Generate metadata repository</b></li>
-	<li>Check <b>Categorize repository</b> and select <b>category.xml</b> from the <b>plugin.updateSite</b> project</li>
-	<li>Check <b>Allow for binary cycles in target platform</b></li>
-	<li>Uncheck all other options</li>
+    <li>Check <b>Categorize repository</b> and select <b>category.xml</b> from the <b>plugin.updateSite</b> project</li>
+    <li>Check <b>Allow for binary cycles in target platform</b></li>
+    <li>Uncheck all other options</li>
   </ol></li>
   <li>Click <b>Finish</b></li>
   <li>Set <tt>USE_RANDOOP_ARCHIVE</tt> in <tt>randoop.plugin.RandoopPlugin</tt> back to <tt>false</tt></li>
   <li>Commit and push changes</li>
 </ol>
 
-</p>
 
 <h1 id="randoop_internals">Randoop Internals</h1>
 
@@ -180,3 +180,6 @@ plugin/build-randoop.xml is provided to make exporting the archive easy. To run
 the ant file from Eclipse, simply run the launch
 configuration plugin/build-randoop.config.
 </p>
+
+</body>
+</html>
