@@ -169,13 +169,18 @@ public final class ReflectionExecutor {
     out.println("Message: " + e.getMessage());
     out.println("Stack trace: ");
     try {
-      // Workaround for http://bugs.sun.com/view_bug.do?bug_id=6973831
-      Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");    
-      if (eSuppressedExceptions == null) {
-        UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<Object>());
+      e.printStackTrace(out);
+    } catch (Throwable t) {
+      try {
+        // Workaround for http://bugs.sun.com/view_bug.do?bug_id=6973831
+        // Note that field Throwable.suppressedExceptions only exists in JDK 7.
+        Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");    
+        if (eSuppressedExceptions == null) {
+          UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<Object>());
+        }
+      } catch (NoSuchFieldException nsfe) {
+        out.println("This can't happen on JDK7 (can on JDK6): NoSuchFieldException " + nsfe);
       }
-    } catch (NoSuchFieldException nsfe) {
-      out.println("This can't happen: NoSuchFieldException " + nsfe);
     }
   }
 
