@@ -13,7 +13,6 @@ import java.util.Set;
 
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
-import randoop.experimental.SequencePrettyPrinter;
 import randoop.main.GenInputsAbstract;
 
 /**
@@ -107,11 +106,6 @@ public class JunitFileWriter {
 
 
   private File writeSubSuite(List<ExecutableSequence> sequencesForOneFile, String junitTestsClassName) {
-	if(GenInputsAbstract.pretty_print) {
-	    SequencePrettyPrinter printer = new SequencePrettyPrinter(sequencesForOneFile, packageName, junitTestsClassName);
-	    return printer.createFile(getDir().getAbsolutePath());
-	}
-	
     String className = junitTestsClassName;
     File file = new File(getDir(), className + ".java");
     PrintStream out = createTextOutputStream(file);
