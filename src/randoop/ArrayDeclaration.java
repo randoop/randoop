@@ -61,13 +61,6 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
   public Class<?> getElementType() {
     return this.elementType;
   }
-  
-  /**
-   * Returns the length of elements held in this ArrayDeclarationInfo
-   * */
-  public int getLength() {
-	  return this.length;
-  }
 
   /**
    * Extracts the input constraints for this ArrayDeclarationInfo

@@ -260,9 +260,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public final static String all = "all";
   public final static String fail = "fail";
   public final static String pass = "pass";
-  
-  @Option("Simplify failed tests while preserving original failure behavior")
-  public static boolean simplify_fail_tests = false;
 
   /** Maximum number of tests to write to each JUnit file */
   @Option("Maximum number of tests to write to each JUnit file")
@@ -292,9 +289,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Output sequences even if they do not complete execution")
   public static boolean output_nonexec = false;
-  
-  @Option("Output sequences after changing to a better variable name")
-  public static boolean pretty_print = false;
   
   @Option("specifies regex of classes that must be in any regression tests")
   public static Pattern test_classes = null;
