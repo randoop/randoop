@@ -62,6 +62,7 @@ import randoop.SeedSequences;
 import randoop.Sequence;
 import randoop.StatementKind;
 import randoop.Variable;
+import randoop.experimental.GreedySequenceSimplifier;
 import randoop.experiments.CodeCoverageTracker;
 import randoop.experiments.CovWitnessHelperVisitor;
 import randoop.experiments.RandomWalkGenerator;
@@ -598,6 +599,29 @@ public class GenTests extends GenInputsAbstract {
       for (int ii = 0; ii < GenInputsAbstract.outputlimit; ii++)
         seqs.add (sequences.get (ii));
       sequences = seqs;
+    }
+    
+    if(GenInputsAbstract.simplify_fail_tests) {
+    	List<ExecutableSequence> failedSequences = new LinkedList<ExecutableSequence>();
+    	for(ExecutableSequence sequence : sequences) {
+    		if(sequence.hasFailure() && !sequence.hasNonExecutedStatements()) {
+    			failedSequences.add(sequence);
+    		}
+    	}
+    	//simplify each failed statement, and replace the original sequences with the
+    	//simplified one
+    	System.out.println("Start to simplify: " + failedSequences.size() + " sequences.");
+    	for(ExecutableSequence failedSequence : failedSequences) {
+    	    GreedySequenceSimplifier simplifier = new GreedySequenceSimplifier(failedSequence.sequence, explorer.executionVisitor);
+    	    ExecutableSequence simplified_sequence = simplifier.simplfy_sequence();
+    	    System.out.println("Simplified a failed sequence, original length: " + failedSequence.sequence.size()
+    	    		+ ", length after simplification: " + simplified_sequence.sequence.size());
+    	    int index = sequences.indexOf(failedSequence);
+    	    assert index != -1 : "The index should not be -1";
+    	    //replace the failed sequence with the simplified one
+    	    sequences.remove(index);
+    	    sequences.add(index, simplified_sequence);
+    	}
     }
 
     List<File> genfiles = write_junit_tests (junit_output_dir, sequences,

@@ -134,7 +134,7 @@ public final class RMethod implements StatementKind, Serializable {
   // fails sometimes)
   // It is bogus because what we produce here may be different from correct
   // infered type.
-  private String getTypeArguments() {
+  public String getTypeArguments() {
     TypeVariable<Method>[] typeParameters = method.getTypeParameters();
     if (typeParameters.length == 0)
       return "";
@@ -285,7 +285,7 @@ public final class RMethod implements StatementKind, Serializable {
     return outputTypeCached;
   }
 
-  private boolean isVoid() {
+  public boolean isVoid() {
     if (!isVoidComputed) {
       isVoidComputed = true;
       isVoidCached = void.class.equals(this.method.getReturnType());
