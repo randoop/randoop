@@ -37,7 +37,7 @@ public final class CollectionsExt {
     return Collections.unmodifiableList(new ArrayList<T>(l));
   }
 
-  @SuppressWarnings("varargs") // heap pollution warning
+  @SuppressWarnings({"varargs","unchecked"}) // heap pollution warning
   public static <T> Set<T> intersection(Set<? extends T>... sets) {
     if (sets.length == 0)
       return Collections.emptySet();
@@ -61,7 +61,7 @@ public final class CollectionsExt {
     return result;
   }
 
-  @SuppressWarnings("varargs") // heap pollution warning
+  @SuppressWarnings({"varargs","unchecked"}) // heap pollution warning
   public static <T> Set<T> union(Set<? extends T>... sets) {
     Set<T> result= new LinkedHashSet<T>();
     for (Set<? extends T> s : sets) {
@@ -74,7 +74,7 @@ public final class CollectionsExt {
    * Returns an ArrayList that is a concatenation of the arguments. 
    * Elements of arguments are copied, the argument lists are NOT shared. 
    */
-  @SuppressWarnings("varargs") // heap pollution warning
+  @SuppressWarnings({"varargs","unchecked"}) // heap pollution warning
   public static <T> List<T> concat(List<? extends T>... lists) {
     List<T> result= new ArrayList<T>();
     for (List<? extends T> list : lists) {
