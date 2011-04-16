@@ -86,19 +86,24 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Ignore class names specified by user that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
   
+  /**
+   * The possible values of the literals_level command-line argument.
+   * @see #literals_level
+   */
   public static enum ClassLiteralsMode {
-    NONE, CLASS, PACKAGE, ALL;
+    /** do not use literals specified in a literals file */
+    NONE,
+      /** a literal for a given class is used as input only to methods of that class */
+      CLASS,
+      /** a literal is used as input to methods of any classes in the same package */
+      PACKAGE,
+      /** each literal is used as input to any method under test */
+      ALL;
   }
   
   /**
-   * How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE.
-   *  
-   * <ul>
-   * <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
-   * <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.</li>
-   * <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.</li>
-   * <li> --literals-level=NONE means do not use literals specified in a literals file.</li>
-   * </ul>
+   * How to use literal values (see --literals-file).
+   * @see ClassLiteralsMode
    */
   @Option("How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE")
   public static ClassLiteralsMode literals_level = ClassLiteralsMode.NONE;
@@ -261,7 +266,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public final static String fail = "fail";
   public final static String pass = "pass";
 
-  @Option("Simplify failed tests while preserving original failure behavior")
+  @Option("Simplify (shorten) failed tests while preserving failure behavior")
   public static boolean simplify_fail_tests = false;
 
   /** Maximum number of tests to write to each JUnit file */
