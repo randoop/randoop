@@ -192,37 +192,30 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
 <ul>
   <li>Code under test
     <ul>
-      <li><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class under test [default []]</li>
+      <li><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class under test</li>
       <li><b>--classlist=</b><i>string</i>. The name of a file that lists classes under test.
  
  In the file, each class under test is specified by its fully
- qualified name on a separate line. [no default]</li>
+ qualified name on a separate line.</li>
       <li><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
  
  In the file, each each method under test is specified on a separate
  line. The list of methods given by this argument will augment
  any methods derived via the --classlist option.
  
- Also see section on <a href="#specifying-methods">specifying methods 
- and constructors under test</a>. [no default]</li>
+ Also see the manual section on <a href="http://randoop.googlecode.com/hg/doc/#specifying-methods">specifying methods 
+ and constructors under test</a>.</li>
       <li><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method#toString()</code> matches the regular expression
  given.  This does not prevent indirect calls to such methods from
- other, allowed methods. [no default]</li>
-      <li><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method) [no default]</li>
+ other, allowed methods.</li>
+      <li><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method)</li>
       <li><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
-      <li><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE.
-  
- <ul>
- <li> --literals-level=ALL means each literal is used as input to any method under test.</li>
- <li> --literals-level=PACKAGE means a literal is used as input to methods of any classes in the same package.</li>
- <li> --literals-level=CLASS means a literal for a given class is used as input only to methods of that class.</li>
- <li> --literals-level=NONE means do not use literals specified in a literals file.</li>
- </ul> [default NONE]</li>
+      <li><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file). See: <code>ClassLiteralsMode</code>. [default NONE]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
       <li><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
  
  Literals in these files are used in addition to all other constants in the pool.
  For the format of this file, see documentation in class <code>randoop.LiteralFileReader</code>.
- The special value "CLASSES" (with no quotes) means to read literals from all classes under test. [default []]</li>
+ The special value "CLASSES" (with no quotes) means to read literals from all classes under test.</li>
     </ul>
   </li>
   <li>Controlling randomness
@@ -293,40 +286,42 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
   <li>Outputting the JUnit tests
     <ul>
       <li><b>--output-tests=</b><i>string</i>. What kinds of tests to output: pass, fail, or all [default all]</li>
+      <li><b>--simplify-fail-tests=</b><i>boolean</i>. Simplify failed tests while preserving original failure behavior [default false]</li>
       <li><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
       <li><b>--junit-classname=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
       <li><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files [default ]</li>
-      <li><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written [no default]</li>
+      <li><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written</li>
       <li><b>--dont-output-tests=</b><i>boolean</i>. Run Randoop but do not create JUnit tests [default false]</li>
       <li><b>--output-nonexec=</b><i>boolean</i>. Output sequences even if they do not complete execution.
  
   Randoop's default behavior is to output only tests consisting of
   method call sequences that execute to the end, rather than throwing
   an exception or failing a contract check in the middle of execution. [default false]</li>
-      <li><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests [no default]</li>
+      <li><b>--pretty-print=</b><i>boolean</i>. Output sequences after changing to a better variable name [default false]</li>
+      <li><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests</li>
     </ul>
   </li>
   <li>Runtime environment
     <ul>
-      <li><b>-D</b> <b>--system-props=</b><i>string</i> <tt>[+]</tt>. Specify system properties to be set (similar to java -Dx=y) [default []]</li>
+      <li><b>-D</b> <b>--system-props=</b><i>string</i> <tt>[+]</tt>. Specify system properties to be set (similar to java -Dx=y)</li>
       <li><b>--agent=</b><i>string</i>. Specify an extra command for recursive JVM calls that Randoop spawns.
  The argument to the --agent option is the entire extra JVM command.  A
  typical invocation of Randoop might be:
- <pre>java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"</pre> [no default]</li>
+ <pre>java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"</pre></li>
       <li><b>--mem-megabytes=</b><i>int</i>. specify the memory size (in megabytes) for recursive JVM calls [default 1000]</li>
       <li><b>--capture-output=</b><i>boolean</i>. Capture all output to stdout and stderr [default false]</li>
     </ul>
   </li>
   <li>Serialized input/output of generated tests
     <ul>
-      <li><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Serialize test inputs to the given file [default []]</li>
-      <li><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Serialize test inputs to the given file (text-based) [default []]</li>
+      <li><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Serialize test inputs to the given file</li>
+      <li><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Serialize test inputs to the given file (text-based)</li>
       <li><b>--output-components=</b><i>string</i>. Output components (serialized, GZIPPED) to the given file.
  
- Suggestion: use a .gz suffix in file name. [no default]</li>
+ Suggestion: use a .gz suffix in file name.</li>
       <li><b>--output-tests-serialized=</b><i>string</i>. Output tests (sequences plus checkers) in serialized form to the given file.
  
- Suggestion: use a .gz suffix in file name. [no default]</li>
+ Suggestion: use a .gz suffix in file name.</li>
     </ul>
   </li>
   <li>Notifications
@@ -338,14 +333,14 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
   </li>
   <li>Advanced extension points
     <ul>
-      <li><b>--visitor=</b><i>string</i> <tt>[+]</tt>. Install the given runtime visitor [default []]</li>
+      <li><b>--visitor=</b><i>string</i> <tt>[+]</tt>. Install the given runtime visitor</li>
     </ul>
   </li>
   <li>Logging and troubleshooting Randoop
     <ul>
       <li><b>--debug-checks=</b><i>boolean</i>. Perform expensive internal checks (for Randoop   debugging) [default false]</li>
       <li><b>--log=</b><i>filename</i>. Name of a file to which to log lots of information.
- If not specified, no logging is done. [no default]</li>
+ If not specified, no logging is done.</li>
     </ul>
   </li>
   <li>Eliminating redundant tests
@@ -353,7 +348,7 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
       <li><b>--remove-subsequences=</b><i>boolean</i>. Remove tests that are subsumed in other tests [default true]</li>
       <li><b>--compare-checks=</b><i>boolean</i>. Run each test twice and compare the checks.  If the results differ,
  then disable the test. [default false]</li>
-      <li><b>--clean-checks=</b><i>filename</i>. Create clean checks for a serialized sequence [no default]</li>
+      <li><b>--clean-checks=</b><i>filename</i>. Create clean checks for a serialized sequence</li>
       <li><b>--print-diff-obs=</b><i>boolean</i>. Print any checks that are different in the clean run [default false]</li>
     </ul>
   </li>
