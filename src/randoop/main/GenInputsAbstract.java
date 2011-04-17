@@ -52,7 +52,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * line. The list of methods given by this argument will augment
    * any methods derived via the --classlist option.
    * 
-   * Also see the manual section on <a href="http://randoop.googlecode.com/hg/doc/#specifying-methods">specifying methods 
+   * Also see the manual section on <a href="http://randoop.googlecode.com/hg/doc/index.html#specifying-methods">specifying methods 
    * and constructors under test</a>.
    */
   @Option("The name of a file that lists methods under test")
