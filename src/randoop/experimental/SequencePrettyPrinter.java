@@ -47,7 +47,7 @@ public class SequencePrettyPrinter {
 		String[] all_import_classes = this.extractImportClasses();
 		StringBuilder sb = new StringBuilder();
 		//print package
-		if(this.packageName != null) {
+		if(this.packageName != null && !this.packageName.trim().equals("")) {
 			sb.append("package " + packageName + ";");
 			sb.append(Globals.lineSep);
 			sb.append(Globals.lineSep);
@@ -67,12 +67,21 @@ public class SequencePrettyPrinter {
 		//print class header
 		sb.append("public class " + this.className + " extends TestCase { ");
 		sb.append(Globals.lineSep);
+		sb.append(Globals.lineSep);
+
+                sb.append("  public static boolean debug = false;");
+		sb.append(Globals.lineSep);
+		sb.append(Globals.lineSep);
 		
 		int count = 0;
 		for(ExecutableSequence eseq : this.outputSequences) {
 			VariableRenamer renamer = new VariableRenamer(eseq.sequence);
 			//print the test method
-			sb.append(indent("public void test" + (count++) + "() {", 2));
+			sb.append(indent("public void test" + (count++) + "() throws Throwable {", 2));
+			sb.append(Globals.lineSep);
+			sb.append(Globals.lineSep);
+                        sb.append("    if(debug) System.out.println(\"%n"+ this.className + ".test"+ count + "\");");
+			sb.append(Globals.lineSep);
 			sb.append(Globals.lineSep);
 			//makes 4 indentation here
 			SequenceDumper printer = new SequenceDumper(eseq, renamer);
