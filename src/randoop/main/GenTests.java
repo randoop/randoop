@@ -601,7 +601,7 @@ public class GenTests extends GenInputsAbstract {
       sequences = seqs;
     }
     
-    if(GenInputsAbstract.simplify_fail_tests) {
+    if(GenInputsAbstract.simplify_failed_tests) {
     	List<ExecutableSequence> failedSequences = new LinkedList<ExecutableSequence>();
     	for(ExecutableSequence sequence : sequences) {
     		if(sequence.hasFailure() && !sequence.hasNonExecutedStatements()) {
