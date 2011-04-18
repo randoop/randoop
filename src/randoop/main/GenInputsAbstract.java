@@ -267,7 +267,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public final static String pass = "pass";
 
   @Option("Simplify (shorten) failed tests while preserving failure behavior")
-  public static boolean simplify_fail_tests = false;
+  public static boolean simplify_failed_tests = false;
 
   /** Maximum number of tests to write to each JUnit file */
   @Option("Maximum number of tests to write to each JUnit file")
