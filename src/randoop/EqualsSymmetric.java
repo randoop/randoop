@@ -62,7 +62,7 @@ public final class EqualsSymmetric implements ObjectContract {
     b.append(" " + toCommentString() + Globals.lineSep);
     b.append("assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.equals(x1) ? x1.equals(x0) : true");
+    b.append("x0.equals(x1) == x1.equals(x0)");
     b.append(");");
     return b.toString();
   }

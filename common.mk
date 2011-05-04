@@ -18,7 +18,7 @@ empty:=
 space:= $(empty) $(empty)
 export CLASSPATH := $(subst $(space),:,$(CLASSPATH_WITH_SPACES))
 
-XMXHEAP := -Xmx1650m 
+XMXHEAP := -Xmx1024m 
 
 # Path to plume-lib. Used when creating Randoop manual
 # (see Makefile, target "manual")
