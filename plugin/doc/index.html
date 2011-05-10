@@ -66,7 +66,7 @@ plug-in.</p>
 
 <h3 id="Update_Site">Update Site</h3>
 <p>
-To install the plug-in, navigate to <b>Help > Install New Software</b> and 
+To install the plug-in, navigate to <b><i>Help</i> > <i>Install New Software</i></b> and 
 add the Randoop update site to the available repositories:</p>
 <pre class="code">
 http://randoop.googlecode.com/hg/plugin.updateSite/
@@ -97,8 +97,8 @@ shortcut or the Eclipse launch configuration dialog.</p>
 <h3 id="Launch_shortcut">Launch shortcut</h3>
 <p>The launch shortcut is the easiest way to create and launch a new Randoop
 launch configuration. To launch with the shortcut, simply select elements to
-test from the package explorer view, right click, and navigate to <b>Run As >
-Randoop Test Input</b>.
+test from the package explorer view, right click, and navigate to <b><i>Run As</i> >
+<i>Randoop Test Input</i></b>.
 
 The following elements may be used for test-input:
 </p>
@@ -179,18 +179,14 @@ plug-in are named slightly differently than those in the manual.
 
 <h3 id="Launch_configuration_dialog">Launch configuration dialog</h3>
 <p>Another way to create a new Randoop launch configuration is through the
-launch configuration dialog. To open the dialog, navigate to <b>Run >
-Run Configurations...</b>, and click <b>'Randoop Launcher'</b> from the filtered
+launch configuration dialog. To open the dialog, navigate to <b><i>Run</i> >
+<i>Run Configurations</i>...</b>, and click <b><i>Randoop Launcher</i></b> from the filtered
 tree pane at left. From here, you can edit launch configurations using a similar
-user interface to that used in the Randoop launch wizard. The only difference
-between the two user interfaces is that the launch configuration dialog adds
-an option to choose a project and slightly rearranges the options so they fit
-better in the smaller window. Launch configurations that are created using the
-launch shortcut are automatically added to the launch configuration dialog.
+user interface to that used in the Randoop launch wizard. Launch configurations that are created using the wizard are automatically added to the launch configuration dialog.
 </p>
 
-<p>You can specify the Java project in the 'General' tab to change which
-classpaths are used for searching for classes and change what source folder is
+<p>You can specify the Java project to work on in the <b><i>General</i></b> tab. This changes which
+classpaths are used for searching for classes and changes what source folder is
 used for outputing tests. Each class in the launch configuration is stored along
 with the classpath it was found in. If you change the project, the
 plug-in will search for the same exact classpath in the new project. For
@@ -198,8 +194,18 @@ example, if the classpath is a source folder, the plug-in will check if the new
 project links to the same folder or has that folder's containing project in its
 classpath. If the type cannot be found in the new project it is considered
 missing. If you know there are copies of the missing classes in the new project,
-you can use the 'Resolve Missing Classes' button to search for classes with the
+you can click the <i>Resolve Missing Classes</i> button to search for classes with the
 same full-qualified name as those that are missing.
+</p>
+
+<p>The launch configuration dialog also adds the <b><i>Arguments</i></b>
+tab, which can be used to manually specify arguments for Randoop or the VM.
+The text in the <i>Program arguments</i> box is passed as arguments to Randoop.
+If there is a duplicate of an argument in the text box and the <i>Parameters</i>
+tab that can take only one value, then the argument specified in the <i>Arguments</i>
+tab will be used. For example, if "--timelimit=30" were written in the
+<i>Program arguments</i> text box, then the time limit used for generating tests
+would be 30 seconds, regardless of what was specified in the the <i>Parameters</i> tab.
 </p>
 
 <div class="image">
@@ -209,12 +215,12 @@ configurations unlaunchable.</div>
 
 <p>The Randoop Eclipse plug-in supports refactoring of source folder names,
 package names, class names, and method names. If you use Eclipe's built in
-refactoring tools, the changes should be reflected in your Randoop launch
+refactoring tools, the changes will be reflected in your Randoop launch
 confurations as well.
 </p>
 
 <h3 id="Randoop_View">Randoop View</h3>
-<p>Once you launch Randoop by either pressing 'Finish' in the wizard or 'Run' in
+<p>Once you launch Randoop by either pressing <i>Finish</i> in the wizard or <i>Run</i> in
 the launch configuration dialog, the plug-in will open the Randoop view. The
 Randoop view shows the progress of the test generation and a tree with any
 failures that Randoop uncovers. You can double click on a failure to open a
@@ -302,8 +308,9 @@ instead of their actual order in the project
 </p>
 <ul>
 <li>Support of Randoop sessions similar to JUnit's sessions - with options to
-export and import the results of a launch.
-</li>
+export and import the results of a launch.</li>
+<li>Continuously run Randoop tests in the background and add notifications to
+the text editor when issues are discovered.</li>
 </ul>
 
 </body>
