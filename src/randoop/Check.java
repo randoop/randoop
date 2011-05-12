@@ -2,15 +2,23 @@ package randoop;
 
 import java.io.Serializable;
 
+// A better name for Check would be SequenceDecoration.
+
 /**
- * A correctness check performed on some aspect of a unit test's execution.
- * Examples include assertions, calls to invariant or "checkRep" methods,
- * or try-catch clauses that check for expected exceptions.
- * 
- * <p>
- * 
- * <code>Check</code> objects are inserted as a decorations on
- * specific indices of an {@link ExecutableSequence}. Thus, a check is
+ * A Check represents the expected runtime behavior of a Sequence, at a
+ * particular offset.  When a unit test is run as a regression test, it
+ * should have the same behavior as it did previously, and the Check
+ * objects represent that previous, expected behavior.  Some examples of
+ * Checks are:
+ * <ul>
+ *   <li>{@link ExpectedExceptionCheck} -- an exception should be thrown
+ *   <li>{@link NoExceptionCheck} -- no exception should be thrown
+ *   <li>{@link ObjectCheck} -- a particular {@link ObjectContract} should hold
+ * </ul>
+ *
+ * The visitor classes decorate a sequence with <code>Check</code> objects.
+ * A <code>Check</code> object is inserted as a decoration on a
+ * specific index of an {@link ExecutableSequence}. Thus, a check is
  * always associated with a specific index in a sequence. A check at
  * index i means that the check is to performed after statement i
  * finishes executing.
