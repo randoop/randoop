@@ -6,12 +6,15 @@ import java.io.Serializable;
 // methods, document them well and update the Randoop manual.
 
 /**
- * An object contract provides the core functionality for the checking
- * code of unit tests, i.e. the code that checks for expected behavior.
- * An object contract checks a specific property for one or more objects.
+ * An object contract represents a property that must hold of any object of
+ * a given class.  It is used as part of the oracle (assertion) for a unit
+ * test:  the oracle expects that every object contract holds.  Any
+ * sequence of method calls that leads to a failing contracts is outputted
+ * by Randoop as an error-revealing test case.
+ * <p>
+ *
  * Implementing classes provide two key pieces functionality:
  * 
- * <p>
  * <ul>
  * <li> A method <code>evaluate(Object... objects)</code> that
  *      evaluates ones or more objects at runtime and determines if the
@@ -22,14 +25,11 @@ import java.io.Serializable;
  *      property.
  * </ul>
  * 
- * <p>
- * Randoop outputs sequences that lead to failing properties as 
- * error-revealing test cases.
  * 
  * <p>
  * 
  * See the various implementing classes for examples
- * (for an example, see the {@link EqualsReflexive}).
+ * (for an example, see {@link EqualsReflexive}).
  * 
  */
 public interface ObjectContract extends Serializable {
