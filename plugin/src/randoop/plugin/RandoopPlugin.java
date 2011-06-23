@@ -38,7 +38,10 @@ public class RandoopPlugin extends AbstractUIPlugin {
   /** The plug-in's unique identifier */
   public static final String PLUGIN_ID = "randoop"; //$NON-NLS-1$
 
-  public final static boolean USE_RANDOOP_ARCHIVE = false;
+  /** As of Indigo, this breaks launching when set to false because we make the
+   *  assumption the we can get to the randoop's bin folder by navigating to
+   *  ../bin/ If you think about it, it's amazing it ever worked. */
+  public final static boolean USE_RANDOOP_ARCHIVE = true;
   
   private static final IPath RANDOOP_JAR = new Path("randoop.jar"); //$NON-NLS-1$
 
