@@ -100,7 +100,7 @@ public class RandoopLaunchResources {
     Assert.isTrue(javaProject.getPath().isPrefixOf(fullOutputDirPath));
     javaProject.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
     
-    fOutputLocation = root.getLocation().append(fullOutputDirPath);
+    fOutputLocation = args.getProject().getLocation().removeLastSegments(1).append(fullOutputDirPath);
     
     IPath outputDirPath = fullOutputDirPath.makeRelativeTo(javaProject.getPath());
     
