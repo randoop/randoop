@@ -62,7 +62,7 @@ public class ProjectOption extends Option {
       public void modifyText(ModifyEvent e) {
         String projectName = fProjectText.getText();
 
-        fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
+        fJavaProject = JavaCore.create(RandoopCoreUtil.getProjectFromName(projectName));
 
         String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;
         notifyListeners(new OptionChangeEvent(attr, projectName));
@@ -129,7 +129,7 @@ public class ProjectOption extends Option {
     if (fProjectText != null) {
       String projectName = RandoopArgumentCollector.getProjectName(config);
 
-      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
+      fJavaProject = JavaCore.create(RandoopCoreUtil.getProjectFromName(projectName));
       fProjectText.setText(projectName);
 
       String attr = IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME;

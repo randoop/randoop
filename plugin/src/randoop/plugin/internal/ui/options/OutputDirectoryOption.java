@@ -11,6 +11,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -133,7 +134,7 @@ public class OutputDirectoryOption extends Option implements IOptionChangeListen
   public void initializeWithoutListenersFrom(ILaunchConfiguration config) {
     if (fOutputSourceFolderText != null) {
       String projectName = RandoopArgumentCollector.getProjectName(config);
-      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
+      fJavaProject = JavaCore.create(RandoopCoreUtil.getProjectFromName(projectName));
       
       String folderName = RandoopArgumentCollector.getOutputDirectoryName(config);
 
@@ -236,7 +237,7 @@ public class OutputDirectoryOption extends Option implements IOptionChangeListen
     if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(attr)) {
       String projectName = (String) event.getValue();
 
-      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
+      fJavaProject = JavaCore.create(RandoopCoreUtil.getProjectFromName(projectName));
 
       fSourceFolderBrowseButton.setEnabled(fJavaProject != null && fJavaProject.exists());
     }
