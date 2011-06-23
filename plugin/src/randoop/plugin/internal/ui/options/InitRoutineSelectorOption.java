@@ -12,6 +12,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.dialogs.FilteredTypesSelectionDialog;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -137,7 +138,7 @@ public class InitRoutineSelectorOption extends Option implements IOptionChangeLi
   public void initializeWithoutListenersFrom(ILaunchConfiguration config) {
     if (fInitRoutineText != null) {
       String projectName = RandoopArgumentCollector.getProjectName(config);
-      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
+      fJavaProject = JavaCore.create(RandoopCoreUtil.getProjectFromName(projectName));
 
       String folderName = RandoopArgumentCollector.getOutputDirectoryName(config);
 
@@ -230,7 +231,7 @@ public class InitRoutineSelectorOption extends Option implements IOptionChangeLi
     if (IRandoopLaunchConfigurationConstants.ATTR_PROJECT_NAME.equals(attr)) {
       String projectName = (String) event.getValue();
 
-      fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
+      fJavaProject = JavaCore.create(RandoopCoreUtil.getProjectFromName(projectName));
 
       fInitRoutineBrowseButton.setEnabled(fJavaProject != null && fJavaProject.exists());
     }
