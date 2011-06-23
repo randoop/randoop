@@ -954,7 +954,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
     fTypeTreeViewer.refresh();
     
     String projectName = RandoopArgumentCollector.getProjectName(config);
-    setJavaProject(RandoopCoreUtil.getProjectFromName(projectName));
+    setJavaProject(JavaCore.create(RandoopCoreUtil.getProjectFromName(projectName)));
   }
 
   public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -1299,7 +1299,7 @@ public class ClassSelectorOption extends Option implements IOptionChangeListener
         fJavaProject = null;
       } else {
         Assert.isTrue(value instanceof String, "Project name must be a string");
-        fJavaProject = RandoopCoreUtil.getProjectFromName((String) value);
+        fJavaProject = JavaCore.create(RandoopCoreUtil.getProjectFromName((String) value));
       }
 
       boolean enabled = fJavaProject != null && fJavaProject.exists();
