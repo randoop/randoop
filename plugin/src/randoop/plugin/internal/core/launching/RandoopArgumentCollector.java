@@ -51,6 +51,7 @@ public class RandoopArgumentCollector {
   private double fNullRatio;
   private int fInputLimit;
   private int fTimeLimit;
+  private IProject fProject;
   private IJavaProject fJavaProject;
   private IPath fOutputDirectory;
   private String fJUnitPackageName;
@@ -79,8 +80,8 @@ public class RandoopArgumentCollector {
     Assert.isNotNull(fName, "Configuration name not given");
 
     String projectName = getProjectName(config);
-    IProject project = RandoopCoreUtil.getProjectFromName(projectName);
-    fJavaProject = JavaCore.create(project);
+    fProject = RandoopCoreUtil.getProjectFromName(projectName);
+    fJavaProject = JavaCore.create(fProject);
     if (fJavaProject == null) {
       String msg = NLS.bind("Java project ''{0}'' was not found.", projectName);
       IStatus s = RandoopStatus.createUIStatus(IStatus.ERROR, msg);
@@ -231,6 +232,10 @@ public class RandoopArgumentCollector {
   public String getName() {
     return fName;
   }
+  
+	public IProject getProject() {
+		return fProject;
+	}
   
   public IJavaProject getJavaProject() {
     return fJavaProject;
