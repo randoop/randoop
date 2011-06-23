@@ -162,14 +162,15 @@ public class RandoopCoreUtil {
   }
 
   /**
-   * Returns the Java project by the specified name in the workspace.
+   * Returns the IProject by the specified name in the workspace. To convert
+   * the project to a Java project use JavaCore.create(project)
    * 
    * @param projectName
    *          the name of the project
-   * @return the Java project by the specific name, or <code>null</code> it was
+   * @return the project by the specific name, or <code>null</code> it was
    *         not found
    */
-  public static IJavaProject getProjectFromName(String projectName) {
+  public static IProject getProjectFromName(String projectName) {
     IWorkspace workspace = ResourcesPlugin.getWorkspace();
     IStatus status = workspace.validateName(projectName, IResource.PROJECT);
 
@@ -179,7 +180,7 @@ public class RandoopCoreUtil {
       if (!project.exists())
         return null;
       
-      return JavaCore.create(project);
+      return project;
     }
     return null;
   }

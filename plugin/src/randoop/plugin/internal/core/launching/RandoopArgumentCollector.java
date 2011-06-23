@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -17,6 +18,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
 
@@ -77,7 +79,8 @@ public class RandoopArgumentCollector {
     Assert.isNotNull(fName, "Configuration name not given");
 
     String projectName = getProjectName(config);
-    fJavaProject = RandoopCoreUtil.getProjectFromName(projectName);
+    IProject project = RandoopCoreUtil.getProjectFromName(projectName);
+    fJavaProject = JavaCore.create(project);
     if (fJavaProject == null) {
       String msg = NLS.bind("Java project ''{0}'' was not found.", projectName);
       IStatus s = RandoopStatus.createUIStatus(IStatus.ERROR, msg);
