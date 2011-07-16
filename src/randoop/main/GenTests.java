@@ -831,6 +831,10 @@ public class GenTests extends GenInputsAbstract {
       cmd.add (String.format ("-D%s", prop));
     }
 
+    //Add Java classpath
+    cmd.add("-cp");
+    cmd.add(Globals.getClassPath());
+
     cmd.add ("randoop.main.Main");
     cmd.add ("cleanobs");
 
@@ -878,6 +882,10 @@ public class GenTests extends GenInputsAbstract {
     for (String prop : GenInputsAbstract.system_props) {
       cmd.add (String.format ("-D%s", prop));
     }
+
+    //Add Java classpath
+    cmd.add("-cp");
+    cmd.add(Globals.getClassPath());
 
     // Add memory size
     cmd.add (String.format ("-Xmx%dM", GenInputsAbstract.mem_megabytes));
