@@ -14,6 +14,8 @@ public class Globals {
 
   public static final String lineSep = System.getProperty("line.separator");
 
+  public static final String pathSep = System.getProperty("path.separator");
+
   public static PrintStream blackHole;
 
   private static final ByteArrayOutputStream bos;
@@ -50,6 +52,10 @@ public class Globals {
 
   public static String getRandoopVersion() {
       return RANDOOP_VERSION;
+  }
+
+  public static String getClassPath() {
+      return System.getProperty("java.class.path");
   }
 
   public static final int COLWIDTH = 70;
