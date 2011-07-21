@@ -50,6 +50,11 @@
 <!-- end toc -->
 
 <p>
+There is separate <a href="../plugin/doc/dev.html">developer documentation
+    for the Eclipse plugin</a>.
+</p>
+
+<p>
 (Also see the <a href="index.html">Randoop Manual</a>.)
 </p>
 
@@ -67,27 +72,30 @@
 
 <h2 id="compiling">Compiling Randoop</h2>
 
-<p>Under Unix:</p>
+<p>From the command line (in Randoop's top-level directory):</p>
 
-<ol>
-  <li>To do everything (build <i>and</i> run all tests), type <code>make all</code>, <b><i>OR</i></b></li>
-  <li>From a command prompt, type <code>make build</code> under Randoop's home
-    directory (the directory containing this file).</li>
-  <li>If you want to rebuild from scratch, type <code>make clean</code> first.</li>
-  <li> The generated classes are placed in bin/ directory.</li>
-</ol>
+<ul>
+  <li>To do everything (build <i>and</i> run all tests), type <code>make all</code></li>
+  <li>To build without running tests: type <code>make build</code></li>
+  <li>If you want to rebuild from scratch, type <code>make clean</code> first</li>
+</ul>
 
 <p>Under Eclipse:</p>
 
-<ol>
-  <li>If you are in Eclipse, Randoop compiles out of the box.</li>
-  <li>The generated classes are also placed in bin/ directory.</li>
-</ol>
+<ul>
+  <li>Randoop comes with a .project file, so it compiles in the usual way.</li>
+</ul>
+
+<p>When using the command line or Eclipse, the generated classes are placed
+  in the <code>bin/</code> directory.</p>
+
+
 
 <h2 id="running">Running unit and system tests</h2>
 
 <ul>
-  <li>From a command prompt, type <code>make tests</code> under Randoop's home directory.</li>
+  <li>From a command prompt, type <code>make tests</code> under Randoop's
+  home directory.</li>
 </ul>
 
 <h2 id="classpath">Randoop classpath</h2>
