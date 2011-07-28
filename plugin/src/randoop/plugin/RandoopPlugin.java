@@ -41,7 +41,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
   /** As of Indigo, this breaks launching when set to false because we make the
    *  assumption the we can get to the randoop's bin folder by navigating to
    *  ../bin/ If you think about it, it's amazing it ever worked. */
-  public final static boolean USE_RANDOOP_ARCHIVE = false;
+  public final static boolean USE_RANDOOP_JAR = true;
   
   private static final IPath RANDOOP_JAR = new Path("randoop.jar"); //$NON-NLS-1$
 
@@ -175,7 +175,7 @@ public class RandoopPlugin extends AbstractUIPlugin {
    */
   public static List<IPath> getRandoopClasspaths() throws CoreException {
     ArrayList<IPath> cp = new ArrayList<IPath>();
-    if (USE_RANDOOP_ARCHIVE) {
+    if (USE_RANDOOP_JAR) {
       try {
         cp.add(getFullPath(RANDOOP_JAR));
       } catch (IOException e) {
