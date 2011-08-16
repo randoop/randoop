@@ -58,8 +58,8 @@ public final class EqualsSymmetric implements ObjectContract {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
+    b.append("// This assertion (symmetry of equals) fails ");
+    b.append(Globals.lineSep);
     b.append("assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
     b.append("x0.equals(x1) == x1.equals(x0)");
