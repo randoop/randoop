@@ -298,6 +298,8 @@ public class ExecutableSequence implements Serializable {
    *   <li> All statements in the sequences have been executed.
    *   <li> A statement's execution results in an exception and
    *        <code>stop_on_exception==true</code>.
+   *   <li> A <code>null</code> input value is implicitly passed to the statement
+            (i.e., not throught explicitly declaring like  x = null)
    *   <li> After executing the i-th statement and calling the visitor's
    *        <code>visitAfter</code> method, a <code>ContractViolation</code>
    *        check is present at index i.
@@ -329,6 +331,8 @@ public class ExecutableSequence implements Serializable {
       List<Variable> inputs = sequence.getInputs(i);
       Object[] inputVariables = new Object[inputs.size()];
 
+      // If a null value is implicitly passed to the statement (e.g., to the receiver)
+      // stop execution.
       if (!getRuntimeInputs(sequence, executionResults.theList, i, inputs, inputVariables))
         break;
 
