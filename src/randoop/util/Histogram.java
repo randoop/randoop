@@ -54,7 +54,11 @@ public final class Histogram<T> {
     });
   }
 
-  // this works only when keys are comparable
+  /**
+   * This works only when keys are comparable.
+   * (In general, the keys are not required to be comparable.)
+   */
+  @SuppressWarnings("rawtypes")
   public String toStringSortedByKey() {
     return entriesToString(false, new Comparator<Map.Entry<T, Integer>>() {
       @SuppressWarnings("unchecked")
