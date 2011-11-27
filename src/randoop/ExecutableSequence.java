@@ -14,14 +14,14 @@ import randoop.util.Reflection;
 
 /**
  * An ExecutableSequence wraps a {@link Sequence} with functionality for
- * executing the sequence. It also lets the client add {@link Check}s to
+ * executing the sequence. It also lets the client add {@link Check}s
  * that check expected behaviors of the execution.
  * <p>
  * An ExecutableSequence augments a sequence with three additional pieces
  * of data:
  * <p>
  * <ul>
- * <li> <b>Execution results.</b>An ExecutableSequence can be executed, and the
+ * <li> <b>Execution results.</b> An ExecutableSequence can be executed, and the
  *      results of the execution (meaning the objects created during execution,
  *      and any exceptions thrown) are made available to clients or execution
  *      visitors to inspect.
@@ -30,7 +30,7 @@ import randoop.util.Reflection;
  *      For example, a client might add a <code>NotNull</code> check to the ith index 
  *      of a sequence to signify that the value returned by the statement at index i
  *      should not be null.
- * <li> <b>Check evaluation results.</b>Corresponding to every check is a boolean value that
+ * <li> <b>Check evaluation results.</b> Corresponding to every check is a boolean value that
  *      represents whether the check passed or failed during the last execution
  *      of the sequence.
  * </ul>
@@ -45,7 +45,7 @@ import randoop.util.Reflection;
  * 
  * <p>
  * 
- * The ethod <code>execute(ExecutionVisitor v)</code> executes the code that the 
+ * The method <code>execute(ExecutionVisitor v)</code> executes the code that the 
  * sequence represents. This method uses reflection to execute each element in the 
  * sequence (method call, constructor call, primitive or array declaration, etc).
  * Before executing each statement (e.g. the i-th statement), execute(v)
@@ -55,10 +55,12 @@ import randoop.util.Reflection;
  * it may decorate the sequence with {@link Check}s about the
  * execution.
  * 
- * NOTES.
  * <p>
+ * 
+ * NOTES.
+ *
  * <ul>
- * <li> It only makes sense to call the following methods *after* executing the
+ * <li> It only makes sense to call the following methods <b>after</b> executing the
  * i-th statement in a sequence:
  *    <ul>
  *        <li> isNormalExecution(i)

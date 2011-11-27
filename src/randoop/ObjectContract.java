@@ -9,7 +9,7 @@ import java.io.Serializable;
  * An object contract represents a property that must hold of any object of
  * a given class.  It is used as part of the oracle (assertion) for a unit
  * test:  the oracle expects that every object contract holds.  Any
- * sequence of method calls that leads to a failing contracts is outputted
+ * sequence of method calls that leads to a failing contract is outputted
  * by Randoop as an error-revealing test case.
  * <p>
  *
