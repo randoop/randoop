@@ -50,10 +50,10 @@ public class ReflectionTests extends TestCase{
     }
 
     Set<Class<?>> classes = Reflection.relatedClasses(String.class, 1);
-    assertEquals(46, classes.size());
+    assertEquals(47, classes.size());
 
     Set<Class<?>> classes2 = Reflection.relatedClasses(Object.class, 2);
-    assertEquals(61, classes2.size());
+    assertEquals(62, classes2.size());
   }
 
   public void testLoadClassesFromStream1() throws IOException {

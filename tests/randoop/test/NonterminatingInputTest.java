@@ -9,7 +9,7 @@ import randoop.RConstructor;
 import randoop.Sequence;
 import randoop.Variable;
 import randoop.util.ReflectionExecutor;
-import randoop.util.ReflectionExecutor.TimeoutExceeded;
+import randoop.util.TimeoutExceededException;
 
 public class NonterminatingInputTest extends TestCase {
 
@@ -22,7 +22,7 @@ public class NonterminatingInputTest extends TestCase {
     ExecutableSequence es = new ExecutableSequence(s);
     es.execute(new DummyVisitor());
     ReflectionExecutor.timeout = oldTimeout;
-    assertTrue(es.throwsException(TimeoutExceeded.class));
+    assertTrue(es.throwsException(TimeoutExceededException.class));
   }
 
   public static class Looper {
