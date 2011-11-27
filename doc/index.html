@@ -291,7 +291,7 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
   <li>Outputting the JUnit tests
     <ul>
       <li><b>--output-tests=</b><i>string</i>. What kinds of tests to output: pass, fail, or all [default all]</li>
-      <li><b>--simplify-fail-tests=</b><i>boolean</i>. Simplify failed tests while preserving original failure behavior [default false]</li>
+      <li><b>--simplify-failed-tests=</b><i>boolean</i>. Simplify (shorten) failed tests while preserving failure behavior [default false]</li>
       <li><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
       <li><b>--junit-classname=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
       <li><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files [default ]</li>
@@ -302,7 +302,7 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
   Randoop's default behavior is to output only tests consisting of
   method call sequences that execute to the end, rather than throwing
   an exception or failing a contract check in the middle of execution. [default false]</li>
-      <li><b>--pretty-print=</b><i>boolean</i>. Output sequences after changing to a better variable name [default false]</li>
+      <li><b>--pretty-print=</b><i>boolean</i>. Remove full package + class name declarations, and change the variables name (e.g., change ArrayList var0 to ArrayList arrayList0) in an output sequence. This option will not change the sequence behavior. [default false]</li>
       <li><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests</li>
     </ul>
   </li>
