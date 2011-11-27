@@ -134,7 +134,10 @@ public class JunitFileWriter {
         }
         out.println("  public void test" + testCounter++ + "() throws Throwable {");
         out.println();
-        out.println(indent("if (debug) System.out.printf(\"%n" + className + ".test" + (testCounter-1) + "\");"));
+        // Replaced this printf by the below to avoid a dependence on Java
+        // 5 -- printf was added to the PrintStream class only in J2SE 5.0.
+        // out.println(indent("if (debug) System.out.printf(\"%n" + className + ".test" + (testCounter-1) + "\");"));
+        out.println(indent("if (debug) { System.out.println(); System.out.print(\"" + className + ".test" + (testCounter-1) + "\"); }"));
         out.println();
         out.println(indent(s.toCodeString()));
         out.println("  }");
