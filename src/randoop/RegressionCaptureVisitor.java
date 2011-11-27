@@ -10,6 +10,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.util.Files;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
+import randoop.util.TimeoutExceededException;
 
 /**
  * An execution visitor that records regression checks on the values
@@ -272,18 +273,8 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         ExceptionalExecution e = (ExceptionalExecution)result;
         
         Throwable exception = e.getException();
-        
-        // FIXME Currently, tests that lead to a TimeOutException are
-        // output unchanged.  It would be incorrect to require a
-        // TimeOutException, because the suites that Randoop outputs do not
-        // detect long-running tests and generate a TimeOutException.
-        // (Such a mechanism would be the better solution, as documented in
-        // Issue 11:  http://code.google.com/p/randoop/issues/detail?id=11 .)
-        // But, the current behavior is also incorrect, since the generated
-        // test simply loops forever, which is unhelpful to the user.
-        if (!(exception instanceof TimeOutException)) {
-          s.addCheck(i, new ExpectedExceptionCheck(exception, i), true);
-        }
+
+        s.addCheck(i, new ExpectedExceptionCheck(exception, i), true);
       } else {
         assert s.getResult(i) instanceof NotExecuted;
         assert false : "Randoop should not have gotten here (bug in Randoop)";

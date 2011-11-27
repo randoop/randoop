@@ -79,6 +79,7 @@ import randoop.util.Randomness;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.RunCmd;
+import randoop.util.TimeoutExceededException;
 import cov.Branch;
 import cov.Coverage;
 
@@ -500,8 +501,11 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
-    // Remove any sequences that throw
-    // randoop.util.ReflectionExecutor.TimeoutExceeded.
+    // Remove any sequences that throw randoop.util.TimeoutExceededException.
+    // It would be nicer for Randoop to output a test suite that detects
+    // long-running tests and generates a TimeoutExceededException, as
+    // documented in Issue 11:
+    // http://code.google.com/p/randoop/issues/detail?id=11 .
     {
       List<ExecutableSequence> non_timeout_seqs = new ArrayList<ExecutableSequence>();
       boolean keep = true;
@@ -511,9 +515,9 @@ public class GenTests extends GenInputsAbstract {
           if (!exObs.isEmpty()) {
             assert exObs.size() == 1 : toString();
             ExpectedExceptionCheck eec = (ExpectedExceptionCheck) exObs.get(0);
-            // Some TimeoutExceeded exceptions seem to be slipping through. -MDE
+            // Some TimeoutExceededException exceptions seem to be slipping through. -MDE
             // System.out.println("ExpectedExceptionCheck: " + eec.get_value());
-            if (eec.get_value().equals("randoop.util.ReflectionExecutor.TimeoutExceeded")) {
+            if (eec.get_value().equals("randoop.util.TimeoutExceededException")) {
               keep = false;
               break;
             }
@@ -521,6 +525,8 @@ public class GenTests extends GenInputsAbstract {
         }
         if (keep)
           non_timeout_seqs.add (es);
+        // This test suggests a shorter way to implement this method.
+        assert keep == !es.throwsException(TimeoutExceededException.class);
       }
       sequences = non_timeout_seqs;
     }

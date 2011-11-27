@@ -12,7 +12,7 @@ import plume.UtilMDE;
  *
  * This class maintains an "executor" thread. Code is executed
  * on that thread. If the code takes longer than the specified
- * timeout, the thread is killed and a ReflectionExecutor.TimeoutExceeded
+ * timeout, the thread is killed and a TimeoutExceededException
  * exception is reported.
  *
  */
@@ -38,10 +38,6 @@ public final class ReflectionExecutor {
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int timeout = 5000;
 
-
-  public static class TimeoutExceeded extends RuntimeException {
-    private static final long serialVersionUID = -5314228165430676893L;
-  }
 
   // Execution statistics.
   private static long normal_exec_accum  = 0;
@@ -120,7 +116,7 @@ public final class ReflectionExecutor {
         // stop a thread no matter what it's doing.
         runnerThread.stop();
         
-        return new ReflectionExecutor.TimeoutExceeded();
+        return new TimeoutExceededException();
       }
 
       return runnerThread.exceptionThrown;
