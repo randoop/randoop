@@ -98,7 +98,7 @@ public class StringEscapeUtils {
     escapeJavaStyleString(out, str, false);
   }
 
-  private static String escapeJavaStyleString(String str, boolean escapeSingleQuotes) {
+  public static String escapeJavaStyleString(String str, boolean escapeSingleQuotes) {
     if (str == null) {
       return null;
     }

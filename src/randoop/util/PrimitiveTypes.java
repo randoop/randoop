@@ -161,7 +161,7 @@ public final class PrimitiveTypes {
       // XXX This won't always work!
       if (value.equals(' '))
         return "' '";
-      return "\'" + StringEscapeUtils.escapeJava(value.toString()) + "\'";
+      return "\'" + StringEscapeUtils.escapeJavaStyleString(value.toString(), true) + "\'";
 
     } else if (double.class.equals(valueClass)) {
       Double d = (Double) value;
