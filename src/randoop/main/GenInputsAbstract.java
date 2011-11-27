@@ -229,7 +229,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * generate new tests. Setting this variable to a small number can sometimes result
    * in a greater variety of tests generated during a single run.
    */
-  @Option("Clear the component set when gets this big")
+  @Option("Clear the component set when it gets this big")
   public static int clear = 100000000;
 
   ///////////////////////////////////////////////////////////////////
@@ -383,7 +383,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup(value="Logging and troubleshooting Randoop")
   
-  @Option("Perform expensive internal checks (for Randoop   debugging)")
+  @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
 
   /**
