@@ -266,17 +266,21 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
 
       } else if (result instanceof ExceptionalExecution) {
 
+        // The code threw an exception.  Require that the test throw the
+        // same exception in the future as it did this time.
+
         ExceptionalExecution e = (ExceptionalExecution)result;
         
         Throwable exception = e.getException();
         
-        // FIXME Tests that lead to a TimeOutException should be output to the user,
-        // since they came from sequences that failed to terminate within a reasonable
-        // time and can thus point to a potential infinite loops. Currently, Randoop outputs
-        // tests asserting that a TimeOutException is thrown, which will not occur when the
-        // generated JUnit test is executed. The appropriate way of outputting tests that
-        // led to a TimeOutException is documented in Issue 11 in Randoop's web page;
-        // it only needs to be implemented.
+        // FIXME Currently, tests that lead to a TimeOutException are
+        // output unchanged.  It would be incorrect to require a
+        // TimeOutException, because the suites that Randoop outputs do not
+        // detect long-running tests and generate a TimeOutException.
+        // (Such a mechanism would be the better solution, as documented in
+        // Issue 11:  http://code.google.com/p/randoop/issues/detail?id=11 .)
+        // But, the current behavior is also incorrect, since the generated
+        // test simply loops forever, which is unhelpful to the user.
         if (!(exception instanceof TimeOutException)) {
           s.addCheck(i, new ExpectedExceptionCheck(exception, i), true);
         }
