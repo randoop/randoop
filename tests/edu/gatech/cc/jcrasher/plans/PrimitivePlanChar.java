@@ -31,6 +31,7 @@ public class PrimitivePlanChar extends PrimitivePlan {
 	/**
 	 * How to reproduce this value=object?
 	 */
+	// Is it a bug that the value is not quoted if it's a quote, newline, etc.?
 	@Override
     public String toString() {return "'" +getValue().toString() +"'";}
 }
