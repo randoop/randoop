@@ -554,7 +554,7 @@ summary:
 # We only use the html-update package.
 utils/plume-lib:
 	mkdir -p utils
-	cd utils && hg clone https://plume-lib.googlecode.com/hg/ plume-lib
+	cd utils && hg clone https://code.google.com/p/plume-lib/ plume-lib
 
 plume-lib-update: utils/plume-lib
 	cd utils/plume-lib && hg pull -u
