@@ -156,16 +156,21 @@ Run Randoop by invoking its main class <tt>randoop.main.Main</tt>:
 </p>
 
 <pre class="code">
-java -ea -classpath randoop.jar randoop.main.Main <em>command</em> <em>args...</em>
+java -ea -classpath randoop.jar:... randoop.main.Main <em>command</em> <em>args...</em>
 </pre>
 
 <p>
+The classpath needs to contain both Randoop and the classes under test.
 You don't need the <code>-classpath</code> argument if you add
 <tt>randoop.jar</tt> to your classpath.
+</p>
+
+<p>
 We recommend using the <tt>-ea</tt> (enable assertions)
 option to java when running Randoop: if something goes wrong and you
 send us an error report, we will be able better to help you diagnose
-the cause of the problem.</p>
+the cause of the problem.
+</p>
 
 <p>
 Randoop supports two commands:
@@ -979,4 +984,8 @@ taking too long to execute and cannot be killed by Randoop.
 <!--  LocalWords:  noprogressdisplay progressinterval filename cov ints expfile
  -->
 <!--  LocalWords:  subsequences online unpub javac TypeN postcondition jarpath
+ -->
+<!--  LocalWords:  test1 o1 t1 s1 var0 arrayList0 Type0 Type1 Type2 o2 'a'
+ -->
+<!--  LocalWords:  test10 var1 var2 'c' 3L s2 a1
  -->
