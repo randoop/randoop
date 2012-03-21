@@ -50,14 +50,17 @@ public class ReflectionTests extends TestCase{
     }
 
     Set<Class<?>> classes = Reflection.relatedClasses(String.class, 1);
-    // Debugging
-    if (classes.size() != 47) {
-      System.out.println("Mismatch in classes.length(): " + classes);
-    }
-    assertEquals(47, classes.size());
-
     Set<Class<?>> classes2 = Reflection.relatedClasses(Object.class, 2);
-    assertEquals(62, classes2.size());
+
+    // Class java.util.Locale.Category was introduced in JDK 7.
+    if (System.getProperty("java.version").startsWith("1.6")) {
+      assertEquals(46, classes.size());
+      assertEquals(61, classes2.size());
+    } else {
+      assertEquals(47, classes.size());
+      assertEquals(62, classes2.size());
+    }
+
   }
 
   public void testLoadClassesFromStream1() throws IOException {
