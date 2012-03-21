@@ -50,6 +50,10 @@ public class ReflectionTests extends TestCase{
     }
 
     Set<Class<?>> classes = Reflection.relatedClasses(String.class, 1);
+    // Debugging
+    if (classes.size() != 47) {
+      System.out.println(classes);
+    }
     assertEquals(47, classes.size());
 
     Set<Class<?>> classes2 = Reflection.relatedClasses(Object.class, 2);
