@@ -33,9 +33,12 @@ RANDOOP_HOME ?= $(shell pwd)
 include common.mk
 
 JAVAC ?= javac
+
+JAVAC_TARGET ?= ${TARGET_DEFAULT}
+
 # User may set JAVAC_JAR
 # User may set JAVAC_EXTRA_ARGS
-JAVAC_COMMAND ?= ${JAVAC} ${JAVAC_EXTRA_ARGS}
+JAVAC_COMMAND ?= ${JAVAC} ${JAVAC_TARGET} ${JAVAC_EXTRA_ARGS}
 
 export PATH
 
