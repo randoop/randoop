@@ -271,7 +271,7 @@ class SequenceDumper {
 	       // format, except that it slashes are periods. So before calling
 	       // classnameFromJvm, we replace the period with slashes to
 	       // make the string true JVML.
-	       retval = UtilMDE.classnameFromJvm(retval.replace('.', '/'));
+	       retval = UtilMDE.fieldDescriptorToBinaryName(retval.replace('.', '/'));
 	     }
 
 	     // If inner classes are involved, Class.getName() will return
