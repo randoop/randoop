@@ -508,8 +508,8 @@ public class GenTests extends GenInputsAbstract {
     // http://code.google.com/p/randoop/issues/detail?id=11 .
     {
       List<ExecutableSequence> non_timeout_seqs = new ArrayList<ExecutableSequence>();
-      boolean keep = true;
       for (ExecutableSequence es : sequences) {
+        boolean keep = true;
         for (int i = 0 ; i < es.sequence.size() ; i++) {
           List<Check> exObs = es.getChecks(i, ExpectedExceptionCheck.class);
           if (!exObs.isEmpty()) {
