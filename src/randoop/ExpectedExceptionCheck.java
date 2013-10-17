@@ -88,6 +88,9 @@ public class ExpectedExceptionCheck implements Check {
   public String toCodeStringPostStatement() {
     StringBuilder b = new StringBuilder();
     String exceptionClassName = exceptionClass.getCanonicalName();
+    if (exceptionClassName == null) {
+      exceptionClassName = "Exception";
+    }
     b.append("  fail(\"Expected exception of type " + exceptionClassName + "\");" + Globals.lineSep);
     b.append("} catch (");
     b.append(exceptionClassName);
