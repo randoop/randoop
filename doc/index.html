@@ -25,6 +25,7 @@
         <ul>
           <li><a href="#troubleshooting">Troubleshooting</a>
             <ul>
+              <li><a href="#no-tests-created">Randoop does not create tests</a></li>
               <li><a href="#nontermination">Randoop does not terminate</a></li>
             </ul></li>
         </ul></li>
@@ -426,6 +427,20 @@ java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
 
 
 <h3 id="troubleshooting">Troubleshooting</h3>
+
+<h4 id="no-tests-created">Randoop does not create tests</h4>
+
+<p>
+If Randoop outputs
+</p>
+<pre>No tests were created. No JUnit class created.</pre>
+<p>
+then you need to change Randoop's parameters and re-run it.  You might give
+Randoop more classes to analyze, a larger timeout, additional primitive
+values, specific methods to avoid calling, or some other configuration
+change.  See elsewhere in this manual for suggestions.
+</p>
+
 
 <h4 id="nontermination">Randoop does not terminate</h4>
 
@@ -994,5 +1009,5 @@ taking too long to execute and cannot be killed by Randoop.
  -->
 <!--  LocalWords:  test1 o1 t1 s1 var0 arrayList0 Type0 Type1 Type2 o2 'a'
  -->
-<!--  LocalWords:  test10 var1 var2 'c' 3L s2 a1
+<!--  LocalWords:  test10 var1 var2 'c' 3L s2 a1 'a' c' 3L
  -->
