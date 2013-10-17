@@ -55,7 +55,7 @@ public class JunitFileWriter {
    */
   public List<File> createJunitTestFiles(List<ExecutableSequence> sequences, String junitTestsClassName) {
     if (sequences.size() == 0) {
-      System.out.println("No sequences given to createJunitFiles. No Junit class created.");
+      System.out.println("No tests were created. No JUnit class created.");
       return new ArrayList<File>();
     }
 
