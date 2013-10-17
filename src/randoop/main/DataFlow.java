@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -344,8 +345,8 @@ public class DataFlow {
       throw new Error (String.format ("error running cmd '%s'", cmd), e);
     }
     if (result != 0)
-      throw new Error (String.format ("Bad result (%s) from cmd '%s'", result,
-          cmd));
+      throw new Error (String.format ("Bad result (%s) from cmd '%s' in directory '%s' with environment %s",
+                                      result, cmd, dir, Arrays.toString(env_arr)));
   }
 
   /**
