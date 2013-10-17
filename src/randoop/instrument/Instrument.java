@@ -483,10 +483,10 @@ public class Instrument implements ClassFileTransformer {
    * Class the reports tokenizing errors from the map file.  All errors
    * are throw IOExceptions
    */
-  static class MapFileError extends StrTok.Error {
+  static class MapFileErrorHandler extends StrTok.ErrorHandler {
     LineNumberReader lr;
     File map_file;
-    public MapFileError (LineNumberReader lr, File map_file) {
+    public MapFileErrorHandler (LineNumberReader lr, File map_file) {
       this.lr = lr;
       this.map_file = map_file;
     }
@@ -527,12 +527,12 @@ public class Instrument implements ClassFileTransformer {
     // Read the arguments
     ArrayList<String> args = new ArrayList<String>();
     String tok = st.nextToken();
-    if (tok != ")") {
+    if (tok != ")") { // interned
       st.pushBack();
       do {
         tok = st.need_word();
         args.add (tok);
-      } while (st.nextToken() == ",");
+      } while (st.nextToken() == ","); // interned
       st.pushBack();
       st.need (")");
     }
@@ -566,7 +566,7 @@ public class Instrument implements ClassFileTransformer {
   public void read_map_file (File map_file) throws IOException {
 
     LineNumberReader lr = new LineNumberReader (new FileReader (map_file));
-    MapFileError mfe = new MapFileError (lr, map_file);
+    MapFileErrorHandler mfeh = new MapFileErrorHandler (lr, map_file);
     Pattern current_regex = null;
     Map<MethodDef,MethodInfo> map = new LinkedHashMap<MethodDef,MethodInfo>();
     for (String line = lr.readLine(); line != null; line = lr.readLine()) {
@@ -577,7 +577,7 @@ public class Instrument implements ClassFileTransformer {
         if (current_regex == null)
           throw new IOException ("No current class regex on line "
                                  + lr.getLineNumber());
-        StrTok st = new StrTok (line, mfe);
+        StrTok st = new StrTok (line, mfeh);
         st.stok.wordChars ('.', '.');
         MethodDef md = parse_method (st);
         String new_method = st.need_word();
