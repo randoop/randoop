@@ -829,8 +829,12 @@ public class GenTests extends GenInputsAbstract {
     cmd.add ("-ea");
 
     // Add a javaagent option if specified
-    if (GenInputsAbstract.agent != null)
-      cmd.add (GenInputsAbstract.agent);
+    if (GenInputsAbstract.agent != null) {
+      String [] args = GenInputsAbstract.agent.split(" ");
+      for (String s : args) {
+        cmd.add (s);
+      }
+    }
 
     // Define any properties
     for (String prop : GenInputsAbstract.system_props) {
@@ -881,8 +885,12 @@ public class GenTests extends GenInputsAbstract {
     cmd.add ("-ea");
 
     // Add a javaagent option if specified
-    if (GenInputsAbstract.agent != null)
-      cmd.add (GenInputsAbstract.agent);
+    if (GenInputsAbstract.agent != null) {
+      String [] args = GenInputsAbstract.agent.split(" ");
+      for (String s : args) {
+        cmd.add (s);
+      }
+    }
 
     // Define any properties
     for (String prop : GenInputsAbstract.system_props) {
