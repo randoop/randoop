@@ -76,13 +76,18 @@ public class ProgressDisplay extends Thread {
         listenerMgr.progressThreadUpdateNotify();
       }
 
-      // Check that we're still doing progress. If no new inputs
-      // generated for several seconds, we're probably in an infinite
-      // loop, and should exit.
-      updateLastSeqGen();
-      long now = System.currentTimeMillis();
-      if (now - lastNumSeqsIncrease > exit_if_no_new_sequences_after_mseconds) {
-        printStackTraceAndExit();
+      // Do not enforce a global timeout if we are using threads:
+      // if several test threads time out in a row, the global timeout
+      // will be exceeded even though nothing is wrong.
+      if (!ReflectionExecutor.usethreads) {
+        // Check that we're still doing progress. If no new inputs
+        // generated for several seconds, we're probably in an infinite
+        // loop, and should exit.
+        updateLastSeqGen();
+	long now = System.currentTimeMillis();
+	if (now - lastNumSeqsIncrease > exit_if_no_new_sequences_after_mseconds) {
+          printStackTraceAndExit();
+        }
       }
 
       try {
