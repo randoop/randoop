@@ -8,6 +8,7 @@ import java.util.Map;
 
 import randoop.main.GenInputsAbstract;
 import randoop.util.Files;
+import randoop.util.Log;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.TimeoutExceededException;
@@ -195,8 +196,10 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
             // long, as this can cause the generate unit tests to be
             // unreadable and/or non-compilable due to Java
             // restrictions on String constants.
-            if (str.length() > GenInputsAbstract.string_maxlen) {
-              // System.out.printf ("Ignoring too long string%n");
+            if (!PrimitiveTypes.stringLengthOK(str)) {
+              if (Log.isLoggingOn()) {
+		Log.logLine("Ignoring a string that exceeds the maximum length of " + GenInputsAbstract.string_maxlen);
+	      }
               continue;
             }
           }
