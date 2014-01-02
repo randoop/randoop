@@ -674,5 +674,9 @@ distribution-files: manual randoop_agent.jar
 
 showvars:
 	@echo "CLASSPATH = $(CLASSPATH)"
+	@echo "RANDOOP_FILES = $(RANDOOP_FILES)"
+	@echo "RANDOOP_SRC_FILES = $(RANDOOP_SRC_FILES)"
+	@echo "RANDOOP_TESTS_FILES = $(RANDOOP_TESTS_FILES)"
+	@echo "RANDOOP_TXT_FILES = $(RANDOOP_TXT_FILES)"
 
 .FORCE:
