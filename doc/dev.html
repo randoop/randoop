@@ -152,12 +152,13 @@ Then, run under Randoop's home directory:
 <h2 id="making_new_dist">Making a new distribution (a new release)</h2>
 
 <ol>
-  <li>Commit all changes.</li>
+  <li>If <tt>hg status</tt> reports any changes, commit them.</li>
+  <li>Compile and test: run <code>make clean</code> followed by <code>make all</code>. If any tests fail, fix them and start over.</li>
   <li>Update changelog: add summary of changes for built version to <code>doc/CHANGES.txt</code>.</li>
   <li>Increase version number (modify variable <code>RANDOOP_VERSION</code> in <code>src/randoop/Globals.java</code>).</li>
-  <li>Compile and test: run <code>make clean</code> followed by <code>make all</code>. Make sure all tests pass.</li>
-  <li>If there are any changes, start over.</li>
+  <li>Commit those changes.</li>
   <li>Tag the repository tip with the version number (e.g., <code>hg tag v1.3.2</code>).</li>
+  <li>Create the distribution: <tt>make distribution-files</tt></li>
   <li>Rename the zip and jar files created under the <code>dist/</code> directory to the appropriate version number.</li>
   <li>Upload the zip and jar files to Google Code.</li>
 </ol>
