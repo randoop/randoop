@@ -1,21 +1,35 @@
-version 1.3.3                                                                  
-                                                                                
-Bugfixes                                                                       
-  - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)
-  - Fix for PrettyPrinter                                                    
-  - Unquoted character constants make Randoop generate uncompilable tests    
-  - Problem of using compare_checks in eclipse plugin by adding              
+version 1.3.4
 
-Features                                                                       
-  - Suppress generics-related compiler warnings                              
+Bug fixes:
+ * String lengths are checked correctly
+ * No global timeout when per-thread timeout is in force
+ * Better agent flag parsing
+ * Don't output code like "catch (null e)".
+
+Documentation:
+ * Add troubleshooting section about no tests being created
+ * Tips on reporting a bug
+ * Documentation for building a release
+
+
+version 1.3.3
+
+Bugfixes
+  - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)
+  - Fix for PrettyPrinter
+  - Unquoted character constants make Randoop generate uncompilable tests
+  - Problem of using compare_checks in eclipse plugin by adding
+
+Features
+  - Suppress generics-related compiler warnings
   - Renaming sequence variables for a better name, and minimizing faulty sequence
-  - Generated JUnit tests are compatible with Java 1.4                       
+  - Generated JUnit tests are compatible with Java 1.4
   - TimeoutExceeded and TimeOutException unified into TimeoutExceededException
 
 Documentation enhanced
 
 
-version 1.3.1.
+version 1.3.1
 
 Added @TestValue annotation, allowing users to specify additional
 primitive values to Randoop programmatically.
