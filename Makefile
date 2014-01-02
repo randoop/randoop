@@ -648,7 +648,7 @@ distribution-files: manual randoop_agent.jar
 # Make sure everything works.
 	cd randoop && \
 	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
-# (Alternative that may be necessary with certain OpenJDK builds whose javac erroneously double-evaluates command-line argumants.)
+# (Alternative that may be necessary with certain OpenJDK builds whose javac erroneously double-evaluates command-line arguments.)
 # 	cd randoop && \
 #	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp `ls lib/*.jar | perl -p -e 's/\n/:/g'`
 # Make randoop.jar.
