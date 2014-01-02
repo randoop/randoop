@@ -20,8 +20,8 @@ export CLASSPATH := $(subst $(space),:,$(CLASSPATH_WITH_SPACES))
 
 XMXHEAP := -Xmx1024m 
 
-# The default target level for the compiler is 5 (1.5)                                  
-TARGET_DEFAULT := -target 5 
+# The default target level for the compiler is 7 (1.7)                                  
+TARGET_DEFAULT := -target 7
 
 # Path to plume-lib. Used when creating Randoop manual
 # (see Makefile, target "manual")
