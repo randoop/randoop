@@ -13,7 +13,8 @@ import randoop.util.RecordProcessor;
 
 /**
  * The output created by DataFlow consists of a collection of results, one for
- * each sequence. Each result contains the sequence analyzed, the frontier
+ * each sequence. Each result is a DFResultsOneSeq.
+ * A DFResultsOneSeq contains the sequence analyzed, the frontier
  * branch that the sequence reaches, and the set of "interesting" variables
  * affecting the outcome of the frontier branch.
  */
