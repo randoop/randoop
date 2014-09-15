@@ -16,11 +16,11 @@ import plume.Options.ArgException;
  * This command must be run from $RANDOOP_HOME/systemtests.
  * The command is run as follows:
  *
- *   java randoop.experiments.RandoopOneClass<?> <subject-program-string>
+ *   java randoop.experiments.RandoopOneClass <em>subject-program-string</em>
  *
  * The command assumes:
  *
- *   + The file experiments/<subject-program-string>.experiment exists and
+ *   + The file experiments/<em>subject-program-string</em>.experiment exists and
  *     specifies a subject program property file.
  *
  *  The command reads in the property file and uses it to create the

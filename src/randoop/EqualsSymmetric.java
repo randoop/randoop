@@ -1,7 +1,7 @@
 package randoop;
 
 /**
- * The contract: <code>o1.equals(o2) => o2.equals(o1)</code>.
+ * The contract: <code>o1.equals(o2) &rArr; o2.equals(o1)</code>.
  */
 public final class EqualsSymmetric implements ObjectContract {
 

@@ -16,7 +16,7 @@ import edu.gatech.cc.jcrasher.plans.Plan;
  * ClassWrapper
  *
  * Each class or interface X has exactly one ClassWrapper XW.
- * - A global mapping: Class<?> --> ClassWrapper holds all tupels (X, XW)*
+ * - A global mapping: Class<?> &rarr; ClassWrapper holds all tupels (X, XW)*
  * - ClassWrapper knows about each way to construct an instance x of X.
  *   The "needs-type-for-construction"-relation, i.e.:
  * 

@@ -37,7 +37,7 @@ import plume.UtilMDE;
 public final class Reflection {
 
   /**
-   * Used by methods that that a java.lang.Class<?> object as
+   * Used by methods that that a java.lang.Class&lt;?&gt; object as
    * argument and use it to compute something based on it.
    */
   public static enum Match { EXACT_TYPE, COMPATIBLE_TYPE }
@@ -54,8 +54,8 @@ public final class Reflection {
    * the given class, to a given depth. For example, if class C1 declares
    * only method foo(C2)/C3,  and class C2 declares method bar(C4)/C5, then:
    *
-   * We say that C1, C2 and C3 are related to C1 at depth >= 0.
-   * We say that C4 and C5 are related to C1 at depth >= 1.
+   * We say that C1, C2 and C3 are related to C1 at depth &ge; 0.
+   * We say that C4 and C5 are related to C1 at depth &ge; 1.
    *
    * We say that a class C2 appears in the interface of C iff:
    * (1) C2 is C
@@ -580,7 +580,6 @@ public final class Reflection {
    /**
     * To deserialize a list serialized with this method, use the
     * method deserializeClassList.
-    * @throws IOException
     */
    public static ArrayList<String> getNamesForClasses(ArrayList<Class<?>> cl) {
      if (cl == null) throw new IllegalArgumentException("cl should not be null.");

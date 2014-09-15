@@ -39,13 +39,13 @@ public class DataFlowInput implements Serializable {
    * 
    * START RECORD
    * BRANCH
-   * <branch-description>
+   * <em>branch-description</em>
    * SEQUENCE
-   * <sequence-description>
+   * <em>sequence-description</em>
    * END RECORD
    *
-   * Where <branch-description> is a string that can be parsed
-   * by the method cov.OneBranchInfo.parse(String), and <sequence-description>
+   * Where <em>branch-description</em> is a string that can be parsed
+   * by the method cov.OneBranchInfo.parse(String), and <em>sequence-description</em>
    * is a string that can be parsed by the method
    * randoop.SequenceParser.parse(String).
    * 

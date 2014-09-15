@@ -224,7 +224,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Clear the component set each time it contains the given number of inputs.
-   * <br />
+   * <p>
+   *
    * Randoop stores previously-generated tests in a "component" set, and uses them to
    * generate new tests. Setting this variable to a small number can sometimes result
    * in a greater variety of tests generated during a single run.

@@ -426,7 +426,7 @@ public class RatPoly {
      *         derivative of each term.
      *
      *         Given a term, a*x^b,
-     *         the derivativee of the term is:  (a*b)*x^(b-1)  for b > 0
+     *         the derivativee of the term is:  (a*b)*x^(b-1)  for b &gt; 0
      *                                            0         for b == 0
      */
     public RatPoly differentiate () {
@@ -456,7 +456,7 @@ public class RatPoly {
      *         <p>The antiderivative of a polynomial is the sum of the
      *         antiderivative of each term plus some constant.
      *
-     *         Given a term, a*x^b,  (where b >= 0)
+     *         Given a term, a*x^b,  (where b &ge; 0)
      *         the antiderivativee of the term is:  a/(b+1)*x^(b+1)
      */
     public RatPoly antiDifferentiate (RatNum integrationConstant) {

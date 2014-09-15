@@ -199,7 +199,7 @@ public class RatPolyStack {
 
     /** Integrates the top element of this, placing the result on top
      * of the stack.
-     * requires: this.size() >= 1
+     * requires: this.size() &ge; 1
      * modifies: this
      * effects:  If this = [p1]:S
      * then this_post = [p2]:S
@@ -213,7 +213,7 @@ public class RatPolyStack {
     /** Differentiates the top element of this, placing the result on top
      *
      * of the stack.
-     * requires: this.size() >= 1
+     * requires: this.size() &ge; 1
      * modifies: this
      * effects:  If this = [p1]:S
      * then this_post = [p2]:S

@@ -24,7 +24,7 @@ import cov.CoverageAtom;
  * Used to combine the coverage results of multiple Randoop runs.
  * 
  * Input: a list of serialized objects of type
- *        Map<CoverageAtom,Set<Sequence>>
+ *        Map&lt;CoverageAtom,Set&lt;Sequence&gt;&gt;
  *        
  * Output: a serialized object of the above type
  *         that combines all the entries from the inputs.

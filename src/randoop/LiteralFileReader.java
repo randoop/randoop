@@ -33,12 +33,12 @@ import randoop.util.RecordProcessor;
  * </ul>
  * Blank lines and comment lines (lines starting with "#") are ignored, both
  * between records and inside records.
- * </p>
+ * <p>
  * 
  * An example literals file appears in file
- * randoop/systemtests/resources/literalsfile.txt.</p>
+ * randoop/systemtests/resources/literalsfile.txt.<p>
  * 
- * LIMITATIONS:</p>
+ * LIMITATIONS:<p>
  * 
  * Error messages do not include line numbers pointing to location of the error.</p>
  * 

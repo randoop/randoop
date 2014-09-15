@@ -10,7 +10,7 @@ import randoop.util.Files;
  * A target maker that takes as input a file name with one target per line, and
  * give back the targets (preprended with user-specified prefix/suffix) in the file.
  *
- * If prefix == "<none>" then no prefix is used. Same for suffix.
+ * If prefix == "&lt;none&gt;" then no prefix is used. Same for suffix.
  */
 public class OneTargetPerLine implements TargetMaker {
 

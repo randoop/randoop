@@ -1,7 +1,7 @@
 package randoop;
 
 /**
- * The contract: <code>o1.equals(o2) => o1.hashCode() == o2.hashCode()</code>.
+ * The contract: <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.
  */
 public final class EqualsHashcode implements ObjectContract {
 

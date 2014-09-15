@@ -12,8 +12,8 @@ import plume.UtilMDE;
  * partially specified by the client of this class.
  * 
  * A record is a sequence of lines, beginning with the string
- * "START <recordtype>" and ending with the string "END <recordtype>"
- * where <recordtype> is specified by the client. For example:
+ * "START &lt;recordtype&gt;" and ending with the string "END &lt;recordtype&gt;"
+ * where &lt;recordtype&gt; is specified by the client. For example:
  * 
  * START person
  * ...

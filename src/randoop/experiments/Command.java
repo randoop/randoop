@@ -16,8 +16,8 @@ import randoop.Globals;
 /**
  * The important method in this class is <code>exec(String)</code>. It
  * executes its argument and pipes both stdout and stderr to System.out. Each
- * line in the piped output from stdout is prefixed with "OUT>" and the output
- * from stderr is prefixed with "ERR>"
+ * line in the piped output from stdout is prefixed with "OUT&gt;" and the output
+ * from stderr is prefixed with "ERR&gt;"
  *
  * <p>
  * Credit: Producer code modified (and augmented) from Michael Daconta's "Java
@@ -158,7 +158,7 @@ public class Command {
 
   /**
    * Runs cmd, redirecting stdout and stderr to `out' and prefixing the output
-   * from stout with "OUT>" and the output from stderr with "ERR>".
+   * from stout with "OUT&gt;" and the output from stderr with "ERR&gt;".
    *
    * Returns whatever exit number is returned by the subprocess invoking the
    * command.
