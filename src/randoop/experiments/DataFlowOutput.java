@@ -35,27 +35,27 @@ public class DataFlowOutput implements Serializable {
    * The text file consists of a list of records, each as follows:
    * 
    * START DFRESULT
-   * <branch-description>
-   * <sequence-description>
-   * VARS <num-vars>
-   * <var> <val> ... <val>
+   * <em>branch-description</em>
+   * <em>sequence-description</em>
+   * VARS <em>num-vars</em>
+   * <em>var</em> <em>val</em> ... <em>val</em>
    * ...
-   * <var> <val> ... <val>
+   * <em>var</em> <em>val</em> ... <em>val</em>
    * END DFRESULT
    * 
    * Where:
    * 
-   * <branch-description> is a string that can be parsed by the method
+   * <em>branch-description</em> is a string that can be parsed by the method
    * cov.OneBranchInfo.parse(String).
    * 
-   * <sequence-description> is a string that can be parsed by the method
+   * <em>sequence-description</em> is a string that can be parsed by the method
    * randoop.SequenceParser.parse(String).
    * 
-   * <num-vars> is the number of "interesting" variables in the sequence.
+   * <em>num-vars</em> is the number of "interesting" variables in the sequence.
    * 
-   * Each <var> <val> ... <val> is an interesting variable followed by
+   * Each <em>var</em> <em>val</em> ... <em>val</em> is an interesting variable followed by
    * interesting values for the variable, all on a single line and separated
-   * with whitespace. There are <num-vars> lines.
+   * with whitespace. There are <em>num-vars</em> lines.
    * 
    * Blank lines and comments between records are allowed and ignored. Comments
    * are lines starting with "#".
@@ -63,7 +63,7 @@ public class DataFlowOutput implements Serializable {
    * The records are used to create the list of DFResultsOneSeq objects.
    * 
    * TODO potential problems: (1) last statement is sequence begins with "VARS";
-   *      (2) some <val> is a string with whitespace.
+   *      (2) some <em>val</em> is a string with whitespace.
    */
   public static DataFlowOutput parse(String filename) {
     

@@ -53,7 +53,7 @@ public class Branch implements CoverageAtom, Serializable {
    *          the name of the class containing this branch.
    * @param methodName
    *          the name of the method containing this branch. If this branch is
-   *          part of a constructor, the string must be "<init>". If this
+   *          part of a constructor, the string must be "&lt;init&gt;". If this
    *          branch is not part of a method or constructor, the string must be
    *          null.
    * @param lineNumber

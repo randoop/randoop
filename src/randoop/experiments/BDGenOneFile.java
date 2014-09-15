@@ -17,11 +17,11 @@ public class BDGenOneFile {
    * This command must be run from $RANDOOP_HOME/systemtests.
    * The command is run as follows:
    *
-   *   java randoop.experiments.BDGenOneFile <subject-program-string>-<bdgen-input-file>
+   *   java randoop.experiments.BDGenOneFile <em>subject-program-string</em>-<em>bdgen-input-file</em>
    *
    * The command assumes:
    *
-   *   + The file experiments/<subject-program-string>.experiment exists and
+   *   + The file experiments/<em>subject-program-string</em>.experiment exists and
    *     specifies a subject program property file.
    */
   public static void main(String[] args) throws IOException {

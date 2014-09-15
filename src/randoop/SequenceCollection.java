@@ -48,7 +48,7 @@ import randoop.util.Reflection.Match;
  * To find all the sequences that create values of a given type,
  * Randoop first uses the <code>SubTypeSet</code> to find the set
  * <code>S</code> of feasible subtypes in set of sequences, and
- * returns the range of <code>S</cod> in the sequence map.
+ * returns the range of <code>S</code> in the sequence map.
  */
 public class SequenceCollection {
 

@@ -14,11 +14,11 @@ public class RandoopOneClass {
    * This command must be run from $RANDOOP_HOME/systemtests.
    * The command is run as follows:
    *
-   *   java randoop.experiments.RandoopOneClass <subject-program-string>-<classname>
+   *   java randoop.experiments.RandoopOneClass <em>subject-program-string</em>-<em>classname</em>
    *
    * The command assumes:
    *
-   *   + The file experiments/<subject-program-string>.experiment exists and
+   *   + The file experiments/<em>subject-program-string</em>.experiment exists and
    *     specifies a subject program property file.
    */
   public static void main(String[] args) throws IOException {

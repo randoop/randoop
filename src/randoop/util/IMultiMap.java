@@ -10,7 +10,7 @@ import java.util.Set;
 public interface IMultiMap<T1, T2> {
 
   /**
-   * Precondition: the mapping key->value is not already in the map.
+   * Precondition: the mapping key&rarr;value is not already in the map.
    * 
    * @param key cannot be null.
    * @param value cannot be null.
@@ -18,7 +18,7 @@ public interface IMultiMap<T1, T2> {
    void add(T1 key, T2 value);
 
   /**
-   * Precondition: the mapping key->value is in the map.
+   * Precondition: the mapping key&rarr;value is in the map.
    * 
    * @param key cannot be null.
    * @param value cannot be null.

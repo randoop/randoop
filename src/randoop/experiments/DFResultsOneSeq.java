@@ -68,7 +68,7 @@ public class DFResultsOneSeq implements Serializable {
   
   /**
    * Outputs this object as a String that can be parsed
-   * by method DFResultsOneSeq.parse(List<String>).
+   * by method DFResultsOneSeq.parse(List&lt;String&gt;).
    * 
    * See documentation for DataFlowOutput.parse(String filename).
    */

@@ -25,7 +25,7 @@ import edu.gatech.cc.jcrasher.plans.PresetPlans;
  * ClassWrapperImpl
  *
  * Each class or interface X has exactly one ClassWrapper XW.
- * - A global mapping: Class<?> --> ClassWrapper holds all tupels (X, XW)*
+ * - A global mapping: Class<?> &rarr; ClassWrapper holds all tupels (X, XW)*
  * - ClassWrapper knows all preset valus of its wrapped type and all
  * 	found methods or constructors, which return the wrapped type:
  * 

@@ -37,11 +37,11 @@ import cov.Branch;
  *
  * Usage:
  *
- * DataFlow --scratchdir=<dir> [ --overwrite ] INPUT_FILE
+ * DataFlow --scratchdir=dir [ --overwrite ] INPUT_FILE
  *
  * Where
  *
- * <dir> is a directory where DataFlow will place temporary files.
+ * dir is a directory where DataFlow will place temporary files.
  *
  * INPUT_FILE is a text file that specifies the input to data flow.
  * It is parsed using the DataFlowInput.parse(File) method.

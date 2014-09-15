@@ -17,14 +17,14 @@ public class DataFlow {
    * This command must be run from $RANDOOP_HOME/systemtests.
    * The command is run as follows:
    * 
-   *   java randoop.experiments.DataFlow <subject-program-string>-<suffix>
+   *   java randoop.experiments.DataFlow <em>subject-program-string</em>-<em>suffix</em>
    *   
    * The command assumes two things:
    * 
-   *   + The file experiments/<subject-program-string>.experiment exists and
+   *   + The file experiments/<em>subject-program-string</em>.experiment exists and
    *     specifies a subject program property file.
    *     
-   *   + The file <subject-program-string>-<suffix>.ser exists and contains
+   *   + The file <em>subject-program-string</em>-<em>suffix</em>.ser exists and contains
    *     the serialized results of a run of Randoop on classes in the subject
    *     program.
    *     

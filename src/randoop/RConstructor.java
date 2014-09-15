@@ -194,8 +194,8 @@ public final class RConstructor implements StatementKind, Serializable {
    *
    * Where CONSTRUCTOR is a string representation of the constrctor signature. Examples:
    *
-   * java.util.ArrayList.<init>()
-   * java.util.ArrayList.<init>(java.util.Collection)
+   * java.util.ArrayList.&lt;init&gt;()
+   * java.util.ArrayList.&lt;init&gt;(java.util.Collection)
    *
    */
   public String toParseableString() {

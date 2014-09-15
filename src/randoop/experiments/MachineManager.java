@@ -16,12 +16,12 @@ import java.util.List;
  * If there is a target and this manager's machine name is "local",
  * the manager issues the command
  *
- *   make -C $RANDOOP_HOME/systemtests <target>
+ *   make -C $RANDOOP_HOME/systemtests <em>target</em>
  *
  * If the machine name is other than "local", the target issues the
  * command
  *
- *   ssh <machine> make -C $RANDOOP_HOME/systemtests <target>
+ *   ssh <em>machine</em> make -C $RANDOOP_HOME/systemtests <em>target</em>
  */
 public class MachineManager extends Thread {
 

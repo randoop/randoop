@@ -880,11 +880,11 @@ public final class Sequence implements Serializable, WeightedElement {
    * the statement call. The VAR tokens appearing after STATEMENT_KIND represent
    * the "input variables" to the statement call. At the i-th line, the input
    * variable tokens should appear as an output variable for some previous j-th
-   * line, j < i.
+   * line, j &lt; i.
    *
    * Here is an example of a list of lines representing a sequence.
    *
-   * var0 = cons : java.util.HashMap.<init>() :
+   * var0 = cons : java.util.HashMap.&lt;init&gt;() :
    * var1 = prim : double:-1.0 :
    * var2 = prim : java.lang.String:"hi!" :
    * var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
@@ -1002,7 +1002,7 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * Parse a sequence encoded as a strings. Convience method for parse(List<String>),
+   * Parse a sequence encoded as a strings. Convience method for {@link #parse(List)},
    * which parses a sequence of strings, each representing a Statement. See
    * that method for more documentation on the string representation of a sequence.
    *
@@ -1029,7 +1029,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * The file should be made up of a list of records, each as follows:
    *
    * START SEQUENCE
-   * <parseable-sequence-string>
+   * &lt;parseable-sequence-string&gt;
    * END SEQUENCE
    */
   public static void readTextSequences(String file, final Collection<Sequence> collection) {

@@ -14,9 +14,9 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  *
  * - Manages initialization with some objects of component type
  * 
- * ClassWrapper --> Class
- * ClassWrapper --> Plan*
- * Plan   --> Instance
+ * ClassWrapper &rarr; Class
+ * ClassWrapper &rarr; Plan*
+ * Plan   &rarr; Instance
  *
  * CS 8903 Automatic Testing: 
  * Crash java classes by passing inconvenient params
@@ -28,7 +28,7 @@ public class ArrayPlan extends NullPlan {
 
   /**
    * Which plans generate array's components to initialize this value?
-   * - zero-elem-array --> empty array
+   * - zero-elem-array &rarr; empty array
    * - list of params in order to initialize araray
    */
   protected Plan[] componentPlans = null;
