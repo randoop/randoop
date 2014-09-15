@@ -75,7 +75,8 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	touch bin
 
 # Run all tests.
-tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen  results 
+# tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen  results 
+tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist  results 
 
 # Runs pure Randoop-related tests.
 randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output
@@ -355,7 +356,8 @@ covtest: bin
 
 # Runs Randoop and Dataflow analysis on arraylist.
 # Order matters: df1 should follow randoop, and bdgen should follow df2.
-arraylist: randoop-df df
+# arraylist: randoop-df df
+arraylist: randoop-df
 
 # Compiles and coverage-instruments the java_collections subject program.
 prepare:
@@ -395,16 +397,16 @@ randoop-df: bin
 test-constants: bin
 	java -ea randoop.util.ClassFileConstants bin/randoop/util/ClassFileConstants.class
 
-# Runs dataflow on the results of Randoop on arraylist.
-#
-# Its input is the output of target randoop.
-df: $(DYNCOMP) bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
-	   randoop.main.DataFlow \
-	   --scratchdir=systemtests/df-scratch \
-	   --overwrite \
-	   --outputfile=systemtests/resources/arraylist.dfout.txt \
-	   systemtests/resources/arraylist.dfin.txt.goal
+# # Runs dataflow on the results of Randoop on arraylist.
+# #
+# # Its input is the output of target randoop.
+# df: $(DYNCOMP) bin
+# 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
+# 	   randoop.main.DataFlow \
+# 	   --scratchdir=systemtests/df-scratch \
+# 	   --overwrite \
+# 	   --outputfile=systemtests/resources/arraylist.dfout.txt \
+# 	   systemtests/resources/arraylist.dfin.txt.goal
 
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
@@ -420,75 +422,76 @@ execerr:
 	randoop.main.Main \
 	exec systemtests/resources/dferr2-seq-only.txt
 
-# Runs dataflow on various test inputs (see systemtests/resources/df1.txt).
-#
-# Its input was manually generated.
-df1: $(DYNCOMP) bin
-	rm -f systemtests/resources/df1.txt.output
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
-	   randoop.main.DataFlow \
-	   --scratchdir=systemtests/df-scratch \
-	   --overwrite \
-	   systemtests/resources/df1.txt
+# # Runs dataflow on various test inputs (see systemtests/resources/df1.txt).
+# #
+# # Its input was manually generated.
+# df1: $(DYNCOMP) bin
+# 	rm -f systemtests/resources/df1.txt.output
+# 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
+# 	   randoop.main.DataFlow \
+# 	   --scratchdir=systemtests/df-scratch \
+# 	   --overwrite \
+# 	   systemtests/resources/df1.txt
+# 
+# # Runs dataflow on a set of inputs.
+# #
+# # Its input was manually generated to be sequences which bdgen can
+# # successfully modify to cover a frontier branch.
+# #
+# # Its output is used as input by target bdgen.
+# df2:
+# 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
+# 	   randoop.main.DataFlow \
+# 	   --scratchdir=systemtests/df-scratch \
+# 	   --overwrite \
+# 	   --outputfile=systemtests/resources/df2-output.txt \
+# 	   systemtests/resources/df2-input.txt
+# 
+# # Runs bdgen on a collection of (sequence, frontier branch,
+# # interesting vars) triples, and checks that bdgen can successfully
+# # creates new sequences to cover the frontier branches.
+# #
+# # Its input is the output of target df2.
+# bdgen: bin
+# 	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
+# 	   randoop.main.GenBranchDir \
+# 	   --many-branches \
+# 	   --input-df-results=systemtests/resources/df2-output.txt.goal \
+# 	   --input-covinst-classes=systemtests/resources/df-bdgen-covclasses.txt \
+# 	   --input-covmap=covmap.gz \
+# 	   --output-new-sequences=systemtests/resources/bdgen-output.txt \
+# 	   --output-failures=systemtests/resources/bdgen-failures.txt \
+# 	   --output-new-branches=systemtests/resources/bdgen-branches.txt \
+# 	   --output-new-branches-sorted \
+# 	   --logfile=systemtests/bdgen-log.txt
+# 
+# # Runs bdgen on a collection of manually-generated cases, for which it
+# # should successfully generate sequences that cover frontier
+# # branches.
+# bdgen2: bin
+# 	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
+# 	   randoop.main.GenBranchDir \
+# 	   --many-branches \
+# 	   --input-df-results=systemtests/resources/bdgen2-input.txt \
+# 	   --input-covinst-classes=systemtests/resources/df-bdgen-covclasses.txt \
+# 	   --input-components-txt=systemtests/resources/bdgen_components.txt \
+# 	   --output-new-sequences=systemtests/resources/bdgen2-output.txt \
+# 	   --output-failures=systemtests/resources/bdgen2-failures.txt \
+# 	   --output-new-branches=systemtests/resources/bdgen2-branches.txt \
+# 	   --output-new-branches-sorted \
+# 	   --logfile=systemtests/bdgen2-log.txt
+# # There is nondeterminism in HashMap. Don't consider branchs in regression tests.
+# 	grep -v "util2\.HashMap" systemtests/resources/bdgen2-branches.txt > tmp.txt
+# 	mv tmp.txt systemtests/resources/bdgen2-branches.txt
+# 
+# df3: $(DYNCOMP) bin
+# 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
+# 	   randoop.main.DataFlow \
+# 	   --scratchdir=systemtests/df-scratch \
+# 	   --overwrite \
+# 	   --outputfile=systemtests/resources/df3-output.txt \
+# 	   systemtests/resources/df3.txt
 
-# Runs dataflow on a set of inputs.
-#
-# Its input was manually generated to be sequences which bdgen can
-# successfully modify to cover a frontier branch.
-#
-# Its output is used as input by target bdgen.
-df2:
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
-	   randoop.main.DataFlow \
-	   --scratchdir=systemtests/df-scratch \
-	   --overwrite \
-	   --outputfile=systemtests/resources/df2-output.txt \
-	   systemtests/resources/df2-input.txt
-
-# Runs bdgen on a collection of (sequence, frontier branch,
-# interesting vars) triples, and checks that bdgen can successfully
-# creates new sequences to cover the frontier branches.
-#
-# Its input is the output of target df2.
-bdgen: bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
-	   randoop.main.GenBranchDir \
-	   --many-branches \
-	   --input-df-results=systemtests/resources/df2-output.txt.goal \
-	   --input-covinst-classes=systemtests/resources/df-bdgen-covclasses.txt \
-	   --input-covmap=covmap.gz \
-	   --output-new-sequences=systemtests/resources/bdgen-output.txt \
-	   --output-failures=systemtests/resources/bdgen-failures.txt \
-	   --output-new-branches=systemtests/resources/bdgen-branches.txt \
-	   --output-new-branches-sorted \
-	   --logfile=systemtests/bdgen-log.txt
-
-# Runs bdgen on a collection of manually-generated cases, for which it
-# should successfully generate sequences that cover frontier
-# branches.
-bdgen2: bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
-	   randoop.main.GenBranchDir \
-	   --many-branches \
-	   --input-df-results=systemtests/resources/bdgen2-input.txt \
-	   --input-covinst-classes=systemtests/resources/df-bdgen-covclasses.txt \
-	   --input-components-txt=systemtests/resources/bdgen_components.txt \
-	   --output-new-sequences=systemtests/resources/bdgen2-output.txt \
-	   --output-failures=systemtests/resources/bdgen2-failures.txt \
-	   --output-new-branches=systemtests/resources/bdgen2-branches.txt \
-	   --output-new-branches-sorted \
-	   --logfile=systemtests/bdgen2-log.txt
-# There is nondeterminism in HashMap. Don't consider branchs in regression tests.
-	grep -v "util2\.HashMap" systemtests/resources/bdgen2-branches.txt > tmp.txt
-	mv tmp.txt systemtests/resources/bdgen2-branches.txt
-
-df3: $(DYNCOMP) bin
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
-	   randoop.main.DataFlow \
-	   --scratchdir=systemtests/df-scratch \
-	   --overwrite \
-	   --outputfile=systemtests/resources/df3-output.txt \
-	   systemtests/resources/df3.txt
 
 ############################################################
 # Targets for creating and printing the results of test diffs.
