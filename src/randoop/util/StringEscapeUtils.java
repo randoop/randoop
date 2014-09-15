@@ -46,8 +46,8 @@ public class StringEscapeUtils {
    * <p><code>StringEscapeUtils</code> instances should NOT be constructed in
    * standard programming.</p>
    *
-   * <p>Instead, the class should be used as:
-   * <pre>StringEscapeUtils.escapeJava("foo");</pre></p>
+   * <p>Instead, the class should be used as:</p>
+   * <pre>StringEscapeUtils.escapeJava("foo");</pre>
    *
    * <p>This constructor is public to permit tools that require a JavaBean
    * instance to operate.</p>
@@ -69,11 +69,11 @@ public class StringEscapeUtils {
    * is that in JavaScript, a single quote must be escaped.</p>
    *
    * <p>Example:
+   * </p>
    * <pre>
    * input string: He didn't say, "Stop!"
    * output string: He didn't say, \"Stop!\"
    * </pre>
-   * </p>
    *
    * @param str  String to escape values in, may be null
    * @return String with escaped values, <code>null</code> if null string input

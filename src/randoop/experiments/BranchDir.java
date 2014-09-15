@@ -14,14 +14,14 @@ import randoop.util.Files;
  * This command must be run from $RANDOOP_HOME/systemtests.
  * The command is run as follows:
  * 
- *   java randoop.experiments.BranchDir <subject-program-string>-<classname>
+ *   java randoop.experiments.BranchDir <em>subject-program-string</em>-<em>classname</em>
  *   
  * The command assumes:
  * 
- *   + The file experiments/<subject-program-string>.experiment exists and
+ *   + The file experiments/<em>subject-program-string</em>.experiment exists and
  *     specifies a subject program property file.
  *     
- *   + The file <subject-program-string>-<suffix>.ser.output exists and contains
+ *   + The file <em>subject-program-string</em>-<em>suffix</em>.ser.output exists and contains
  *     the serialized results of a run of DataFlow on classes in the subject
  *     program.
  *     

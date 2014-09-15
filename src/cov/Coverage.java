@@ -98,9 +98,9 @@ public class Coverage {
    * @param cls
    *          The class whose source lines are of interest.
    * @param startLine
-   *          The first line of interest. Must be >= 1.
+   *          The first line of interest. Must be &ge; 1.
    * @param endLine
-   *          The last line of interest. Must be >= startLine. If endLine is
+   *          The last line of interest. Must be &ge; startLine. If endLine is
    *          greater than the number of lines in the source file, the method
    *          returns lines up to the last line in the file.
    * @return Returns null if lineNumber is greater than lines in source file.

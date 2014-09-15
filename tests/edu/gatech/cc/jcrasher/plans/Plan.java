@@ -11,9 +11,9 @@ package edu.gatech.cc.jcrasher.plans;
  * - There can be different Plans for each class discovered.
  * - Each plan produces its own value.
  * 
- * ClassWrapper --> Class
- * ClassWrapper --> Plan*
- * Plan         --> Instance
+ * ClassWrapper &rarr; Class
+ * ClassWrapper &rarr; Plan*
+ * Plan         &rarr; Instance
  *
  * Automatic Testing: 
  * Crash java classes by passing inconvenient params

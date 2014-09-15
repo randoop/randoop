@@ -67,7 +67,7 @@ public class ListOfListsSelectorTest extends TestCase {
   }
 
   /*
-   * Test method for 'randoop.util.ListOfLists.ListOfLists(List<List<T>>)'
+   * Test method for 'randoop.util.ListOfLists.ListOfLists(List&lt;List&lt;T&gt;&gt;)'
    */
    public void testListOfLists() {
 

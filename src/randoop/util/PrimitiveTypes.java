@@ -245,7 +245,7 @@ public final class PrimitiveTypes {
   /**
    * Returns true if the given string looks like it came from a call of
    * Object.toString(); in other words, looks something like
-   * "<classname>@<hex>". Such strings are rarely useful in generation because
+   * "&lt;classname&gt;@&lt;hex&gt;". Such strings are rarely useful in generation because
    * they contain non-reproducible hash strings.
    * 
    * This method is actually more restrictive in what it determines to look like
@@ -253,7 +253,7 @@ public final class PrimitiveTypes {
    * 
    * .*@[0-9a-h]{1,8}.*
    * 
-   * Meaning, if it looks like the string contains the telltale "@<hex>"
+   * Meaning, if it looks like the string contains the telltale "@&lt;hex&gt;"
    * pattern, the method returns false. This almost always works and is a
    * faster check.
    */

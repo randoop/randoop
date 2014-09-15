@@ -16,7 +16,7 @@ public class StatementKinds {
    * represents more specifics of the StatementKind. For example, the following
    * String represents the constructor for HashMap:
    * 
-   * cons : java.util.HashMap.<init>()
+   * cons : java.util.HashMap.&lt;init&gt;()
    * 
    * A class implementing StatementKind should define a static field named ID
    * that corresponds to the ID string used when parsing. The way this parse
