@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2002,2004 The Apache Software Foundation.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<document>
+
+ <properties>
+  <title>Jelly Tag Reference (ant:fileScanner)</title>
+  <author email="dion@apache.org">Dion Gillard</author>
+ </properties>
+
+  <body>
+
+    <section name="Home Page">
+      <p>See 
+        <a href="http://jakarta.apache.org/commons/jelly/libs/ant/">http://jakarta.apache.org/commons/jelly/libs/ant/</a>
+      </p>
+    </section>
+
+    <section name="Description">
+      <p>
+        This tag creates a <code>FileScanner</code> object so that you can loop over the contents of an Ant
+        <a href="http://ant.apache.org/manual/CoreTypes/fileset.html">fileset</a>.
+      </p>
+      <p>
+        The <code>FileScanner</code> object has the following useful methods:
+        <ul>
+          <li><code>Iterator iterator()</code>: returns an iterator of the files in the nested filesets.</li>
+          <li><code>Iterator directories()</code>: returns an iterator of the directories in the nested filesets.</li>
+          <li><code>boolean hasFiles()</code>: returns true if there are files in the nested filesets..</li>
+        </ul>
+      </p>
+    </section>
+    
+    <section name="Attributes">
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Required</th>
+        </tr>
+        <tr>
+          <td>var</td>
+          <td>The variable name for the <code>FileScanner</code> object</td>
+          <td>Yes</td>
+        </tr>
+      </table>
+    </section>
+    
+    <section name="Nested Elements">
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Required</th>
+        </tr>
+        <tr>
+          <td>fileset</td>
+          <td>Any valid ant <a href="http://ant.apache.org/manual/CoreTypes/fileset.html">fileset</a>.</td>
+          <td>No</td>
+        </tr>
+      </table>
+    </section>
+
+    <section name="Examples">
+      <source><![CDATA[
+<j:jelly xmlns:j="jelly:core" xmlns:ant="jelly:ant">
+  <ant:fileScanner var="pluginProjects">
+    <ant:fileset dir="${basedir}">
+      <ant:include name="jelly-tags/*/project.xml" />
+    </ant:fileset>
+  </ant:fileScanner>
+
+  <j:forEach items="${pluginProjects.iterator()}" var="plugin">
+    <!-- process using ${plugin} variable -->
+  </j:forEach>
+</j:jelly>
+]]></source>
+    </section>
+    
+  </body>
+</document>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="randoop.makejar" default="makejar">
+	<property name="plugin.dir" location="plugin" />
+	<property name="src.dir" location="src" />
+	<property name="lib.dir" location="lib" />
+	<property name="output.dir" location="bin" />
+
+	<path id="build.classpath">
+		<pathelement location="${lib.dir}/plume.jar" />
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+			<exclude name="plume.jar" />
+		</fileset>
+	</path>
+
+	<target name="clean">
+		<delete dir="${output.dir}" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="bin" />
+		<javac source="1.5" target="1.5" srcdir="${src.dir}" classpathref="build.classpath" destdir="${output.dir}" />
+	</target>
+
+	<target name="makejar" description="Create a minimal jar for Randoop with plume.jar included" depends="compile">
+
+		<jar jarfile="${plugin.dir}/randoop.jar">
+			<zipfileset dir="${output.dir}" includes="**/*.class"/>
+			<zipfileset src="${lib.dir}/plume.jar" includes="**/*.class"/>
+			<manifest>
+				<attribute name="Main-Class" value="randoop.main.Main" />
+			</manifest>
+		</jar>
+
+	</target>
+
+</project>

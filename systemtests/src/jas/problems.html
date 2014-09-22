@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>JAS - Designs, Problems and Solutions</title>
+<style type="text/css">
+body { background-color: #FFFFF5; } 
+pre  { background-color: silver; 
+       margin-left: 1em; 
+       margin-right: 1em; 
+       padding: 1em; 
+     }
+dt   { font-weight: bolder; 
+       margin-top: 1em;
+     }
+.note { color: maroon; }
+</style>
+  </head>
+  <body>
+    <h1>JAS - Designs, Problems and Solutions</h1>
+
+<p>In ths document we discus some design alternatives, 
+some problems and present our implemented solutions. 
+</p>
+
+
+<h2>1. Designs</h2>
+
+<p><strong>Note:</strong> 
+In this section 'base ring' 
+and 'extension ring' mean object oriented concepts not 
+the mathematical concepts. I.e. 'base ring' is the super class
+of all considered ring classes and 'extension ring' is some
+subclass of the 'base ring' class.
+</p>
+
+<p>The first question is which classes or which objects 
+implement the arithmetic of polynomials. Are polynomials 
+only passive containers which are transformed by ring methods?
+Or are polynomials active objects with methods.
+</p>
+
+
+<h3>1.1. Ring is object with methods</h3>
+
+<p>
+One design was proposed e.g. by M. Conrad in 2002 
+(see <a href="http://ring.perisic.com/">ring.perisic.com</a>).
+It starts with an abstract <code>Ring</code> with abstract
+methods for the ring operations and some real implementations, 
+e.g. for powers. The method parameters are <code>RingElt</code>s,
+which serve mostly as containers for the different ring 
+implementations. The concrete rings, e.g. rational numbers 
+or polynomials, extend <code>Ring</code> and implement the
+algortihms for the respective (extended) <code>RingElt</code>
+data structures. <code>RingElt</code> structures are moreover
+mostly private classes within their corresponding <code>Ring</code>
+extension.
+</p>
+<p>
+Type resolution of the parameters of the methods is completely dynamic 
+during runtime. There is no compile time type checking. 
+The type resolution, by means of a <code>RingX.map(RingElt)</code>
+method, is moreover able to coerce elements from one ring to 
+some other ring, e.g. form rational to polynomial over rationals,
+similar to Scratchpad.
+The base <code>Ring</code> knows about all extension rings, like in
+a closed world. 
+</p>
+<p>
+Creation of extension rings is mainly at initialization time of the 
+base ring (since it knows all extensions) into ring properties.
+Creation of ring elements is mostly dynamic using direct constructors 
+in the various <code>map()</code> methods.
+</p>
+
+
+
+<h3>1.2. Polynomial is object with methods</h3>
+
+<p>
+An other design, e.g. used in our approach, takes polynomials as
+the primary players. A <code>Polynomial</code> is implemented as
+a class with the usual algebraic operations as methods. 
+Each polynomial has a reference to a corresponding <code>Ring</code>
+object, which is a container for the ring characteristics. E.g. 
+for polynomial rings these are the number of variables, the 
+type information of the coefficent ring, the term order,
+the names of the variables and eventualy the commutator relations.
+There is one proposal by V. Niculescu, from 2003, 
+[ref:  
+<a href="http://www.cs.ubbcluj.ro/~vniculescu/Niculescu-03i1.zip"
+   >A design proposal for an object oriented algebraic library</a>]
+to view and implement the <code>Ring</code> as a factory class
+for polynomials and to make the polynomial constructors unavailable.
+</p>
+<p>
+Creation of ring elements was in our first design by employing the 
+prototype creational pattern (via <code>clone()</code>) 
+and directly using element constructors. In the new design it 
+will use the factory pattern (via <code>getZERO()</code>, 
+<code>getONE()</code> etc.) of the <code>RingFactory</code>
+</p>
+<p>
+Type resolution of the coefficient or polynomial method parameters are 
+to the respective interface during compile time with a dynamic upcast 
+to the actual polynomial or coefficient during runtime. 
+There is currently no mapping of elements from one ring to 
+another. However there are conversions / constructor / parser methods 
+from <code>long</code>, <code>java.math.BigInteger</code>, 
+<code>String</code> and <code>java.io.Reader</code> in the new design.
+</p>
+
+
+<h3>1.3. Template, generics and type parameter approaches</h3>
+
+<p>
+These approaches may not be completely covered by Java, C++ or C#.
+For polynomials they mean the usage of a type parameter (eventually
+restricted to some unterface) for the coefficient ring.
+</p>
+<p>
+The creation problem is difficult to solve in Java, since 
+type parameters can not be used in <code>new</code>
+or <code>class.newInstance()</code>. I.e. new objects can not be
+generated only from a type parameter but only from an object or class.
+</p>
+
+
+
+<h2>2. Problems</h2>
+
+<p>During the development and refactorings 
+<!--no  to use type parmeters (generics, templates) -->
+some problems have been detected.
+Consider the following interface and class definitions.
+</p>
+
+<pre>
+interface ModulElem {
+  ModulElem sum(ModulElem other);
+  ...
+}
+
+interface RingElem extends ModulElem {
+  // RingElem sum(RingElem other); no override
+  RingElem multiply(RingElem other);
+  ...
+}
+
+class Rational implements RingElem { // jdk 1.5
+
+  /*ModulElem*/ Rational sum(ModulElem other) {
+  ...
+  }
+
+  /*RingElem*/  Rational multiply(RingElem other) {
+     if ( other instanceof Rational ) {
+        return multiply( (Rational)other );
+     } else { 
+        return // coerce to suitable ring extension
+     }
+  }
+
+  Rational multiply(Rational other) {
+  ...
+  }
+
+}
+
+class Complex implements RingElem {
+  ...
+}
+
+  void usageOK() {
+    Rational a = new Rational();
+    Rational b = new Rational();
+    Rational c;
+    c = a.sum(b);       // jdk 1.5
+    c = a.multiply(b);  // jdk 1.5
+  }
+
+  void usageProblem1() {
+    RingElem a = new Rational();
+    RingElem b = new Rational();
+    RingElem c;
+    c = (RingElem) a.sum(b); // must cast
+    c = a.multiply(b);       // no cast
+  }
+
+  void usageProblem2() {
+    RingElem a = new Rational();
+    RingElem b = new Complex();
+    RingElem c;
+    c = a.multiply(b); // runtime failiure
+  }
+</pre>
+
+<p>
+One problem is the cast in 
+    <code>c = (RingElem)a.sum(b)</code>
+which is not expected since a and b are <code>RingElem</code>s.
+One sulution would be to redefine <code>sum()</code> for 
+<code>RingElem</code>, but then  <code>sum()</code> in 
+<code>ModulElem</code> is not overriden. 
+Then <code>RingElem</code> is no longer an extension of 
+<code>ModulElem</code> and the relation between the 
+interfaces is broken.
+</p>
+
+<p>
+The other problem is 'up cast' in 
+    <code>return multiply( (Rational)other )</code>
+which defeates compile time type safety.
+<code>multiply( )</code> is at first not meaningful defined 
+between <code>Rational</code> and <code>Complex</code>.
+One could as in Scratchpad coerce <code>Rational</code> 
+to <code>Complex</code> (here extend) and multiply to 
+<code>Complex</code> objects, but this may not be expected 
+by the application.
+</p>
+
+<p>
+This problems exist also if abstract classes are used 
+instead of interfaces.
+</p>
+
+
+<h2>3. Solutions</h2>
+
+<p>Reflecting on the mentioned designs and problems our
+design proposal is as follows.
+</p>
+<ol>
+<li><p>We do not distinguish between interfaces for 
+    modules, rings or fields. There is only one interface
+    for rings, wich also defines <code>inverse()</code> 
+    and <code>quotient()</code> together with 
+    a method <code>isUnit()</code> to see if a certain element is
+    invertible or can be used as divisor. 
+    </p>
+</li>
+<li><p>To separate the creation process of ring elements  
+    from the implementation of the ring element 
+    abstract data type we distinguish two interfaces:
+    <code>RingElem&lt;C extends RingElem&gt;</code>
+    and 
+    <code>RingFactory&lt;C extends RingElem&gt;</code>.
+    </p>
+</li>
+<li><p><code>RingElem</code> uses a type parameter 
+    <code>C</code> which is itself recursively reqired 
+    to extend <code>RingElem</code>: <code>C extends RingElem</code>.
+    Also the interface <code>RingFactory</code> depends on the 
+    same type parameter.
+    </p>
+</li>
+<li><p>Basic data types, such as rational numbers, can directly 
+    implement both interfaces but more complex data types, such 
+    as polynomials will implement the interfaces in two different 
+    classes. e.g.
+    </p>
+    <pre>
+BigRational implements RingElem&lt;BigRational&gt;, RingFactory&lt;BigRational&gt;
+</pre>
+<p>or for generic polynomials
+</p>
+    <pre>
+GenPolynomial&lt;C extends RingElem&lt;C&gt; &gt; implements RingElem&lt; GenPolynomial&lt;C&gt; &gt;
+
+GenPolynomialRing&lt;C extends RingElem&lt;C&gt; &gt; implements RingFactory&lt; GenPolynomial&lt;C&gt; &gt;
+</pre>
+</li>
+<li><p>Constructors for basic data types can be implemented in any 
+    appropriate way.
+    Constructors for more complex data types should always require one
+    parameter to be of the respective factory type. This is to 
+    avoid the creation of elements with no knowledge of is corresponding 
+    ring factory.
+    Constructors which require more preconditions, which are only 
+    provided by type (internal) methods should not be declared public.
+    It seems best to declare them as protected.
+    </p>
+</li>
+<li><p>Basic arithmetic is implemented using the 
+    <code>java.math.BigInteger</code> class, which 
+    is itself implemented like GnuMP.
+    At the moment the following classes are implemented
+    <code>BigInteger</code>,
+    <code>BigRational</code>,
+    <code>ModInteger</code>,
+    <code>BigComplex</code>,
+    <code>BigQuaternion</code> 
+    and <code>AlgebraicNumber</code>.
+    </p>
+</li>
+<li><p>Generic polynomials are implemented as sorted maps from
+    exponent vectors to coefficients.
+    For sorted map the Java class <code>java.util.TreeMap</code>
+    is used.
+    The older alternative implementation using <code>Map</code>,
+    implemented with <code>java.util.LinkedHashMap</code>, has
+    been abandoned.
+    There is only one implementation of exponent vectors 
+    <code>ExpVector</code> as dense Java array of <code>long</code>s.
+    Other implementations, e.g. sparse representation or  
+    bigger numbers or <code>int</code>s are not considered 
+    at the moment.
+    The comparators for <code>SortedMap&lt;ExpVector,C&gt;</code>
+    are created from a <code>TermOrder</code> class which 
+    implements most used term orders in practice.
+    </p>
+</li>
+<li><p>Non commutative polynomials with respect to certain
+    commutator relations, so called solvable polynomials, 
+    are extended from 
+    <code>GenPolynomial</code> respectively 
+    <code>GenPolynomialRing</code>.
+    The relations are stored in <code>RelationTable</code> objects,
+    which are inteded to be internal to the 
+    <code>GenSolvablePolynomialRing</code>.
+    The class 
+    <code>GenSolvablePolynomial</code> implements the 
+    non commutative multiplication and uses the commutative 
+    methods from its super class <code>GenPolynomial</code>.
+    As mentioned before, some casts are eventualy required, e.g.
+    <code>GenSolvablePolynomial&lt;C&gt; p.sum(q)</code>. 
+    The respective objects are however correctly buildt 
+    using the methods from the solvable ring factory.
+    <br />
+    The class design allows solvable polynomial objects to be 
+    used in all algorithms where <code>GenPolynomial</code>s 
+    can be used as parameters as long as no distinction between 
+    left and right multiplication is required.
+    </p>
+</li>
+<!--
+<li><p>
+    </p>
+</li>
+-->
+</ol>
+
+
+<h3>3.1. Interfaces</h3>
+
+<p>The interface definition for ring elements with the usual
+arithmetic operations and some status, comparison methods
+and a clone method is as follows.
+</p>
+<pre>
+public interface RingElem&lt;C extends RingElem&gt; 
+                 extends Cloneable, 
+                         Comparable&lt;C&gt;, 
+                         Serializable {
+    public C clone();
+
+    public boolean isZERO();
+    public boolean isONE();
+    public boolean isUnit();
+    public boolean equals(Object b);
+    public int     hashCode();
+    public int     compareTo(C b);
+    public int     signum();
+
+    public C sum(C S);
+    public C subtract(C S);
+    public C negate();
+    public C abs();
+    public C multiply(C S);
+    public C divide(C S);
+    public C remainder(C S);
+    public C inverse();
+}
+</pre>
+
+<p>The interface definition for a ring factory for the creation 
+respectively the reference to the ring constants 0 and 1 is given 
+in the following code. Moreover there are often used casts / 
+conversions from the basic Java types long and BigInteger, 
+as well as a method to create a random element of the ring, 
+a counter part to clone and some parsing methods to obtain 
+a ring element from some external String or Reader.
+</p>
+<pre>
+public interface RingFactory&lt;C extends RingElem&gt; 
+                 extends Serializable {
+    public C getZERO();
+    public C getONE();
+
+    public C fromInteger(long a);
+    public C fromInteger(BigInteger a);
+
+    public C random(int n);
+    public C copy(C c);
+
+    public C parse(String s);
+    public C parse(Reader r);
+}
+</pre>
+
+
+<h3>3.2. Some constructors</h3>
+
+<p>Constructors for BigRational:
+</p>
+<pre>
+    protected BigRational(BigInteger n, BigInteger d)
+              // assert gcd(n,d) == 1
+    public BigRational(BigInteger n)
+    public BigRational(long n, long d)
+    public BigRational(long n)
+    public BigRational()
+    public BigRational(String s) throws NumberFormatException
+</pre>
+
+<p>Constructors for GenPolynomial
+</p>
+<pre>
+    public GenPolynomial(GenPolynomialRing&lt; C &gt; r) 
+    public GenPolynomial(GenPolynomialRing&lt; C &gt; r, SortedMap&lt;ExpVector,C&gt; v) 
+    public GenPolynomial(GenPolynomialRing&lt; C &gt; r, C c, ExpVector e)
+</pre>
+
+<p>Constructors for GenPolynomialRing
+</p>
+<pre>
+    public GenPolynomialRing(RingFactory&lt; C &gt; cf, int n) 
+    public GenPolynomialRing(RingFactory&lt; C &gt; cf, int n, TermOrder t) {
+    public GenPolynomialRing(RingFactory&lt; C &gt; cf, int n, TermOrder t, String[] v)
+</pre>
+
+
+<h3>3.3. Polynomial examples</h3>
+
+<p>Example of a 
+random polynomial in 7 variables over the rational numbers 
+with default term order and with 10 non zero coefficients:
+</p>
+<pre>
+   BigRational cfac = new BigRational();
+   GenPolynomialRing&lt;BigRational&gt; fac;
+                fac = new GenPolynomialRing&lt;BigRational&gt;(cfac,7);
+
+   GenPolynomial&lt;BigRational&gt; a = fac.random(10);
+
+a = GenPolynomial[ 31/5 (0,0,0,1,2,1,2), 19/15 (2,0,0,0,0,0,2), 
+    13/5 (0,2,1,1,0,0,0), 2/3 (0,0,2,0,0,0,0), 217/18 (0,0,0,2,0,0,0), 
+    18/5 (0,0,0,0,2,0,0), 11/32 (1,0,0,0,0,0,0), 63/4 (0,0,0,0,0,0,0) ] 
+    :: GenPolynomialRing[ BigRational, 7, IGRLEX(4),  ]
+</pre>
+
+<p>Example of a 
+random polynomial in 3 variables over a polynomial ring in 7 variables 
+over the rational numbers, both with default term order and 
+with 10 non zero coefficients:
+</p>
+<pre>
+   BigRational cfac = new BigRational();
+   GenPolynomialRing&lt;BigRational&gt; fac;
+                fac = new GenPolynomialRing&lt;BigRational&gt;(cfac,7);
+
+   GenPolynomialRing&lt;GenPolynomial&lt;BigRational&gt;&gt; gfac;
+               gfac = new GenPolynomialRing&lt;GenPolynomial&lt;BigRational&gt;&gt;(fac,3);
+
+   GenPolynomial&lt;GenPolynomial&lt;BigRational&gt;&gt; a = gfac.random(10);
+
+a = GenPolynomial[ 
+       GenPolynomial[ 10/3 (2,0,1,1,0,0,2), 8/7 (1,0,2,0,0,0,0), 
+         9/5 (0,1,0,0,0,0,0), 1/4 (0,0,1,0,0,0,0), 3/14 (0,0,0,0,0,0,0) ] 
+         :: GenPolynomialRing[ BigRational, 7, IGRLEX(4),  ] (2,1,0), 
+       GenPolynomial[ 26/23 (0,2,2,0,1,0,2), 9/4 (1,0,0,0,0,1,1), 
+         29/17 (0,0,2,0,1,0,0), 24/19 (2,0,0,0,0,0,0), 28/13 (1,0,0,1,0,0,0), 
+         11/32 (0,0,1,0,1,0,0), 18/11 (1,0,0,0,0,0,0), 5/11 (0,0,0,0,1,0,0), 
+         475/32 (0,0,0,0,0,0,0) ] 
+         :: GenPolynomialRing[ BigRational, 7, IGRLEX(4),  ] (2,0,0), 
+       GenPolynomial[ 14/15 (2,0,0,1,1,0,2), 19/5 (1,1,0,0,0,0,0), 
+         4/29 (0,0,2,0,0,0,0), 23/27 (0,0,0,2,0,0,0), 20/13 (0,0,0,0,0,0,0) ] 
+         :: GenPolynomialRing[ BigRational, 7, IGRLEX(4),  ] (0,0,2), 
+       GenPolynomial[ 13/8 (2,0,0,1,1,0,0), 8/7 (2,0,0,0,0,0,2), 
+         21/2 (0,0,1,0,0,0,2), 23/22 (0,1,0,0,0,1,0), 9/11 (0,0,0,2,0,0,0), 
+         21/2 (0,0,0,0,2,0,0), 23/13 (0,0,0,0,0,2,0), 5/2 (0,1,0,0,0,0,0), 
+         367/62 (0,0,0,0,0,0,0) ] 
+         :: GenPolynomialRing[ BigRational, 7, IGRLEX(4),  ] (1,0,0), 
+       GenPolynomial[ 4/3 (0,1,0,1,2,1,1), 17/2 (2,1,0,0,2,0,0), 
+         10/29 (1,0,0,0,0,2,2), 3/2 (0,0,2,2,0,0,1), 11/8 (2,0,0,0,0,0,2), 
+         26/31 (0,2,1,0,0,0,0), 10/9 (0,0,1,2,0,0,0), 4/5 (0,0,1,0,0,2,0), 
+         1/8 (2,0,0,0,0,0,0), 1161/406 (0,2,0,0,0,0,0), 31/6 (0,0,0,2,0,0,0), 
+         19 (0,0,1,0,0,0,0), 2 (0,0,0,0,0,1,0), 7/19 (0,0,0,0,0,0,1), 
+         20227/2520 (0,0,0,0,0,0,0) ] 
+         :: GenPolynomialRing[ BigRational, 7, IGRLEX(4),  ] (0,0,0) ] 
+    :: GenPolynomialRing[ GenPolynomialRing, 3, IGRLEX(4),  ]
+</pre>
+
+
+<h3>3.4. Algebraic number examples</h3>
+
+<p>Example of algebraic numbers 
+</p>
+<pre>
+  AlgebraicNumber&lt;C extends RingElem&lt;C&gt; &gt; 
+                 implements RingElem&lt; AlgebraicNumber&lt;C&gt; &gt;, 
+                            RingFactory&lt; AlgebraicNumber&lt;C&gt; &gt;
+</pre>
+
+<p>over rational numbers (so defining an algebraic extension Q(alpha))
+</p>
+<pre>
+   BigRational cfac = new BigRational();
+
+   GenPolynomialRing&lt;BigRational&gt; mfac;
+       mfac = new GenPolynomialRing&lt;BigRational&gt;( cfac, 1 );
+
+   GenPolynomial&lt;BigRational&gt; modul = mfac.random(8).monic();
+       // assume !modul.isUnit()
+
+   AlgebraicNumber&lt;BigRational&gt; fac;
+       fac = new AlgebraicNumber&lt;BigRational&gt;( modul );
+
+   AlgebraicNumber&lt; BigRational &gt; a = fac.random(15);
+
+modul = GenPolynomial[ 1 (2), 13/12 (1), 55/21 (0) ] 
+        :: GenPolynomialRing[ BigRational, 1, IGRLEX(4),  ]
+
+a = AlgebraicNumber[ 
+       GenPolynomial[ 1 (1), -175698982/14106209 (0) ] 
+       :: GenPolynomialRing[ BigRational, 1, IGRLEX(4),  ] 
+       mod 
+       GenPolynomial[ 1 (2), 13/12 (1), 55/21 (0) ] 
+       :: GenPolynomialRing[ BigRational, 1, IGRLEX(4),  ] ]
+</pre>
+
+<p>or modular integers (so defining a Galois field GF(p,n)).
+</p>
+<pre>
+   long prime = getPrime(); // 2^60-93
+   ModInteger cfac = new ModInteger(prime,1);
+
+   GenPolynomialRing&lt;ModInteger&gt; mfac;
+       mfac = new GenPolynomialRing&lt;ModInteger&gt;( cfac, 1 );
+
+   GenPolynomial&lt;ModInteger&gt; modul = mfac.random(8).monic();
+       // assume !modul.isUnit()
+
+   AlgebraicNumber&lt;ModInteger&gt; fac;
+       fac = new AlgebraicNumber&lt;ModInteger&gt;( modul );
+
+   AlgebraicNumber&lt; ModInteger &gt; a = fac.random(12);
+
+modul = GenPolynomial[                  1 mod(1152921504606846883) (2), 
+                       123527304065019309 mod(1152921504606846883) (1), 
+                       452933448238404135 mod(1152921504606846883) (0) ] 
+        :: GenPolynomialRing[ ModInteger, 1, IGRLEX(4),  ]
+
+a = AlgebraicNumber[ 
+       GenPolynomial[                  1 mod(1152921504606846883) (1), 
+                      384307168202282226 mod(1152921504606846883) (0) ] 
+       :: GenPolynomialRing[ ModInteger, 1, IGRLEX(4),  ] 
+       mod 
+       GenPolynomial[                  1 mod(1152921504606846883) (2), 
+                      123527304065019309 mod(1152921504606846883) (1), 
+                      452933448238404135 mod(1152921504606846883) (0) ] 
+       :: GenPolynomialRing[ ModInteger, 1, IGRLEX(4),  ] ]
+</pre>
+
+
+<h3>3.5. Solvable polynomial examples</h3>
+
+<p>Example for the creation of a solvable polynomial ring factory.
+   The relation table is created internally.
+</p>
+<pre>
+     BigRational fac = new BigRational(0);
+     TermOrder tord = new TermOrder(TermOrder.INVLEX);
+     String[] vars = new String[]{ "x", "y", "z" };
+     int nvar = vars.length;
+     spfac = new GenSolvablePolynomialRing&lt;BigRational&gt;(fac,nvar,tord,vars);
+
+spfac = GenSolvablePolynomialRing[ BigRational, 3, 
+                                   INVLEX(2), x y z , 
+                                   #rel = 0 ]
+spfac.table = RelationTable[]
+</pre>
+
+<p>A non empty relation table looks as follows.
+</p>
+<pre>
+f = GenSolvablePolynomialRing[ BigRational, 3, INVLEX(2), x y z , #rel = 1 ]
+
+f.ring.table = RelationTable[
+               [0, 1]=[ExpVectorPair[(1,0,0),(0,1,0)], 
+                       GenSolvablePolynomial[ 1 (1,1,0), -1 (0,0,0) ] 
+                       :: GenSolvablePolynomialRing[ BigRational, 3, 
+                                                     INVLEX(2), x y z , 
+                                                     #rel = 1 ]
+                      ]
+               ]
+</pre>
+
+<p>Example of a solvable polynomial over Z_19.
+</p>
+<pre>
+d = GenSolvablePolynomial[ 3 mod(19) (1,1,0), 1 mod(19) (0,0,1) ] 
+    :: GenSolvablePolynomialRing[ ModInteger, 3, INVLEX(2), x y z , #rel = 1 ]
+</pre>
+
+
+<!--
+<p>
+</p>
+<pre>
+</pre>
+-->
+
+<p><!--a href="README" target="readme" >README</a-->
+</p>
+
+    <hr />
+<address><a href="mailto:kredel at rz.uni-mannheim.de">Heinz Kredel</a></address>
+<p>
+<!-- Created: Thu May 26 10:38:37 CEST 2005 -->
+<!-- hhmts start -->
+Last modified: Sun Mar 12 14:29:09 CET 2006
+<!-- hhmts end -->
+</p>
+<p align="right" >
+$Id: problems.html 787 2006-03-12 13:29:40Z kredel $
+</p>
+  </body>
+</html>

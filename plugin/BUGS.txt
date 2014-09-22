@@ -1,0 +1,79 @@
+
+PLUGIN BUGS
+
+* TestGeneratorViewPart initially opens in wrong area. It should open
+  in the Package Explorer / JUnit view area 
+
+* The Randoop 'R' icon appears to be distorted in the launch shortcut
+  in Galileo
+
+* Randoop generated JUnit files are uncompilable from a non-default
+  package if class-input from the default package is used.
+  
+* Sometimes the project does a full build when opening the launch
+  dialog. This is very time-consuming and annoying (This may be done
+  by Eclipse, not Randoop)
+
+* If a user edits code by removing a class or changing parameters to a
+  method that is used in a launch configuration, when they open the
+  launch configuration there will be unsaved changes.
+  [Many Eclipse plug-ins such as JUnit and PDE have the same issue.]
+  REASON: The config stores methods so it knows what should be checked
+          when the config is opened, but it checks if the methods are
+          available before adding them to the list.
+  SOLUTION: Probably the best way to fix this would be to have a refresh
+            button that searches for changes, removes methods that don't
+            exist, and adds new ones that have been added.
+
+* Cannot run tests on methods with generic type parameters without testing
+  the entire class.
+
+* "Project Sources" dialog: When I first press "Project Sources", user
+  presented with an empty window and no classes, and no indication of
+  what user is to do. Should show a list of classes for the selected
+  project, or something like that. Also, the Project Sources class
+  selection dialog changes behavior on subsequent presses: it seems to
+  remember which classes I searched for in earlier dialogs, and shows
+  those classes in subsequent dialogs, which is confusing.
+
+* As I use the plugin in an example use, many errors show up in the
+  Error Log window of the test Eclipse application.
+
+* Sometimes, pressing the "Regenerate tests" button results in NPE on
+  MessageViewListener.
+
+* There should be a more elegant way of handling Randoop erros such as:
+
+java.lang.Error: classForName(randoop.RandoopTest2)
+	at randoop.util.Reflection.classForName(Reflection.java:206)
+	at randoop.util.Reflection.loadClassesFromList(Reflection.java:386)
+	at randoop.main.GenInputsAbstract.findClassesFromArgs(GenInputsAbstract.java:454)
+	at randoop.main.GenTests.handle(GenTests.java:184)
+	at randoop.main.Main.nonStaticMain(Main.java:81)
+	at randoop.main.Main.main(Main.java:43)
+Caused by: java.lang.ClassNotFoundException: randoop.RandoopTest2
+	at java.net.URLClassLoader$1.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)Throwable thrown while handling command:java.lang.Error: classForName(randoop.RandoopTest2)
+
+	at java.net.URLClassLoader.findClass(Unknown Source)
+	at java.lang.ClassLoader.loadClass(Unknown Source)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Unknown Source)
+	at java.lang.ClassLoader.loadClass(Unknown Source)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Unknown Source)
+	at randoop.util.Reflection.classForName(Reflection.java:198)
+	... 5 more
+Randoop failed.
+Last sequence under execution:null
+
+This error occurred when I tested JUnit tests with Randoop, and elected to delete them before launching. Randoop threw an error since their class files hadn’t yet been created yet.
+
+
+FEATURE REQUESTS
+
+* Plug-in should open a classpath fix proposal dialog immediately after
+  generating tests if randoop and junit are not already in the classpath.
+  
+* Add button to remove all Randoop-generate files.
+
+* The state of the check button [ ] Ignore JUNit Tests should be remembered
