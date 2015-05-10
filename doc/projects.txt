@@ -1,5 +1,5 @@
 ALSO SEE project ideas page in Randoop wiki:
-http://code.google.com/p/randoop/wiki/ProjectIdeas
+https://github.com/mernst/randoop/wiki/ProjectIdeas
 
 ***
 
