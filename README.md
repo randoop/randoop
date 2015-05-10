@@ -7,7 +7,7 @@ Randoop is an automatic unit test generator for Java. It automatically creates u
 
 ### Randoop plugin for Eclipse ###
 
-Check out the [Randoop plugin for Eclipse](http://randoop.googlecode.com/hg/plugin/doc/index.html), which lets you automatically generate JUnit tests for your project.
+Check out the [Randoop plugin for Eclipse](https://rawgit.com/mernst/randoop/master/plugin/doc/index.html), which lets you automatically generate JUnit tests for your project.
 
 
 ---
@@ -15,28 +15,14 @@ Check out the [Randoop plugin for Eclipse](http://randoop.googlecode.com/hg/plug
 
 ## Documentation ##
 
-[Randoop user manual](http://randoop.googlecode.com/hg/doc/index.html)
+[Randoop user manual](https://rawgit.com/mernst/randoop/master/doc/index.html)
 
-[Randoop developer manual](http://randoop.googlecode.com/hg/doc/dev.html)
+[Randoop developer manual](https://rawgit.com/mernst/randoop/master/doc/dev.html)
 
-### Presentation slides (in chronological order) ###
-
-  * Feedback-Directed Random Test Generation (presented at ICSE 2007): [PDF](http://randoop.googlecode.com/files/randoop_icse_2007.pdf) [PPT](http://randoop.googlecode.com/files/randoop_icse_2007.ppt)
-  * Finding Errors in .NET with Feedback-Directed Random Testing (presented at ISSTA 2008): [PDF](http://randoop.googlecode.com/files/randoop_case_study_2008.pdf) [PPT](http://randoop.googlecode.com/files/randoop_case_study_2008.ppt)
-  * Directed Random Testing (dissertation slides): [PDF](http://randoop.googlecode.com/files/thesis_talk_post.pdf)
-
+[Project ideas page (for contributors/researchers)](http://code.google.com/p/randoop/wiki/ProjectIdeas)
 
 
 ---
-
-
-### Project Ideas (for contributors/researchers) ###
-
-[Project ideas page](http://code.google.com/p/randoop/wiki/ProjectIdeas)
-
-
----
-
 
 ### Randoop Publications ###
 
@@ -44,11 +30,14 @@ These papers describe Randoop and its underlying techniques in more detail.
 
 [Eclat: Automatic generation and classification of test inputs](http://www.cs.washington.edu/homes/mernst/pubs/classify-tests-ecoop2005-abstract.html)
 by Carlos Pacheco and Michael D. Ernst. In _ECOOP 2005 -- Object-Oriented Programming, 19th European Conference_, (Glasgow, Scotland), 2005.
+Paper: [PDF](http://www.cs.washington.edu/homes/mernst/pubs/classify-tests-ecoop2005.pdf)
 
   * The first paper to present the feedback-directed random test generation, which generates each test, evaluates it, and determines whether to use it as a foundation for more tests.  Randoop uses this technique.
 
-[Feedback-directed random test generation](http://people.csail.mit.edu/cpacheco/publications/feedback-random-abstract.html)
+[Feedback-directed random test generation](http://www.cs.washington.edu/homes/mernst/pubs/feedback-testgen-icse2007-abstract.html)
 by Carlos Pacheco, Shuvendu K. Lahiri, Michael D. Ernst, and Thomas Ball. In _ICSE '07: Proceedings of the 29th International Conference on Software Engineering_, (Minneapolis, MN, USA), 2007.
+Paper: [PDF](http://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007.pdf)
+Slides: [PDF](http://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007-slides.pdf) [PPT](http://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2007-slides.ppt)
 
   * The main paper describing feedback-directed random test generation and Randoop, as well as experiments that compare the technique with other test generation techniques.
 
@@ -57,12 +46,18 @@ by Carlos Pacheco, Shuvendu K. Lahiri, Michael D. Ernst, and Thomas Ball. In _IC
   * A short tool paper describing aspects of the Java version of Randoop.
 
 [Finding Errors in .NET with Feedback-directed Random Testing](http://people.csail.mit.edu/cpacheco/publications/randoop-case-study-abstract.html) by Carlos Pacheco, Shuvendu K. Lahiri, and Thomas Ball. In _ISSTA 2008_, Seattle, Washington, 2008.
+Slides: [PDF](http://randoop.googlecode.com/files/randoop_case_study_2008.pdf) [PPT](http://randoop.googlecode.com/files/randoop_case_study_2008.ppt)
 
   * This case study details the use of Randoop at Microsoft (using a .NET version of Randoop, developed internally at Microsoft). A team of test engineers applied Randoop to a critical .NET component that had been thorughly tested for years. Still, Randoop found many serious errors.
 
+Directed Random Testing (dissertation).
+Slides: [PDF](http://randoop.googlecode.com/files/thesis_talk_post.pdf)
+
+
 ### Other publications that use or evaluate Randoop ###
 
-Note: this list is outdated. For a more recent collection of publications take a look at [this Google Scholar search](http://scholar.google.com/scholar?hl=en&q=pacheco+lahiri+ball+ernst&btnG=Search&as_sdt=0%2C5&as_ylo=&as_vis=0).
+Note: this list is seriously outdated!  For a more recent collection of publications take a look at [this Google Scholar search](http://scholar.google.com/scholar?hl=en&q=pacheco+lahiri+ball+ernst&btnG=Search&as_sdt=0%2C5&as_ylo=&as_vis=0).
+There are 393 results as of 2015-05-10.
 
 The following papers (by other authors) use or evaluate Randoop.
 
@@ -72,6 +67,9 @@ The following papers (by other authors) use or evaluate Randoop.
   * Making Program Refactoring Safer, by Gustavo Soares, Rohit Gheyi, Dalton Serey, and Tiago Massoni. In IEEE Software, July/August 2010.
 
 ### Courses that use Randoop ###
+
+Note: this list is seriously outdated!
+If you wish to have your course listed here, let us know.
 
   * Software Testing (Spring 2008) at Universidade Federal de Pernambuco, taught by Marcelo d'Amorim.
   * Reliable Software: Testing and Monitoring (Third term 2008), Caltech, taught by Alex Groce.
@@ -85,4 +83,4 @@ The following papers (by other authors) use or evaluate Randoop.
 
 ### .NET version of Randoop ###
 
-A version of Randoop that works with Microsoft's .NET platform is available at [http://randoop.codeplex.com/](http://randoop.codeplex.com/) as of September 2010.  Randoop.NET is a from-scratch re-implementation of feedback-directed test generation.  Also, the "Randoop" name is due to the Microsoft group, even though the idea and the Java tool (previously known as "Joe") predate their work.  Check it out!
+A version of Randoop that works with Microsoft's .NET platform is available at [http://randoop.codeplex.com/](http://randoop.codeplex.com/).  Check it out!  Randoop.NET is a from-scratch re-implementation of feedback-directed test generation.  Also, the "Randoop" name is due to the Microsoft group, even though the idea and the Java tool (previously known as "Joe") predate their work.  The project was created in September 2010, but no further development was done.  (The [discussions webpage](http://randoop.codeplex.com/discussions) has two conversations, both from 2011.
