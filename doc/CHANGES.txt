@@ -1,4 +1,12 @@
-version 1.3.4
+Version 1.3.5, released May 25, 2015
+
+Moved the Randoop version control repository from Google Code to GitHub,
+and from the Mercurial version control system to Git.
+
+Randoop now compiles, and its tests pass, under Java 8.
+
+
+Version 1.3.4, released January 1, 2014
 
 Bug fixes:
  * String lengths are checked correctly
@@ -12,7 +20,7 @@ Documentation:
  * Documentation for building a release
 
 
-version 1.3.3
+Version 1.3.3, released Novmember 21, 2012
 
 Bugfixes
   - Workaround for openjdk bug (http://bugs.sun.com/view_bug.do?bug_id=6973831)
@@ -29,7 +37,7 @@ Features
 Documentation enhanced
 
 
-version 1.3.1
+Version 1.3.1
 
 Added @TestValue annotation, allowing users to specify additional
 primitive values to Randoop programmatically.
