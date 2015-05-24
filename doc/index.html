@@ -4,9 +4,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html" />
 <link rel="stylesheet" href="main.css" type="text/css" />
+<link rel="icon" type="image/gif" href="bug.gif" />
 <title>Randoop Manual</title>
 </head>
 <body>
+
+<img src="bug.gif" alt="Bug" style="float:right" />
 
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
@@ -213,7 +216,7 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
  line. The list of methods given by this argument will augment
  any methods derived via the --classlist option.
  
- Also see the manual section on <a href="http://randoop.googlecode.com/hg/doc/index.html#specifying-methods">specifying methods 
+ Also see the manual section on <a href="https://rawgit.com/mernst/randoop/master/doc/index.html#specifying-methods">specifying methods 
  and constructors under test</a>.</li>
       <li><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method#toString()</code> matches the regular expression
  given.  This does not prevent indirect calls to such methods from
@@ -279,7 +282,8 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
  If this option is given, tests with fewer calls are given greater weight during
  its random selection. This has the overall effect of producing smaller JUnit tests. [default false]</li>
       <li><b>--clear=</b><i>int</i>. Clear the component set each time it contains the given number of inputs.
- <br/>
+ <p>
+
  Randoop stores previously-generated tests in a "component" set, and uses them to
  generate new tests. Setting this variable to a small number can sometimes result
  in a greater variety of tests generated during a single run. [default 100000000]</li>
