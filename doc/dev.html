@@ -4,9 +4,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html" />
 <link rel="stylesheet" href="main.css" type="text/css" />
+<link rel="icon" type="image/gif" href="bug.gif" />
 <title>Randoop Developer's Manual</title>
 </head>
 <body>
+
+<img src="bug.gif" alt="Bug" style="float:right" />
 
 <h1>Randoop Developer's Manual</h1> <!-- omit from toc -->
 
@@ -77,7 +80,7 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 <ul>
   <li>To do everything (build <i>and</i> run all tests), type <code>make all</code></li>
   <li>To build without running tests: type <code>make build</code></li>
-  <li>If you want to rebuild from scratch, type <code>make clean</code> first</li>
+  <li>To rebuild from scratch, type <code>make clean && make build</code></li>
 </ul>
 
 <p>Under Eclipse:</p>
@@ -93,17 +96,15 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 
 <h2 id="running">Running unit and system tests</h2>
 
-<ul>
-  <li>From a command prompt, type <code>make tests</code> under Randoop's
-  home directory.</li>
-</ul>
+<p>From the command line (in Randoop's top-level directory), type <code>make tests</code></p>
+
 
 <h2 id="classpath">Randoop classpath</h2>
 
 <p>
-Your classpath must include <tt>bin/</tt> and <tt>lib/*</tt> (either the
-literal text &ldquo;<tt>lib/*</tt>&rdquo;, or explicitly listing all the
-<tt>.jar</tt> files under <tt>lib/*</tt>, should work).
+Your classpath must include <tt>bin/</tt> and <tt>lib/*</tt>.  (You can either include the
+literal text &ldquo;<tt>lib/*</tt>&rdquo; or explicit listing all the
+<tt>.jar</tt> files under <tt>lib/</tt> .).
 </p>
 
 <p>
@@ -116,8 +117,7 @@ following:
   variable in <tt>~/.bashrc</tt> or some other configuration file.
   </li>
 
-  <li>Create a temporary shell script or Makefile for ad-hoc
-  use, for instance, a Make file such as:
+  <li>Create a shell script or Makefile that sets the classpath; for instance, a <tt>Makefile</tt> such as:
 
 <pre class="code">
   RANDOOP_HOME ?= <em>directory</em>
@@ -152,12 +152,13 @@ Then, run under Randoop's home directory:
 <h2 id="making_new_dist">Making a new distribution (a new release)</h2>
 
 <ol>
-  <li>If <tt>hg status</tt> reports any changes, commit them.</li>
-  <li>Compile and test: run <code>make clean</code> followed by <code>make all</code>. If any tests fail, fix them and start over.</li>
-  <li>Update changelog: add summary of changes for built version to <code>doc/CHANGES.txt</code>.</li>
+  <li>If <tt>git status</tt> reports any changes, commit them.</li>
+  <li>Compile and test: run <code>make clean && make all</code>. If any tests fail, fix them and start over.</li>
+  <li>Update the changelog: add a summary of changes to <code>doc/CHANGES.txt</code>.</li>
   <li>Increase version number (modify variable <code>RANDOOP_VERSION</code> in <code>src/randoop/Globals.java</code>).</li>
   <li>Commit those changes.</li>
-  <li>Tag the repository tip with the version number (e.g., <code>hg tag v1.3.2</code>).</li>
+  <li>Tag the repository tip with the version number; for example,
+      <code>git tag -a v1.3.2 -m "Randoop version 1.3.2"</code></li>
   <li>Create the distribution: <tt>make distribution-files</tt></li>
   <li>Rename the zip and jar files created under the <code>dist/</code> directory to the appropriate version number.</li>
   <li>Upload the zip and jar files to Google Code.</li>
