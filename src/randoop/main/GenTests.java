@@ -365,15 +365,19 @@ public class GenTests extends GenInputsAbstract {
       contracts.addAll(checkRepContracts);
       
       // Now add all of Randoop's default contracts.
+      // If you add to this list, also update the Javadoc for check_object_contracts.
       contracts.add(new EqualsReflexive());
-      contracts.add(new EqualsToNullRetFalse());
-      contracts.add(new EqualsHashcode());
       contracts.add(new EqualsSymmetric());
+      contracts.add(new EqualsHashcode());
+      contracts.add(new EqualsToNullRetFalse());
       ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts,
           GenInputsAbstract.offline ? false : true);
       visitors.add(contractVisitor);
     }
-    visitors.add(new RegressionCaptureVisitor());
+    
+    if (check_regression_behavior) {
+      visitors.add(new RegressionCaptureVisitor());
+    }
 
     // Install any user-specified visitors.
     if (!GenInputsAbstract.visitor.isEmpty()) {
