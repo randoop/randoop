@@ -72,8 +72,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * classes/methods are considered visible.  If public_only is false
    * then any class/method that is not private is considered visible.
    * 
+   * <p>
    * FIXME: This option outputs tests that do not compile. Until a fix
-   *        is done, keep the option @Unpublicized. The option should
+   *        is done (which probably involves reflective invocation),
+   *        keep the option @Unpublicized. The option should
    *        probably be an enum with PUBLIC, PACKAGE, PUBLIC elements.
    */
   @Unpublicized  
@@ -238,22 +240,33 @@ public abstract class GenInputsAbstract extends CommandHandler {
   
   /**
    * Use the methods specified in the given file to create regression assertions.
-   * 
-   * TODO: this is a useful feature but has no tests to ensure it works.
-   * Write tests and then remove @Unpublicized annotation. 
    */
-  @Unpublicized
   @Option("File containing observer functions")
   public static File observers = null;
   
   /**
-   * Use Randoop's default set of object contracts.
-   *  
-   * By default, Randoop checks a set of contracts, e.g.
-   * equals(Object) is reflexive, equals(null) returns false, no NullPointerExceptions, no AssertionErrors, etc.
+   * Use Randoop's default set of object contracts as assertions.
+   * If disabled, these assertions are not created.
+   * <p>
+   * 
+   * The default set of contracts includes:
+   *   equals(Object) is reflexive,
+   *   equals(Object) is symmetric,
+   *   equals(Object) and hashCode() are consistent,
+   *   x.equals(null) returns false,
+   *   any nullary method annotated with {@code @CheckRep} returns true.
    */
-  @Option("Use Randoop's default set of object contracts")
+  @Option("Use Randoop's object contracts as assertions")
   public static boolean check_object_contracts = true;
+
+  /**
+   * Capture the current behavior as assertions.
+   * This makes Randoop's tests act as regression tests that ensure that the
+   * code continues to behave as it did when the tests were generated.
+   */
+  @Option("Use current behavior as assertions")
+  public static boolean check_regression_behavior = true;
+
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup ("Outputting the JUnit tests")
