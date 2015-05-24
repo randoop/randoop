@@ -44,7 +44,7 @@ public class ReflectionTests extends TestCase{
   public void testRelatedClasses1() throws Exception {
 
     if (System.getProperty("java.vendor").contains("Apple")) {
-      // TODO for Apple, number of classes in String class differs. Figure out why
+      // TODO for Apple, number of classes in Reflection package differs. Figure out why
       // and add appropriate test.
       return;
     }
@@ -56,11 +56,16 @@ public class ReflectionTests extends TestCase{
     if (System.getProperty("java.version").startsWith("1.6")) {
       assertEquals(46, classes.size());
       assertEquals(61, classes2.size());
-    } else {
+    } else if (System.getProperty("java.version").startsWith("1.7")) {
       assertEquals(47, classes.size());
       assertEquals(62, classes2.size());
+    } else if (System.getProperty("java.version").startsWith("1.8")) {
+      assertEquals(80, classes.size());
+      assertEquals(96, classes2.size());
+    } else {
+      throw new Error("Unrecognized Java version: "
+                      + System.getProperty("java.version"));
     }
-
   }
 
   public void testLoadClassesFromStream1() throws IOException {
