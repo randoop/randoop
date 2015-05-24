@@ -1,8 +1,8 @@
 Version 1.3.5, released May 25, 2015
 
-New command-line argument --check-regression-behavior controls whether the tests include assertions about the current behavior.
+Command-line argument --check-regression-behavior controls whether the tests include assertions about the current behavior.
 
-New command-line argument --observers lets you provide a file listing observer functions.
+Command-line argument --observers lets you provide a file listing observer functions.
 
 Moved the Randoop version control repository from Google Code to GitHub,
 and from the Mercurial version control system to Git.
