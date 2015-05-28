@@ -4,12 +4,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html" />
 <link rel="stylesheet" href="main.css" type="text/css" />
-<link rel="icon" type="image/gif" href="bug.gif" />
+<link rel="icon" type="image/png" href="randoop-logo.png" />
 <title>Randoop Manual</title>
 </head>
 <body>
 
-<img src="bug.gif" alt="Bug" style="float:right" />
+<img src="randoop-logo.png" alt="Randoop logo" style="float:right" />
 
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
@@ -132,16 +132,14 @@ automated test generation. </p>
 
 <ul><li><strong>(Easiest)</strong> If you are interested
 only in using Randoop, the quickest way to get started is downloading
-the file <tt>randoop.jar</tt> under
-the <a href="http://code.google.com/p/randoop/downloads/list"
-rel="nofollow">Downloads</a> tab. After you do this, follow the
-instructions in the next
-section. </li>
+the file <tt>randoop-<em>X.Y.Z</em>.jar</tt> from the
+<a href="https://github.com/mernst/randoop/releases/latest">latest release</a>.
+After you do this, follow the instructions in the next section. </li>
 <li><strong>(Easy)</strong> If you want to use
 Randoop and are also interested in inspecting or compiling the source
-code, you can download the file <tt>randoop.zip</tt> under
-the <a href="http://code.google.com/p/randoop/downloads/list"
-rel="nofollow">Downloads</a> tab. This archive contains, in addition
+code, you can download the file <tt>randoop-<em>X.Y.Z</em>.jar</tt> from the
+<a href="https://github.com/mernst/randoop/releases/latest">latest release</a>.
+This archive contains, in addition
 to <tt>randoop.jar</tt>, the source code for the tool and accompanying
 libraries. </li>
 <li><strong>(Advanced)</strong> Finally, you
@@ -298,10 +296,10 @@ java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.Tre
  
  The default set of contracts includes:
    equals(Object) is reflexive,
-   x.equals(null) returns false,
-   equals(Object) and hashCode() are consistent,
    equals(Object) is symmetric,
-   any method annotated with @CheckRep returns true. [default true]</li>
+   equals(Object) and hashCode() are consistent,
+   x.equals(null) returns false,
+   any nullary method annotated with @CheckRep returns true. [default true]</li>
       <li><b>--check-regression-behavior=</b><i>boolean</i>. Capture the current behavior as assertions.
  This makes Randoop's tests act as regression tests that ensure that the
  code continues to behave as it did when the tests were generated. [default true]</li>

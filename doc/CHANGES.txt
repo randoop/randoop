@@ -4,6 +4,8 @@ Command-line argument --check-regression-behavior controls whether the tests inc
 
 Command-line argument --observers lets you provide a file listing observer functions.
 
+The Randoop homepage is now http://mernst.github.io/randoop/ .
+
 Moved the Randoop version control repository from Google Code to GitHub,
 and from the Mercurial version control system to Git.
 
