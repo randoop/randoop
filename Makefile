@@ -622,6 +622,7 @@ distribution-files: manual randoop_agent.jar
 	rm -rf randoop dist
 	mkdir randoop
 	mkdir randoop/bin
+	cp randoop_agent.jar randoop/
 # Copy sources and required libraries.
 	cp -R src randoop/src
 	cp -R tests randoop/tests
