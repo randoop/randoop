@@ -131,10 +131,6 @@ following:
 
 <h2 id="modmanual">Modifying the manual</h2>
 
-<p>
-To modify the Randoop manual, edit directly the HTML files:
-</p>
-
 <ul>
 <li> <code>index.html</code> has the user manual.</li>
 <li> <code>dev.html</code> has the developer manual with instructions
@@ -142,11 +138,11 @@ for hacking Randoop</li>
 </ul>
 
 <p>
-Then, run under Randoop's home directory:
+After editing the HTML files, run under Randoop's home directory:
 </p>
 
 <pre class="code">
-% make manual
+make manual
 </pre>
 
 <h2 id="making_new_dist">Making a new distribution (a new release)</h2>
@@ -177,15 +173,14 @@ unit tests.
 <h2 id="unit_tests">Unit test concepts</h2>
 
 <p>
-At a general level, a unit test is just a snippet of code that checks
-some expected property of some classes under test. A more detailed
-description of a unit test (and one useful for the purpose of
-automatically generating tests) is as consisting of <i>two</i> things:
+A unit test is a snippet of code that checks
+some expected property of some classes under test.
+It is helpful to think of a unit test as consisting of <i>two</i> things:
 </p>
 <ul>
-<li><b>A test input</b>, i.e. the portions of the code that call
-constructors and method of the classes under test, and</li>
-<li><b>Checking code</b> (also known as the &ldquo;test oracle&rdquo;), i.e., the
+<li><b>A test input</b>:  the portions of the code that call
+constructors and method of the classes under test; this is sometimes called the setup code.</li>
+<li><b>Checking code</b> or assertions or the &ldquo;test oracle&rdquo;: the
 portion of the code that <i>checks</i> that the test input behaves as
 expected.</li>
 </ul>
@@ -214,7 +209,8 @@ test. The test check is in line 5.
 <p>
 In Randoop, test inputs are represented using 
 <a href="javadoc/randoop/Sequence.html">Sequences</a>, which describe
-a sequence of Statement}s (like the statements in lines 3-4 above)
+a sequence of <a href="javadoc/randoop/Statement.html">Statement</a>s
+(like the statements in lines 3-4 above)
 exercising the code under test, and test checks are represented
 using <a href="javadoc/randoop/Check.html">Checks</a>.
 </p>
@@ -236,9 +232,9 @@ constructors of the classes under test.
 </p>
 
 <p>
-Continuing with our running example (testing the JDK collections
-classes), here is an example of a sequence of statements that calls
-methods from the classes under test, which each statement in a
+Continuing with our running example,
+here is an example of a sequence of statements that calls
+methods from the classes under test, which each statement on a
 separate line:
 </p>
 
@@ -252,7 +248,7 @@ separate line:
 </pre>
 
 <p>
-Notice from the examples that each statement has three elements:
+Notice that each statement has three elements:
 </p>
 <ol>
 <li>A specific method (or constructor) that is being called.</li>
@@ -291,10 +287,12 @@ performs.
 <p>
 Randoop statements include:
 </p>
-</li>
+<ul>
 <li><a href="javadoc/randoop/RMethod.html">RMethod</a> represents a
-particular method call. This class Randoop's analogue of java
-reflection's <code>Method</code> class, and adds additional
+method call. This class is Randoop's analogue of Java
+reflection's
+<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Method.html"><code>Method</code></a>
+class, and adds additional
 functionality useful to Randoop.
 </li>
 
@@ -303,17 +301,19 @@ represents a constructor call.
 </li>
 
 <li><a href="javadoc/randoop/PrimitiveOrStringOrNullDecl.html">PrimitiveOrStringOrNullDecl</a>
-represents a statement that creates a primitive value, a String, or
+represents a statement that declares and initializes a variable to primitive value, a String, or
 the <code>null</code> value (in code, <code>int x =
 1</code>, <code>String s = "s"</code>, <code>Foo f = null</code>,
 etc.).
 </li>
 
 <li><a href="javadoc/randoop/ArrayDeclaration.html">ArrayDeclaration</a>
-represents a statement that creates an array out of values created in
+represents a statement that declares and initializes an array out of values created in
 previous statements (e.g. <code>int[] x = new int[] { var0, var1
 };</code>).
 </li>
+
+</ul>
 
 <li><a href="javadoc/randoop/Variable.html">Variables</a> represent
 both the inputs and the outputs of a statement. A variable is just a
@@ -379,7 +379,7 @@ create new automated generation techniques.</li>
 </ul>
 <p>
 A second way to create a sequence is using <code>concatenation</code>:
-given sequences <code>s1</code>, <code>s2</code> and <code>s3</code>,
+given sequences <code>s1</code>, <code>s2</code>, and <code>s3</code>,
 you can create a new sequence that is the concatenation of the three
 sequences.
 </p>
@@ -403,7 +403,7 @@ the concatenated sequence with a call of <code>m</code>. See
 </p>
 <p>
 A third way to create a sequence is by parsing it from a String. For
-example, given s string <code>parseable</code> with the following contents:
+example, given a string <code>parseable</code> with the following contents:
 </p>
 <pre class="code">
 var0 =  cons : java.util.LinkedList.&lt;init&gt;() : 
@@ -425,7 +425,7 @@ Sequence seq = Sequence.parse(parseable);
 
 <p>
 An <a href="javadoc/randoop/ExecutableSequence.html">ExecutableSequence</a>
- wraps around a <code>Sequence</code> and adds two pieces of
+ wraps a <code>Sequence</code> and adds two pieces of
  functionality:
 </p>
 <ul>
@@ -486,12 +486,13 @@ classes <a href="javadoc/randoop/Execution.html">Execution</a> and
 <h3>Miscellaneous Notes</h3> <!-- omit from toc -->
 
 <ul>
-<li>Executing statements in a sequence may result in random stuff
-being printed to standard out. Capturing this output is possible via
+<li>If the code under test prints to standard out,
+then executing statements in a sequence may result in output
+to standard out. Capturing this output is possible via
 the method
 <code>ExecutableSequence.executeStatement</code>.  This is
-accomplished by changing stdout and stderr to a memory based
-printsteam and recording the results.
+accomplished by changing stdout and stderr to a memory-based
+PrintSteam and recording the results.
 </li>
 </ul>
 
@@ -590,7 +591,7 @@ element, etc.)  with <i>checking code</i> (the code in lines 6-7
 creating assertions, and the code in lines 9, 11-14 checking that the
 correct exception is thrown). In Randoop, test input code is
 represented as a <a href="#sequence">Sequence</a> and checking code is
-represented with <code>Check</code>s associated with the sequence.
+represented by <code>Check</code>s associated with the sequence.
 </p>
 <p>
 More specifically, each check is associated with an index in the
@@ -661,7 +662,7 @@ mains for other purposes.
 main <a href="javadoc/randoop/main/GenTests.html">GenTests</a>
 entrypoint for Randoop. (This is not strictly true, as Randoop's true
 entrypoint is
-class <a href="javadoc/randoop/main/Main.html">randoop.main.Main</a>
+class <a href="javadoc/randoop/main/Main.html">randoop.main.Main</a>.
 But <code>GenTests</code> is where all the action starts with test
 generation.) The <code>handle</code> method is long and mostly deals with
 setting up things before the generation process, and doing things like
