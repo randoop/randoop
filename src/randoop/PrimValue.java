@@ -97,12 +97,18 @@ public final class PrimValue implements ObjectContract {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
-    b.append("assertTrue(");
 
     // ValueExpression represents the value of a variable.
     // We special-case printing for this type of expression,
     // to improve readability.
-    if (printMode.equals(PrintMode.EQUALSMETHOD)) {
+    if (value.equals(Double.NaN) || value.equals(Float.NaN)) {
+      b.append("assertEquals(");
+      b.append("x0");
+      b.append(", ");
+      b.append(PrimitiveTypes.toCodeString(value));
+      b.append(");");
+    } else if (printMode.equals(PrintMode.EQUALSMETHOD)) {
+      b.append("assertTrue(");
       // First add a message
       b.append ("\"'\" + " + "x0" + " + \"' != '\" + "
           + PrimitiveTypes.toCodeString(value) + "+ \"'\", ");
@@ -110,13 +116,14 @@ public final class PrimValue implements ObjectContract {
       b.append(".equals(");
       b.append(PrimitiveTypes.toCodeString(value));
       b.append(")");
-      } else {
-        assert printMode.equals(PrintMode.EQUALSEQUALS);
-        b.append("x0 == " + PrimitiveTypes.toCodeString(value));
-      }
-
-    // Close assert.
-    b.append(");");
+      // Close assert.
+      b.append(");");
+    } else {
+      assert printMode.equals(PrintMode.EQUALSEQUALS);
+      b.append("assertTrue(");
+      b.append("x0 == " + PrimitiveTypes.toCodeString(value));
+      b.append(");");
+    }
 
     return b.toString();
   }
