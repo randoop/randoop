@@ -234,7 +234,7 @@ public class ExecutableSequence implements Serializable {
    * Output this sequence as code. In addition to printing out the statements,
    * this method prints the checks.
    *
-   * If for a given statement there is an check of type
+   * If for a given statement there is a check of type
    * StatementThrowsException, that check's pre-statement code is printed
    * immediately before the statement, and its post-statement code is printed
    * immediately after the statement.

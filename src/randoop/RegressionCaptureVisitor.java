@@ -198,8 +198,8 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
             // restrictions on String constants.
             if (!PrimitiveTypes.stringLengthOK(str)) {
               if (Log.isLoggingOn()) {
-		Log.logLine("Ignoring a string that exceeds the maximum length of " + GenInputsAbstract.string_maxlen);
-	      }
+                Log.logLine("Ignoring a string that exceeds the maximum length of " + GenInputsAbstract.string_maxlen);
+              }
               continue;
             }
           }

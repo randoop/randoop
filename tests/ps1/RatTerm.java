@@ -24,30 +24,30 @@ public class RatTerm {
     public final int expt;
 
     /** requires: c != null
-	effects:
-	constructs a new RatTerm, t, with t.coeff = c and t.expt = e.
+        effects:
+        constructs a new RatTerm, t, with t.coeff = c and t.expt = e.
     */
     public RatTerm(RatNum c, int e) {
-	coeff = c;
-	expt = e;
+        coeff = c;
+        expt = e;
     }
 
     /** Standard equality operation.
-	@return true iff 'obj' is an instance of a RatTerm and 'this' = 'obj'
+        @return true iff 'obj' is an instance of a RatTerm and 'this' = 'obj'
     */
     @Override
     public boolean equals(Object obj) {
-	if (obj instanceof RatTerm) {
-	    RatTerm rt = (RatTerm) obj;
-	    return this.expt == rt.expt && this.coeff.equals(rt.coeff);
-	} else {
-	    return false;
-	}
+        if (obj instanceof RatTerm) {
+            RatTerm rt = (RatTerm) obj;
+            return this.expt == rt.expt && this.coeff.equals(rt.coeff);
+        } else {
+            return false;
+        }
     }
 
     /** @return implementation specific debugging string. */
     public String debugPrint() {
-	return "Term<coeff:"+this.coeff.unparse()+" expt:"+this.expt+">";
+        return "Term<coeff:"+this.coeff.unparse()+" expt:"+this.expt+">";
     }
 
     @Override

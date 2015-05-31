@@ -30,7 +30,7 @@ public final class Cell extends Node
    * @return the subtree with the new body inserted
    **/
   @Override
-public final Node loadTree(Body p, MathVector xpic, int l, Tree tree)
+  public final Node loadTree(Body p, MathVector xpic, int l, Tree tree)
   {
     // move down one level
     int si = oldSubindex(xpic, l);
@@ -47,7 +47,7 @@ public final Node loadTree(Body p, MathVector xpic, int l, Tree tree)
    * @return the mass of this node
    **/
   @Override
-public final double hackcofm()
+  public final double hackcofm()
   {
     double mq = 0.0;
     MathVector tmpPos = new MathVector();
@@ -55,10 +55,10 @@ public final double hackcofm()
     for (int i=0; i < NSUB; i++) {
       Node r = subp[i];
       if (r != null) {
-	double mr = r.hackcofm();
-	mq = mr + mq;
-	tmpv.multScalar(r.pos, mr);
-	tmpPos.addition(tmpv);
+        double mr = r.hackcofm();
+        mq = mr + mq;
+        tmpv.multScalar(r.pos, mr);
+        tmpPos.addition(tmpv);
       }
     }
     mass = mq;
@@ -72,13 +72,13 @@ public final double hackcofm()
    * Recursively walk the tree to do hackwalk calculation
    **/
   @Override
-public final HG walkSubTree(double dsq, HG hg)
+  public final HG walkSubTree(double dsq, HG hg)
   {
     if (subdivp(dsq, hg)) {
       for (int k = 0; k < Cell.NSUB; k++) {
-	Node r = subp[k];
-	if (r != null)
-	  hg = r.walkSubTree(dsq / 4.0, hg);
+        Node r = subp[k];
+        if (r != null)
+          hg = r.walkSubTree(dsq / 4.0, hg);
       }
     } else {
       hg = gravSub(hg);
@@ -105,7 +105,7 @@ public final HG walkSubTree(double dsq, HG hg)
    * @return a string represenation of a cell.
    **/
   @Override
-public String toString()
+  public String toString()
   {
     return "Cell " + super.toString();
   }

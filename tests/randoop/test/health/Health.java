@@ -62,9 +62,9 @@ public class Health
     if (printResult || printMsgs) {
       System.out.println("# of people treated:            " + r.totalPatients + " people");
       System.out.println("Average length of stay:         " + 
-			 r.totalTime / r.totalPatients + " time units");
+                         r.totalTime / r.totalPatients + " time units");
       System.out.println("Average # of hospitals visited: " + 
-			 r.totalHospitals / r.totalPatients);
+                         r.totalHospitals / r.totalPatients);
     }
     if (printMsgs) {
       System.out.println("Build Time " + (end0 - start0)/1000.0);
@@ -84,29 +84,29 @@ public class Health
 
       // check for options that require arguments
       if (arg.equals("-l")) {
-	if (i < args.length) {
-	  maxLevel = new Integer(args[i++]).intValue();
-	} else {
-	  throw new Error("-l requires the number of levels");
-	}
+        if (i < args.length) {
+          maxLevel = new Integer(args[i++]).intValue();
+        } else {
+          throw new Error("-l requires the number of levels");
+        }
       } else if (arg.equals("-t")) {
-	if (i < args.length) {
-	  maxTime = new Integer(args[i++]).intValue();
-	} else {
-	  throw new Error("-t requires the amount of time");
-	}
+        if (i < args.length) {
+          maxTime = new Integer(args[i++]).intValue();
+        } else {
+          throw new Error("-t requires the amount of time");
+        }
       } else if (arg.equals("-s")) {
-	if (i < args.length) {
-	  seed = new Integer(args[i++]).intValue();
-	} else {
-	  throw new Error("-s requires a seed value");
-	}
+        if (i < args.length) {
+          seed = new Integer(args[i++]).intValue();
+        } else {
+          throw new Error("-s requires a seed value");
+        }
       } else if (arg.equals("-p")) {
-	printResult = true;
+        printResult = true;
       } else if (arg.equals("-m")) {
-	printMsgs = true;
+        printMsgs = true;
       } else if (arg.equals("-h")) {
-	usage();
+        usage();
       }
     }
     if (maxTime == 0 || maxLevel == 0 || seed == 0) usage();

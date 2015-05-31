@@ -120,8 +120,8 @@ public class SequenceCollection {
   }
 
   public void addAll(SequenceCollection components) {
-    for(ArrayListSimpleList<Sequence> s:components.activeSequences.values()) {
-      for(Sequence seq:s.theList) {
+    for (ArrayListSimpleList<Sequence> s:components.activeSequences.values()) {
+      for (Sequence seq:s.theList) {
         add(seq);
       }
     }       
@@ -228,7 +228,7 @@ public class SequenceCollection {
 
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<Sequence>();
-    for(ArrayListSimpleList<Sequence> a: activeSequences.values()) {
+    for (ArrayListSimpleList<Sequence> a: activeSequences.values()) {
       result.addAll(a.theList);
     }
     return result;
@@ -237,7 +237,7 @@ public class SequenceCollection {
 
   public Set<StatementKind> getAllStatements() {
     Set<StatementKind> result = new LinkedHashSet<StatementKind>();
-    for(Sequence s: getAllSequences()) {
+    for (Sequence s: getAllSequences()) {
       for (Statement stmtWithInputs : s.getStatementsWithInputs().toJDKList()) {
         result.add(stmtWithInputs.statement);
       }

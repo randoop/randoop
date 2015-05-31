@@ -64,82 +64,82 @@ public class RatTermVec {
     public int size() { return underlying_terms.size(); }
 
     /** Indexing operation.
-	requires: 0 <= index < this.size()
-	@return the RatTerm at the specified index.
-	<br>
-	e.g. Given a RatTermVec v = [t2, t3, t4], the expression
-	"v.get(1)" will return the RatTerm t3.
+        requires: 0 <= index < this.size()
+        @return the RatTerm at the specified index.
+        <br>
+        e.g. Given a RatTermVec v = [t2, t3, t4], the expression
+        "v.get(1)" will return the RatTerm t3.
      */
     public RatTerm get(int index) { return (RatTerm) underlying_terms.get(index); }
 
     /** Appending operation.
-	requires: t != null
-	modifies: this
-	effects: Adds the specified RatTerm, 't', to the end of this
-	vector, increasing the vector's size by one.
-	<br>
-	e.g. Given a RatTermVec v = [t2, t3, t4], the statement
-	"v.addElement(t3);" will make v_post = [t2, t3, t4, t3].
+        requires: t != null
+        modifies: this
+        effects: Adds the specified RatTerm, 't', to the end of this
+        vector, increasing the vector's size by one.
+        <br>
+        e.g. Given a RatTermVec v = [t2, t3, t4], the statement
+        "v.addElement(t3);" will make v_post = [t2, t3, t4, t3].
     */
     public void addElement(RatTerm t) { underlying_terms.add(t); terms = (RatTerm[])underlying_terms.toArray(new RatTerm[] {}); /*termsSize = underlying_terms.size();*/ }
 
     /** Insertion operation.
-	requires: t != null && 0 <= index <= this.size()
-	modifies: this
-	effects: Inserts 't' as a component in this RatTermVec at the
-	specified index. Each component in this vector with an index
-	greater or equal to the specified index is shifted upward to
-	have an index one greater than the value it had previously.
-	The size of this vector is increased by 1.
-	<br>
-	e.g. Given a RatTermVec v = [t2, t3, t4], the statement
-	"v.insert(t5, 1);" will make v_post = [t2, t5, t3, t4].
+        requires: t != null && 0 <= index <= this.size()
+        modifies: this
+        effects: Inserts 't' as a component in this RatTermVec at the
+        specified index. Each component in this vector with an index
+        greater or equal to the specified index is shifted upward to
+        have an index one greater than the value it had previously.
+        The size of this vector is increased by 1.
+        <br>
+        e.g. Given a RatTermVec v = [t2, t3, t4], the statement
+        "v.insert(t5, 1);" will make v_post = [t2, t5, t3, t4].
     */
     public void insert(RatTerm t, int index) { underlying_terms.add(index, t); terms = (RatTerm[])underlying_terms.toArray(new RatTerm[] {}); /*termsSize = underlying_terms.size();*/ }
 
     /** Deletion operation.
-	requires: 0 <= index < this.size()
-	modifies: this
-	effects: Deletes the RatTerm at the specified index. Each
-	RatTerm in this vector with an index greater or equal to the
-	specified index is shifted downward to have an index one
-	smaller than the value it had previously. The size of this
-	vector is decreased by 1.
-	<br>
-	e.g. Given a RatTermVec v = [t2, t3, t4], the statement
-	"v.remove(1);" will make v_post = [t2, t4].
+        requires: 0 <= index < this.size()
+        modifies: this
+        effects: Deletes the RatTerm at the specified index. Each
+        RatTerm in this vector with an index greater or equal to the
+        specified index is shifted downward to have an index one
+        smaller than the value it had previously. The size of this
+        vector is decreased by 1.
+        <br>
+        e.g. Given a RatTermVec v = [t2, t3, t4], the statement
+        "v.remove(1);" will make v_post = [t2, t4].
     */
     public void remove(int index) { underlying_terms.remove(index); terms = (RatTerm[])underlying_terms.toArray(new RatTerm[] {}); /*termsSize = underlying_terms.size();*/ }
 
     /** Replacement operation.
-	requires: t != null && 0 < index < this.size()
-	modifies: this
-	effects: Sets the RatTerm at the 'index' of this vector to be
-	          't'. The previous RatTerm at 'index' is discarded.
-	<br>
-	e.g. Given a RatTermVec v = [t2, t3, t4], the statement
-	"v.set(t5, 1);" will make v_post = [t2, t5, t4].
+        requires: t != null && 0 < index < this.size()
+        modifies: this
+        effects: Sets the RatTerm at the 'index' of this vector to be
+                  't'. The previous RatTerm at 'index' is discarded.
+        <br>
+        e.g. Given a RatTermVec v = [t2, t3, t4], the statement
+        "v.set(t5, 1);" will make v_post = [t2, t5, t4].
     */
     public void set(RatTerm t, int index) { underlying_terms.setElementAt(t, index); terms = (RatTerm[])underlying_terms.toArray(new RatTerm[] {}); /*termsSize = underlying_terms.size();*/ }
 
     /** Copy operation.
-	@return a new RatTermVec whose initial state matches that of
-	this RatTermVec.  Changes made to the state of the returned vector
-	will NOT be reflected in this vector, and vice versa.  (Also recall
-	that RatTerm objects are immutable.)
+        @return a new RatTermVec whose initial state matches that of
+        this RatTermVec.  Changes made to the state of the returned vector
+        will NOT be reflected in this vector, and vice versa.  (Also recall
+        that RatTerm objects are immutable.)
     */
     public RatTermVec copy() {
-	RatTermVec tv = new RatTermVec();
-	tv.underlying_terms = (Vector) this.underlying_terms.clone();
+        RatTermVec tv = new RatTermVec();
+        tv.underlying_terms = (Vector) this.underlying_terms.clone();
 
         tv.terms = (RatTerm[])tv.underlying_terms.toArray(new RatTerm[] {}); /*tv.termsSize = tv.underlying_terms.size();*/
 
-	return tv;
+        return tv;
     }
 
     /** @return implementation specific debugging string. */
     public String printDebug() {
-	return "RatTermVec<underlying_terms:"+this.underlying_terms+">";
+        return "RatTermVec<underlying_terms:"+this.underlying_terms+">";
     }
 
     @Override

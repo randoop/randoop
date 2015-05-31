@@ -22,8 +22,8 @@ public class UBStack {
 
     alreadyMember = false;
 
-    for(index=0; index<numberOfElements; index++) {
-      if(k == elems[index]) {
+    for (index=0; index<numberOfElements; index++) {
+      if (k == elems[index]) {
         alreadyMember = true;
         break;
       }
@@ -72,8 +72,8 @@ public class UBStack {
   }
 
   public boolean isMember(int k) {
-    for(int index=0; index<numberOfElements; index++)
-      if( k==elems[index])
+    for (int index=0; index<numberOfElements; index++)
+      if ( k==elems[index])
         return true;
     return false;            
   }

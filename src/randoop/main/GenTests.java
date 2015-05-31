@@ -224,14 +224,14 @@ public class GenTests extends GenInputsAbstract {
       try {
         for (Member m : Reflection.loadMethodsAndCtorsFromFile(new File(methodlist))) {
           if (m instanceof Method) {
-	      if (reflectionFilter.canUse((Method)m)) {
+              if (reflectionFilter.canUse((Method)m)) {
                 statements.add(RMethod.getRMethod((Method)m));
-	      }
+              }
           } else {
             assert m instanceof Constructor<?>;
             if (reflectionFilter.canUse((Constructor<?>)m)) {
               statements.add(RConstructor.getRConstructor((Constructor<?>)m));
-	          }
+                  }
             statements.add(RConstructor.getRConstructor((Constructor<?>)m));
           }
         }
@@ -611,27 +611,27 @@ public class GenTests extends GenInputsAbstract {
       sequences = seqs;
     }
     
-    if(GenInputsAbstract.simplify_failed_tests) {
-    	List<ExecutableSequence> failedSequences = new LinkedList<ExecutableSequence>();
-    	for(ExecutableSequence sequence : sequences) {
-    		if(sequence.hasFailure() && !sequence.hasNonExecutedStatements()) {
-    			failedSequences.add(sequence);
-    		}
-    	}
-    	//simplify each failed statement, and replace the original sequences with the
-    	//simplified one
-    	System.out.println("Start to simplify: " + failedSequences.size() + " sequences.");
-    	for(ExecutableSequence failedSequence : failedSequences) {
-    	    GreedySequenceSimplifier simplifier = new GreedySequenceSimplifier(failedSequence.sequence, explorer.executionVisitor);
-    	    ExecutableSequence simplified_sequence = simplifier.simplfy_sequence();
-    	    System.out.println("Simplified a failed sequence, original length: " + failedSequence.sequence.size()
-    	    		+ ", length after simplification: " + simplified_sequence.sequence.size());
-    	    int index = sequences.indexOf(failedSequence);
-    	    assert index != -1 : "The index should not be -1";
-    	    //replace the failed sequence with the simplified one
-    	    sequences.remove(index);
-    	    sequences.add(index, simplified_sequence);
-    	}
+    if (GenInputsAbstract.simplify_failed_tests) {
+        List<ExecutableSequence> failedSequences = new LinkedList<ExecutableSequence>();
+        for (ExecutableSequence sequence : sequences) {
+                if (sequence.hasFailure() && !sequence.hasNonExecutedStatements()) {
+                        failedSequences.add(sequence);
+                }
+        }
+        //simplify each failed statement, and replace the original sequences with the
+        //simplified one
+        System.out.println("Start to simplify: " + failedSequences.size() + " sequences.");
+        for (ExecutableSequence failedSequence : failedSequences) {
+            GreedySequenceSimplifier simplifier = new GreedySequenceSimplifier(failedSequence.sequence, explorer.executionVisitor);
+            ExecutableSequence simplified_sequence = simplifier.simplfy_sequence();
+            System.out.println("Simplified a failed sequence, original length: " + failedSequence.sequence.size()
+                        + ", length after simplification: " + simplified_sequence.sequence.size());
+            int index = sequences.indexOf(failedSequence);
+            assert index != -1 : "The index should not be -1";
+            //replace the failed sequence with the simplified one
+            sequences.remove(index);
+            sequences.add(index, simplified_sequence);
+        }
     }
 
     List<File> genfiles = write_junit_tests (junit_output_dir, sequences,

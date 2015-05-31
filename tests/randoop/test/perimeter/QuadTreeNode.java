@@ -66,7 +66,7 @@ public abstract class QuadTreeNode
    * @param se the node represent the southeast quadrant
    **/
   private QuadTreeNode(Quadrant quad, QuadTreeNode nw, QuadTreeNode ne, 
-		       QuadTreeNode sw, QuadTreeNode se, QuadTreeNode parent)
+                       QuadTreeNode sw, QuadTreeNode se, QuadTreeNode parent)
   {
     this.quadrant = quad;
     this.nw = nw;
@@ -85,7 +85,7 @@ public abstract class QuadTreeNode
    * @param se the node represent the southeast quadrant
    **/
   protected void setChildren(QuadTreeNode nw, QuadTreeNode ne, 
-			     QuadTreeNode sw, QuadTreeNode se)
+                             QuadTreeNode sw, QuadTreeNode se)
   {
     this.nw = nw;
     this.ne = ne;
@@ -124,7 +124,7 @@ public abstract class QuadTreeNode
    * @param level the level of the tree
    **/
   public static QuadTreeNode createTree(int size, int center_x, int center_y,
-			     QuadTreeNode parent, Quadrant quadrant, int level)
+                             QuadTreeNode parent, Quadrant quadrant, int level)
   {
     QuadTreeNode node;
 
@@ -136,18 +136,18 @@ public abstract class QuadTreeNode
       node = new BlackNode(quadrant, parent);
     } else {
       if (level == 0) {
-	node = new BlackNode(quadrant, parent);
+        node = new BlackNode(quadrant, parent);
       } else {
-	node = new GreyNode(quadrant, parent);
-	QuadTreeNode sw = createTree(size, center_x-size, center_y-size,
-				     node, Quadrant.cSouthWest, level - 1);
-	QuadTreeNode se = createTree(size, center_x+size, center_y-size,
-				     node, Quadrant.cSouthEast, level - 1);
-	QuadTreeNode ne = createTree(size, center_x+size, center_y+size,
-				     node, Quadrant.cNorthEast, level - 1);
-	QuadTreeNode nw = createTree(size, center_x-size, center_y+size,
-				     node, Quadrant.cNorthWest, level - 1);
-	node.setChildren(nw, ne, sw, se);
+        node = new GreyNode(quadrant, parent);
+        QuadTreeNode sw = createTree(size, center_x-size, center_y-size,
+                                     node, Quadrant.cSouthWest, level - 1);
+        QuadTreeNode se = createTree(size, center_x+size, center_y-size,
+                                     node, Quadrant.cSouthEast, level - 1);
+        QuadTreeNode ne = createTree(size, center_x+size, center_y+size,
+                                     node, Quadrant.cNorthEast, level - 1);
+        QuadTreeNode nw = createTree(size, center_x-size, center_y+size,
+                                     node, Quadrant.cNorthWest, level - 1);
+        node.setChildren(nw, ne, sw, se);
       }
     }
     return node;
@@ -209,7 +209,7 @@ public abstract class QuadTreeNode
       return 1;
     } else {
       return sw.countTree() + se.countTree() + ne.countTree() +
-	nw.countTree();
+        nw.countTree();
     }
   }
 
@@ -224,9 +224,9 @@ public abstract class QuadTreeNode
   private static int checkIntersect(int center_x, int center_y, int size)
   {
     if (checkOutside(center_x+size, center_y+size) == 0 &&
-	checkOutside(center_x+size, center_y-size) == 0 &&
-	checkOutside(center_x-size, center_y-size) == 0 &&
-	checkOutside(center_x-size, center_y+size) == 0) 
+        checkOutside(center_x+size, center_y-size) == 0 &&
+        checkOutside(center_x-size, center_y-size) == 0 &&
+        checkOutside(center_x-size, center_y+size) == 0) 
       return 2;
     
     int sum = checkOutside(center_x+size, center_y+size) +

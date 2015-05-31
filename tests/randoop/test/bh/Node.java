@@ -38,7 +38,7 @@ public abstract class Node
     int i = 0;
     for (int k = 0; k < MathVector.NDIM; k++) {
       if (((int)ic.value(k) & l) != 0)
-	i += Cell.NSUB >> (k + 1);
+        i += Cell.NSUB >> (k + 1);
     }
     return i;
   }

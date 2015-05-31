@@ -63,7 +63,7 @@ public class JCrasherRun {
     jcrasher.add("--depth=1000");
     {
       BufferedReader reader= null;
-      try{
+      try {
         reader = new BufferedReader(new FileReader(this.base.targetClassListFile));
         String line = reader.readLine();
         while (line != null) {

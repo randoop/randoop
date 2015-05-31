@@ -107,16 +107,16 @@ public class JunitFileWriter {
 
 
   private File writeSubSuite(List<ExecutableSequence> sequencesForOneFile, String junitTestsClassName) {
-	if(GenInputsAbstract.pretty_print) {
-	  SequencePrettyPrinter printer = new SequencePrettyPrinter(sequencesForOneFile, packageName, junitTestsClassName);
+    if (GenInputsAbstract.pretty_print) {
+      SequencePrettyPrinter printer = new SequencePrettyPrinter(sequencesForOneFile, packageName, junitTestsClassName);
       return printer.createFile(getDir().getAbsolutePath());
-	}
-	  
+    }
+
     String className = junitTestsClassName;
     File file = new File(getDir(), className + ".java");
     PrintStream out = createTextOutputStream(file);
 
-    try{
+    try {
       outputPackageName(out, packageName);
       out.println();
       out.println("import junit.framework.*;");
@@ -185,7 +185,7 @@ public class JunitFileWriter {
   
   public List<String> getJunitTestSuiteNames() {
     List<String> junitTestSuites = new LinkedList<String>();
-    for(String junitTestsClassName : createdSequencesAndClasses.keySet()) {
+    for (String junitTestsClassName : createdSequencesAndClasses.keySet()) {
       int numSubSuites = createdSequencesAndClasses.get(junitTestsClassName).size();
       for (int i = 0; i < numSubSuites; i++) {
         junitTestSuites.add(junitTestsClassName + i);
@@ -222,7 +222,7 @@ public class JunitFileWriter {
       out.println("");
       out.println("  public static Test suite() {");
       out.println("    TestSuite result = new TestSuite();");
-      for(String junitTestsClassName : junitTestSuiteNames) {
+      for (String junitTestsClassName : junitTestSuiteNames) {
         out.println("    result.addTest(new TestSuite(" + junitTestsClassName + ".class));");
       }
       out.println("    return result;");

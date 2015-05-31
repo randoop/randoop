@@ -455,7 +455,7 @@ public final class Reflection {
     *  Other lines must contain string such that Class.forName(s) returns a class.
     */
    public static List<Member> loadMethodsAndCtorsFromReader(BufferedReader reader) {
-     try{
+     try {
        List<String> lines= Files.readWhole(reader);
        return loadMethodsAndCtorsFromLines(lines);
      } catch (IOException e) {
@@ -531,7 +531,7 @@ public final class Reflection {
 
    public static void saveClassesToFile(List<Class<?>> classes, String file) throws IOException {
      FileWriter fw = new FileWriter(file);
-     for(Class<?> s:classes) {
+     for (Class<?> s:classes) {
        fw.append(s.getName() + Globals.lineSep);
      }
      fw.close();

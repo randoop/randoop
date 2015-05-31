@@ -78,7 +78,7 @@ public final class Histogram<T> {
       sb.append("Histogram:").append(fName).append(Globals.lineSep);
     int size = getSize();
     sb.append("Total size:" + size).append(Globals.lineSep);
-    for(Iterator<Map.Entry<T, Integer>> iter= entries.iterator(); iter.hasNext();) {
+    for (Iterator<Map.Entry<T, Integer>> iter= entries.iterator(); iter.hasNext();) {
       Map.Entry<T, Integer> e= iter.next();
       sb.append(UtilMDE.rpad(e.getValue(), 9));
       if (append_percent)
@@ -97,7 +97,7 @@ public final class Histogram<T> {
 
   private int getSize() {
     int result= 0;
-    for(Iterator<T> iter= fMap.keySet().iterator(); iter.hasNext();) {
+    for (Iterator<T> iter= fMap.keySet().iterator(); iter.hasNext();) {
       result += getCount(iter.next());
     }
     return result;

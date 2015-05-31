@@ -64,8 +64,8 @@ public class BH
     if (printResults) {
       int j = 0;
       for (Enumeration<Body> e = root.bodies(); e.hasMoreElements(); ) {
-	Body b = e.nextElement();
-	System.out.println("body " + j++ + " -- " + b.pos);
+        Body b = e.nextElement();
+        System.out.println("body " + j++ + " -- " + b.pos);
       }
     }
 
@@ -118,23 +118,23 @@ public class BH
 
       // check for options that require arguments
       if (arg.equals("-b")) {
-	if (i < args.length) {
-	  nbody = new Integer(args[i++]).intValue();
-	} else {
-	  throw new Error("-l requires the number of levels");
-	}
+        if (i < args.length) {
+          nbody = new Integer(args[i++]).intValue();
+        } else {
+          throw new Error("-l requires the number of levels");
+        }
       } else if (arg.equals("-s")) {
-	if (i < args.length) {
-	  nsteps = new Integer(args[i++]).intValue();
-	} else {
-	  throw new Error("-l requires the number of levels");
-	}
+        if (i < args.length) {
+          nsteps = new Integer(args[i++]).intValue();
+        } else {
+          throw new Error("-l requires the number of levels");
+        }
       } else if (arg.equals("-m")) {
-	printMsgs  = true;
+        printMsgs  = true;
       } else if (arg.equals("-p")) {
-	printResults = true;
+        printResults = true;
       } else if (arg.equals("-h")) {
-	usage();
+        usage();
       }
     }
     if (nbody == 0) usage();

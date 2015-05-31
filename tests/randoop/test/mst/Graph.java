@@ -71,10 +71,10 @@ public class Graph
     for (Vertex tmp = nodes[0]; tmp != null; tmp = tmp.next()) {
       Hashtable hash = tmp.neighbors();
       for (int i = 0; i < numvert; i++) {
-	if (i != count1) {
-	  int dist = computeDist(i, count1, numvert);
-	  hash.put(nodes[i], new Integer(dist));
-	}
+        if (i != count1) {
+          int dist = computeDist(i, count1, numvert);
+          hash.put(nodes[i], new Integer(dist));
+        }
       }
       count1++;
     }

@@ -42,8 +42,8 @@ public class List
     ListNode p = head;
     for (ListNode ln = head.next; ln != null; ln = ln.next) {
       if (ln.object == o) {
-	p.next = ln.next;
-	return;
+        p.next = ln.next;
+        return;
       }
       p = ln;
     }

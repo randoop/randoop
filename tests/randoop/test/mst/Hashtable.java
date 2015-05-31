@@ -46,7 +46,7 @@ public class Hashtable
     else {
       HashEntry prev = ent;
       for (ent = ent.next(); ent != null && ent.key() != key;
-	   prev = ent, ent = ent.next()) { /* empty body */ }
+           prev = ent, ent = ent.next()) { /* empty body */ }
       prev.setNext(ent.next());
     }
   }

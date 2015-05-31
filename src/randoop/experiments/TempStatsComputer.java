@@ -28,7 +28,7 @@ public class TempStatsComputer implements StatsComputer {
     gentime[size] += writer.gentime;
     exectime[size] += writer.exectime;
 
-    for(int i = 0 ; i < writer.numclassifs ; i++) {
+    for (int i = 0 ; i < writer.numclassifs ; i++) {
 
       // If not a failure, we're done processing record.
       if (writer.classifNames[i].equals("normal") ||

@@ -142,7 +142,7 @@ public final class SeedSequences {
 
           } catch (IllegalArgumentException e) {
             String msg = "RANDOOP ANNOTATION ERROR: IllegalArgumentException when processing @TestValue-annotated field " +
-            		f.getName() + " in class " + f.getDeclaringClass() + "."; 
+                        f.getName() + " in class " + f.getDeclaringClass() + "."; 
             throw new RuntimeException(msg);
           } catch (IllegalAccessException e) {
             String msg = "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field " +

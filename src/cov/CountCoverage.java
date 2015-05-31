@@ -70,7 +70,7 @@ public class CountCoverage {
     if (!line.startsWith("COV")) throw new IllegalArgumentException(line);
     String[] tokens = line.split(":");
     if (tokens.length != 5) throw new IllegalArgumentException(line);
-    if(!tokens[0].equals("COV")) throw new IllegalArgumentException(line);
+    if (!tokens[0].equals("COV")) throw new IllegalArgumentException(line);
     String className = tokens[1];
 
     int totBr = Integer.parseInt(tokens[3]);

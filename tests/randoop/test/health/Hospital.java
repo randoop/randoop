@@ -56,9 +56,9 @@ public class Hospital
       Patient p = (Patient)e.nextElement();
       p.timeLeft -= 1;
       if (p.timeLeft == 0) {
-	freePersonnel++;
-	inside.delete(p);
-	returned.add(p);
+        freePersonnel++;
+        inside.delete(p);
+        returned.add(p);
       }
     }
   }
@@ -74,16 +74,16 @@ public class Hospital
       Patient p = (Patient)e.nextElement();
       p.timeLeft -= 1;
       if (p.timeLeft == 0) {
-	if (v.staysHere()) {
-	  assess.delete(p);
-	  inside.add(p);
-	  p.timeLeft = 10;
-	  p.time += 10;
-	} else {
-	  freePersonnel++;
-	  assess.delete(p);
-	  up.add(p);
-	}
+        if (v.staysHere()) {
+          assess.delete(p);
+          inside.add(p);
+          p.timeLeft = 10;
+          p.time += 10;
+        } else {
+          freePersonnel++;
+          assess.delete(p);
+          up.add(p);
+        }
       }
     }
     return up;
@@ -94,13 +94,13 @@ public class Hospital
     for (Enumeration e = waiting.elements(); e.hasMoreElements(); ) {
       Patient p = (Patient)e.nextElement();
       if (freePersonnel > 0) {
-	freePersonnel--;
-	p.timeLeft = 3;
-	p.time += 3;
-	waiting.delete(p);
-	assess.add(p);
+        freePersonnel--;
+        p.timeLeft = 3;
+        p.time += 3;
+        waiting.delete(p);
+        assess.add(p);
       } else {
-	p.time++;
+        p.time++;
       }
     }
   }

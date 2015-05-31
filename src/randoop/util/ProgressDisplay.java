@@ -84,8 +84,8 @@ public class ProgressDisplay extends Thread {
         // generated for several seconds, we're probably in an infinite
         // loop, and should exit.
         updateLastSeqGen();
-	long now = System.currentTimeMillis();
-	if (now - lastNumSeqsIncrease > exit_if_no_new_sequences_after_mseconds) {
+        long now = System.currentTimeMillis();
+        if (now - lastNumSeqsIncrease > exit_if_no_new_sequences_after_mseconds) {
           printStackTraceAndExit();
         }
       }

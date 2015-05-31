@@ -31,7 +31,7 @@ public class JavaFileWriter {
 
   private static void writeSubSuite(List<Sequence> sequencesForOneFile, int i, String junitClassName) {
     PrintStream out = createTextOutputStream(junitClassName + i + ".java");
-    try{
+    try {
       out.println("public class " + junitClassName + i + " {");
 
       int testCounter = 0;

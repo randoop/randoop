@@ -33,13 +33,13 @@ public class Node {
                 res+= right.toString(k-1, flag);
             if (child == null)
                 res += "null";
-	}
-	return res;
+        }
+        return res;
     }
     
     @Override
     public String toString() {
-    	return toString(0,true);
+        return toString(0,true);
     }
     
     public List<Object> getAbstraction() {

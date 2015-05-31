@@ -48,7 +48,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
       // throw new IllegalStateException("Not accessible: " + this.constructor);
     }
 
-    try{
+    try {
       this.retval = this.constructor.newInstance(this.inputs);
     } catch (InvocationTargetException e) {
       this.exceptionThrown= e.getCause();

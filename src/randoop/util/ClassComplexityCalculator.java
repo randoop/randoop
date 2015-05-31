@@ -128,7 +128,7 @@ return result;
     for (String className : args) {
       String classNa = className.substring(0, className.length() - ".class".length());
       System.out.println("loading " +classNa + " " + (classCount++) + " of " + args.length);
-      try{
+      try {
         classes.add(Class.forName(classNa));
       } catch (NoClassDefFoundError e) {
         System.out.println("Not found:" + classNa);
