@@ -92,7 +92,9 @@ public final class ObserverEqValue implements ObjectContract {
     String methodname = observer.getName();
     if (value == null) {
       b.append(String.format ("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
-    } else if (observer.getReturnType().isPrimitive()) {
+    } else if (observer.getReturnType().isPrimitive()
+               && (! value.equals(Double.NaN))
+               && (! value.equals(Float.NaN))) {
       if (observer.getReturnType().equals(boolean.class)) {
         assert value.equals(true) || value.equals(false);
         if (value.equals(true)) {
@@ -101,12 +103,12 @@ public final class ObserverEqValue implements ObjectContract {
           b.append(String.format ("assertFalse(x0.%s());", methodname));
         }
       } else {
-        b.append(String.format ("assertTrue(x0.%s()  == %s);", methodname,
+        b.append(String.format ("assertTrue(x0.%s() == %s);", methodname,
                                 PrimitiveTypes.toCodeString(value)));
       }
     } else { // string
       // System.out.printf ("value = %s - %s\n", value, value.getClass());
-      b.append(String.format ("assertEquals(x0.%s(),%s);", methodname,
+      b.append(String.format ("assertEquals(x0.%s(), %s);", methodname,
                               PrimitiveTypes.toCodeString(value)));
     }
     return b.toString();
