@@ -26,9 +26,9 @@ import randoop.util.Reflection.Match;
 /**
  * Immutable.
  * <p>
- * A sequence of statements. Each element in the sequence represents a
- * particular Statement, like a method call "Foo f = m(i1...iN)" or a
- * declaration "int x = 0".
+ * A sequence of {@link Statement}s. Each element in the sequence represents a
+ * particular {@link Statement}, like a method call <code>Foo f = m(i1...iN)</code> or a
+ * declaration <code>int x = 0</code>.
  * <p>
  * This class represents only the structure of a well-formed sequence of
  * statements, and does not contain any information about the runtime behavior

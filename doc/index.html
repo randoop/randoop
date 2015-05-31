@@ -233,17 +233,17 @@ java -classpath .:randoop.jar junit.textui.TestRunner RandoopTest</pre>
 <p>
 Randoop creates unit tests by calling a set of <b>methods and
 constructors under test</b>. A method or constructor <i>M</i> is
-considered a member under test if:
+considered a member under test if <b>all</b> of the following are true:
 </p>
 
 <ol>
-  <li> <i>M</i> is declared in a public class
-       via <code>--testclass</code> or <code>--classlist</code>, or a
-       member via via <code>--methodlist</code>, <b>AND</b>
+  <li> <i>M</i> is declared in a public class that is named
+       by <code>--testclass</code> or <code>--classlist</code>, or is a
+       member named by <code>--methodlist</code>.
   </li>
-  <li> <i>M</i> is public, has public return type and arguments, and
-       does not match the pattern given
-       via <code>--omitmethods</code>.
+  <li> <i>M</i> does not match the pattern given
+       via <code>--omitmethods</code> and is not listed in <code>--observers</code>.
+  <li> <i>M</i> is public and has public return type and parameter types.
   </li>
 </ol>
 
@@ -334,7 +334,7 @@ public static void test1() {
   // to itself! This assertion fails at runtime on Sun's JDK.
   Assert.assertTrue(s1.equals(s1));
 }</pre>
-<p>The test shown above is nicely succinct: it shows a small number of method calls leading up to the assertion violation. Because Randoop's generation is random, the actual test revealing the error can be significantly longer, and contain many &quot;random&quot; calls leading up to the violation. An older version of Randoop used to have a <i>minimizer</i> built in, i.e. a module that attempted to reduce the number of calls in a failing test to ease debugging. The current version of the tool does not have a minimizer -- but we are hoping to implement it for the next release. </p>
+<p>The test shown above is nicely succinct: it shows a small number of method calls leading up to the assertion violation. Because Randoop's generation is random, the actual test revealing the error can be significantly longer, and contain many &quot;random&quot; calls leading up to the violation. An older version of Randoop used to have a <i>minimizer</i> built in, i.e. a module that attempted to reduce the number of calls in a failing test to ease debugging. The current version of the tool does not have a minimizer &mdash; but we are hoping to implement it for the next release. </p>
 
 <p>This test shows a scenario that makes it possible to create a <tt>TreeSet</tt> that violates reflexivity of equality. Test test reveals an error in the <tt>TreeSet</tt> constructor, which does not properly check its arguments (and possibly a second error in the <tt>TreeSet.equals</tt> method, which should always check if its argument is the same object as itself and return <tt>true</tt> in such a case). </p>
 
@@ -457,7 +457,7 @@ agent</a>  to replace the new functionality by the old functionality.)
  
  In the file, each each method under test is specified on a separate
  line. The list of methods given by this argument will augment
- any methods derived via the --classlist option.
+ any methods derived via the <tt>--classlist</tt> option.
  
  Also see the manual section on <a href="https://rawgit.com/mernst/randoop/master/doc/index.html#specifying-methods">specifying methods 
  and constructors under test</a>.</li>

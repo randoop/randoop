@@ -70,9 +70,11 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
   }
 
   /** Map from each class to the list of observer methods for that class */
-  private static final Map<Class<?>, List<Method>> observer_map
+  // Public so it can be used by GenTests.  Maybe create a getter instead.
+  public static final Map<Class<?>, List<Method>> observer_map
     = new LinkedHashMap<Class<?>, List<Method>>();
   
+  // Populate observer_map from observers file.
   static {
     if (GenInputsAbstract.observers != null) {
       List<String> lines  = null;
