@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.8.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.10-swt.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.10.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.9.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.contenttype_3.2.100.v20070319.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.jobs_3.3.1.R33x_v20070709.jar"/>
