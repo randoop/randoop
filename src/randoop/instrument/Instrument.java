@@ -504,7 +504,7 @@ public class Instrument implements ClassFileTransformer {
    *    fully-qualified-method-name (args)
    *
    *  where the arguments are comma separated and all arguments other than
-   *  primitives should have fully qualified names.  Arrays are indicating
+   *  primitives should have fully-qualified names.  Arrays are indicating
    *  by trailing brackets.  For example:
    *
    *        int
@@ -561,7 +561,7 @@ public class Instrument implements ClassFileTransformer {
    * Blank lines and // comments are ignored.  The orig-method-def is
    * replaced by a call to new-method-name with the same arguments in
    * any classfile that matches the regular expressions.  All method
-   * names and argument types should be fully qualified.
+   * names and argument types should be fully-qualified.
    */
   public void read_map_file (File map_file) throws IOException {
 

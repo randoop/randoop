@@ -37,8 +37,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * The name of a file that lists classes under test.
    * 
-   * In the file, each class under test is specified by its fully
-   * qualified name on a separate line.
+   * In the file, each class under test is specified by its
+   * fully-qualified name on a separate line.
    */
   @Option("The name of a file that lists classes under test")
   public static String classlist = null;
