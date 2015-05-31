@@ -20,6 +20,7 @@
       <li><a href="#running_randoop">Running Randoop</a></li>
       <li><a href="#generating_tests">Generating tests</a>
         <ul>
+          <li><a href="#example_collections">Example: Generating tests for <tt>java.util.Collections</tt></a></li>
           <li><a href="#specifying-methods">Specifying methods and constructors under test</a></li>
           <li><a href="#error_revealing_tests">Error-revealing Tests</a></li>
           <li><a href="#regression_tests">Regression tests</a>
@@ -189,31 +190,43 @@ This section of the manual describes how to run Randoop,
 <a href="#regression_tests">regression tests</a>,
 and details all of Randoop's command-line options. </p>
 
+
+<h3 id="example_collections">Example: Generating tests for <tt>java.util.Collections</tt></h3>
+
 <p>Imagine we want to generate tests for the
-class <tt>java.util.Collections</tt>, a utility class that defines
-several methods for manipulating collections. </p>
+class <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html"><tt>java.util.Collections</tt></a>.
+</p>
 
 <p>The first important thing to keep in mind is that <strong>Randoop
 will only generate tests using classes you specify.</strong> In order
-to effectively test Collections, You should probably also specify some
-helper classes, including classes that generates collections. For this
+to effectively test Collections, you should probably also specify some
+helper classes, including classes that generate collections. For this
 example, we will add <tt>java.util.TreeSet</tt> to the mix. </p>
 
 <p>Invoke Randoop as follows (all in a single line): </p>
 
-<pre class="code">java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.TreeSet --testclass=java.util.Collections --timelimit=60</pre><p>Alternatively, you can create a file that lists the names of the classes under test, and use the <tt>--classlist</tt> option: </p>
+<pre class="code">java -classpath randoop.jar randoop.main.Main gentests --testclass=java.util.TreeSet --testclass=java.util.Collections --timelimit=60</pre>
 
-<pre class="code">java -classpath randoop.jar randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre><p>Where the contents of <tt>myclasses.txt</tt> are as follows. </p>
-
+<p>Alternatively, you can create a file <tt>myclasses.txt</tt> that lists the names of the classes under test:
+</p>
 <pre class="code">java.util.Collections
-java.util.TreeSet</pre><p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
+java.util.TreeSet</pre>
+<p>
+and use the <tt>--classlist</tt> option: </p>
+
+<pre class="code">java -classpath randoop.jar randoop.main.Main gentests --classlist=myclasses.txt --timelimit=60</pre>
+
+
+<p>After 60 seconds, Randoop stops generating tests. The last thing Randoop prints out is the name of the JUnit files containing the tests it generated. You should see a message similar to the following: </p>
 
 <pre class="code">Created file: my/home/directory/RandoopTest0.java
 Created file: my/home/directory/RandoopTest.java
-done.</pre><p>The main test driver is in class <tt>RandoopTest</tt>. You can now compile and run the tests. Don't forget to include junit.jar in the classpath when you compile and run the tests. In this example, you should also add the current directory (&quot;.&quot;) when you run the tests. </p>
+done.</pre><p>The main test driver is in class <tt>RandoopTest</tt>. You can now compile and run the tests. Don't forget to include <tt>junit.jar</tt> in the classpath when you compile and run the tests. In this example, you should also add the current directory (&quot;.&quot;) when you run the tests. </p>
 
-<pre class="code">javac -classpath randoop.jar RandoopTest*.java
-java -classpath .:randoop.jar junit.textui.TestRunner RandoopTest</pre><p>JUnit will execute the generated tests. Most will pass, and some will fail. The next section describes the kinds of tests that Randoop generates, and the reason why they may fail. </p>
+<pre class="code">javac -classpath randoop.jar:... RandoopTest*.java
+java -classpath .:randoop.jar junit.textui.TestRunner RandoopTest</pre>
+<p>JUnit will execute the generated tests. Most will pass, and some will fail. The next section describes the kinds of tests that Randoop generates, and the reason why they may fail. </p>
+
 
 <h3 id="specifying-methods">Specifying methods and constructors under test</h3>
 
