@@ -246,18 +246,7 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
-    // Remove observers
-    for (Iterator<StatementKind> iterator = model.iterator(); iterator.hasNext(); ) {
-      StatementKind statement = iterator.next();
-      if (statement instanceof RMethod) {
-        RMethod rmethod = (RMethod) statement;
-        Method method = rmethod.getMethod();
-        List<Method> observer_methods = RegressionCaptureVisitor.observer_map.get(method.getDeclaringClass());
-        if (observer_methods != null && observer_methods.contains(method))
-          // Remove the current element from the iterator and the list.
-          iterator.remove();
-      }
-    }
+    // Don't remove observers; they create useful values.
 
     if (model.size() == 0) {
       Log.out.println("There are no methods to test. Exiting.");

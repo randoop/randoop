@@ -128,7 +128,8 @@ public final class Sequence implements Serializable, WeightedElement {
     return statements.get((value).index).statement;
   }
 
-  /** The inputs for the ith statement. */
+  /** The inputs for the ith statement.
+   * Includes the receiver. */
   public List<Variable> getInputs(int statementIndex) {
     List<Variable> inputsAsVariables = new ArrayList<Variable>();
     for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs)
