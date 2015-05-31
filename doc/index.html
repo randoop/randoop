@@ -242,7 +242,7 @@ considered a member under test if <b>all</b> of the following are true:
        member named by <code>--methodlist</code>.
   </li>
   <li> <i>M</i> does not match the pattern given
-       via <code>--omitmethods</code> and is not listed in <code>--observers</code>.
+       via <code>--omitmethods</code>.
   <li> <i>M</i> is public and has public return type and parameter types.
   </li>
 </ol>
@@ -583,8 +583,8 @@ agent</a>  to replace the new functionality by the old functionality.)
   </li>
   <li>Serialized input/output of generated tests
     <ul>
-      <li><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Serialize test inputs to the given file</li>
-      <li><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Serialize test inputs to the given file (text-based)</li>
+      <li><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file</li>
+      <li><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file (text-based)</li>
       <li><b>--output-components=</b><i>string</i>. Output components (serialized, GZIPPED) to the given file.
  
  Suggestion: use a .gz suffix in file name.</li>

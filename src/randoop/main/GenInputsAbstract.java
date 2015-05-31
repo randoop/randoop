@@ -346,10 +346,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Serialized input/output of generated tests")  
 
-  @Option("Serialize test inputs to the given file")
+  // I don't see how to create these files, only write to them.
+  // Maybe the writing code has bit-rotted?
+
+  @Option("Read serialized test inputs from the given file")
   public static List<String> componentfile_ser = new ArrayList<String>();
 
-  @Option("Serialize test inputs to the given file (text-based)")
+  @Option("Read serialized test inputs from the given file (text-based)")
   public static List<String> componentfile_txt = new ArrayList<String>();
 
   /**

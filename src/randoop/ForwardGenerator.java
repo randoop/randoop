@@ -190,11 +190,11 @@ public class ForwardGenerator extends AbstractGenerator {
       return;
     }
     
-    // If runtime value is a primitive value, clear active flag, and
-    // if the value is new, add a sequence corresponding to that value.
+    // Clear the active flags of some statements
     for (int i = 0; i < seq.sequence.size(); i++) {
 
-      // type ensured by isNormalExecution clause ealier in this method.
+      // If there is no return value, clear its active flag
+      // Cast succeeds because of isNormalExecution clause ealier in this method.
       NormalExecution e = (NormalExecution)seq.getResult(i);
       Object runtimeValue = e.getRuntimeValue();
       if (runtimeValue == null) {
@@ -205,8 +205,21 @@ public class ForwardGenerator extends AbstractGenerator {
         continue;
       }
       
+      // If it is a call to an observer method, clear the active flag of
+      // its receiver.  (This method doesn't side effect the receiver, so
+      // Randoop should use the other shorter sequence that produces the
+      // receiver.)
+      Sequence stmts = seq.sequence;
+      Statement stmt = stmts.statements.get(i);
+      if (RegressionCaptureVisitor.isObserverInvocation(stmt)) {
+        List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
+        int receiver = inputVars.get(0);
+        seq.sequence.clearActiveFlag(receiver);
+      }
+
+      // If its runtime value is a primitive value, clear its active flag,
+      // and if the value is new, add a sequence corresponding to that value.
       Class<?> objectClass = runtimeValue.getClass();
-      
       if (PrimitiveTypes.isBoxedOrPrimitiveOrStringType(objectClass)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Making index " + i + " inactive (value is a primitive)");
