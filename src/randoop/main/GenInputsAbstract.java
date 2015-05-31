@@ -226,11 +226,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Clear the component set each time it contains the given number of inputs.
-   * <p>
    *
+   * <p>
    * Randoop stores previously-generated tests in a "component" set, and uses them to
    * generate new tests. Setting this variable to a small number can sometimes result
    * in a greater variety of tests generated during a single run.
+   * </p>
    */
   @Option("Clear the component set when it gets this big")
   public static int clear = 100000000;
@@ -247,14 +248,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Use Randoop's default set of object contracts as assertions.
    * If disabled, these assertions are not created.
-   * <p>
    * 
+   * <p>
    * The default set of contracts includes:
    *   equals(Object) is reflexive,
    *   equals(Object) is symmetric,
    *   equals(Object) and hashCode() are consistent,
    *   x.equals(null) returns false,
    *   any nullary method annotated with {@code @CheckRep} returns true.
+   * </p>
    */
   @Option("Use Randoop's object contracts as assertions")
   public static boolean check_object_contracts = true;
