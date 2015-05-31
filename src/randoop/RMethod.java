@@ -306,11 +306,7 @@ public final class RMethod implements StatementKind, Serializable {
   }
 
   /**
-   * A string representing this method. The string is of the form:
-   *
-   * METHOD
-   *
-   * Where METHOD is a string representation of the method signature. Examples:
+   * A string representing this method's signature. Examples:
    *
    * java.util.ArrayList.get(int)
    * java.util.ArrayList.add(int,java.lang.Object)
