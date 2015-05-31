@@ -38,7 +38,7 @@ public Object clone()
       MathVector v = (MathVector)super.clone();
       v.data = new double[NDIM];
       for (int i = 0; i < NDIM; i++) {
-	v.data[i] = data[i];
+        v.data[i] = data[i];
       }
       return v;
     } catch (CloneNotSupportedException e) {

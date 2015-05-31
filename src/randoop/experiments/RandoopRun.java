@@ -110,7 +110,7 @@ public class RandoopRun {
       printResultsToStdout(resultsFile);
       Properties p = new Properties();
       FileInputStream inputStream= null;
-      try{
+      try {
         inputStream = new FileInputStream(resultsFile);
         p.load(inputStream);
       } finally{
@@ -162,7 +162,7 @@ public class RandoopRun {
   private void printResultsToStdout(String resultsFileName) throws IOException {
     System.out.println("========== Results");
     BufferedReader reader= null;
-    try{
+    try {
       reader = new BufferedReader(new FileReader(resultsFileName));
       String line = reader.readLine();
       while (line != null) {

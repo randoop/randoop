@@ -74,7 +74,7 @@ public final class Files {
 
   public static void writeToFile(String s, File file, Boolean append) throws IOException {
     BufferedWriter writer= new BufferedWriter(new FileWriter(file, append));
-    try{
+    try {
       writer.append(s);
     } finally {
       writer.close();
@@ -115,7 +115,7 @@ public final class Files {
    */
   public static List<String> readWhole(File file) throws IOException {
     BufferedReader in = new BufferedReader(new FileReader(file));
-    try{
+    try {
       return readWhole(in);
     } finally{
       in.close();
@@ -137,7 +137,7 @@ public final class Files {
   public static String getFileContents(File file) throws IOException {
     StringBuilder result = new StringBuilder();    
     Reader in = new BufferedReader(new FileReader(file));
-    try{
+    try {
       int c;
       while ((c = in.read()) != -1)
       {
@@ -197,7 +197,7 @@ public final class Files {
     }
     if (lines.size() != 1)
       throw new IllegalStateException("Expected exactly 1 line in " + file + " but found " + lines.size());
-    try{
+    try {
       return Long.valueOf(lines.get(0));
     } catch (NumberFormatException e) {
       throw new IllegalStateException("Expected a number (type long) in " + file + " but found " + lines.get(0));

@@ -86,19 +86,19 @@ public class Tree
 
       double coeff = 4.0;
       for (int k = 0; k < MathVector.NDIM; k++) {
-	seed = BH.myRand(seed);
-	r = BH.xRand(0.0, 0.999, seed);
-	p.pos.value(k, coeff*r);
+        seed = BH.myRand(seed);
+        r = BH.xRand(0.0, 0.999, seed);
+        p.pos.value(k, coeff*r);
       }
       
       cmr.addition(p.pos);
 
       double x, y;
       do {
-	seed = BH.myRand(seed);
-	x    = BH.xRand(0.0, 1.0, seed);
-	seed = BH.myRand(seed);
-	y    = BH.xRand(0.0, 0.1, seed);
+        seed = BH.myRand(seed);
+        x    = BH.xRand(0.0, 1.0, seed);
+        seed = BH.myRand(seed);
+        y    = BH.xRand(0.0, 0.1, seed);
       } while (y > x*x * Math.pow(1.0 - x*x, 3.5));
 
       double v = Math.sqrt(2.0) * x / Math.pow(1 + r*r, 0.25);
@@ -106,11 +106,11 @@ public class Tree
       double rad = vsc * v;
       double rsq;
       do {
-	for (int k = 0; k < MathVector.NDIM; k++) {
-	  seed     = BH.myRand(seed);
-	  p.vel.value(k, BH.xRand(-1.0, 1.0, seed));
-	}
-	rsq = p.vel.dotProduct();
+        for (int k = 0; k < MathVector.NDIM; k++) {
+          seed     = BH.myRand(seed);
+          p.vel.value(k, BH.xRand(-1.0, 1.0, seed));
+        }
+        rsq = p.vel.dotProduct();
       } while (rsq > 1.0);
       double rsc1 = rad / Math.sqrt(rsq);
       p.vel.multScalar(rsc1);
@@ -170,13 +170,13 @@ public class Tree
     for (Enumeration<Body> e = bodiesRev(); e.hasMoreElements(); ) {
       Body q = e.nextElement();
       if (q.mass != 0.0) {
-	q.expandBox(this, nstep);
-	MathVector xqic = intcoord(q.pos);
-	if (root == null) {
-	  root = q;
-	} else {
-	  root = root.loadTree(q, xqic, Node.IMAX >> 1, this);
-	}
+        q.expandBox(this, nstep);
+        MathVector xqic = intcoord(q.pos);
+        if (root == null) {
+          root = q;
+        } else {
+          root = root.loadTree(q, xqic, Node.IMAX >> 1, this);
+        }
       }
     }
     root.hackcofm();
@@ -223,10 +223,10 @@ public class Tree
       Body b = e.nextElement();
       MathVector acc1 = (MathVector)b.newAcc.clone();
       if (nstep > 0) {
-	dacc.subtraction(acc1, b.acc);
-	dvel.multScalar(dacc, dthf);
-	dvel.addition(b.vel);
-	b.vel = (MathVector)dvel.clone();
+        dacc.subtraction(acc1, b.acc);
+        dvel.multScalar(dacc, dthf);
+        dvel.addition(b.vel);
+        b.vel = (MathVector)dvel.clone();
       }
       b.acc = (MathVector)acc1.clone();
       dvel.multScalar(b.acc, dthf);

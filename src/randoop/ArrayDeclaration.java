@@ -66,7 +66,7 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
    * Returns the length of elements held in this ArrayDeclarationInfo
    * */
   public int getLength() {
-	  return this.length;
+    return this.length;
   }
 
   /**

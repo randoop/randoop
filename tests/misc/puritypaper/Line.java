@@ -10,7 +10,7 @@ public class Line {
     newestLine = this;
   }
   void replaceIfCloser(Point other) {
-    if(other.distanceTo(a) > b.distanceTo(a)) 
+    if (other.distanceTo(a) > b.distanceTo(a)) 
       other.copyTo(this.b);
   }
   void replaceWithOrigin() {
@@ -24,7 +24,7 @@ public class Line {
     return this; 
   }
   void checkAndSwapCoordinates() {
-    if(a.distanceToOrigin() > b.distanceToOrigin()) 
+    if (a.distanceToOrigin() > b.distanceToOrigin()) 
       swapCoordinates();
   }
 }

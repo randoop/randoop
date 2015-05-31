@@ -39,5 +39,5 @@ public class SouthEast implements Quadrant
   {
     return node.getSouthEast();
   }
-		  
+
 }

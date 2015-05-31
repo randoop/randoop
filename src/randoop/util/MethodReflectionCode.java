@@ -44,7 +44,7 @@ public final class MethodReflectionCode extends ReflectionCode {
       if (receiver != null)
         throw new IllegalArgumentException("receiver must be null for static method.");
     } else {
-      if(! Reflection.canBePassedAsArgument(receiver, method.getDeclaringClass()))
+      if (! Reflection.canBePassedAsArgument(receiver, method.getDeclaringClass()))
         throw new IllegalArgumentException("method " + method + " cannot be invoked on " + receiver);
     }
     // TODO check that the lookup starting at receiver.getClass<?> will result

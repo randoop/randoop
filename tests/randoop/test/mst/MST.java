@@ -100,8 +100,8 @@ public class MST
     if (o != null) {
       int dist = ((Integer)o).intValue();
       if (dist < retval.dist()) {
-	vlist.setMindist(dist);
-	retval.setDist(dist);
+        vlist.setMindist(dist);
+        retval.setDist(dist);
       }
     } else
       System.out.println("Not found");
@@ -111,25 +111,25 @@ public class MST
     for (Vertex tmp = vlist.next(); tmp != null; prev = tmp, tmp = tmp.next()) {
       count++;
       if (tmp == inserted) {
-	Vertex next = tmp.next();
-	prev.setNext(next);
-      }	else {
-	hash = tmp.neighbors();
-	int dist2 = tmp.mindist();
-	o = hash.get(inserted);
-	if (o != null) {
-	  int dist = ((Integer)o).intValue();
-	  if (dist < dist2) {
-	    tmp.setMindist(dist);
-	    dist2 = dist;
-	  }
-	} else
-	  System.out.println("Not found");
+        Vertex next = tmp.next();
+        prev.setNext(next);
+      } else {
+        hash = tmp.neighbors();
+        int dist2 = tmp.mindist();
+        o = hash.get(inserted);
+        if (o != null) {
+          int dist = ((Integer)o).intValue();
+          if (dist < dist2) {
+            tmp.setMindist(dist);
+            dist2 = dist;
+          }
+        } else
+          System.out.println("Not found");
 
-	if (dist2 < retval.dist()) {
-	  retval.setVert(tmp);
-	  retval.setDist(dist2);
-	}
+        if (dist2 < retval.dist()) {
+          retval.setVert(tmp);
+          retval.setDist(dist2);
+        }
       } // else
     } // for
     return retval;
@@ -157,15 +157,15 @@ public class MST
       arg = args[i++];
 
       if (arg.equals("-v")) {
-	if (i < args.length) {
-	  vertices = new Integer(args[i++]).intValue();
-	} else throw new RuntimeException("-v requires the number of vertices");
+        if (i < args.length) {
+          vertices = new Integer(args[i++]).intValue();
+        } else throw new RuntimeException("-v requires the number of vertices");
       } else if (arg.equals("-p")) {
-	printResult = true;
+        printResult = true;
       } else if (arg.equals("-m")) {
-	printMsgs = true;
+        printMsgs = true;
       } else if (arg.equals("-h")) {
-	usage();
+        usage();
       }
     }
     if (vertices == 0) usage();

@@ -69,15 +69,15 @@ public class TreeAdd
       arg = args[i++];
 
       if (arg.equals("-l")) {
-	if (i < args.length) {
-	  levels = new Integer(args[i++]).intValue();
-	} else throw new RuntimeException("-l requires the number of levels");
+        if (i < args.length) {
+          levels = new Integer(args[i++]).intValue();
+        } else throw new RuntimeException("-l requires the number of levels");
       } else if (arg.equals("-p")) {
-	printResult = true;
+        printResult = true;
       } else if (arg.equals("-m")) {
-	printMsgs = true;
+        printMsgs = true;
       } else if (arg.equals("-h")) {
-	usage();
+        usage();
       }
     }
     if (levels == 0) usage();

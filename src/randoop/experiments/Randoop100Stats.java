@@ -52,7 +52,7 @@ public class Randoop100Stats implements StatsComputer {
     num.put(writer.size, num.get(writer.size) + 1);
     tot.put(writer.size, tot.get(writer.size) + writer.exectime);
 
-    for(int i = 0 ; i < writer.numclassifs ; i++) {
+    for (int i = 0 ; i < writer.numclassifs ; i++) {
 
       String kind = writer.classifNames[i];
       String key = writer.classifNames[i] + "/" + writer.classifSources[i];

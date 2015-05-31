@@ -46,7 +46,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
       throw new IllegalArgumentException("args cannot be null.");
     
     Set<T2> values = map.get(key);
-    if(values == null) {
+    if (values == null) {
       values = new LinkedHashSet<T2>(1);  
       map.put(key, values);
     }
@@ -71,7 +71,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
       throw new IllegalArgumentException("args cannot be null.");
 
     Set<T2> values = map.get(key);
-    if(values == null) {
+    if (values == null) {
       throw new IllegalArgumentException("Mapping not present: " + key + " -> " + value);
     } 
     values.remove(value);
@@ -124,7 +124,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     if (key == null)
       throw new IllegalArgumentException("arg cannot be null.");
     Set<T2> values = map.get(key);
-    if(values == null) return Collections.emptySet();
+    if (values == null) return Collections.emptySet();
     return values;
   }
 

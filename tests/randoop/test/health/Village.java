@@ -80,8 +80,8 @@ public class Village
     } else {
       Village village = new Village(level, label, back, seed);
       for (int i = 3; i >= 0; i--) {
-	Village child = createVillage(level - 1, (label * 4) + i + 1, village, seed);
-	village.addVillage(i, child);
+        Village child = createVillage(level - 1, (label * 4) + i + 1, village, seed);
+        village.addVillage(i, child);
       }
       return village;
     }
@@ -99,18 +99,18 @@ public class Village
     for (int i = 3; i >= 0; i--) {
       Village v = forward[i];
       if (v != null) {
-	val[i] = v.simulate();
+        val[i] = v.simulate();
       }
     }
     
     for (int i = 3; i >= 0; i--) {
       List l = val[i];
       if (l != null) {
-	for (Enumeration e = l.elements(); e.hasMoreElements(); ) {
-	  Patient p = (Patient)e.nextElement();
-	  hospital.putInHospital(p);
-	  // remove the patient?
-	}
+        for (Enumeration e = l.elements(); e.hasMoreElements(); ) {
+          Patient p = (Patient)e.nextElement();
+          hospital.putInHospital(p);
+          // remove the patient?
+        }
       }
     }
     
@@ -137,16 +137,16 @@ public class Village
     for (int i = 3; i >=0 ; i--) {
       Village v = forward[i];
       if (v != null) {
-	fval[i] = v.getResults();
+        fval[i] = v.getResults();
       }
     }
 
     Results r = new Results();
     for (int i = 3; i >= 0; i--) {
       if (fval[i] != null) {
-	r.totalHospitals += fval[i].totalHospitals;
-	r.totalPatients += fval[i].totalPatients;
-	r.totalTime += fval[i].totalTime;
+        r.totalHospitals += fval[i].totalHospitals;
+        r.totalPatients += fval[i].totalPatients;
+        r.totalTime += fval[i].totalTime;
       }
     }
 

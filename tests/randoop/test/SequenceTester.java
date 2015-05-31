@@ -194,23 +194,23 @@ public class SequenceTester {
     checkEqualStatements(expected, codeString, "testing toCodeString()");
   }
 
-	private void checkEqualStatements(String expectedString,
-			String actualString, String context) {
-		String[] expected = trimmedStatements(expectedString);
-		String[] actual = trimmedStatements(actualString);
-		if (expected.length != actual.length) {
-			failWithMessage("when " + context + ", lengths differ", expected,
-					actual);
-			return;
-		} else {
-			for (int i = 0; i < expected.length; i++) {
-				if (!expected[i].equals(actual[i])) {
-					failWithMessage("when " + context + ", statement " + i
-							+ " differ", expected, actual);
-				}
-			}
-		}
-	}
+  private void checkEqualStatements(String expectedString,
+      String actualString, String context) {
+    String[] expected = trimmedStatements(expectedString);
+    String[] actual = trimmedStatements(actualString);
+    if (expected.length != actual.length) {
+      failWithMessage("when " + context + ", lengths differ", expected,
+          actual);
+      return;
+    } else {
+      for (int i = 0; i < expected.length; i++) {
+        if (!expected[i].equals(actual[i])) {
+          failWithMessage("when " + context + ", statement " + i
+              + " differ", expected, actual);
+        }
+      }
+    }
+  }
 
   private void failWithMessage(String string, String[] expected, String[] actual) {
     oneOrMoreFailures = true;

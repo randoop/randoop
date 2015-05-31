@@ -78,20 +78,20 @@ public final class Body extends Node
       rmid.addScalar(tree.rmin, 0.5 * rsize);
       
       for (int k = 0; k < MathVector.NDIM; k++) {
-	if (pos.value(k) < rmid.value(k)) {
-	  double rmin = tree.rmin.value(k);
-	  tree.rmin.value(k, rmin - rsize);
-	}
+        if (pos.value(k) < rmid.value(k)) {
+          double rmin = tree.rmin.value(k);
+          tree.rmin.value(k, rmin - rsize);
+        }
       }
       tree.rsize = 2.0 * rsize;
       if (tree.root != null) {
-	MathVector ic = tree.intcoord(rmid);
-	if (ic == null) throw new Error("Variable is out of bounds");
-	int k = oldSubindex(ic, IMAX >> 1);
-	Cell newt = new Cell();
-	newt.subp[k] = tree.root;
-	tree.root = newt;
-	inbox = icTest(tree);
+        MathVector ic = tree.intcoord(rmid);
+        if (ic == null) throw new Error("Variable is out of bounds");
+        int k = oldSubindex(ic, IMAX >> 1);
+        Cell newt = new Cell();
+        newt.subp[k] = tree.root;
+        tree.root = newt;
+        inbox = icTest(tree);
       }
     }
   }
@@ -177,9 +177,9 @@ public final double hackcofm()
       public Enumerate() { this.current = Body.this; }
       public boolean hasMoreElements() { return (current != null);  }
       public Object nextElement() {
-	Object retval = current;
-	current = current.next;
-	return retval;
+        Object retval = current;
+        current = current.next;
+        return retval;
       }
     }
     return new Enumerate();
@@ -193,9 +193,9 @@ public final double hackcofm()
       public Enumerate() { this.current = Body.this; }
       public boolean hasMoreElements() {  return (current != null);  }
       public Object nextElement() {
-	Object retval = current;
-	current = current.procNext;
-	return retval;
+        Object retval = current;
+        current = current.procNext;
+        return retval;
       }
     }
 
@@ -223,7 +223,7 @@ public final double hackcofm()
     int i = 0;
     for (int k = 0; k < MathVector.NDIM; k++) {
       if (((int)xp.value(k) & l) != 0) {
-	i += Cell.NSUB >> (k + 1);
+        i += Cell.NSUB >> (k + 1);
       }
     }
     return i;

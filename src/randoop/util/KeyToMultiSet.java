@@ -30,7 +30,7 @@ public class KeyToMultiSet<T1, T2> {
 
   public void add(T1 key, T2 value) {
     MultiSet<T2> values = map.get(key);
-    if(values == null) {
+    if (values == null) {
       values = new MultiSet<T2>();  
     } 
     values.add(value);
@@ -39,7 +39,7 @@ public class KeyToMultiSet<T1, T2> {
 
   public void remove(T1 key, T2 value) {
     MultiSet<T2> values = map.get(key);
-    if(values == null) {
+    if (values == null) {
       throw new IllegalStateException("No values where found when trying to remove from multiset. Key: " + key + " Variable: " + value);
     } 
     values.remove(value);
@@ -47,7 +47,7 @@ public class KeyToMultiSet<T1, T2> {
 
   public void remove(T1 key) {
     MultiSet<T2> values = map.get(key);
-    if(values == null) {
+    if (values == null) {
       throw new IllegalStateException("No values where found when trying to remove from multiset. Key: " + key);
     } 
     map.remove(key);
@@ -55,7 +55,7 @@ public class KeyToMultiSet<T1, T2> {
 
   public Set<T2> getVariables(T1 key) {
     MultiSet<T2> values = map.get(key);
-    if(values == null) return Collections.emptySet();
+    if (values == null) return Collections.emptySet();
     return values.getElements();
   }
 
@@ -78,7 +78,7 @@ public class KeyToMultiSet<T1, T2> {
   }
 
   public void removeAllInstances(Set<T2> values) {
-    for(MultiSet<T2> multiSet:map.values()) {
+    for (MultiSet<T2> multiSet:map.values()) {
       multiSet.removeAllInstances(values);
     }
   }

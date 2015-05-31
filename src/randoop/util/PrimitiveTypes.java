@@ -166,7 +166,7 @@ public final class PrimitiveTypes {
     } else if (double.class.equals(valueClass)) {
       Double d = (Double) value;
       if (d.isNaN()) {
-	return "Double.NaN";
+  return "Double.NaN";
       } else if (d == Double.POSITIVE_INFINITY) {
         return "Double.POSITIVE_INFINITY";
       } else if (d == Double.NEGATIVE_INFINITY) {
@@ -186,7 +186,7 @@ public final class PrimitiveTypes {
       } else if (d == Float.POSITIVE_INFINITY) {
         return "Float.POSITIVE_INFINITY";
       } else if (d == Float.NEGATIVE_INFINITY) {
-	return "Float.NEGATIVE_INFINITY";
+  return "Float.NEGATIVE_INFINITY";
       }
       String rep = d.toString();
       assert rep != null;
