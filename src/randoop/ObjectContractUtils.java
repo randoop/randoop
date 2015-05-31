@@ -50,6 +50,7 @@ public class ObjectContractUtils {
         .getTimeElapsedMillis());
   }
   
+  /** Replace dummy variables such as "x0" in the code by their real names. */
   public static String localizeContractCode(String str, Variable... vars) {
     for (int i = 0 ; i < vars.length ; i++) {
       // See documentation for Expression.toCommentString().
