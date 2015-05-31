@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -242,6 +243,19 @@ public class GenTests extends GenInputsAbstract {
       for (StatementKind st : statements) {
         if (!model.contains(st))
           model.add(st);
+      }
+    }
+
+    // Remove observers
+    for (Iterator<StatementKind> iterator = model.iterator(); iterator.hasNext(); ) {
+      StatementKind statement = iterator.next();
+      if (statement instanceof RMethod) {
+        RMethod rmethod = (RMethod) statement;
+        Method method = rmethod.getMethod();
+        List<Method> observer_methods = RegressionCaptureVisitor.observer_map.get(method.getDeclaringClass());
+        if (observer_methods != null && observer_methods.contains(method))
+          // Remove the current element from the iterator and the list.
+          iterator.remove();
       }
     }
 

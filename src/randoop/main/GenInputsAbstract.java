@@ -50,7 +50,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 
    * In the file, each each method under test is specified on a separate
    * line. The list of methods given by this argument will augment
-   * any methods derived via the --classlist option.
+   * any methods derived via the <tt>--classlist</tt> option.
    * 
    * Also see the manual section on <a href="https://rawgit.com/mernst/randoop/master/doc/index.html#specifying-methods">specifying methods 
    * and constructors under test</a>.
@@ -243,6 +243,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Use the methods specified in the given file to create regression assertions.
    */
   @Option("File containing observer functions")
+  // This file is used to populate RegressionCaptureVisitor.observer_map
   public static File observers = null;
   
   /**

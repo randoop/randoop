@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 /**
- * Represents a kind of statement that can be part of a sequence, for example, a
+ * Represents a template for a statement that can be part of a sequence, for example, a particular
  * method call, constructor call, or primitive value declaration.
  * <p>
  * 

@@ -14,7 +14,7 @@ import randoop.util.Reflection.Match;
 public class HelperSequenceCreator {
 
   /**
-   * Returns a sequence that creates an object of type compatible the given class.
+   * Returns a sequence that creates an object of type compatible with the given class.
    * Wraps the object in a list, and returns the list.
    *
    * CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an array.
