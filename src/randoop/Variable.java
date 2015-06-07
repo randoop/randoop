@@ -88,4 +88,17 @@ public class Variable implements Comparable<Variable>, Serializable {
     if (o.sequence != this.sequence) throw new IllegalArgumentException();
     return (new Integer(this.index).compareTo(new Integer(o.index)));
   }
+  
+  /**
+   * The following two are only used for testing
+   * */
+  
+  private Variable(int i) {
+    this.sequence = null;
+    this.index = i;
+  }
+  
+  public static Variable  getMockVar(int i) {
+    return new Variable(i);
+  }
 }

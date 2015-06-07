@@ -84,7 +84,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   @Option("Specifies initialization routine (class.method)")
   public static String init_routine = null;
+  public static boolean check_npe = true;
   
+  @Option("Use enum type or not, added by S Zhang")
+  public static boolean use_enum_type = false;
   @Option("Ignore class names specified by user that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
   

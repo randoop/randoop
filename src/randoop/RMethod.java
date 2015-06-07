@@ -117,14 +117,14 @@ public final class RMethod implements StatementKind, Serializable {
 
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        Object val = ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue();
-        b.append(PrimitiveTypes.toCodeString(val));
-      } else {
-        b.append(inputVars.get(i).getName());
-      }
+      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement();
+      if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
+        if(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getType().isEnum() && GenInputsAbstract.use_enum_type) {
+          //print the enum value directly
+          b.append(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue());
+        } else {
+          b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+        }      
     }
 
     b.append(");" + Globals.lineSep);

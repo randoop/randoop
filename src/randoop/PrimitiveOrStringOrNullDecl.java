@@ -53,6 +53,11 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
         throw new IllegalArgumentException("o.getClass()=" + o.getClass() + ",t=" + t);
       if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
         throw new IllegalArgumentException("o is not a primitive-like value.");
+    } else if(t.isEnum()) {
+      //add support for enum type
+      if(o == null) {
+        throw new IllegalArgumentException("enum value of type: " + t.getName() +  " must not be null!");
+      }
     } else if (t.equals(String.class)) {
       if (!PrimitiveTypes.stringLengthOK((String) o)) {
         throw new IllegalArgumentException("String too long, length = " + ((String) o).length());
@@ -131,7 +136,15 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       b.append(PrimitiveTypes.toCodeString(getValue()));
       b.append(");");
       b.append(Globals.lineSep);
-
+    } else if (type.isEnum()) {
+      //add support for enum
+      b.append(Reflection.getCompilableName(type));
+      b.append("  ");
+      b.append(newVar.getName());
+      b.append(" = ");
+      b.append(Reflection.getCompilableName(type) + "." + this.value.toString());
+      b.append(";");
+      b.append(Globals.lineSep);
     } else {
       b.append(Reflection.getCompilableName(type));
       b.append(" ");
@@ -147,6 +160,9 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
    * Returns the value of this PrimitiveOrStringOrNullDeclInfo
    */
   public Object getValue() {
+    if(this.type.isEnum()) {
+      return this.type.getName().replace('$', '.') + "." + value;
+    }
     return value;
   }
 
@@ -251,7 +267,8 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
    * int:0                        represents: int x = 0;
    * boolean:false                represents: boolean x = false;
    * char:20                      represents: char x = ' ';
-   * 
+   * EnumType:EnumValue           represents: EnumType x = EnumType.EnumValue;
+   * InnerEnum$Inner:EnumValue    represents: InnerEnum.Inner x = InnerEnum.Inner.EnumValue;
    * Note that a string type can be given as both "String" or "java.lang.String".
    */
   public static PrimitiveOrStringOrNullDecl parse(String s) throws StatementKindParseException {
@@ -364,6 +381,14 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
         if (!PrimitiveTypes.stringLengthOK((String)value)) {
           throw new StatementKindParseException("Error when parsing String; length is greater than " + GenInputsAbstract.string_maxlen);
         }
+      }
+    } else if (type.isEnum()) {
+      //check the validity of the given value
+      value = Reflection.getEnumConstantByName(type, valString.trim());
+      if(value == null) {
+        String msg = "A enum value declaration : " + valString+ " does not exist in its class declaration: "
+          + type.getName();
+        throw new StatementKindParseException(msg);
       }
     } else {
       if (valString.equals("null")) {
