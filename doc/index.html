@@ -465,14 +465,14 @@ agent</a>  to replace the new functionality by the old functionality.)
 
 <!-- start options doc (DO NOT EDIT BY HAND) -->
 <ul>
-  <li>Code under test
+  <li id="optiongroup:Code-under-test">Code under test
     <ul>
-      <li><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class under test</li>
-      <li><b>--classlist=</b><i>string</i>. The name of a file that lists classes under test.
+      <li id="option:testclass"><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class under test</li>
+      <li id="option:classlist"><b>--classlist=</b><i>string</i>. The name of a file that lists classes under test.
  
  In the file, each class under test is specified by its
  fully-qualified name on a separate line.</li>
-      <li><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
+      <li id="option:methodlist"><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
  
  In the file, each each method under test is specified on a separate
  line. The list of methods given by this argument augment
@@ -481,7 +481,7 @@ agent</a>  to replace the new functionality by the old functionality.)
  
  Also see the manual section on <a href="https://rawgit.com/mernst/randoop/master/doc/index.html#specifying-methods">specifying methods 
  and constructors that may appear in a test</a>.</li>
-      <li><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method#toString()</code> matches the regular expression
+      <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method#toString()</code> matches the regular expression
  given.  This does not prevent indirect calls to such methods from
  other, allowed methods.
  <p>
@@ -491,35 +491,35 @@ agent</a>  to replace the new functionality by the old functionality.)
  <tt>-classlist</tt>, or <tt>--methodlist</tt> command-line options;
  the purpose of <tt>--omitmethods</tt> is to override one of those other
  command-line options.</li>
-      <li><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method)</li>
-      <li><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
-      <li><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file). See: <code>ClassLiteralsMode</code>. [default NONE]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
-      <li><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
+      <li id="option:init-routine"><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method)</li>
+      <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
+      <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file). See: <code>ClassLiteralsMode</code>. [default NONE]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
+      <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
  
  Literals in these files are used in addition to all other constants in the pool.
  For the format of this file, see documentation in class <code>randoop.LiteralFileReader</code>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under test.</li>
     </ul>
   </li>
-  <li>Controlling randomness
+  <li id="optiongroup:Controlling-randomness">Controlling randomness
     <ul>
-      <li><b>--randomseed=</b><i>int</i>. The random seed to use in the generation process [default 0]</li>
+      <li id="option:randomseed"><b>--randomseed=</b><i>int</i>. The random seed to use in the generation process [default 0]</li>
     </ul>
   </li>
-  <li>Limiting test generation
+  <li id="optiongroup:Limiting-test-generation">Limiting test generation
     <ul>
-      <li><b>--timelimit=</b><i>int</i>. Maximum number of seconds to spend generating tests [default 100]</li>
-      <li><b>--inputlimit=</b><i>int</i>. Maximum number of tests generated.
+      <li id="option:timelimit"><b>--timelimit=</b><i>int</i>. Maximum number of seconds to spend generating tests [default 100]</li>
+      <li id="option:inputlimit"><b>--inputlimit=</b><i>int</i>. Maximum number of tests generated.
  
  Used to determine when to stop test generation. Generation stops when
  either the time limit (--timelimit=int) OR the input limit
  (--inputlimit=int) is reached.  The number of tests output
  may be smaller than then number of inputs created, because redundant
  and illegal inputs may be discarded.  Also see --outputlimit. [default 100000000]</li>
-      <li><b>--outputlimit=</b><i>int</i>. Determines the maximum number of tests to output, no matter how many
+      <li id="option:outputlimit"><b>--outputlimit=</b><i>int</i>. Determines the maximum number of tests to output, no matter how many
  are generated.  Contrast to --inputlimit. [default 100000000]</li>
-      <li><b>--maxsize=</b><i>int</i>. Do not generate tests with more than this many statements [default 100]</li>
-      <li><b>--forbid-null=</b><i>boolean</i>. Never use null as input to methods or constructors.
+      <li id="option:maxsize"><b>--maxsize=</b><i>int</i>. Do not generate tests with more than this many statements [default 100]</li>
+      <li id="option:forbid-null"><b>--forbid-null=</b><i>boolean</i>. Never use null as input to methods or constructors.
  
  This option causes Randoop to abandon the method call rather than providing
  null as an input, when no non-null value of the appropriate type is available.
@@ -528,10 +528,10 @@ agent</a>  to replace the new functionality by the old functionality.)
  see option --null-ratio. [default true]</li>
     </ul>
   </li>
-  <li>Varying the nature of generated tests
+  <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
     <ul>
-      <li><b>--string-maxlen=</b><i>int</i>. Maximum length of Strings in generated tests [default 10000]</li>
-      <li><b>--null-ratio=</b><i>double</i>. Use null with the given frequency.
+      <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>. Maximum length of Strings in generated tests [default 10000]</li>
+      <li id="option:null-ratio"><b>--null-ratio=</b><i>double</i>. Use null with the given frequency.
  
  If a null ratio is given, it should be between 0 and 1. A ratio of X means that
  null will be used instead of a non-null value as a parameter to method calls,
@@ -539,19 +539,19 @@ agent</a>  to replace the new functionality by the old functionality.)
  a ratio of 0.5 directs Randoop to use null inputs 50 percent of the time.
  
  Randoop never uses null for receiver values. [default 0.0]</li>
-      <li><b>--alias-ratio=</b><i>double</i>. Try to reuse values from a sequence with the given frequency.
+      <li id="option:alias-ratio"><b>--alias-ratio=</b><i>double</i>. Try to reuse values from a sequence with the given frequency.
  
  If an alias ratio is given, it should be between 0 and 1.
  
  A ratio of 0 results in tests where each value created within a test input is typically used at most once
  as an argument in a method call. A ratio of 1 tries to maximize the number of times
  values are used as inputs to parameters within a test. [default 0.0]</li>
-      <li><b>--small-tests=</b><i>boolean</i>. Favor shorter sequences when assembling new sequences out of old ones.
+      <li id="option:small-tests"><b>--small-tests=</b><i>boolean</i>. Favor shorter sequences when assembling new sequences out of old ones.
 
  Randoop generate new tests by combining old previously-generated tests.
  If this option is given, tests with fewer calls are given greater weight during
  its random selection. This has the overall effect of producing smaller JUnit tests. [default false]</li>
-      <li><b>--clear=</b><i>int</i>. Clear the component set each time it contains the given number of inputs.
+      <li id="option:clear"><b>--clear=</b><i>int</i>. Clear the component set each time it contains the given number of inputs.
 
  <p>
  Randoop stores previously-generated tests in a "component" set, and uses them to
@@ -560,10 +560,10 @@ agent</a>  to replace the new functionality by the old functionality.)
  </p> [default 100000000]</li>
     </ul>
   </li>
-  <li>Creating test oracles
+  <li id="optiongroup:Creating-test-oracles">Creating test oracles
     <ul>
-      <li><b>--observers=</b><i>filename</i>. File containing observer functions</li>
-      <li><b>--check-object-contracts=</b><i>boolean</i>. Use Randoop's default set of object contracts as assertions.
+      <li id="option:observers"><b>--observers=</b><i>filename</i>. File containing observer functions</li>
+      <li id="option:check-object-contracts"><b>--check-object-contracts=</b><i>boolean</i>. Use Randoop's default set of object contracts as assertions.
  If disabled, these assertions are not created.
  
  <p>
@@ -574,89 +574,89 @@ agent</a>  to replace the new functionality by the old functionality.)
    x.equals(null) returns false,
    any nullary method annotated with @CheckRep returns true.
  </p> [default true]</li>
-      <li><b>--check-regression-behavior=</b><i>boolean</i>. Capture the current behavior as assertions.
+      <li id="option:check-regression-behavior"><b>--check-regression-behavior=</b><i>boolean</i>. Capture the current behavior as assertions.
  This makes Randoop's tests act as regression tests that ensure that the
  code continues to behave as it did when the tests were generated. [default true]</li>
     </ul>
   </li>
-  <li>Outputting the JUnit tests
+  <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
     <ul>
-      <li><b>--output-tests=</b><i>string</i>. What kinds of tests to output: pass, fail, or all [default all]</li>
-      <li><b>--simplify-failed-tests=</b><i>boolean</i>. Simplify (shorten) failed tests while preserving failure behavior [default false]</li>
-      <li><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
-      <li><b>--junit-classname=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
-      <li><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files [default ]</li>
-      <li><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written</li>
-      <li><b>--dont-output-tests=</b><i>boolean</i>. Run Randoop but do not create JUnit tests [default false]</li>
-      <li><b>--output-nonexec=</b><i>boolean</i>. Output sequences even if they do not complete execution.
+      <li id="option:output-tests"><b>--output-tests=</b><i>string</i>. What kinds of tests to output: pass, fail, or all [default all]</li>
+      <li id="option:simplify-failed-tests"><b>--simplify-failed-tests=</b><i>boolean</i>. Simplify (shorten) failed tests while preserving failure behavior [default false]</li>
+      <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
+      <li id="option:junit-classname"><b>--junit-classname=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
+      <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files [default ]</li>
+      <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written</li>
+      <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>. Run Randoop but do not create JUnit tests [default false]</li>
+      <li id="option:output-nonexec"><b>--output-nonexec=</b><i>boolean</i>. Output sequences even if they do not complete execution.
  
   Randoop's default behavior is to output only tests consisting of
   method call sequences that execute to the end, rather than throwing
   an exception or failing a contract check in the middle of execution. [default false]</li>
-      <li><b>--pretty-print=</b><i>boolean</i>. Remove full package + class name declarations, and change the variables name (e.g., change ArrayList var0 to ArrayList arrayList0) in an output sequence. This option will not change the sequence behavior. [default false]</li>
-      <li><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests</li>
+      <li id="option:pretty-print"><b>--pretty-print=</b><i>boolean</i>. Remove full package + class name declarations, and change the variables name (e.g., change ArrayList var0 to ArrayList arrayList0) in an output sequence. This option will not change the sequence behavior. [default false]</li>
+      <li id="option:test-classes"><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests</li>
     </ul>
   </li>
-  <li>Runtime environment
+  <li id="optiongroup:Runtime-environment">Runtime environment
     <ul>
-      <li><b>-D</b> <b>--system-props=</b><i>string</i> <tt>[+]</tt>. Specify system properties to be set (similar to java -Dx=y)</li>
-      <li><b>--agent=</b><i>string</i>. Specify an extra command for recursive JVM calls that Randoop spawns.
+      <li id="option:system-props"><b>-D</b> <b>--system-props=</b><i>string</i> <tt>[+]</tt>. Specify system properties to be set (similar to java -Dx=y)</li>
+      <li id="option:agent"><b>--agent=</b><i>string</i>. Specify an extra command for recursive JVM calls that Randoop spawns.
  The argument to the --agent option is the entire extra JVM command.  A
  typical invocation of Randoop might be:
  <pre>java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"</pre></li>
-      <li><b>--mem-megabytes=</b><i>int</i>. specify the memory size (in megabytes) for recursive JVM calls [default 1000]</li>
-      <li><b>--capture-output=</b><i>boolean</i>. Capture all output to stdout and stderr [default false]</li>
+      <li id="option:mem-megabytes"><b>--mem-megabytes=</b><i>int</i>. specify the memory size (in megabytes) for recursive JVM calls [default 1000]</li>
+      <li id="option:capture-output"><b>--capture-output=</b><i>boolean</i>. Capture all output to stdout and stderr [default false]</li>
     </ul>
   </li>
-  <li>Serialized input/output of generated tests
+  <li id="optiongroup:Serialized-input/output-of-generated-tests">Serialized input/output of generated tests
     <ul>
-      <li><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file</li>
-      <li><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file (text-based)</li>
-      <li><b>--output-components=</b><i>string</i>. Output components (serialized, GZIPPED) to the given file.
+      <li id="option:componentfile-ser"><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file</li>
+      <li id="option:componentfile-txt"><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file (text-based)</li>
+      <li id="option:output-components"><b>--output-components=</b><i>string</i>. Output components (serialized, GZIPPED) to the given file.
  
  Suggestion: use a .gz suffix in file name.</li>
-      <li><b>--output-tests-serialized=</b><i>string</i>. Output tests (sequences plus checkers) in serialized form to the given file.
+      <li id="option:output-tests-serialized"><b>--output-tests-serialized=</b><i>string</i>. Output tests (sequences plus checkers) in serialized form to the given file.
  
  Suggestion: use a .gz suffix in file name.</li>
     </ul>
   </li>
-  <li>Notifications
+  <li id="optiongroup:Notifications">Notifications
     <ul>
-      <li><b>--comm-port=</b><i>int</i>. Uses the specified port for notifications (used by Eclipse plugin). [default -1]</li>
-      <li><b>--noprogressdisplay=</b><i>boolean</i>. Do not display progress update message to console [default false]</li>
-      <li><b>--progressinterval=</b><i>long</i>. Display progress message every &lt;int&gt; milliseconds [default 5000]</li>
+      <li id="option:comm-port"><b>--comm-port=</b><i>int</i>. Uses the specified port for notifications (used by Eclipse plugin). [default -1]</li>
+      <li id="option:noprogressdisplay"><b>--noprogressdisplay=</b><i>boolean</i>. Do not display progress update message to console [default false]</li>
+      <li id="option:progressinterval"><b>--progressinterval=</b><i>long</i>. Display progress message every &lt;int&gt; milliseconds [default 5000]</li>
     </ul>
   </li>
-  <li>Advanced extension points
+  <li id="optiongroup:Advanced-extension-points">Advanced extension points
     <ul>
-      <li><b>--visitor=</b><i>string</i> <tt>[+]</tt>. Install the given runtime visitor</li>
+      <li id="option:visitor"><b>--visitor=</b><i>string</i> <tt>[+]</tt>. Install the given runtime visitor</li>
     </ul>
   </li>
-  <li>Logging and troubleshooting Randoop
+  <li id="optiongroup:Logging-and-troubleshooting-Randoop">Logging and troubleshooting Randoop
     <ul>
-      <li><b>--debug-checks=</b><i>boolean</i>. Perform expensive internal checks (for Randoop debugging) [default false]</li>
-      <li><b>--log=</b><i>filename</i>. Name of a file to which to log lots of information.
+      <li id="option:debug-checks"><b>--debug-checks=</b><i>boolean</i>. Perform expensive internal checks (for Randoop debugging) [default false]</li>
+      <li id="option:log"><b>--log=</b><i>filename</i>. Name of a file to which to log lots of information.
  If not specified, no logging is done.</li>
     </ul>
   </li>
-  <li>Eliminating redundant tests
+  <li id="optiongroup:Eliminating-redundant-tests">Eliminating redundant tests
     <ul>
-      <li><b>--remove-subsequences=</b><i>boolean</i>. Remove tests that are subsumed in other tests [default true]</li>
-      <li><b>--compare-checks=</b><i>boolean</i>. Run each test twice and compare the checks.  If the results differ,
+      <li id="option:remove-subsequences"><b>--remove-subsequences=</b><i>boolean</i>. Remove tests that are subsumed in other tests [default true]</li>
+      <li id="option:compare-checks"><b>--compare-checks=</b><i>boolean</i>. Run each test twice and compare the checks.  If the results differ,
  then disable the test. [default false]</li>
-      <li><b>--clean-checks=</b><i>filename</i>. Create clean checks for a serialized sequence</li>
-      <li><b>--print-diff-obs=</b><i>boolean</i>. Print any checks that are different in the clean run [default false]</li>
+      <li id="option:clean-checks"><b>--clean-checks=</b><i>filename</i>. Create clean checks for a serialized sequence</li>
+      <li id="option:print-diff-obs"><b>--print-diff-obs=</b><i>boolean</i>. Print any checks that are different in the clean run [default false]</li>
     </ul>
   </li>
-  <li>Threading and timeouts
+  <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
     <ul>
-      <li><b>--usethreads=</b><i>boolean</i>. Use if Randoop is exhibiting nonterminating behavior: this is usually
+      <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>. Use if Randoop is exhibiting nonterminating behavior: this is usually
  due to execution of code under test that results in an infinite
  loop. With this option, Randoop executes each test in a separate
  thread and kills tests that take too long to finish. Tests killed in
  this manner are not reported to the user. The downside is a BIG
  (order-of-magnitude) decrease in generation speed. [default true]</li>
-      <li><b>--timeout=</b><i>int</i>. After this many milliseconds, a non-returning method call, and its
+      <li id="option:timeout"><b>--timeout=</b><i>int</i>. After this many milliseconds, a non-returning method call, and its
  associated test, are stopped forcefully.
  Only meaningful if --usethreads is also specified. [default 5000]</li>
     </ul>
