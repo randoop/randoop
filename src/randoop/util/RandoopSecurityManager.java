@@ -33,6 +33,7 @@ public class RandoopSecurityManager extends SecurityManager {
     //super.checkAccess(g);
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void checkAwtEventQueueAccess() {
     if (status == Status.OFF) return;
@@ -91,6 +92,7 @@ public class RandoopSecurityManager extends SecurityManager {
     //super.checkListen(port);
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void checkMemberAccess(Class<?> clazz, int which) {
     if (status == Status.OFF) return;
@@ -193,12 +195,14 @@ public class RandoopSecurityManager extends SecurityManager {
     //super.checkSetFactory();
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void checkSystemClipboardAccess() {
     if (status == Status.OFF) return;
     //super.checkSystemClipboardAccess();
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public boolean checkTopLevelWindow(Object window) {
     if (status == Status.OFF) return true;
