@@ -18,7 +18,7 @@ default:
 	@echo "results        display results of tests."
 	@echo "tests          run tests."
 	@echo "update-goals   update test goal files."
-	@echo "manual         update the user manual."
+	@echo "manual         update the manual's list of options and table of contents."
 	@echo "jdoc           update the javadoc."
 	@echo "distribution-files  create distribution zip and jar files, in dist/ dir."
 	@echo "                    (also updates manual)."                              
