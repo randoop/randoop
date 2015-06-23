@@ -28,7 +28,7 @@ The Randoop homepage is
       <li><a href="#generating_tests">Generating tests</a>
         <ul>
           <li><a href="#example_collections">Example: Generating tests for <tt>java.util.Collections</tt></a></li>
-          <li><a href="#specifying-methods">Specifying methods and constructors under test</a></li>
+          <li><a href="#specifying-methods">Specifying methods and constructors that may appear in a test</a></li>
           <li><a href="#error_revealing_tests">Error-revealing Tests</a></li>
           <li><a href="#regression_tests">Regression tests</a>
             <ul>
@@ -244,12 +244,11 @@ java -classpath .:randoop.jar junit.textui.TestRunner RandoopTest</pre>
 <p>JUnit will execute the generated tests. Most will pass, and some will fail. The next section describes the kinds of tests that Randoop generates, and the reason why they may fail. </p>
 
 
-<h3 id="specifying-methods">Specifying methods and constructors under test</h3>
+<h3 id="specifying-methods">Specifying methods and constructors that may appear in a test</h3>
 
 <p>
-Randoop creates unit tests by calling a set of <b>methods and
-constructors under test</b>. A method or constructor <i>M</i> is
-considered a member under test if <b>all</b> of the following are true:
+A method or constructor <i>M</i> is considered a "method under test" and
+may appear in a Randoop test only if <b>all</b> of the following are true:
 </p>
 
 <ol>
@@ -259,12 +258,16 @@ considered a member under test if <b>all</b> of the following are true:
   </li>
   <li> <i>M</i> does not match the pattern given
        via <code>--omitmethods</code>.
-  <li> <i>M</i> is public and has public return type and parameter types.
+  <li> <i>M</i> is public, and its return type and parameter types are public.
   </li>
 </ol>
 
 <p>Additional notes:</p>
 <ul>
+<li>
+<p>The methods under test should include any methods that a test may need to call in order to set up state.</p>
+</li>
+
 <li>
 <p>A class list file used with <code>--classlist</code> consists of a
 text file with the fully-qualified name of a class in each line; see
@@ -307,7 +310,7 @@ specifying classes or methods.
 <li>
 <p>
 When determining the set of members under test from the
-<code>--testclass</code>, <code>--classlist</code> or
+<code>--testclass</code>, <code>--classlist</code>, or
 <code>--methodlist</code> options, non-public classes or members are
 ignored.
 </p>
@@ -472,14 +475,22 @@ agent</a>  to replace the new functionality by the old functionality.)
       <li><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
  
  In the file, each each method under test is specified on a separate
- line. The list of methods given by this argument will augment
- any methods derived via the <tt>--classlist</tt> option.
+ line. The list of methods given by this argument augment
+ any methods derived via the <tt>--testclass</tt> or
+ <tt>--classlist</tt> option.
  
  Also see the manual section on <a href="https://rawgit.com/mernst/randoop/master/doc/index.html#specifying-methods">specifying methods 
- and constructors under test</a>.</li>
+ and constructors that may appear in a test</a>.</li>
       <li><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method#toString()</code> matches the regular expression
  given.  This does not prevent indirect calls to such methods from
- other, allowed methods.</li>
+ other, allowed methods.
+ <p>
+ 
+ Randoop only calls methods
+ that are specified by one of the <tt>--testclass</tt>,
+ <tt>-classlist</tt>, or <tt>--methodlist</tt> command-line options;
+ the purpose of <tt>--omitmethods</tt> is to override one of those other
+ command-line options.</li>
       <li><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method)</li>
       <li><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
       <li><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file). See: <code>ClassLiteralsMode</code>. [default NONE]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
@@ -1013,7 +1024,7 @@ Control key, then press the Backslash key).
 </body>
 </html>
 
-<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util
+<!--  LocalWords:  Randoop's checkRep addFirst TreeSet ClassCastException util nullary CheckRep 'a' 3L
  -->
 <!--  LocalWords:  synchronizedSet ProjectIdeas randoop classpath gentests txt
  -->

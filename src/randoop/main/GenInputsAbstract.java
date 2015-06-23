@@ -49,11 +49,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * The name of a file that lists methods under test.
    * 
    * In the file, each each method under test is specified on a separate
-   * line. The list of methods given by this argument will augment
-   * any methods derived via the <tt>--classlist</tt> option.
+   * line. The list of methods given by this argument augment
+   * any methods derived via the <tt>--testclass</tt> or
+   * <tt>--classlist</tt> option.
    * 
    * Also see the manual section on <a href="https://rawgit.com/mernst/randoop/master/doc/index.html#specifying-methods">specifying methods 
-   * and constructors under test</a>.
+   * and constructors that may appear in a test</a>.
    */
   @Option("The name of a file that lists methods under test")
   public static String methodlist = null;
@@ -63,6 +64,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * java.lang.reflect.Method#toString()} matches the regular expression
    * given.  This does not prevent indirect calls to such methods from
    * other, allowed methods.
+   * <p>
+   * 
+   * Randoop only calls methods
+   * that are specified by one of the <tt>--testclass</tt>,
+   * <tt>-classlist</tt>, or <tt>--methodlist</tt> command-line options;
+   * the purpose of <tt>--omitmethods</tt> is to override one of those other
+   * command-line options.
    */
   @Option("Do not call methods that match regular expression <string>")
   public static Pattern omitmethods = null;
