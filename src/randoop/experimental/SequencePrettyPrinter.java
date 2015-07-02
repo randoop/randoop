@@ -97,8 +97,19 @@ public class SequencePrettyPrinter {
       sb.append(Globals.lineSep);
       sb.append(Globals.lineSep);
     }
-    
+
+    sb.append(indent("@Override", 2));
     sb.append(Globals.lineSep);
+    sb.append(indent("public void runTest() throws Throwable {", 2));
+    sb.append(Globals.lineSep);
+    for (int i=0; i<count; i++) {
+      sb.append(indent("test" + i + "();", 4));
+      sb.append(Globals.lineSep);
+    }      
+    sb.append(indent("}", 2));
+    sb.append(Globals.lineSep);
+    sb.append(Globals.lineSep);
+
     sb.append("}");
     
     return sb.toString();
