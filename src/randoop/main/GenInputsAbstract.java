@@ -329,6 +329,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("specifies regex of classes that must be in any regression tests")
   public static Pattern test_classes = null;
   
+  /**
+   * Whether to use JUnit's standard reflective mechanisms for invoking
+   * tests.  These reflective invocations can interfere with code analysis,
+   * such as by the DynComp tool.  If that is a problem, then set this to
+   * false and Randoop will output tests that use direct method calls
+   * instead of reflection.
+   */
+  @Option("If true, use JUnit's reflective invocation; if false, use direct method calls")
+  public static boolean junit_reflection_allowed = true;
+
+
   ///////////////////////////////////////////////////////////////////
   // We do this rather than using java -D so that we can easily pass these
   // to other JVMs

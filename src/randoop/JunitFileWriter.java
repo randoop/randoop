@@ -205,21 +205,30 @@ public class JunitFileWriter {
       out.println("");
       out.println("public class " + driverClassName + " extends TestCase {");
       out.println("");
+      if (GenInputsAbstract.junit_reflection_allowed) {
       out.println("  public static void main(String[] args) {");
+      } else {
+      out.println("  public static void main(String[] args) throws Throwable {");
+      }
       if (GenInputsAbstract.init_routine != null)
         out.println ("    " + GenInputsAbstract.init_routine + "();");
 
+      if (GenInputsAbstract.junit_reflection_allowed) {
       out.println("    TestRunner runner = new TestRunner();");
       out.println("    TestResult result = runner.doRun(suite(), false);");
       out.println("    if (! result.wasSuccessful()) {");
       out.println("      System.exit(1);");
       out.println("    }");
+      } else {
+      out.println("    new " + driverClassName + "(\"" + driverClassName + "\").runTest();");
+      }
       out.println("  }");
       out.println("");
       out.println("  public " + driverClassName + "(String name) {");
       out.println("    super(name);");
       out.println("  }");
       out.println("");
+      if (GenInputsAbstract.junit_reflection_allowed) {
       out.println("  public static Test suite() {");
       out.println("    TestSuite result = new TestSuite();");
       for (String junitTestsClassName : junitTestSuiteNames) {
@@ -227,6 +236,14 @@ public class JunitFileWriter {
       }
       out.println("    return result;");
       out.println("  }");
+      } else {
+      out.println("  @Override");
+      out.println("  public void runTest() throws Throwable {");
+      for (String junitTestsClassName : junitTestSuiteNames) {
+        out.println("    new " + junitTestsClassName + "().runTest();");
+      }
+      out.println("  }");
+      }
       out.println("");
       out.println("}");
     } finally {

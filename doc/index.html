@@ -595,6 +595,11 @@ agent</a>  to replace the new functionality by the old functionality.)
   an exception or failing a contract check in the middle of execution. [default false]</li>
       <li id="option:pretty-print"><b>--pretty-print=</b><i>boolean</i>. Remove full package + class name declarations, and change the variables name (e.g., change ArrayList var0 to ArrayList arrayList0) in an output sequence. This option will not change the sequence behavior. [default false]</li>
       <li id="option:test-classes"><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests</li>
+      <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>. Whether to use JUnit's standard reflective mechanisms for invoking
+ tests.  These reflective invocations can interfere with code analysis,
+ such as by the DynComp tool.  If that is a problem, then set this to
+ false and Randoop will output tests that use direct method calls
+ instead of reflection. [default true]</li>
     </ul>
   </li>
   <li id="optiongroup:Runtime-environment">Runtime environment
