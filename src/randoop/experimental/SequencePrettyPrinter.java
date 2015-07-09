@@ -78,7 +78,7 @@ public class SequencePrettyPrinter {
     for (ExecutableSequence eseq : this.outputSequences) {
       VariableRenamer renamer = new VariableRenamer(eseq.sequence);
       //print the test method
-      sb.append(indent("public void test" + (count++) + "() throws Throwable {", 2));
+      sb.append(indent("public void test" + count + "() throws Throwable {", 2));
       sb.append(Globals.lineSep);
       sb.append(Globals.lineSep);
       sb.append("    if (debug) System.out.println(\"%n"+ this.className + ".test"+ count + "\");");
@@ -97,6 +97,7 @@ public class SequencePrettyPrinter {
       sb.append(indent("}", 2));
       sb.append(Globals.lineSep);
       sb.append(Globals.lineSep);
+      count++;
     }
 
     sb.append(indent("@Override", 2));
