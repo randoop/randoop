@@ -243,6 +243,7 @@ public class JunitFileWriter {
       for (String junitTestsClassName : junitTestSuiteNames) {
         out.println("    new " + junitTestsClassName + "().runTest();");
       }
+      out.println("    System.out.println(); System.out.println(\"All tests passed.\");");
       out.println("  }");
       }
       out.println("");
