@@ -50,6 +50,7 @@ The Randoop homepage is
             <ul>
               <li><a href="#no-tests-created">Randoop does not create tests</a></li>
               <li><a href="#nontermination">Randoop does not terminate</a></li>
+              <li><a href="#nontermination">Randoop produces different output on different runs</a></li>
             </ul></li>
         </ul></li>
     </ul>
@@ -1020,6 +1021,43 @@ You can also determine which calls are executing by examining the stack
 trace.  On Unix this can be done by typing <tt>Ctrl-\</tt> (hold down the
 Control key, then press the Backslash key).
 </p>
+
+
+<h4 id="nontermination">Randoop produces different output on different runs</h4>
+
+<p>
+Randoop is deterministic:  if you run it twice with the same arguments, it
+will produce the identical test suite.  You can use the
+<a href="#option:randomseed"><tt>--randomseed</tt></a> command-line
+argument to make Randoop produce different tests.
+</p>
+
+<p>
+If running Randoop twice produces different test suites, then there is
+nondeterminism in your program.  Some ways to eliminate nondeterminism in a
+sequential Java program are:
+</p>
+
+<ul>
+  <li>
+    Use
+    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashMap.html">LinkedHashMap</tt></a>
+    and
+    <a href="https://docs.oracle.com/javase/8/docs/api/java/util/LinkedHashSet.html">LinkedHashSet</tt></a>
+    rather than HashMap and HashSet.
+  </li>
+  <li>
+    Override hashCode(), so that your program does not use
+    Object.hashCode() which is nondeterministic (it depends on when the
+    garbage collector runs).  Also don't instantiate the Object class,
+    as in <tt>new Object()</tt>; instead, use some class that overrides
+    hashCode().
+  </li>
+  <li>
+    Mitigate other sources of nondeterminism, such as always calling
+    Arrays.sort on the result of File.listFiles.
+  </li>
+</ul>
 
 
 
