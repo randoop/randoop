@@ -3,6 +3,7 @@ package randoop.experimental;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +32,7 @@ public class SequenceSimplifyUtils {
     assert sequence != null : "The sequence can not be null.";
     //find out all used var indices
     int size = sequence.size();
-    Set<Integer> usedVarIndices = new HashSet<Integer>();
+    Set<Integer> usedVarIndices = new LinkedHashSet<Integer>();
     for (int i = 0; i < size; i++) {
       List<Variable> usedvars = sequence.getInputs(i);
       for (Variable usedvar : usedvars) {
@@ -55,7 +56,7 @@ public class SequenceSimplifyUtils {
   public static List<Integer> getAllUnusedVariableIndexAsList(ExecutableSequence eseq) {
     List<Integer> usedVarIndexList = getAllUnusedVariableIndexInList(eseq.sequence);
     
-    Set<Integer> usedVarIndexInAssertion = new HashSet<Integer>();
+    Set<Integer> usedVarIndexInAssertion = new LinkedHashSet<Integer>();
     int size = eseq.sequence.size();
     for (int i = 0; i < size; i++) {
       List<Check> checks = eseq.getChecks(i);

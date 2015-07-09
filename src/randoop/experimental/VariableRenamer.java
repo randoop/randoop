@@ -1,6 +1,7 @@
 package randoop.experimental;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import randoop.Sequence;
@@ -41,9 +42,9 @@ class VariableRenamer {
    * and the value is the number of variables with the given type. This field is only
    * used in <code>rename</code> method.
    * */
-  private Map<String, Integer> name_counting_map = new HashMap<String, Integer>();
+  private Map<String, Integer> name_counting_map = new LinkedHashMap<String, Integer>();
   private Map<Integer, String> renameVarsInSequence() {
-    Map<Integer, String> index_var_map = new HashMap<Integer, String>();
+    Map<Integer, String> index_var_map = new LinkedHashMap<Integer, String>();
     for (int i = 0; i < this.sequence.size(); i++) {
       Class<?> outputType = this.sequence.getStatementKind(i).getOutputType();
       if (outputType.equals(void.class)) {

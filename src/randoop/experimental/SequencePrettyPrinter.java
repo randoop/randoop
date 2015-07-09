@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -135,7 +136,7 @@ public class SequencePrettyPrinter {
   
   private String[] extractImportClasses() {
     //keep all needed import
-    Set<String> import_clz_set = new HashSet<String>();
+    Set<String> import_clz_set = new LinkedHashSet<String>();
     for (ExecutableSequence eseq : this.outputSequences) {
       Sequence sequence = eseq.sequence;
       int length = sequence.size();

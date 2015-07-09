@@ -1,6 +1,7 @@
 package randoop.experimental;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class RedundantStatementRemover extends AbstractSimplifier {
     ExecutableSequence sequence_for_simplify = this.eSeq;
     ExecutableSequence simplified_sequence = null;
     //keep track of unremovable_indices and already removed indices in the ORIGINAL sequence
-    Set<Integer> unremovable_indices = new HashSet<Integer>();
+    Set<Integer> unremovable_indices = new LinkedHashSet<Integer>();
     List<Integer> removed_indices = new LinkedList<Integer>();
     while(true) {
       //the index positions are different!

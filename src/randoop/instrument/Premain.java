@@ -105,7 +105,7 @@ public class Premain {
   private static HashSet<String> readPurityFile(File purityFileName,
                                       File pathLoc) throws IOException
   {
-    HashSet<String> pureMethods = new HashSet<String>();
+    HashSet<String> pureMethods = new LinkedHashSet<String>();
 
     BufferedReader reader = new BufferedReader
         (new FileReader (new File(pathLoc, purityFileName.getPath())));
