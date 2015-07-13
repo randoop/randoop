@@ -61,6 +61,7 @@ dist/
 temp.mk
 temp.txt
 
+utils
 utils/plume-lib/
 
 plugin/bin/
