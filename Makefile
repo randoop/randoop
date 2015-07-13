@@ -563,7 +563,7 @@ utils/plume-lib:
 	cd utils && git clone https://github.com/mernst/plume-lib.git plume-lib
 
 plume-lib-update: utils/plume-lib
-	cd utils/plume-lib && hg pull -u
+	cd utils/plume-lib && git pull
 
 .PHONY: utils/plume-lib/java/plume.jar
 utils/plume-lib/java/plume.jar: plume-lib-update
@@ -597,12 +597,12 @@ GENTESTS_OPTIONS_JAVA = \
 # Consider also running "make plume-lib-update" to get the latest
 # html-update-toc.  "plume-lib-update" is not a prerequisite of this
 # target, to avoid connecting to the network just to build the manual.
-manual: build utils/plume-lib
+manual: build plume-lib-update
 	javadoc -quiet -doclet plume.OptionsDoclet -i -docfile doc/index.html ${GENTESTS_OPTIONS_JAVA}
 	utils/plume-lib/bin/html-update-toc doc/index.html
 	utils/plume-lib/bin/html-update-toc doc/dev.html
 
-plugin-manual: build utils/plume-lib
+plugin-manual: build plume-lib-update
 	utils/plume-lib/bin/html-update-toc plugin/doc/index.html
 	utils/plume-lib/bin/html-update-toc plugin/doc/dev.html
 
