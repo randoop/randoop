@@ -468,7 +468,7 @@ agent</a>  to replace the new functionality by the old functionality.)
 <ul>
   <li id="optiongroup:Code-under-test">Code under test
     <ul>
-      <li id="option:testclass"><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class under test</li>
+      <li id="option:testclass"><b>--testclass=</b><i>string</i> <tt>[+]</tt>. Each element is the fully-qualified name of a class under test.</li>
       <li id="option:classlist"><b>--classlist=</b><i>string</i>. The name of a file that lists classes under test.
  
  In the file, each class under test is specified by its
@@ -509,7 +509,14 @@ agent</a>  to replace the new functionality by the old functionality.)
   </li>
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
     <ul>
-      <li id="option:timelimit"><b>--timelimit=</b><i>int</i>. Maximum number of seconds to spend generating tests [default 100]</li>
+      <li id="option:timelimit"><b>--timelimit=</b><i>int</i>. Maximum number of seconds to spend generating tests.
+ 
+ Used to determine when to stop test generation. Generation stops when
+ either the time limit (--timelimit=int) OR the input limit
+ (--inputlimit=int) is reached.
+
+ Note that if you use this option, Randoop is nondeterministic: it
+ may generate different test suites on different runs. [default 100]</li>
       <li id="option:inputlimit"><b>--inputlimit=</b><i>int</i>. Maximum number of tests generated.
  
  Used to determine when to stop test generation. Generation stops when
@@ -531,7 +538,9 @@ agent</a>  to replace the new functionality by the old functionality.)
   </li>
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
     <ul>
-      <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>. Maximum length of Strings in generated tests [default 10000]</li>
+      <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>. Maximum length of strings in generated tests.  Strings longer than
+ 65KB (or about 10,000 characters) may be rejected by the Java
+ compiler, according to the Java Virtual Machine specification. [default 10000]</li>
       <li id="option:null-ratio"><b>--null-ratio=</b><i>double</i>. Use null with the given frequency.
  
  If a null ratio is given, it should be between 0 and 1. A ratio of X means that
@@ -563,7 +572,7 @@ agent</a>  to replace the new functionality by the old functionality.)
   </li>
   <li id="optiongroup:Creating-test-oracles">Creating test oracles
     <ul>
-      <li id="option:observers"><b>--observers=</b><i>filename</i>. File containing observer functions</li>
+      <li id="option:observers"><b>--observers=</b><i>filename</i>. Use the methods specified in the given file to create regression assertions.</li>
       <li id="option:check-object-contracts"><b>--check-object-contracts=</b><i>boolean</i>. Use Randoop's default set of object contracts as assertions.
  If disabled, these assertions are not created.
  
@@ -629,14 +638,19 @@ agent</a>  to replace the new functionality by the old functionality.)
   </li>
   <li id="optiongroup:Notifications">Notifications
     <ul>
-      <li id="option:comm-port"><b>--comm-port=</b><i>int</i>. Uses the specified port for notifications (used by Eclipse plugin). [default -1]</li>
+      <li id="option:comm-port"><b>--comm-port=</b><i>int</i>. Randoop uses the specified port for output, in serialized form (used by Eclipse plugin).
+ 
+ If this value is not -1, Randoop relays information about the
+ program's execution over a connection to the specified port on the
+ local machine. Information is sent using a serialized
+ randoop.runtime.Message object. Printing is also suppressed. [default -1]</li>
       <li id="option:noprogressdisplay"><b>--noprogressdisplay=</b><i>boolean</i>. Do not display progress update message to console [default false]</li>
       <li id="option:progressinterval"><b>--progressinterval=</b><i>long</i>. Display progress message every &lt;int&gt; milliseconds [default 5000]</li>
     </ul>
   </li>
   <li id="optiongroup:Advanced-extension-points">Advanced extension points
     <ul>
-      <li id="option:visitor"><b>--visitor=</b><i>string</i> <tt>[+]</tt>. Install the given runtime visitor</li>
+      <li id="option:visitor"><b>--visitor=</b><i>string</i> <tt>[+]</tt>. Install the given runtime visitor. See class randoop.ExecutionVisitor.</li>
     </ul>
   </li>
   <li id="optiongroup:Logging-and-troubleshooting-Randoop">Logging and troubleshooting Randoop

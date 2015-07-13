@@ -27,10 +27,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
         example, options);
   }
 
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup ("Code under test")
 
   /** Each element is the fully-qualified name of a class under test. */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup ("Code under test")
   @Option("The fully-qualified name of a class under test")
   public static List<String> testclass = new ArrayList<String>();
 
@@ -128,22 +128,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("A file containing literal values to be used as inputs to methods under test")
   public static List<String> literals_file = new ArrayList<String>(); 
 
+
+  /** The random seed to use in the generation process */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Controlling randomness")
-  
-  /** The random seed to use in the generation process */
   @Option("The random seed to use in the generation process")
   public static int randomseed = (int) Randomness.SEED;
 
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Limiting test generation")
   
   /**
    * Maximum number of seconds to spend generating tests.
    * 
    * Used to determine when to stop test generation. Generation stops when
-   * either the time limit (--timelimit=int) OR the input limit (--inputlimit=int) is reached.
+   * either the time limit (--timelimit=int) OR the input limit
+   * (--inputlimit=int) is reached.
+   *
+   * Note that if you use this option, Randoop is nondeterministic: it
+   * may generate different test suites on different runs.
    */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Limiting test generation")
   @Option("Maximum number of seconds to spend generating tests")
   public static int timelimit = 100;
 
@@ -182,8 +186,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Never use null as input to methods or constructors")
   public static boolean forbid_null = true;
 
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Varying the nature of generated tests")
 
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
@@ -193,6 +195,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 65KB (or about 10,000 characters) may be rejected by the Java
    * compiler, according to the Java Virtual Machine specification.
    */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Varying the nature of generated tests")
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 10000;
   
@@ -244,12 +248,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Clear the component set when it gets this big")
   public static int clear = 100000000;
 
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Creating test oracles")
   
   /**
    * Use the methods specified in the given file to create regression assertions.
    */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Creating test oracles")
   @Option("File containing observer functions")
   // This file is used to populate RegressionCaptureVisitor.observer_map
   public static File observers = null;
@@ -279,9 +283,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean check_regression_behavior = true;
 
 
+  
   ///////////////////////////////////////////////////////////////////
   @OptionGroup ("Outputting the JUnit tests")
-  
   // TODO make an enum. (But presently Options package requires upper-case
   // strings for enums, which will break Make targets, plugin, etc.)
   @Option("What kinds of tests to output: pass, fail, or all")
@@ -342,9 +346,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
 
   ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Runtime environment")
   // We do this rather than using java -D so that we can easily pass these
   // to other JVMs
-  @OptionGroup("Runtime environment")
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
   public static List<String> system_props = new ArrayList<String>();
   
@@ -363,12 +367,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Capture all output to stdout and stderr")
   public static boolean capture_output = false;
 
+
+
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Serialized input/output of generated tests")  
-
-  // I don't see how to create these files, only write to them.
+  // I don't see how to create the serialized files, only write to them.
   // Maybe the writing code has bit-rotted?
-
+  @OptionGroup("Serialized input/output of generated tests")  
   @Option("Read serialized test inputs from the given file")
   public static List<String> componentfile_ser = new ArrayList<String>();
 
@@ -391,8 +395,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Output tests (sequences plus checkers) in serialized form to the given file.")
   public static String output_tests_serialized = null;
 
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Notifications")
 
   /**
    * Randoop uses the specified port for output, in serialized form (used by Eclipse plugin).
@@ -402,6 +404,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * local machine. Information is sent using a serialized
    * randoop.runtime.Message object. Printing is also suppressed.
    */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Notifications")
   @Option("Uses the specified port for notifications (used by Eclipse plugin).")
   public static int comm_port = -1;
   
@@ -411,18 +415,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Display progress message every <int> milliseconds")
   public static long progressinterval = 5000;
 
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup(value="Advanced extension points")
 
   /**
    * Install the given runtime visitor. See class randoop.ExecutionVisitor.
    */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup(value="Advanced extension points")
   @Option("Install the given runtime visitor")
   public static List<String> visitor = new ArrayList<String>();
 
+  
   ///////////////////////////////////////////////////////////////////
   @OptionGroup(value="Logging and troubleshooting Randoop")
-  
   @Option("Perform expensive internal checks (for Randoop debugging)")
   public static boolean debug_checks = false;
 
@@ -445,17 +449,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean dontexecute = false;
 
 
-  ///////////////////////////////////////////////////////////////////
-  // These options are only used for the branch-directed generation
-  // research project.
-  @OptionGroup(value="Branch-directed generation", unpublicized=true)
-    
+   
   /**
    * Whether to use the long format for outputting JUnit tests.
    * The long format emits exactly one line per statement, including
    * primitive declarations, and uses boxed primitives. This option is used
    * in the branch-directed generation project.
    */
+  ///////////////////////////////////////////////////////////////////
+  // These options are only used for the branch-directed generation
+  // research project.
+  @OptionGroup(value="Branch-directed generation", unpublicized=true)
   @Unpublicized
   @Option("Use long format for outputting JUnit tests.")
   public static boolean long_format = false;
@@ -480,9 +484,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Output covered branches to the given text file")
   public static String output_branches = null;
   
+
   ///////////////////////////////////////////////////////////////////
   @OptionGroup(value="Eliminating redundant tests")
-
   @Option("Remove tests that are subsumed in other tests")
   public static boolean remove_subsequences = true;
 
@@ -499,11 +503,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Print any checks that are different in the clean run")
   public static boolean print_diff_obs = false;
 
+  
   ///////////////////////////////////////////////////////////////////
   // These options are useful in the context of Carlos's PhD thesis
   // experiments and shouldn't be needed by external users.
   @OptionGroup(value="Pacheco thesis", unpublicized=true)
-  
   @Unpublicized
   @Option("Write experiment results file")
   public static FileWriter expfile = null;
