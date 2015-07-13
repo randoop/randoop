@@ -29,7 +29,6 @@ import randoop.util.Timer;
 public abstract class AbstractGenerator {
 
   @OptionGroup(value="AbstractGenerator unpublicized options", unpublicized=true)
-
   @Unpublicized
   @Option("Dump each sequence to the log file")
   public static boolean dump_sequences = false;
