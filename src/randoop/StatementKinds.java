@@ -68,6 +68,10 @@ public class StatementKinds {
     }
   }
 
+  /**
+   * The "id" is really the kind or a tag, such as "prim".
+   * It's not a unique identifier for this statement.
+   */
   public static String getId(StatementKind st) {
     if (st == null) throw new IllegalArgumentException("st cannot be null.");
     if (st instanceof PrimitiveOrStringOrNullDecl)
