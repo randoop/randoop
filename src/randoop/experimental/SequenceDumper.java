@@ -111,8 +111,7 @@ class SequenceDumper {
 
        if (!rmethod.isVoid()) {
         sb.append(getSimpleCompilableName(rmethod.getMethod().getReturnType()));
-        String cast = "";
-        sb.append(" " + this.renamer.getRenamedVar(newVar.index) + " = " + cast);
+        sb.append(" " + this.renamer.getRenamedVar(newVar.index) + " = ");
       }
       String receiverString = rmethod.isStatic() ? null : this.renamer.getRenamedVar(inputVars.get(0).index);
       appendReceiverOrClassForStatics(rmethod, receiverString, sb);
