@@ -116,7 +116,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * @see ClassLiteralsMode
    */
   @Option("How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE")
-  public static ClassLiteralsMode literals_level = ClassLiteralsMode.NONE;
+  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
   
   /**
    * A file containing literal values to be used as inputs to methods under test.

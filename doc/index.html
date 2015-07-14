@@ -501,7 +501,7 @@ agent</a>  to replace the new functionality by the old functionality.)
  command-line options.</li>
       <li id="option:init-routine"><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method)</li>
       <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
-      <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file). See: <code>ClassLiteralsMode</code>. [default NONE]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
+      <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file). See: <code>ClassLiteralsMode</code>. [default CLASS]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
       <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
  
  Literals in these files are used in addition to all other constants in the pool.
