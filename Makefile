@@ -283,6 +283,7 @@ randoop-long-string: bin
 
 # Tests that Randoop does not create tests for methods that return non-public types, as this would
 # lead to non-compilable tests.
+# Actually, it should create the tests but declare them with a supertype!
 randoop-visibility: bin
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Visibility.java
 	rm -rf systemtests/randoop-scratch
