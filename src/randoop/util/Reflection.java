@@ -383,7 +383,13 @@ public final class Reflection {
 
      List<Class<?>> result = new ArrayList<Class<?>>(classNames.size());
      for (String className : classNames) {
-       Class<?> c = classForName(className, noerr);
+       Class<?> c;
+       try {
+         c = classForName(className, noerr);
+       } catch (Error e) {
+         System.err.println("class not found: " + className);
+         throw e;
+       }
        if (c != null) {
          result.add(c);
        }
