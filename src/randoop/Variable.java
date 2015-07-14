@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import randoop.experimental.VariableRenamer;
+
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable>, Serializable {
 
@@ -75,12 +77,33 @@ public class Variable implements Comparable<Variable>, Serializable {
     return result;
   }
 
-  private static String getName(int i) {
-    return "var" + Integer.toString(i);
+  public String getName() {
+    return getName(index);
   }
 
-  public String getName() {
-    return Variable.getName(index);
+  public String getName(Class<?> clazz) {
+    return getName(clazz, index);
+  }
+
+  public String getName(int i) {
+    return getName(getType(), i);
+  }
+
+  /** For use by clients when the statement has not yet been appended,
+   * so getType() would fail. */
+  public String getName(Class<?> clazz, int i) {
+    return getName(classToVariableName(clazz), index);
+  }
+
+  /** For use by clients when the statement has not yet been appended,
+   * so getType() would fail. */
+  public String getName(String className) {
+    return getName(className, index);
+  }
+
+  public String getName(String className, int i) {
+    String basename = classNameToVariableName(className);
+    return basename + Integer.toString(i);
   }
 
   public int compareTo(Variable o) {
@@ -88,4 +111,21 @@ public class Variable implements Comparable<Variable>, Serializable {
     if (o.sequence != this.sequence) throw new IllegalArgumentException();
     return (new Integer(this.index).compareTo(new Integer(o.index)));
   }
+
+  /** Convert to string and downcase the first character. */
+  public static String classToVariableName(Class<?> clazz) {
+    // assert !clazz.equals(void.class) : "The given variable type can not be void!";
+    // return classNameToVariableName(clazz.getSimpleName().replace("[]", "_array"));
+    return VariableRenamer.getVariableName(clazz);
+  }
+
+  /** Downcase the first character. */
+  public static String classNameToVariableName(String className) {
+    assert ! className.contains(".");
+    assert ! className.contains("[");
+    assert ! className.equals("");
+    return Character.toLowerCase(className.charAt(0))
+      + className.substring(1);
+  }
+
 }

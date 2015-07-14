@@ -133,7 +133,11 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
       throw new IllegalArgumentException("Too many arguments:"
           + inputVars.size() + " capacity:" + length);
     String declaringClass = this.elementType.getCanonicalName();
-    b.append(declaringClass + "[] " + newVar.getName() + " = new " + declaringClass + "[] { ");
+    String var = Variable.classToVariableName(this.elementType) + "_array" + newVar.index;
+      
+    b.append(declaringClass + "[] "
+             + var
+             + " = new " + declaringClass + "[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
       if (i > 0)
         b.append(", ");

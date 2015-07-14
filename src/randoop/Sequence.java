@@ -850,11 +850,12 @@ public final class Sequence implements Serializable, WeightedElement {
     assert statementSep != null;
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      b.append("var" + i);
+      StatementKind sk = getStatementKind(i);
+      b.append(Variable.classToVariableName(sk.getOutputType()) + i);
       b.append(" =  ");
-      b.append(StatementKinds.getId(getStatementKind(i)));
+      b.append(StatementKinds.getId(sk));
       b.append(" : ");
-      b.append(getStatementKind(i).toParseableString());
+      b.append(sk.toParseableString());
       b.append(" : ");
       for (Variable v : getInputs(i)) {
         b.append(v.toString());

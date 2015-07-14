@@ -19,7 +19,7 @@ public class ArrayDeclarationTests extends TestCase{
     ArrayList<Variable> input = new ArrayList<Variable>();
     input.add(var0);
     ad.appendCode(var1, input, b);
-    assertEquals("java.lang.String[] var1 = new java.lang.String[] { \"mystring\"};" + Globals.lineSep + "", b.toString());
+    assertEquals("java.lang.String[] str_array1 = new java.lang.String[] { \"mystring\"};" + Globals.lineSep + "", b.toString());
   }
 
   public void test2() throws Exception {
@@ -31,7 +31,7 @@ public class ArrayDeclarationTests extends TestCase{
     ArrayList<Variable> input = new ArrayList<Variable>();
     input.add(var0);
     ad.appendCode(var1, input, b);
-    assertEquals("char[] var1 = new char[] { 'c'};" + Globals.lineSep + "", b.toString());
+    assertEquals("char[] char_array1 = new char[] { 'c'};" + Globals.lineSep + "", b.toString());
   }
 
   public void test3() throws Exception {
@@ -43,7 +43,7 @@ public class ArrayDeclarationTests extends TestCase{
     ArrayList<Variable> input = new ArrayList<Variable>();
     input.add(var0);
     ad.appendCode(var1, input, b);
-    assertEquals("char[][] var1 = new char[][] { var0};" + Globals.lineSep + "", b.toString());
+    assertEquals("char[][] char_array_array1 = new char[][] { char_array0};" + Globals.lineSep + "", b.toString());
   }
 
 }
