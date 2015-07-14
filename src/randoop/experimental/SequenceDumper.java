@@ -239,7 +239,7 @@ class SequenceDumper {
             sb.append(/*inputVars.get(i).getName()*/this.renamer.getRenamedVar(inputVars.get(i).index));
           }
         }
-        sb.append("};");
+        sb.append(" };");
         sb.append(Globals.lineSep);
   }
   
