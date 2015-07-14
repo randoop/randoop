@@ -1,5 +1,6 @@
 package randoop;
 
+import java.lang.reflect.Modifier;
 import java.io.ObjectStreamException;
 
 import randoop.util.Reflection;
@@ -82,6 +83,16 @@ public class ExpectedExceptionCheck implements Check {
     return b.toString();
   }
 
+  /** The nearest visible superclass -- usually the argument itself. */
+  // TODO: handle general visibility based on Randoop command-line
+  // arguments, rather than hard-coding isPublic test.
+  public static Class<?> nearestVisibleSuperclass(Class<?> clazz) {
+    while (! Modifier.isPublic(clazz.getModifiers())) {
+      clazz = clazz.getSuperclass();
+    }
+    return clazz;
+  }
+
   /**
    * The "catch" half of the try-catch wrapper.
    */
@@ -92,11 +103,21 @@ public class ExpectedExceptionCheck implements Check {
       exceptionClassName = "Exception";
     }
     b.append("  fail(\"Expected exception of type " + exceptionClassName + "\");" + Globals.lineSep);
-    b.append("} catch (");
-    b.append(exceptionClassName);
-    b.append(" e) {" + Globals.lineSep);
-    b.append("  // Expected exception." + Globals.lineSep);
-    b.append("}" + Globals.lineSep);
+    if (Modifier.isPublic(exceptionClass.getModifiers())) {
+      b.append("} catch (" + exceptionClassName + " e) {" + Globals.lineSep);
+      b.append("  // Expected exception." + Globals.lineSep);
+      b.append("}" + Globals.lineSep);
+    } else {
+      // The exception type is private.  Catch the nearest public supertype.
+      Class<?> publicSuperClass = nearestVisibleSuperclass(exceptionClass);
+      String publicSuperClassName = publicSuperClass.getCanonicalName();
+      b.append("} catch (" + publicSuperClassName + " e) {" + Globals.lineSep);
+      b.append("  // Expected exception." + Globals.lineSep);
+      b.append("  if (! e.getClass().getCanonicalName().equals(\"" + exceptionClassName + "\")) {" + Globals.lineSep);
+ b.append("    fail(\"Expected exception of type " + exceptionClassName + ", got \" + e.getClass().getCanonicalName());" + Globals.lineSep);
+      b.append("  }" + Globals.lineSep);
+      b.append("}" + Globals.lineSep);
+    }      
     return b.toString();
   }
 

@@ -5,11 +5,22 @@ class NonVisible {
 }
 
 public class Visibility {
+
   public NonVisible getNonVisible() {
     return new NonVisible();
   }  
-  public void eatNonVisible(NonVisible nonVisible) {
-    
+
+  public void takesNonVisible(NonVisible nonVisible) {
+   
   }
+
+  public void m() throws InnerInvisibleException {
+    throw new InnerInvisibleException();
+   }
+
+  private static class InnerInvisibleException extends Exception {
+    // empty body
+  }
+
 }
 
