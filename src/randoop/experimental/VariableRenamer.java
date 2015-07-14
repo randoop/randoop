@@ -6,7 +6,7 @@ import java.util.Map;
 
 import randoop.Sequence;
 
-class VariableRenamer {
+public class VariableRenamer {
 
   /**
    * The sequence in which every variable will be renamed
@@ -72,8 +72,11 @@ class VariableRenamer {
    * ClassName var0 = new ClassName() will be transformed to ClassName className = new ClassName()
    * Class var0 = null will be transformed to Class clazz = null
    * */
-  private static String getVariableName(Class<?> clz) {
-    assert !clz.equals(void.class) : "The given variable type can not be void!";
+  public static String getVariableName(Class<?> clz) {
+    // assert !clz.equals(void.class) : "The given variable type can not be void!";
+    if (clz.equals(void.class)) {
+      return "void";
+    }
     // renaming for array type
     if (clz.isArray()) {
       while (clz.isArray()) {
@@ -89,7 +92,7 @@ class VariableRenamer {
     } else if (clz.equals(Class.class)) {
       return "clazz";
     }
-    //for primtivie types (including boxing or unboxing types
+    //for primitive types (including boxing or unboxing types)
     else if (clz.equals(int.class) || clz.equals(Integer.class)) {
       return "i";
     } else if (clz.equals(double.class) || clz.equals(Double.class)) {
