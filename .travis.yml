@@ -1,0 +1,12 @@
+language: java
+
+script: make all-dist
+
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+  - openjdk7
+
+notifications:
+  email:
+    - mernst@cs.washington.edu
