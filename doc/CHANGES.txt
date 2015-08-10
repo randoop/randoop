@@ -12,9 +12,9 @@ observers when you run Randoop, then you are not using Randoop as intended
 and Randoop may be generating sub-optimal test suites.
 
 Fix bugs, notably:
- #18 Handle non-visible thrown exceptions
- #51 Use better variable names in generated tests
- Use equals, not ==, to compare NaN
+ * #18 Handle non-visible thrown exceptions
+ * #51 Use better variable names in generated tests
+ * Use equals, not ==, to compare NaN
 
 Many documentation improvements, including clarifications and
 restructuring.  The manual mentions the Maven plug-in and explains that
