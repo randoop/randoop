@@ -1,3 +1,10 @@
+Version 1.3.7, released ??
+
+Created a new mailing list, randoop-discuss@googlegroups.com, for
+discussions with Randoop users.  It is open to join and should be easier to
+search than the existing randoop-developers@googlegroups.com mailing list.
+
+
 Version 1.3.6, released August 10, 2015
 
 Command-line-argument --junit-reflection-allowed=false causes Randoop to
