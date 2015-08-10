@@ -154,12 +154,14 @@ make manual
   <li>Update the changelog: add a summary of changes to <code>doc/CHANGES.txt</code>.</li>
   <li>Increment version number:  modify variable <code>RANDOOP_VERSION</code> in <code>src/randoop/Globals.java</code>, and update it in the repository (including the gh-pages branch).</li>
   <li>Commit those changes.</li>
-  <li>Tag the repository tip with the version number; for example,
-      <code>git tag -a v1.3.6 -m "Randoop version 1.3.6"</code></li>
-  <li><code>git push --tags</code></li>
+  <li>Tag the repository tip with the version number; for example:<br/>
+    <code>git tag -a v1.3.6 -m "Randoop version 1.3.6" && git push --tags</code>
+    <br/>(Should I do that in the gh-pages branch to, or not?  For now, don't do it.)
+  </li>
   <li>Create the distribution: <tt>make distribution-files</tt></li>
   <li>Rename the zip and jar files created under the <code>dist/</code> directory to the appropriate version number.</li>
-  <li>Follow the <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>; in particular, start at <a href="https://github.com/mernst/randoop/releases">https://github.com/mernst/randoop/releases</a>, and upload the zip and jar files</li>
+  <li>Follow the <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>; in particular, start at <a href="https://github.com/mernst/randoop/releases">https://github.com/mernst/randoop/releases</a>, click "draft a new release", name it "Randoop version 1.3.6", and upload the zip and jar files</li>
+  <li>(I should create a mailing list and announce releases to that list.)
 </ol>
 
 
