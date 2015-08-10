@@ -1,7 +1,24 @@
-Version 1.3.6, released ??
+Version 1.3.6, released August 10, 2015
 
-Command-line-argument --junit-reflection-allowed=false causes
-Randoop to avoid use of JUnit's reflective test invocation.  Use of direct method calls instead can make Randoop's generated tests easier to analyze.
+Command-line-argument --junit-reflection-allowed=false causes Randoop to
+avoid use of JUnit's reflective test invocation.  Use of direct method
+calls instead can make Randoop's generated tests easier to analyze.
+
+Changed default for --literals-level to CLASS.
+
+Improvements in treatment of observer methods:  put observer results in the
+pool, but not receivers after observer invocations.  If you are not using
+observers when you run Randoop, then you are not using Randoop as intended
+and Randoop may be generating sub-optimal test suites.
+
+Fix bugs, notably:
+ #18 Handle non-visible thrown exceptions
+ #51 Use better variable names in generated tests
+ Use equals, not ==, to compare NaN
+
+Many documentation improvements, including clarifications and
+restructuring.  The manual mentions the Maven plug-in and explains that
+Randoop is deterministic but your sequential Java program may not be.
 
 Not directly related to Randoop, but possibly of interest to Randoop users:
 ABB Corporation has released an improved version of Randoop.NET.  Compared to
