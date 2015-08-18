@@ -3,6 +3,7 @@ package randoop.util;
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -502,6 +503,8 @@ public final class Reflection {
      try {
        reader = Files.getFileReader(classListingFile);
        return loadMethodsAndCtorsFromReader(reader);
+     } catch (FileNotFoundException fnfe) {
+       throw new RuntimeException(fnfe);
      } finally {
        if (reader != null)
          reader.close();

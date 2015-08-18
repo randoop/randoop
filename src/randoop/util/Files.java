@@ -157,19 +157,13 @@ public final class Files {
     return getFileContents(new File(path));
   }
 
-  public static LineNumberReader getFileReader(String fileName) {
+  public static LineNumberReader getFileReader(String fileName) throws FileNotFoundException {
     return getFileReader(new File(fileName));
   }
 
-  public static LineNumberReader getFileReader(File fileName) {
-    LineNumberReader reader;
-    try {
-      reader = new LineNumberReader(new BufferedReader(
+  public static LineNumberReader getFileReader(File fileName) throws FileNotFoundException {
+    return new LineNumberReader(new BufferedReader(
           new FileReader(fileName)));
-    } catch (FileNotFoundException e1) {
-      throw new IllegalStateException("File was not found " + fileName + " " + e1.getMessage());
-    }
-    return reader;
   }
   public static String addProjectPath(String string) {  
     return System.getProperty("user.dir") + File.separator + string;
