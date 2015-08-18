@@ -30,7 +30,7 @@ public final class Randomness {
 
   public static boolean nextRandomBool() {
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + "calls so far.");
+    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return random.nextBoolean();
   }
 
