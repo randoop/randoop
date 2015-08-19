@@ -542,12 +542,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RuntimeException(b.toString());
     }
     
-    if (alias_ratio < 0 && alias_ratio > 1) {
-      throw new RuntimeException("Alias ratio must be between 0 and 1.");
+    if (alias_ratio < 0 || alias_ratio > 1) {
+      throw new RuntimeException("Alias ratio must be between 0 and 1, inclusive.");
     }
 
-    if (null_ratio < 0 && null_ratio > 1) {
-      throw new RuntimeException("Null ratio must be between 0 and 1.");
+    if (null_ratio < 0 || null_ratio > 1) {
+      throw new RuntimeException("Null ratio must be between 0 and 1, inclusive.");
     }
 
     if (maxsize <= 0) {
