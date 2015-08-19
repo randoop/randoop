@@ -51,7 +51,7 @@ public class DefaultTestFilter implements ITestFilter {
     //
     //       The code below behaves slightly differently, returning after only
     //       one successful failure addition to the failure set. This means that
-    //       some redundant tests may be generated, since a latter test may reveal
+    //       some redundant tests may be generated, since a later test may reveal
     //       a failure already revealed by the current test.
 
     for (FailureSet.Failure failure : f.getFailures()) {
