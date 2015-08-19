@@ -88,31 +88,30 @@ public final class RMethod implements StatementKind, Serializable {
   }
 
   public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
-     if (!isVoid()) {
-      b.append(Reflection.getCompilableName(this.method.getReturnType()));
-      String cast = "";
-      b.append(" " + newVar.getName() + " = " + cast);
+    if (!isVoid()) {
+      sb.append(Reflection.getCompilableName(this.method.getReturnType()));
+      sb.append(" " + newVar.getName() + " = ");
     }
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
-    appendReceiverOrClassForStatics(receiverString, b);
+    appendReceiverOrClassForStatics(receiverString, sb);
 
-    b.append(".");
-    b.append(getTypeArguments());
-    b.append(this.method.getName() + "(");
+    sb.append(".");
+    sb.append(getTypeArguments());
+    sb.append(getMethod().getName() + "(");
 
     int startIndex = (isStatic() ? 0 : 1);
     for (int i = startIndex ; i < inputVars.size() ; i++) {
       if (i > startIndex)
-        b.append(", ");
+        sb.append(", ");
 
       // CASTING.
-      // We cast whenever the variable and input types are not identical.
-      // We also cast if input type is a primitive, because Randoop uses
-      // boxed primitives, and need to convert back to primitive.
       if (PrimitiveTypes.isPrimitive(getInputTypes().get(i)) && GenInputsAbstract.long_format) {
-        b.append("(" + getInputTypes().get(i).getName() + ")");
+        // Cast if input type is a primitive, because Randoop uses
+        // boxed primitives.
+        sb.append("(" + getInputTypes().get(i).getName() + ")");
       } else if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
-        b.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+        // Cast if the variable and input types are not identical.
+        sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
       }
 
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
@@ -121,13 +120,13 @@ public final class RMethod implements StatementKind, Serializable {
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
         Object val = ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue();
-        b.append(PrimitiveTypes.toCodeString(val));
+        sb.append(PrimitiveTypes.toCodeString(val));
       } else {
-        b.append(inputVars.get(i).getName());
+        sb.append(inputVars.get(i).getName());
       }
     }
 
-    b.append(");" + Globals.lineSep);
+    sb.append(");" + Globals.lineSep);
   }
   
   // XXX this is a pretty bogus workaround for a bug in javac (type inference
