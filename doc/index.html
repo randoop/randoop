@@ -612,8 +612,8 @@ agent</a>  to replace the new functionality by the old functionality.)
       <li id="option:output-nonexec"><b>--output-nonexec=</b><i>boolean</i>. Output sequences even if they do not complete execution.
  
   Randoop's default behavior is to output only tests consisting of
-  method call sequences that execute to the end, rather than throwing
-  an exception or failing a contract check in the middle of execution. [default false]</li>
+  method call sequences that execute every statement, rather than throwing
+  an exception or failing a contract check before the last statement. [default false]</li>
       <li id="option:pretty-print"><b>--pretty-print=</b><i>boolean</i>. Remove full package + class name declarations, and change the variables name (e.g., change ArrayList var0 to ArrayList arrayList0) in an output sequence. This option will not change the sequence behavior. [default false]</li>
       <li id="option:test-classes"><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests</li>
       <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>. Whether to use JUnit's standard reflective mechanisms for invoking

@@ -322,8 +322,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Output sequences even if they do not complete execution.
    * 
    *  Randoop's default behavior is to output only tests consisting of
-   *  method call sequences that execute to the end, rather than throwing
-   *  an exception or failing a contract check in the middle of execution.
+   *  method call sequences that execute every statement, rather than throwing
+   *  an exception or failing a contract check before the last statement.
    */
   @Option("Output sequences even if they do not complete execution")
   public static boolean output_nonexec = false;

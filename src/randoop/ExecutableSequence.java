@@ -637,13 +637,18 @@ public class ExecutableSequence implements Serializable {
     return false;
   }
 
+  /**
+   * Returns whether the sequence contains a non-executed statement.
+   * That happnes if some statment before the last one throws an exception.
+   */
   public boolean hasNonExecutedStatements() {
     return getNonExecutedIndex() != -1;
   }
 
   /**
    * Returns the index i for a non-executed statement, or -1 if
-   * there is no such index.
+   * there is no such index.  Note that a statement is considered
+   * executed even if it throws an exception.
    */
   public int getNonExecutedIndex() {
     // Starting from the end of the sequence is always faster to find non-executed statements.

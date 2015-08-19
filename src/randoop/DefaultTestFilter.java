@@ -10,7 +10,7 @@ import randoop.main.GenInputsAbstract;
  * to the user. This determination is made by following these steps in order:</p>
  *
  * <ul>
- * <li> First, if the method sequence did not execute to completion (i.e. an exception occurred in the middle),
+ * <li> First, if the method sequence did not execute to completion (i.e. an exception occurred before the last statement),
  *      do not output, unless the user asked for such tests to be output via --output-nonexec option.
  * <li> Else, if user specified --output-tests=all, output the test.
  * <li> Else, if test revealed no failures, output if user specified --output-tests=pass, otherwise do not output.
