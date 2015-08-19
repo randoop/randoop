@@ -378,9 +378,7 @@ public class GenTests extends GenInputsAbstract {
       visitors.add(contractVisitor);
     }
     
-    if (check_regression_behavior) {
-      visitors.add(new RegressionCaptureVisitor());
-    }
+    visitors.add(new RegressionCaptureVisitor());
 
     // Install any user-specified visitors.
     if (!GenInputsAbstract.visitor.isEmpty()) {
