@@ -461,6 +461,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // research project.
   @OptionGroup(value="Branch-directed generation", unpublicized=true)
   @Unpublicized
+  /**
+   * In long format, primitive values are stored in variables and the
+   * variables are used, as in "int x = 3 ; foo(x)".  In short format,
+   * primitive values are directly added to methods, as in "foo(3)".
+   */
   @Option("Use long format for outputting JUnit tests.")
   public static boolean long_format = false;
 
