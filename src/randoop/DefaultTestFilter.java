@@ -56,7 +56,7 @@ public class DefaultTestFilter implements ITestFilter {
 
     for (FailureSet.Failure failure : f.getFailures()) {
       if (errors.add(failure)) {
-        if ((GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail))) {
+        if ((GenInputsAbstract.output_tests.equals(GenInputsAbstract.FAIL))) {
           return true;
         }
       }

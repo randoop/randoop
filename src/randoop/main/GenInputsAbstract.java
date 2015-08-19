@@ -530,14 +530,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   public void checkOptionsValid() {
     
-    if (!(output_tests.equals(all) || output_tests.equals(pass) || output_tests.equals(fail))) {
+    if (!(output_tests.equals(ALL) || output_tests.equals(PASS) || output_tests.equals(FAIL))) {
       StringBuilder b = new StringBuilder();
       b.append("Option output-tests must be one of ");
-      b.append(all);
+      b.append(ALL);
       b.append(", ");
-      b.append(pass);
+      b.append(PASS);
       b.append(", or ");
-      b.append(fail);
+      b.append(FAIL);
       b.append(".");
       throw new RuntimeException(b.toString());
     }
