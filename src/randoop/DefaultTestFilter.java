@@ -10,7 +10,7 @@ import randoop.main.GenInputsAbstract;
  * to the user. This determination is made by following these steps in order:</p>
  *
  * <ul>
- * <li> First, if the method sequence did not execute to completion (i.e. an exception occurred in the middle),
+ * <li> First, if the method sequence did not execute to completion (i.e. an exception occurred before the last statement),
  *      do not output, unless the user asked for such tests to be output via --output-nonexec option.
  * <li> Else, if user specified --output-tests=all, output the test.
  * <li> Else, if test revealed no failures, output if user specified --output-tests=pass, otherwise do not output.
@@ -32,15 +32,15 @@ public class DefaultTestFilter implements ITestFilter {
       return false;
     }
     
-    if (GenInputsAbstract.output_tests.equals(GenInputsAbstract.all)) {
+    if (GenInputsAbstract.output_tests.equals(GenInputsAbstract.ALL)) {
       return true;
     }
     
-    if ((GenInputsAbstract.output_tests.equals(GenInputsAbstract.pass))) {
+    if ((GenInputsAbstract.output_tests.equals(GenInputsAbstract.PASS))) {
       return f.getFailures().isEmpty();
     }
     
-    assert GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail) : GenInputsAbstract.output_tests;
+    assert GenInputsAbstract.output_tests.equals(GenInputsAbstract.FAIL) : GenInputsAbstract.output_tests;
 
     // FIXME: The filter at this point should return true if this test reveals
     //        a new failure, i.e.:
@@ -51,12 +51,12 @@ public class DefaultTestFilter implements ITestFilter {
     //
     //       The code below behaves slightly differently, returning after only
     //       one successful failure addition to the failure set. This means that
-    //       some redundant tests may be generated, since a latter test may reveal
+    //       some redundant tests may be generated, since a later test may reveal
     //       a failure already revealed by the current test.
 
     for (FailureSet.Failure failure : f.getFailures()) {
       if (errors.add(failure)) {
-        if ((GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail))) {
+        if ((GenInputsAbstract.output_tests.equals(GenInputsAbstract.FAIL))) {
           return true;
         }
       }

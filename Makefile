@@ -63,6 +63,7 @@ clean:
 
 # Build Randoop.
 build: bin randoop_agent.jar
+compile: build
 
 bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	mkdir -p bin
@@ -94,6 +95,7 @@ jdoc:
 	mkdir -p doc/javadoc
 	find src/randoop -name "*.java" \
 		| xargs javadoc -d doc/javadoc -quiet -noqualifier all -notimestamp
+javadoc: jdoc
 
 .PHONY: tags
 tags: TAGS

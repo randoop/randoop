@@ -30,7 +30,7 @@ public final class Randomness {
 
   public static boolean nextRandomBool() {
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + "calls so far.");
+    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return random.nextBoolean();
   }
 
@@ -39,7 +39,7 @@ public final class Randomness {
    */
   public static int nextRandomInt(int i) {
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + "calls so far.");
+    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return random.nextInt(i);
   }
   public static <T> T randomMember(List<T> list) {
@@ -68,7 +68,7 @@ public final class Randomness {
 
     // Select a random point in interval and find its corresponding element.
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + "calls so far.");
+    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     double randomPoint = Randomness.random.nextDouble() * max;
     double currentPoint = 0;
     for (int i = 0 ; i < list.size() ; i++) {
@@ -90,14 +90,14 @@ public final class Randomness {
       throw new IllegalArgumentException("arg must be between 0 and 1.");
     double falseProb = 1 - trueProb;
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + "calls so far.");
+    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return (Randomness.random.nextDouble() >= falseProb);
   }
 
   public static boolean randomBoolFromDistribution(double falseProb_, double trueProb_) {
     double falseProb = falseProb_/(falseProb_+trueProb_);
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + "calls so far.");
+    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return (Randomness.random.nextDouble() >= falseProb);
   }
 }

@@ -288,12 +288,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @OptionGroup ("Outputting the JUnit tests")
   // TODO make an enum. (But presently Options package requires upper-case
   // strings for enums, which will break Make targets, plugin, etc.)
+  /** For details, see the Javadoc documentation for {@link DefaultTestFilter}. */
   @Option("What kinds of tests to output: pass, fail, or all")
   public static String output_tests = "all";
   
-  public final static String all = "all";
-  public final static String fail = "fail";
-  public final static String pass = "pass";
+  public final static String ALL = "all";
+  public final static String FAIL = "fail";
+  public final static String PASS = "pass";
 
   @Option("Simplify (shorten) failed tests while preserving failure behavior")
   public static boolean simplify_failed_tests = false;
@@ -321,8 +322,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Output sequences even if they do not complete execution.
    * 
    *  Randoop's default behavior is to output only tests consisting of
-   *  method call sequences that execute to the end, rather than throwing
-   *  an exception or failing a contract check in the middle of execution.
+   *  method call sequences that execute every statement, rather than throwing
+   *  an exception or failing a contract check before the last statement.
    */
   @Option("Output sequences even if they do not complete execution")
   public static boolean output_nonexec = false;
@@ -534,24 +535,24 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   public void checkOptionsValid() {
     
-    if (!(output_tests.equals(all) || output_tests.equals(pass) || output_tests.equals(fail))) {
+    if (!(output_tests.equals(ALL) || output_tests.equals(PASS) || output_tests.equals(FAIL))) {
       StringBuilder b = new StringBuilder();
       b.append("Option output-tests must be one of ");
-      b.append(all);
+      b.append(ALL);
       b.append(", ");
-      b.append(pass);
+      b.append(PASS);
       b.append(", or ");
-      b.append(fail);
+      b.append(FAIL);
       b.append(".");
       throw new RuntimeException(b.toString());
     }
     
-    if (alias_ratio < 0 && alias_ratio > 1) {
-      throw new RuntimeException("Alias ratio must be between 0 and 1.");
+    if (alias_ratio < 0 || alias_ratio > 1) {
+      throw new RuntimeException("Alias ratio must be between 0 and 1, inclusive.");
     }
 
-    if (null_ratio < 0 && null_ratio > 1) {
-      throw new RuntimeException("Null ratio must be between 0 and 1.");
+    if (null_ratio < 0 || null_ratio > 1) {
+      throw new RuntimeException("Null ratio must be between 0 and 1, inclusive.");
     }
 
     if (maxsize <= 0) {

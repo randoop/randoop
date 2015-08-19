@@ -160,7 +160,8 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
       StatementKind st = s.sequence.getStatementKind(i);
       ExecutionOutcome result = s.getResult(i);
 
-      if (result instanceof NormalExecution) {
+      if (result instanceof NormalExecution
+          && GenInputsAbstract.check_regression_behavior) {
 
         NormalExecution e = (NormalExecution)result;
         // If value is like x in "int x = 3" don't capture

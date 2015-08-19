@@ -277,6 +277,14 @@ public class ExecutableSequence implements Serializable {
     return b.toString(); // + "/*" + this.toString() + "*/";
   }
 
+  /** Return the code representation of the i'th statement. */
+  public String oneStatementToCodeString(int i) {
+    StringBuilder oneStatement = new StringBuilder();
+    sequence.printStatement(oneStatement, i);
+    return oneStatement.toString();
+  }
+
+
   /**
    * Executes sequence, stopping on exceptions
    */
@@ -478,12 +486,16 @@ public class ExecutableSequence implements Serializable {
     return getResult(i) instanceof NormalExecution;
   }
 
-  public boolean isNormalExecution() {
+  public int getNonNormalExecutionIndex() {
     for (int i = 0 ; i < this.sequence.size() ; i++) {
       if (!isNormalExecution(i))
-        return false;
+        return i;
     }
-    return true;
+    return -1;
+  }
+
+  public boolean isNormalExecution() {
+    return getNonNormalExecutionIndex() == -1;
   }
 
   public List<Check> getChecks(int i, Class<? extends Check> clazz) {
@@ -552,13 +564,17 @@ public class ExecutableSequence implements Serializable {
     return false;
   }
   
-  public boolean hasFailure() {
+  public int getFailureIndex() {
     for (int i = 0 ; i < sequence.size() ; i++) {
       if (hasFailure(i)) {
-        return true;
+        return i;
       }
     }
-    return false;
+    return -1;
+  }
+  
+  public boolean hasFailure() {
+    return getFailureIndex() != -1;
   }
   
   public List<Check> getFailures(int idx) {
@@ -571,15 +587,21 @@ public class ExecutableSequence implements Serializable {
     return failedContracts;
   }
 
-  public int getFailureIndex() {
-    for (int i = 0 ; i < sequence.size() ; i++) {
-      if (hasFailure(i)) {
+  /**
+   * Returns the index i for which this.isExceptionalExecution(i), or -1 if
+   * there is no such index.
+   */
+  public int exceptionIndex() {
+    if (!throwsException())
+      throw new RuntimeException("Execution does not throw an exception");
+    for (int i = 0; i < this.sequence.size(); i++) {
+      if (this.getResult(i) instanceof ExceptionalExecution) {
         return i;
       }
     }
     return -1;
   }
-  
+
   /**
    * @return The index in the sequence at which an exception of the
    * given class (or a class compatible with it) was thrown. If no such
@@ -615,13 +637,27 @@ public class ExecutableSequence implements Serializable {
     return false;
   }
 
+  /**
+   * Returns whether the sequence contains a non-executed statement.
+   * That happnes if some statment before the last one throws an exception.
+   */
   public boolean hasNonExecutedStatements() {
+    return getNonExecutedIndex() != -1;
+  }
+
+  /**
+   * Returns the index i for a non-executed statement, or -1 if
+   * there is no such index.  Note that a statement is considered
+   * executed even if it throws an exception.
+   */
+  public int getNonExecutedIndex() {
     // Starting from the end of the sequence is always faster to find non-executed statements.
     for (int i = this.sequence.size() - 1 ; i >= 0 ; i--)
       if (getResult(i) instanceof NotExecuted)
-        return true;
-    return false;
+        return i;
+    return -1;
   }
+
 
   public ExecutableSequence duplicate() {
     ExecutableSequence newSequence = new ExecutableSequence(this.sequence);
@@ -630,21 +666,6 @@ public class ExecutableSequence implements Serializable {
       newSequence.checks.get(i).addAll(getChecks(i));
     }
     return newSequence;
-  }
-
-  /**
-   * Returns the index i for which this.isExceptionalExecution(i), or -1 if
-   * there is no such index.
-   */
-  public int exceptionIndex() {
-    if (!throwsException())
-      throw new RuntimeException("Execution does not throw an exception");
-    for (int i = 0; i < this.sequence.size(); i++) {
-      if (this.getResult(i) instanceof ExceptionalExecution) {
-        return i;
-      }
-    }
-    return -1;
   }
 
   public static <D extends Check> List<Sequence> getSequences(List<ExecutableSequence> exec) {
@@ -657,8 +678,8 @@ public class ExecutableSequence implements Serializable {
 
   @Override
   public int hashCode() {
-    return sequence.hashCode() * 3 +
-    checks.hashCode() * 5;
+    return sequence.hashCode() * 3
+      + checks.hashCode() * 5;
     // results are not part of this because they contain actual runtime objects. XXX is that bogus?
   }
 
