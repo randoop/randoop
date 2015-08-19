@@ -288,12 +288,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @OptionGroup ("Outputting the JUnit tests")
   // TODO make an enum. (But presently Options package requires upper-case
   // strings for enums, which will break Make targets, plugin, etc.)
+  /** For details, see the Javadoc documentation for {@link DefaultTestFilter}. */
   @Option("What kinds of tests to output: pass, fail, or all")
   public static String output_tests = "all";
   
-  public final static String all = "all";
-  public final static String fail = "fail";
-  public final static String pass = "pass";
+  public final static String ALL = "all";
+  public final static String FAIL = "fail";
+  public final static String PASS = "pass";
 
   @Option("Simplify (shorten) failed tests while preserving failure behavior")
   public static boolean simplify_failed_tests = false;

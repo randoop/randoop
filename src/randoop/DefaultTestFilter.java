@@ -32,15 +32,15 @@ public class DefaultTestFilter implements ITestFilter {
       return false;
     }
     
-    if (GenInputsAbstract.output_tests.equals(GenInputsAbstract.all)) {
+    if (GenInputsAbstract.output_tests.equals(GenInputsAbstract.ALL)) {
       return true;
     }
     
-    if ((GenInputsAbstract.output_tests.equals(GenInputsAbstract.pass))) {
+    if ((GenInputsAbstract.output_tests.equals(GenInputsAbstract.PASS))) {
       return f.getFailures().isEmpty();
     }
     
-    assert GenInputsAbstract.output_tests.equals(GenInputsAbstract.fail) : GenInputsAbstract.output_tests;
+    assert GenInputsAbstract.output_tests.equals(GenInputsAbstract.FAIL) : GenInputsAbstract.output_tests;
 
     // FIXME: The filter at this point should return true if this test reveals
     //        a new failure, i.e.:
