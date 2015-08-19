@@ -673,8 +673,8 @@ public class ExecutableSequence implements Serializable {
 
   @Override
   public int hashCode() {
-    return sequence.hashCode() * 3 +
-    checks.hashCode() * 5;
+    return sequence.hashCode() * 3
+      + checks.hashCode() * 5;
     // results are not part of this because they contain actual runtime objects. XXX is that bogus?
   }
 
