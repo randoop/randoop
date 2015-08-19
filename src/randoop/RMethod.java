@@ -87,7 +87,7 @@ public final class RMethod implements StatementKind, Serializable {
     return toParseableString();
   }
 
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder sb) {
     if (!isVoid()) {
       sb.append(Reflection.getCompilableName(this.method.getReturnType()));
       sb.append(" " + newVar.getName() + " = ");
