@@ -126,12 +126,12 @@ class SequenceDumper {
           sb.append(", ");
 
         // CASTING.
-        // We cast whenever the variable and input types are not identical.
-        // We also cast if input type is a primitive, because Randoop uses
-        // boxed primitives, and need to convert back to primitive.
         if (PrimitiveTypes.isPrimitive(rmethod.getInputTypes().get(i)) && GenInputsAbstract.long_format) {
+          // Cast if input type is a primitive, because Randoop uses
+          // boxed primitives.
           sb.append("(" + rmethod.getInputTypes().get(i).getSimpleName() + ")");
         } else if (!inputVars.get(i).getType().equals(rmethod.getInputTypes().get(i))) {
+          // Cast if the variable and input types are not identical.
           sb.append("(" + rmethod.getInputTypes().get(i).getSimpleName() + ")");
         }
 
