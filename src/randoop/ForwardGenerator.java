@@ -169,6 +169,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (seq.hasNonExecutedStatements()) {
       if (Log.isLoggingOn()) {
         Log.logLine("Making all indices inactive (sequence has non-executed statements, so judging it inadequate for further extension).");
+        Log.logLine("Non-executed statement: " + seq.oneStatementToCodeString(seq.getNonExecutedIndex()));
       }
       seq.sequence.clearAllActiveFlags();
       return;
@@ -177,6 +178,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (seq.hasFailure()) {
       if (Log.isLoggingOn()) {
         Log.logLine("Making all indices inactive (sequence reveals a failure, so judging it inadequate for further extension)");
+        Log.logLine("Failing statement: " + seq.oneStatementToCodeString(seq.getFailureIndex()));
       }
       seq.sequence.clearAllActiveFlags();
       return;
@@ -185,6 +187,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (!seq.isNormalExecution()) {
       if (Log.isLoggingOn()) {
         Log.logLine("Making all indices inactive (exception thrown, or failure revealed during execution).");
+        Log.logLine("Statement with non-normal execution: " + seq.oneStatementToCodeString(seq.getNonNormalExecutionIndex()));
       }
       seq.sequence.clearAllActiveFlags();
       return;
