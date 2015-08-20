@@ -39,12 +39,12 @@ public class ForwardExplorerPerformanceTest extends TestCase {
     InputStream classStream =
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
-    List<StatementKind> m =
+    List<StatementKind> model =
       Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
-    ForwardGenerator explorer = new ForwardGenerator(m, TIME_LIMIT_SECS*1000, Integer.MAX_VALUE, null, null, null, null);
+    ForwardGenerator explorer = new ForwardGenerator(model, TIME_LIMIT_SECS*1000, Integer.MAX_VALUE, null, null, null, null);
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.explore();
     System.out.println("" + Globals.lineSep + "" + Globals.lineSep + "Expected " + EXPECTED_MIN + " sequences, created " + explorer.allSequences.size() + " sequences.");

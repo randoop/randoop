@@ -6,6 +6,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import randoop.ForwardGenerator;
 import randoop.Sequence;
+import randoop.StatementKind;
 import randoop.main.GenInputsAbstract;
 import randoop.test.treeadd.TreeAdd;
 import randoop.test.treeadd.TreeNode;
@@ -26,8 +27,9 @@ public class ForwardExplorerTests2 extends TestCase {
     System.out.println(classes);
 
     //SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
+    List<StatementKind> model = Reflection.getStatements(classes, null);
     ForwardGenerator exp =
-      new ForwardGenerator(Reflection.getStatements(classes, null), Long.MAX_VALUE, 100, null, null, null, null);
+      new ForwardGenerator(model, Long.MAX_VALUE, 100, null, null, null, null);
     GenInputsAbstract.forbid_null = false;
     exp.explore();
     for (Sequence s : exp.allSequences()) {

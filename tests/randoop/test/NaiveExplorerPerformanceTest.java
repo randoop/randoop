@@ -37,12 +37,12 @@ public class NaiveExplorerPerformanceTest extends TestCase {
     InputStream classStream =
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
-    List<StatementKind> m =
+    List<StatementKind> model =
       Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
-    RandomWalkGenerator explorer = new RandomWalkGenerator(m, TIME_LIMIT_SECS*1000, Integer.MAX_VALUE, null, null, null, null);
+    RandomWalkGenerator explorer = new RandomWalkGenerator(model, TIME_LIMIT_SECS*1000, Integer.MAX_VALUE, null, null, null, null);
     
     System.out.println("" + Globals.lineSep + "Will explore for " + TIME_LIMIT_SECS + " seconds.");
     explorer.explore();

@@ -17,12 +17,12 @@ public class NaivePerformanceTest extends AbstractPerformanceTest {
     InputStream classStream =
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
-    List<StatementKind> m =
+    List<StatementKind> model =
       Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
-    RandomWalkGenerator explorer = new RandomWalkGenerator(m, Long.MAX_VALUE, 100000, null, null, null, null);
+    RandomWalkGenerator explorer = new RandomWalkGenerator(model, Long.MAX_VALUE, 100000, null, null, null, null);
     explorer.explore();
   }
 
