@@ -632,15 +632,49 @@ public final class Reflection {
     }
   }
 
+  // It would be better to have one version of this routine with signature
+  //   private static boolean isOverload(Executable m1, Executable m2) {
+  // but the Executable class was introduced only in Java 8, so to retain
+  // compatibility with earlier versions of Java, copy-and-paste two
+  // identical versions.
+
   // Return true if the two methods or constructors overload one another
   // with the same number of arguments.
-  private static boolean isOverload(Executable m1, Executable m2) {
+  private static boolean isOverload(Method m1, Method m2) {
     if (! m1.getClass().equals(m2.getClass()))
       // Require two Methods or two Constructors, no mismatch
       return false;
     if (! m1.getName().equals(m2.getName()))
       return false;
-    if (m1.getParameterCount() != m2.getParameterCount())
+    // For Java 8: if (m1.getParameterCount() != m2.getParameterCount())
+    if (m1.getParameterTypes().length != m2.getParameterTypes().length)
+      return false;
+    if (Modifier.isStatic(m1.getModifiers()) != Modifier.isStatic(m2.getModifiers()))
+      return false;
+
+    // Not needed; there is no harm to including this.
+    // Class<?>[] paramTypes1 = m1.getParameterTypes();
+    // Class<?>[] paramTypes2 = m2.getParameterTypes();
+    // if (! Array.equals(paramTypes1, paramTypes2))
+    //   return false;             // not an overload:  the identical signature!
+
+    // Another test would be that some common subclass/subinterface of
+    // their classes declares the method, to avoid methods of the same name
+    // that have no ambiguity.
+
+    return true;
+  }
+
+  // Return true if the two methods or constructors overload one another
+  // with the same number of arguments.
+  private static boolean isOverload(Constructor<?> m1, Constructor<?> m2) {
+    if (! m1.getClass().equals(m2.getClass()))
+      // Require two Methods or two Constructors, no mismatch
+      return false;
+    if (! m1.getName().equals(m2.getName()))
+      return false;
+    // For Java 8: if (m1.getParameterCount() != m2.getParameterCount())
+    if (m1.getParameterTypes().length != m2.getParameterTypes().length)
       return false;
     if (Modifier.isStatic(m1.getModifiers()) != Modifier.isStatic(m2.getModifiers()))
       return false;
