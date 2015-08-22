@@ -87,7 +87,8 @@ public final class RConstructor implements StatementKind, Serializable {
   /** Reset/clear the overloads field. */
   public void resetOverloads() {
     overloads = new ArrayList<Set<Class<?>>>();
-    for (int i=0; i<constructor.getParameterCount(); i++) {
+    // For Java 8: for (int i=0; i<constructor.getParameterCount(); i++) {
+    for (int i=0; i<constructor.getParameterTypes().length; i++) {
       overloads.add(new HashSet<Class<?>>());
     }
     addToOverloads(constructor);

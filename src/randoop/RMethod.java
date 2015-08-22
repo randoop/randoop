@@ -97,7 +97,8 @@ public final class RMethod implements StatementKind, Serializable {
   /** Reset/clear the overloads field. */
   public void resetOverloads() {
     overloads = new ArrayList<Set<Class<?>>>();
-    for (int i=0; i<method.getParameterCount(); i++) {
+    // For Java 8:  for (int i=0; i<method.getParameterCount(); i++) {
+    for (int i=0; i<method.getParameterTypes().length; i++) {
       overloads.add(new HashSet<Class<?>>());
     }
     addToOverloads(method);
