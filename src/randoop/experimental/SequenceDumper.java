@@ -91,7 +91,8 @@ class SequenceDumper {
   private void appendCode(StringBuilder sb, StatementKind statement,
       Variable newVar, List<Variable> inputVars) {
     if (statement instanceof PrimitiveOrStringOrNullDecl) {
-      if (GenInputsAbstract.long_format) {
+      if (GenInputsAbstract.long_format
+          || ! ExecutableSequence.canUseShortFormat(statement)) {
         PrimitiveOrStringOrNullDecl primiveStatement = (PrimitiveOrStringOrNullDecl)statement;
         this.printPrimitiveType(primiveStatement, newVar, inputVars, sb);
       }
@@ -139,7 +140,7 @@ class SequenceDumper {
         // the value (e.g. "3") is inserted directly added as arguments to method calls.
         StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
         if (!GenInputsAbstract.long_format
-                  && statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
+            && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
           sb.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
         } else {
           sb.append(this.renamer.getRenamedVar(inputVars.get(i).index)/* inputVars.get(i).getName()*/);
@@ -182,7 +183,8 @@ class SequenceDumper {
         // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
         // the value (e.g. "3") is inserted directly added as arguments to method calls.
         StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-        if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
+        if (!GenInputsAbstract.long_format
+            && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
           sb.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
         } else {
           sb.append(this.renamer.getRenamedVar(inputVars.get(i).index)/* inputVars.get(i).getName()*/);
