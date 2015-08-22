@@ -195,8 +195,8 @@ public class ExecutableSequence implements Serializable {
     return b.toString();
   }
 
-  /*package-accessible*/
-  static boolean canUseShortFormat(StatementKind statementCreatingVar) {
+  /** True for a primitive or String literal, but not for a null literal. */
+  public static boolean canUseShortFormat(StatementKind statementCreatingVar) {
     return (statementCreatingVar instanceof PrimitiveOrStringOrNullDecl
             // Do not use the short output format if the value is null, because
             // the variable type may disambiguate among overloaded methods.

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -585,6 +586,91 @@ public final class Reflection {
 
      return new ArrayList<StatementKind>(statements);
    }
+
+
+  /** Sets the overloads field of each RMethod or RConstructor in the list. */
+  public static void setOverloads(List<StatementKind> model) {
+    for (StatementKind sk : model) {
+      if (sk instanceof RMethod) {
+        RMethod rm = (RMethod) sk;
+        rm.resetOverloads();
+        Method m = rm.getMethod();
+        
+        List<Method> possibleOverloads;
+        if (Modifier.isStatic(m.getModifiers())) {
+          possibleOverloads = new ArrayList<Method>(Arrays.asList(m.getDeclaringClass().getDeclaredMethods()));
+        } else {
+          // Find the overloads in this and superclasses.
+          possibleOverloads = new ArrayList<Method>(Arrays.asList(m.getDeclaringClass().getMethods()));
+          // We should to find overloads in any subclass of a superclass
+          // that declares the method.  For now, just look in the model.
+          for (StatementKind possibleOverloadSk : model) {
+            if (possibleOverloadSk instanceof RMethod) {
+              Method possibleOverload = ((RMethod) possibleOverloadSk).getMethod();
+              possibleOverloads.add(possibleOverload);
+            }
+          }
+        }
+        for (Method possibleOverload : possibleOverloads) {
+          if (isOverload(m, possibleOverload)) {
+            rm.addToOverloads(possibleOverload);
+          }
+        }
+      } else if (sk instanceof RConstructor) {
+        RConstructor rc = (RConstructor) sk;
+        rc.resetOverloads();
+        Constructor<?> c = rc.getConstructor();
+        
+        Constructor<?>[] possibleOverloads = c.getDeclaringClass().getDeclaredConstructors();
+
+        for (Constructor<?> possibleOverload : possibleOverloads) {
+          if (isOverload(c, possibleOverload)) {
+            rc.addToOverloads(possibleOverload);
+          }
+        }
+      }
+    }
+  }
+
+  // Return true if the two methods or constructors overload one another
+  // with the same number of arguments.
+  private static boolean isOverload(Executable m1, Executable m2) {
+    if (! m1.getClass().equals(m2.getClass()))
+      // Require two Methods or two Constructors, no mismatch
+      return false;
+    if (! m1.getName().equals(m2.getName()))
+      return false;
+    if (m1.getParameterCount() != m2.getParameterCount())
+      return false;
+    if (Modifier.isStatic(m1.getModifiers()) != Modifier.isStatic(m2.getModifiers()))
+      return false;
+
+    // Not needed; there is no harm to including this.
+    // Class<?>[] paramTypes1 = m1.getParameterTypes();
+    // Class<?>[] paramTypes2 = m2.getParameterTypes();
+    // if (! Array.equals(paramTypes1, paramTypes2))
+    //   return false;             // not an overload:  the identical signature!
+
+    // Another test would be that some common subclass/subinterface of
+    // their classes declares the method, to avoid methods of the same name
+    // that have no ambiguity.
+
+    return true;
+  }
+
+  // Returns true if there exists a value that is of both types
+  private static boolean typesCauseOverloadAmbiguity(Class<?> t1, Class<?> t2) {
+    if (t1.isPrimitive())
+      return false;
+    if (t2.isPrimitive())
+      return false;
+    if (t1.isAssignableFrom(t2))
+      return false;
+    if (t2.isAssignableFrom(t1))
+      return false;
+    // An example value is null
+    return true;
+  }
 
    /**
     * To deserialize a list serialized with this method, use the

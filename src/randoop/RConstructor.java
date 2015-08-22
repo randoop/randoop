@@ -4,10 +4,13 @@ import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
 import randoop.util.ConstructorReflectionCode;
@@ -33,6 +36,16 @@ public final class RConstructor implements StatementKind, Serializable {
 
   // State variable.
   private final Constructor<?> constructor;
+
+  /**
+   * A list with as many sublists as the formal paramters of this constructor.
+   * The <em>i</em>th set indicates all the possible argument types for the
+   * <em>i</im>th formal parameter, for overloads of this constructor with the
+   * same number of formal parameters.  At a call site, if the declared
+   * type of an actual argument is not uniquely determined, then the acutal
+   * should be casted at the call site.
+   */ 
+  public List<Set<Class<?>>> overloads;
 
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
@@ -69,6 +82,23 @@ public final class RConstructor implements StatementKind, Serializable {
    */
   public static RConstructor getRConstructor(Constructor<?> constructor) {
     return new RConstructor(constructor);
+  }
+
+  /** Reset/clear the overloads field. */
+  public void resetOverloads() {
+    overloads = new ArrayList<Set<Class<?>>>();
+    for (int i=0; i<constructor.getParameterCount(); i++) {
+      overloads.add(new HashSet<Class<?>>());
+    }
+    addToOverloads(constructor);
+  }
+
+  public void addToOverloads(Constructor<?> c) {
+    Class<?>[] ptypes = c.getParameterTypes();
+    assert ptypes.length == overloads.size();
+    for (int i=0; i<overloads.size(); i++) {
+      overloads.get(i).add(ptypes[i]);
+    }
   }
 
   /**
@@ -109,8 +139,10 @@ public final class RConstructor implements StatementKind, Serializable {
       if (!inputVars.get(i).getType().equals(getInputTypes().get(i)))
         b.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
       
-      // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
-      // the value (e.g. "3") is inserted directly added as arguments to method calls.
+      // In the short output format, statements that assign to a primitive
+      // or string literal, like "int x = 3" are not added to a sequence;
+      // instead, the value (e.g. "3") is inserted directly added as
+      // arguments to method calls.
       StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {

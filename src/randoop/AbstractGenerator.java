@@ -13,6 +13,7 @@ import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
+import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
 
@@ -134,6 +135,8 @@ public abstract class AbstractGenerator {
   public AbstractGenerator(List<StatementKind> statements, long timeMillis, int maxSequences, ComponentManager componentManager,
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> testfilters) {
     assert statements != null;
+
+    Reflection.setOverloads(statements);
 
     this.maxTimeMillis = timeMillis;
 

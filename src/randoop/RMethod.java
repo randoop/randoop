@@ -12,7 +12,9 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
 import randoop.util.CollectionsExt;
@@ -36,6 +38,16 @@ public final class RMethod implements StatementKind, Serializable {
 
   // State variable.
   private final Method method;
+
+  /**
+   * A list with as many sublists as the formal paramters of this method.
+   * The <em>i</em>th set indicates all the possible argument types for the
+   * <em>i</im>th formal parameter, for overloads of this method with the
+   * same number of formal parameters.  At a call site, if the declared
+   * type of an actual argument is not uniquely determined, then the acutal
+   * should be casted at the call site.
+   */ 
+  public List<Set<Class<?>>> overloads;
 
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
@@ -82,6 +94,23 @@ public final class RMethod implements StatementKind, Serializable {
     return new RMethod(method);
   }
 
+  /** Reset/clear the overloads field. */
+  public void resetOverloads() {
+    overloads = new ArrayList<Set<Class<?>>>();
+    for (int i=0; i<method.getParameterCount(); i++) {
+      overloads.add(new HashSet<Class<?>>());
+    }
+    addToOverloads(method);
+  }
+
+  public void addToOverloads(Method m) {
+    Class<?>[] ptypes = m.getParameterTypes();
+    assert ptypes.length == overloads.size();
+    for (int i=0; i<overloads.size(); i++) {
+      overloads.get(i).add(ptypes[i]);
+    }
+  }
+
   @Override
   public String toString() {
     return toParseableString();
@@ -107,7 +136,7 @@ public final class RMethod implements StatementKind, Serializable {
       // CASTING.
       if (PrimitiveTypes.isPrimitive(getInputTypes().get(i)) && GenInputsAbstract.long_format) {
         // Cast if input type is a primitive, because Randoop uses
-        // boxed primitives.
+        // boxed primitives.  (Is that necessary with autoboxing?)
         sb.append("(" + getInputTypes().get(i).getName() + ")");
       } else if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
         // Cast if the variable and input types are not identical.
