@@ -3,7 +3,7 @@
 Randoop is an automatic unit test generator for Java. It automatically creates unit tests for your classes, in JUnit format.
 
   * Randoop generates unit tests using feedback-directed random test generation. In a nutshell, this technique randomly, but smartly, generates sequences of methods and constructor invocations for the classes under test, and uses the sequences to create tests. Randoop executes the sequences it creates, using the results of the execution to create assertions that capture the behavior or your program and that catch bugs.
-  * Randoop has created tests that find previously unkwon errors even in widely-used libraries including Sun and IBM's JDKs. A .NET version of Randoop, used internally at Microsoft, has been used successfully by a team of test engineers to find errors in a core .NET component that has been heavily tested for years. Randoop's combination of randomized test generation and test execution results in a highly effective test generation technique.
+  * Randoop has created tests that find previously unknown errors even in widely-used libraries including Sun and IBM's JDKs. A .NET version of Randoop, used internally at Microsoft, has been used successfully by a team of test engineers to find errors in a core .NET component that has been heavily tested for years. Randoop's combination of randomized test generation and test execution results in a highly effective test generation technique.
 
 ### Randoop plugin for Eclipse ###
 
