@@ -102,13 +102,13 @@ public final class PrimValue implements ObjectContract {
     // We special-case printing for this type of expression,
     // to improve readability.
     if (value.equals(Double.NaN) || value.equals(Float.NaN)) {
-      b.append("assertEquals(");
+      b.append("org.junit.Assert.assertEquals(");
       b.append("x0");
       b.append(", ");
       b.append(PrimitiveTypes.toCodeString(value));
       b.append(");");
     } else if (printMode.equals(PrintMode.EQUALSMETHOD)) {
-      b.append("assertTrue(");
+      b.append("org.junit.Assert.assertTrue(");
       // First add a message
       b.append ("\"'\" + " + "x0" + " + \"' != '\" + "
           + PrimitiveTypes.toCodeString(value) + "+ \"'\", ");
@@ -120,7 +120,7 @@ public final class PrimValue implements ObjectContract {
       b.append(");");
     } else {
       assert printMode.equals(PrintMode.EQUALSEQUALS);
-      b.append("assertTrue(");
+      b.append("org.junit.Assert.assertTrue(");
       b.append("x0 == " + PrimitiveTypes.toCodeString(value));
       b.append(");");
     }

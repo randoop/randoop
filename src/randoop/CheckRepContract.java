@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 
 /**
  * Represents the contract that an object should conform to its representation
- * invariant, as expressed in a user-supplied representation check method.A rep
+ * invariant, as expressed in a user-supplied representation check method. A rep
  * check method for a class must be declared as a public instance method with no
  * parameters in the given class, annotated with a <code>@CheckRep</code>
  * annotation, and have return type <code>boolean</code> or <code>void</code>.
@@ -115,7 +115,7 @@ public final class CheckRepContract implements ObjectContract {
     b.append(Globals.lineSep);
         b.append("// Check representation invariant." + Globals.lineSep);
     if (returnsBoolean) {
-      b.append("assertTrue(");
+      b.append("org.junit.Assert.assertTrue(");
       b.append("\"Representation invariant failed: " + toCommentString() + "\", ");
       b.append(("x0." + checkRepMethod.getName() + "()"));
       b.append(");");

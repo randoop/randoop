@@ -98,17 +98,17 @@ public final class ObserverEqValue implements ObjectContract {
       if (observer.getReturnType().equals(boolean.class)) {
         assert value.equals(true) || value.equals(false);
         if (value.equals(true)) {
-          b.append(String.format ("assertTrue(x0.%s());", methodname));
+          b.append(String.format ("org.junit.Assert.assertTrue(x0.%s());", methodname));
         } else {
-          b.append(String.format ("assertFalse(x0.%s());", methodname));
+          b.append(String.format ("org.junit.Assert.assertFalse(x0.%s());", methodname));
         }
       } else {
-        b.append(String.format ("assertTrue(x0.%s() == %s);", methodname,
+        b.append(String.format ("org.junit.Assert.assertTrue(x0.%s() == %s);", methodname,
                                 PrimitiveTypes.toCodeString(value)));
       }
     } else { // string
       // System.out.printf ("value = %s - %s\n", value, value.getClass());
-      b.append(String.format ("assertEquals(x0.%s(), %s);", methodname,
+      b.append(String.format ("org.junit.Assert.assertEquals(x0.%s(), %s);", methodname,
                               PrimitiveTypes.toCodeString(value)));
     }
     return b.toString();

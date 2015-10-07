@@ -20,7 +20,7 @@ import java.io.Serializable;
  * A <code>Check</code> object is inserted as a decoration on a
  * specific index of an {@link ExecutableSequence}. Thus, a check is
  * always associated with a specific index in a sequence. A check at
- * index i means that the check is to performed after statement i
+ * index i means that the check is to be performed after statement i
  * finishes executing.
  * 
  * <p>
