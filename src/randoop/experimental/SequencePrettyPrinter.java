@@ -61,12 +61,12 @@ public class SequencePrettyPrinter {
       sb.append(Globals.lineSep);
     }
     sb.append(Globals.lineSep);
-    sb.append("import junit.framework.TestCase;");
+    sb.append("import org.junit.Test;");
     sb.append(Globals.lineSep);
     sb.append(Globals.lineSep);
     
     //print class header
-    sb.append("public class " + this.className + " extends TestCase { ");
+    sb.append("public class " + this.className + " { ");
     sb.append(Globals.lineSep);
     sb.append(Globals.lineSep);
 
@@ -78,6 +78,7 @@ public class SequencePrettyPrinter {
     for (ExecutableSequence eseq : this.outputSequences) {
       VariableRenamer renamer = new VariableRenamer(eseq.sequence);
       //print the test method
+      sb.append(indent("@Test",2));
       sb.append(indent("public void test" + count + "() throws Throwable {", 2));
       sb.append(Globals.lineSep);
       sb.append(Globals.lineSep);
@@ -99,18 +100,6 @@ public class SequencePrettyPrinter {
       sb.append(Globals.lineSep);
       count++;
     }
-
-    sb.append(indent("@Override", 2));
-    sb.append(Globals.lineSep);
-    sb.append(indent("public void runTest() throws Throwable {", 2));
-    sb.append(Globals.lineSep);
-    for (int i=0; i<count; i++) {
-      sb.append(indent("test" + i + "();", 4));
-      sb.append(Globals.lineSep);
-    }      
-    sb.append(indent("}", 2));
-    sb.append(Globals.lineSep);
-    sb.append(Globals.lineSep);
 
     sb.append("}");
     
