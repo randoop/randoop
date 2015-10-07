@@ -4,42 +4,45 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestResult;
-import junit.textui.TestRunner;
+import org.junit.internal.TextListener;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 public class RandoopContractsTest {
 
-  @SuppressWarnings("unchecked")
   public static void main(String[] args) throws ClassNotFoundException, IllegalArgumentException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-    Class<TestCase> tstCls = (Class<TestCase>) Class.forName("BuggyTest");
-
-    Test test = (Test) tstCls.getMethod("suite").invoke(null);
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    TestRunner runner = new TestRunner(new PrintStream(baos));
-    TestResult result = runner.doRun(test, false);
     
-    int expectedFailures = 7;
-    int expectedErrors = 2;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    JUnitCore junit = new JUnitCore();
+    junit.addListener(new TextListener(new PrintStream(baos)));
+    Class<?> testClass = Class.forName("BuggyTest");
+    Result testResult = junit.run(testClass);
+    
+    /* 
+     * JUnit4 Result class does not distinguish b/w failures and exceptions (errors).
+     * JUnit3 version looking for 7 failures and 2 errors
+     */
+    int expectedFailures = 9;
 
-    if (result.failureCount() != expectedFailures) {
-      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE " + expectedFailures + " FAILURES BUT GOT " + result.failureCount());
+
+    if (testResult.getFailureCount() != expectedFailures) {
+      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE " + expectedFailures + " FAILURES BUT GOT " + testResult.getFailureCount());
       b.append("\n\nJUNIT OUTPUT ON RANDOOP-GENERATED TESTS:");
       b.append(baos.toString());
       throw new RuntimeException(b.toString());
     }
 
-    if (result.errorCount() != expectedErrors) {
-      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE " + expectedErrors + " ERRORS BUT GOT " + result.errorCount());
+    /* 
+     * JUnit4 Result class does not differentiate b/w failures and exceptions (errors)
+    if (testResult.errorCount() != expectedErrors) {
+      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE " + expectedErrors + " ERRORS BUT GOT " + testResult.errorCount());
       b.append("\n\nJUNIT OUTPUT ON RANDOOP-GENERATED TESTS:");
       b.append(baos.toString());
       throw new RuntimeException(b.toString());
     }
+    */
 
-    System.out.println("Test passed; got " + expectedFailures + " failures and " + expectedErrors + " errors.");
+    System.out.println("Test passed; got " + expectedFailures + " failures");
 
   }
 
