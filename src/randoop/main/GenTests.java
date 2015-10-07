@@ -699,7 +699,7 @@ public class GenTests extends GenInputsAbstract {
             compMgr.addGeneratedSequence(seq);
             break;
           default:
-            throw new Error("This can't happen");
+            throw new Error("Unexpected error in GenTests -- please report");
           }
         }
       }
@@ -726,8 +726,13 @@ public class GenTests extends GenInputsAbstract {
     List<String> junitTestSuiteNames = new LinkedList<String>();
     junitTestSuiteNames.addAll(jfw.getJunitTestSuiteNames());
     junitTestSuiteNames.addAll(additionalJUnitClasses == null ? Collections.<String>emptyList() : additionalJUnitClasses);
-    ret.add(JunitFileWriter.writeDriverFile(jfw.getDir(), jfw.packageName, jfw.junitDriverClassName, junitTestSuiteNames));
-    //ret.add(jfw.writeDriverFile());
+    
+    if (GenInputsAbstract.junit_reflection_allowed) {
+      ret.add(jfw.writeSuiteFile(junitTestSuiteNames));
+    } else {
+      ret.add(jfw.writeDriverFile(junitTestSuiteNames));
+    }
+
     List<File> files = ret;
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.println();
