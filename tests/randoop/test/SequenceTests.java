@@ -141,6 +141,7 @@ public class SequenceTests extends TestCase {
     checkListsEqual(expectedCode, Arrays.asList(ds.toCodeString().split(Globals.lineSep)), testId);
   }
   
+  @SuppressWarnings("deprecation")
   private static void checkListsEqual(List<String> expected, List<String> actual, String testId) {
 
     expected = trimmedLines(expected);
