@@ -1,11 +1,12 @@
 package foo.bar;
 
-import junit.framework.*;
+import org.junit.Test;
 
-public class Naive0 extends TestCase {
+public class Naive0 {
 
   public static boolean debug = false;
 
+  @Test
   public void test1() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test1"); }
@@ -15,6 +16,7 @@ public class Naive0 extends TestCase {
 
   }
 
+  @Test
   public void test2() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test2"); }
@@ -25,6 +27,7 @@ public class Naive0 extends TestCase {
 
   }
 
+  @Test
   public void test3() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test3"); }
@@ -36,10 +39,11 @@ public class Naive0 extends TestCase {
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
 
   }
 
+  @Test
   public void test4() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test4"); }
@@ -53,10 +57,11 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.fill((java2.util2.List)linkedList2, (java.lang.Object)byte4);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
 
   }
 
+  @Test
   public void test5() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test5"); }
@@ -69,10 +74,11 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList2);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
 
   }
 
+  @Test
   public void test6() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test6"); }
@@ -83,10 +89,11 @@ public class Naive0 extends TestCase {
     int i2 = linkedList1.size();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i2 == 0);
+    org.junit.Assert.assertTrue(i2 == 0);
 
   }
 
+  @Test
   public void test7() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test7"); }
@@ -97,10 +104,11 @@ public class Naive0 extends TestCase {
     int i2 = linkedList0.indexOf((java.lang.Object)d1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i2 == (-1));
+    org.junit.Assert.assertTrue(i2 == (-1));
 
   }
 
+  @Test
   public void test8() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test8"); }
@@ -115,13 +123,14 @@ public class Naive0 extends TestCase {
     java2.util2.Iterator iterator6 = linkedList2.iterator();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator6);
+    org.junit.Assert.assertNotNull(iterator6);
 
   }
 
+  @Test
   public void test9() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test9"); }
@@ -131,10 +140,11 @@ public class Naive0 extends TestCase {
     java2.util2.List list1 = java2.util2.Collections.singletonList((java.lang.Object)byte0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list1);
+    org.junit.Assert.assertNotNull(list1);
 
   }
 
+  @Test
   public void test10() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test10"); }
@@ -145,13 +155,14 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj1 = linkedList0.removeLast();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
 
   }
 
+  @Test
   public void test11() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test11"); }
@@ -164,13 +175,14 @@ public class Naive0 extends TestCase {
     java.lang.Object[] obj_array4 = linkedList0.toArray(obj_array3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array3);
+    org.junit.Assert.assertNotNull(obj_array3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array4);
+    org.junit.Assert.assertNotNull(obj_array4);
 
   }
 
+  @Test
   public void test12() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test12"); }
@@ -185,17 +197,18 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj5 = linkedList2.removeLast();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
 
   }
 
+  @Test
   public void test13() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test13"); }
@@ -214,16 +227,17 @@ public class Naive0 extends TestCase {
     boolean b10 = linkedList1.removeAll((java2.util2.Collection)linkedList6);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
 
   }
 
+  @Test
   public void test14() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test14"); }
@@ -234,10 +248,11 @@ public class Naive0 extends TestCase {
     java2.util2.Iterator iterator2 = linkedList1.iterator();
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator2);
+    org.junit.Assert.assertNotNull(iterator2);
 
   }
 
+  @Test
   public void test15() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test15"); }
@@ -252,10 +267,11 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.copy((java2.util2.List)linkedList1, (java2.util2.List)linkedList5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
 
   }
 
+  @Test
   public void test16() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test16"); }
@@ -275,13 +291,14 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.copy((java2.util2.List)linkedList1, (java2.util2.List)linkedList5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
 
   }
 
+  @Test
   public void test17() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test17"); }
@@ -302,16 +319,17 @@ public class Naive0 extends TestCase {
     java2.util2.List list12 = java2.util2.Collections.singletonList((java.lang.Object)linkedList5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list12);
+    org.junit.Assert.assertNotNull(list12);
 
   }
 
+  @Test
   public void test18() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test18"); }
@@ -329,19 +347,20 @@ public class Naive0 extends TestCase {
     int i9 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList2, (java2.util2.List)linkedList4);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array8);
+    org.junit.Assert.assertNotNull(obj_array8);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i9 == 0);
+    org.junit.Assert.assertTrue(i9 == 0);
 
   }
 
+  @Test
   public void test19() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test19"); }
@@ -351,10 +370,11 @@ public class Naive0 extends TestCase {
     java2.util2.List list1 = java2.util2.Collections.singletonList((java.lang.Object)s0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list1);
+    org.junit.Assert.assertNotNull(list1);
 
   }
 
+  @Test
   public void test20() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test20"); }
@@ -366,10 +386,11 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.sort((java2.util2.List)linkedList1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator2);
+    org.junit.Assert.assertNotNull(iterator2);
 
   }
 
+  @Test
   public void test21() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test21"); }
@@ -393,22 +414,23 @@ public class Naive0 extends TestCase {
     boolean b15 = linkedList6.removeAll((java2.util2.Collection)linkedList12);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator13);
+    org.junit.Assert.assertNotNull(iterator13);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b15 == false);
+    org.junit.Assert.assertTrue(b15 == false);
 
   }
 
+  @Test
   public void test22() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test22"); }
@@ -424,10 +446,11 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.rotate((java2.util2.List)linkedList2, (int)i6);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
 
   }
 
+  @Test
   public void test23() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test23"); }
@@ -453,29 +476,30 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj16 = linkedList6.getFirst();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator13);
+    org.junit.Assert.assertNotNull(iterator13);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b15 == false);
+    org.junit.Assert.assertTrue(b15 == false);
 
   }
 
+  @Test
   public void test24() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test24"); }
@@ -490,13 +514,14 @@ public class Naive0 extends TestCase {
     java2.util2.Iterator iterator6 = linkedList2.iterator();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator6);
+    org.junit.Assert.assertNotNull(iterator6);
 
   }
 
+  @Test
   public void test25() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test25"); }
@@ -507,6 +532,7 @@ public class Naive0 extends TestCase {
 
   }
 
+  @Test
   public void test26() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test26"); }
@@ -523,13 +549,14 @@ public class Naive0 extends TestCase {
     boolean b8 = linkedList1.removeAll((java2.util2.Collection)linkedList7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == false);
+    org.junit.Assert.assertTrue(b8 == false);
 
   }
 
+  @Test
   public void test27() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test27"); }
@@ -545,13 +572,14 @@ public class Naive0 extends TestCase {
     int i7 = java2.util2.Collections.binarySearch((java2.util2.List)linkedList2, (java.lang.Object)linkedList5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == (-1));
+    org.junit.Assert.assertTrue(i7 == (-1));
 
   }
 
+  @Test
   public void test28() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test28"); }
@@ -571,20 +599,21 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java2.util2.ListIterator listIterator10 = linkedList7.listIterator((int)i9);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == false);
+    org.junit.Assert.assertTrue(b8 == false);
 
   }
 
+  @Test
   public void test29() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test29"); }
@@ -622,34 +651,35 @@ public class Naive0 extends TestCase {
     boolean b29 = linkedList12.containsAll((java2.util2.Collection)linkedList21);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator13);
+    org.junit.Assert.assertNotNull(iterator13);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b15 == false);
+    org.junit.Assert.assertTrue(b15 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i19 == 0);
+    org.junit.Assert.assertTrue(i19 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i23 == 0);
+    org.junit.Assert.assertTrue(i23 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list28);
+    org.junit.Assert.assertNotNull(list28);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b29 == true);
+    org.junit.Assert.assertTrue(b29 == true);
 
   }
 
+  @Test
   public void test30() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test30"); }
@@ -664,17 +694,18 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java2.util2.List list5 = linkedList0.subList((int)i3, (int)i4);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i2 == (-1));
+    org.junit.Assert.assertTrue(i2 == (-1));
 
   }
 
+  @Test
   public void test31() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test31"); }
@@ -699,25 +730,26 @@ public class Naive0 extends TestCase {
     java.lang.String str16 = linkedList6.toString();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator13);
+    org.junit.Assert.assertNotNull(iterator13);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b15 == false);
+    org.junit.Assert.assertTrue(b15 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue("'" + str16 + "' != '" + "[]"+ "'", str16.equals("[]"));
+    org.junit.Assert.assertTrue("'" + str16 + "' != '" + "[]"+ "'", str16.equals("[]"));
 
   }
 
+  @Test
   public void test32() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test32"); }
@@ -736,20 +768,21 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj9 = linkedList2.set((int)i7, (java.lang.Object)d8);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator6);
+    org.junit.Assert.assertNotNull(iterator6);
 
   }
 
+  @Test
   public void test33() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test33"); }
@@ -763,13 +796,14 @@ public class Naive0 extends TestCase {
     java.lang.Object[] obj_array5 = linkedList2.toArray();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array5);
+    org.junit.Assert.assertNotNull(obj_array5);
 
   }
 
+  @Test
   public void test34() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test34"); }
@@ -781,6 +815,7 @@ public class Naive0 extends TestCase {
 
   }
 
+  @Test
   public void test35() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test35"); }
@@ -797,16 +832,17 @@ public class Naive0 extends TestCase {
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
 
   }
 
+  @Test
   public void test36() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test36"); }
@@ -825,16 +861,17 @@ public class Naive0 extends TestCase {
     arrayList1.ensureCapacity((int)i9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
 
   }
 
+  @Test
   public void test37() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test37"); }
@@ -854,20 +891,21 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       boolean b10 = arrayList1.addAll((int)i2, (java2.util2.Collection)linkedList5);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == 0);
+    org.junit.Assert.assertTrue(i6 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator9);
+    org.junit.Assert.assertNotNull(iterator9);
 
   }
 
+  @Test
   public void test38() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test38"); }
@@ -888,23 +926,24 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj11 = linkedList1.getFirst();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
 
   }
 
+  @Test
   public void test39() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test39"); }
@@ -942,34 +981,35 @@ public class Naive0 extends TestCase {
     int i29 = linkedList1.lastIndexOf((java.lang.Object)linkedList18);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == 0);
+    org.junit.Assert.assertTrue(i15 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i19 == 0);
+    org.junit.Assert.assertTrue(i19 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b22 == false);
+    org.junit.Assert.assertTrue(b22 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator25);
+    org.junit.Assert.assertNotNull(iterator25);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b27 == false);
+    org.junit.Assert.assertTrue(b27 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue("'" + str28 + "' != '" + "[]"+ "'", str28.equals("[]"));
+    org.junit.Assert.assertTrue("'" + str28 + "' != '" + "[]"+ "'", str28.equals("[]"));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i29 == (-1));
+    org.junit.Assert.assertTrue(i29 == (-1));
 
   }
 
+  @Test
   public void test40() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test40"); }
@@ -984,16 +1024,17 @@ public class Naive0 extends TestCase {
     java2.util2.Collection collection6 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)linkedList2);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array5);
+    org.junit.Assert.assertNotNull(obj_array5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(collection6);
+    org.junit.Assert.assertNotNull(collection6);
 
   }
 
+  @Test
   public void test41() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test41"); }
@@ -1010,13 +1051,14 @@ public class Naive0 extends TestCase {
     java2.util2.List list8 = java2.util2.Collections.nCopies((int)i0, (java.lang.Object)linkedList6);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list8);
+    org.junit.Assert.assertNotNull(list8);
 
   }
 
+  @Test
   public void test42() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test42"); }
@@ -1035,20 +1077,21 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj9 = linkedList6.removeLast();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list8);
+    org.junit.Assert.assertNotNull(list8);
 
   }
 
+  @Test
   public void test43() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test43"); }
@@ -1061,13 +1104,14 @@ public class Naive0 extends TestCase {
     int i4 = linkedList1.indexOf((java.lang.Object)s3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i2 == 0);
+    org.junit.Assert.assertTrue(i2 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == (-1));
+    org.junit.Assert.assertTrue(i4 == (-1));
 
   }
 
+  @Test
   public void test44() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test44"); }
@@ -1082,20 +1126,21 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj5 = linkedList0.getLast();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array3);
+    org.junit.Assert.assertNotNull(obj_array3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array4);
+    org.junit.Assert.assertNotNull(obj_array4);
 
   }
 
+  @Test
   public void test45() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test45"); }
@@ -1107,13 +1152,14 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj2 = linkedList0.getFirst();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
 
   }
 
+  @Test
   public void test46() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test46"); }
@@ -1132,19 +1178,20 @@ public class Naive0 extends TestCase {
     java.lang.Object[] obj_array10 = linkedList2.toArray(obj_array8);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array8);
+    org.junit.Assert.assertNotNull(obj_array8);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array9);
+    org.junit.Assert.assertNotNull(obj_array9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array10);
+    org.junit.Assert.assertNotNull(obj_array10);
 
   }
 
+  @Test
   public void test47() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test47"); }
@@ -1157,13 +1204,14 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj3 = arrayList1.remove((int)i2);
-      fail("Expected exception of type java.lang.ArrayIndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.ArrayIndexOutOfBoundsException");
     } catch (java.lang.ArrayIndexOutOfBoundsException e) {
       // Expected exception.
     }
 
   }
 
+  @Test
   public void test48() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test48"); }
@@ -1188,19 +1236,20 @@ public class Naive0 extends TestCase {
     java2.util2.Map map16 = java2.util2.Collections.singletonMap((java.lang.Object)linkedList5, (java.lang.Object)linkedList13);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator14);
+    org.junit.Assert.assertNotNull(iterator14);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map16);
+    org.junit.Assert.assertNotNull(map16);
 
   }
 
+  @Test
   public void test49() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test49"); }
@@ -1238,31 +1287,32 @@ public class Naive0 extends TestCase {
     boolean b29 = arrayList1.addAll((int)i11, (java2.util2.Collection)linkedList25);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == 0);
+    org.junit.Assert.assertTrue(i15 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i19 == 0);
+    org.junit.Assert.assertTrue(i19 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator26);
+    org.junit.Assert.assertNotNull(iterator26);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map28);
+    org.junit.Assert.assertNotNull(map28);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b29 == false);
+    org.junit.Assert.assertTrue(b29 == false);
 
   }
 
+  @Test
   public void test50() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test50"); }
@@ -1284,23 +1334,24 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj12 = arrayList1.remove((int)i11);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
 
   }
 
+  @Test
   public void test51() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test51"); }
@@ -1329,28 +1380,29 @@ public class Naive0 extends TestCase {
     java.lang.Object[] obj_array20 = linkedList6.toArray(obj_array17);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list8);
+    org.junit.Assert.assertNotNull(list8);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i12 == 0);
+    org.junit.Assert.assertTrue(i12 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array17);
+    org.junit.Assert.assertNotNull(obj_array17);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array18);
+    org.junit.Assert.assertNotNull(obj_array18);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array19);
+    org.junit.Assert.assertNotNull(obj_array19);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array20);
+    org.junit.Assert.assertNotNull(obj_array20);
 
   }
 
+  @Test
   public void test52() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test52"); }
@@ -1360,6 +1412,7 @@ public class Naive0 extends TestCase {
 
   }
 
+  @Test
   public void test53() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test53"); }
@@ -1406,44 +1459,45 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       boolean b37 = arrayList1.addAll((int)i30, (java2.util2.Collection)linkedList33);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == 0);
+    org.junit.Assert.assertTrue(i15 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i19 == 0);
+    org.junit.Assert.assertTrue(i19 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator26);
+    org.junit.Assert.assertNotNull(iterator26);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map28);
+    org.junit.Assert.assertNotNull(map28);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b29 == false);
+    org.junit.Assert.assertTrue(b29 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i34 == 0);
+    org.junit.Assert.assertTrue(i34 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array36);
+    org.junit.Assert.assertNotNull(obj_array36);
 
   }
 
+  @Test
   public void test54() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test54"); }
@@ -1463,23 +1517,24 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java2.util2.ListIterator listIterator10 = linkedList4.listIterator((int)i9);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
 
   }
 
+  @Test
   public void test55() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test55"); }
@@ -1496,16 +1551,17 @@ public class Naive0 extends TestCase {
     boolean b8 = linkedList2.equals((java.lang.Object)linkedList5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator6);
+    org.junit.Assert.assertNotNull(iterator6);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
 
   }
 
+  @Test
   public void test56() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test56"); }
@@ -1522,16 +1578,17 @@ public class Naive0 extends TestCase {
     boolean b8 = linkedList2.add((java.lang.Object)i7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator6);
+    org.junit.Assert.assertNotNull(iterator6);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
 
   }
 
+  @Test
   public void test57() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test57"); }
@@ -1552,13 +1609,14 @@ public class Naive0 extends TestCase {
     linkedList5.clear();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
 
   }
 
+  @Test
   public void test58() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test58"); }
@@ -1614,43 +1672,44 @@ public class Naive0 extends TestCase {
     linkedList13.addFirst((java.lang.Object)arrayList18);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator14);
+    org.junit.Assert.assertNotNull(iterator14);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map16);
+    org.junit.Assert.assertNotNull(map16);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i22 == 0);
+    org.junit.Assert.assertTrue(i22 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array24);
+    org.junit.Assert.assertNotNull(obj_array24);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b25 == true);
+    org.junit.Assert.assertTrue(b25 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i32 == 0);
+    org.junit.Assert.assertTrue(i32 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i36 == 0);
+    org.junit.Assert.assertTrue(i36 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator43);
+    org.junit.Assert.assertNotNull(iterator43);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map45);
+    org.junit.Assert.assertNotNull(map45);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b46 == false);
+    org.junit.Assert.assertTrue(b46 == false);
 
   }
 
+  @Test
   public void test59() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test59"); }
@@ -1666,17 +1725,18 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj6 = linkedList2.removeFirst();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
 
   }
 
+  @Test
   public void test60() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test60"); }
@@ -1734,59 +1794,60 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       linkedList12.add((int)i30, (java.lang.Object)str47);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator13);
+    org.junit.Assert.assertNotNull(iterator13);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b15 == false);
+    org.junit.Assert.assertTrue(b15 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i19 == 0);
+    org.junit.Assert.assertTrue(i19 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i23 == 0);
+    org.junit.Assert.assertTrue(i23 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list28);
+    org.junit.Assert.assertNotNull(list28);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b29 == true);
+    org.junit.Assert.assertTrue(b29 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i34 == 0);
+    org.junit.Assert.assertTrue(i34 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i38 == 0);
+    org.junit.Assert.assertTrue(i38 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b41 == false);
+    org.junit.Assert.assertTrue(b41 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator44);
+    org.junit.Assert.assertNotNull(iterator44);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b46 == false);
+    org.junit.Assert.assertTrue(b46 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue("'" + str47 + "' != '" + "[]"+ "'", str47.equals("[]"));
+    org.junit.Assert.assertTrue("'" + str47 + "' != '" + "[]"+ "'", str47.equals("[]"));
 
   }
 
+  @Test
   public void test61() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test61"); }
@@ -1804,16 +1865,17 @@ public class Naive0 extends TestCase {
     boolean b9 = linkedList1.containsAll((java2.util2.Collection)linkedList5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i2 == 0);
+    org.junit.Assert.assertTrue(i2 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == 0);
+    org.junit.Assert.assertTrue(i6 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b9 == true);
+    org.junit.Assert.assertTrue(b9 == true);
 
   }
 
+  @Test
   public void test62() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test62"); }
@@ -1834,22 +1896,23 @@ public class Naive0 extends TestCase {
     boolean b12 = treeSet0.add((java.lang.Object)obj_array9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array9);
+    org.junit.Assert.assertNotNull(obj_array9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array10);
+    org.junit.Assert.assertNotNull(obj_array10);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array11);
+    org.junit.Assert.assertNotNull(obj_array11);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b12 == true);
+    org.junit.Assert.assertTrue(b12 == true);
 
   }
 
+  @Test
   public void test63() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test63"); }
@@ -1888,34 +1951,35 @@ public class Naive0 extends TestCase {
     linkedList1.clear();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == 0);
+    org.junit.Assert.assertTrue(i15 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i19 == 0);
+    org.junit.Assert.assertTrue(i19 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b22 == false);
+    org.junit.Assert.assertTrue(b22 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator25);
+    org.junit.Assert.assertNotNull(iterator25);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b27 == false);
+    org.junit.Assert.assertTrue(b27 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue("'" + str28 + "' != '" + "[]"+ "'", str28.equals("[]"));
+    org.junit.Assert.assertTrue("'" + str28 + "' != '" + "[]"+ "'", str28.equals("[]"));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i29 == (-1));
+    org.junit.Assert.assertTrue(i29 == (-1));
 
   }
 
+  @Test
   public void test64() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test64"); }
@@ -1934,22 +1998,23 @@ public class Naive0 extends TestCase {
     java2.util2.Iterator iterator10 = linkedList2.iterator();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array8);
+    org.junit.Assert.assertNotNull(obj_array8);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i9 == 0);
+    org.junit.Assert.assertTrue(i9 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator10);
+    org.junit.Assert.assertNotNull(iterator10);
 
   }
 
+  @Test
   public void test65() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test65"); }
@@ -1959,10 +2024,11 @@ public class Naive0 extends TestCase {
     java2.util2.Set set1 = java2.util2.Collections.unmodifiableSet((java2.util2.Set)treeSet0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(set1);
+    org.junit.Assert.assertNotNull(set1);
 
   }
 
+  @Test
   public void test66() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test66"); }
@@ -1979,16 +2045,17 @@ public class Naive0 extends TestCase {
     boolean b8 = treeSet0.remove((java.lang.Object)linkedList3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator7);
+    org.junit.Assert.assertNotNull(iterator7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == false);
+    org.junit.Assert.assertTrue(b8 == false);
 
   }
 
+  @Test
   public void test67() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test67"); }
@@ -2007,23 +2074,24 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj9 = linkedList5.removeFirst();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator6);
+    org.junit.Assert.assertNotNull(iterator6);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
 
   }
 
+  @Test
   public void test68() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test68"); }
@@ -2054,25 +2122,26 @@ public class Naive0 extends TestCase {
     boolean b22 = linkedList5.remove((java.lang.Object)linkedList13);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i14 == 0);
+    org.junit.Assert.assertTrue(i14 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i18 == 0);
+    org.junit.Assert.assertTrue(i18 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b21 == true);
+    org.junit.Assert.assertTrue(b21 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b22 == false);
+    org.junit.Assert.assertTrue(b22 == false);
 
   }
 
+  @Test
   public void test69() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test69"); }
@@ -2094,19 +2163,20 @@ public class Naive0 extends TestCase {
     java2.util2.List list13 = java2.util2.Collections.unmodifiableList(list12);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list12);
+    org.junit.Assert.assertNotNull(list12);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list13);
+    org.junit.Assert.assertNotNull(list13);
 
   }
 
+  @Test
   public void test70() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test70"); }
@@ -2124,13 +2194,14 @@ public class Naive0 extends TestCase {
     java2.util2.LinkedList linkedList9 = new java2.util2.LinkedList((java2.util2.Collection)linkedList7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == false);
+    org.junit.Assert.assertTrue(b8 == false);
 
   }
 
+  @Test
   public void test71() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test71"); }
@@ -2150,22 +2221,23 @@ public class Naive0 extends TestCase {
     boolean b11 = treeSet0.removeAll((java2.util2.Collection)linkedList5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(set1);
+    org.junit.Assert.assertNotNull(set1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == 0);
+    org.junit.Assert.assertTrue(i6 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator9);
+    org.junit.Assert.assertNotNull(iterator9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b11 == false);
+    org.junit.Assert.assertTrue(b11 == false);
 
   }
 
+  @Test
   public void test72() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test72"); }
@@ -2197,35 +2269,36 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       boolean b22 = treeSet0.remove((java.lang.Object)list21);
-      fail("Expected exception of type java.lang.ClassCastException");
+      org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
     } catch (java.lang.ClassCastException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array9);
+    org.junit.Assert.assertNotNull(obj_array9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array10);
+    org.junit.Assert.assertNotNull(obj_array10);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array11);
+    org.junit.Assert.assertNotNull(obj_array11);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b12 == true);
+    org.junit.Assert.assertTrue(b12 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i17 == 0);
+    org.junit.Assert.assertTrue(i17 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list21);
+    org.junit.Assert.assertNotNull(list21);
 
   }
 
+  @Test
   public void test73() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test73"); }
@@ -2235,6 +2308,7 @@ public class Naive0 extends TestCase {
 
   }
 
+  @Test
   public void test74() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test74"); }
@@ -2274,34 +2348,35 @@ public class Naive0 extends TestCase {
     int i31 = arrayList1.lastIndexOf((java.lang.Object)long30);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == 0);
+    org.junit.Assert.assertTrue(i15 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i19 == 0);
+    org.junit.Assert.assertTrue(i19 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator26);
+    org.junit.Assert.assertNotNull(iterator26);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map28);
+    org.junit.Assert.assertNotNull(map28);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b29 == false);
+    org.junit.Assert.assertTrue(b29 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i31 == (-1));
+    org.junit.Assert.assertTrue(i31 == (-1));
 
   }
 
+  @Test
   public void test75() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test75"); }
@@ -2327,22 +2402,23 @@ public class Naive0 extends TestCase {
     java2.util2.Map map17 = java2.util2.Collections.synchronizedMap(map16);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator14);
+    org.junit.Assert.assertNotNull(iterator14);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map16);
+    org.junit.Assert.assertNotNull(map16);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map17);
+    org.junit.Assert.assertNotNull(map17);
 
   }
 
+  @Test
   public void test76() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test76"); }
@@ -2358,16 +2434,17 @@ public class Naive0 extends TestCase {
     int i7 = arrayList1.lastIndexOf((java.lang.Object)linkedList3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == (-1));
+    org.junit.Assert.assertTrue(i6 == (-1));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == (-1));
+    org.junit.Assert.assertTrue(i7 == (-1));
 
   }
 
+  @Test
   public void test77() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test77"); }
@@ -2417,46 +2494,47 @@ public class Naive0 extends TestCase {
     int i41 = java2.util2.Collections.lastIndexOfSubList((java2.util2.List)arrayList1, (java2.util2.List)linkedList32);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i14 == 0);
+    org.junit.Assert.assertTrue(i14 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i18 == 0);
+    org.junit.Assert.assertTrue(i18 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b21 == false);
+    org.junit.Assert.assertTrue(b21 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator24);
+    org.junit.Assert.assertNotNull(iterator24);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b26 == false);
+    org.junit.Assert.assertTrue(b26 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i30 == 0);
+    org.junit.Assert.assertTrue(i30 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i34 == 0);
+    org.junit.Assert.assertTrue(i34 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list39);
+    org.junit.Assert.assertNotNull(list39);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b40 == true);
+    org.junit.Assert.assertTrue(b40 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i41 == 1);
+    org.junit.Assert.assertTrue(i41 == 1);
 
   }
 
+  @Test
   public void test78() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test78"); }
@@ -2473,10 +2551,11 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.rotate((java2.util2.List)linkedList5, (int)i7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
 
   }
 
+  @Test
   public void test79() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test79"); }
@@ -2490,16 +2569,17 @@ public class Naive0 extends TestCase {
     java2.util2.Iterator iterator5 = linkedList0.iterator();
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array3);
+    org.junit.Assert.assertNotNull(obj_array3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array4);
+    org.junit.Assert.assertNotNull(obj_array4);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator5);
+    org.junit.Assert.assertNotNull(iterator5);
 
   }
 
+  @Test
   public void test80() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test80"); }
@@ -2550,46 +2630,47 @@ public class Naive0 extends TestCase {
     java2.util2.TreeSet treeSet42 = new java2.util2.TreeSet((java2.util2.Collection)arrayList1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i14 == 0);
+    org.junit.Assert.assertTrue(i14 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i18 == 0);
+    org.junit.Assert.assertTrue(i18 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b21 == false);
+    org.junit.Assert.assertTrue(b21 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator24);
+    org.junit.Assert.assertNotNull(iterator24);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b26 == false);
+    org.junit.Assert.assertTrue(b26 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i30 == 0);
+    org.junit.Assert.assertTrue(i30 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i34 == 0);
+    org.junit.Assert.assertTrue(i34 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list39);
+    org.junit.Assert.assertNotNull(list39);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b40 == true);
+    org.junit.Assert.assertTrue(b40 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i41 == 1);
+    org.junit.Assert.assertTrue(i41 == 1);
 
   }
 
+  @Test
   public void test81() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test81"); }
@@ -2627,37 +2708,38 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.fill((java2.util2.List)arrayList1, (java.lang.Object)linkedList14);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == (-1));
+    org.junit.Assert.assertTrue(i6 == (-1));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == (-1));
+    org.junit.Assert.assertTrue(i7 == (-1));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i12 == 0);
+    org.junit.Assert.assertTrue(i12 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list16);
+    org.junit.Assert.assertNotNull(list16);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i20 == 0);
+    org.junit.Assert.assertTrue(i20 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array25);
+    org.junit.Assert.assertNotNull(obj_array25);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array26);
+    org.junit.Assert.assertNotNull(obj_array26);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array27);
+    org.junit.Assert.assertNotNull(obj_array27);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array28);
+    org.junit.Assert.assertNotNull(obj_array28);
 
   }
 
+  @Test
   public void test82() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test82"); }
@@ -2673,20 +2755,21 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java2.util2.ListIterator listIterator6 = linkedList0.listIterator((int)i5);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array3);
+    org.junit.Assert.assertNotNull(obj_array3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array4);
+    org.junit.Assert.assertNotNull(obj_array4);
 
   }
 
+  @Test
   public void test83() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test83"); }
@@ -2720,32 +2803,33 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj24 = linkedList5.remove((int)i23);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i14 == 0);
+    org.junit.Assert.assertTrue(i14 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i18 == 0);
+    org.junit.Assert.assertTrue(i18 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b21 == true);
+    org.junit.Assert.assertTrue(b21 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b22 == false);
+    org.junit.Assert.assertTrue(b22 == false);
 
   }
 
+  @Test
   public void test84() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test84"); }
@@ -2818,64 +2902,65 @@ public class Naive0 extends TestCase {
     int i64 = arrayList1.indexOf((java.lang.Object)arrayList33);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == 0);
+    org.junit.Assert.assertTrue(i15 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i19 == 0);
+    org.junit.Assert.assertTrue(i19 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator26);
+    org.junit.Assert.assertNotNull(iterator26);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map28);
+    org.junit.Assert.assertNotNull(map28);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b29 == false);
+    org.junit.Assert.assertTrue(b29 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i31 == (-1));
+    org.junit.Assert.assertTrue(i31 == (-1));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i37 == 0);
+    org.junit.Assert.assertTrue(i37 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array39);
+    org.junit.Assert.assertNotNull(obj_array39);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b40 == true);
+    org.junit.Assert.assertTrue(b40 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i47 == 0);
+    org.junit.Assert.assertTrue(i47 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i51 == 0);
+    org.junit.Assert.assertTrue(i51 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator58);
+    org.junit.Assert.assertNotNull(iterator58);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map60);
+    org.junit.Assert.assertNotNull(map60);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b61 == false);
+    org.junit.Assert.assertTrue(b61 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i63 == (-1));
+    org.junit.Assert.assertTrue(i63 == (-1));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i64 == (-1));
+    org.junit.Assert.assertTrue(i64 == (-1));
 
   }
 
+  @Test
   public void test85() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test85"); }
@@ -2891,23 +2976,24 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj6 = linkedList0.getFirst();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array3);
+    org.junit.Assert.assertNotNull(obj_array3);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array4);
+    org.junit.Assert.assertNotNull(obj_array4);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator5);
+    org.junit.Assert.assertNotNull(iterator5);
 
   }
 
+  @Test
   public void test86() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test86"); }
@@ -2934,31 +3020,32 @@ public class Naive0 extends TestCase {
     java.lang.Object[] obj_array18 = linkedList5.toArray(obj_array17);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(set1);
+    org.junit.Assert.assertNotNull(set1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == 0);
+    org.junit.Assert.assertTrue(i6 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator9);
+    org.junit.Assert.assertNotNull(iterator9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b11 == false);
+    org.junit.Assert.assertTrue(b11 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == 0);
+    org.junit.Assert.assertTrue(i15 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array17);
+    org.junit.Assert.assertNotNull(obj_array17);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array18);
+    org.junit.Assert.assertNotNull(obj_array18);
 
   }
 
+  @Test
   public void test87() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test87"); }
@@ -2969,13 +3056,14 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       java.lang.Object obj1 = linkedList0.getFirst();
-      fail("Expected exception of type java2.util2.NoSuchElementException");
+      org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
     }
 
   }
 
+  @Test
   public void test88() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test88"); }
@@ -2993,13 +3081,14 @@ public class Naive0 extends TestCase {
     linkedList5.addFirst((java.lang.Object)i8);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == (-1));
+    org.junit.Assert.assertTrue(i7 == (-1));
 
   }
 
+  @Test
   public void test89() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test89"); }
@@ -3051,49 +3140,50 @@ public class Naive0 extends TestCase {
     java2.util2.Iterator iterator43 = treeSet42.iterator();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i14 == 0);
+    org.junit.Assert.assertTrue(i14 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i18 == 0);
+    org.junit.Assert.assertTrue(i18 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b21 == false);
+    org.junit.Assert.assertTrue(b21 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator24);
+    org.junit.Assert.assertNotNull(iterator24);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b26 == false);
+    org.junit.Assert.assertTrue(b26 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i30 == 0);
+    org.junit.Assert.assertTrue(i30 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i34 == 0);
+    org.junit.Assert.assertTrue(i34 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(list39);
+    org.junit.Assert.assertNotNull(list39);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b40 == true);
+    org.junit.Assert.assertTrue(b40 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i41 == 1);
+    org.junit.Assert.assertTrue(i41 == 1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator43);
+    org.junit.Assert.assertNotNull(iterator43);
 
   }
 
+  @Test
   public void test90() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test90"); }
@@ -3118,25 +3208,26 @@ public class Naive0 extends TestCase {
     boolean b16 = arrayList1.remove((java.lang.Object)linkedList10);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == (-1));
+    org.junit.Assert.assertTrue(i6 == (-1));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == (-1));
+    org.junit.Assert.assertTrue(i7 == (-1));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i11 == 0);
+    org.junit.Assert.assertTrue(i11 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == (-1));
+    org.junit.Assert.assertTrue(i15 == (-1));
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b16 == false);
+    org.junit.Assert.assertTrue(b16 == false);
 
   }
 
+  @Test
   public void test91() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test91"); }
@@ -3147,10 +3238,11 @@ public class Naive0 extends TestCase {
     java2.util2.Collection collection2 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)linkedList1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(collection2);
+    org.junit.Assert.assertNotNull(collection2);
 
   }
 
+  @Test
   public void test92() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test92"); }
@@ -3162,10 +3254,11 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.reverse((java2.util2.List)linkedList0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i2 == (-1));
+    org.junit.Assert.assertTrue(i2 == (-1));
 
   }
 
+  @Test
   public void test93() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test93"); }
@@ -3185,19 +3278,20 @@ public class Naive0 extends TestCase {
     boolean b11 = arrayList1.isEmpty();
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b11 == false);
+    org.junit.Assert.assertTrue(b11 == false);
 
   }
 
+  @Test
   public void test94() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test94"); }
@@ -3223,22 +3317,23 @@ public class Naive0 extends TestCase {
     java2.util2.Map map17 = java2.util2.Collections.unmodifiableMap(map16);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator14);
+    org.junit.Assert.assertNotNull(iterator14);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map16);
+    org.junit.Assert.assertNotNull(map16);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map17);
+    org.junit.Assert.assertNotNull(map17);
 
   }
 
+  @Test
   public void test95() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test95"); }
@@ -3259,25 +3354,26 @@ public class Naive0 extends TestCase {
     boolean b12 = treeSet0.isEmpty();
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(set1);
+    org.junit.Assert.assertNotNull(set1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == 0);
+    org.junit.Assert.assertTrue(i6 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator9);
+    org.junit.Assert.assertNotNull(iterator9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b10 == false);
+    org.junit.Assert.assertTrue(b10 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b11 == false);
+    org.junit.Assert.assertTrue(b11 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b12 == true);
+    org.junit.Assert.assertTrue(b12 == true);
 
   }
 
+  @Test
   public void test96() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test96"); }
@@ -3307,28 +3403,29 @@ public class Naive0 extends TestCase {
     int i21 = arrayList1.indexOf((java.lang.Object)linkedList13);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i5 == 0);
+    org.junit.Assert.assertTrue(i5 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array7);
+    org.junit.Assert.assertNotNull(obj_array7);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b8 == true);
+    org.junit.Assert.assertTrue(b8 == true);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b11 == false);
+    org.junit.Assert.assertTrue(b11 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i15 == 0);
+    org.junit.Assert.assertTrue(i15 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b20 == false);
+    org.junit.Assert.assertTrue(b20 == false);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i21 == 0);
+    org.junit.Assert.assertTrue(i21 == 0);
 
   }
 
+  @Test
   public void test97() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test97"); }
@@ -3350,22 +3447,23 @@ public class Naive0 extends TestCase {
     java2.util2.TreeSet treeSet13 = new java2.util2.TreeSet((java2.util2.SortedSet)treeSet0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i4 == 0);
+    org.junit.Assert.assertTrue(i4 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array9);
+    org.junit.Assert.assertNotNull(obj_array9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array10);
+    org.junit.Assert.assertNotNull(obj_array10);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array11);
+    org.junit.Assert.assertNotNull(obj_array11);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b12 == true);
+    org.junit.Assert.assertTrue(b12 == true);
 
   }
 
+  @Test
   public void test98() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test98"); }
@@ -3400,35 +3498,36 @@ public class Naive0 extends TestCase {
     // This behavior will recorded for regression testing.
     try {
       linkedList2.add((int)i6, (java.lang.Object)map23);
-      fail("Expected exception of type java.lang.IndexOutOfBoundsException");
+      org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
     }
     
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(obj_array5);
+    org.junit.Assert.assertNotNull(obj_array5);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i10 == 0);
+    org.junit.Assert.assertTrue(i10 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i14 == 0);
+    org.junit.Assert.assertTrue(i14 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(iterator21);
+    org.junit.Assert.assertNotNull(iterator21);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map23);
+    org.junit.Assert.assertNotNull(map23);
     
     // Regression assertion (captures the current behavior of the code)
-    assertNotNull(map24);
+    org.junit.Assert.assertNotNull(map24);
 
   }
 
+  @Test
   public void test99() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test99"); }
@@ -3447,16 +3546,17 @@ public class Naive0 extends TestCase {
     java2.util2.Collections.sort((java2.util2.List)linkedList1);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i2 == 0);
+    org.junit.Assert.assertTrue(i2 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i6 == 0);
+    org.junit.Assert.assertTrue(i6 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(b9 == true);
+    org.junit.Assert.assertTrue(b9 == true);
 
   }
 
+  @Test
   public void test100() throws Throwable {
 
     if (debug) { System.out.println(); System.out.print("Naive0.test100"); }
@@ -3478,13 +3578,13 @@ public class Naive0 extends TestCase {
     int i13 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList2, (java2.util2.List)linkedList9);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i3 == 0);
+    org.junit.Assert.assertTrue(i3 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i7 == 0);
+    org.junit.Assert.assertTrue(i7 == 0);
     
     // Regression assertion (captures the current behavior of the code)
-    assertTrue(i13 == 0);
+    org.junit.Assert.assertTrue(i13 == 0);
 
   }
 
