@@ -152,7 +152,7 @@ randoop1: bin
 	  foo/bar/TestClass*.java
 	cd systemtests/randoop-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
-	  foo.bar.TestClass
+	  org.junit.runner.JUnitCore foo.bar.TestClass
 	cp systemtests/randoop-scratch/foo/bar/TestClass0.java systemtests/resources/TestClass0.java
 
 # Runs Randoop on Collections and TreeSet, capture output.
@@ -264,7 +264,7 @@ randoop-custom-visitor: bin
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) CustomVisitorTest.java
 	cd systemtests/randoop-scratch && \
-	  java  -cp .:$(CLASSPATH) CustomVisitorTest
+	  java  -cp .:$(CLASSPATH) org.junit.runner.JUnitCore CustomVisitorTest
 	cp systemtests/randoop-scratch/CustomVisitorTest0.java \
 	  systemtests/resources/CustomVisitorTest0.java
 
@@ -279,7 +279,7 @@ randoop-long-string: bin
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) LongString.java
 	cd systemtests/randoop-scratch && \
-	  java  -cp .:$(CLASSPATH) LongString
+	  java  -cp .:$(CLASSPATH) org.junit.runner.JUnitCore LongString
 	cp systemtests/randoop-scratch/LongString0.java \
 	  systemtests/resources/LongString0.java
 
