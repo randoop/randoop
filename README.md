@@ -19,7 +19,7 @@ Check out the [Randoop plugin for Eclipse](https://rawgit.com/randoop/randoop/ma
 
 [Randoop developer manual](https://rawgit.com/randoop/randoop/master/doc/dev.html)
 
-[Project ideas page (for contributors/researchers)](http://code.google.com/p/randoop/wiki/ProjectIdeas)
+[Project ideas page (for contributors/researchers)](https://github.com/randoop/randoop/wiki/ProjectIdeas)
 
 
 ---
