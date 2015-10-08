@@ -7,7 +7,7 @@ Randoop is an automatic unit test generator for Java. It automatically creates u
 
 ### Randoop plugin for Eclipse ###
 
-Check out the [Randoop plugin for Eclipse](https://rawgit.com/mernst/randoop/master/plugin/doc/index.html), which lets you automatically generate JUnit tests for your project.
+Check out the [Randoop plugin for Eclipse](https://rawgit.com/randoop/randoop/master/plugin/doc/index.html), which lets you automatically generate JUnit tests for your project.
 
 
 ---
@@ -15,9 +15,9 @@ Check out the [Randoop plugin for Eclipse](https://rawgit.com/mernst/randoop/mas
 
 ## Documentation ##
 
-[Randoop user manual](https://rawgit.com/mernst/randoop/master/doc/index.html)
+[Randoop user manual](https://rawgit.com/randoop/randoop/master/doc/index.html)
 
-[Randoop developer manual](https://rawgit.com/mernst/randoop/master/doc/dev.html)
+[Randoop developer manual](https://rawgit.com/randoop/randoop/master/doc/dev.html)
 
 [Project ideas page (for contributors/researchers)](http://code.google.com/p/randoop/wiki/ProjectIdeas)
 

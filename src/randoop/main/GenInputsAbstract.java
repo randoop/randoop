@@ -53,7 +53,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * any methods derived via the <tt>--testclass</tt> or
    * <tt>--classlist</tt> option.
    * 
-   * Also see the manual section on <a href="https://rawgit.com/mernst/randoop/master/doc/index.html#specifying-methods">specifying methods 
+   * Also see the manual section on <a href="https://rawgit.com/randoop/randoop/master/doc/index.html#specifying-methods">specifying methods 
    * and constructors that may appear in a test</a>.
    */
   @Option("The name of a file that lists methods under test")

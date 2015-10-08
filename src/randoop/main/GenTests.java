@@ -510,7 +510,7 @@ public class GenTests extends GenInputsAbstract {
     // It would be nicer for Randoop to output a test suite that detects
     // long-running tests and generates a TimeoutExceededException, as
     // documented in Issue 11:
-    // https://github.com/mernst/randoop/issues/11 .
+    // https://github.com/randoop/randoop/issues/11 .
     {
       List<ExecutableSequence> non_timeout_seqs = new ArrayList<ExecutableSequence>();
       for (ExecutableSequence es : sequences) {
