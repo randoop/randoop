@@ -93,23 +93,12 @@ public class JunitFileWriter {
   }
 
   /** create both the test files and the drivers for convenience **/
-  /* commented out b/c not being used and involved in prototype conflict with writeDriverFile - ben keller
-  public List<File> createJunitFiles(List<ExecutableSequence> sequences, List<Class<?>> allClasses) {
-    List<File> ret = new ArrayList<File>();
-    ret.addAll(createJunitTestFiles(sequences));
-    ret.add(writeDriverFile(allClasses));
-    return ret;
-  }
-/*
-  /** create both the test files and the drivers for convenience **/
-  /* commented out b/c not being used and involved in prototype conflict with writeDriverFile - ben keller
   public List<File> createJunitFiles(List<ExecutableSequence> sequences) {
     List<File> ret = new ArrayList<File>();
     ret.addAll(createJunitTestFiles(sequences));
     ret.add(writeDriverFile());
     return ret;
   }
-*/
 
   /*
    * Writes a JUnit4 test class for a list of sequences
@@ -181,24 +170,7 @@ public class JunitFileWriter {
     boolean isDefaultPackage= packageName.length() == 0;
     if (!isDefaultPackage)
       out.println("package " + packageName + ";");
-  }
-/* commented out because involved in prototype conflict with revised (formerly static) writeDriverFile
-  public File writeDriverFile() {
-    return writeDriverFile(junitDriverClassName);
-  }
-
-  public File writeDriverFile(List<Class<?>> allClasses) {
-    return writeDriverFile(junitDriverClassName);
-  }
-  /**
-   * Creates Junit tests for the faults.
-   * Output is a set of .java files.
-   */
- /*
-  public File writeDriverFile(String driverClassName) {
-    return writeDriverFile(getDir(), packageName, driverClassName, getJunitTestSuiteNames());
-  }
-  */
+  } 
   
   public List<String> getJunitTestSuiteNames() {
     List<String> junitTestSuites = new LinkedList<String>();
@@ -297,6 +269,15 @@ public class JunitFileWriter {
         out.close();
     }
     return file;
+  }
+  
+ 
+  /**
+   * Creates Junit tests for the faults.
+   * Output is a set of .java files.
+   */
+  public File writeDriverFile() {
+    return writeDriverFile(getJunitTestSuiteNames());
   }
 
   public File getDir() {
