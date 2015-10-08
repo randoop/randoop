@@ -158,7 +158,7 @@ public class JunitFileWriter {
  * Writes a test method to the output stream for the sequence s with name "test"+testCounter. 
  */
   private void writeTest(PrintStream out, String className, int testCounter, ExecutableSequence s) {
-    out.println("@Test");
+    out.println("  @Test");
     out.println("  public void test" + testCounter + "() throws Throwable {");
     out.println();
     out.println(indent("if (debug) { System.out.println(); System.out.print(\"" + className + ".test" + testCounter + "\"); }"));
