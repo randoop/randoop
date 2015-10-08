@@ -545,16 +545,21 @@ Writing a list of executed sequences as JUnit files:
   jfw.createJunitFiles(seq);
 </pre>
 <p>
-If you want to modify Randoop's JUnit-generating code, here are laces to look:
+If you want to modify Randoop's JUnit-generating code, here are places to look:
 </p>
 <ul>
 <li>Class <code>randoop.JunitFileWriter</code> figures out how many JUnit classes/files
 to write, how many tests to put in each, what to name them, etc.
+  <ul>
+  <li><code>randoop.JunitFileWriter.writeDriverFile</code> generates the non-reflective driver file</li>
+  <li><code>randoop.JunitFileWriter.writeSuiteFile</code> generates the (reflective) test suite</li>
+  </ul>
 </li>
 <li>Methods responsible for writing the code for a single unit test:
   <ul>
-  <li><code>randoop.ExecutableSequence.toCodeString(),</code></li>
-  <li><code>randoop.ExecutableSequence.toCodeString(),</code></li>
+  <li><code>randoop.ExecutableSequence.toCodeString()</code>,</li>
+  <li>implementors of <code>randoop.ObjectContract</code>,</li>
+  <li>implementors of <code>randoop.Check</code>,</li>
   <li>and the various implementations of <code>StatementKind.appendCode(...)</code></li>
   </ul>
 </li>
@@ -574,21 +579,22 @@ For example, consider the following unit test:
 </p>
 <pre class="code">
  1.  // Tests that the size of a list is 1 after adding an element.
- 2.  public void testAdd() {
- 3.     LinkedList l = new LinkedList();         // Create a list.
- 3.     assertTrue(l.equals(l));                 // List should be equal to itself.
- 4.     Object o = new Object(); 
- 5.     boolean b = l.add(o);                    // Add an element to it.
- 6.     assertTrue(l.size() == 1);               // List should have size 1.
- 7.     assertTrue(l.equals(l));                 // List should still be equal to itself.
- 8.     int i = 10;                              
- 9.     try {
-10.       Object o2 = l.remove(i);               // Removing from invalid index
-11.       fail();                                // should throw exception.
-12.     } catch (IndexOutOfBoundsException e) {
-13.       // expected exception.
-14.     }
-15.  }
+ 2.  @Test
+ 3.  public void testAdd() {
+ 4.     LinkedList l = new LinkedList();            // Create a list.
+ 5.     assertTrue(l.equals(l));                    // List should be equal to itself.
+ 6.     Object o = new Object(); 
+ 7.     boolean b = l.add(o);                       // Add an element to it.
+ 8.     org.junit.Assert.assertTrue(l.size() == 1); // List should have size 1.
+ 9.     org.junit.Assert.assertTrue(l.equals(l));   // List should still be equal to itself.
+10.     int i = 10;                              
+11.     try {
+12.       Object o2 = l.remove(i);                  // Removing from invalid index
+13.       org.junit.Assert.fail();                  // should throw exception.
+14.     } catch (IndexOutOfBoundsException e) {
+15.       // expected exception.
+16.     }
+17.  }
 </pre>
 <p>
 Like a typical unit test, this test combines <i>test input code</i>
