@@ -1,5 +1,10 @@
 Version 1.3.7, released ??
 
+The Randoop homepage is now http://randoop.github.io/randoop/ .
+Moved the Randoop version control repository to its own organization.  It now appears at 
+https://github.com/randoop/randoop (previously https://github.com/mernst/randoop).
+
+
 Created a new mailing list, randoop-discuss@googlegroups.com, for
 discussions with Randoop users.  It is open to join and should be easier to
 search than the existing randoop-developers@googlegroups.com mailing list.
