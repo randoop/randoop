@@ -252,11 +252,11 @@ and use the <tt>--classlist</tt> option: </p>
 Created file: my/home/directory/RandoopTest.java
 done.</pre>
 <p>
-The main test suite is in class <tt>RandoopTest</tt>. You can now compile and run the tests. Don't forget to include <tt>junit.jar</tt> and <tt>hamcrest-core.jar</tt> in the classpath when you compile and run the tests. In this example, you should also add the current directory (&quot;.&quot;) when you run the tests. 
+The main test suite is in class <tt>RandoopTest</tt>. Compile and run the tests using a classpath including the code under test, the generated tests, and JUnit4 files <tt>junit.jar</tt> and <tt>hamcrest-core.jar</tt>. In this example, you should also add the current directory (&quot;.&quot;) when you run the tests. 
 </p>
 
-<pre class="code">javac -classpath randoop.jar:... RandoopTest*.java
-java -classpath .:randoop.jar org.junit.runner.JUnitCore RandoopTest</pre>
+<pre class="code">javac -classpath .:$JUNITPATH RandoopTest*.java
+java -classpath .:$JUNITPATH org.junit.runner.JUnitCore RandoopTest</pre>
 <p>JUnit will execute the generated tests. Most will pass, and some will fail. The next section describes the kinds of tests that Randoop generates, and the reason why they may fail. </p>
 
 
