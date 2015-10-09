@@ -58,7 +58,7 @@ public class PluginBridge implements ITestFilter, IEventListener {
 
         List<ExecutableSequence> singleSequenceList = new LinkedList<ExecutableSequence>();
         singleSequenceList.add(s);
-        File junitFile = JunitFileWriter.createJunitTestFile(GenInputsAbstract.junit_output_dir, "randoopFailures", s, GenInputsAbstract.junit_classname
+        File junitFile = JunitFileWriter.writeJUnitTestFile(GenInputsAbstract.junit_output_dir, "randoopFailures", s, GenInputsAbstract.junit_classname
             + "_failure_" + errors.size());
 
         //additionalJunitFiles.add(junitFile);
