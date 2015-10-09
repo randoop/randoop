@@ -153,7 +153,8 @@ public class JunitFileWriter {
     return file;
   }
 
-  // TODO document and move to util directory.
+  // TODO: Move to util directory.
+  /** Insert four spaces at the beginning of every line of codeString. */
   public static String indent(String codeString) {
     StringBuilder indented = new StringBuilder();
     String[] lines = codeString.split(Globals.lineSep);
