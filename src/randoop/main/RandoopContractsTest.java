@@ -32,16 +32,6 @@ public class RandoopContractsTest {
       throw new RuntimeException(b.toString());
     }
 
-    /* 
-     * JUnit4 Result class does not differentiate b/w failures and exceptions (errors)
-    if (testResult.errorCount() != expectedErrors) {
-      StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE " + expectedErrors + " ERRORS BUT GOT " + testResult.errorCount());
-      b.append("\n\nJUNIT OUTPUT ON RANDOOP-GENERATED TESTS:");
-      b.append(baos.toString());
-      throw new RuntimeException(b.toString());
-    }
-    */
-
     System.out.println("Test passed; got " + expectedFailures + " failures");
 
   }
