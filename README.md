@@ -46,12 +46,12 @@ Slides: [PDF](http://homes.cs.washington.edu/~mernst/pubs/feedback-testgen-icse2
   * A short tool paper describing aspects of the Java version of Randoop.
 
 [Finding Errors in .NET with Feedback-directed Random Testing](http://people.csail.mit.edu/cpacheco/publications/randoop-case-study-abstract.html) by Carlos Pacheco, Shuvendu K. Lahiri, and Thomas Ball. In _ISSTA 2008_, Seattle, Washington, 2008.
-Slides: [PDF](http://randoop.googlecode.com/files/randoop_case_study_2008.pdf) [PPT](http://randoop.googlecode.com/files/randoop_case_study_2008.ppt)
+Slides: [PPT](https://rawgit.com/randoop/randoop/master/presentations/issta_2008_final.pptx)
 
   * This case study details the use of Randoop at Microsoft (using a .NET version of Randoop, developed internally at Microsoft). A team of test engineers applied Randoop to a critical .NET component that had been thorughly tested for years. Still, Randoop found many serious errors.
 
 Directed Random Testing (dissertation).
-Slides: [PDF](http://randoop.googlecode.com/files/thesis_talk_post.pdf)
+Slides: [PPT](https://rawgit.com/randoop/randoop/master/presentations/randoop2.ppt)
 
 
 ### Other publications that use or evaluate Randoop ###
