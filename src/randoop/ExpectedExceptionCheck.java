@@ -102,7 +102,7 @@ public class ExpectedExceptionCheck implements Check {
     if (exceptionClassName == null) {
       exceptionClassName = "Exception";
     }
-    b.append("  fail(\"Expected exception of type " + exceptionClassName + "\");" + Globals.lineSep);
+    b.append("  org.junit.Assert.fail(\"Expected exception of type " + exceptionClassName + "\");" + Globals.lineSep);
     if (Modifier.isPublic(exceptionClass.getModifiers())) {
       b.append("} catch (" + exceptionClassName + " e) {" + Globals.lineSep);
       b.append("  // Expected exception." + Globals.lineSep);
@@ -114,7 +114,7 @@ public class ExpectedExceptionCheck implements Check {
       b.append("} catch (" + publicSuperClassName + " e) {" + Globals.lineSep);
       b.append("  // Expected exception." + Globals.lineSep);
       b.append("  if (! e.getClass().getCanonicalName().equals(\"" + exceptionClassName + "\")) {" + Globals.lineSep);
- b.append("    fail(\"Expected exception of type " + exceptionClassName + ", got \" + e.getClass().getCanonicalName());" + Globals.lineSep);
+ b.append("    org.junit.Assert.fail(\"Expected exception of type " + exceptionClassName + ", got \" + e.getClass().getCanonicalName());" + Globals.lineSep);
       b.append("  }" + Globals.lineSep);
       b.append("}" + Globals.lineSep);
     }      

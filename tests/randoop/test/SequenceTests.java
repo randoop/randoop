@@ -87,7 +87,6 @@ public class SequenceTests extends TestCase {
     visitors.add(new RegressionCaptureVisitor());
   }
 
-  @SuppressWarnings("deprecation")
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
   private static void parseRecord(List<String> lines) {
 
@@ -141,6 +140,7 @@ public class SequenceTests extends TestCase {
     checkListsEqual(expectedCode, Arrays.asList(ds.toCodeString().split(Globals.lineSep)), testId);
   }
   
+  @SuppressWarnings("deprecation")
   private static void checkListsEqual(List<String> expected, List<String> actual, String testId) {
 
     expected = trimmedLines(expected);

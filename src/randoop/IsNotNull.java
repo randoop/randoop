@@ -50,7 +50,7 @@ public final class IsNotNull implements ObjectContract {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
-    b.append("assertNotNull(x0);");
+    b.append("org.junit.Assert.assertNotNull(x0);");
     return b.toString();
   }
 

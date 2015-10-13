@@ -1,14 +1,18 @@
-Version 1.3.7, released ??
+Version 2.0, released October 13, 2015
 
 The Randoop homepage is now http://randoop.github.io/randoop/ .
-Moved the Randoop version control repository to its own organization.  It now appears at 
-https://github.com/randoop/randoop (previously https://github.com/mernst/randoop).
+Moved the Randoop version control repository to its own organization.
+It now appears at https://github.com/randoop/randoop
+(previously https://github.com/mernst/randoop).
 
+Changed output to JUnit4. Default output is a set of JUnit4 test classes 
+with a test suite runnable from the command line using 
+org.junit.runner.JUnitCore. Setting --junit-reflection-allowed=false instead
+produces a Main class that calls each of the test methods individually.
 
 Created a new mailing list, randoop-discuss@googlegroups.com, for
 discussions with Randoop users.  It is open to join and should be easier to
 search than the existing randoop-developers@googlegroups.com mailing list.
-
 
 Version 1.3.6, released August 10, 2015
 

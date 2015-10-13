@@ -52,7 +52,7 @@ public class CustomCheck implements Check {
 
   @Override
   public String toCodeStringPostStatement() {
-    return String.format("%s.a1(%s); Assert.assertEquals(%s.i, %d);", var, var, var, ival);
+    return String.format("%s.a1(%s); org.junit.Assert.assertEquals(%s.i, %d);", var, var, var, ival);
   }
 
   @Override

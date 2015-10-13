@@ -57,7 +57,7 @@ public final class HashCodeReturnsNormally implements ObjectContract {
     b.append(Globals.lineSep);
     b.append("// Checks the contract: ");
     b.append(" " + toCommentString() + Globals.lineSep);
-    b.append("assertTrue(");
+    b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
     b.append("x0.hashCode()");
     b.append(");");

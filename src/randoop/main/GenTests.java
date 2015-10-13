@@ -73,6 +73,7 @@ import randoop.runtime.IMessage;
 import randoop.runtime.MessageSender;
 import randoop.runtime.PluginBridge;
 import randoop.util.ClassFileConstants;
+import randoop.util.CollectionsExt;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -699,7 +700,7 @@ public class GenTests extends GenInputsAbstract {
             compMgr.addGeneratedSequence(seq);
             break;
           default:
-            throw new Error("This can't happen");
+            throw new Error("Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
           }
         }
       }
@@ -718,17 +719,26 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing %d junit tests%n", seq.size());
     }
-    JunitFileWriter jfw
-      = new JunitFileWriter(output_dir, junit_package_name,
-                            junit_classname, testsperfile);
-    List<File> ret = new ArrayList<File>();
-    ret.addAll(jfw.createJunitTestFiles(seq));
-    List<String> junitTestSuiteNames = new LinkedList<String>();
-    junitTestSuiteNames.addAll(jfw.getJunitTestSuiteNames());
-    junitTestSuiteNames.addAll(additionalJUnitClasses == null ? Collections.<String>emptyList() : additionalJUnitClasses);
-    ret.add(JunitFileWriter.writeDriverFile(jfw.getDir(), jfw.packageName, jfw.junitDriverClassName, junitTestSuiteNames));
-    //ret.add(jfw.writeDriverFile());
-    List<File> files = ret;
+    
+    List<File> files = new ArrayList<File>();
+    
+    if (seq.size() > 0) {
+      List<List<ExecutableSequence>> seqPartition = 
+          CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (seq), testsperfile);
+
+      JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name,junit_classname);
+      
+      files.addAll(jfw.writeJUnitTestFiles(seqPartition));
+
+      if (GenInputsAbstract.junit_reflection_allowed) {
+        files.add(jfw.writeSuiteFile(additionalJUnitClasses));
+      } else {
+        files.add(jfw.writeDriverFile());
+      }
+    } else { //preserves behavior from previous version
+      System.out.println("No tests were created. No JUnit class created.");
+    }
+
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.println();
     }

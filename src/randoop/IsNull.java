@@ -48,7 +48,7 @@ public final class IsNull implements ObjectContract {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
     b.append("// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
-    b.append("assertNull(x0);");
+    b.append("org.junit.Assert.assertNull(x0);");
     return b.toString();
   }
 

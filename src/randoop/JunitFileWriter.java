@@ -5,71 +5,313 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import randoop.util.CollectionsExt;
-import randoop.util.Log;
 import randoop.experimental.SequencePrettyPrinter;
 import randoop.main.GenInputsAbstract;
+import randoop.util.Log;
 
 /**
- * Outputs a collection of sequences as Java files, using the JUnit framework, with one method per sequence.
+ * JunitFileWriter is a class that for a collection of sequences, outputs
+ * Java files containing one JUnit4 test method per sequence.
+ * An object manages the information for a suite of tests (name, package, and directory)
+ * and is used by first running writeJUnitTestFiles and then writeSuiteFile or 
+ * writeDriverFile. Alternatively, a single test file can be written using the static
+ * method writeJUnitTestFile.
  */
 public class JunitFileWriter {
 
   // The class of the main JUnit suite, and the prefix of the subsuite names.
-  public String junitDriverClassName;
+  public final String masterTestClassName;
 
    // The package name of the main JUnit suite
-  public String packageName;
+  public final String packageName;
 
   // The directory where the JUnit files should be written to.
-  private String dirName;
+  public final String dirName;
 
   public static boolean includeParseableString = false;
 
-  private int testsPerFile;
+  /**
+   * testClassCount indicates the number of test classes written for the code partitions
+   * received by writeJUnitTestFiles. It is used to generate the list of test class names.
+   */
+  private int testClassCount = 0;
 
-  private Map<String, List<List<ExecutableSequence>>> createdSequencesAndClasses = new LinkedHashMap<String, List<List<ExecutableSequence>>>();
+  /**
+   * classMethodCounts maps test class names to the number of methods in each class. 
+   * This is used to generate lists of method names for a class, since current convention is that 
+   * a test method is named "test"+i for some integer i.
+   */
+  private Map<String, Integer> classMethodCounts = new LinkedHashMap<String,Integer>();
 
-  public JunitFileWriter(String junitDirName, String packageName, String junitDriverClassName, int testsPerFile) {
+  /**
+   * JunitFileWriter creates an instance of class holding information needed to write
+   * a test suite.
+   * 
+   * @param junitDirName         directory where files are to be written
+   * @param packageName          package name to be used in JUnit test classes
+   * @param masterTestClassName  name of test class suite/driver
+   */
+  public JunitFileWriter(String junitDirName, String packageName, String masterTestClassName) {
     this.dirName = junitDirName;
     this.packageName = packageName;
-    this.junitDriverClassName = junitDriverClassName;
-    this.testsPerFile = testsPerFile;
+    this.masterTestClassName = masterTestClassName;
   }
   
-
-  public static File createJunitTestFile(String junitOutputDir, String packageName, ExecutableSequence es, String className) {
-    JunitFileWriter writer = new JunitFileWriter(junitOutputDir, packageName, "dummy", 1);
-    writer.createOutputDir();
-    return writer.writeSubSuite(Collections.singletonList(es), className);
-  }
-  
-  /** Creates Junit tests for the faults.
-   * Output is a set of .java files.
+  //called by PluginBridge.outputSequence
+  /**
+   * writeJUnitTestFile is a static method that writes a single test class to the
+   * specified directory and with the specified class name.
+   * 
+   * @param junitOutputDir   directory where files are to be written.
+   * @param packageName      package name for test classes.
+   * @param es               executable sequence to be written to test class.
+   * @param className        name of test class.
+   * @return File that new test class was written to.
    */
-  public List<File> createJunitTestFiles(List<ExecutableSequence> sequences, String junitTestsClassName) {
-    if (sequences.size() == 0) {
-      System.out.println("No tests were created. No JUnit class created.");
-      return new ArrayList<File>();
-    }
-
-    createOutputDir();
-
+  public static File writeJUnitTestFile(String junitOutputDir, String packageName, ExecutableSequence es, String className) {
+    JunitFileWriter writer = new JunitFileWriter(junitOutputDir, packageName, "dummy");
+    writer.createOutputDir();
+    return writer.writeTestClass(Collections.singletonList(es), className);
+  }
+  
+  /**
+   * writeJUnitTestFiles writes a suite of test class files from a list of lists
+   * of executable sequences. Each executable sequence corresponds to a test method, a
+   * list of executable sequences corresponds to a test class, and the list of lists to a
+   * test suite.
+   * 
+   * @param seqPartition  suite of test classes as a list of lists of executable sequences
+   * @return File objects corresponding to test class files generated.
+   * 
+   * @see writeSuiteFile
+   * @see writeDriverFile
+   */
+  public List<File> writeJUnitTestFiles(List<List<ExecutableSequence>> seqPartition) {
     List<File> ret = new ArrayList<File>();
-    List<List<ExecutableSequence>> subSuites = CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (sequences), testsPerFile);
-    for (int i = 0 ; i < subSuites.size() ; i++) {
-      ret.add(writeSubSuite(subSuites.get(i), junitTestsClassName + i));
+    
+    NameGenerator classNameGen = new NameGenerator(masterTestClassName);
+    
+    createOutputDir();
+  
+    for (List<ExecutableSequence> partition : seqPartition) {
+      ret.add(writeTestClass(partition, classNameGen.next()));
     }
-    createdSequencesAndClasses.put(junitTestsClassName, subSuites);
+    
+    testClassCount = classNameGen.nameCount();
+    
     return ret;
   }
 
+  /**
+   * writeTestClass writes a code sequence as a JUnit4 test class to a .java file.
+   * 
+   * @param sequences      list of executable sequences for method bodies.
+   * @param testClassName  name of test class.
+   * @return File object for generated java file.
+   */
+  private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
+    if (GenInputsAbstract.pretty_print) {
+      SequencePrettyPrinter printer = new SequencePrettyPrinter(sequences, packageName, testClassName);
+      return printer.createFile(getDir().getAbsolutePath());
+    }
+
+    String className = testClassName;
+    File file = new File(getDir(), className + ".java");
+    PrintStream out = createTextOutputStream(file);
+
+    NameGenerator methodNameGen = new NameGenerator("test",1);
+    
+    try {
+      outputPackageName(out, packageName);
+      out.println();
+      out.println("import org.junit.Test;");
+      out.println();
+      out.println("public class " + className + " {");
+      out.println();
+      out.println("  public static boolean debug = false;");
+      out.println();
+      
+      for (ExecutableSequence s : sequences) {
+        if (includeParseableString) {
+          out.println("/*");
+          out.println(s.sequence.toString());
+          out.println("*/");
+        }
+       
+        writeTest(out, className, methodNameGen.next(), s);
+        out.println();
+      }
+      out.println("}");
+      classMethodCounts.put(className,methodNameGen.nameCount());
+    } finally {
+      if (out != null)
+        out.close();
+    }
+
+    return file;
+  }
+
+/*
+ * Writes a test method to the output stream for the sequence s with name "test"+testCounter. 
+ */
+  private void writeTest(PrintStream out, String className, String methodName, ExecutableSequence s) {
+    out.println("  @Test");
+    out.println("  public void " + methodName + "() throws Throwable {");
+    out.println();
+    out.println(indent("if (debug) { System.out.println(); System.out.print(\"" + className + "." + methodName + "\"); }"));
+    out.println();
+    out.println(indent(s.toCodeString()));
+    out.println("  }");
+  }
+  
+  private List<String> getTestClassNames() {
+    List<String> junitTestSuites = new LinkedList<String>();
+    NameGenerator classNameGen = new NameGenerator(masterTestClassName);
+    while (classNameGen.nameCount() < testClassCount) {
+      junitTestSuites.add(classNameGen.next());
+    }
+    return junitTestSuites;
+  }
+  
+  /**
+   * writeSuiteFile writes a JUnit4 suite consisting of test classes
+   * from createJunitTestFiles and additional classes provided as a
+   * parameter.
+   * The file is written to the directory pointed to by writer object 
+   * in a class whose name is the masterTestClassName.
+   * 
+   * @see createJunitTestFiles
+   */
+  public File writeSuiteFile(List<String> additionalTestClassNames) {
+    File dir = this.getDir();
+    String suiteClassName = masterTestClassName;
+    File file = new File(dir, suiteClassName+".java");
+    
+    List<String> testClassNames = getTestClassNames();
+    if (additionalTestClassNames != null && !additionalTestClassNames.isEmpty() ) {
+      testClassNames.addAll(additionalTestClassNames);
+    }
+    
+    try (PrintStream out = createTextOutputStream(file)) {
+      outputPackageName(out, packageName);
+      
+      out.println();
+      out.println("import org.junit.runner.RunWith;");
+      out.println("import org.junit.runners.Suite;");
+      out.println();
+      out.println("@RunWith(Suite.class)");
+      out.println("@Suite.SuiteClasses({");
+ 
+      /* should be done with a joiner - waiting until we can graduate to Java 8 */
+      Iterator<String> testIterator = testClassNames.iterator();
+      if (testIterator.hasNext()) {
+        out.print(testIterator.next() + ".class");
+        while (testIterator.hasNext()) {
+          out.println(", ");
+          out.print(testIterator.next() + ".class");
+        }
+        out.println();
+      }
+      
+      out.println("})");
+      out.println("public class " + suiteClassName + "{ }");
+    } 
+    return file;
+  }
+  
+  /**
+   * writeDriverFile writes non-reflective driver for tests as a main class.
+   * The file is written to the directory pointed to by writer object 
+   * in a class whose name is the masterTestClassName.
+   * 
+   * @see writeSubSuite
+   * @return File object for generated Java file.
+   */
+  public File writeDriverFile() {
+    File dir = this.getDir();
+    File file = new File(dir, masterTestClassName + "Driver.java");
+    
+    List<String> testClassNames = getTestClassNames();
+    
+    try (PrintStream out = createTextOutputStream(file)) {
+      outputPackageName(out, packageName);
+
+      out.println();
+      out.println("public class " + masterTestClassName + "Driver {");
+      out.println();
+      out.println("  public static void main(String[] args) {");
+      
+      if (GenInputsAbstract.init_routine != null) {
+        out.println ("    " + GenInputsAbstract.init_routine + "();");
+      }
+      
+      out.println("    boolean wasSuccessful = true;");
+      
+      NameGenerator instanceNameGen = new NameGenerator("t");
+      for (String testClass : testClassNames) {
+        String testVariable = instanceNameGen.next();
+        out.println(testClass + " " + testVariable + "= new " + testClass + "()");
+
+        NameGenerator methodGen = new NameGenerator("test",1);
+        int classMethodCount = classMethodCounts.get(testClass);
+        while ( methodGen.nameCount() < classMethodCount) {
+          String methodName = methodGen.next();
+          out.println("    try {");
+          out.println("      " + testVariable + "." + methodName + "()");
+          out.println("    } catch (Throwable e) {");
+          out.println("      wasSuccessful = false;");
+          out.println("      e.printStackTrace();");
+          out.println("    }");
+        }
+
+        out.println();
+      }
+      
+      out.println("    if ( !wasSuccessful ) {");
+      out.println("      System.exit(1);");
+      out.println("    }");
+      out.println("  }");
+      out.println();
+      out.println("}");
+    } 
+    return file;
+  }
+  
+  /*
+   * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i 
+   */
+  private class NameGenerator {
+    private int initialValue;
+    private int counter;
+    private String prefix;
+    
+    public NameGenerator(String prefix, int initialValue) {
+      this.initialValue = initialValue;
+      this.counter = initialValue;
+      this.prefix = prefix;
+    }
+    
+    public NameGenerator(String prefix) {
+      this(prefix,0);
+    }
+    
+    public String next() {
+      String name = prefix + counter;
+      counter++;
+      return name;
+    }
+    
+    public int nameCount() {
+      return counter - initialValue;
+    }
+  }
+  
   private void createOutputDir() {
     File dir = getDir();
     if (!dir.exists()) {
@@ -79,82 +321,26 @@ public class JunitFileWriter {
       }
     }
   }
-
-  /** Creates Junit tests for the faults.
-   * Output is a set of .java files.
-   *
-   * the default junit class name is the driver class name + index
-   */
-  public List<File> createJunitTestFiles(List<ExecutableSequence> sequences) {
-    return createJunitTestFiles(sequences, junitDriverClassName);
-  }
-
-  /** create both the test files and the drivers for convenience **/
-  public List<File> createJunitFiles(List<ExecutableSequence> sequences, List<Class<?>> allClasses) {
-    List<File> ret = new ArrayList<File>();
-    ret.addAll(createJunitTestFiles(sequences));
-    ret.add(writeDriverFile(allClasses));
-    return ret;
-  }
-
-  /** create both the test files and the drivers for convinience **/
-  public List<File> createJunitFiles(List<ExecutableSequence> sequences) {
-    List<File> ret = new ArrayList<File>();
-    ret.addAll(createJunitTestFiles(sequences));
-    ret.add(writeDriverFile());
-    return ret;
-  }
-
-
-  private File writeSubSuite(List<ExecutableSequence> sequencesForOneFile, String junitTestsClassName) {
-    if (GenInputsAbstract.pretty_print) {
-      SequencePrettyPrinter printer = new SequencePrettyPrinter(sequencesForOneFile, packageName, junitTestsClassName);
-      return printer.createFile(getDir().getAbsolutePath());
+  
+  private File getDir() {
+    File dir = null;
+    if (dirName == null || dirName.length() == 0)
+      dir = new File(System.getProperty("user.dir"));
+    else
+      dir = new File(dirName);
+    if (packageName == null)
+      return dir;
+ 
+    if (packageName.length() == 0)
+      return dir;
+    String[] split = packageName.split("\\.");
+    for (String s : split) {
+      dir = new File(dir, s);
     }
-
-    String className = junitTestsClassName;
-    File file = new File(getDir(), className + ".java");
-    PrintStream out = createTextOutputStream(file);
-
-    try {
-      outputPackageName(out, packageName);
-      out.println();
-      out.println("import junit.framework.*;");
-      out.println();
-      out.println("public class " + className + " extends TestCase {");
-      out.println();
-      out.println("  public static boolean debug = false;");
-      out.println();
-      int testCounter = 1;
-      for (ExecutableSequence s : sequencesForOneFile) {
-        if (includeParseableString) {
-          out.println("/*");
-          out.println(s.sequence.toString());
-          out.println("*/");
-        }
-        out.println("  public void test" + testCounter + "() throws Throwable {");
-        out.println();
-        // Replaced this printf by the below to avoid a dependence on Java
-        // 5 -- printf was added to the PrintStream class only in J2SE 5.0.
-        // out.println(indent("if (debug) System.out.printf(\"%n" + className + ".test" + testCounter + "\");"));
-        out.println(indent("if (debug) { System.out.println(); System.out.print(\"" + className + ".test" + testCounter + "\"); }"));
-        out.println();
-        out.println(indent(s.toCodeString()));
-        out.println("  }");
-        out.println();
-        testCounter++;
-      }
-      out.println("}");
-    } finally {
-      if (out != null)
-        out.close();
-    }
-
-    return file;
+    return dir;
   }
 
-  // TODO: Move to util directory.
-  /** Insert four spaces at the beginning of every line of codeString. */
+  // TODO document and move to util directory.
   public static String indent(String codeString) {
     StringBuilder indented = new StringBuilder();
     String[] lines = codeString.split(Globals.lineSep);
@@ -168,112 +354,8 @@ public class JunitFileWriter {
     boolean isDefaultPackage= packageName.length() == 0;
     if (!isDefaultPackage)
       out.println("package " + packageName + ";");
-  }
-
-  public File writeDriverFile() {
-    return writeDriverFile(junitDriverClassName);
-  }
-
-  public File writeDriverFile(List<Class<?>> allClasses) {
-    return writeDriverFile(junitDriverClassName);
-  }
-  /**
-   * Creates Junit tests for the faults.
-   * Output is a set of .java files.
-   */
-  public File writeDriverFile(String driverClassName) {
-    return writeDriverFile(getDir(), packageName, driverClassName, getJunitTestSuiteNames());
-  }
+  } 
   
-  public List<String> getJunitTestSuiteNames() {
-    List<String> junitTestSuites = new LinkedList<String>();
-    for (String junitTestsClassName : createdSequencesAndClasses.keySet()) {
-      int numSubSuites = createdSequencesAndClasses.get(junitTestsClassName).size();
-      for (int i = 0; i < numSubSuites; i++) {
-        junitTestSuites.add(junitTestsClassName + i);
-      }
-    } 
-    return junitTestSuites;
-  }
-  
-  public static File writeDriverFile(File dir, String packageName, String driverClassName,
-      List<String> junitTestSuiteNames) {
-    File file = new File(dir, driverClassName + ".java");
-    PrintStream out = createTextOutputStream(file);
-    try {
-      outputPackageName(out, packageName);
-      out.println("import junit.framework.*;");
-      out.println("import junit.textui.*;");
-      out.println("");
-      out.println("public class " + driverClassName + " extends TestCase {");
-      out.println("");
-      if (GenInputsAbstract.junit_reflection_allowed) {
-      out.println("  public static void main(String[] args) {");
-      } else {
-      out.println("  public static void main(String[] args) throws Throwable {");
-      }
-      if (GenInputsAbstract.init_routine != null)
-        out.println ("    " + GenInputsAbstract.init_routine + "();");
-
-      if (GenInputsAbstract.junit_reflection_allowed) {
-      out.println("    TestRunner runner = new TestRunner();");
-      out.println("    TestResult result = runner.doRun(suite(), false);");
-      out.println("    if (! result.wasSuccessful()) {");
-      out.println("      System.exit(1);");
-      out.println("    }");
-      } else {
-      out.println("    new " + driverClassName + "(\"" + driverClassName + "\").runTest();");
-      }
-      out.println("  }");
-      out.println("");
-      out.println("  public " + driverClassName + "(String name) {");
-      out.println("    super(name);");
-      out.println("  }");
-      out.println("");
-      if (GenInputsAbstract.junit_reflection_allowed) {
-      out.println("  public static Test suite() {");
-      out.println("    TestSuite result = new TestSuite();");
-      for (String junitTestsClassName : junitTestSuiteNames) {
-        out.println("    result.addTest(new TestSuite(" + junitTestsClassName + ".class));");
-      }
-      out.println("    return result;");
-      out.println("  }");
-      } else {
-      out.println("  @Override");
-      out.println("  public void runTest() throws Throwable {");
-      for (String junitTestsClassName : junitTestSuiteNames) {
-        out.println("    new " + junitTestsClassName + "().runTest();");
-      }
-      out.println("    System.out.println(); System.out.println(\"All tests passed.\");");
-      out.println("  }");
-      }
-      out.println("");
-      out.println("}");
-    } finally {
-      if (out != null)
-        out.close();
-    }
-    return file;
-  }
-
-  public File getDir() {
-    File dir = null;
-    if (dirName == null || dirName.length() == 0)
-      dir = new File(System.getProperty("user.dir"));
-    else
-      dir = new File(dirName);
-    if (packageName == null)
-      return dir;
-    packageName = packageName.trim(); // Just in case.
-    if (packageName.length() == 0)
-      return dir;
-    String[] split = packageName.split("\\.");
-    for (String s : split) {
-      dir = new File(dir, s);
-    }
-    return dir;
-  }
-
   private static PrintStream createTextOutputStream(File file) {
     try {
       return new PrintStream(file);
