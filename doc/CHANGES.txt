@@ -1,18 +1,23 @@
 Version 2.0, released October 13, 2015
 
 The Randoop homepage is now http://randoop.github.io/randoop/ .
-Moved the Randoop version control repository to its own organization.
-It now appears at https://github.com/randoop/randoop
+Moved the Randoop version control repository to its own GitHub organization:
+it now appears at https://github.com/randoop/randoop
 (previously https://github.com/mernst/randoop).
 
-Changed output to JUnit4. Default output is a set of JUnit4 test classes 
-with a test suite runnable from the command line using 
-org.junit.runner.JUnitCore. Setting --junit-reflection-allowed=false instead
-produces a Main class that calls each of the test methods individually.
+Randoop now outputs JUnit 4 tests (previously JUnit 3 tests).
+These can be run from the command line using a command such as
+
+  java -classpath .:$JUNITPATH org.junit.runner.JUnitCore RandoopTest
+
+If command-line argument --junit-reflection-allowed=false is set when
+running Randoop, then Randoop instead produces a Main class that calls each
+of the test methods individually, without using reflection.
 
 Created a new mailing list, randoop-discuss@googlegroups.com, for
 discussions with Randoop users.  It is open to join and should be easier to
 search than the existing randoop-developers@googlegroups.com mailing list.
+
 
 Version 1.3.6, released August 10, 2015
 
