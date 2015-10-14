@@ -3,6 +3,7 @@ syntax: glob
 *.diff
 *~
 *.orig
+.DS_Store
 Makefile.user
 bin/randoop/version.txt
 randoop.zip
@@ -39,8 +40,8 @@ systemtests/resources/df3-output.txt
 systemtests/sources.txt
 systemtests/resources/Literals0.java
 systemtests/resources/CustomVisitorTest0.java
-systemtests/resources/LongString0.java 
-systemtests/resources/JDK_Tests?.java 
+systemtests/resources/LongString0.java
+systemtests/resources/JDK_Tests?.java
 systemtests/resources/std*.txt
 
 bdgen-log.txt
