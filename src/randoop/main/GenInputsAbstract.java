@@ -143,6 +143,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * either the time limit (--timelimit=int) OR the input limit
    * (--inputlimit=int) is reached.
    *
+   * The default value is appropriate for generating tests for a single
+   * class in the context of a larger program, but is too small to be effectiev
+   * for generating tests for an entire program.
+   *
    * Note that if you use this option, Randoop is nondeterministic: it
    * may generate different test suites on different runs.
    */
@@ -152,23 +156,29 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int timelimit = 100;
 
   /**
-   * Maximum number of tests generated.
+   * Determines the maximum number of tests to output.
+   * 
+   * This command-line option is generally more appropriate than
+   * --inputlimit, which controls how many test candidates Randoop
+   * generates internally.
+   */
+  @Option ("Maximum number of tests to ouput; contrast to --inputlimit")
+  public static int outputlimit = 100000000;
+
+  /**
+   * Maximum number of test candidates generated.
    * 
    * Used to determine when to stop test generation. Generation stops when
    * either the time limit (--timelimit=int) OR the input limit
    * (--inputlimit=int) is reached.  The number of tests output
-   * may be smaller than then number of inputs created, because redundant
-   * and illegal inputs may be discarded.  Also see --outputlimit.
+   * may be smaller than then number of test candidates generated,
+   * because redundant and illegal tests may be discarded.
+   * 
+   * The --outputlimit command-line option is usually more appropriate than
+   * --inputlimit.
    */
   @Option("Maximum number of tests generated")
   public static int inputlimit = 100000000;
-
-  /**
-   * Determines the maximum number of tests to output, no matter how many
-   * are generated.  Contrast to --inputlimit.
-   */
-  @Option ("Maximum number of tests to ouput; contrast to --inputlimit")
-  public static int outputlimit = 100000000;
 
   /** Do not generate tests with more than this many statements */
   @Option("Do not generate tests with more than <int> statements")
