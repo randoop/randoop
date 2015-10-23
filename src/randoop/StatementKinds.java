@@ -57,6 +57,8 @@ public class StatementKinds {
       return RConstructor.parse(descr);
     } else if (id.equals(ArrayDeclaration.ID)) {
       return ArrayDeclaration.parse(descr);
+    } else if (id.equals(EnumConstant.ID)) {
+      return EnumConstant.parse(descr);
     } else if (id.equals(DummyStatement.ID)) {
       return DummyStatement.parse(descr);
     } else {
@@ -82,6 +84,8 @@ public class StatementKinds {
       return RConstructor.ID;
     if (st instanceof ArrayDeclaration)
       return ArrayDeclaration.ID;
+    if (st instanceof EnumConstant)
+      return EnumConstant.ID;
     if (st instanceof DummyStatement)
       return DummyStatement.ID;
     throw new Error();

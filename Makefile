@@ -80,7 +80,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist  results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output test-enums
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -411,6 +411,11 @@ test-constants: bin
 # 	   --outputfile=systemtests/resources/arraylist.dfout.txt \
 # 	   systemtests/resources/arraylist.dfin.txt.goal
 
+# runs JUnit4 tests on enum tests
+test-enums: bin
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.EnumConstantTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.EnumReflectionTest
+	  
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
 	rm -rf systemtests/df-scratch
