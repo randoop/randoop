@@ -76,7 +76,7 @@ public final class RMethod implements StatementKind, Serializable {
   /**
    * Creates the Rmethod corresponding to the given reflection method.
    */
-  private RMethod(Method method) {
+  public RMethod(Method method) {
     if (method == null)
       throw new IllegalArgumentException("method should not be null.");
 
