@@ -97,6 +97,9 @@ jdoc:
 		| xargs javadoc -d doc/javadoc -quiet -noqualifier all -notimestamp
 javadoc: jdoc
 
+ideas:
+	kramdown doc/projectideas/ProjectIdeas.md > doc/projectideas/projectideas.html
+
 .PHONY: tags
 tags: TAGS
 TAGS: $(RANDOOP_FILES)
