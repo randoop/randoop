@@ -110,6 +110,9 @@ public class JunitFileWriter {
 
   /**
    * writeTestClass writes a code sequence as a JUnit4 test class to a .java file.
+   * Uses JUnit method ordering that assumes test names are in ascending alphabetical
+   * order in terms of how Randoop wants them to be executed. Relevant when there is
+   * global (or at least class) state that is being manipulated.
    * 
    * @param sequences      list of executable sequences for method bodies.
    * @param testClassName  name of test class.
@@ -130,8 +133,11 @@ public class JunitFileWriter {
     try {
       outputPackageName(out, packageName);
       out.println();
+      out.println("import org.junit.FixMethodOrder;");
       out.println("import org.junit.Test;");
+      out.println("import org.junit.runners.MethodSorters;");
       out.println();
+      out.println("@FixMethodOrder(MethodSorters.NAME_ASCENDING)");
       out.println("public class " + className + " {");
       out.println();
       out.println("  public static boolean debug = false;");

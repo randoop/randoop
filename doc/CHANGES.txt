@@ -1,6 +1,11 @@
 Version 2.0.1, to be released
 
-Added support for enums in generated tests.  If enum doesn't define any methods,
+Corrected bug in Junit4 test class generation by adding @FixMethodOrder annotation to each 
+test class. In certain circumstances, Randoop generates tests that are not independent
+and so are order dependent. Since test methods are named testn for 0 <= n, ordering
+methods in ascending order by name should be sufficient to ensure Randoops intended order. 
+
+Added support for enums in generated tests (Issue #17).  If enum doesn't define any methods,
 then it will only be used as an argument to methods of other classes. Otherwise,
 an enum is treated similarly to any other class.  Will extract all enum constants,
 and extracts both public methods explicitly declared in the class (but not 
