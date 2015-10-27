@@ -29,6 +29,7 @@ public class EnumConstantTest {
     }
   }
   
+  @SuppressWarnings("unused")
   @Test
   public void parseErrors() {
     String missingColon = "randoop.SimpleEnumForTestsTHREE";
@@ -42,9 +43,10 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(missingColon);
+      fail("Expected StatementKindParseException to be thrown");
     } catch (StatementKindParseException e) {
       String msg = "An enum constant description must be of the form \"" +
-          "<type>:<value>" + " but description is \"" + missingColon + "\"";
+          "<type>:<value>" + " but description is \"" + missingColon + "\".";
       assertEquals("Expecting missing colon message",msg,e.getMessage());
     }
     
@@ -53,6 +55,7 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(missingType);
+      fail("Expected StatementKindParseException to be thrown");
     } catch (StatementKindParseException e) {
       String msg = errorPrefix1 + missingType + errorPrefix2 + " No type given.";
       assertEquals("Expecting missing type message",msg,e.getMessage());
@@ -60,6 +63,7 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(missingValue);
+      fail("Expected StatementKindParseException to be thrown");
     } catch (StatementKindParseException e) {
       String msg = errorPrefix1 + missingValue + errorPrefix2 + " No value given.";
       assertEquals("Expecting missing value message",msg,e.getMessage());
@@ -67,6 +71,7 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(spaceInType);
+      fail("Expected StatementKindParseException to be thrown");
     } catch (StatementKindParseException e) {
       String msg = errorPrefix1 + spaceInType + errorPrefix2 + " The type has unexpected whitespace characters.";
       assertEquals("Expecting space in type message",msg,e.getMessage());
@@ -74,6 +79,7 @@ public class EnumConstantTest {
 
     try {
       EnumConstant ec = EnumConstant.parse(spaceInValue);
+      fail("Expected StatementKindParseException to be thrown");
     } catch (StatementKindParseException e) {
       String msg = errorPrefix1 + spaceInValue + errorPrefix2 + " The value has unexpected whitespace characters.";
       assertEquals("Expecting space in value message",msg,e.getMessage());
@@ -81,18 +87,21 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(badType);
+      fail("Expected StatementKindParseException to be thrown");
     } catch (StatementKindParseException e) {
       String msg = errorPrefix1 + badType + errorPrefix2 + " The type given \"SEFT\" was not recognized.";
       assertEquals("Expecting bad type message",msg,e.getMessage());
     }
     try {
       EnumConstant ec = EnumConstant.parse(badValue);
+      fail("Expected StatementKindParseException to be thrown");
     } catch (StatementKindParseException e) {
       String msg = errorPrefix1 + badValue + errorPrefix2 + " The value given \"FOUR\" is not a constant of the enum randoop.SimpleEnumForTests.";
       assertEquals("Expecting bad value message",msg,e.getMessage());
     }
     try {
       EnumConstant ec = EnumConstant.parse(nonEnum);
+      fail("Expected StatementKindParseException to be thrown");
     } catch (StatementKindParseException e) {
       String msg = errorPrefix1 + nonEnum + errorPrefix2 + " The type given \"randoop.EnumConstantTest\" is not an enum.";
       assertEquals("Expecting nonenum message",msg,e.getMessage());
