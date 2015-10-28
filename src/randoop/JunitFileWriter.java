@@ -128,7 +128,7 @@ public class JunitFileWriter {
     File file = new File(getDir(), className + ".java");
     PrintStream out = createTextOutputStream(file);
 
-    NameGenerator methodNameGen = new NameGenerator("test",1);
+    NameGenerator methodNameGen = new NameGenerator("test",1,numDigits(sequences.size()));
     
     try {
       outputPackageName(out, packageName);
@@ -264,8 +264,9 @@ public class JunitFileWriter {
         String testVariable = instanceNameGen.next();
         out.println(testClass + " " + testVariable + "= new " + testClass + "()");
 
-        NameGenerator methodGen = new NameGenerator("test",1);
         int classMethodCount = classMethodCounts.get(testClass);
+        NameGenerator methodGen = new NameGenerator("test",1,numDigits(classMethodCount));
+        
         while ( methodGen.nameCount() < classMethodCount) {
           String methodName = methodGen.next();
           out.println("    try {");
@@ -288,29 +289,42 @@ public class JunitFileWriter {
     } 
     return file;
   }
+
+  private int numDigits(int n) {
+    return (int)Math.log10(n) + 1;
+  }
   
   /*
-   * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i 
+   * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i.
+   * Will pad counter with zeros to ensure a minimum number of digits. If all numbers should be
+   * zero padded then must give the number of digits for the maximum counter value.
    */
   private class NameGenerator {
     private int initialValue;
     private int counter;
+    private int digits;
     private String prefix;
     
-    public NameGenerator(String prefix, int initialValue) {
+    public NameGenerator(String prefix, int initialValue, int digits) {
       this.initialValue = initialValue;
       this.counter = initialValue;
       this.prefix = prefix;
+      this.digits = digits;
     }
     
     public NameGenerator(String prefix) {
-      this(prefix,0);
+      this(prefix,0,0);
     }
     
     public String next() {
-      String name = prefix + counter;
+      StringBuilder sb = new StringBuilder(prefix);
+      String countStr = "" + counter;
+      for (int i = digits - countStr.length(); i > 0; i--) {
+        sb.append('0');
+      }
+      sb.append(countStr);
       counter++;
-      return name;
+      return sb.toString();
     }
     
     public int nameCount() {
