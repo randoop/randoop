@@ -60,7 +60,7 @@ public final class RConstructor implements StatementKind, Serializable {
   }
 
   // Creates the RConstructor corresponding to the given reflection constructor.
-  private RConstructor(Constructor<?> constructor) {
+  public RConstructor(Constructor<?> constructor) {
     if (constructor == null)
       throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;

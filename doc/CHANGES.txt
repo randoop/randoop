@@ -1,3 +1,17 @@
+Version 2.0.1, to be released
+
+Added support for enums in generated tests.  If enum doesn't define any methods,
+then it will only be used as an argument to methods of other classes. Otherwise,
+an enum is treated similarly to any other class.  Will extract all enum constants,
+and extracts both public methods explicitly declared in the class (but not 
+values() or valueOf(-)), inherited methods that are also defined in anonymous 
+class for at least one constant. Captures abstract methods of enum, since must be 
+implemented for all constants. 
+
+Finished consolidation of web documentation, moved Wiki project ideas into doc folder.
+
+Moved plugin directories into their own repository.
+
 Version 2.0, released October 13, 2015
 
 The Randoop homepage is now http://randoop.github.io/randoop/ .

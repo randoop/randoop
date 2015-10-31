@@ -14,9 +14,8 @@ import randoop.util.Util;
 import randoop.main.GenInputsAbstract;
 
 /**
- * Represents a primitive value (including Strings). This type of statement
- * doesn't actually transform any state, but it works out
- * nicely to represent primitives as statements.
+ * Represents a non-receiver value (primitive, String and null values) as a
+ * kind of statement. This type of statement doesn't transform any state.
  *
  * This decl info is for primitives, strings and nulls (of any type).
  * Such values are never used as receivers when generating method calls.
