@@ -19,6 +19,7 @@ import randoop.main.GenInputsAbstract;
  * nicely to represent primitives as statements.
  *
  * This decl info is for primitives, strings and nulls (of any type).
+ * Such values are never used as receivers when generating method calls.
  */
 public final class PrimitiveOrStringOrNullDecl implements StatementKind, Serializable {
 
