@@ -126,7 +126,7 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../randoop/StatementKind.html" title="interface in randoop">StatementKind</a></td>
 <td class="colLast">
-<div class="block">Represents a kind of statement that can be part of a sequence, for example, a
+<div class="block">Represents a template for a statement that can be part of a sequence, for example, a particular
  method call, constructor call, or primitive value declaration.</div>
 </td>
 </tr>
@@ -157,10 +157,7 @@
 <td class="colFirst"><a href="../randoop/CheckRepContract.html" title="class in randoop">CheckRepContract</a></td>
 <td class="colLast">
 <div class="block">Represents the contract that an object should conform to its representation
- invariant, as expressed in a user-supplied representation check method.A rep
- check method for a class must be declared as a public instance method with no
- parameters in the given class, annotated with a <code>@CheckRep</code>
- annotation, and have return type <code>boolean</code> or <code>void</code>.</div>
+ invariant, as expressed in a user-supplied representation check method.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -203,102 +200,128 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../randoop/EnumConstant.html" title="class in randoop">EnumConstant</a></td>
+<td class="colLast">
+<div class="block">EnumConstant represents a constant value from an enum.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/EqualsHashcode.html" title="class in randoop">EqualsHashcode</a></td>
 <td class="colLast">
 <div class="block">The contract: <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/EqualsMethodMatcher.html" title="class in randoop">EqualsMethodMatcher</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/EqualsReflexive.html" title="class in randoop">EqualsReflexive</a></td>
 <td class="colLast">
 <div class="block">The contract: <code>x0.equals(x0)==true</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/EqualsSymmetric.html" title="class in randoop">EqualsSymmetric</a></td>
 <td class="colLast">
 <div class="block">The contract: <code>o1.equals(o2) &rArr; o2.equals(o1)</code>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/EqualsToNullRetFalse.html" title="class in randoop">EqualsToNullRetFalse</a></td>
 <td class="colLast">
 <div class="block">The contract: <code>x0.equals(null)==false</code>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/EverythingIsDifferentMatcher.html" title="class in randoop">EverythingIsDifferentMatcher</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/ExceptionalExecution.html" title="class in randoop">ExceptionalExecution</a></td>
 <td class="colLast">
 <div class="block">Means that the execution of a statement threw an exception.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a></td>
 <td class="colLast">
 <div class="block">An ExecutableSequence wraps a <a href="../randoop/Sequence.html" title="class in randoop"><code>Sequence</code></a> with functionality for
  executing the sequence.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/Execution.html" title="class in randoop">Execution</a></td>
 <td class="colLast">
 <div class="block">Represents the unfolding execution of a sequence.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a></td>
 <td class="colLast">
 <div class="block">Represents the outcome of executing one statement in a sequence, including
  the value returned by the statement, or the exception thrown.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/ExpectedExceptionCheck.html" title="class in randoop">ExpectedExceptionCheck</a></td>
 <td class="colLast">
 <div class="block">A checker that checks for an expected exception from a method call.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/FailureSet.html" title="class in randoop">FailureSet</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/FailureSet.Failure.html" title="class in randoop">FailureSet.Failure</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../randoop/FieldGetter.html" title="class in randoop">FieldGetter</a></td>
+<td class="colLast">
+<div class="block">FieldGetter is an adapter that creates a <a href="../randoop/StatementKind.html" title="interface in randoop"><code>StatementKind</code></a> from
+ a <a href="../randoop/PublicField.html" title="class in randoop"><code>PublicField</code></a> and behaves like a getter for the field.</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../randoop/FieldSetter.html" title="class in randoop">FieldSetter</a></td>
+<td class="colLast">
+<div class="block">FieldSetter is an adapter for a <a href="../randoop/PublicField.html" title="class in randoop"><code>PublicField</code></a> as a <a href="../randoop/StatementKind.html" title="interface in randoop"><code>StatementKind</code></a>
+ that acts like a setter for the field.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/ForwardGenerator.html" title="class in randoop">ForwardGenerator</a></td>
 <td class="colLast">
 <div class="block">Randoop's forward, component-based generator.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/Globals.html" title="class in randoop">Globals</a></td>
 <td class="colLast">
 <div class="block">Various general global variables used throughout Randoop.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/Globals.ErrorStreamAssigner.html" title="class in randoop">Globals.ErrorStreamAssigner</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/HashCodeReturnsNormally.html" title="class in randoop">HashCodeReturnsNormally</a></td>
 <td class="colLast">
 <div class="block">Checks that calling hashCode() on an object does not throw an exception.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/HelperSequenceCreator.html" title="class in randoop">HelperSequenceCreator</a></td>
 <td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../randoop/InstanceField.html" title="class in randoop">InstanceField</a></td>
+<td class="colLast">
+<div class="block">InstanceField represents an instance field of a class.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../randoop/IsNotNull.html" title="class in randoop">IsNotNull</a></td>
@@ -321,7 +344,8 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../randoop/JunitFileWriter.html" title="class in randoop">JunitFileWriter</a></td>
 <td class="colLast">
-<div class="block">Outputs a collection of sequences as Java files, using the JUnit framework, with one method per sequence.</div>
+<div class="block">JunitFileWriter is a class that for a collection of sequences, outputs
+ Java files containing one JUnit4 test method per sequence.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -414,7 +438,8 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../randoop/PrimitiveOrStringOrNullDecl.html" title="class in randoop">PrimitiveOrStringOrNullDecl</a></td>
 <td class="colLast">
-<div class="block">Represents a primitive value (including Strings).</div>
+<div class="block">Represents a non-receiver value (primitive, String and null values) as a
+ kind of statement.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -422,6 +447,20 @@
 <td class="colLast">
 <div class="block">An check recording the value of a primitive value obtained
  during execution, (e.g.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../randoop/PublicField.html" title="class in randoop">PublicField</a></td>
+<td class="colLast">
+<div class="block">PublicField is an abstract class representing a public field of a class object, 
+ which can be an instance field, a static field, or a static final field.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../randoop/PublicFieldParser.html" title="class in randoop">PublicFieldParser</a></td>
+<td class="colLast">
+<div class="block">PublicFieldParser defines a parser to recognize a descriptor of a field in a string,
+ and return an object representing the sort of field it is in the corresponding class.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -500,36 +539,52 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a href="../randoop/SerializableRConstructor.html" title="class in randoop">SerializableRConstructor</a></td>
+<td class="colFirst"><a href="../randoop/SerializablePublicField.html" title="class in randoop">SerializablePublicField</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="../randoop/SerializableRMethod.html" title="class in randoop">SerializableRMethod</a></td>
+<td class="colFirst"><a href="../randoop/SerializableRConstructor.html" title="class in randoop">SerializableRConstructor</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../randoop/SerializableRMethod.html" title="class in randoop">SerializableRMethod</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/Statement.html" title="class in randoop">Statement</a></td>
 <td class="colLast">
 <div class="block">The elements of a Sequence.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/StatementKinds.html" title="class in randoop">StatementKinds</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../randoop/StaticField.html" title="class in randoop">StaticField</a></td>
+<td class="colLast">
+<div class="block">PublicStaticField represents a public static field of a class.</div>
+</td>
+</tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../randoop/StaticFinalField.html" title="class in randoop">StaticFinalField</a></td>
+<td class="colLast">
+<div class="block">StaticFinalField represents a public static final field of a class.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/SubTypeSet.html" title="class in randoop">SubTypeSet</a></td>
 <td class="colLast">
 <div class="block">A set of classes.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../randoop/ToStringReturnsNormally.html" title="class in randoop">ToStringReturnsNormally</a></td>
 <td class="colLast">
 <div class="block">Checks that calling toString() on an object does not throw an exception.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../randoop/Variable.html" title="class in randoop">Variable</a></td>
 <td class="colLast">
 <div class="block">Represents the result of a statement call in a sequence.</div>

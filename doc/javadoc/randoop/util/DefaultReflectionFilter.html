@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -138,8 +138,16 @@ implements <a href="../../randoop/util/ReflectionFilter.html" title="interface i
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/DefaultReflectionFilter.html#DefaultReflectionFilter-java.util.regex.Pattern-">DefaultReflectionFilter</a></span>(Pattern&nbsp;omitmethods)</code>
-<div class="block">omitmethods can be null (which means "omit no methods")</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/DefaultReflectionFilter.html#DefaultReflectionFilter--">DefaultReflectionFilter</a></span>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/DefaultReflectionFilter.html#DefaultReflectionFilter-java.util.regex.Pattern-">DefaultReflectionFilter</a></span>(Pattern&nbsp;omitmethods)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../randoop/util/DefaultReflectionFilter.html#DefaultReflectionFilter-java.util.regex.Pattern-java.util.Set-">DefaultReflectionFilter</a></span>(Pattern&nbsp;omitmethods,
+                       Set&lt;String&gt;&nbsp;omitfields)</code>
+<div class="block">DefaultReflectionFilter creates a filter object that uses default
+ criteria for inclusion of reflection objects.</div>
 </td>
 </tr>
 </table>
@@ -167,6 +175,12 @@ implements <a href="../../randoop/util/ReflectionFilter.html" title="interface i
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/DefaultReflectionFilter.html#canUse-java.lang.reflect.Field-">canUse</a></span>(Field&nbsp;f)</code>
+<div class="block">canUse tests whether a field is included in set omitted method names.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/DefaultReflectionFilter.html#canUse-java.lang.reflect.Method-">canUse</a></span>(Method&nbsp;m)</code>&nbsp;</td>
 </tr>
 </table>
@@ -191,14 +205,40 @@ implements <a href="../../randoop/util/ReflectionFilter.html" title="interface i
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a name="DefaultReflectionFilter--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DefaultReflectionFilter</h4>
+<pre>public&nbsp;DefaultReflectionFilter()</pre>
+</li>
+</ul>
 <a name="DefaultReflectionFilter-java.util.regex.Pattern-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DefaultReflectionFilter</h4>
+<pre>public&nbsp;DefaultReflectionFilter(Pattern&nbsp;omitmethods)</pre>
+</li>
+</ul>
+<a name="DefaultReflectionFilter-java.util.regex.Pattern-java.util.Set-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>DefaultReflectionFilter</h4>
-<pre>public&nbsp;DefaultReflectionFilter(Pattern&nbsp;omitmethods)</pre>
-<div class="block">omitmethods can be null (which means "omit no methods")</div>
+<pre>public&nbsp;DefaultReflectionFilter(Pattern&nbsp;omitmethods,
+                               Set&lt;String&gt;&nbsp;omitfields)</pre>
+<div class="block">DefaultReflectionFilter creates a filter object that uses default
+ criteria for inclusion of reflection objects.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>omitmethods</code> - pattern for methods to omit, if null then no methods omitted.</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../randoop/util/Reflection.html#getStatements-java.util.Collection-randoop.util.ReflectionFilter-"><code>Reflection.getStatements(java.util.Collection, ReflectionFilter)</code></a></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -238,13 +278,31 @@ implements <a href="../../randoop/util/ReflectionFilter.html" title="interface i
 <a name="canUse-java.lang.reflect.Constructor-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>canUse</h4>
 <pre>public&nbsp;boolean&nbsp;canUse(Constructor&lt;?&gt;&nbsp;c)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/util/ReflectionFilter.html#canUse-java.lang.reflect.Constructor-">canUse</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="canUse-java.lang.reflect.Field-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>canUse</h4>
+<pre>public&nbsp;boolean&nbsp;canUse(Field&nbsp;f)</pre>
+<div class="block">canUse tests whether a field is included in set omitted method names.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/util/ReflectionFilter.html#canUse-java.lang.reflect.Field-">canUse</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>f</code> - - field to test</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if field name does not occur in omitFields pattern, and false if it does.</dd>
 </dl>
 </li>
 </ul>

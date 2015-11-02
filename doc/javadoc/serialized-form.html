@@ -201,6 +201,26 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="randoop.EnumConstant">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/EnumConstant.html" title="class in randoop">EnumConstant</a> extends Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>849994347169442078L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>value</h4>
+<pre>Enum&lt;E extends Enum&lt;E&gt;&gt; value</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="randoop.EqualsHashcode">
 <!--   -->
 </a>
@@ -327,6 +347,46 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="randoop.FieldGetter">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/FieldGetter.html" title="class in randoop">FieldGetter</a> extends Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>3966201727170073093L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>field</h4>
+<pre><a href="randoop/PublicField.html" title="class in randoop">PublicField</a> field</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="randoop.FieldSetter">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/FieldSetter.html" title="class in randoop">FieldSetter</a> extends Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-5905429635469194115L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>field</h4>
+<pre><a href="randoop/PublicField.html" title="class in randoop">PublicField</a> field</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="randoop.HashCodeReturnsNormally">
 <!--   -->
 </a>
@@ -334,6 +394,15 @@
 <dl class="nameValue">
 <dt>serialVersionUID:</dt>
 <dd>1139097987278872928L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="randoop.InstanceField">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/InstanceField.html" title="class in randoop">InstanceField</a> extends <a href="randoop/PublicField.html" title="class in randoop">PublicField</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-1879588478257403865L</dd>
 </dl>
 </li>
 <li class="blockList"><a name="randoop.IsNotNull">
@@ -526,6 +595,43 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="randoop.PublicField">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/PublicField.html" title="class in randoop">PublicField</a> extends Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-8083487154339374578L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialization Methods</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>writeReplace</h4>
+<pre>protected&nbsp;Object&nbsp;writeReplace()
+                       throws ObjectStreamException</pre>
+<div class="block">writeReplace creates <code>Serializable</code> version of field.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>ObjectStreamException</code></dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="randoop/SerializablePublicField.html" title="class in randoop"><code>SerializablePublicField</code></a></dd>
+</dl>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>field</h4>
+<pre>Field field</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="randoop.RConstructor">
 <!--   -->
 </a>
@@ -555,6 +661,16 @@
 <li class="blockList">
 <h4>constructor</h4>
 <pre>Constructor&lt;T&gt; constructor</pre>
+</li>
+<li class="blockList">
+<h4>overloads</h4>
+<pre>List&lt;E&gt; overloads</pre>
+<div class="block">A list with as many sublists as the formal paramters of this constructor.
+ The <em>i</em>th set indicates all the possible argument types for the
+ <em>i</im>th formal parameter, for overloads of this constructor with the
+ same number of formal parameters.  At a call site, if the declared
+ type of an actual argument is not uniquely determined, then the acutal
+ should be casted at the call site.</div>
 </li>
 <li class="blockList">
 <h4>inputTypesCached</h4>
@@ -634,6 +750,16 @@
 <li class="blockList">
 <h4>method</h4>
 <pre>Method method</pre>
+</li>
+<li class="blockList">
+<h4>overloads</h4>
+<pre>List&lt;E&gt; overloads</pre>
+<div class="block">A list with as many sublists as the formal paramters of this method.
+ The <em>i</em>th set indicates all the possible argument types for the
+ <em>i</im>th formal parameter, for overloads of this method with the
+ same number of formal parameters.  At a call site, if the declared
+ type of an actual argument is not uniquely determined, then the acutal
+ should be casted at the call site.</div>
 </li>
 <li class="blockList">
 <h4>inputTypesCached</h4>
@@ -957,6 +1083,40 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="randoop.SerializablePublicField">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/SerializablePublicField.html" title="class in randoop">SerializablePublicField</a> extends Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>9109946164794213814L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialization Methods</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>readResolve</h4>
+<pre>private&nbsp;Object&nbsp;readResolve()
+                    throws ObjectStreamException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>ObjectStreamException</code></dd>
+</dl>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>fieldRep</h4>
+<pre>String fieldRep</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="randoop.SerializableRConstructor">
 <!--   -->
 </a>
@@ -1056,6 +1216,24 @@
 <dl class="nameValue">
 <dt>serialVersionUID:</dt>
 <dd>1L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="randoop.StaticField">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/StaticField.html" title="class in randoop">StaticField</a> extends <a href="randoop/PublicField.html" title="class in randoop">PublicField</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>240655978039880972L</dd>
+</dl>
+</li>
+<li class="blockList"><a name="randoop.StaticFinalField">
+<!--   -->
+</a>
+<h3>Class <a href="randoop/StaticFinalField.html" title="class in randoop">StaticFinalField</a> extends <a href="randoop/PublicField.html" title="class in randoop">PublicField</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5759286052853148769L</dd>
 </dl>
 </li>
 <li class="blockList"><a name="randoop.ToStringReturnsNormally">
