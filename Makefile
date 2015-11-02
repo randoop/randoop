@@ -80,7 +80,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist  results 
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output test-enums
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output test-enums test-fields
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -149,7 +149,8 @@ randoop1: bin
 	   --log=systemtests/randoop-log.txt \
 	   --debug_checks \
 	   --observers=systemtests/resources/randoop1_observers.txt \
-	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip
+	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip \
+	   --omit-field-list=systemtests/resources/testclassomitfields.txt
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
@@ -176,7 +177,8 @@ randoop2: bin
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
 	   --long-format \
-	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip
+	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip \
+	   --omit-field-list=systemtests/resources/naiveomitfields.txt
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/Naive*.java
@@ -263,7 +265,8 @@ randoop-custom-visitor: bin
 	   --visitor=randoop.test.CustomVisitor \
 	   --junit-classname=CustomVisitorTest \
 	   --junit-output-dir=systemtests/randoop-scratch \
-	   --check-object-contracts=false
+	   --check-object-contracts=false \
+	   --omit-field-list=systemtests/resources/customvisitoromitfields.txt
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) CustomVisitorTest.java
 	cd systemtests/randoop-scratch && \
@@ -418,6 +421,16 @@ test-constants: bin
 test-enums: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.EnumConstantTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.EnumReflectionTest
+	
+# run JUnit4 tests on fields
+test-fields: bin
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.InstanceFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.StaticFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.StaticFinalFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.PublicFieldParserTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldGetterTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldSetterTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldReflectionTest						
 	  
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
