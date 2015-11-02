@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 // For Java 8: import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -23,14 +24,20 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import randoop.EnumConstant;
+import randoop.FieldGetter;
+import randoop.FieldSetter;
 import randoop.Globals;
+import randoop.InstanceField;
 import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.StatementKind;
 import randoop.StatementKindParseException;
 import randoop.StatementKinds;
+import randoop.StaticFinalField;
+import randoop.StaticField;
 import randoop.main.GenInputsAbstract;
 
 import plume.EntryReader;
@@ -566,7 +573,7 @@ public final class Reflection {
    * @return list of StatementKind objects representing filtered set.
    */
   public static List<StatementKind> getStatements(Collection<Class<?>> classListing, ReflectionFilter filter) {
-    if (filter == null) filter = new DefaultReflectionFilter(null);
+    if (filter == null) filter = new DefaultReflectionFilter();
     Set<StatementKind> statements = new LinkedHashSet<StatementKind>();
     for (Class<?> c : classListing) {
       // System.out.printf ("Considering class %s, filter = %s%n", c, filter);
@@ -618,8 +625,47 @@ public final class Reflection {
             getEnumStatements(filter,statements, ic);
           }
         }
+        Set<String> declaredNames = new TreeSet<>(); //get names of fields declared
+        for (Field f : c.getDeclaredFields()) {
+          declaredNames.add(f.getName());
+        }
+        for (Field f : c.getFields()) { //for all public fields
+          //if not a hidden field, keep it
+          if (filter.canUse(f) && (!declaredNames.contains(f.getName()) || c.equals(f.getDeclaringClass()))) {
+            getFieldStatements(statements,f);
+          }
+        }
       }
     }
+  }
+
+
+  /**
+   * getFieldStatements adds the {@link StatementKind} objects corresponding to 
+   * getters and setters appropriate to the kind of field.
+   * 
+   * @param statements
+   * @param f
+   */
+  private static void getFieldStatements(Set<StatementKind> statements, Field f) {
+    int mods = f.getModifiers();
+    if (Modifier.isPublic(mods)) {
+      if (Modifier.isStatic(mods)) {
+        if (Modifier.isFinal(mods)) {
+          StaticFinalField s = new StaticFinalField(f);
+          statements.add(new FieldGetter(s));
+        } else {
+          StaticField s = new StaticField(f);
+          statements.add(new FieldGetter(s));
+          statements.add(new FieldSetter(s));
+        }
+      } else {
+        InstanceField i = new InstanceField(f);
+        statements.add(new FieldGetter(i));
+        statements.add(new FieldSetter(i));
+      }
+    }
+    
   }
 
   /**

@@ -59,6 +59,10 @@ public class StatementKinds {
       return ArrayDeclaration.parse(descr);
     } else if (id.equals(EnumConstant.ID)) {
       return EnumConstant.parse(descr);
+    } else if (id.equals(FieldGetter.ID)) {
+      return FieldGetter.parse(descr);
+    } else if (id.equals(FieldSetter.ID)) {
+      return FieldSetter.parse(descr);
     } else if (id.equals(DummyStatement.ID)) {
       return DummyStatement.parse(descr);
     } else {
@@ -86,6 +90,10 @@ public class StatementKinds {
       return ArrayDeclaration.ID;
     if (st instanceof EnumConstant)
       return EnumConstant.ID;
+    if (st instanceof FieldGetter)
+      return FieldGetter.ID;
+    if (st instanceof FieldSetter)
+      return FieldSetter.ID;
     if (st instanceof DummyStatement)
       return DummyStatement.ID;
     throw new Error();
