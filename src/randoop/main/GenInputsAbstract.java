@@ -76,6 +76,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern omitmethods = null;
   
   /**
+   * omit_field_list is the name of a file that contains fully qualified
+   * field names to be excluded from test generation. Otherwise, Randoop
+   * includes all public fields of a visible class.
+   */
+  @Option("The name of a file containing field names to omit from generated tests")
+  public static String omit_field_list = null;
+  
+  /**
    * If the command line argument public_only is true, only public
    * classes/methods are considered visible.  If public_only is false
    * then any class/method that is not private is considered visible.

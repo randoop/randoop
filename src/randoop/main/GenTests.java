@@ -1,9 +1,12 @@
 package randoop.main;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -208,7 +212,48 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     
-    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods);
+    //omit fields if either explicitly omitted (see below), or if using coverage instrumentation
+    //from cov.Instrument
+    Set<String> omitFields = new HashSet<>();
+    List<Class<?>> covClasses = new ArrayList<Class<?>>();
+    if (coverage_instrumented_classes != null) {
+      File covClassesFile = new File(coverage_instrumented_classes);
+      try {
+        covClasses = Reflection.loadClassesFromFile(covClassesFile);
+      } catch (IOException e) {
+        throw new Error(e);
+      }
+      for (Class<?> cls : covClasses) {
+        assert Coverage.isInstrumented(cls) : cls.toString();
+        // System.out.println("Will track branch coverage for " + cls);
+        omitFields.add(cls.getName() + "." + cov.Constants.BRANCHLINES);
+        omitFields.add(cls.getName() + "." + cov.Constants.FALSE_BRANCHES);
+        omitFields.add(cls.getName() + "." + cov.Constants.IS_INSTRUMENTED_FIELD);
+        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_ID_ANNOTATION);
+        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_ID_TO_BRANCHES);
+        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_LINE_SPANS_FIELD);
+        omitFields.add(cls.getName() + "." + cov.Constants.SOURCE_FILE_NAME);
+        omitFields.add(cls.getName() + "." + cov.Constants.TRUE_BRANCHES);
+      }
+    }
+    
+    if (omit_field_list != null) {
+      try (BufferedReader rdr = new BufferedReader(new FileReader(new File(omit_field_list)))) {
+       String line = rdr.readLine();
+       while (line != null) {
+         omitFields.add(line.trim());
+         line = rdr.readLine();
+       }
+      } catch (FileNotFoundException e) {
+        System.out.println("Error: cannot find file " + omit_field_list);
+        System.exit(1);
+      } catch (IOException e) {
+        System.out.println("Error reading file " + omit_field_list);
+        System.exit(1);
+      }
+    }
+    
+    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods,omitFields);
     List<StatementKind> model = Reflection.getStatements(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).
@@ -256,21 +301,6 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.println("PUBLIC MEMBERS=" + model.size());
     }
-
-    List<Class<?>> covClasses = new ArrayList<Class<?>>();
-    if (coverage_instrumented_classes != null) {
-      File covClassesFile = new File(coverage_instrumented_classes);
-      try {
-        covClasses = Reflection.loadClassesFromFile(covClassesFile);
-      } catch (IOException e) {
-        throw new Error(e);
-      }
-      for (Class<?> cls : covClasses) {
-        assert Coverage.isInstrumented(cls) : cls.toString();
-        // System.out.println("Will track branch coverage for " + cls);
-      }
-    }
-
 
     // Initialize components.
     Set<Sequence> components = new LinkedHashSet<Sequence>();
