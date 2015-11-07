@@ -28,20 +28,21 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     this(null, new HashSet<String>());
   }
   
-  public DefaultReflectionFilter(Pattern omitmethods) {
-    this(omitmethods, new HashSet<String>());
+  /** If omitMethods is null, then no methods are omitted. */
+  public DefaultReflectionFilter(Pattern omitMethods) {
+    this(omitMethods, new HashSet<String>());
   }
 
   /** 
    * DefaultReflectionFilter creates a filter object that uses default
    * criteria for inclusion of reflection objects. 
-   * @param omitmethods pattern for methods to omit, if null then no methods omitted.
+   * @param omitMethods pattern for methods to omit, if null then no methods omitted.
    * @see Reflection#getStatements(java.util.Collection, ReflectionFilter) 
    */
-  public DefaultReflectionFilter(Pattern omitmethods, Set<String> omitfields) {
+  public DefaultReflectionFilter(Pattern omitMethods, Set<String> omitFields) {
     super();
-    this.omitMethods = omitmethods;
-    this.omitFields = omitfields;
+    this.omitMethods = omitMethods;
+    this.omitFields = omitFields;
   }
 
   public boolean canUse(Class<?> c) {
@@ -209,7 +210,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
   /**
    * canUse tests whether a field is included in set omitted method names.
    * 
-   * @param f - field to test 
+   * @param f field to test 
    * @return true if field name does not occur in omitFields pattern, and false if it does.
    */
   @Override

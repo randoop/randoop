@@ -212,9 +212,27 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     
-    //omit fields if either explicitly omitted (see below), or if using coverage instrumentation
-    //from cov.Instrument
     Set<String> omitFields = new HashSet<>();
+
+    if (omit_field_list != null) {
+      try (BufferedReader rdr = new BufferedReader(new FileReader(new File(omit_field_list)))) {
+       String line = rdr.readLine();
+       while (line != null) {
+         omitFields.add(line.trim());
+         line = rdr.readLine();
+       }
+      } catch (FileNotFoundException e) {
+        System.out.println("Error: cannot find file " + omit_field_list);
+        System.exit(1);
+      } catch (IOException e) {
+        System.out.println("Error reading file " + omit_field_list);
+        System.exit(1);
+      }
+    }
+    
+    // Determine which classes we will compute coverage
+    // instrumentation for (using cov.Instrument).
+    // Also omit all fields in any such class.
     List<Class<?>> covClasses = new ArrayList<Class<?>>();
     if (coverage_instrumented_classes != null) {
       File covClassesFile = new File(coverage_instrumented_classes);
@@ -237,23 +255,7 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     
-    if (omit_field_list != null) {
-      try (BufferedReader rdr = new BufferedReader(new FileReader(new File(omit_field_list)))) {
-       String line = rdr.readLine();
-       while (line != null) {
-         omitFields.add(line.trim());
-         line = rdr.readLine();
-       }
-      } catch (FileNotFoundException e) {
-        System.out.println("Error: cannot find file " + omit_field_list);
-        System.exit(1);
-      } catch (IOException e) {
-        System.out.println("Error reading file " + omit_field_list);
-        System.exit(1);
-      }
-    }
-    
-    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods,omitFields);
+    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods, omitFields);
     List<StatementKind> model = Reflection.getStatements(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).

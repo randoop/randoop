@@ -110,8 +110,8 @@ public class JunitFileWriter {
 
   /**
    * writeTestClass writes a code sequence as a JUnit4 test class to a .java file.
-   * Uses JUnit method ordering that assumes test names are in ascending alphabetical
-   * order in terms of how Randoop wants them to be executed. Relevant when there is
+   * It causes the tests no be executed in ascending alphabetical
+   * order by test method name. Relevant when there is
    * global (or at least class) state that is being manipulated.
    * 
    * @param sequences      list of executable sequences for method bodies.
@@ -128,7 +128,7 @@ public class JunitFileWriter {
     File file = new File(getDir(), className + ".java");
     PrintStream out = createTextOutputStream(file);
 
-    NameGenerator methodNameGen = new NameGenerator("test",1,numDigits(sequences.size()));
+    NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(sequences.size()));
     
     try {
       outputPackageName(out, packageName);
@@ -265,7 +265,7 @@ public class JunitFileWriter {
         out.println(testClass + " " + testVariable + "= new " + testClass + "()");
 
         int classMethodCount = classMethodCounts.get(testClass);
-        NameGenerator methodGen = new NameGenerator("test",1,numDigits(classMethodCount));
+        NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
         
         while ( methodGen.nameCount() < classMethodCount) {
           String methodName = methodGen.next();
@@ -290,18 +290,21 @@ public class JunitFileWriter {
     return file;
   }
 
+  /** Returns the number of digits in the printed representation of the argument. */
   private int numDigits(int n) {
     return (int)Math.log10(n) + 1;
   }
   
   /*
    * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i.
-   * Will pad counter with zeros to ensure a minimum number of digits. If all numbers should be
+   * Pads the counter with zeros to ensure a minimum number of digits. If all numbers should be
    * zero padded then must give the number of digits for the maximum counter value.
    */
   private class NameGenerator {
     private int initialValue;
     private int counter;
+    // Number of digits in each number; those with fewer digits will be
+    // left-padded with zeroes.  May be zero, in which case no padding is done.
     private int digits;
     private String prefix;
     
@@ -313,7 +316,7 @@ public class JunitFileWriter {
     }
     
     public NameGenerator(String prefix) {
-      this(prefix,0,0);
+      this(prefix, 0, 0);
     }
     
     public String next() {
