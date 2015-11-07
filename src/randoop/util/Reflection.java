@@ -546,9 +546,10 @@ public final class Reflection {
 
   /**
    * isAbstract checks to see if class is abstract.
-   * Note: an enum can look like an abstract class under certain circumstances.
+   * Note: an enum can look like an abstract class under certain circumstances,
+   * but this returns false for enums.
    * 
-   * @param c - class to test.
+   * @param c class to test.
    * @return true if non-enum class that is abstract, false otherwise.
    */
   public static boolean isAbstract(Class<?> c) {
