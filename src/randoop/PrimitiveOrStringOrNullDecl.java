@@ -18,6 +18,7 @@ import randoop.main.GenInputsAbstract;
  * kind of statement. This type of statement doesn't transform any state.
  *
  * This decl info is for primitives, strings and nulls (of any type).
+ * Such values are never used as receivers when generating method calls.
  */
 public final class PrimitiveOrStringOrNullDecl implements StatementKind, Serializable {
 
