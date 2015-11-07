@@ -541,7 +541,7 @@ public final class Reflection {
    * isAbstract checks to see if class is abstract.
    * Note: an enum can look like an abstract class under certain circumstances.
    * 
-   * @param c - class to test.
+   * @param c class to test.
    * @return true if non-enum class that is abstract, false otherwise.
    */
   public static boolean isAbstract(Class<?> c) {
@@ -561,8 +561,8 @@ public final class Reflection {
    * getStatements collects the methods, constructor and enum constants for a collection of classes.
    * Returns a filtered list of StatementKind objects.
    * 
-   * @param classListing - collection of class objects from which to extract.
-   * @param filter - filter object determines whether method/constructor/enum constant can be used.
+   * @param classListing collection of class objects from which to extract.
+   * @param filter filter object determines whether method/constructor/enum constant can be used.
    * @return list of StatementKind objects representing filtered set.
    */
   public static List<StatementKind> getStatements(Collection<Class<?>> classListing, ReflectionFilter filter) {
@@ -586,9 +586,9 @@ public final class Reflection {
    * StatementKind objects. 
    * Note that it looks for inner enums, but not inner classes.
    *  
-   * @param filter - object that determines whether to extract from class, or to include members
-   * @param statements - collection of {@link StatementKind} objects constructed
-   * @param c - class object from which members are extracted
+   * @param filter object that determines whether to extract from class, or to include members
+   * @param statements collection of {@link StatementKind} objects constructed
+   * @param c class object from which members are extracted
    */
   private static void getStatementsForClass(ReflectionFilter filter, Set<StatementKind> statements, Class<?> c) {
     if (filter.canUse(c)) {
@@ -629,8 +629,8 @@ public final class Reflection {
    * If the class is not an enum, then nothing will be added to the statement set.
    * @param filter 
    * 
-   * @param statements - collection of {@link StatementKind} objects constructed
-   * @param c - class object from which enum constants are extracted
+   * @param statements collection of {@link StatementKind} objects constructed
+   * @param c class object from which enum constants are extracted
    */
   private static void getEnumStatements(ReflectionFilter filter, Set<StatementKind> statements, Class<?> c) {
     //get enum constants and capture methods attached to them, if any
