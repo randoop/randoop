@@ -54,7 +54,7 @@ RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
 # Build and run tests
 all: clean build tests
 
-# Build, run tests, create manual, create distrubution.
+# Build, run tests, create manual, create distribution.
 all-dist: all manual distribution-files 
 
 # Remove Randoop classes.
