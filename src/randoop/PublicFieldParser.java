@@ -101,7 +101,7 @@ public class PublicFieldParser {
       throw new StatementKindParseException(msg);
     }
     if (!field.getType().equals(type)) {
-      String msg = errorPrefix + " The type of the field \"" + qualifiedFieldName + "\" is " + field.getType().toGenericString() +
+      String msg = errorPrefix + " The type of the field \"" + qualifiedFieldName + "\" is " + field.getType().toString() +
           ", but given as " + type.toString() + ".";
       throw new StatementKindParseException(msg);
     }
