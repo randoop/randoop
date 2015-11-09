@@ -11,7 +11,7 @@ public class LongString0 {
   @Test
   public void test1() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("LongString0.test1"); }
+    if (debug) { System.out.format("%n%s%n","LongString0.test1"); }
 
 
     randoop.test.LongString longString0 = new randoop.test.LongString();
@@ -21,7 +21,7 @@ public class LongString0 {
   @Test
   public void test2() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("LongString0.test2"); }
+    if (debug) { System.out.format("%n%s%n","LongString0.test2"); }
 
 
     java.lang.String str0 = randoop.test.LongString.tooLongString();
@@ -31,7 +31,7 @@ public class LongString0 {
   @Test
   public void test3() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("LongString0.test3"); }
+    if (debug) { System.out.format("%n%s%n","LongString0.test3"); }
 
 
     java.lang.String str0 = randoop.test.LongString.okString();
