@@ -22,7 +22,7 @@ import randoop.CheckRep;
 public class DefaultReflectionFilter implements ReflectionFilter {
 
   private Pattern omitMethods = null;
-  private Set<String> omitFields = null;
+  private Set<String> omitFields;
   
   public DefaultReflectionFilter() {
     this(null, new HashSet<String>());
@@ -208,7 +208,8 @@ public class DefaultReflectionFilter implements ReflectionFilter {
   }
 
   /**
-   * canUse tests whether a field is included in set omitted method names.
+   * canUse tests whether the name of a field is included among the 
+   * omitted method names.
    * 
    * @param f field to test 
    * @return true if field name does not occur in omitFields pattern, and false if it does.
