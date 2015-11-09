@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import plume.EntryReader;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
@@ -193,7 +194,7 @@ public class GenTests extends GenInputsAbstract {
 
     // Remove private (non-.isVisible) classes and abstract classes
     // and interfaces.
-    List<Class<?>> classes = new ArrayList<Class<?>>(allClasses.size());
+    List<Class<?>> classes = new ArrayList<>(allClasses.size());
     for (Class<?> c : allClasses) {
       if (Reflection.isAbstract (c)) {
         System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
@@ -215,25 +216,21 @@ public class GenTests extends GenInputsAbstract {
     Set<String> omitFields = new HashSet<>();
 
     if (omit_field_list != null) {
-      try (BufferedReader rdr = new BufferedReader(new FileReader(new File(omit_field_list)))) {
-       String line = rdr.readLine();
-       while (line != null) {
-         omitFields.add(line.trim());
-         line = rdr.readLine();
-       }
-      } catch (FileNotFoundException e) {
-        System.out.println("Error: cannot find file " + omit_field_list);
-        System.exit(1);
-      } catch (IOException e) {
+      try (EntryReader er = new EntryReader(omit_field_list)) {
+        for (String line : er) {
+          omitFields.add(line);
+        }
+      } catch (IOException e1) {
         System.out.println("Error reading file " + omit_field_list);
-        System.exit(1);
+        System.exit(2);
+        throw new Error("Escaped exit after failing to read omit fields.");
       }
     }
     
-    // Determine which classes we will compute coverage
-    // instrumentation for (using cov.Instrument).
-    // Also omit all fields in any such class.
-    List<Class<?>> covClasses = new ArrayList<Class<?>>();
+    // Determine classes for which we compute coverage instrumentation 
+    // (using cov.Instrument), and omit all fields in any such class 
+    // to avoid having them manipulated by generated tests.
+    List<Class<?>> covClasses = new ArrayList<>();
     if (coverage_instrumented_classes != null) {
       File covClassesFile = new File(coverage_instrumented_classes);
       try {
