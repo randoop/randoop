@@ -116,9 +116,9 @@ extends Object
 implements Serializable, <a href="../randoop/util/WeightedElement.html" title="interface in randoop.util">WeightedElement</a></pre>
 <div class="block">Immutable.
  <p>
- A sequence of statements. Each element in the sequence represents a
- particular <a href="../randoop/Statement.html" title="class in randoop"><code>Statement</code></a>, like a method call "Foo f = m(i1...iN)" or a
- declaration "int x = 0".
+ A sequence of <a href="../randoop/Statement.html" title="class in randoop"><code>Statement</code></a>s. Each element in the sequence represents a
+ particular <a href="../randoop/Statement.html" title="class in randoop"><code>Statement</code></a>, like a method call <code>Foo f = m(i1...iN)</code> or a
+ declaration <code>int x = 0</code>.
  <p>
  This class represents only the structure of a well-formed sequence of
  statements, and does not contain any information about the runtime behavior
@@ -709,7 +709,8 @@ implements Serializable, <a href="../randoop/util/WeightedElement.html" title="i
 <li class="blockList">
 <h4>getInputs</h4>
 <pre>public&nbsp;List&lt;<a href="../randoop/Variable.html" title="class in randoop">Variable</a>&gt;&nbsp;getInputs(int&nbsp;statementIndex)</pre>
-<div class="block">The inputs for the ith statement.</div>
+<div class="block">The inputs for the ith statement.
+ Includes the receiver.</div>
 </li>
 </ul>
 <a name="toCodeString--">

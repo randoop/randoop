@@ -1,15 +1,18 @@
 package foo.bar;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Naive0 {
 
   public static boolean debug = false;
 
   @Test
-  public void test1() throws Throwable {
+  public void test001() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test1"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test001"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -17,9 +20,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test2() throws Throwable {
+  public void test002() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test2"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test002"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -28,9 +31,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test3() throws Throwable {
+  public void test003() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test3"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test003"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -44,9 +47,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test4() throws Throwable {
+  public void test004() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test4"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test004"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -62,9 +65,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test5() throws Throwable {
+  public void test005() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test5"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test005"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -79,9 +82,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test6() throws Throwable {
+  public void test006() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test6"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test006"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -94,9 +97,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test7() throws Throwable {
+  public void test007() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test7"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test007"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -109,9 +112,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test8() throws Throwable {
+  public void test008() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test8"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test008"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -131,9 +134,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test9() throws Throwable {
+  public void test009() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test9"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test009"); }
 
 
     java.lang.Byte byte0 = new java.lang.Byte((byte)(-1));
@@ -145,9 +148,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test10() throws Throwable {
+  public void test010() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test10"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test010"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -163,9 +166,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test11() throws Throwable {
+  public void test011() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test11"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test011"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -183,9 +186,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test12() throws Throwable {
+  public void test012() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test12"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test012"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -209,9 +212,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test13() throws Throwable {
+  public void test013() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test13"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test013"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -238,9 +241,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test14() throws Throwable {
+  public void test014() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test14"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test014"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -253,9 +256,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test15() throws Throwable {
+  public void test015() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test15"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test015"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -272,9 +275,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test16() throws Throwable {
+  public void test016() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test16"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test016"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -299,9 +302,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test17() throws Throwable {
+  public void test017() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test17"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test017"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -330,9 +333,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test18() throws Throwable {
+  public void test018() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test18"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test018"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -361,9 +364,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test19() throws Throwable {
+  public void test019() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test19"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test019"); }
 
 
     java.lang.Short s0 = new java.lang.Short((short)1);
@@ -375,9 +378,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test20() throws Throwable {
+  public void test020() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test20"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test020"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -391,9 +394,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test21() throws Throwable {
+  public void test021() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test21"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test021"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -431,9 +434,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test22() throws Throwable {
+  public void test022() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test22"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test022"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -451,9 +454,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test23() throws Throwable {
+  public void test023() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test23"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test023"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -500,9 +503,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test24() throws Throwable {
+  public void test024() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test24"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test024"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -522,9 +525,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test25() throws Throwable {
+  public void test025() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test25"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test025"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -533,9 +536,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test26() throws Throwable {
+  public void test026() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test26"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test026"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -557,9 +560,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test27() throws Throwable {
+  public void test027() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test27"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test027"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -580,9 +583,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test28() throws Throwable {
+  public void test028() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test28"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test028"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -614,9 +617,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test29() throws Throwable {
+  public void test029() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test29"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test029"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -680,9 +683,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test30() throws Throwable {
+  public void test030() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test30"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test030"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -706,9 +709,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test31() throws Throwable {
+  public void test031() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test31"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test031"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -750,9 +753,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test32() throws Throwable {
+  public void test032() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test32"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test032"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -783,9 +786,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test33() throws Throwable {
+  public void test033() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test33"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test033"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -804,9 +807,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test34() throws Throwable {
+  public void test034() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test34"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test034"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -816,9 +819,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test35() throws Throwable {
+  public void test035() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test35"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test035"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -843,9 +846,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test36() throws Throwable {
+  public void test036() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test36"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test036"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -872,9 +875,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test37() throws Throwable {
+  public void test037() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test37"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test037"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -906,9 +909,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test38() throws Throwable {
+  public void test038() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test38"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test038"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -944,9 +947,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test39() throws Throwable {
+  public void test039() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test39"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test039"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1010,9 +1013,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test40() throws Throwable {
+  public void test040() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test40"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test040"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1035,9 +1038,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test41() throws Throwable {
+  public void test041() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test41"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test041"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(10);
@@ -1059,9 +1062,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test42() throws Throwable {
+  public void test042() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test42"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test042"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(10);
@@ -1092,9 +1095,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test43() throws Throwable {
+  public void test043() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test43"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test043"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1112,9 +1115,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test44() throws Throwable {
+  public void test044() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test44"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test044"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1141,9 +1144,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test45() throws Throwable {
+  public void test045() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test45"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test045"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1160,9 +1163,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test46() throws Throwable {
+  public void test046() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test46"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test046"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1192,9 +1195,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test47() throws Throwable {
+  public void test047() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test47"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test047"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -1212,9 +1215,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test48() throws Throwable {
+  public void test048() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test48"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test048"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1250,9 +1253,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test49() throws Throwable {
+  public void test049() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test49"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test049"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -1313,9 +1316,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test50() throws Throwable {
+  public void test050() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test50"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test050"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -1352,9 +1355,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test51() throws Throwable {
+  public void test051() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test51"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test051"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(10);
@@ -1403,9 +1406,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test52() throws Throwable {
+  public void test052() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test52"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test052"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -1413,9 +1416,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test53() throws Throwable {
+  public void test053() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test53"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test053"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -1498,9 +1501,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test54() throws Throwable {
+  public void test054() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test54"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test054"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -1535,9 +1538,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test55() throws Throwable {
+  public void test055() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test55"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test055"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1562,9 +1565,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test56() throws Throwable {
+  public void test056() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test56"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test056"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1589,9 +1592,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test57() throws Throwable {
+  public void test057() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test57"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test057"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1617,9 +1620,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test58() throws Throwable {
+  public void test058() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test58"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test058"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1710,9 +1713,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test59() throws Throwable {
+  public void test059() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test59"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test059"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1737,9 +1740,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test60() throws Throwable {
+  public void test060() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test60"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test060"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1848,9 +1851,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test61() throws Throwable {
+  public void test061() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test61"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test061"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1876,9 +1879,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test62() throws Throwable {
+  public void test062() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test62"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test062"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -1913,9 +1916,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test63() throws Throwable {
+  public void test063() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test63"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test063"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -1980,9 +1983,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test64() throws Throwable {
+  public void test064() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test64"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test064"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2015,9 +2018,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test65() throws Throwable {
+  public void test065() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test65"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test065"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -2029,9 +2032,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test66() throws Throwable {
+  public void test066() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test66"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test066"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -2056,9 +2059,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test67() throws Throwable {
+  public void test067() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test67"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test067"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2092,9 +2095,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test68() throws Throwable {
+  public void test068() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test68"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test068"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2142,9 +2145,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test69() throws Throwable {
+  public void test069() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test69"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test069"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2177,9 +2180,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test70() throws Throwable {
+  public void test070() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test70"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test070"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2202,9 +2205,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test71() throws Throwable {
+  public void test071() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test71"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test071"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -2238,9 +2241,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test72() throws Throwable {
+  public void test072() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test72"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test072"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -2299,9 +2302,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test73() throws Throwable {
+  public void test073() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test73"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test073"); }
 
 
     java.lang.Object obj0 = new java.lang.Object();
@@ -2309,9 +2312,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test74() throws Throwable {
+  public void test074() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test74"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test074"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -2377,9 +2380,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test75() throws Throwable {
+  public void test075() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test75"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test075"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2419,9 +2422,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test76() throws Throwable {
+  public void test076() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test76"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test076"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -2445,9 +2448,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test77() throws Throwable {
+  public void test077() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test77"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test077"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -2535,9 +2538,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test78() throws Throwable {
+  public void test078() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test78"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test078"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2556,9 +2559,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test79() throws Throwable {
+  public void test079() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test79"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test079"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2580,9 +2583,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test80() throws Throwable {
+  public void test080() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test80"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test080"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -2671,9 +2674,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test81() throws Throwable {
+  public void test081() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test81"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test081"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -2740,9 +2743,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test82() throws Throwable {
+  public void test082() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test82"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test082"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2770,9 +2773,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test83() throws Throwable {
+  public void test083() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test83"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test083"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2830,9 +2833,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test84() throws Throwable {
+  public void test084() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test84"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test084"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -2961,9 +2964,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test85() throws Throwable {
+  public void test085() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test85"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test085"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -2994,9 +2997,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test86() throws Throwable {
+  public void test086() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test86"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test086"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -3046,9 +3049,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test87() throws Throwable {
+  public void test087() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test87"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test087"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -3064,9 +3067,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test88() throws Throwable {
+  public void test088() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test88"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test088"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -3089,9 +3092,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test89() throws Throwable {
+  public void test089() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test89"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test089"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -3184,9 +3187,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test90() throws Throwable {
+  public void test090() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test90"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test090"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -3228,9 +3231,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test91() throws Throwable {
+  public void test091() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test91"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test091"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -3243,9 +3246,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test92() throws Throwable {
+  public void test092() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test92"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test092"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -3259,9 +3262,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test93() throws Throwable {
+  public void test093() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test93"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test093"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -3292,9 +3295,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test94() throws Throwable {
+  public void test094() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test94"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test094"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -3334,9 +3337,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test95() throws Throwable {
+  public void test095() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test95"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test095"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -3374,9 +3377,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test96() throws Throwable {
+  public void test096() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test96"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test096"); }
 
 
     java.lang.Integer i0 = new java.lang.Integer(0);
@@ -3426,9 +3429,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test97() throws Throwable {
+  public void test097() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test97"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test097"); }
 
 
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
@@ -3464,9 +3467,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test98() throws Throwable {
+  public void test098() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test98"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test098"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -3528,9 +3531,9 @@ public class Naive0 {
   }
 
   @Test
-  public void test99() throws Throwable {
+  public void test099() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test99"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test099"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
@@ -3559,7 +3562,7 @@ public class Naive0 {
   @Test
   public void test100() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("Naive0.test100"); }
+    if (debug) { System.out.format("%n%s%n","Naive0.test100"); }
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();

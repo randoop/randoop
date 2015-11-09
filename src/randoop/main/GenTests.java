@@ -1,9 +1,12 @@
 package randoop.main;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -26,6 +30,7 @@ import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import plume.EntryReader;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
@@ -189,7 +194,7 @@ public class GenTests extends GenInputsAbstract {
 
     // Remove private (non-.isVisible) classes and abstract classes
     // and interfaces.
-    List<Class<?>> classes = new ArrayList<Class<?>>(allClasses.size());
+    List<Class<?>> classes = new ArrayList<>(allClasses.size());
     for (Class<?> c : allClasses) {
       if (Reflection.isAbstract (c)) {
         System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
@@ -208,7 +213,46 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     
-    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods);
+    Set<String> omitFields = new HashSet<>();
+
+    if (omit_field_list != null) {
+      try (EntryReader er = new EntryReader(omit_field_list)) {
+        for (String line : er) {
+          omitFields.add(line);
+        }
+      } catch (IOException e1) {
+        System.out.println("Error reading file " + omit_field_list);
+        System.exit(2);
+        throw new Error("Escaped exit after failing to read omit fields.");
+      }
+    }
+    
+    // Determine classes for which we compute coverage instrumentation 
+    // (using cov.Instrument), and omit all fields in any such class 
+    // to avoid having them manipulated by generated tests.
+    List<Class<?>> covClasses = new ArrayList<>();
+    if (coverage_instrumented_classes != null) {
+      File covClassesFile = new File(coverage_instrumented_classes);
+      try {
+        covClasses = Reflection.loadClassesFromFile(covClassesFile);
+      } catch (IOException e) {
+        throw new Error(e);
+      }
+      for (Class<?> cls : covClasses) {
+        assert Coverage.isInstrumented(cls) : cls.toString();
+        // System.out.println("Will track branch coverage for " + cls);
+        omitFields.add(cls.getName() + "." + cov.Constants.BRANCHLINES);
+        omitFields.add(cls.getName() + "." + cov.Constants.FALSE_BRANCHES);
+        omitFields.add(cls.getName() + "." + cov.Constants.IS_INSTRUMENTED_FIELD);
+        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_ID_ANNOTATION);
+        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_ID_TO_BRANCHES);
+        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_LINE_SPANS_FIELD);
+        omitFields.add(cls.getName() + "." + cov.Constants.SOURCE_FILE_NAME);
+        omitFields.add(cls.getName() + "." + cov.Constants.TRUE_BRANCHES);
+      }
+    }
+    
+    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods, omitFields);
     List<StatementKind> model = Reflection.getStatements(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).
@@ -256,21 +300,6 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.println("PUBLIC MEMBERS=" + model.size());
     }
-
-    List<Class<?>> covClasses = new ArrayList<Class<?>>();
-    if (coverage_instrumented_classes != null) {
-      File covClassesFile = new File(coverage_instrumented_classes);
-      try {
-        covClasses = Reflection.loadClassesFromFile(covClassesFile);
-      } catch (IOException e) {
-        throw new Error(e);
-      }
-      for (Class<?> cls : covClasses) {
-        assert Coverage.isInstrumented(cls) : cls.toString();
-        // System.out.println("Will track branch coverage for " + cls);
-      }
-    }
-
 
     // Initialize components.
     Set<Sequence> components = new LinkedHashSet<Sequence>();

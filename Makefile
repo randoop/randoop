@@ -21,7 +21,7 @@ default:
 	@echo "manual         update the manual's list of options and table of contents."
 	@echo "jdoc           update the javadoc."
 	@echo "distribution-files  create distribution zip and jar files, in dist/ dir."
-	@echo "                    (also updates manual)."                              
+	@echo "                    (also updates manual)."
 
 # Put user-specific changes in your own Makefile.user.
 # Make will silently continue if that file does not exist.
@@ -76,11 +76,11 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	touch bin
 
 # Run all tests.
-# tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen  results 
-tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist  results 
+# tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist df3 bdgen2  df1  df2 bdgen  results
+tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist  results
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output test-enums
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output test-enums test-fields
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -124,10 +124,10 @@ ds-coverage: bin
 	   randoop.test.ICSE07ContainersTest
 
 # Basic smoke test: help command does not crash.
-randoop-help: 
-	java -ea -classpath $(CLASSPATH) randoop.main.Main help 
+randoop-help:
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help
 	java -ea -classpath $(CLASSPATH) randoop.main.Main help help
-	java -ea -classpath $(CLASSPATH) randoop.main.Main help gentests 
+	java -ea -classpath $(CLASSPATH) randoop.main.Main help gentests
 	java -ea -classpath $(CLASSPATH) randoop.main.Main help --unpub gentests
 	java -ea -classpath $(CLASSPATH) randoop.main.Main help --unpub help
 
@@ -149,7 +149,8 @@ randoop1: bin
 	   --log=systemtests/randoop-log.txt \
 	   --debug_checks \
 	   --observers=systemtests/resources/randoop1_observers.txt \
-	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip
+	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip \
+	   --omit-field-list=systemtests/resources/testclassomitfields.txt
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
@@ -176,7 +177,8 @@ randoop2: bin
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
 	   --long-format \
-	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip
+	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip \
+	   --omit-field-list=systemtests/resources/naiveomitfields.txt
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/Naive*.java
@@ -263,7 +265,8 @@ randoop-custom-visitor: bin
 	   --visitor=randoop.test.CustomVisitor \
 	   --junit-classname=CustomVisitorTest \
 	   --junit-output-dir=systemtests/randoop-scratch \
-	   --check-object-contracts=false
+	   --check-object-contracts=false \
+	   --omit-field-list=systemtests/resources/customvisitoromitfields.txt
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) CustomVisitorTest.java
 	cd systemtests/randoop-scratch && \
@@ -418,7 +421,17 @@ test-constants: bin
 test-enums: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.EnumConstantTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.EnumReflectionTest
-	  
+
+# run JUnit4 tests on fields
+test-fields: bin
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.InstanceFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.StaticFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.StaticFinalFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.PublicFieldParserTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldGetterTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldSetterTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldReflectionTest
+
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
 	rm -rf systemtests/df-scratch
@@ -443,7 +456,7 @@ execerr:
 # 	   --scratchdir=systemtests/df-scratch \
 # 	   --overwrite \
 # 	   systemtests/resources/df1.txt
-# 
+#
 # # Runs dataflow on a set of inputs.
 # #
 # # Its input was manually generated to be sequences which bdgen can
@@ -457,7 +470,7 @@ execerr:
 # 	   --overwrite \
 # 	   --outputfile=systemtests/resources/df2-output.txt \
 # 	   systemtests/resources/df2-input.txt
-# 
+#
 # # Runs bdgen on a collection of (sequence, frontier branch,
 # # interesting vars) triples, and checks that bdgen can successfully
 # # creates new sequences to cover the frontier branches.
@@ -475,7 +488,7 @@ execerr:
 # 	   --output-new-branches=systemtests/resources/bdgen-branches.txt \
 # 	   --output-new-branches-sorted \
 # 	   --logfile=systemtests/bdgen-log.txt
-# 
+#
 # # Runs bdgen on a collection of manually-generated cases, for which it
 # # should successfully generate sequences that cover frontier
 # # branches.
@@ -494,7 +507,7 @@ execerr:
 # # There is nondeterminism in HashMap. Don't consider branchs in regression tests.
 # 	grep -v "util2\.HashMap" systemtests/resources/bdgen2-branches.txt > tmp.txt
 # 	mv tmp.txt systemtests/resources/bdgen2-branches.txt
-# 
+#
 # df3: $(DYNCOMP) bin
 # 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:${JAVAC_JAR}:$(CLASSPATH) \
 # 	   randoop.main.DataFlow \
@@ -617,7 +630,7 @@ plugin-manual: build plume-lib-update
 	utils/plume-lib/bin/html-update-toc plugin/doc/index.html
 	utils/plume-lib/bin/html-update-toc plugin/doc/dev.html
 
-# A separate target because the "validate" tool might not be installed. 
+# A separate target because the "validate" tool might not be installed.
 # It does not depend on "manual" because that always does a build.
 validate-manual:
 	validate doc/index.html
@@ -678,7 +691,7 @@ distribution-files: manual randoop_agent.jar
 	mv randoop/tmp/randoop.jar randoop/
 	rm -r randoop/tmp
 # Sanity test jar: invoking randoop terminates normally.
-	java -cp randoop/randoop.jar randoop.main.Main 
+	java -cp randoop/randoop.jar randoop.main.Main
 # Create dist zip file.
 	rm -f randoop.zip
 	rm -rf `find randoop -name '*~'`

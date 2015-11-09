@@ -110,6 +110,7 @@ public class JunitFileWriter {
 
   /**
    * writeTestClass writes a code sequence as a JUnit4 test class to a .java file.
+   * Tests are executed in ascending alphabetical order by test method name. 
    * 
    * @param sequences      list of executable sequences for method bodies.
    * @param testClassName  name of test class.
@@ -125,13 +126,16 @@ public class JunitFileWriter {
     File file = new File(getDir(), className + ".java");
     PrintStream out = createTextOutputStream(file);
 
-    NameGenerator methodNameGen = new NameGenerator("test",1);
+    NameGenerator methodNameGen = new NameGenerator("test", 1, numDigits(sequences.size()));
     
     try {
       outputPackageName(out, packageName);
       out.println();
+      out.println("import org.junit.FixMethodOrder;");
       out.println("import org.junit.Test;");
+      out.println("import org.junit.runners.MethodSorters;");
       out.println();
+      out.println("@FixMethodOrder(MethodSorters.NAME_ASCENDING)");
       out.println("public class " + className + " {");
       out.println();
       out.println("  public static boolean debug = false;");
@@ -164,7 +168,7 @@ public class JunitFileWriter {
     out.println("  @Test");
     out.println("  public void " + methodName + "() throws Throwable {");
     out.println();
-    out.println(indent("if (debug) { System.out.println(); System.out.print(\"" + className + "." + methodName + "\"); }"));
+    out.println(indent("if (debug) { System.out.format(\"%n%s%n\",\"" + className + "." + methodName + "\"); }")); 
     out.println();
     out.println(indent(s.toCodeString()));
     out.println("  }");
@@ -258,8 +262,9 @@ public class JunitFileWriter {
         String testVariable = instanceNameGen.next();
         out.println(testClass + " " + testVariable + "= new " + testClass + "()");
 
-        NameGenerator methodGen = new NameGenerator("test",1);
         int classMethodCount = classMethodCounts.get(testClass);
+        NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
+        
         while ( methodGen.nameCount() < classMethodCount) {
           String methodName = methodGen.next();
           out.println("    try {");
@@ -282,27 +287,53 @@ public class JunitFileWriter {
     } 
     return file;
   }
+
+  /** Returns the number of digits in the printed representation of the argument. */
+  private int numDigits(int n) {
+    return (int)Math.log10(n) + 1;
+  }
   
   /*
-   * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i 
+   * A NameGenerator generates a sequence of names as strings in the form "prefix"+i for integer i.
+   * Pads the counter with zeros to ensure a minimum number of digits determined by field digits. 
    */
   private class NameGenerator {
+    
     private int initialValue;
     private int counter;
-    private String prefix;
+    private String format;
     
-    public NameGenerator(String prefix, int initialValue) {
+    /*
+     * Creates an instance that generates names beginning with prefix, count starting
+     * at the initialValue, and 0-padded to digits digits.
+     * 
+     * @param prefix a string to be used as the prefix for all generated names.
+     * @param initialValue integer starting value for name counter
+     * @param digits the minimum number of digits (determines 0-padding)
+     */
+    public NameGenerator(String prefix, int initialValue, int digits) {
       this.initialValue = initialValue;
       this.counter = initialValue;
-      this.prefix = prefix;
+      
+      this.format = prefix + "%d";
+      if (digits > 0) {
+        this.format = prefix + "%0" + digits + "d";
+      }
+      //this.prefix = prefix;
+      //this.digits = digits;
     }
-    
+
+    /*
+     * Generates names without 0-padding on counter.
+     * 
+     * @param prefix is a string to be used as a prefix for all names generated.
+     */
     public NameGenerator(String prefix) {
-      this(prefix,0);
+      this(prefix, 0, 0);
     }
     
     public String next() {
-      String name = prefix + counter;
+      String name = String.format(format, counter);
       counter++;
       return name;
     }

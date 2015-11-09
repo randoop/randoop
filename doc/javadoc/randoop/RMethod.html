@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9,"i12":10,"i13":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":10,"i10":10,"i11":10,"i12":9,"i13":10,"i14":10,"i15":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -74,13 +74,13 @@ var activeTableTab = "activeTableTab";
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
@@ -154,6 +154,31 @@ implements <a href="../randoop/StatementKind.html" title="interface in randoop">
 <div class="block">ID for parsing purposes (see StatementKinds.parse method)</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>List&lt;Set&lt;Class&lt;?&gt;&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#overloads">overloads</a></span></code>
+<div class="block">A list with as many sublists as the formal paramters of this method.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#RMethod-java.lang.reflect.Method-">RMethod</a></span>(Method&nbsp;method)</code>
+<div class="block">Creates the Rmethod corresponding to the given reflection method.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -171,78 +196,88 @@ implements <a href="../randoop/StatementKind.html" title="interface in randoop">
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#addToOverloads-java.lang.reflect.Method-">addToOverloads</a></span>(Method&nbsp;m)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#appendCode-randoop.Variable-java.util.List-java.lang.StringBuilder-">appendCode</a></span>(<a href="../randoop/Variable.html" title="class in randoop">Variable</a>&nbsp;newVar,
           List&lt;<a href="../randoop/Variable.html" title="class in randoop">Variable</a>&gt;&nbsp;inputVars,
-          StringBuilder&nbsp;b)</code>
+          StringBuilder&nbsp;sb)</code>
 <div class="block">Produces a Java source code representation of this statement and append it
  to the given StringBuilder.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#equals-java.lang.Object-">equals</a></span>(Object&nbsp;o)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../randoop/ExecutionOutcome.html" title="class in randoop">ExecutionOutcome</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#execute-java.lang.Object:A-java.io.PrintStream-">execute</a></span>(Object[]&nbsp;statementInput,
        PrintStream&nbsp;out)</code>
 <div class="block">Executes this statement, given the inputs to the statement.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>List&lt;Class&lt;?&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#getInputTypes--">getInputTypes</a></span>()</code>
 <div class="block">Returns the input types of this method.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>Method</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#getMethod--">getMethod</a></span>()</code>
 <div class="block">Returns Method object represented by this MethodCallInfo</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>Class&lt;?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#getOutputType--">getOutputType</a></span>()</code>
 <div class="block">Returns the return type of this method.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static <a href="../randoop/RMethod.html" title="class in randoop">RMethod</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#getRMethod-java.lang.reflect.Method-">getRMethod</a></span>(Method&nbsp;method)</code>
 <div class="block">Returns the statement corresponding to the given constructor.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#getTypeArguments--">getTypeArguments</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#isStatic--">isStatic</a></span>()</code>
 <div class="block">Returns true if method represented by this MethodCallInfo is a static
  method.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#isVoid--">isVoid</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static <a href="../randoop/StatementKind.html" title="interface in randoop">StatementKind</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#parse-java.lang.String-">parse</a></span>(String&nbsp;s)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
-<td class="colFirst"><code>String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#toParseableString--">toParseableString</a></span>()</code>
-<div class="block">A string representing this method.</div>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#resetOverloads--">resetOverloads</a></span>()</code>
+<div class="block">Reset/clear the overloads field.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#toParseableString--">toParseableString</a></span>()</code>
+<div class="block">A string representing this method's signature.</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/RMethod.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -282,6 +317,21 @@ implements <a href="../randoop/StatementKind.html" title="interface in randoop">
 </dl>
 </li>
 </ul>
+<a name="overloads">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>overloads</h4>
+<pre>public&nbsp;List&lt;Set&lt;Class&lt;?&gt;&gt;&gt; overloads</pre>
+<div class="block">A list with as many sublists as the formal paramters of this method.
+ The <em>i</em>th set indicates all the possible argument types for the
+ <em>i</im>th formal parameter, for overloads of this method with the
+ same number of formal parameters.  At a call site, if the declared
+ type of an actual argument is not uniquely determined, then the acutal
+ should be casted at the call site.</div>
+</li>
+</ul>
 <a name="calls_time">
 <!--   -->
 </a>
@@ -298,6 +348,24 @@ implements <a href="../randoop/StatementKind.html" title="interface in randoop">
 <li class="blockList">
 <h4>calls_num</h4>
 <pre>public&nbsp;int calls_num</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="RMethod-java.lang.reflect.Method-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>RMethod</h4>
+<pre>public&nbsp;RMethod(Method&nbsp;method)</pre>
+<div class="block">Creates the Rmethod corresponding to the given reflection method.</div>
 </li>
 </ul>
 </li>
@@ -328,6 +396,25 @@ implements <a href="../randoop/StatementKind.html" title="interface in randoop">
 <div class="block">Returns the statement corresponding to the given constructor.</div>
 </li>
 </ul>
+<a name="resetOverloads--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>resetOverloads</h4>
+<pre>public&nbsp;void&nbsp;resetOverloads()</pre>
+<div class="block">Reset/clear the overloads field.</div>
+</li>
+</ul>
+<a name="addToOverloads-java.lang.reflect.Method-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addToOverloads</h4>
+<pre>public&nbsp;void&nbsp;addToOverloads(Method&nbsp;m)</pre>
+</li>
+</ul>
 <a name="toString--">
 <!--   -->
 </a>
@@ -349,7 +436,7 @@ implements <a href="../randoop/StatementKind.html" title="interface in randoop">
 <h4>appendCode</h4>
 <pre>public&nbsp;void&nbsp;appendCode(<a href="../randoop/Variable.html" title="class in randoop">Variable</a>&nbsp;newVar,
                        List&lt;<a href="../randoop/Variable.html" title="class in randoop">Variable</a>&gt;&nbsp;inputVars,
-                       StringBuilder&nbsp;b)</pre>
+                       StringBuilder&nbsp;sb)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../randoop/StatementKind.html#appendCode-randoop.Variable-java.util.List-java.lang.StringBuilder-">StatementKind</a></code></span></div>
 <div class="block">Produces a Java source code representation of this statement and append it
  to the given StringBuilder.</div>
@@ -473,11 +560,7 @@ implements <a href="../randoop/StatementKind.html" title="interface in randoop">
 <li class="blockList">
 <h4>toParseableString</h4>
 <pre>public&nbsp;String&nbsp;toParseableString()</pre>
-<div class="block">A string representing this method. The string is of the form:
-
- METHOD
-
- Where METHOD is a string representation of the method signature. Examples:
+<div class="block">A string representing this method's signature. Examples:
 
  java.util.ArrayList.get(int)
  java.util.ArrayList.add(int,java.lang.Object)</div>
@@ -550,13 +633,13 @@ implements <a href="../randoop/StatementKind.html" title="interface in randoop">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>

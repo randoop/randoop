@@ -1,14 +1,17 @@
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CustomVisitorTest0 {
 
   public static boolean debug = false;
 
   @Test
-  public void test1() throws Throwable {
+  public void test01() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test1"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test01"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -33,9 +36,9 @@ public class CustomVisitorTest0 {
   }
 
   @Test
-  public void test2() throws Throwable {
+  public void test02() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test2"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test02"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -217,9 +220,9 @@ public class CustomVisitorTest0 {
   }
 
   @Test
-  public void test3() throws Throwable {
+  public void test03() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test3"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test03"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -248,9 +251,9 @@ public class CustomVisitorTest0 {
   }
 
   @Test
-  public void test4() throws Throwable {
+  public void test04() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test4"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test04"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -480,9 +483,9 @@ public class CustomVisitorTest0 {
   }
 
   @Test
-  public void test5() throws Throwable {
+  public void test05() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test5"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test05"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -511,9 +514,9 @@ public class CustomVisitorTest0 {
   }
 
   @Test
-  public void test6() throws Throwable {
+  public void test06() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test6"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test06"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -532,9 +535,9 @@ public class CustomVisitorTest0 {
   }
 
   @Test
-  public void test7() throws Throwable {
+  public void test07() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test7"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test07"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -703,9 +706,9 @@ public class CustomVisitorTest0 {
   }
 
   @Test
-  public void test8() throws Throwable {
+  public void test08() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test8"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test08"); }
 
 
     randoop.test.A a1 = new randoop.test.A(1);
@@ -723,9 +726,9 @@ public class CustomVisitorTest0 {
   }
 
   @Test
-  public void test9() throws Throwable {
+  public void test09() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test9"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test09"); }
 
 
     randoop.test.A a0 = new randoop.test.A();
@@ -740,7 +743,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test10() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test10"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test10"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -874,7 +877,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test11() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test11"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test11"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -1004,7 +1007,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test12() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test12"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test12"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -1238,7 +1241,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test13() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test13"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test13"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -1412,7 +1415,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test14() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test14"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test14"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -1450,7 +1453,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test15() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test15"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test15"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -1693,7 +1696,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test16() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test16"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test16"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -1750,7 +1753,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test17() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test17"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test17"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -1878,7 +1881,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test18() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test18"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test18"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -2038,7 +2041,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test19() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test19"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test19"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -2252,7 +2255,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test20() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test20"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test20"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -2408,7 +2411,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test21() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test21"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test21"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -2515,7 +2518,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test22() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test22"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test22"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -2711,7 +2714,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test23() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test23"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test23"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -2804,7 +2807,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test24() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test24"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test24"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -2861,7 +2864,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test25() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test25"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test25"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -3044,7 +3047,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test26() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test26"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test26"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -3167,7 +3170,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test27() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test27"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test27"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -3425,7 +3428,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test28() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test28"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test28"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -3489,7 +3492,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test29() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test29"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test29"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -3663,7 +3666,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test30() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test30"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test30"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -3678,7 +3681,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test31() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test31"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test31"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -3798,7 +3801,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test32() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test32"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test32"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -3992,7 +3995,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test33() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test33"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test33"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -4192,7 +4195,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test34() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test34"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test34"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -4317,7 +4320,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test35() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test35"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test35"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -4503,7 +4506,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test36() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test36"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test36"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -4546,7 +4549,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test37() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test37"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test37"); }
 
 
     randoop.test.A a1 = new randoop.test.A(1);
@@ -4567,7 +4570,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test38() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test38"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test38"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));
@@ -4761,7 +4764,7 @@ public class CustomVisitorTest0 {
   @Test
   public void test39() throws Throwable {
 
-    if (debug) { System.out.println(); System.out.print("CustomVisitorTest0.test39"); }
+    if (debug) { System.out.format("%n%s%n","CustomVisitorTest0.test39"); }
 
 
     randoop.test.A a1 = new randoop.test.A((-1));

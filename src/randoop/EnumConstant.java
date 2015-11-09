@@ -127,7 +127,7 @@ public class EnumConstant implements StatementKind, Serializable {
     int colonIdx = s.indexOf(':');
     if (colonIdx < 0) {
       String msg = "An enum constant description must be of the form \"" +
-          "<type>:<value>" + " but description is \"" + s + "\"";
+          "<type>:<value>" + " but description is \"" + s + "\".";
       throw new StatementKindParseException(msg);
     }
     
