@@ -35,7 +35,10 @@ public class CoinPurse {
   }
   
   public void add(Coin c) {
-    int count = purse.getOrDefault(c, 0) +1;
-    purse.put(c, count);
+    int count = 0;
+    if (purse.containsKey(c)) {
+      count = purse.get(c);
+    }
+    purse.put(c, count + 1);
   }
 }
