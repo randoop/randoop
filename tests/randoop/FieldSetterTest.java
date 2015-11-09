@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import randoop.util.Reflection;
 
-import daikon.Global;
 
 /**
  * FieldSetterTest defines unit tests for FieldSetter class.
@@ -73,7 +72,7 @@ public class FieldSetterTest {
       assertEquals("Output type should be void", void.class, rhs.getOutputType());      
       
       //code generation
-      String expected = "classWithFields0.oneField = 24;" + Global.lineSep;
+      String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
       RConstructor cons = new RConstructor(Reflection.getConstructorForSignature("randoop.ClassWithFields.ClassWithFields()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
