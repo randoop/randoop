@@ -600,11 +600,13 @@ public final class Reflection {
    */
   private static void getStatementsForClass(ReflectionFilter filter, Set<StatementKind> statements, Class<?> c) {
     if (filter.canUse(c)) {
+      
       if (Log.isLoggingOn()) Log.logLine("Will add members for class " + c.getName());
-      // System.out.printf ("using class %s%n", c);
+
       if (c.isEnum()) {
         getEnumStatements(filter,statements,c);
       } else {
+        
         for (Method m : getMethodsOrdered(c)) {
           if (Log.isLoggingOn()) {
             Log.logLine(String.format("Considering method %s", m));
@@ -614,6 +616,7 @@ public final class Reflection {
             statements.add(mc);
           }
         }
+        
         for (Constructor<?> co : getDeclaredConstructorsOrdered(c)) {
           // System.out.printf ("Considering constructor %s%n", co);
           if (filter.canUse(co)) {
@@ -621,21 +624,26 @@ public final class Reflection {
             statements.add(mc);
           }
         }
+        
         for (Class<?> ic : c.getDeclaredClasses()) { //look for inner enums
           if (ic.isEnum() && filter.canUse(ic)) {
             getEnumStatements(filter,statements, ic);
           }
         }
+        
+        //The set of fields declared in class c is needed to ensure we don't collect
+        //inherited fields that are hidden by local declaration
         Set<String> declaredNames = new TreeSet<>(); //get names of fields declared
         for (Field f : c.getDeclaredFields()) {
           declaredNames.add(f.getName());
         }
         for (Field f : c.getFields()) { //for all public fields
-          //if not a hidden field, keep it
+          //keep a field that satisfies filter, and is not inherited and hidden by local declaration
           if (filter.canUse(f) && (!declaredNames.contains(f.getName()) || c.equals(f.getDeclaringClass()))) {
             getFieldStatements(statements,f);
           }
         }
+        
       }
     }
   }
