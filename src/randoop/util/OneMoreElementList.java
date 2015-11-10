@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public final class OneMoreElementList<T> extends SimpleList<T> implements Serializable {
@@ -45,4 +46,41 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
     return toJDKList().toString();
   }
 
+  @Override
+  public Iterator<T> iterator() {
+    // TODO Auto-generated method stub
+    return new OMEIterator(list.iterator(), lastElement);
+  }
+
+  private class OMEIterator implements Iterator<T> {
+    
+    private Iterator<T> listIterator;
+    private boolean visitedLast;
+    private T last;
+
+    public OMEIterator(Iterator<T> listIterator, T last) {
+      this.listIterator = listIterator;
+      this.visitedLast = false;
+      this.last = last;
+    }
+
+    @Override
+    public boolean hasNext() {
+      // TODO Auto-generated method stub
+      return (listIterator.hasNext() || !visitedLast); 
+    }
+
+    @Override
+    public T next() {
+      // TODO Auto-generated method stub
+      if (listIterator.hasNext()) {
+        return listIterator.next();
+      } else if (!visitedLast){
+        visitedLast = false;
+        return last;
+      }
+      return null;
+    }
+    
+  }
 }
