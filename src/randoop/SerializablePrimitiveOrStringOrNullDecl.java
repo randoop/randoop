@@ -18,6 +18,6 @@ public class SerializablePrimitiveOrStringOrNullDecl implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException {
-    return new PrimitiveOrStringOrNullDecl(Reflection.classForName(type), value);
+    return new NonreceiverTerm(Reflection.classForName(type), value);
   }
 }

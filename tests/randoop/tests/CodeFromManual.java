@@ -16,8 +16,8 @@ import randoop.ExecutableSequence;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.ObjectContract;
-import randoop.RConstructor;
-import randoop.RMethod;
+import randoop.ConstructorCall;
+import randoop.MethodCall;
 import randoop.ReplayVisitor;
 import randoop.Sequence;
 import randoop.SequenceParseException;
@@ -28,12 +28,12 @@ public class CodeFromManual extends TestCase {
 
   public static void test() throws SecurityException, NoSuchMethodException, SequenceParseException {
 
-    Operation newLL = RConstructor.getRConstructor(LinkedList.class.getConstructor());
-    Operation newOb = RConstructor.getRConstructor(Object.class.getConstructor());
-    Operation addFist = RMethod.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
-    Operation size = RMethod.getRMethod(LinkedList.class.getMethod("size"));
-    Operation newTS = RConstructor.getRConstructor(TreeSet.class.getConstructor(Collection.class));
-    Operation syncS = RMethod.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+    Operation newLL = ConstructorCall.getRConstructor(LinkedList.class.getConstructor());
+    Operation newOb = ConstructorCall.getRConstructor(Object.class.getConstructor());
+    Operation addFist = MethodCall.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
+    Operation size = MethodCall.getRMethod(LinkedList.class.getMethod("size"));
+    Operation newTS = ConstructorCall.getRConstructor(TreeSet.class.getConstructor(Collection.class));
+    Operation syncS = MethodCall.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
 
     Sequence s = new Sequence();
     s = s.extend(newLL);

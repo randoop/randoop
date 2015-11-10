@@ -36,7 +36,7 @@ public class FieldSetterTest {
       //code generation
       String expected = "randoop.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      Sequence seq0 = new Sequence().extend(new PrimitiveOrStringOrNullDecl(int.class,24), new ArrayList<Variable>());
+      Sequence seq0 = new Sequence().extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq0,0));
       rhs.appendCode(null, vars, b);
@@ -74,9 +74,9 @@ public class FieldSetterTest {
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      RConstructor cons = new RConstructor(Reflection.getConstructorForSignature("randoop.ClassWithFields.ClassWithFields()"));
+      ConstructorCall cons = new ConstructorCall(Reflection.getConstructorForSignature("randoop.ClassWithFields.ClassWithFields()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
-      Sequence seq1 = seq0.extend(new PrimitiveOrStringOrNullDecl(int.class,24), new ArrayList<Variable>());
+      Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1,0));
       vars.add(new Variable(seq1,1));

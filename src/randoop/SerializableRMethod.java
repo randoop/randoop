@@ -16,7 +16,7 @@ public class SerializableRMethod implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException {
-    return RMethod.getRMethod(Reflection.getMethodForSignature(method));
+    return MethodCall.getRMethod(Reflection.getMethodForSignature(method));
   }
 
 }

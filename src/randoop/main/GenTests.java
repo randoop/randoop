@@ -58,9 +58,9 @@ import randoop.ITestFilter;
 import randoop.JunitFileWriter;
 import randoop.LiteralFileReader;
 import randoop.ObjectContract;
-import randoop.PrimitiveOrStringOrNullDecl;
-import randoop.RConstructor;
-import randoop.RMethod;
+import randoop.NonreceiverTerm;
+import randoop.ConstructorCall;
+import randoop.MethodCall;
 import randoop.RandoopListenerManager;
 import randoop.RegressionCaptureVisitor;
 import randoop.ReplayVisitor;
@@ -256,9 +256,9 @@ public class GenTests extends GenInputsAbstract {
     List<Operation> model = Reflection.getStatements(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).
-    RConstructor objectConstructor = null;
+    ConstructorCall objectConstructor = null;
     try {
-      objectConstructor = RConstructor.getRConstructor(Object.class.getConstructor());
+      objectConstructor = ConstructorCall.getRConstructor(Object.class.getConstructor());
       if (!model.contains(objectConstructor))
         model.add(objectConstructor);
     } catch (Exception e) {
@@ -271,14 +271,14 @@ public class GenTests extends GenInputsAbstract {
         for (Member m : Reflection.loadMethodsAndCtorsFromFile(new File(methodlist))) {
           if (m instanceof Method) {
               if (reflectionFilter.canUse((Method)m)) {
-                statements.add(RMethod.getRMethod((Method)m));
+                statements.add(MethodCall.getRMethod((Method)m));
               }
           } else {
             assert m instanceof Constructor<?>;
             if (reflectionFilter.canUse((Constructor<?>)m)) {
-              statements.add(RConstructor.getRConstructor((Constructor<?>)m));
+              statements.add(ConstructorCall.getRConstructor((Constructor<?>)m));
                   }
-            statements.add(RConstructor.getRConstructor((Constructor<?>)m));
+            statements.add(ConstructorCall.getRConstructor((Constructor<?>)m));
           }
         }
       } catch (IOException e) {
@@ -701,7 +701,7 @@ public class GenTests extends GenInputsAbstract {
 
     // Add a (1-element) sequence corresponding to each literal to the component manager. 
     for (String filename : GenInputsAbstract.literals_file) {
-      MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap;
+      MultiMap<Class<?>, NonreceiverTerm> literalmap;
       if (filename.equals("CLASSES")) {
         Collection<ClassFileConstants.ConstantSet> css
           = new ArrayList<ClassFileConstants.ConstantSet>(allClasses.size());
@@ -715,7 +715,7 @@ public class GenTests extends GenInputsAbstract {
 
       for (Class<?> cls : literalmap.keySet()) {
         Package pkg = (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
-        for (PrimitiveOrStringOrNullDecl p : literalmap.getValues(cls)) {
+        for (NonreceiverTerm p : literalmap.getValues(cls)) {
           Sequence seq = Sequence.create(p);
           switch (GenInputsAbstract.literals_level) {
           case CLASS:

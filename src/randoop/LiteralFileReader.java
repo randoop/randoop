@@ -29,7 +29,7 @@ import randoop.util.RecordProcessor;
  * More specifically, Class.forName(classname) must return a valid Class object.
  * <li>Each type:value pair describes the type and value of a literal (for
  * example, <tt>int:3</tt>).  For the exact format, see
- * {@link randoop.PrimitiveOrStringOrNullDecl#parse(String)}.
+ * {@link randoop.NonreceiverTerm#parse(String)}.
  * </ul>
  * Blank lines and comment lines (lines starting with "#") are ignored, both
  * between records and inside records.
@@ -53,10 +53,10 @@ public class LiteralFileReader {
   private static final String LITERALS = "LITERALS";
 
   /** Returns a map from class to list of constants. */      
-  public static MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> parse(String inFile) {
+  public static MultiMap<Class<?>, NonreceiverTerm> parse(String inFile) {
     
-    final MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> map =
-      new MultiMap<Class<?>, PrimitiveOrStringOrNullDecl>();
+    final MultiMap<Class<?>, NonreceiverTerm> map =
+      new MultiMap<Class<?>, NonreceiverTerm>();
 
     RecordProcessor processor = new RecordProcessor() {
       public void processRecord(List<String> lines) {
@@ -83,7 +83,7 @@ public class LiteralFileReader {
         
         for (int i = 3 ; i < lines.size() ; i++) {
           try {
-            PrimitiveOrStringOrNullDecl p = PrimitiveOrStringOrNullDecl.parse(lines.get(i));
+            NonreceiverTerm p = NonreceiverTerm.parse(lines.get(i));
             map.add(cls, p);
           } catch (StatementKindParseException e) {
             throwInvalidRecordError(e, lines, i);

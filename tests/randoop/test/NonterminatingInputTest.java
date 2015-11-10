@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import junit.framework.TestCase;
 import randoop.DummyVisitor;
 import randoop.ExecutableSequence;
-import randoop.RConstructor;
+import randoop.ConstructorCall;
 import randoop.Sequence;
 import randoop.Variable;
 import randoop.util.ReflectionExecutor;
@@ -16,7 +16,7 @@ public class NonterminatingInputTest extends TestCase {
   public void test() throws SecurityException, NoSuchMethodException {
 
     Sequence s = new Sequence();
-    s = s.extend(RConstructor.getRConstructor(Looper.class.getConstructor()), new ArrayList<Variable>());
+    s = s.extend(ConstructorCall.getRConstructor(Looper.class.getConstructor()), new ArrayList<Variable>());
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;
     ExecutableSequence es = new ExecutableSequence(s);

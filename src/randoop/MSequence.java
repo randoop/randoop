@@ -107,7 +107,7 @@ public class MSequence {
 
     for (MVariable v2 : v.getCreatingStatementWithInputs().inputs) {
       if (v2.getCreatingStatementWithInputs().statementKind
-          instanceof PrimitiveOrStringOrNullDecl)
+          instanceof NonreceiverTerm)
         continue;
       if (!infvars.contains(v2)) {
         infvars.add(v2);
@@ -120,14 +120,14 @@ public class MSequence {
       MVariable result = statements.get(i).result;
       if (!infvars.contains(result)) {
         assert !(result.getCreatingStatementWithInputs().statementKind
-                 instanceof PrimitiveOrStringOrNullDecl);
+                 instanceof NonreceiverTerm);
         infvars.add(result);
         findInfluencingVars(result, infvars);
       }
 
       for (MVariable v2 : statements.get(i).inputs) {
         if (v2.getCreatingStatementWithInputs().statementKind
-            instanceof PrimitiveOrStringOrNullDecl)
+            instanceof NonreceiverTerm)
           continue;
         if (!infvars.contains(v2)) {
           infvars.add(v2);

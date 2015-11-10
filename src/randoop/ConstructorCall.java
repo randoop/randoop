@@ -27,7 +27,7 @@ import randoop.util.Util;
  * java.lang.reflect.Constructor.
  *
  */
-public final class RConstructor implements Operation, Serializable {
+public final class ConstructorCall implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -60,7 +60,7 @@ public final class RConstructor implements Operation, Serializable {
   }
 
   // Creates the RConstructor corresponding to the given reflection constructor.
-  public RConstructor(Constructor<?> constructor) {
+  public ConstructorCall(Constructor<?> constructor) {
     if (constructor == null)
       throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
@@ -80,8 +80,8 @@ public final class RConstructor implements Operation, Serializable {
   /**
    * Creates the RConstructor corresponding to the given reflection constructor.
    */
-  public static RConstructor getRConstructor(Constructor<?> constructor) {
-    return new RConstructor(constructor);
+  public static ConstructorCall getRConstructor(Constructor<?> constructor) {
+    return new ConstructorCall(constructor);
   }
 
   /** Reset/clear the overloads field. */
@@ -147,7 +147,7 @@ public final class RConstructor implements Operation, Serializable {
       Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+        b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
       } else {
         b.append(inputVars.get(i).getName());
       }
@@ -162,9 +162,9 @@ public final class RConstructor implements Operation, Serializable {
       return false;
     if (this == o)
       return true;
-    if (!(o instanceof RConstructor))
+    if (!(o instanceof ConstructorCall))
       return false;
-    RConstructor other = (RConstructor) o;
+    ConstructorCall other = (ConstructorCall) o;
     if (!this.constructor.equals(other.constructor))
       return false;
     return true;
@@ -236,6 +236,6 @@ public final class RConstructor implements Operation, Serializable {
   }
 
   public static Operation parse(String s) {
-    return RConstructor.getRConstructor(Reflection.getConstructorForSignature(s));
+    return ConstructorCall.getRConstructor(Reflection.getConstructorForSignature(s));
   }
 }

@@ -17,7 +17,7 @@ import randoop.util.Reflection;
  * Represents a one-dimensional
  * array creation statement, e.g. "int[] x = new int[2] { 3, 7 };"
  */
-public final class ArrayDeclaration implements Operation, Serializable {
+public final class ArrayCreation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -40,7 +40,7 @@ public final class ArrayDeclaration implements Operation, Serializable {
    * @param elementType type of objects in the array
    * @param length number of objects allowed in the array
    */
-  public ArrayDeclaration(Class<?> elementType, int length) {
+  public ArrayCreation(Class<?> elementType, int length) {
 
     // Check legality of arguments.
     if (elementType == null) throw new IllegalArgumentException("elementType cannot be null.");
@@ -49,10 +49,11 @@ public final class ArrayDeclaration implements Operation, Serializable {
     // Set state variables.
     this.elementType = elementType;
     this.length = length;
+    this.outputTypeCached = Array.newInstance(elementType, 0).getClass();
   }
 
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableArrayDeclaration(elementType, length);
+    return new SerializableArrayCreation(elementType, length);
   }
 
   /**
@@ -119,9 +120,6 @@ public final class ArrayDeclaration implements Operation, Serializable {
    * namely the receiver that is generated.
    */
   public Class<?> getOutputType() {
-    if (outputTypeCached == null) {
-      outputTypeCached = Array.newInstance(elementType, 0).getClass();
-    }
     return outputTypeCached;
   }
 
@@ -147,7 +145,7 @@ public final class ArrayDeclaration implements Operation, Serializable {
       Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+        b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
       } else {
         b.append(inputVars.get(i).getName());
       }
@@ -168,11 +166,11 @@ public final class ArrayDeclaration implements Operation, Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof ArrayDeclaration))
+    if (!(o instanceof ArrayCreation))
       return false;
     if (this == o)
       return true;
-    ArrayDeclaration otherArrayDecl = (ArrayDeclaration) o;
+    ArrayCreation otherArrayDecl = (ArrayCreation) o;
     if (!this.elementType.equals(otherArrayDecl.elementType))
       return false;
     if (this.length != otherArrayDecl.length)
@@ -203,6 +201,6 @@ public final class ArrayDeclaration implements Operation, Serializable {
     String lengthStr = str.substring(openBr + 1, closeBr);
     Class<?> elementType = Reflection.classForName(elementTypeStr);
     int length = Integer.parseInt(lengthStr);
-    return new ArrayDeclaration(elementType, length);
+    return new ArrayCreation(elementType, length);
   }
 }

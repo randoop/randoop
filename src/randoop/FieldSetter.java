@@ -114,7 +114,7 @@ public class FieldSetter implements Operation, Serializable{
     //TODO this is duplicate code from RMethod - should factor out behavior
     Operation statementCreatingVar = inputVars.get(index).getDeclaringStatement();
     if (!GenInputsAbstract.long_format && ExecutableSequence.canUseShortFormat(statementCreatingVar )) {
-      Object val = ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue();
+      Object val = ((NonreceiverTerm) statementCreatingVar).getValue();
       b.append(PrimitiveTypes.toCodeString(val));
     } else {
       b.append(inputVars.get(index).getName());

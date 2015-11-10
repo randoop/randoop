@@ -356,7 +356,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a sequence that consists of a single primitive declaration
    * statement (e.g. int i = 1;)
    */
-  public static Sequence create(PrimitiveOrStringOrNullDecl info) {
+  public static Sequence create(NonreceiverTerm info) {
     return new Sequence().extend(info, new ArrayList<Variable>());
   }
 
@@ -365,7 +365,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * given class.
    */
   public static Sequence zero(Class<?> c) {
-    return create(PrimitiveOrStringOrNullDecl.nullOrZeroDecl(c));
+    return create(NonreceiverTerm.nullOrZeroDecl(c));
   }
 
 
@@ -392,7 +392,7 @@ public final class Sequence implements Serializable, WeightedElement {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
       Operation s = statements.get(i).statement;
-      if (s instanceof PrimitiveOrStringOrNullDecl)
+      if (s instanceof NonreceiverTerm)
         continue;
        netSize++;
     }
@@ -660,7 +660,7 @@ public final class Sequence implements Serializable, WeightedElement {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
     Statement newStatement = new Statement(statement, indexList);
-    int newNetSize = (statement instanceof PrimitiveOrStringOrNullDecl) ? this.savedNetSize : this.savedNetSize + 1;
+    int newNetSize = (statement instanceof NonreceiverTerm) ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(new OneMoreElementList<Statement>(this.statements, newStatement), this.savedHashCode
         + newStatement.hashCode(), newNetSize);
   }
@@ -789,7 +789,7 @@ public final class Sequence implements Serializable, WeightedElement {
       for (Variable v : retval.getInputs(retval.size()-1)) {
         if (v.getType().equals(int.class)) {
           int randint = Randomness.nextRandomInt(100);
-          retval = retval.extend(new PrimitiveOrStringOrNullDecl(int.class, randint));
+          retval = retval.extend(new NonreceiverTerm(int.class, randint));
           vil.add(retval.size() - 1);
         } else {
           vil.add(v.getDeclIndex());
@@ -1074,7 +1074,7 @@ public final class Sequence implements Serializable, WeightedElement {
     if (size() != 1) {
       return false;
     }
-    if (!(getStatementKind(0) instanceof PrimitiveOrStringOrNullDecl)) {
+    if (!(getStatementKind(0) instanceof NonreceiverTerm)) {
       return false;
     }
     return true;

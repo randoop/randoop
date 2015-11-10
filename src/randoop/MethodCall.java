@@ -29,7 +29,7 @@ import randoop.util.ReflectionExecutor;
  * The "R" stands for "Randoop", to underline the distinction from
  * java.lang.reflect.Method.
  */
-public final class RMethod implements Operation, Serializable {
+public final class MethodCall implements Operation, Serializable {
 
   private static final long serialVersionUID = -7616184807726929835L;
 
@@ -76,7 +76,7 @@ public final class RMethod implements Operation, Serializable {
   /**
    * Creates the Rmethod corresponding to the given reflection method.
    */
-  public RMethod(Method method) {
+  public MethodCall(Method method) {
     if (method == null)
       throw new IllegalArgumentException("method should not be null.");
 
@@ -90,8 +90,8 @@ public final class RMethod implements Operation, Serializable {
   /**
    * Returns the statement corresponding to the given constructor.
    */
-  public static RMethod getRMethod(Method method) {
-    return new RMethod(method);
+  public static MethodCall getRMethod(Method method) {
+    return new MethodCall(method);
   }
 
   /** Reset/clear the overloads field. */
@@ -149,7 +149,7 @@ public final class RMethod implements Operation, Serializable {
       Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        Object val = ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue();
+        Object val = ((NonreceiverTerm) statementCreatingVar).getValue();
         sb.append(PrimitiveTypes.toCodeString(val));
       } else {
         sb.append(inputVars.get(i).getName());
@@ -232,11 +232,11 @@ public final class RMethod implements Operation, Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof RMethod))
+    if (!(o instanceof MethodCall))
       return false;
     if (this == o)
       return true;
-    RMethod other = (RMethod) o;
+    MethodCall other = (MethodCall) o;
     if (!this.method.equals(other.method))
       return false;
     return true;
@@ -345,7 +345,7 @@ public final class RMethod implements Operation, Serializable {
   }
 
   public static Operation parse(String s) {
-    return RMethod.getRMethod(Reflection.getMethodForSignature(s));
+    return MethodCall.getRMethod(Reflection.getMethodForSignature(s));
   }
 
 

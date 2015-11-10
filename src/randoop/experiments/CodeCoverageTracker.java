@@ -14,8 +14,8 @@ import plume.Option;
 import plume.Unpublicized;
 import randoop.ExecutableSequence;
 import randoop.IEventListener;
-import randoop.RConstructor;
-import randoop.RMethod;
+import randoop.ConstructorCall;
+import randoop.MethodCall;
 import randoop.Sequence;
 import randoop.Operation;
 import cov.Branch;
@@ -75,7 +75,7 @@ public class CodeCoverageTracker implements IEventListener {
           // Atom belongs to a method.
           // Add to method stats (and implicitly, global stats).
           Method method = (Method)member;
-          addToCount(RMethod.getRMethod(method), 1);
+          addToCount(MethodCall.getRMethod(method), 1);
           continue;
         }
 
@@ -83,7 +83,7 @@ public class CodeCoverageTracker implements IEventListener {
         // Add to constructor stats (and implicitly, global stats).
         assert member instanceof Constructor<?> : member.toString();
         Constructor<?> cons = (Constructor<?>)member;
-        addToCount(RConstructor.getRConstructor(cons), 1);
+        addToCount(ConstructorCall.getRConstructor(cons), 1);
       }
     }
 
@@ -143,7 +143,7 @@ public class CodeCoverageTracker implements IEventListener {
           // Atom belongs to a method.
           // Add to method stats (and implicitly, global stats).
           Method method = (Method) member;
-          addToCount(RMethod.getRMethod(method), 1);
+          addToCount(MethodCall.getRMethod(method), 1);
           continue;
         }
 
@@ -151,7 +151,7 @@ public class CodeCoverageTracker implements IEventListener {
         // Add to constructor stats (and implicitly, global stats).
         assert member instanceof Constructor<?> : member.toString();
         Constructor<?> cons = (Constructor<?>) member;
-        addToCount(RConstructor.getRConstructor(cons), 1);
+        addToCount(ConstructorCall.getRConstructor(cons), 1);
       }
 
     }

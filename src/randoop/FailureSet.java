@@ -61,7 +61,7 @@ public class FailureSet {
           Class<?> cls = runtimeval.getClass();
           // We record this as an error in the equals method.
           try {
-            st = RMethod.getRMethod(cls.getMethod("equals", Object.class));
+            st = MethodCall.getRMethod(cls.getMethod("equals", Object.class));
           } catch (Exception e) {
             throw new Error(e);
           }

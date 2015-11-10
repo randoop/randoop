@@ -49,7 +49,7 @@ public final class SeedSequences {
   public static Set<Sequence> objectsToSeeds(Collection<Object> objs) {
     Set<Sequence> retval = new LinkedHashSet<Sequence>();
     for (Object o : objs) {
-      retval.add(PrimitiveOrStringOrNullDecl.sequenceForPrimitive(o));
+      retval.add(NonreceiverTerm.sequenceForPrimitive(o));
     }
     return retval;
   }
@@ -163,7 +163,7 @@ public final class SeedSequences {
     Set<Sequence> retval = objectsToSeeds(primitives);
     if (nullString) {
       // Add "String x = null" statement.
-      retval.add(Sequence.create(PrimitiveOrStringOrNullDecl.nullOrZeroDecl(String.class)));
+      retval.add(Sequence.create(NonreceiverTerm.nullOrZeroDecl(String.class)));
     }
     return retval;
   }

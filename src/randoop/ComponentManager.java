@@ -164,10 +164,10 @@ public class ComponentManager {
     if (classLiterals != null || packageLiterals != null) {
 
       Class<?> declaringCls = null;
-      if (statement instanceof RMethod) {
-        declaringCls = ((RMethod) statement).getMethod().getDeclaringClass();
-      } else if (statement instanceof RConstructor) {
-        declaringCls = ((RConstructor) statement).getConstructor().getDeclaringClass();
+      if (statement instanceof MethodCall) {
+        declaringCls = ((MethodCall) statement).getMethod().getDeclaringClass();
+      } else if (statement instanceof ConstructorCall) {
+        declaringCls = ((ConstructorCall) statement).getConstructor().getDeclaringClass();
       }
 
       if (classLiterals != null) {

@@ -31,8 +31,8 @@ import randoop.FieldGetter;
 import randoop.FieldSetter;
 import randoop.Globals;
 import randoop.InstanceField;
-import randoop.RConstructor;
-import randoop.RMethod;
+import randoop.ConstructorCall;
+import randoop.MethodCall;
 import randoop.Operation;
 import randoop.StatementKindParseException;
 import randoop.StatementKinds;
@@ -495,11 +495,11 @@ public final class Reflection {
       } catch (StatementKindParseException e) {
         throw new Error(e);
       }
-      if (stk instanceof RMethod) {
-        result.add(((RMethod)stk).getMethod());
+      if (stk instanceof MethodCall) {
+        result.add(((MethodCall)stk).getMethod());
       } else {
-        assert (stk instanceof RConstructor);
-        result.add(((RConstructor)stk).getConstructor());
+        assert (stk instanceof ConstructorCall);
+        result.add(((ConstructorCall)stk).getConstructor());
       }
     }
     return result;
@@ -612,7 +612,7 @@ public final class Reflection {
             Log.logLine(String.format("Considering method %s", m));
           }
           if (filter.canUse(m)) {
-            RMethod mc = RMethod.getRMethod(m);
+            MethodCall mc = MethodCall.getRMethod(m);
             statements.add(mc);
           }
         }
@@ -620,7 +620,7 @@ public final class Reflection {
         for (Constructor<?> co : getDeclaredConstructorsOrdered(c)) {
           // System.out.printf ("Considering constructor %s%n", co);
           if (filter.canUse(co)) {
-            RConstructor mc = RConstructor.getRConstructor(co);
+            ConstructorCall mc = ConstructorCall.getRConstructor(co);
             statements.add(mc);
           }
         }
@@ -703,14 +703,14 @@ public final class Reflection {
     for (Method m : c.getDeclaredMethods()) {
       if (filter.canUse(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
-          statements.add(new RMethod(m));
+          statements.add(new MethodCall(m));
         }
       }
     }
     //get any inherited methods that seem to be overridden in anonymous class of some constant
     for (Method m : c.getMethods()) { 
       if (filter.canUse(m) && overrideMethods.contains(m.getName())) {
-        statements.add(new RMethod(m));
+        statements.add(new MethodCall(m));
       }
     }
   }
@@ -719,8 +719,8 @@ public final class Reflection {
   /** Sets the overloads field of each RMethod or RConstructor in the list. */
   public static void setOverloads(List<Operation> model) {
     for (Operation sk : model) {
-      if (sk instanceof RMethod) {
-        RMethod rm = (RMethod) sk;
+      if (sk instanceof MethodCall) {
+        MethodCall rm = (MethodCall) sk;
         rm.resetOverloads();
         Method m = rm.getMethod();
 
@@ -733,8 +733,8 @@ public final class Reflection {
           // We should to find overloads in any subclass of a superclass
           // that declares the method.  For now, just look in the model.
           for (Operation possibleOverloadSk : model) {
-            if (possibleOverloadSk instanceof RMethod) {
-              Method possibleOverload = ((RMethod) possibleOverloadSk).getMethod();
+            if (possibleOverloadSk instanceof MethodCall) {
+              Method possibleOverload = ((MethodCall) possibleOverloadSk).getMethod();
               possibleOverloads.add(possibleOverload);
             }
           }
@@ -744,8 +744,8 @@ public final class Reflection {
             rm.addToOverloads(possibleOverload);
           }
         }
-      } else if (sk instanceof RConstructor) {
-        RConstructor rc = (RConstructor) sk;
+      } else if (sk instanceof ConstructorCall) {
+        ConstructorCall rc = (ConstructorCall) sk;
         rc.resetOverloads();
         Constructor<?> c = rc.getConstructor();
 

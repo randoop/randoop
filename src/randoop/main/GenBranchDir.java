@@ -24,8 +24,8 @@ import randoop.ExecutableSequence;
 import randoop.MSequence;
 import randoop.MStatement;
 import randoop.MVariable;
-import randoop.PrimitiveOrStringOrNullDecl;
-import randoop.RMethod;
+import randoop.NonreceiverTerm;
+import randoop.MethodCall;
 import randoop.Sequence;
 import randoop.SequenceCollection;
 import randoop.SequenceParseException;
@@ -363,8 +363,8 @@ public class GenBranchDir {
       for (int i = 0 ; i < r.sequence.size() ; i++) {
         Operation st = r.sequence.getStatementKind(i);
         // If i-th statement is "x = null;" ...
-        if (st instanceof PrimitiveOrStringOrNullDecl
-            && ((PrimitiveOrStringOrNullDecl)st).getValue() == null) {
+        if (st instanceof NonreceiverTerm
+            && ((NonreceiverTerm)st).getValue() == null) {
           Variable v = r.sequence.getVariable(i);
 
           // See if there is already a variable info for this variable.
@@ -486,8 +486,8 @@ public class GenBranchDir {
     Branch goalBranch = ((Branch)r.frontierBranch).getOppositeBranch();
 
     boolean isInstanceMethod =
-      (st instanceof RMethod)
-      && (!((RMethod)st).isStatic());
+      (st instanceof MethodCall)
+      && (!((MethodCall)st).isStatic());
 
 
     for (int i = 0 ; i < types.size() ; i++) {
@@ -498,7 +498,7 @@ public class GenBranchDir {
         if (!Reflection.canBeUsedAs(types.get(j), types.get(i)))
           continue;
         Operation jSt = r.sequence.getStatementKind(vars.get(j).getDeclIndex());
-        if (i == 0 && isInstanceMethod && jSt instanceof PrimitiveOrStringOrNullDecl)
+        if (i == 0 && isInstanceMethod && jSt instanceof NonreceiverTerm)
           continue;
 
         // Ok to replace.
@@ -668,9 +668,9 @@ public class GenBranchDir {
 
     Operation st = sequence.getStatementKind(var.getDeclIndex());
 
-    if (st instanceof PrimitiveOrStringOrNullDecl) {
+    if (st instanceof NonreceiverTerm) {
 
-      PrimitiveOrStringOrNullDecl decl = (PrimitiveOrStringOrNullDecl)st;
+      NonreceiverTerm decl = (NonreceiverTerm)st;
       if (st.getOutputType().isPrimitive() || st.getOutputType().equals(String.class)) {
         out.println("Primitive value or string...");
         return null;
@@ -743,7 +743,7 @@ public class GenBranchDir {
 
       // The variable is not null. Replace it with null.
 
-      Operation newSt = new PrimitiveOrStringOrNullDecl(st.getOutputType(), null);
+      Operation newSt = new NonreceiverTerm(st.getOutputType(), null);
       Sequence comp = new Sequence();
       comp = comp.extend(newSt, new ArrayList<Variable>());
       Variable compvar = comp.getLastVariable();
@@ -925,8 +925,8 @@ public class GenBranchDir {
     {
       out.println("WILL TRY NEGATING " + var);
       Operation st = r.sequence.getStatementKind(var.getDeclIndex());
-      assert st instanceof PrimitiveOrStringOrNullDecl;
-      PrimitiveOrStringOrNullDecl prim = (PrimitiveOrStringOrNullDecl)st;
+      assert st instanceof NonreceiverTerm;
+      NonreceiverTerm prim = (NonreceiverTerm)st;
       assert prim.getType().equals(int.class);
       int value = (Integer) prim.getValue();
       Sequence news = replaceVarValue(r.sequence, var, -value, goalBranch);
@@ -952,8 +952,8 @@ public class GenBranchDir {
         {
           out.println("WILL TRY ADDING " + i + " TO " + var);
           Operation st = r.sequence.getStatementKind(var.getDeclIndex());
-          assert st instanceof PrimitiveOrStringOrNullDecl;
-          PrimitiveOrStringOrNullDecl prim = (PrimitiveOrStringOrNullDecl)st;
+          assert st instanceof NonreceiverTerm;
+          NonreceiverTerm prim = (NonreceiverTerm)st;
           assert prim.getType().equals(int.class);
           int value = (Integer) prim.getValue();
           Sequence news = replaceVarValue(r.sequence, var, value + i, goalBranch);
@@ -965,8 +965,8 @@ public class GenBranchDir {
         {
           out.println("WILL TRY SETTING " + i + " TO " + var);
           Operation st = r.sequence.getStatementKind(var.getDeclIndex());
-          assert st instanceof PrimitiveOrStringOrNullDecl;
-          PrimitiveOrStringOrNullDecl prim = (PrimitiveOrStringOrNullDecl)st;
+          assert st instanceof NonreceiverTerm;
+          NonreceiverTerm prim = (NonreceiverTerm)st;
           assert prim.getType().equals(int.class);
           Sequence news = replaceVarValue(r.sequence, var, i, goalBranch);
           if (coversUncovered(news, goalBranch, "prim set to " + var)) {
@@ -983,8 +983,8 @@ public class GenBranchDir {
     {
       out.println("WILL TRY SUBTRACTING 1 " + var);
       Operation st = r.sequence.getStatementKind(var.getDeclIndex());
-      assert st instanceof PrimitiveOrStringOrNullDecl;
-      PrimitiveOrStringOrNullDecl prim = (PrimitiveOrStringOrNullDecl)st;
+      assert st instanceof NonreceiverTerm;
+      NonreceiverTerm prim = (NonreceiverTerm)st;
       assert prim.getType().equals(int.class);
       int value = (Integer) prim.getValue();
       Sequence news = replaceVarValue(r.sequence, var, value - 1, goalBranch);
@@ -1009,7 +1009,7 @@ public class GenBranchDir {
     MSequence seq = sequence.toModifiableSequence();
 
     MVariable mvar = seq.getVariable(var.getDeclIndex());
-    Operation st = new PrimitiveOrStringOrNullDecl(mvar.getType(), val);
+    Operation st = new NonreceiverTerm(mvar.getType(), val);
     seq.statements.set(var.getDeclIndex(), new MStatement(st, new ArrayList<MVariable>(), mvar));
     // out.println("@@@" + seq.toCodeString());
 

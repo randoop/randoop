@@ -16,7 +16,7 @@ public class SerializableRConstructor implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException {
-    return RConstructor.getRConstructor(Reflection.getConstructorForSignature(constructor));
+    return ConstructorCall.getRConstructor(Reflection.getConstructorForSignature(constructor));
   }
 
 }

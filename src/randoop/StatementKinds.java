@@ -46,17 +46,17 @@ public class StatementKinds {
     Set<String> validIds = new LinkedHashSet<String>();
 
     // If you add a statement kind, add its ID to this set.
-    validIds.addAll(Arrays.asList(PrimitiveOrStringOrNullDecl.ID, RMethod.ID, RConstructor.ID, ArrayDeclaration.ID, DummyStatement.ID));
+    validIds.addAll(Arrays.asList(NonreceiverTerm.ID, MethodCall.ID, ConstructorCall.ID, ArrayCreation.ID, DummyStatement.ID));
 
     // Call appropriate parsing method.
-    if (id.equals(PrimitiveOrStringOrNullDecl.ID)) {
-      return PrimitiveOrStringOrNullDecl.parse(descr);
-    } else if (id.equals(RMethod.ID)) {
-      return RMethod.parse(descr);
-    } else if (id.equals(RConstructor.ID)) {
-      return RConstructor.parse(descr);
-    } else if (id.equals(ArrayDeclaration.ID)) {
-      return ArrayDeclaration.parse(descr);
+    if (id.equals(NonreceiverTerm.ID)) {
+      return NonreceiverTerm.parse(descr);
+    } else if (id.equals(MethodCall.ID)) {
+      return MethodCall.parse(descr);
+    } else if (id.equals(ConstructorCall.ID)) {
+      return ConstructorCall.parse(descr);
+    } else if (id.equals(ArrayCreation.ID)) {
+      return ArrayCreation.parse(descr);
     } else if (id.equals(EnumConstant.ID)) {
       return EnumConstant.parse(descr);
     } else if (id.equals(FieldGetter.ID)) {
@@ -80,14 +80,14 @@ public class StatementKinds {
    */
   public static String getId(Operation st) {
     if (st == null) throw new IllegalArgumentException("st cannot be null.");
-    if (st instanceof PrimitiveOrStringOrNullDecl)
-      return PrimitiveOrStringOrNullDecl.ID;
-    if (st instanceof RMethod)
-      return RMethod.ID;
-    if (st instanceof RConstructor)
-      return RConstructor.ID;
-    if (st instanceof ArrayDeclaration)
-      return ArrayDeclaration.ID;
+    if (st instanceof NonreceiverTerm)
+      return NonreceiverTerm.ID;
+    if (st instanceof MethodCall)
+      return MethodCall.ID;
+    if (st instanceof ConstructorCall)
+      return ConstructorCall.ID;
+    if (st instanceof ArrayCreation)
+      return ArrayCreation.ID;
     if (st instanceof EnumConstant)
       return EnumConstant.ID;
     if (st instanceof FieldGetter)

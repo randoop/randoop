@@ -57,7 +57,7 @@ public class EnumReflectionTest {
       assertTrue("enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
     }
     for (Method m : exclude) {
-      assertFalse("method " + m.toGenericString() + " should not occur in simple enum", actual.contains(new RMethod(m)) );
+      assertFalse("method " + m.toGenericString() + " should not occur in simple enum", actual.contains(new MethodCall(m)) );
     }
   }
   
@@ -121,15 +121,15 @@ public class EnumReflectionTest {
     }
     
     for (Constructor<?> con : coin.getDeclaredConstructors()) {
-      assertFalse("enum constructor " + con.getName() + "should not occur", actual.contains(new RConstructor(con)));
+      assertFalse("enum constructor " + con.getName() + "should not occur", actual.contains(new ConstructorCall(con)));
     }
     
     for (Method m : coin.getMethods()) {
       if (m.getName().equals("value")) {
-        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(new RMethod(m)));
+        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(new MethodCall(m)));
         count++;
       } else {
-        assertFalse("enum method " + m.toGenericString() + " should not occur", actual.contains(new RMethod(m)));
+        assertFalse("enum method " + m.toGenericString() + " should not occur", actual.contains(new MethodCall(m)));
       }
     }
     assertEquals("number of statements", count, actual.size());
@@ -163,10 +163,10 @@ public class EnumReflectionTest {
     
     for (Method m : op.getMethods()) {
       if (overrides.contains(m.getName())) {
-        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(new RMethod(m)));
+        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(new MethodCall(m)));
         count++;
       } else {
-        assertFalse("enum method " + m.toGenericString() + " should not occur", actual.contains(new RMethod(m)));
+        assertFalse("enum method " + m.toGenericString() + " should not occur", actual.contains(new MethodCall(m)));
       }
     }
     

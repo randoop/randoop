@@ -197,12 +197,12 @@ public class ExecutableSequence implements Serializable {
 
   /** True for a primitive or String literal, but not for a null literal. */
   public static boolean canUseShortFormat(Operation statementCreatingVar) {
-    return (statementCreatingVar instanceof PrimitiveOrStringOrNullDecl
+    return (statementCreatingVar instanceof NonreceiverTerm
             // Do not use the short output format if the value is null, because
             // the variable type may disambiguate among overloaded methods.
             // (It would be even nicer to use the short output format unless
             // disambiguation is truly needed.)
-            && ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue() != null);
+            && ((NonreceiverTerm) statementCreatingVar).getValue() != null);
   }
 
   /** 
@@ -378,13 +378,13 @@ public class ExecutableSequence implements Serializable {
         // If receiver position of a method, don't continue execution.
         if (ri == 0) {
           Operation st = s.getStatementKind(i);
-          if (st instanceof RMethod && (!((RMethod)st).isStatic())) {
+          if (st instanceof MethodCall && (!((MethodCall)st).isStatic())) {
             return false;
           }
         }
         // If null value is implicitly passed (i.e. not passed from a
         // statement like "x = null;" don't continue execution.
-        if (!(creatingStatement instanceof PrimitiveOrStringOrNullDecl)) {
+        if (!(creatingStatement instanceof NonreceiverTerm)) {
           return false;
         }
       }
@@ -422,7 +422,7 @@ public class ExecutableSequence implements Serializable {
         System.setErr (ps_output_buffer);
       }
       
-      assert ((statement instanceof RMethod && !((RMethod)statement).isStatic()) ? inputVariables[0] != null : true);
+      assert ((statement instanceof MethodCall && !((MethodCall)statement).isStatic()) ? inputVariables[0] != null : true);
       
       ExecutionOutcome r = statement.execute(inputVariables, Globals.blackHole);
       assert r != null;

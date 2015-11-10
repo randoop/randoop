@@ -27,7 +27,7 @@ import randoop.IStopper;
 import randoop.ITestFilter;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.PrimitiveOrStringOrNullDecl;
+import randoop.NonreceiverTerm;
 import randoop.RandoopListenerManager;
 import randoop.RandoopStat;
 import randoop.SeedSequences;
@@ -213,7 +213,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // First, may need to execute primitive declarations.
     for (int i = oldsize ; i < sequence.size() - 1 ; i++) {
-      assert sequence.getStatementKind(i) instanceof PrimitiveOrStringOrNullDecl;
+      assert sequence.getStatementKind(i) instanceof NonreceiverTerm;
       executionVisitor.visitBefore(eseq, i);
       ExecutableSequence.executeStatement(sequence, exec, i, new Object[0]);
       executionVisitor.visitAfter(eseq, i);
@@ -378,7 +378,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // There may be primitive declarations that fed into the last
     // statement; remove them also.
-    while (sequence.size() > 0 && sequence.getLastStatement() instanceof PrimitiveOrStringOrNullDecl) {
+    while (sequence.size() > 0 && sequence.getLastStatement() instanceof NonreceiverTerm) {
       removeLast();
     }
 
@@ -553,7 +553,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // valuesSoFar contains all the variables
     for (int i = 0 ; i < sequence.size() ; i++) {
-      if (sequence.getStatementKind(i) instanceof PrimitiveOrStringOrNullDecl)
+      if (sequence.getStatementKind(i) instanceof NonreceiverTerm)
         continue;
       assert valuesSoFar.contains(i) : i;
     }

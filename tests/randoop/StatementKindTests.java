@@ -12,56 +12,56 @@ public class StatementKindTests extends TestCase {
   public void testPrimStKind() {
 
     // String.
-    checkParse(new PrimitiveOrStringOrNullDecl(String.class, null));
-    checkParse(new PrimitiveOrStringOrNullDecl(String.class, ""));
-    checkParse(new PrimitiveOrStringOrNullDecl(String.class, " "));
-    checkParse(new PrimitiveOrStringOrNullDecl(String.class, "\""));
-    checkParse(new PrimitiveOrStringOrNullDecl(String.class, "\n"));
-    checkParse(new PrimitiveOrStringOrNullDecl(String.class, "\u0000"));
+    checkParse(new NonreceiverTerm(String.class, null));
+    checkParse(new NonreceiverTerm(String.class, ""));
+    checkParse(new NonreceiverTerm(String.class, " "));
+    checkParse(new NonreceiverTerm(String.class, "\""));
+    checkParse(new NonreceiverTerm(String.class, "\n"));
+    checkParse(new NonreceiverTerm(String.class, "\u0000"));
 
     // Object.
-    checkParse(new PrimitiveOrStringOrNullDecl(Object.class, null));
+    checkParse(new NonreceiverTerm(Object.class, null));
     try {
-      checkParse(new PrimitiveOrStringOrNullDecl(Object.class, new Object()));
+      checkParse(new NonreceiverTerm(Object.class, new Object()));
       fail();
     } catch (IllegalArgumentException e) {
       // Good.
     }
 
     // Array.
-    checkParse(new PrimitiveOrStringOrNullDecl(new Object[][]{}.getClass(), null));
+    checkParse(new NonreceiverTerm(new Object[][]{}.getClass(), null));
 
     // Primitives.
-    checkParse(new PrimitiveOrStringOrNullDecl(int.class, 0));
-    checkParse(new PrimitiveOrStringOrNullDecl(int.class, 1));
-    checkParse(new PrimitiveOrStringOrNullDecl(int.class, -1));
-    checkParse(new PrimitiveOrStringOrNullDecl(int.class, Integer.MAX_VALUE));
-    checkParse(new PrimitiveOrStringOrNullDecl(int.class, Integer.MIN_VALUE));
+    checkParse(new NonreceiverTerm(int.class, 0));
+    checkParse(new NonreceiverTerm(int.class, 1));
+    checkParse(new NonreceiverTerm(int.class, -1));
+    checkParse(new NonreceiverTerm(int.class, Integer.MAX_VALUE));
+    checkParse(new NonreceiverTerm(int.class, Integer.MIN_VALUE));
 
-    checkParse(new PrimitiveOrStringOrNullDecl(byte.class, (byte)0));
-    checkParse(new PrimitiveOrStringOrNullDecl(short.class, (short)0));
-    checkParse(new PrimitiveOrStringOrNullDecl(long.class, (long)0));
-    checkParse(new PrimitiveOrStringOrNullDecl(float.class, (float)0));
-    checkParse(new PrimitiveOrStringOrNullDecl(double.class, (double)0));
-    checkParse(new PrimitiveOrStringOrNullDecl(boolean.class, false));
+    checkParse(new NonreceiverTerm(byte.class, (byte)0));
+    checkParse(new NonreceiverTerm(short.class, (short)0));
+    checkParse(new NonreceiverTerm(long.class, (long)0));
+    checkParse(new NonreceiverTerm(float.class, (float)0));
+    checkParse(new NonreceiverTerm(double.class, (double)0));
+    checkParse(new NonreceiverTerm(boolean.class, false));
 
-    checkParse(new PrimitiveOrStringOrNullDecl(char.class, ' '));
-    checkParse(new PrimitiveOrStringOrNullDecl(char.class, '\u0000'));
-    checkParse(new PrimitiveOrStringOrNullDecl(char.class, '\''));
-    checkParse(new PrimitiveOrStringOrNullDecl(char.class, '0'));
+    checkParse(new NonreceiverTerm(char.class, ' '));
+    checkParse(new NonreceiverTerm(char.class, '\u0000'));
+    checkParse(new NonreceiverTerm(char.class, '\''));
+    checkParse(new NonreceiverTerm(char.class, '0'));
   }
 
   public void testRMethod() {
 
     for (Method m : ArrayList.class.getMethods()) {
-      checkParse(RMethod.getRMethod(m));
+      checkParse(MethodCall.getRMethod(m));
     }
   }
 
   public void testRConstructor() {
 
     for (Constructor<?> c : ArrayList.class.getConstructors()) {
-      checkParse(RConstructor.getRConstructor(c));
+      checkParse(ConstructorCall.getRConstructor(c));
     }
   }
 
@@ -70,7 +70,7 @@ public class StatementKindTests extends TestCase {
   }
 
   public void testArrayDecl() {
-    checkParse(new ArrayDeclaration(int.class, 3));
+    checkParse(new ArrayCreation(int.class, 3));
   }
 
 

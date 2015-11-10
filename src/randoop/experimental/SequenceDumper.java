@@ -5,15 +5,15 @@ import java.util.List;
 
 import plume.UtilMDE;
 
-import randoop.ArrayDeclaration;
+import randoop.ArrayCreation;
 import randoop.Check;
 import randoop.ExecutableSequence;
 import randoop.ExpectedExceptionCheck;
 import randoop.Globals;
 import randoop.ObjectCheck;
-import randoop.PrimitiveOrStringOrNullDecl;
-import randoop.RConstructor;
-import randoop.RMethod;
+import randoop.NonreceiverTerm;
+import randoop.ConstructorCall;
+import randoop.MethodCall;
 import randoop.Operation;
 import randoop.Variable;
 import randoop.main.GenInputsAbstract;
@@ -90,25 +90,25 @@ class SequenceDumper {
    **********************************************************/
   private void appendCode(StringBuilder sb, Operation statement,
       Variable newVar, List<Variable> inputVars) {
-    if (statement instanceof PrimitiveOrStringOrNullDecl) {
+    if (statement instanceof NonreceiverTerm) {
       if (GenInputsAbstract.long_format
           || ! ExecutableSequence.canUseShortFormat(statement)) {
-        PrimitiveOrStringOrNullDecl primiveStatement = (PrimitiveOrStringOrNullDecl)statement;
+        NonreceiverTerm primiveStatement = (NonreceiverTerm)statement;
         this.printPrimitiveType(primiveStatement, newVar, inputVars, sb);
       }
-    } else if (statement instanceof RMethod) {
-      this.printRMethod((RMethod)statement, newVar, inputVars, sb);
-    } else if (statement instanceof RConstructor) {
-      this.printRConstructor((RConstructor)statement, newVar, inputVars, sb);
-    } else if (statement instanceof ArrayDeclaration) {
-      ArrayDeclaration arrayDeclaration = (ArrayDeclaration)statement;
+    } else if (statement instanceof MethodCall) {
+      this.printRMethod((MethodCall)statement, newVar, inputVars, sb);
+    } else if (statement instanceof ConstructorCall) {
+      this.printRConstructor((ConstructorCall)statement, newVar, inputVars, sb);
+    } else if (statement instanceof ArrayCreation) {
+      ArrayCreation arrayDeclaration = (ArrayCreation)statement;
       this.printArrayDeclaration(arrayDeclaration, newVar, inputVars, sb);
     } else {
       throw new Error("Wrong type of statement: " + statement);
     }
   }
   
-  private void printRMethod(RMethod rmethod, Variable newVar, List<Variable> inputVars, StringBuilder sb) {
+  private void printRMethod(MethodCall rmethod, Variable newVar, List<Variable> inputVars, StringBuilder sb) {
 
        if (!rmethod.isVoid()) {
         sb.append(getSimpleCompilableName(rmethod.getMethod().getReturnType()));
@@ -141,7 +141,7 @@ class SequenceDumper {
         Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
         if (!GenInputsAbstract.long_format
             && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-          sb.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+          sb.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
         } else {
           sb.append(this.renamer.getRenamedVar(inputVars.get(i).index)/* inputVars.get(i).getName()*/);
         }
@@ -150,7 +150,7 @@ class SequenceDumper {
       sb.append(");" + Globals.lineSep);
   }
   
-  private void printRConstructor(RConstructor rconstructor, Variable newVar, List<Variable> inputVars, StringBuilder sb) {
+  private void printRConstructor(ConstructorCall rconstructor, Variable newVar, List<Variable> inputVars, StringBuilder sb) {
 
       assert inputVars.size() == rconstructor.getInputTypes().size();
 
@@ -185,7 +185,7 @@ class SequenceDumper {
         Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
         if (!GenInputsAbstract.long_format
             && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-          sb.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+          sb.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
         } else {
           sb.append(this.renamer.getRenamedVar(inputVars.get(i).index)/* inputVars.get(i).getName()*/);
         }
@@ -194,7 +194,7 @@ class SequenceDumper {
       sb.append(Globals.lineSep);
   }
   
-  private void printPrimitiveType(PrimitiveOrStringOrNullDecl statement,
+  private void printPrimitiveType(NonreceiverTerm statement,
       Variable newVar, List<Variable> inputVars, StringBuilder sb){
     Class<?> type = statement.getType();
     //print primitive type
@@ -220,7 +220,7 @@ class SequenceDumper {
       }
     }
   
-  private void printArrayDeclaration(ArrayDeclaration statement,
+  private void printArrayDeclaration(ArrayCreation statement,
       Variable newVar, List<Variable> inputVars, StringBuilder sb) {
     int length = statement.getLength();
     if (inputVars.size() > length)
@@ -235,8 +235,8 @@ class SequenceDumper {
           // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
           // the value (e.g. "3") is inserted directly added as arguments to method calls.
           Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-          if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
-            sb.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+          if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof NonreceiverTerm) {
+            sb.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
           } else {
             sb.append(/*inputVars.get(i).getName()*/this.renamer.getRenamedVar(inputVars.get(i).index));
           }
@@ -284,7 +284,7 @@ class SequenceDumper {
        return retval;
   }
   
-  private static void appendReceiverOrClassForStatics(RMethod rmethod, String receiverString,
+  private static void appendReceiverOrClassForStatics(MethodCall rmethod, String receiverString,
       StringBuilder b) {
     if (rmethod.isStatic()) {
       String s2 = rmethod.getMethod().getDeclaringClass().getSimpleName().replace('$',

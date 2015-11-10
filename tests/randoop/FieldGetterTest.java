@@ -73,7 +73,7 @@ public class FieldGetterTest {
 
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
-      RConstructor cons = new RConstructor(
+      ConstructorCall cons = new ConstructorCall(
           Reflection.getConstructorForSignature("randoop.ClassWithFields.ClassWithFields()"));
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();

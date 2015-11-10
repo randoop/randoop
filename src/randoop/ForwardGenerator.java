@@ -235,7 +235,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && !PrimitiveTypes.stringLengthOK((String)runtimeValue);
         if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
-          componentManager.addGeneratedSequence(PrimitiveOrStringOrNullDecl.sequenceForPrimitive(runtimeValue));
+          componentManager.addGeneratedSequence(NonreceiverTerm.sequenceForPrimitive(runtimeValue));
         }
       } else if (GenInputsAbstract.use_object_cache) {
         objectCache.setActiveFlags(seq, i);
@@ -442,8 +442,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // true if statement st represents an instance method, and we are currently
       // selecting a value to act as the receiver for the method.
-      boolean isReceiver = (i == 0 && (statement instanceof RMethod)
-          && (!((RMethod) statement).isStatic()));
+      boolean isReceiver = (i == 0 && (statement instanceof MethodCall)
+          && (!((MethodCall) statement).isStatic()));
 
       // If alias ratio is given, attempt with some probability to use a variable already in S.
       if (GenInputsAbstract.alias_ratio != 0 &&
@@ -514,7 +514,7 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag (false, null, null);
         } else {
           if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          Operation st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
+          Operation st = NonreceiverTerm.nullOrZeroDecl(t);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
           sequences.add(seq);
@@ -532,7 +532,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (!isReceiver&& GenInputsAbstract.null_ratio != 0
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn()) Log.logLine("null-ratio option given. Randomly decided to use null as input.");
-        Operation st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
+        Operation st = NonreceiverTerm.nullOrZeroDecl(t);
         Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
         variables.add(totStatements);
         sequences.add(seq);
@@ -566,9 +566,9 @@ public class ForwardGenerator extends AbstractGenerator {
       // If we were unlucky and selected a null value as the receiver
       // for a method call, return with failure.
       if (i == 0
-          && (statement instanceof RMethod)
-          && (!((RMethod) statement).isStatic())
-          && chosenSeq.getCreatingStatement(randomVariable) instanceof PrimitiveOrStringOrNullDecl)
+          && (statement instanceof MethodCall)
+          && (!((MethodCall) statement).isStatic())
+          && chosenSeq.getCreatingStatement(randomVariable) instanceof NonreceiverTerm)
         return new InputsAndSuccessFlag (false, null, null);
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
@@ -576,7 +576,7 @@ public class ForwardGenerator extends AbstractGenerator {
         // Update types and typesToVars.
         for (int j = 0 ; j < chosenSeq.size() ; j++) {
           Operation stk = chosenSeq.getStatementKind(j);
-          if (stk instanceof PrimitiveOrStringOrNullDecl)
+          if (stk instanceof NonreceiverTerm)
             continue; // Prim decl not an interesting candidate for multiple uses.
           Class<?> outType = stk.getOutputType();
           types.add(outType);

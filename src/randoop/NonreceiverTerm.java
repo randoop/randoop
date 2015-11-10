@@ -20,7 +20,7 @@ import randoop.main.GenInputsAbstract;
  * This decl info is for primitives, strings and nulls (of any type).
  * Such values are never used as receivers when generating method calls.
  */
-public final class PrimitiveOrStringOrNullDecl implements Operation, Serializable {
+public final class NonreceiverTerm implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -39,7 +39,7 @@ public final class PrimitiveOrStringOrNullDecl implements Operation, Serializabl
   /**
    * Constructs a PrimitiveOrStringOrNullDeclInfo of type t and value o
    */
-  public PrimitiveOrStringOrNullDecl(Class<?> t, Object o) {
+  public NonreceiverTerm(Class<?> t, Object o) {
     if (t == null)
       throw new IllegalArgumentException("t should not be null.");
 
@@ -74,11 +74,11 @@ public final class PrimitiveOrStringOrNullDecl implements Operation, Serializabl
    */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof PrimitiveOrStringOrNullDecl))
+    if (!(o instanceof NonreceiverTerm))
       return false;
     if (this == o)
       return true;
-    PrimitiveOrStringOrNullDecl other = (PrimitiveOrStringOrNullDecl) o;
+    NonreceiverTerm other = (NonreceiverTerm) o;
 
     return this.type.equals(other.type)
     && Util.equalsWithNull(this.value, other.value);
@@ -168,26 +168,26 @@ public final class PrimitiveOrStringOrNullDecl implements Operation, Serializabl
    * Returns the appropriate PrimitiveOrStringOrNullDeclInfo representative of 
    * the specified class c.
    */
-  public static PrimitiveOrStringOrNullDecl nullOrZeroDecl(Class<?> c) {
+  public static NonreceiverTerm nullOrZeroDecl(Class<?> c) {
     if (String.class.equals(c))
-      return new PrimitiveOrStringOrNullDecl(String.class, "");
+      return new NonreceiverTerm(String.class, "");
     if (Character.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Character.TYPE, 'a'); // TODO This is not null or zero...
+      return new NonreceiverTerm(Character.TYPE, 'a'); // TODO This is not null or zero...
     if (Byte.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Byte.TYPE, (byte)0);
+      return new NonreceiverTerm(Byte.TYPE, (byte)0);
     if (Short.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Short.TYPE, (short)0);
+      return new NonreceiverTerm(Short.TYPE, (short)0);
     if (Integer.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Integer.TYPE, (Integer.valueOf(0)).intValue());
+      return new NonreceiverTerm(Integer.TYPE, (Integer.valueOf(0)).intValue());
     if (Long.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Long.TYPE, (Long.valueOf(0)).longValue());
+      return new NonreceiverTerm(Long.TYPE, (Long.valueOf(0)).longValue());
     if (Float.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Float.TYPE, (Float.valueOf(0)).floatValue());
+      return new NonreceiverTerm(Float.TYPE, (Float.valueOf(0)).floatValue());
     if (Double.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Double.TYPE, (Double.valueOf(0)).doubleValue());
+      return new NonreceiverTerm(Double.TYPE, (Double.valueOf(0)).doubleValue());
     if (Boolean.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Boolean.TYPE,false);
-    return new PrimitiveOrStringOrNullDecl(c, null);
+      return new NonreceiverTerm(Boolean.TYPE,false);
+    return new NonreceiverTerm(c, null);
   }
 
   public String toParseableString() {
@@ -225,7 +225,7 @@ public final class PrimitiveOrStringOrNullDecl implements Operation, Serializabl
       throw new IllegalArgumentException("o is a string of length > " + GenInputsAbstract.string_maxlen);
     }
 
-    return Sequence.create(new PrimitiveOrStringOrNullDecl(PrimitiveTypes.primitiveType(cls), o));
+    return Sequence.create(new NonreceiverTerm(PrimitiveTypes.primitiveType(cls), o));
   }
 
   /**
@@ -254,7 +254,7 @@ public final class PrimitiveOrStringOrNullDecl implements Operation, Serializabl
    * 
    * Note that a string type can be given as both "String" or "java.lang.String".
    */
-  public static PrimitiveOrStringOrNullDecl parse(String s) throws StatementKindParseException {
+  public static NonreceiverTerm parse(String s) throws StatementKindParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
@@ -375,6 +375,6 @@ public final class PrimitiveOrStringOrNullDecl implements Operation, Serializabl
       }
     }
 
-    return new PrimitiveOrStringOrNullDecl(type, value);
+    return new NonreceiverTerm(type, value);
   }
 }

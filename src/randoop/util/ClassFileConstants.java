@@ -1,6 +1,6 @@
 package randoop.util;
 
-import randoop.PrimitiveOrStringOrNullDecl;
+import randoop.NonreceiverTerm;
 
 import java.util.*;
 import java.io.*;
@@ -489,9 +489,9 @@ public class ClassFileConstants {
    * Convert a collection of ConstantSets to the format expected by
    * GenTest.addClassLiterals.
    */
-  public static MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> toMap(Collection<ConstantSet> constantSets) {
-    final MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> map =
-      new MultiMap<Class<?>, PrimitiveOrStringOrNullDecl>();
+  public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
+    final MultiMap<Class<?>, NonreceiverTerm> map =
+      new MultiMap<Class<?>, NonreceiverTerm>();
     for (ConstantSet cs : constantSets) {
       Class<?> clazz;
       try {
@@ -500,22 +500,22 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new PrimitiveOrStringOrNullDecl(int.class, x.intValue()));
+        map.add(clazz, new NonreceiverTerm(int.class, x.intValue()));
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new PrimitiveOrStringOrNullDecl(long.class, x.longValue()));
+        map.add(clazz, new NonreceiverTerm(long.class, x.longValue()));
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new PrimitiveOrStringOrNullDecl(float.class, x.floatValue()));
+        map.add(clazz, new NonreceiverTerm(float.class, x.floatValue()));
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new PrimitiveOrStringOrNullDecl(double.class, x.doubleValue()));
+        map.add(clazz, new NonreceiverTerm(double.class, x.doubleValue()));
       }
       for (String x : cs.strings) {
-        map.add(clazz, new PrimitiveOrStringOrNullDecl(String.class, x));
+        map.add(clazz, new NonreceiverTerm(String.class, x));
       }
       for (Class<?> x : cs.classes) {
-        map.add(clazz, new PrimitiveOrStringOrNullDecl(Class.class, x));
+        map.add(clazz, new NonreceiverTerm(Class.class, x));
       }
     }
     return map;

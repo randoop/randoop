@@ -12,7 +12,7 @@ import plume.UtilMDE;
 
 import randoop.ExecutableSequence;
 import randoop.Globals;
-import randoop.RMethod;
+import randoop.MethodCall;
 import randoop.Sequence;
 import randoop.Operation;
 import randoop.util.Files;
@@ -148,8 +148,8 @@ public class SequencePrettyPrinter {
         }
         //if it is a RMethod, consider the case it may be
         //static method
-        if (statement instanceof RMethod) {
-          RMethod rmethod = (RMethod)statement;
+        if (statement instanceof MethodCall) {
+          MethodCall rmethod = (MethodCall)statement;
           if (rmethod.isStatic()) {
             Class<?> declaring_class = rmethod.getMethod().getDeclaringClass();
             if (needImport(declaring_class)) {
