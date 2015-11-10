@@ -10,9 +10,9 @@ public class FailureSet {
   private Set<Failure> failures = new LinkedHashSet<Failure>();
   
   public static class Failure {
-    public final StatementKind st;
+    public final Operation st;
     public final Class<?> viocls;
-    public Failure(StatementKind st, Class<?> viocls) {
+    public Failure(Operation st, Class<?> viocls) {
       this.st = st;
       this.viocls = viocls;
     }
@@ -41,7 +41,7 @@ public class FailureSet {
     
     for (Check obs : es.getFailures(idx)) {
       Class<?> vioCls = obs.getClass();
-      StatementKind st = null;
+      Operation st = null;
 
       if (obs instanceof ObjectCheck && ((ObjectCheck)obs).contract instanceof ObjectContract) {
 

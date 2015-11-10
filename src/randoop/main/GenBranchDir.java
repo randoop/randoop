@@ -29,7 +29,7 @@ import randoop.RMethod;
 import randoop.Sequence;
 import randoop.SequenceCollection;
 import randoop.SequenceParseException;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.Variable;
 import randoop.experiments.DFResultsOneSeq;
 import randoop.experiments.DataFlowOutput;
@@ -361,7 +361,7 @@ public class GenBranchDir {
     if (null_is_interesting) {
       // Try single-variable null flip strategy on variables that were null.
       for (int i = 0 ; i < r.sequence.size() ; i++) {
-        StatementKind st = r.sequence.getStatementKind(i);
+        Operation st = r.sequence.getStatementKind(i);
         // If i-th statement is "x = null;" ...
         if (st instanceof PrimitiveOrStringOrNullDecl
             && ((PrimitiveOrStringOrNullDecl)st).getValue() == null) {
@@ -479,7 +479,7 @@ public class GenBranchDir {
   private static Pair<Branch, Sequence> twoVarsAliasLastStatementVars(
       DFResultsOneSeq r) {
 
-    StatementKind st = r.sequence.getLastStatement();
+    Operation st = r.sequence.getLastStatement();
     List<Class<?>> types = r.sequence.getLastStatement().getInputTypes();
     List<Variable> vars = r.sequence.getInputs(r.sequence.size() - 1);
     assert vars.size() == types.size();
@@ -497,7 +497,7 @@ public class GenBranchDir {
         // See if we can replace i <- j.
         if (!Reflection.canBeUsedAs(types.get(j), types.get(i)))
           continue;
-        StatementKind jSt = r.sequence.getStatementKind(vars.get(j).getDeclIndex());
+        Operation jSt = r.sequence.getStatementKind(vars.get(j).getDeclIndex());
         if (i == 0 && isInstanceMethod && jSt instanceof PrimitiveOrStringOrNullDecl)
           continue;
 
@@ -666,7 +666,7 @@ public class GenBranchDir {
 
     Branch goalBranch = (frontierBranch).getOppositeBranch();
 
-    StatementKind st = sequence.getStatementKind(var.getDeclIndex());
+    Operation st = sequence.getStatementKind(var.getDeclIndex());
 
     if (st instanceof PrimitiveOrStringOrNullDecl) {
 
@@ -743,7 +743,7 @@ public class GenBranchDir {
 
       // The variable is not null. Replace it with null.
 
-      StatementKind newSt = new PrimitiveOrStringOrNullDecl(st.getOutputType(), null);
+      Operation newSt = new PrimitiveOrStringOrNullDecl(st.getOutputType(), null);
       Sequence comp = new Sequence();
       comp = comp.extend(newSt, new ArrayList<Variable>());
       Variable compvar = comp.getLastVariable();
@@ -924,7 +924,7 @@ public class GenBranchDir {
     // Try negating.
     {
       out.println("WILL TRY NEGATING " + var);
-      StatementKind st = r.sequence.getStatementKind(var.getDeclIndex());
+      Operation st = r.sequence.getStatementKind(var.getDeclIndex());
       assert st instanceof PrimitiveOrStringOrNullDecl;
       PrimitiveOrStringOrNullDecl prim = (PrimitiveOrStringOrNullDecl)st;
       assert prim.getType().equals(int.class);
@@ -951,7 +951,7 @@ public class GenBranchDir {
       {
         {
           out.println("WILL TRY ADDING " + i + " TO " + var);
-          StatementKind st = r.sequence.getStatementKind(var.getDeclIndex());
+          Operation st = r.sequence.getStatementKind(var.getDeclIndex());
           assert st instanceof PrimitiveOrStringOrNullDecl;
           PrimitiveOrStringOrNullDecl prim = (PrimitiveOrStringOrNullDecl)st;
           assert prim.getType().equals(int.class);
@@ -964,7 +964,7 @@ public class GenBranchDir {
         }
         {
           out.println("WILL TRY SETTING " + i + " TO " + var);
-          StatementKind st = r.sequence.getStatementKind(var.getDeclIndex());
+          Operation st = r.sequence.getStatementKind(var.getDeclIndex());
           assert st instanceof PrimitiveOrStringOrNullDecl;
           PrimitiveOrStringOrNullDecl prim = (PrimitiveOrStringOrNullDecl)st;
           assert prim.getType().equals(int.class);
@@ -982,7 +982,7 @@ public class GenBranchDir {
     // Try adding 1.
     {
       out.println("WILL TRY SUBTRACTING 1 " + var);
-      StatementKind st = r.sequence.getStatementKind(var.getDeclIndex());
+      Operation st = r.sequence.getStatementKind(var.getDeclIndex());
       assert st instanceof PrimitiveOrStringOrNullDecl;
       PrimitiveOrStringOrNullDecl prim = (PrimitiveOrStringOrNullDecl)st;
       assert prim.getType().equals(int.class);
@@ -1009,7 +1009,7 @@ public class GenBranchDir {
     MSequence seq = sequence.toModifiableSequence();
 
     MVariable mvar = seq.getVariable(var.getDeclIndex());
-    StatementKind st = new PrimitiveOrStringOrNullDecl(mvar.getType(), val);
+    Operation st = new PrimitiveOrStringOrNullDecl(mvar.getType(), val);
     seq.statements.set(var.getDeclIndex(), new MStatement(st, new ArrayList<MVariable>(), mvar));
     // out.println("@@@" + seq.toCodeString());
 

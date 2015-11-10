@@ -235,8 +235,8 @@ public class SequenceCollection {
 
   }
 
-  public Set<StatementKind> getAllStatements() {
-    Set<StatementKind> result = new LinkedHashSet<StatementKind>();
+  public Set<Operation> getAllStatements() {
+    Set<Operation> result = new LinkedHashSet<Operation>();
     for (Sequence s: getAllSequences()) {
       for (Statement stmtWithInputs : s.getStatementsWithInputs().toJDKList()) {
         result.add(stmtWithInputs.statement);

@@ -17,7 +17,7 @@ import randoop.util.Reflection;
  * Represents a one-dimensional
  * array creation statement, e.g. "int[] x = new int[2] { 3, 7 };"
  */
-public final class ArrayDeclaration implements StatementKind, Serializable {
+public final class ArrayDeclaration implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -144,7 +144,7 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
       
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
         b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
@@ -196,7 +196,7 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
    * int[3]
    * 
    */
-  public static StatementKind parse(String str) {
+  public static Operation parse(String str) {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');
     String elementTypeStr = str.substring(0, openBr);

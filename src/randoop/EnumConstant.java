@@ -16,7 +16,7 @@ import randoop.util.Reflection;
  * @author bjkeller
  *
  */
-public class EnumConstant implements StatementKind, Serializable {
+public class EnumConstant implements Operation, Serializable {
   
   private static final long serialVersionUID = 849994347169442078L;
   
@@ -68,7 +68,7 @@ public class EnumConstant implements StatementKind, Serializable {
   /**
    * getOutputType returns the type of the enum constant.
    * 
-   * @see randoop.StatementKind#getOutputType()
+   * @see randoop.Operation#getOutputType()
    */
   @Override
   public Class<?> getOutputType() {
@@ -103,7 +103,7 @@ public class EnumConstant implements StatementKind, Serializable {
    * type-value pair. The parse function should return an equivalent object.
    * 
    * @see EnumConstant#parse(String)
-   * @see randoop.StatementKind#toParseableString()
+   * @see randoop.Operation#toParseableString()
    */
   @Override
   public String toParseableString() {

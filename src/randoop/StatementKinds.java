@@ -27,7 +27,7 @@ public class StatementKinds {
    * For more details on the exact form of DESCRIPTION, see the different
    * classes implementing StatementKind.
    */
-  public static StatementKind parse(String str) throws StatementKindParseException {
+  public static Operation parse(String str) throws StatementKindParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
@@ -78,7 +78,7 @@ public class StatementKinds {
    * The "id" is really the kind or a tag, such as "prim".
    * It's not a unique identifier for this statement.
    */
-  public static String getId(StatementKind st) {
+  public static String getId(Operation st) {
     if (st == null) throw new IllegalArgumentException("st cannot be null.");
     if (st instanceof PrimitiveOrStringOrNullDecl)
       return PrimitiveOrStringOrNullDecl.ID;

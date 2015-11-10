@@ -19,7 +19,7 @@ import java.util.List;
  *  <li> Update method StatementKinds.getId(StatementKing) to handle statement kinds of type C.
  *  </ul> 
  */
-public interface StatementKind {
+public interface Operation {
 
   /**
    * Returns the (ordered) list of input types for this statement kind.

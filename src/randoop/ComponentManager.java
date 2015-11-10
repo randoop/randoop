@@ -155,7 +155,7 @@ public class ComponentManager {
    * package-level literals, those are added to the collection as well.
    */
   @SuppressWarnings("unchecked")
-  public SimpleList<Sequence> getSequencesForType(StatementKind statement, int i) {
+  public SimpleList<Sequence> getSequencesForType(Operation statement, int i) {
 
     Class<?> neededType = statement.getInputTypes().get(i);
 

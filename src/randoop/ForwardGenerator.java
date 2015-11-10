@@ -55,7 +55,7 @@ public class ForwardGenerator extends AbstractGenerator {
     this.objectCache = newCache;
   }
 
-  public ForwardGenerator(List<StatementKind> statements,
+  public ForwardGenerator(List<Operation> statements,
       long timeMillis, int maxSequences,
       ComponentManager componentManager,
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> fs) {
@@ -259,7 +259,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (Log.isLoggingOn()) Log.logLine("-------------------------------------------");
 
-    StatementKind statement = null;
+    Operation statement = null;
 
     if (this.statements.isEmpty())
       return null;
@@ -385,7 +385,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // that create values of some type required by the statement), the success flag
   // of the returned object is false.
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(StatementKind statement) {
+  private InputsAndSuccessFlag selectInputs(Operation statement) {
 
     // Variable inputTypes containsthe  values required as input to the
     // statement given as a parameter to the selectInputs method.
@@ -514,7 +514,7 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag (false, null, null);
         } else {
           if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          StatementKind st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
+          Operation st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
           sequences.add(seq);
@@ -532,7 +532,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (!isReceiver&& GenInputsAbstract.null_ratio != 0
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn()) Log.logLine("null-ratio option given. Randomly decided to use null as input.");
-        StatementKind st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
+        Operation st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
         Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
         variables.add(totStatements);
         sequences.add(seq);
@@ -575,7 +575,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (GenInputsAbstract.alias_ratio != 0) {
         // Update types and typesToVars.
         for (int j = 0 ; j < chosenSeq.size() ; j++) {
-          StatementKind stk = chosenSeq.getStatementKind(j);
+          Operation stk = chosenSeq.getStatementKind(j);
           if (stk instanceof PrimitiveOrStringOrNullDecl)
             continue; // Prim decl not an interesting candidate for multiple uses.
           Class<?> outType = stk.getOutputType();

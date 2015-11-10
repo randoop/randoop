@@ -77,7 +77,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     return isObserverInvocation(statement.statement);
   }
 
-  public static boolean isObserverInvocation(StatementKind statement) {
+  public static boolean isObserverInvocation(Operation statement) {
     if (! (statement instanceof RMethod)) {
       return false;
     }
@@ -157,7 +157,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     // Recall there are as many values as statements in the sequence.
     for (int i = 0; i < s.sequence.size() ; i++) {
 
-      StatementKind st = s.sequence.getStatementKind(i);
+      Operation st = s.sequence.getStatementKind(i);
       ExecutionOutcome result = s.getResult(i);
 
       if (result instanceof NormalExecution
@@ -226,7 +226,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           if (s.sequence.getInputs(i).size() > 0) {
             Variable var0 = s.sequence.getInputs (i).get(0);
             if (var0.getType() == java.util.Date.class) {
-              StatementKind sk = s.sequence.getCreatingStatement (var0);
+              Operation sk = s.sequence.getCreatingStatement (var0);
               if ((sk instanceof RConstructor) &&
                   (s.sequence.getInputs(i).size() == 1))
                 continue;

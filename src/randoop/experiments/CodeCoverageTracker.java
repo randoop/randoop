@@ -17,7 +17,7 @@ import randoop.IEventListener;
 import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.Sequence;
-import randoop.StatementKind;
+import randoop.Operation;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
@@ -39,7 +39,7 @@ public class CodeCoverageTracker implements IEventListener {
   public final Set<Branch> branchesCovered;
   private int branchtot;
   private int branchcov;
-  Map<StatementKind,Integer> membersToBranchTot;
+  Map<Operation,Integer> membersToBranchTot;
 
   /**
    * Creates a coverage tracker that tracks the classes specified
@@ -56,7 +56,7 @@ public class CodeCoverageTracker implements IEventListener {
     branchesCovered = new LinkedHashSet<Branch>();
     branchtot = 0;
     branchcov = 0;
-    membersToBranchTot = new LinkedHashMap<StatementKind, Integer>();
+    membersToBranchTot = new LinkedHashMap<Operation, Integer>();
     
     // Setup STAT_BRANCHTOT for the coverage classes.
     for (Class<?> cls : coverageInstrumentedClasses) {
@@ -89,7 +89,7 @@ public class CodeCoverageTracker implements IEventListener {
 
   }
   
-  private void addToCount(StatementKind member, int i) {
+  private void addToCount(Operation member, int i) {
     Integer count = membersToBranchTot.get(member);
     if (count == null) {
       count = 0;

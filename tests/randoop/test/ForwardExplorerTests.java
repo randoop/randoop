@@ -10,7 +10,7 @@ import randoop.ForwardGenerator;
 import randoop.SeedSequences;
 import randoop.Sequence;
 import randoop.SequenceCollection;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.main.GenInputsAbstract;
 import randoop.test.bh.BH;
 import randoop.test.bh.Body;
@@ -35,7 +35,7 @@ public class ForwardExplorerTests extends TestCase {
 
   public static void test1() {
 
-    List<StatementKind> model =
+    List<Operation> model =
       Reflection.getStatements(Arrays.<Class<?>>asList(Long.class), null);
 
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
@@ -63,7 +63,7 @@ public class ForwardExplorerTests extends TestCase {
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 200;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    List<StatementKind> model = Reflection.getStatements(classes, null);
+    List<Operation> model = Reflection.getStatements(classes, null);
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 200, mgr, null, null, null);
     exp.explore();
@@ -106,7 +106,7 @@ public class ForwardExplorerTests extends TestCase {
     System.out.println(classes);
 
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    List<StatementKind> model = Reflection.getStatements(classes, null);
+    List<Operation> model = Reflection.getStatements(classes, null);
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 200, mgr, null, null, null);
     GenInputsAbstract.forbid_null = false;

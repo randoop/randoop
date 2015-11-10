@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.util.Reflection;
 import randoop.util.Util;
 
@@ -21,7 +21,7 @@ public class StatementCollectionWeightedTest extends TestCase {
     List<Class<?>> classes = new ArrayList<Class<?>>();
     classes.add(java.util.ArrayList.class);
 
-    List<StatementKind> statements = 
+    List<Operation> statements = 
       Reflection.getStatements(classes, null);
 
     StringBuilder weightedMethods = new StringBuilder();

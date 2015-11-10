@@ -49,7 +49,7 @@ public class EnumReflectionTest {
     List<Enum<?>> include = Arrays.asList(se.getEnumConstants());
     @SuppressWarnings("unchecked")
     List<Method> exclude = Arrays.asList(se.getMethods());
-    List<StatementKind> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = Reflection.getStatements(classes, null);
     
     assertEquals("number of statements", include.size(), actual.size());
 
@@ -88,7 +88,7 @@ public class EnumReflectionTest {
     }
     
     
-    List<StatementKind> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = Reflection.getStatements(classes, null);
     assertEquals("number of statements", include.size()+5, actual.size());
     
     for (Enum<?> e : include) {
@@ -111,7 +111,7 @@ public class EnumReflectionTest {
     Class<?> coin = Coin.class;
     classes.add(coin);
     
-    List<StatementKind> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = Reflection.getStatements(classes, null);
     
     int count = 0;
     for (Object obj : coin.getEnumConstants()) {
@@ -147,7 +147,7 @@ public class EnumReflectionTest {
     Class<?> op = OperatorEnum.class;
     classes.add(op);
     
-    List<StatementKind> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = Reflection.getStatements(classes, null);
     
     Set<String> overrides = new TreeSet<String>();
     int count = 0;

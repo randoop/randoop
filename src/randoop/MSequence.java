@@ -244,7 +244,7 @@ public class MSequence {
     return statements.get(statementIndex).inputs;
   }
 
-  public StatementKind getStatementKind(int statementIndex) {
+  public Operation getStatementKind(int statementIndex) {
     return statements.get(statementIndex).statementKind;
   }
 }

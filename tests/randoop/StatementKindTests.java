@@ -75,10 +75,10 @@ public class StatementKindTests extends TestCase {
 
 
 
-  private void checkParse(StatementKind st) {
+  private void checkParse(Operation st) {
     String stStr = st.toParseableString();
     System.out.println(stStr);
-    StatementKind st2;
+    Operation st2;
     try {
       st2 = StatementKinds.parse(StatementKinds.getId(st) + ":" + stStr);
     } catch (StatementKindParseException e) {

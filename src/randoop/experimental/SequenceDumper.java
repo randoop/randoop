@@ -14,7 +14,7 @@ import randoop.ObjectCheck;
 import randoop.PrimitiveOrStringOrNullDecl;
 import randoop.RConstructor;
 import randoop.RMethod;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.Variable;
 import randoop.main.GenInputsAbstract;
 import randoop.util.PrimitiveTypes;
@@ -44,7 +44,7 @@ class SequenceDumper {
   public String printSequenceAsCodeString() {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < this.sequenceToPrint.sequence.size(); i++) {
-      StatementKind statement = this.sequenceToPrint.sequence.getStatementKind(i);
+      Operation statement = this.sequenceToPrint.sequence.getStatementKind(i);
       Variable outputVar = this.sequenceToPrint.sequence.getVariable(i);
       List<Variable> inputVars = this.sequenceToPrint.sequence.getInputs(i);
       //store the code text of the current statement
@@ -88,7 +88,7 @@ class SequenceDumper {
   /**********************************************************
    * The following code prints different types of statements.
    **********************************************************/
-  private void appendCode(StringBuilder sb, StatementKind statement,
+  private void appendCode(StringBuilder sb, Operation statement,
       Variable newVar, List<Variable> inputVars) {
     if (statement instanceof PrimitiveOrStringOrNullDecl) {
       if (GenInputsAbstract.long_format
@@ -138,7 +138,7 @@ class SequenceDumper {
 
         // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
         // the value (e.g. "3") is inserted directly added as arguments to method calls.
-        StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+        Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
         if (!GenInputsAbstract.long_format
             && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
           sb.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
@@ -182,7 +182,7 @@ class SequenceDumper {
         
         // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
         // the value (e.g. "3") is inserted directly added as arguments to method calls.
-        StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+        Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
         if (!GenInputsAbstract.long_format
             && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
           sb.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
@@ -234,7 +234,7 @@ class SequenceDumper {
           
           // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
           // the value (e.g. "3") is inserted directly added as arguments to method calls.
-          StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+          Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
           if (!GenInputsAbstract.long_format &&  statementCreatingVar instanceof PrimitiveOrStringOrNullDecl) {
             sb.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
           } else {

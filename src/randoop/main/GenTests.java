@@ -66,7 +66,7 @@ import randoop.RegressionCaptureVisitor;
 import randoop.ReplayVisitor;
 import randoop.SeedSequences;
 import randoop.Sequence;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.Variable;
 import randoop.experimental.GreedySequenceSimplifier;
 import randoop.experiments.CodeCoverageTracker;
@@ -253,7 +253,7 @@ public class GenTests extends GenInputsAbstract {
     }
     
     DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods, omitFields);
-    List<StatementKind> model = Reflection.getStatements(classes, reflectionFilter);
+    List<Operation> model = Reflection.getStatements(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).
     RConstructor objectConstructor = null;
@@ -266,7 +266,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (methodlist != null) {
-      Set<StatementKind> statements = new LinkedHashSet<StatementKind>();
+      Set<Operation> statements = new LinkedHashSet<Operation>();
       try {
         for (Member m : Reflection.loadMethodsAndCtorsFromFile(new File(methodlist))) {
           if (m instanceof Method) {
@@ -285,7 +285,7 @@ public class GenTests extends GenInputsAbstract {
         System.out.println("Error while reading method list file " + methodlist);
         System.exit(1);
       }
-      for (StatementKind st : statements) {
+      for (Operation st : statements) {
         if (!model.contains(st))
           model.add(st);
       }

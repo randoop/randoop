@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class MStatement {
 
-  public final StatementKind statementKind;
+  public final Operation statementKind;
 
   public final List<MVariable> inputs;
 
@@ -31,7 +31,7 @@ public class MStatement {
    * Create a new statement of type statement that takes as input the
    * given values.
    */
-  public MStatement(StatementKind statement, List<MVariable> inputVariables, MVariable result) {
+  public MStatement(Operation statement, List<MVariable> inputVariables, MVariable result) {
     this.statementKind = statement;
     this.inputs = new ArrayList<MVariable>(inputVariables);
     this.result = result;

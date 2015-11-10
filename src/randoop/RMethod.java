@@ -29,7 +29,7 @@ import randoop.util.ReflectionExecutor;
  * The "R" stands for "Randoop", to underline the distinction from
  * java.lang.reflect.Method.
  */
-public final class RMethod implements StatementKind, Serializable {
+public final class RMethod implements Operation, Serializable {
 
   private static final long serialVersionUID = -7616184807726929835L;
 
@@ -146,7 +146,7 @@ public final class RMethod implements StatementKind, Serializable {
 
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
         Object val = ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue();
@@ -344,7 +344,7 @@ public final class RMethod implements StatementKind, Serializable {
     return Reflection.getSignature(method);
   }
 
-  public static StatementKind parse(String s) {
+  public static Operation parse(String s) {
     return RMethod.getRMethod(Reflection.getMethodForSignature(s));
   }
 

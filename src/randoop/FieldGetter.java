@@ -7,7 +7,7 @@ import java.util.List;
 import randoop.util.Reflection;
 
 /**
- * FieldGetter is an adapter that creates a {@link StatementKind} from
+ * FieldGetter is an adapter that creates a {@link Operation} from
  * a {@link PublicField} and behaves like a getter for the field.
  * 
  * @see PublicField
@@ -15,7 +15,7 @@ import randoop.util.Reflection;
  * @author bjkeller
  *
  */
-public class FieldGetter implements StatementKind,Serializable {
+public class FieldGetter implements Operation,Serializable {
 
   private static final long serialVersionUID = 3966201727170073093L;
   

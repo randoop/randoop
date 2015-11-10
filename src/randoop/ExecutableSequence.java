@@ -196,7 +196,7 @@ public class ExecutableSequence implements Serializable {
   }
 
   /** True for a primitive or String literal, but not for a null literal. */
-  public static boolean canUseShortFormat(StatementKind statementCreatingVar) {
+  public static boolean canUseShortFormat(Operation statementCreatingVar) {
     return (statementCreatingVar instanceof PrimitiveOrStringOrNullDecl
             // Do not use the short output format if the value is null, because
             // the variable type may disambiguate among overloaded methods.
@@ -373,11 +373,11 @@ public class ExecutableSequence implements Serializable {
     for (int ri = 0 ; ri < runtimeObjects.length ; ri++) {
       if (runtimeObjects[ri] == null) {
         int creatingStatementIdx = inputs.get(ri).getDeclIndex();
-        StatementKind creatingStatement = s.getStatementKind(creatingStatementIdx);
+        Operation creatingStatement = s.getStatementKind(creatingStatementIdx);
 
         // If receiver position of a method, don't continue execution.
         if (ri == 0) {
-          StatementKind st = s.getStatementKind(i);
+          Operation st = s.getStatementKind(i);
           if (st instanceof RMethod && (!((RMethod)st).isStatic())) {
             return false;
           }
@@ -408,7 +408,7 @@ public class ExecutableSequence implements Serializable {
   // Precondition: this method has been invoked on 0..index-1.
   public static void executeStatement(Sequence s, List<ExecutionOutcome> outcome,
       int index, Object[] inputVariables) {
-    StatementKind statement = s.getStatementKind(index);
+    Operation statement = s.getStatementKind(index);
 
     // Capture any output  Syncronize with ProgressDisplay so that
     // we don't capture its output as well.

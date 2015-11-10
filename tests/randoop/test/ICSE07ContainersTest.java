@@ -12,7 +12,7 @@ import randoop.ForwardGenerator;
 import randoop.IStopper;
 import randoop.ObjectCache;
 import randoop.SeedSequences;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.main.GenInputsAbstract;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
@@ -45,7 +45,7 @@ public class ICSE07ContainersTest extends TestCase {
 
     System.out.println("ICSE 2006 container: " + name);
 
-    List<StatementKind> statements = 
+    List<Operation> statements = 
       Reflection.getStatements(classList, new DefaultReflectionFilter(pattern));
     
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());

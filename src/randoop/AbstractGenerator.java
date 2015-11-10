@@ -66,7 +66,7 @@ public abstract class AbstractGenerator {
    * used to generate sequences. In other words, statements specifies the universe
    * of operations from which sequences are generated.
    */
-  public List<StatementKind> statements;
+  public List<Operation> statements;
   
   /**
    * Container for execution visitors used during execution of sequences. 
@@ -132,7 +132,7 @@ public abstract class AbstractGenerator {
    *  
    * @param testfilters List of filters to determine which sequences to output. Can be null or empty.
    */
-  public AbstractGenerator(List<StatementKind> statements, long timeMillis, int maxSequences, ComponentManager componentManager,
+  public AbstractGenerator(List<Operation> statements, long timeMillis, int maxSequences, ComponentManager componentManager,
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> testfilters) {
     assert statements != null;
 

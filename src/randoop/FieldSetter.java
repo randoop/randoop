@@ -8,14 +8,14 @@ import randoop.main.GenInputsAbstract;
 import randoop.util.PrimitiveTypes;
 
 /**
- * FieldSetter is an adapter for a {@link PublicField} as a {@link StatementKind}
+ * FieldSetter is an adapter for a {@link PublicField} as a {@link Operation}
  * that acts like a setter for the field. 
  * 
  * @see PublicField
  * 
  * @author bjkeller
  */
-public class FieldSetter implements StatementKind, Serializable{
+public class FieldSetter implements Operation, Serializable{
 
   private static final long serialVersionUID = -5905429635469194115L;
   
@@ -24,7 +24,7 @@ public class FieldSetter implements StatementKind, Serializable{
   private PublicField field;
 
   /**
-   * FieldSetter creates a setter {@link StatementKind} object for a field of a class.
+   * FieldSetter creates a setter {@link Operation} object for a field of a class.
    * Throws an exception if the field is static final.
    * @param field – field object to be set by setter statements.
    * @throws IllegalArgumentException if field is static final.
@@ -112,7 +112,7 @@ public class FieldSetter implements StatementKind, Serializable{
     int index = inputVars.size() - 1;
 
     //TODO this is duplicate code from RMethod - should factor out behavior
-    StatementKind statementCreatingVar = inputVars.get(index).getDeclaringStatement();
+    Operation statementCreatingVar = inputVars.get(index).getDeclaringStatement();
     if (!GenInputsAbstract.long_format && ExecutableSequence.canUseShortFormat(statementCreatingVar )) {
       Object val = ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue();
       b.append(PrimitiveTypes.toCodeString(val));

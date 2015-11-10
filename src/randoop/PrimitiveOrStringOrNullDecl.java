@@ -20,7 +20,7 @@ import randoop.main.GenInputsAbstract;
  * This decl info is for primitives, strings and nulls (of any type).
  * Such values are never used as receivers when generating method calls.
  */
-public final class PrimitiveOrStringOrNullDecl implements StatementKind, Serializable {
+public final class PrimitiveOrStringOrNullDecl implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 

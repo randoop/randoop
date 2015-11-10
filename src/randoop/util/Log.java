@@ -7,7 +7,7 @@ import java.util.List;
 
 import randoop.Globals;
 import randoop.Sequence;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.main.GenInputsAbstract;
 
 public final class Log {
@@ -67,12 +67,12 @@ public final class Log {
     }
   }
 
-  public static void log(List<StatementKind> model) {
+  public static void log(List<Operation> model) {
     if (! isLoggingOn()) return;
 
     try {
       GenInputsAbstract.log.write("Statements : " + Globals.lineSep);
-      for (StatementKind t : model) {
+      for (Operation t : model) {
         GenInputsAbstract.log.write(t.toString());
         GenInputsAbstract.log.write(Globals.lineSep);
         GenInputsAbstract.log.flush();

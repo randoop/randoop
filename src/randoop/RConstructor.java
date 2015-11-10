@@ -27,7 +27,7 @@ import randoop.util.Util;
  * java.lang.reflect.Constructor.
  *
  */
-public final class RConstructor implements StatementKind, Serializable {
+public final class RConstructor implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -144,7 +144,7 @@ public final class RConstructor implements StatementKind, Serializable {
       // or string literal, like "int x = 3" are not added to a sequence;
       // instead, the value (e.g. "3") is inserted directly added as
       // arguments to method calls.
-      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
         b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
@@ -235,7 +235,7 @@ public final class RConstructor implements StatementKind, Serializable {
     return Reflection.getSignature(constructor);
   }
 
-  public static StatementKind parse(String s) {
+  public static Operation parse(String s) {
     return RConstructor.getRConstructor(Reflection.getConstructorForSignature(s));
   }
 }

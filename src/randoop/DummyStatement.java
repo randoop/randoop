@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DummyStatement implements StatementKind, Serializable {
+public class DummyStatement implements Operation, Serializable {
 
   private static final long serialVersionUID = -3153094271647824398L;
 
@@ -79,7 +79,7 @@ public class DummyStatement implements StatementKind, Serializable {
    * (foobar)
    * 
    */
-  public static StatementKind parse(String description) {
+  public static Operation parse(String description) {
     assert description.charAt(0) == '(';
     assert description.charAt(description.length() - 1) == ')';
     return new DummyStatement(description.substring(1, description.length() - 1));

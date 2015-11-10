@@ -14,7 +14,7 @@ import randoop.ExecutableSequence;
 import randoop.Globals;
 import randoop.RMethod;
 import randoop.Sequence;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.util.Files;
 
 public class SequencePrettyPrinter {
@@ -131,7 +131,7 @@ public class SequencePrettyPrinter {
       Sequence sequence = eseq.sequence;
       int length = sequence.size();
       for (int i = 0; i < length; i++) {
-        StatementKind statement = sequence.getStatementKind(i);
+        Operation statement = sequence.getStatementKind(i);
         Class<?> outputType = statement.getOutputType();
         outputType = this.getComponentType(outputType);
         

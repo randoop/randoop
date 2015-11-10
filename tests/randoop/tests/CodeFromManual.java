@@ -21,19 +21,19 @@ import randoop.RMethod;
 import randoop.ReplayVisitor;
 import randoop.Sequence;
 import randoop.SequenceParseException;
-import randoop.StatementKind;
+import randoop.Operation;
 import randoop.Variable;
 
 public class CodeFromManual extends TestCase {
 
   public static void test() throws SecurityException, NoSuchMethodException, SequenceParseException {
 
-    StatementKind newLL = RConstructor.getRConstructor(LinkedList.class.getConstructor());
-    StatementKind newOb = RConstructor.getRConstructor(Object.class.getConstructor());
-    StatementKind addFist = RMethod.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
-    StatementKind size = RMethod.getRMethod(LinkedList.class.getMethod("size"));
-    StatementKind newTS = RConstructor.getRConstructor(TreeSet.class.getConstructor(Collection.class));
-    StatementKind syncS = RMethod.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+    Operation newLL = RConstructor.getRConstructor(LinkedList.class.getConstructor());
+    Operation newOb = RConstructor.getRConstructor(Object.class.getConstructor());
+    Operation addFist = RMethod.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
+    Operation size = RMethod.getRMethod(LinkedList.class.getMethod("size"));
+    Operation newTS = RConstructor.getRConstructor(TreeSet.class.getConstructor(Collection.class));
+    Operation syncS = RMethod.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
 
     Sequence s = new Sequence();
     s = s.extend(newLL);
