@@ -313,7 +313,7 @@ public class Instrument extends ASTVisitor {
       oneMethodIndices = new LinkedHashSet<Integer>();
       // add annotation @SimpleCovMethodId("X") where X is methodId.
       SingleMemberAnnotation anno = ast.newSingleMemberAnnotation();
-      anno.setTypeName(ast.newName(Constants.MethodIdAnnotation));
+      anno.setTypeName(ast.newName(Constants.METHOD_ID_ANNOTATION));
       StringLiteral uniqueId = ast.newStringLiteral();
       uniqueId.setLiteralValue(Integer.toString(methodId));
       anno.setValue(uniqueId);
@@ -389,23 +389,31 @@ public class Instrument extends ASTVisitor {
     return true;
   }
 
+  /**
+   * getCovIndicesMethod adds declarations for instrumentation indices.
+   * 
+   * Note: the names from {@link Constants} are used in filtering fields in
+   * Randoop test generation, and these constants must be used to avoid having
+   * generated tests mess with the instrumentation.
+   *
+   */
   private static List<BodyDeclaration> getCovIndicesMethod(Map<String,Set<Integer>> methodIndices,
       List<Integer> branchToLine, int totBranches, Map<String, Pair<Integer, Integer>> allMethodLineSpans) {
 
     assert totBranches == branchToLine.size() : "totBranches:" + totBranches + ",branchToLine.size()=" + branchToLine.size();
     StringBuilder code = new StringBuilder();
 
-    code.append("public static final String " + Constants.sourceFileNameField + " = \"" + sourceFileName + "\";");
-    code.append("public static final boolean " + Constants.isInstrumentedField + " = true;");
+    code.append("public static final String " + Constants.SOURCE_FILE_NAME + " = \"" + sourceFileName + "\";");
+    code.append("public static final boolean " + Constants.IS_INSTRUMENTED_FIELD + " = true;");
 
-    code.append("public static int[] " + Constants.trueBranches + " = new int[" + totBranches + "];");
-    code.append("public static int[] " + Constants.falseBranches + " = new int[" + totBranches + "];");
-    code.append("public static java.util.Map<String,int[]> " + Constants.methodIdToBranches +  " = new java.util.LinkedHashMap<String,int[]>();");
-    code.append("public static java.util.Map<String,int[]> " + Constants.methodLineSpansField + " = new java.util.LinkedHashMap<String,int[]>();");
+    code.append("public static int[] " + Constants.TRUE_BRANCHES + " = new int[" + totBranches + "];");
+    code.append("public static int[] " + Constants.FALSE_BRANCHES + " = new int[" + totBranches + "];");
+    code.append("public static java.util.Map<String,int[]> " + Constants.METHOD_ID_TO_BRANCHES +  " = new java.util.LinkedHashMap<String,int[]>();");
+    code.append("public static java.util.Map<String,int[]> " + Constants.METHOD_LINE_SPANS_FIELD + " = new java.util.LinkedHashMap<String,int[]>();");
     code.append("static {  ");
     for (Map.Entry<String,Set<Integer>> entry : methodIndices.entrySet()) {
       String methodSig = entry.getKey();
-      code.append(Constants.methodIdToBranches + ".put(\"" + methodSig + "\", new int[]{");
+      code.append(Constants.METHOD_ID_TO_BRANCHES + ".put(\"" + methodSig + "\", new int[]{");
       List<Integer> intList = new ArrayList<Integer>(entry.getValue());
       for (int i = 0 ; i < intList.size() ; i++) {
         if (i > 0) code.append(",");
@@ -415,12 +423,12 @@ public class Instrument extends ASTVisitor {
     }
     for (Map.Entry<String,Pair<Integer,Integer>> entry : allMethodLineSpans.entrySet()) {
       String methodSig = entry.getKey();
-      code.append(Constants.methodLineSpansField + ".put(\"" + methodSig + "\", new int[]{");
+      code.append(Constants.METHOD_LINE_SPANS_FIELD + ".put(\"" + methodSig + "\", new int[]{");
       code.append(entry.getValue().a + "," + entry.getValue().b + "});");
     }
     code.append("}");
 
-    code.append("public static int " + Constants.branchLines + "[] = new int[]{");
+    code.append("public static int " + Constants.BRANCHLINES + "[] = new int[]{");
     for (int i = 0 ; i < branchToLine.size() ; i++) {
       if (i > 0) code.append(",");
       code.append(branchToLine.get(i));
@@ -429,7 +437,7 @@ public class Instrument extends ASTVisitor {
 
     code.append("@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)");
     code.append("@java.lang.annotation.Target({java.lang.annotation.ElementType.METHOD,java.lang.annotation.ElementType.CONSTRUCTOR})");
-    code.append("public static @interface " + Constants.MethodIdAnnotation + " {");
+    code.append("public static @interface " + Constants.METHOD_ID_ANNOTATION + " {");
     code.append("String value();");
     code.append("};");
 
@@ -454,11 +462,11 @@ public class Instrument extends ASTVisitor {
     code.append("(((");
     code.append(exp.toString());
     code.append(") && ++");
-    code.append(covFieldsCls + "." + Constants.trueBranches);
+    code.append(covFieldsCls + "." + Constants.TRUE_BRANCHES);
     code.append("[");
     code.append(branchNumber);
     code.append("]!=0) || ++");
-    code.append(covFieldsCls + "." + Constants.falseBranches);
+    code.append(covFieldsCls + "." + Constants.FALSE_BRANCHES);
     code.append("[");
     code.append(branchNumber);
     code.append("]==0)");

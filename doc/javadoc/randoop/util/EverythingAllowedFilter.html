@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -159,6 +159,10 @@ implements <a href="../../randoop/util/ReflectionFilter.html" title="interface i
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/EverythingAllowedFilter.html#canUse-java.lang.reflect.Field-">canUse</a></span>(Field&nbsp;f)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/EverythingAllowedFilter.html#canUse-java.lang.reflect.Method-">canUse</a></span>(Method&nbsp;m)</code>&nbsp;</td>
 </tr>
 </table>
@@ -229,13 +233,26 @@ implements <a href="../../randoop/util/ReflectionFilter.html" title="interface i
 <a name="canUse-java.lang.reflect.Constructor-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>canUse</h4>
 <pre>public&nbsp;boolean&nbsp;canUse(Constructor&lt;?&gt;&nbsp;m)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../randoop/util/ReflectionFilter.html#canUse-java.lang.reflect.Constructor-">canUse</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="canUse-java.lang.reflect.Field-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>canUse</h4>
+<pre>public&nbsp;boolean&nbsp;canUse(Field&nbsp;f)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../randoop/util/ReflectionFilter.html#canUse-java.lang.reflect.Field-">canUse</a></code>&nbsp;in interface&nbsp;<code><a href="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</a></code></dd>
 </dl>
 </li>
 </ul>
