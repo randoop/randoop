@@ -345,9 +345,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Output sequences even if they do not complete execution")
   public static boolean output_nonexec = false;
-
-  @Option("Remove full package + class name declarations, and change the variables name (e.g., change ArrayList var0 to ArrayList arrayList0) in an output sequence. This option will not change the sequence behavior.")
-  public static boolean pretty_print = false;
   
   @Option("specifies regex of classes that must be in any regression tests")
   public static Pattern test_classes = null;

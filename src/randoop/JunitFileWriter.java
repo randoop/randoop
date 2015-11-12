@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import randoop.experimental.SequencePrettyPrinter;
 import randoop.main.GenInputsAbstract;
 import randoop.util.Log;
 
@@ -117,10 +116,6 @@ public class JunitFileWriter {
    * @return File object for generated java file.
    */
   private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
-    if (GenInputsAbstract.pretty_print) {
-      SequencePrettyPrinter printer = new SequencePrettyPrinter(sequences, packageName, testClassName);
-      return printer.createFile(getDir().getAbsolutePath());
-    }
 
     String className = testClassName;
     File file = new File(getDir(), className + ".java");
