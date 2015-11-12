@@ -4,7 +4,6 @@ import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
 import randoop.util.ConstructorReflectionCode;
-import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
@@ -27,7 +25,7 @@ import randoop.util.Util;
  * java.lang.reflect.Constructor.
  *
  */
-public final class ConstructorCall implements Operation, Serializable {
+public final class ConstructorCall extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -111,7 +109,7 @@ public final class ConstructorCall implements Operation, Serializable {
   }
 
   // TODO: integrate with below method
-  public void appendCode(Variable varName, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == this.getInputTypes().size();
 
     Class<?> declaringClass = constructor.getDeclaringClass();
@@ -127,8 +125,7 @@ public final class ConstructorCall implements Operation, Serializable {
     // TODO the last replace is ugly. There should be a method that does it.
     String declaringClassStr = Reflection.getCompilableName(declaringClass);
 
-    b.append(declaringClassStr + " " + varName.getName() + " = "
-        + (isNonStaticMember ? inputVars.get(0) + "." : "")
+    b.append((isNonStaticMember ? inputVars.get(0) + "." : "")
         + "new "
         + (isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr)
         + "(");
@@ -144,16 +141,18 @@ public final class ConstructorCall implements Operation, Serializable {
       // or string literal, like "int x = 3" are not added to a sequence;
       // instead, the value (e.g. "3") is inserted directly added as
       // arguments to method calls.
-      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
+      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      if (!GenInputsAbstract.long_format) {
+        String shortForm = statementCreatingVar.getShortForm();
+        if (shortForm != null) {
+          b.append(shortForm);
+        }
       } else {
         b.append(inputVars.get(i).getName());
       }
     }
-    b.append(");");
-    b.append(Globals.lineSep);
+    b.append(")");
+    
   }
 
   @Override
@@ -238,4 +237,17 @@ public final class ConstructorCall implements Operation, Serializable {
   public static Operation parse(String s) {
     return ConstructorCall.getRConstructor(Reflection.getConstructorForSignature(s));
   }
+
+  @Override
+  public Class<?> getDeclaringClass() {
+    // TODO Auto-generated method stub
+    return constructor.getDeclaringClass();
+  }
+
+  @Override
+  public boolean isConstructorCall() {
+    // TODO Auto-generated method stub
+    return true;
+  }
+
 }

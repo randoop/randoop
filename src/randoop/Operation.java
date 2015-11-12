@@ -4,11 +4,11 @@ import java.io.PrintStream;
 import java.util.List;
 
 /**
- * Represents a template for a statement that can be part of a sequence, for example, a particular
- * method call, constructor call, or primitive value declaration.
- * <p>
+ * Represents an operation (in the term algebra sense) that can occur in a statement 
+ * as part of a test sequence. Operations include method calls, constructor calls, field
+ * accesses, enum constant values, or primitive values.
  * 
- * An implementing class C should additionally provide the following:
+ * To support text-based serialization, an implementing class C should also provide:
  * 
  *  <ul>
  *  <li> A public static String field that contains a unique ID for the statement kind.
@@ -22,33 +22,33 @@ import java.util.List;
 public interface Operation {
 
   /**
-   * Returns the (ordered) list of input types for this statement kind.
+   * getInputTypes returns the ordered list of input types for this operation.
+   * If a method call or field access, the first input corresponds to the
+   * receiver, which must be an object of the declaring class.
    */
   List<Class<?>> getInputTypes();
 
   /**
-   * Returns the type of this statement kind's output.
+   * getOutputTypes gives the type returned by the operation.
    */
   Class<?> getOutputType();
 
-
   /**
-   * Executes this statement, given the inputs to the statement. Returns
+   * execute performs this operation using the array of input values. Returns
    * the results of execution as an ResultOrException object and can
    * output results to specified PrintStream.
-   * @param statementInput array containing appropriate inputs to statement
+   * @param input array containing appropriate inputs to operation
    * @param out stream to output results of execution;
    *            can be null if you don't want to print.
    * @return results of executing this statement
    */
-  ExecutionOutcome execute(Object[] statementInput, PrintStream out);
-
+  ExecutionOutcome execute(Object[] input, PrintStream out);
 
   /**
    * Produces a Java source code representation of this statement and append it
    * to the given StringBuilder.
    */
-  void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b);
+  void appendCode(List<Variable> inputVars, StringBuilder b);
 
   /**
    * Returns a string representation of this StatementKind, which can
@@ -58,5 +58,46 @@ public interface Operation {
    * this object, i.e. C.parse(this.s).equals(this).
    */
   String toParseableString();
+
+  /**
+   * isStatic is a predicate to indicate whether object represents a static
+   * operation on the declaring class.
+   * 
+   * @return true if operation corresponds to static method or field of a class, and false, otherwise.
+   */
+  boolean isStatic();
+
+  /**
+   * isMessage is a predicate to indicate whether object represents a method-call-like
+   * operation (either static or instance). This include non-method operations that access 
+   * fields.
+   * 
+   * @return true if operation is method-like, and false otherwise.
+   */
+  boolean isMessage();
+
+  /**
+   * getDeclaringClass returns the type to which the operation belongs. If a constructor
+   * or value, then the type should be the same as the output type.
+   * 
+   * @return class to which the operation belongs.
+   */
+  Class<?> getDeclaringClass();
+
+  /**
+   * isConstructorCall is a predicate to indicate whether object represents a call to a constructor.
+   * 
+   * @return true if operation is a constructor call, and false otherwise.
+   */
+  boolean isConstructorCall();
+
+  /**
+   * isNonreceivingValue is a predicate to indicate whether this object represents a value of a
+   * non-receiving type (includes numbers, strings and null).
+   * 
+   * @return true if object is a non-receiving value, and false, otherwise.
+   */
+  boolean isNonreceivingValue();
+
 
 }

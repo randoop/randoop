@@ -24,27 +24,29 @@ import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 
 /**
- * Represents a method call.
- *
- * The "R" stands for "Randoop", to underline the distinction from
- * java.lang.reflect.Method.
+ * MethodCall is a {@link Operation} that represents a call to a method of a class.
+ * It is a wrapper for a reflective Method object, and caches values of computed 
+ * reflective calls.
+ * 
+ * Previously called RMethod.
  */
-public final class MethodCall implements Operation, Serializable {
+public final class MethodCall extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = -7616184807726929835L;
 
-  /** ID for parsing purposes (see StatementKinds.parse method) */
+  /** 
+   * ID for parsing purposes (see StatementKinds.parse method) 
+   */
   public static final String ID = "method";
 
-  // State variable.
   private final Method method;
 
   /**
-   * A list with as many sublists as the formal paramters of this method.
+   * A list with as many sublists as the formal parameters of this method.
    * The <em>i</em>th set indicates all the possible argument types for the
    * <em>i</im>th formal parameter, for overloads of this method with the
    * same number of formal parameters.  At a call site, if the declared
-   * type of an actual argument is not uniquely determined, then the acutal
+   * type of an actual argument is not uniquely determined, then the actual
    * should be casted at the call site.
    */ 
   public List<Set<Class<?>>> overloads;
@@ -74,7 +76,7 @@ public final class MethodCall implements Operation, Serializable {
   }
 
   /**
-   * Creates the Rmethod corresponding to the given reflection method.
+   * Creates the MethodCall corresponding to the given reflection method.
    */
   public MethodCall(Method method) {
     if (method == null)
@@ -90,7 +92,7 @@ public final class MethodCall implements Operation, Serializable {
   /**
    * Returns the statement corresponding to the given constructor.
    */
-  public static MethodCall getRMethod(Method method) {
+  public static MethodCall getMethodCall(Method method) {
     return new MethodCall(method);
   }
 
@@ -117,11 +119,8 @@ public final class MethodCall implements Operation, Serializable {
     return toParseableString();
   }
 
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder sb) {
-    if (!isVoid()) {
-      sb.append(Reflection.getCompilableName(this.method.getReturnType()));
-      sb.append(" " + newVar.getName() + " = ");
-    }
+  public void appendCode(List<Variable> inputVars, StringBuilder sb) {
+    
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     appendReceiverOrClassForStatics(receiverString, sb);
 
@@ -146,11 +145,12 @@ public final class MethodCall implements Operation, Serializable {
 
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        Object val = ((NonreceiverTerm) statementCreatingVar).getValue();
-        sb.append(PrimitiveTypes.toCodeString(val));
+      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      if (!GenInputsAbstract.long_format) {
+        String shortForm = statementCreatingVar.getShortForm();
+        if (shortForm != null) {
+          sb.append(shortForm);
+        }
       } else {
         sb.append(inputVars.get(i).getName());
       }
@@ -326,6 +326,7 @@ public final class MethodCall implements Operation, Serializable {
    * Returns true if method represented by this MethodCallInfo is a static
    * method.
    */
+  @Override
   public boolean isStatic() {
     if (!isStaticComputed) {
       isStaticComputed = true;
@@ -345,8 +346,24 @@ public final class MethodCall implements Operation, Serializable {
   }
 
   public static Operation parse(String s) {
-    return MethodCall.getRMethod(Reflection.getMethodForSignature(s));
+    return MethodCall.getMethodCall(Reflection.getMethodForSignature(s));
   }
 
+  public Class<?> getDeclaringClass() {
+    return method.getDeclaringClass();
+  }
+
+  public boolean isMethodIn(List<Method> list) {
+    return list != null && list.contains(method);
+  }
+
+  public boolean callsTheMethod(Method m) {
+    return method.equals(m);
+  }
+
+  @Override
+  public boolean isMessage() {
+    return true;
+  }
 
 }

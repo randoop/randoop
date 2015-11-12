@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 import randoop.main.GenInputsAbstract;
-import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 
 /**
@@ -126,26 +125,28 @@ public final class ArrayCreation implements Operation, Serializable {
   /**
    * Appends string representation of ArrayDeclarationInfo into b.
    */
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     if (inputVars.size() > length)
       throw new IllegalArgumentException("Too many arguments:"
           + inputVars.size() + " capacity:" + length);
+    
+    //TODO fix naming in statement
     String declaringClass = this.elementType.getCanonicalName();
-    String var = Variable.classToVariableName(this.elementType) + "_array" + newVar.index;
+   // String var = Variable.classToVariableName(this.elementType) + "_array" + newVar.index;
       
-    b.append(declaringClass + "[] "
-             + var
-             + " = new " + declaringClass + "[] { ");
+    b.append("new " + declaringClass + "[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
       if (i > 0)
         b.append(", ");
       
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
+      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      if (!GenInputsAbstract.long_format) {
+        String shortForm = statementCreatingVar.getShortForm();
+        if (shortForm != null) {
+          b.append(shortForm);
+        }
       } else {
         b.append(inputVars.get(i).getName());
       }
@@ -202,5 +203,35 @@ public final class ArrayCreation implements Operation, Serializable {
     Class<?> elementType = Reflection.classForName(elementTypeStr);
     int length = Integer.parseInt(lengthStr);
     return new ArrayCreation(elementType, length);
+  }
+
+  @Override
+  public boolean isStatic() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean isMessage() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public Class<?> getDeclaringClass() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean isConstructorCall() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public boolean isNonreceivingValue() {
+    // TODO Auto-generated method stub
+    return false;
   }
 }

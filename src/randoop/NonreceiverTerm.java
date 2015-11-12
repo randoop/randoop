@@ -20,7 +20,7 @@ import randoop.main.GenInputsAbstract;
  * This decl info is for primitives, strings and nulls (of any type).
  * Such values are never used as receivers when generating method calls.
  */
-public final class NonreceiverTerm implements Operation, Serializable {
+public final class NonreceiverTerm extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -118,28 +118,20 @@ public final class NonreceiverTerm implements Operation, Serializable {
     return Collections.emptyList();
   }
 
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
 
     if (type.isPrimitive()) {
-
-      b.append(PrimitiveTypes.boxedType(type).getName());
-      b.append(" ");
-      b.append(newVar.getName());
-      b.append(" = new ");
+      
+      b.append("new ");
       b.append(PrimitiveTypes.boxedType(type).getName());
       b.append("(");
       b.append(PrimitiveTypes.toCodeString(getValue()));
-      b.append(");");
-      b.append(Globals.lineSep);
+      b.append(")");
 
     } else {
-      b.append(Reflection.getCompilableName(type));
-      b.append(" ");
-      b.append(newVar.getName());
-      b.append(" = ");
+
       b.append(PrimitiveTypes.toCodeString(getValue()));
-      b.append(";");
-      b.append(Globals.lineSep);
+     
     }
   }
 
@@ -376,5 +368,11 @@ public final class NonreceiverTerm implements Operation, Serializable {
     }
 
     return new NonreceiverTerm(type, value);
+  }
+
+  @Override
+  public Class<?> getDeclaringClass() {
+    // TODO verify this is what we want
+    return type;
   }
 }

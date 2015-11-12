@@ -16,7 +16,7 @@ import randoop.util.Reflection;
  * @author bjkeller
  *
  */
-public class EnumConstant implements Operation, Serializable {
+public class EnumConstant extends AbstractOperation implements Operation, Serializable {
   
   private static final long serialVersionUID = 849994347169442078L;
   
@@ -88,14 +88,8 @@ public class EnumConstant implements Operation, Serializable {
    * @see randoop.StatementKind#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)
    */
   @Override
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
-    b.append(Reflection.getCompilableName(type()));
-    b.append(" ");
-    b.append(newVar.getName());
-    b.append(" = ");
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     b.append(Reflection.getCompilableName(type()) + "." + this.value.name());
-    b.append(";");
-    b.append(Globals.lineSep);
   }
 
   /**
@@ -203,5 +197,10 @@ public class EnumConstant implements Operation, Serializable {
    */
   public Enum<?> value() {
     return this.value;
+  }
+
+  @Override
+  public Class<?> getDeclaringClass() {
+    return value.getDeclaringClass();
   }
 }

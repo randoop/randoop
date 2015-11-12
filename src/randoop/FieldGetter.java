@@ -4,8 +4,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.List;
 
-import randoop.util.Reflection;
-
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from
  * a {@link PublicField} and behaves like a getter for the field.
@@ -15,7 +13,7 @@ import randoop.util.Reflection;
  * @author bjkeller
  *
  */
-public class FieldGetter implements Operation,Serializable {
+public class FieldGetter extends AbstractOperation implements Operation,Serializable {
 
   private static final long serialVersionUID = 3966201727170073093L;
   
@@ -88,14 +86,8 @@ public class FieldGetter implements Operation,Serializable {
    * @param b - StringBuilder that strings are appended to.
    */
   @Override
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
-    b.append(Reflection.getCompilableName(field.getType()));
-    b.append(" ");
-    b.append(newVar.getName());
-    b.append(" = ");
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     b.append(field.toCode(inputVars));
-    b.append(";");
-    b.append(Globals.lineSep);
   }
 
   /**
@@ -155,5 +147,23 @@ public class FieldGetter implements Operation,Serializable {
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
     PublicField pf = (new PublicFieldParser()).parse(fieldDescriptor);
     return new FieldGetter(pf);
+  }
+
+  @Override
+  public boolean isStatic() {
+    return field.isStatic();
+  }
+ 
+  /**
+   * A FieldGetter is a method call because it acts like a getter.
+   */
+  @Override
+  public boolean isMessage() {
+    return true;
+  }
+  
+  @Override
+  public Class<?> getDeclaringClass() {
+    return field.getDeclaringClass();
   }
 }

@@ -160,5 +160,9 @@ public abstract class PublicField implements Serializable {
   protected Object writeReplace() throws ObjectStreamException {
     return new SerializablePublicField(field);
   }
+
+  public boolean isStatic() {
+    return false;
+  }
   
 }

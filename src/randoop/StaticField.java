@@ -46,5 +46,10 @@ public class StaticField extends PublicField {
   public List<Class<?>> getAccessTypes() {
    return new ArrayList<>();
   }
+  
+  @Override
+  public boolean isStatic() {
+    return true;
+  }
 
 }

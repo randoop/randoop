@@ -46,5 +46,8 @@ public class StaticFinalField extends PublicField {
     return new ArrayList<>();
   }
  
-
+  @Override
+  public boolean isStatic() {
+    return true;
+  }
 }

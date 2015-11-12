@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DummyStatement implements Operation, Serializable {
+public class DummyStatement extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = -3153094271647824398L;
 
@@ -49,8 +49,8 @@ public class DummyStatement implements Operation, Serializable {
     return void.class;
   }
 
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
-    b.append("//DummyStatement;" + Globals.lineSep);
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
+    b.append("//DummyStatement");
   }
 
   public boolean equals(Object o) {
@@ -83,5 +83,11 @@ public class DummyStatement implements Operation, Serializable {
     assert description.charAt(0) == '(';
     assert description.charAt(description.length() - 1) == ')';
     return new DummyStatement(description.substring(1, description.length() - 1));
+  }
+
+
+  @Override
+  public Class<?> getDeclaringClass() {
+    return void.class;
   }
 }
