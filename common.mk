@@ -18,9 +18,9 @@ empty:=
 space:= $(empty) $(empty)
 export CLASSPATH := $(subst $(space),:,$(CLASSPATH_WITH_SPACES))
 
-XMXHEAP := -Xmx1024m 
+XMXHEAP := -Xmx1024m
 
-# The default target level for the compiler is 7 (1.7)                                  
+# The default target level for the compiler is 7 (1.7)
 TARGET_DEFAULT := -target 7 -source 7
 
 # Path to plume-lib. Used when creating Randoop manual

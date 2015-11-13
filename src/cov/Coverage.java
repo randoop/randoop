@@ -51,7 +51,7 @@ public class Coverage {
     Boolean b = isInstrumentedCached.get(c);
     if (b == null) {
       try {
-        c.getField(Constants.isInstrumentedField);
+        c.getField(Constants.IS_INSTRUMENTED_FIELD);
         b = true;
       } catch (NoSuchFieldException e) {
         b = false;
@@ -268,7 +268,7 @@ public class Coverage {
     }
     Annotation methodIdAnno = null;
     for (Annotation anno : annos) {
-      if (anno.annotationType().getName().endsWith(Constants.MethodIdAnnotation)) {
+      if (anno.annotationType().getName().endsWith(Constants.METHOD_ID_ANNOTATION)) {
         methodIdAnno = anno;
         break;
       }
@@ -295,7 +295,7 @@ public class Coverage {
     if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
     if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
-      Field f = cls.getField(Constants.trueBranches);
+      Field f = cls.getField(Constants.TRUE_BRANCHES);
       makeAccessible(f);
       return (int[]) f.get(null);
     } catch (Exception e) {
@@ -310,7 +310,7 @@ public class Coverage {
     if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
     if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
-      Field f = cls.getField(Constants.falseBranches);
+      Field f = cls.getField(Constants.FALSE_BRANCHES);
       makeAccessible(f);
       return (int[]) f.get(null);
     } catch (Exception e) {
@@ -325,7 +325,7 @@ public class Coverage {
     if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
     if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
-      Field f = cls.getField(Constants.branchLines);
+      Field f = cls.getField(Constants.BRANCHLINES);
       makeAccessible(f);
       return (int[]) f.get(null);
     } catch (Exception e) {
@@ -341,7 +341,7 @@ public class Coverage {
     if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
     if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
-      Field f = cls.getField(Constants.methodIdToBranches);
+      Field f = cls.getField(Constants.METHOD_ID_TO_BRANCHES);
       makeAccessible(f);
       return (Map<String,int[]>) f.get(null);
     } catch (Exception e) {
@@ -357,7 +357,7 @@ public class Coverage {
     if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
     if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
-      Field f = cls.getField(Constants.methodLineSpansField);
+      Field f = cls.getField(Constants.METHOD_LINE_SPANS_FIELD);
       makeAccessible(f);
       return (Map<String,int[]>) f.get(null);
     } catch (Exception e) {
@@ -374,7 +374,7 @@ public class Coverage {
     if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
     if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
-      Field f = cls.getField(Constants.sourceFileNameField);
+      Field f = cls.getField(Constants.SOURCE_FILE_NAME);
       makeAccessible(f);
       return (String) f.get(null);
     } catch (Exception e) {

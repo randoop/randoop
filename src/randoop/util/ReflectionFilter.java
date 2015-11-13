@@ -1,6 +1,7 @@
 package randoop.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -13,6 +14,7 @@ public interface ReflectionFilter {
   public boolean canUse(Class<?> c);
   public boolean canUse(Method m);
   public boolean canUse(Constructor<?> m);
+  public boolean canUse(Field f);
 
 
 }

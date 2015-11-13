@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":9,"i25":9,"i26":9,"i27":9,"i28":9,"i29":9,"i30":9,"i31":9,"i32":9,"i33":9,"i34":9,"i35":9,"i36":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":9,"i25":9,"i26":9,"i27":9,"i28":9,"i29":9,"i30":9,"i31":9,"i32":9,"i33":9,"i34":9,"i35":9,"i36":9,"i37":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -272,11 +272,15 @@ extends Object</pre>
 <tr id="i17" class="rowColor">
 <td class="colFirst"><code>static List&lt;<a href="../../randoop/StatementKind.html" title="interface in randoop">StatementKind</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Reflection.html#getStatements-java.util.Collection-randoop.util.ReflectionFilter-">getStatements</a></span>(Collection&lt;Class&lt;?&gt;&gt;&nbsp;classListing,
-             <a href="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</a>&nbsp;filter)</code>&nbsp;</td>
+             <a href="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</a>&nbsp;filter)</code>
+<div class="block">getStatements collects the methods, constructor and enum constants for a collection of classes.</div>
+</td>
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Reflection.html#isAbstract-java.lang.Class-">isAbstract</a></span>(Class&lt;?&gt;&nbsp;c)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Reflection.html#isAbstract-java.lang.Class-">isAbstract</a></span>(Class&lt;?&gt;&nbsp;c)</code>
+<div class="block">isAbstract checks to see if class is abstract.</div>
+</td>
 </tr>
 <tr id="i19" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
@@ -373,6 +377,12 @@ extends Object</pre>
                  String&nbsp;file)</code>&nbsp;</td>
 </tr>
 <tr id="i34" class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Reflection.html#setOverloads-java.util.List-">setOverloads</a></span>(List&lt;<a href="../../randoop/StatementKind.html" title="interface in randoop">StatementKind</a>&gt;&nbsp;model)</code>
+<div class="block">Sets the overloads field of each RMethod or RConstructor in the list.</div>
+</td>
+</tr>
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>static Method</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Reflection.html#super_get_declared_method-java.lang.Class-java.lang.String-java.lang.Class...-">super_get_declared_method</a></span>(Class&lt;?&gt;&nbsp;c,
                          String&nbsp;methodname,
@@ -381,11 +391,11 @@ extends Object</pre>
  superclasses</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>static StackTraceElement</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Reflection.html#throwPointForName-java.lang.String-">throwPointForName</a></span>(String&nbsp;s)</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>static String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../randoop/util/Reflection.html#throwPointToString-java.lang.StackTraceElement-">throwPointToString</a></span>(StackTraceElement&nbsp;throwPoint)</code>&nbsp;</td>
 </tr>
@@ -733,6 +743,14 @@ extends Object</pre>
 <li class="blockList">
 <h4>isAbstract</h4>
 <pre>public static&nbsp;boolean&nbsp;isAbstract(Class&lt;?&gt;&nbsp;c)</pre>
+<div class="block">isAbstract checks to see if class is abstract.
+ Note: an enum can look like an abstract class under certain circumstances.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>c</code> - - class to test.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if non-enum class that is abstract, false otherwise.</dd>
+</dl>
 </li>
 </ul>
 <a name="saveClassesToFile-java.util.List-java.lang.String-">
@@ -758,11 +776,25 @@ extends Object</pre>
 <h4>getStatements</h4>
 <pre>public static&nbsp;List&lt;<a href="../../randoop/StatementKind.html" title="interface in randoop">StatementKind</a>&gt;&nbsp;getStatements(Collection&lt;Class&lt;?&gt;&gt;&nbsp;classListing,
                                                 <a href="../../randoop/util/ReflectionFilter.html" title="interface in randoop.util">ReflectionFilter</a>&nbsp;filter)</pre>
+<div class="block">getStatements collects the methods, constructor and enum constants for a collection of classes.
+ Returns a filtered list of StatementKind objects.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>classListing</code> - </dd>
-<dd><code>filter</code> - can be null.</dd>
+<dd><code>classListing</code> - - collection of class objects from which to extract.</dd>
+<dd><code>filter</code> - - filter object determines whether method/constructor/enum constant can be used.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>list of StatementKind objects representing filtered set.</dd>
 </dl>
+</li>
+</ul>
+<a name="setOverloads-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setOverloads</h4>
+<pre>public static&nbsp;void&nbsp;setOverloads(List&lt;<a href="../../randoop/StatementKind.html" title="interface in randoop">StatementKind</a>&gt;&nbsp;model)</pre>
+<div class="block">Sets the overloads field of each RMethod or RConstructor in the list.</div>
 </li>
 </ul>
 <a name="getNamesForClasses-java.util.ArrayList-">

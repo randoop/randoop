@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 // For Java 8: import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
@@ -23,14 +24,20 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import randoop.EnumConstant;
+import randoop.FieldGetter;
+import randoop.FieldSetter;
 import randoop.Globals;
+import randoop.InstanceField;
 import randoop.RConstructor;
 import randoop.RMethod;
 import randoop.StatementKind;
 import randoop.StatementKindParseException;
 import randoop.StatementKinds;
+import randoop.StaticFinalField;
+import randoop.StaticField;
 import randoop.main.GenInputsAbstract;
 
 import plume.EntryReader;
@@ -539,9 +546,10 @@ public final class Reflection {
 
   /**
    * isAbstract checks to see if class is abstract.
-   * Note: an enum can look like an abstract class under certain circumstances.
+   * Note: an enum can look like an abstract class under certain circumstances,
+   * but this returns false for enums.
    * 
-   * @param c - class to test.
+   * @param c class to test.
    * @return true if non-enum class that is abstract, false otherwise.
    */
   public static boolean isAbstract(Class<?> c) {
@@ -561,12 +569,12 @@ public final class Reflection {
    * getStatements collects the methods, constructor and enum constants for a collection of classes.
    * Returns a filtered list of StatementKind objects.
    * 
-   * @param classListing - collection of class objects from which to extract.
-   * @param filter - filter object determines whether method/constructor/enum constant can be used.
+   * @param classListing collection of class objects from which to extract.
+   * @param filter filter object determines whether method/constructor/enum constant can be used.
    * @return list of StatementKind objects representing filtered set.
    */
   public static List<StatementKind> getStatements(Collection<Class<?>> classListing, ReflectionFilter filter) {
-    if (filter == null) filter = new DefaultReflectionFilter(null);
+    if (filter == null) filter = new DefaultReflectionFilter();
     Set<StatementKind> statements = new LinkedHashSet<StatementKind>();
     for (Class<?> c : classListing) {
       // System.out.printf ("Considering class %s, filter = %s%n", c, filter);
@@ -586,17 +594,19 @@ public final class Reflection {
    * StatementKind objects. 
    * Note that it looks for inner enums, but not inner classes.
    *  
-   * @param filter - object that determines whether to extract from class, or to include members
-   * @param statements - collection of {@link StatementKind} objects constructed
-   * @param c - class object from which members are extracted
+   * @param filter object that determines whether to extract from class, or to include members
+   * @param statements collection of {@link StatementKind} objects constructed
+   * @param c class object from which members are extracted
    */
   private static void getStatementsForClass(ReflectionFilter filter, Set<StatementKind> statements, Class<?> c) {
     if (filter.canUse(c)) {
+      
       if (Log.isLoggingOn()) Log.logLine("Will add members for class " + c.getName());
-      // System.out.printf ("using class %s%n", c);
+
       if (c.isEnum()) {
         getEnumStatements(filter,statements,c);
       } else {
+        
         for (Method m : getMethodsOrdered(c)) {
           if (Log.isLoggingOn()) {
             Log.logLine(String.format("Considering method %s", m));
@@ -606,6 +616,7 @@ public final class Reflection {
             statements.add(mc);
           }
         }
+        
         for (Constructor<?> co : getDeclaredConstructorsOrdered(c)) {
           // System.out.printf ("Considering constructor %s%n", co);
           if (filter.canUse(co)) {
@@ -613,13 +624,57 @@ public final class Reflection {
             statements.add(mc);
           }
         }
+        
         for (Class<?> ic : c.getDeclaredClasses()) { //look for inner enums
           if (ic.isEnum() && filter.canUse(ic)) {
             getEnumStatements(filter,statements, ic);
           }
         }
+        
+        //The set of fields declared in class c is needed to ensure we don't collect
+        //inherited fields that are hidden by local declaration
+        Set<String> declaredNames = new TreeSet<>(); //get names of fields declared
+        for (Field f : c.getDeclaredFields()) {
+          declaredNames.add(f.getName());
+        }
+        for (Field f : c.getFields()) { //for all public fields
+          //keep a field that satisfies filter, and is not inherited and hidden by local declaration
+          if (filter.canUse(f) && (!declaredNames.contains(f.getName()) || c.equals(f.getDeclaringClass()))) {
+            getFieldStatements(statements,f);
+          }
+        }
+        
       }
     }
+  }
+
+
+  /**
+   * getFieldStatements adds the {@link StatementKind} objects corresponding to 
+   * getters and setters appropriate to the kind of field.
+   * 
+   * @param statements
+   * @param f
+   */
+  private static void getFieldStatements(Set<StatementKind> statements, Field f) {
+    int mods = f.getModifiers();
+    if (Modifier.isPublic(mods)) {
+      if (Modifier.isStatic(mods)) {
+        if (Modifier.isFinal(mods)) {
+          StaticFinalField s = new StaticFinalField(f);
+          statements.add(new FieldGetter(s));
+        } else {
+          StaticField s = new StaticField(f);
+          statements.add(new FieldGetter(s));
+          statements.add(new FieldSetter(s));
+        }
+      } else {
+        InstanceField i = new InstanceField(f);
+        statements.add(new FieldGetter(i));
+        statements.add(new FieldSetter(i));
+      }
+    }
+    
   }
 
   /**
@@ -629,8 +684,8 @@ public final class Reflection {
    * If the class is not an enum, then nothing will be added to the statement set.
    * @param filter 
    * 
-   * @param statements - collection of {@link StatementKind} objects constructed
-   * @param c - class object from which enum constants are extracted
+   * @param statements collection of {@link StatementKind} objects constructed
+   * @param c class object from which enum constants are extracted
    */
   private static void getEnumStatements(ReflectionFilter filter, Set<StatementKind> statements, Class<?> c) {
     //get enum constants and capture methods attached to them, if any

@@ -1,16 +1,18 @@
 Version 2.0.1, to be released
 
-Added support for enums in generated tests.  If enum doesn't define any methods,
-then it will only be used as an argument to methods of other classes. Otherwise,
-an enum is treated similarly to any other class.  Will extract all enum constants,
-and extracts both public methods explicitly declared in the class (but not 
-values() or valueOf(-)), inherited methods that are also defined in anonymous 
-class for at least one constant. Captures abstract methods of enum, since must be 
-implemented for all constants. 
+Randoop now generates tests involving fields (fixes issues #21 and #47).
+A Randoop-generated test previously only invoked methods; now the
+generated tests may access and set fields as well.  Use command-line
+option --omit-field-list to make Randoop ignore certain fields.
+ 
+Randoop now includes enums in generated tests (fixes issue #17).
 
-Finished consolidation of web documentation, moved Wiki project ideas into doc folder.
+JUnit now executes Randoop-generated tests in a deterministic order:
+in ascending order by name.
 
-Moved plugin directories into their own repository.
+The Randoop Eclipse plugin has moved into its own repository: 
+https://github.com/randoop/randoop-eclipse-plugin
+
 
 Version 2.0, released October 13, 2015
 

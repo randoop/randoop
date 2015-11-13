@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":9,"i10":10,"i11":10};
+var methods = {"i0":9,"i1":10,"i2":9,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -109,7 +109,12 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">JunitFileWriter</span>
 extends Object</pre>
-<div class="block">Outputs a collection of sequences as Java files, using the JUnit framework, with one method per sequence.</div>
+<div class="block">JunitFileWriter is a class that for a collection of sequences, outputs
+ Java files containing one JUnit4 test method per sequence.
+ An object manages the information for a suite of tests (name, package, and directory)
+ and is used by first running writeJUnitTestFiles and then writeSuiteFile or 
+ writeDriverFile. Alternatively, a single test file can be written using the static
+ method writeJUnitTestFile.</div>
 </li>
 </ul>
 </div>
@@ -129,14 +134,18 @@ extends Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#dirName">dirName</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#includeParseableString">includeParseableString</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#junitDriverClassName">junitDriverClassName</a></span></code>&nbsp;</td>
-</tr>
 <tr class="altColor">
+<td class="colFirst"><code>String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#masterTestClassName">masterTestClassName</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#packageName">packageName</a></span></code>&nbsp;</td>
 </tr>
@@ -155,10 +164,12 @@ extends Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#JunitFileWriter-java.lang.String-java.lang.String-java.lang.String-int-">JunitFileWriter</a></span>(String&nbsp;junitDirName,
+<td class="colOne"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#JunitFileWriter-java.lang.String-java.lang.String-java.lang.String-">JunitFileWriter</a></span>(String&nbsp;junitDirName,
                String&nbsp;packageName,
-               String&nbsp;junitDriverClassName,
-               int&nbsp;testsPerFile)</code>&nbsp;</td>
+               String&nbsp;masterTestClassName)</code>
+<div class="block">JunitFileWriter creates an instance of class holding information needed to write
+ a test suite.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -176,69 +187,38 @@ extends Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>List&lt;File&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#createJunitFiles-java.util.List-">createJunitFiles</a></span>(List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&nbsp;sequences)</code>
-<div class="block">create both the test files and the drivers for convinience</div>
-</td>
+<td class="colFirst"><code>static String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#indent-java.lang.String-">indent</a></span>(String&nbsp;codeString)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>List&lt;File&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#createJunitFiles-java.util.List-java.util.List-">createJunitFiles</a></span>(List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&nbsp;sequences,
-                List&lt;Class&lt;?&gt;&gt;&nbsp;allClasses)</code>
-<div class="block">create both the test files and the drivers for convenience</div>
+<td class="colFirst"><code>File</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeDriverFile--">writeDriverFile</a></span>()</code>
+<div class="block">writeDriverFile writes non-reflective driver for tests as a main class.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#createJunitTestFile-java.lang.String-java.lang.String-randoop.ExecutableSequence-java.lang.String-">createJunitTestFile</a></span>(String&nbsp;junitOutputDir,
-                   String&nbsp;packageName,
-                   <a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&nbsp;es,
-                   String&nbsp;className)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeJUnitTestFile-java.lang.String-java.lang.String-randoop.ExecutableSequence-java.lang.String-">writeJUnitTestFile</a></span>(String&nbsp;junitOutputDir,
+                  String&nbsp;packageName,
+                  <a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&nbsp;es,
+                  String&nbsp;className)</code>
+<div class="block">writeJUnitTestFile is a static method that writes a single test class to the
+ specified directory and with the specified class name.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>List&lt;File&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#createJunitTestFiles-java.util.List-">createJunitTestFiles</a></span>(List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&nbsp;sequences)</code>
-<div class="block">Creates Junit tests for the faults.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeJUnitTestFiles-java.util.List-">writeJUnitTestFiles</a></span>(List&lt;List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&gt;&nbsp;seqPartition)</code>
+<div class="block">writeJUnitTestFiles writes a suite of test class files from a list of lists
+ of executable sequences.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>List&lt;File&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#createJunitTestFiles-java.util.List-java.lang.String-">createJunitTestFiles</a></span>(List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&nbsp;sequences,
-                    String&nbsp;junitTestsClassName)</code>
-<div class="block">Creates Junit tests for the faults.</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
 <td class="colFirst"><code>File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#getDir--">getDir</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>List&lt;String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#getJunitTestSuiteNames--">getJunitTestSuiteNames</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>static String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#indent-java.lang.String-">indent</a></span>(String&nbsp;codeString)</code>&nbsp;</td>
-</tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeDriverFile--">writeDriverFile</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>static File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeDriverFile-java.io.File-java.lang.String-java.lang.String-java.util.List-">writeDriverFile</a></span>(File&nbsp;dir,
-               String&nbsp;packageName,
-               String&nbsp;driverClassName,
-               List&lt;String&gt;&nbsp;junitTestSuiteNames)</code>&nbsp;</td>
-</tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeDriverFile-java.util.List-">writeDriverFile</a></span>(List&lt;Class&lt;?&gt;&gt;&nbsp;allClasses)</code>&nbsp;</td>
-</tr>
-<tr id="i11" class="rowColor">
-<td class="colFirst"><code>File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeDriverFile-java.lang.String-">writeDriverFile</a></span>(String&nbsp;driverClassName)</code>
-<div class="block">Creates Junit tests for the faults.</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../randoop/JunitFileWriter.html#writeSuiteFile-java.util.List-">writeSuiteFile</a></span>(List&lt;String&gt;&nbsp;additionalTestClassNames)</code>
+<div class="block">writeSuiteFile writes a JUnit4 suite consisting of test classes
+ from createJunitTestFiles and additional classes provided as a
+ parameter.</div>
 </td>
 </tr>
 </table>
@@ -263,13 +243,13 @@ extends Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="junitDriverClassName">
+<a name="masterTestClassName">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>junitDriverClassName</h4>
-<pre>public&nbsp;String junitDriverClassName</pre>
+<h4>masterTestClassName</h4>
+<pre>public final&nbsp;String masterTestClassName</pre>
 </li>
 </ul>
 <a name="packageName">
@@ -278,7 +258,16 @@ extends Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>packageName</h4>
-<pre>public&nbsp;String packageName</pre>
+<pre>public final&nbsp;String packageName</pre>
+</li>
+</ul>
+<a name="dirName">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>dirName</h4>
+<pre>public final&nbsp;String dirName</pre>
 </li>
 </ul>
 <a name="includeParseableString">
@@ -298,7 +287,7 @@ extends Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="JunitFileWriter-java.lang.String-java.lang.String-java.lang.String-int-">
+<a name="JunitFileWriter-java.lang.String-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -306,8 +295,15 @@ extends Object</pre>
 <h4>JunitFileWriter</h4>
 <pre>public&nbsp;JunitFileWriter(String&nbsp;junitDirName,
                        String&nbsp;packageName,
-                       String&nbsp;junitDriverClassName,
-                       int&nbsp;testsPerFile)</pre>
+                       String&nbsp;masterTestClassName)</pre>
+<div class="block">JunitFileWriter creates an instance of class holding information needed to write
+ a test suite.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>junitDirName</code> - directory where files are to be written</dd>
+<dd><code>packageName</code> - package name to be used in JUnit test classes</dd>
+<dd><code>masterTestClassName</code> - name of test class suite/driver</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -318,71 +314,67 @@ extends Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="createJunitTestFile-java.lang.String-java.lang.String-randoop.ExecutableSequence-java.lang.String-">
+<a name="writeJUnitTestFile-java.lang.String-java.lang.String-randoop.ExecutableSequence-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>createJunitTestFile</h4>
-<pre>public static&nbsp;File&nbsp;createJunitTestFile(String&nbsp;junitOutputDir,
-                                       String&nbsp;packageName,
-                                       <a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&nbsp;es,
-                                       String&nbsp;className)</pre>
+<h4>writeJUnitTestFile</h4>
+<pre>public static&nbsp;File&nbsp;writeJUnitTestFile(String&nbsp;junitOutputDir,
+                                      String&nbsp;packageName,
+                                      <a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&nbsp;es,
+                                      String&nbsp;className)</pre>
+<div class="block">writeJUnitTestFile is a static method that writes a single test class to the
+ specified directory and with the specified class name.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>junitOutputDir</code> - directory where files are to be written.</dd>
+<dd><code>packageName</code> - package name for test classes.</dd>
+<dd><code>es</code> - executable sequence to be written to test class.</dd>
+<dd><code>className</code> - name of test class.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>File that new test class was written to.</dd>
+</dl>
 </li>
 </ul>
-<a name="createJunitTestFiles-java.util.List-java.lang.String-">
+<a name="writeJUnitTestFiles-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>createJunitTestFiles</h4>
-<pre>public&nbsp;List&lt;File&gt;&nbsp;createJunitTestFiles(List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&nbsp;sequences,
-                                       String&nbsp;junitTestsClassName)</pre>
-<div class="block">Creates Junit tests for the faults.
- Output is a set of .java files.</div>
+<h4>writeJUnitTestFiles</h4>
+<pre>public&nbsp;List&lt;File&gt;&nbsp;writeJUnitTestFiles(List&lt;List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&gt;&nbsp;seqPartition)</pre>
+<div class="block">writeJUnitTestFiles writes a suite of test class files from a list of lists
+ of executable sequences. Each executable sequence corresponds to a test method, a
+ list of executable sequences corresponds to a test class, and the list of lists to a
+ test suite.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>seqPartition</code> - suite of test classes as a list of lists of executable sequences</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>File objects corresponding to test class files generated.</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><code>writeSuiteFile</code>, 
+<code>writeDriverFile</code></dd>
+</dl>
 </li>
 </ul>
-<a name="createJunitTestFiles-java.util.List-">
+<a name="writeSuiteFile-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>createJunitTestFiles</h4>
-<pre>public&nbsp;List&lt;File&gt;&nbsp;createJunitTestFiles(List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&nbsp;sequences)</pre>
-<div class="block">Creates Junit tests for the faults.
- Output is a set of .java files.
-
- the default junit class name is the driver class name + index</div>
-</li>
-</ul>
-<a name="createJunitFiles-java.util.List-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createJunitFiles</h4>
-<pre>public&nbsp;List&lt;File&gt;&nbsp;createJunitFiles(List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&nbsp;sequences,
-                                   List&lt;Class&lt;?&gt;&gt;&nbsp;allClasses)</pre>
-<div class="block">create both the test files and the drivers for convenience</div>
-</li>
-</ul>
-<a name="createJunitFiles-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createJunitFiles</h4>
-<pre>public&nbsp;List&lt;File&gt;&nbsp;createJunitFiles(List&lt;<a href="../randoop/ExecutableSequence.html" title="class in randoop">ExecutableSequence</a>&gt;&nbsp;sequences)</pre>
-<div class="block">create both the test files and the drivers for convinience</div>
-</li>
-</ul>
-<a name="indent-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>indent</h4>
-<pre>public static&nbsp;String&nbsp;indent(String&nbsp;codeString)</pre>
+<h4>writeSuiteFile</h4>
+<pre>public&nbsp;File&nbsp;writeSuiteFile(List&lt;String&gt;&nbsp;additionalTestClassNames)</pre>
+<div class="block">writeSuiteFile writes a JUnit4 suite consisting of test classes
+ from createJunitTestFiles and additional classes provided as a
+ parameter.
+ The file is written to the directory pointed to by writer object 
+ in a class whose name is the masterTestClassName.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><code>createJunitTestFiles</code></dd>
+</dl>
 </li>
 </ul>
 <a name="writeDriverFile--">
@@ -392,56 +384,24 @@ extends Object</pre>
 <li class="blockList">
 <h4>writeDriverFile</h4>
 <pre>public&nbsp;File&nbsp;writeDriverFile()</pre>
+<div class="block">writeDriverFile writes non-reflective driver for tests as a main class.
+ The file is written to the directory pointed to by writer object 
+ in a class whose name is the masterTestClassName.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>File object for generated Java file.</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><code>writeSubSuite</code></dd>
+</dl>
 </li>
 </ul>
-<a name="writeDriverFile-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>writeDriverFile</h4>
-<pre>public&nbsp;File&nbsp;writeDriverFile(List&lt;Class&lt;?&gt;&gt;&nbsp;allClasses)</pre>
-</li>
-</ul>
-<a name="writeDriverFile-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>writeDriverFile</h4>
-<pre>public&nbsp;File&nbsp;writeDriverFile(String&nbsp;driverClassName)</pre>
-<div class="block">Creates Junit tests for the faults.
- Output is a set of .java files.</div>
-</li>
-</ul>
-<a name="getJunitTestSuiteNames--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getJunitTestSuiteNames</h4>
-<pre>public&nbsp;List&lt;String&gt;&nbsp;getJunitTestSuiteNames()</pre>
-</li>
-</ul>
-<a name="writeDriverFile-java.io.File-java.lang.String-java.lang.String-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>writeDriverFile</h4>
-<pre>public static&nbsp;File&nbsp;writeDriverFile(File&nbsp;dir,
-                                   String&nbsp;packageName,
-                                   String&nbsp;driverClassName,
-                                   List&lt;String&gt;&nbsp;junitTestSuiteNames)</pre>
-</li>
-</ul>
-<a name="getDir--">
+<a name="indent-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getDir</h4>
-<pre>public&nbsp;File&nbsp;getDir()</pre>
+<h4>indent</h4>
+<pre>public static&nbsp;String&nbsp;indent(String&nbsp;codeString)</pre>
 </li>
 </ul>
 </li>

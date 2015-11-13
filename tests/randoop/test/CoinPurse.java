@@ -19,7 +19,11 @@ public class CoinPurse {
   public int value() {
     int val = 0;
     for (Coin c : purse.keySet()) {
-      val += c.value()*purse.getOrDefault(c, 0);
+      int count = 0;
+      if (purse.containsKey(c)) {
+        count = purse.get(c);
+      }
+      val += c.value()*count;
     }
     return val;
   }
@@ -31,7 +35,10 @@ public class CoinPurse {
   }
   
   public void add(Coin c) {
-    int count = purse.getOrDefault(c, 0) +1;
-    purse.put(c, count);
+    int count = 0;
+    if (purse.containsKey(c)) {
+      count = purse.get(c);
+    }
+    purse.put(c, count + 1);
   }
 }

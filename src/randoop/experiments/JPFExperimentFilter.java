@@ -1,6 +1,7 @@
 package randoop.experiments;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
@@ -294,6 +295,11 @@ public class JPFExperimentFilter implements ReflectionFilter {
 
 
     return baseFilter.canUse(m);
+  }
+
+  @Override
+  public boolean canUse(Field f) {
+    return baseFilter.canUse(f);
   }
 
 }

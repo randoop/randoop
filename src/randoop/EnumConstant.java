@@ -116,7 +116,7 @@ public class EnumConstant implements StatementKind, Serializable {
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
    * 
-   * @param s - string representing type-value pair for an enum constant
+   * @param s string representing type-value pair for an enum constant
    * @return an EnumConstant representing the enum constant value in {@link s}
    * @throws StatementKindParseException
    */
@@ -127,7 +127,7 @@ public class EnumConstant implements StatementKind, Serializable {
     int colonIdx = s.indexOf(':');
     if (colonIdx < 0) {
       String msg = "An enum constant description must be of the form \"" +
-          "<type>:<value>" + " but description is \"" + s + "\"";
+          "<type>:<value>" + " but description is \"" + s + "\".";
       throw new StatementKindParseException(msg);
     }
     
@@ -183,8 +183,8 @@ public class EnumConstant implements StatementKind, Serializable {
    * valueOf searches the enum constant list of a class for a constant with the given name.
    * Note: cannot make this work using valueOf method of Enum due to typing.
    * 
-   * @param type - class that is already known to be an enum.
-   * @param valueName - name for value that may be a constant of the enum.
+   * @param type class that is already known to be an enum.
+   * @param valueName name for value that may be a constant of the enum.
    * @return reference to actual constant value, or null if none exists in type.
    */
   private static Enum<?> valueOf(Class<?> type, String valueName) {

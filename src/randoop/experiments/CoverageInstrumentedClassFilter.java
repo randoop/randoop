@@ -7,7 +7,7 @@ public class CoverageInstrumentedClassFilter implements ClassFilter {
 
   public boolean include(JavaClass cls) {
     for (Field f : cls.getFields()) {
-      if (f.getName().equals(cov.Constants.isInstrumentedField))
+      if (f.getName().equals(cov.Constants.IS_INSTRUMENTED_FIELD))
         return true;
     }
     return false;

@@ -1,9 +1,12 @@
 package randoop.util;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import randoop.CheckRep;
@@ -18,12 +21,28 @@ import randoop.CheckRep;
  */
 public class DefaultReflectionFilter implements ReflectionFilter {
 
-  private Pattern omitmethods = null;
+  private Pattern omitMethods = null;
+  private Set<String> omitFields;
+  
+  public DefaultReflectionFilter() {
+    this(null, new HashSet<String>());
+  }
+  
+  /** If omitMethods is null, then no methods are omitted. */
+  public DefaultReflectionFilter(Pattern omitMethods) {
+    this(omitMethods, new HashSet<String>());
+  }
 
-  /** omitmethods can be null (which means "omit no methods") */
-  public DefaultReflectionFilter(Pattern omitmethods) {
+  /** 
+   * DefaultReflectionFilter creates a filter object that uses default
+   * criteria for inclusion of reflection objects. 
+   * @param omitMethods pattern for methods to omit, if null then no methods omitted.
+   * @see Reflection#getStatements(java.util.Collection, ReflectionFilter) 
+   */
+  public DefaultReflectionFilter(Pattern omitMethods, Set<String> omitFields) {
     super();
-    this.omitmethods = omitmethods;
+    this.omitMethods = omitMethods;
+    this.omitFields = omitFields;
   }
 
   public boolean canUse(Class<?> c) {
@@ -177,15 +196,42 @@ public class DefaultReflectionFilter implements ReflectionFilter {
   }
 
   private boolean matchesOmitMethodPattern(String name) {
-     if (omitmethods == null) {
+     if (omitMethods == null) {
        return false;
      }
-     boolean result = omitmethods.matcher(name).find();
+     boolean result = omitMethods.matcher(name).find();
      if (Log.isLoggingOn()) {
        Log.logLine (String.format("Comparing '%s' against pattern '%s' = %b%n", name,
-                    omitmethods, result));
+                    omitMethods, result));
      }
      return result;
+  }
+
+  /**
+   * canUse tests whether the name of a field is included among the 
+   * omitted method names.
+   * 
+   * @param f field to test 
+   * @return true if field name does not occur in omitFields pattern, and false if it does.
+   */
+  @Override
+  public boolean canUse(Field f) {
+
+    if (omitFields == null) {
+      return true;
+    }
+    
+    String name = f.getDeclaringClass().getName() + "." + f.getName();
+    boolean result = !omitFields.contains(name);
+    if (Log.isLoggingOn()) {
+      if (result) {
+        Log.logLine(String.format("Including field '%s'", name));
+      } else {
+        Log.logLine(String.format("Not including field '%s'", name));
+      }
+    }
+    return result;
+
   }
 
 }
