@@ -112,9 +112,9 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
    * 
    * @param s string representing type-value pair for an enum constant
    * @return an EnumConstant representing the enum constant value in {@link s}
-   * @throws StatementKindParseException
+   * @throws OperationParseException
    */
-  public static EnumConstant parse(String s) throws StatementKindParseException {
+  public static EnumConstant parse(String s) throws OperationParseException {
     if (s == null) {
       throw new IllegalArgumentException("s cannot be null");
     }
@@ -122,7 +122,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     if (colonIdx < 0) {
       String msg = "An enum constant description must be of the form \"" +
           "<type>:<value>" + " but description is \"" + s + "\".";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     String typeName = s.substring(0, colonIdx).trim();
@@ -135,39 +135,39 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     
     if (typeName.isEmpty()) {
       String msg = errorPrefix + " No type given.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     if (valueName.isEmpty()) {
       String msg = errorPrefix + " No value given.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     String whitespacePattern = ".*\\s+.*";
     if (typeName.matches(whitespacePattern)) {
       String msg = errorPrefix + " The type has unexpected whitespace characters.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     if (valueName.matches(whitespacePattern)) {
       String msg = errorPrefix + " The value has unexpected whitespace characters.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     Class<?> type = Reflection.classForName(typeName,true);
     if (type == null) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     if (!type.isEnum()) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" is not an enum.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     value = valueOf(type,valueName);
     if (value == null) {
       String msg = errorPrefix + " The value given \"" + valueName + "\" is not a constant of the enum " +
           typeName + ".";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     return new EnumConstant(value);
@@ -198,6 +198,9 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   public Enum<?> value() {
     return this.value;
   }
+  
+  @Override
+  public Object getValue() { return value(); }
 
   @Override
   public Class<?> getDeclaringClass() {

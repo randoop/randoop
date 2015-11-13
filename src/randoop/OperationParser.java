@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class StatementKinds {
+public class OperationParser {
 
   /**
    * Parses a string representing a StatementKind. The string is expected to be
@@ -27,7 +27,7 @@ public class StatementKinds {
    * For more details on the exact form of DESCRIPTION, see the different
    * classes implementing StatementKind.
    */
-  public static Operation parse(String str) throws StatementKindParseException {
+  public static Operation parse(String str) throws OperationParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
@@ -37,7 +37,7 @@ public class StatementKinds {
     if (colonIdx == -1) {
       String msg = "A statement description must be of the form " + "<id> : <description> but the statement \""
           + str + "\" does not have a valid form (no colon).";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     String id = str.substring(0, colonIdx).trim();
@@ -70,7 +70,7 @@ public class StatementKinds {
         + "<id> <description>"
         + " with <id> in " + validIds.toString()
         + " but the statement \"" + str + "\" does not have a valid <id>.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
   }
 

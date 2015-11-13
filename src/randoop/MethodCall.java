@@ -155,8 +155,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
         sb.append(inputVars.get(i).getName());
       }
     }
-
-    sb.append(");" + Globals.lineSep);
+    sb.append(")");
   }
   
   // XXX this is a pretty bogus workaround for a bug in javac (type inference

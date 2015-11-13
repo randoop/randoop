@@ -155,25 +155,25 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
    * "<set>" is literally what is expected.
    * @param descr - string containing descriptor of field setter.
    * @return FieldSetter object corresponding to setter descriptor.
-   * @throws StatementKindParseException if descr does not have expected form.
+   * @throws OperationParseException if descr does not have expected form.
    * @see PublicFieldParser#parse(String)
    */
-  public static FieldSetter parse(String descr) throws StatementKindParseException {
+  public static FieldSetter parse(String descr) throws OperationParseException {
     int parPos = descr.indexOf('(');
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
     if (parPos < 0) {
       String msg = errorPrefix + " expecting parentheses.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     String prefix = descr.substring(0, parPos);
     if (!prefix.equals("<set>")) {
       String msg = errorPrefix + " expecting <set>( <field-descriptor> ).";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     int lastParPos = descr.lastIndexOf(')');
     if (lastParPos < 0) {
       String msg = errorPrefix + " no closing parentheses found.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
     PublicField pf = (new PublicFieldParser()).parse(fieldDescriptor);

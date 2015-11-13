@@ -1,11 +1,11 @@
 package randoop;
 
 // Not meant for serialization.
-public class StatementKindParseException extends Exception {
+public class OperationParseException extends Exception {
 
   private static final long serialVersionUID = 1L;
 
-  public StatementKindParseException(String string) {
+  public OperationParseException(String string) {
     super(string); 
   }
 

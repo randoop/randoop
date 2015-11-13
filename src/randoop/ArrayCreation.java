@@ -16,7 +16,7 @@ import randoop.util.Reflection;
  * Represents a one-dimensional
  * array creation statement, e.g. "int[] x = new int[2] { 3, 7 };"
  */
-public final class ArrayCreation implements Operation, Serializable {
+public final class ArrayCreation extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -142,7 +142,9 @@ public final class ArrayCreation implements Operation, Serializable {
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format) {
+      if (!GenInputsAbstract.long_format && 
+          statementCreatingVar.isPrimitiveInitialization() &&
+          !statementCreatingVar.isNullInitialization()) {
         String shortForm = statementCreatingVar.getShortForm();
         if (shortForm != null) {
           b.append(shortForm);
@@ -151,8 +153,7 @@ public final class ArrayCreation implements Operation, Serializable {
         b.append(inputVars.get(i).getName());
       }
     }
-    b.append("};");
-    b.append(Globals.lineSep);
+    b.append(" }");
   }
 
   @Override
@@ -206,32 +207,7 @@ public final class ArrayCreation implements Operation, Serializable {
   }
 
   @Override
-  public boolean isStatic() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public boolean isMessage() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
   public Class<?> getDeclaringClass() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public boolean isConstructorCall() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public boolean isNonreceivingValue() {
-    // TODO Auto-generated method stub
-    return false;
+    return getOutputType();
   }
 }

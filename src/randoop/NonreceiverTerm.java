@@ -118,26 +118,24 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
     return Collections.emptyList();
   }
 
+  /**
+   * appendCode adds the string representation of the Nonreceiver value
+   * to the StringBuilder.
+   * Note: do not explicitly box primitive values.
+   * @see Operation#appendCode(List, StringBuilder)
+   * 
+   * @param inputVars ignored
+   * @param b {@link StringBuilder} to which string representation is appended.
+   * 
+   */
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
-
-    if (type.isPrimitive()) {
-      
-      b.append("new ");
-      b.append(PrimitiveTypes.boxedType(type).getName());
-      b.append("(");
-      b.append(PrimitiveTypes.toCodeString(getValue()));
-      b.append(")");
-
-    } else {
-
-      b.append(PrimitiveTypes.toCodeString(getValue()));
-     
-    }
+    b.append(PrimitiveTypes.toCodeString(getValue()));
   }
 
   /**
-   * Returns the value of this PrimitiveOrStringOrNullDeclInfo
+   * Returns the value of this NonreceiverTerm
    */
+  @Override
   public Object getValue() {
     return value;
   }
@@ -157,7 +155,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   }
 
   /**
-   * Returns the appropriate PrimitiveOrStringOrNullDeclInfo representative of 
+   * Returns the appropriate NonreceiverTerm representative of 
    * the specified class c.
    */
   public static NonreceiverTerm nullOrZeroDecl(Class<?> c) {
@@ -246,13 +244,13 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
    * 
    * Note that a string type can be given as both "String" or "java.lang.String".
    */
-  public static NonreceiverTerm parse(String s) throws StatementKindParseException {
+  public static NonreceiverTerm parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
       String msg = "A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the description \"" + s + "\" does not have this form.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     // Extract type and value.
     String typeString = s.substring(0, colonIdx);
@@ -262,7 +260,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
     if (typeString.matches(".*\\s+.*")) {
       String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the <type> description \"" + s + "\" contains invalid whitespace characters.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     // Convert "String" to "java.lang.String"
@@ -274,7 +272,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
     if (type == null) {
       String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the <type> given (\"" + typeString + "\") was unrecognized.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     Object value = null;
 
@@ -284,7 +282,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(byte.class)) {
       try {
@@ -292,7 +290,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(short.class)) {
       try {
@@ -300,7 +298,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(int.class)) {
       try {
@@ -308,7 +306,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(long.class)) {
       try {
@@ -316,7 +314,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(float.class)) {
       try {
@@ -324,7 +322,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(double.class)) {
       try {
@@ -332,7 +330,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(boolean.class)) {
       if (valString.equals("true") || valString.equals("false")) {
@@ -340,7 +338,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } else {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(String.class)) {
       if (valString.equals("null")) {
@@ -350,11 +348,11 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
         if (valString.charAt(0) != '"' || valString.charAt(valString.length() - 1) != '"') {
           String msg = "Error when parsing type/value pair " + s +  ". A String value declaration description must be of the form "
             + "java.lang.String:\"thestring\"" + " but the string given was not enclosed in quotation marks.";
-          throw new StatementKindParseException(msg);
+          throw new OperationParseException(msg);
         }
         value = UtilMDE.unescapeNonJava(valString.substring(1, valString.length() - 1));
         if (!PrimitiveTypes.stringLengthOK((String)value)) {
-          throw new StatementKindParseException("Error when parsing String; length is greater than " + GenInputsAbstract.string_maxlen);
+          throw new OperationParseException("Error when parsing String; length is greater than " + GenInputsAbstract.string_maxlen);
         }
       }
     } else {
@@ -363,7 +361,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       } else {
         String msg = "Error when parsing type/value pair " + s +  ". A primitve value declaration description that is not a primitive value or a string must be of the form "
           + "<type>:null but the string given (\"" + valString + "\") was not of this form.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     }
 
@@ -374,5 +372,10 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   public Class<?> getDeclaringClass() {
     // TODO verify this is what we want
     return type;
+  }
+  
+  @Override
+  public boolean isNonreceivingValue() {
+    return true;
   }
 }

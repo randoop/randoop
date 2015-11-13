@@ -99,5 +99,17 @@ public interface Operation {
    */
   boolean isNonreceivingValue();
 
+  /**
+   * getValue returns the "value" of an operation that is actuall a ground term, meaning
+   * a constant of some form.  Only null if value is null, otherwise throws an exception
+   * if not a reasonable meaning of value for type of operation.
+   * 
+   * This is a hack to allow randoop.main.GenBranchDir to do mutation.
+   * 
+   * @return object reference to value.
+   * @throws IllegalArgumentException if no meaningful definition of "value" for type.
+   */
+  Object getValue();
+
 
 }

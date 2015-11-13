@@ -124,25 +124,25 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
    * 
    * @param descr - string containing descriptor of getter for a field.
    * @return - getter object in string.
-   * @throws StatementKindParseException if any error in descriptor string
+   * @throws OperationParseException if any error in descriptor string
    * @see PublicFieldParser#parse(String)
    */
-  public static FieldGetter parse(String descr) throws StatementKindParseException {
+  public static FieldGetter parse(String descr) throws OperationParseException {
     int parPos = descr.indexOf('(');
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
     if (parPos < 0) {
       String msg = errorPrefix + " expecting parentheses.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     String prefix = descr.substring(0, parPos);
     if (!prefix.equals("<get>")) {
       String msg = errorPrefix + " expecting <get>( <field-descriptor> ).";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     int lastParPos = descr.lastIndexOf(')');
     if (lastParPos < 0) {
       String msg = errorPrefix + " no closing parentheses found.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
     PublicField pf = (new PublicFieldParser()).parse(fieldDescriptor);
