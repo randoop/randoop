@@ -2,6 +2,8 @@ language: java
 
 script: make all-dist
 
+sudo: false
+
 jdk:
   - oraclejdk8
   - oraclejdk7
