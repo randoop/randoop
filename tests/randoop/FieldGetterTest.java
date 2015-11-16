@@ -33,10 +33,11 @@ public class FieldGetterTest {
 
       //code generation
       String expected = "int i0 = randoop.ClassWithFields.fourField;" + Globals.lineSep;
+      Statement st = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
       StringBuilder b = new StringBuilder();
-      rhs.appendCode(var, new ArrayList<Variable>(), b);
+      st.appendCode(var, new ArrayList<Variable>(), b);
       assertEquals("Expect initialization of variable from static field", expected, b.toString());
 
       //execution - should be 4 (haven't changed value yet)
@@ -75,10 +76,12 @@ public class FieldGetterTest {
       // - sequence where one is declared and initialized by constructed object
       ConstructorCall cons = new ConstructorCall(
           Reflection.getConstructorForSignature("randoop.ClassWithFields.ClassWithFields()"));
+      Statement st1 = new Statement(cons);
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seqInit, 0)); 
       // bind getter "call" to initialization
+      Statement st_rhs = new Statement(rhs);
       Sequence seq = seqInit.extend(rhs, vars);
       // - first variable is object
       Variable var1 = new Variable(seq, 0);
@@ -87,7 +90,7 @@ public class FieldGetterTest {
       vars = new ArrayList<>();
       vars.add(var1);
       StringBuilder b = new StringBuilder();
-      rhs.appendCode(var2, vars, b);
+      st_rhs.appendCode(var2, vars, b);
       assertEquals("Expect initialization of variable from static field", expected, b.toString());
 
       //execution
@@ -132,10 +135,11 @@ public class FieldGetterTest {
 
       //code generation
       String expected = "int i0 = randoop.ClassWithFields.FIVEFIELD;" + Globals.lineSep;
+      Statement st_rhs = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
       StringBuilder b = new StringBuilder();
-      rhs.appendCode(var, new ArrayList<Variable>(), b);
+      st_rhs.appendCode(var, new ArrayList<Variable>(), b);
       assertEquals("Expect initialization of variable from static final field",
           expected, b.toString());
 
@@ -160,7 +164,7 @@ public class FieldGetterTest {
     try {
       FieldGetter getter = FieldGetter.parse(getterDescr);
       assertEquals("parse should return object that converts to string", getterDescr, getter.toParseableString());
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
      fail("Parse error: " + e.getMessage());
     }
     

@@ -66,7 +66,7 @@ public abstract class AbstractGenerator {
    * used to generate sequences. In other words, statements specifies the universe
    * of operations from which sequences are generated.
    */
-  public List<Operation> statements;
+  public List<Operation> operations;
   
   /**
    * Container for execution visitors used during execution of sequences. 
@@ -118,18 +118,12 @@ public abstract class AbstractGenerator {
    * Constructs a generator with the given parameters.
    * 
    * @param statements Statements (e.g. methods and constructors) used to create sequences. Cannot be null.
-   * 
    * @param timeMillis maximum time to spend in generation. Must be non-negative.
-   * 
    * @param maxSequences maximum number of sequences to generate. Must be non-negative.
-   * 
    * @param componentManager component manager to use to store sequences during component-based generation.
    *        Can be null, in which case the generator's component manager is initialized as <code>new ComponentManager()</code>.
-   *        
    * @param stopper Optional, additional stopping criterion for the generator. Can be null.
-   * 
    * @param listenerManager Manager that stores and calls any listeners to use during generation. Can be null.
-   *  
    * @param testfilters List of filters to determine which sequences to output. Can be null or empty.
    */
   public AbstractGenerator(List<Operation> statements, long timeMillis, int maxSequences, ComponentManager componentManager,
@@ -142,7 +136,7 @@ public abstract class AbstractGenerator {
 
     this.maxSequences = maxSequences;
 
-    this.statements = statements;
+    this.operations = statements;
 
     this.executionVisitor = new MultiVisitor();
 
@@ -181,7 +175,7 @@ public abstract class AbstractGenerator {
    */
   public void explore() {
 
-      Log.log(this.statements);
+      Log.log(this.operations);
 
       timer.startTiming();
 
@@ -215,7 +209,7 @@ public abstract class AbstractGenerator {
         if (dump_sequences) {
           System.out.printf ("seq before run: %s%n", eSeq);
         }
-        
+       
         // Notify listeners we just completed generation step.
         if (listenerMgr != null) {
           listenerMgr.generationStepPost(eSeq);
@@ -261,7 +255,7 @@ public abstract class AbstractGenerator {
           Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
           Log.logLine("allSequences.size()=" + numSequences());
         }
-        
+
     }
       
     if (!GenInputsAbstract.noprogressdisplay && progressDisplay != null) {

@@ -39,7 +39,8 @@ public class FieldSetterTest {
       Sequence seq0 = new Sequence().extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq0,0));
-      rhs.appendCode(null, vars, b);
+      Statement st_rhs = new Statement(rhs);
+      st_rhs.appendCode(null, vars, b);
       assertEquals("Expect assignment to static field",expected,b.toString());
       
       //execution -- gives back null
@@ -80,7 +81,8 @@ public class FieldSetterTest {
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1,0));
       vars.add(new Variable(seq1,1));
-      rhs.appendCode(null, vars, b);
+      Statement st_rhs = new Statement(rhs);
+      st_rhs.appendCode(null, vars, b);
       assertEquals("Expect assignment to instance field",expected,b.toString());
       
       //execution
@@ -138,7 +140,7 @@ public class FieldSetterTest {
     try {
       FieldSetter setter = FieldSetter.parse(setterDesc);
       assertEquals("parse should return object that converts to string", setterDesc, setter.toParseableString());
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
      fail("Parse error: " + e.getMessage());
     }
     

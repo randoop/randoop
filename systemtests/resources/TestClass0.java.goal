@@ -6066,7 +6066,7 @@ public class TestClass0 {
     java2.util2.Collection collection30 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set29);
     java2.util2.Comparator comparator31 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj32 = java2.util2.Collections.max(collection30, comparator31);
-    java.lang.Object[] obj_array33 = new java.lang.Object[] { comparator31};
+    java.lang.Object[] obj_array33 = new java.lang.Object[] { comparator31 };
     java.lang.Object[] obj_array34 = treeSet27.toArray(obj_array33);
     java.lang.Object[] obj_array35 = arrayList9.toArray(obj_array33);
     java2.util2.TreeSet treeSet36 = new java2.util2.TreeSet((java2.util2.Collection)arrayList9);
@@ -7793,7 +7793,7 @@ public class TestClass0 {
     java2.util2.Collection collection41 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set40);
     java2.util2.Comparator comparator42 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj43 = java2.util2.Collections.max(collection41, comparator42);
-    java.lang.Object[] obj_array44 = new java.lang.Object[] { comparator42};
+    java.lang.Object[] obj_array44 = new java.lang.Object[] { comparator42 };
     java.lang.Object[] obj_array45 = treeSet38.toArray(obj_array44);
     java.lang.Object[] obj_array46 = arrayList20.toArray(obj_array44);
     java.lang.Object[] obj_array47 = arrayList9.toArray(obj_array44);
@@ -8558,7 +8558,7 @@ public class TestClass0 {
     java2.util2.Collection collection31 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set30);
     java2.util2.Comparator comparator32 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj33 = java2.util2.Collections.max(collection31, comparator32);
-    java.lang.Object[] obj_array34 = new java.lang.Object[] { comparator32};
+    java.lang.Object[] obj_array34 = new java.lang.Object[] { comparator32 };
     java.lang.Object[] obj_array35 = treeSet28.toArray(obj_array34);
     java.lang.Object[] obj_array36 = arrayList10.toArray(obj_array34);
     // The following exception was thrown during execution.
@@ -10626,14 +10626,14 @@ public class TestClass0 {
     java2.util2.Collection collection58 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set57);
     java2.util2.Comparator comparator59 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj60 = java2.util2.Collections.max(collection58, comparator59);
-    java.lang.Object[] obj_array61 = new java.lang.Object[] { comparator59};
+    java.lang.Object[] obj_array61 = new java.lang.Object[] { comparator59 };
     java.lang.Object[] obj_array62 = treeSet55.toArray(obj_array61);
     java.lang.Object[] obj_array63 = arrayList37.toArray(obj_array61);
     int i64 = java2.util2.Collections.indexOfSubList((java2.util2.List)arrayList9, (java2.util2.List)arrayList37);
     java2.util2.TreeSet treeSet65 = new java2.util2.TreeSet();
     java2.util2.Set set67 = java2.util2.Collections.singleton((java.lang.Object)1.0f);
     java2.util2.Set set68 = java2.util2.Collections.singleton((java.lang.Object)set67);
-    java.lang.Object[] obj_array69 = new java.lang.Object[] { set68};
+    java.lang.Object[] obj_array69 = new java.lang.Object[] { set68 };
     java.lang.Object[] obj_array70 = treeSet65.toArray(obj_array69);
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
@@ -13441,7 +13441,7 @@ public class TestClass0 {
     java2.util2.Collection collection34 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set33);
     java2.util2.Comparator comparator35 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj36 = java2.util2.Collections.max(collection34, comparator35);
-    java.lang.Object[] obj_array37 = new java.lang.Object[] { comparator35};
+    java.lang.Object[] obj_array37 = new java.lang.Object[] { comparator35 };
     java.lang.Object[] obj_array38 = treeSet31.toArray(obj_array37);
     java.lang.Object[] obj_array39 = arrayList13.toArray(obj_array37);
     java2.util2.TreeSet treeSet40 = new java2.util2.TreeSet((java2.util2.Collection)arrayList13);
@@ -14728,7 +14728,7 @@ public class TestClass0 {
     java2.util2.Collection collection58 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set57);
     java2.util2.Comparator comparator59 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj60 = java2.util2.Collections.max(collection58, comparator59);
-    java.lang.Object[] obj_array61 = new java.lang.Object[] { comparator59};
+    java.lang.Object[] obj_array61 = new java.lang.Object[] { comparator59 };
     java.lang.Object[] obj_array62 = treeSet55.toArray(obj_array61);
     java.lang.Object[] obj_array63 = arrayList37.toArray(obj_array61);
     int i64 = java2.util2.Collections.indexOfSubList((java2.util2.List)arrayList9, (java2.util2.List)arrayList37);
@@ -20655,7 +20655,7 @@ public class TestClass0 {
     java2.util2.Collection collection58 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set57);
     java2.util2.Comparator comparator59 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj60 = java2.util2.Collections.max(collection58, comparator59);
-    java.lang.Object[] obj_array61 = new java.lang.Object[] { comparator59};
+    java.lang.Object[] obj_array61 = new java.lang.Object[] { comparator59 };
     java.lang.Object[] obj_array62 = treeSet55.toArray(obj_array61);
     java.lang.Object[] obj_array63 = arrayList37.toArray(obj_array61);
     int i64 = java2.util2.Collections.indexOfSubList((java2.util2.List)arrayList9, (java2.util2.List)arrayList37);
@@ -20966,7 +20966,7 @@ public class TestClass0 {
     java2.util2.Collection collection57 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set56);
     java2.util2.Comparator comparator58 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj59 = java2.util2.Collections.max(collection57, comparator58);
-    java.lang.Object[] obj_array60 = new java.lang.Object[] { comparator58};
+    java.lang.Object[] obj_array60 = new java.lang.Object[] { comparator58 };
     java.lang.Object[] obj_array61 = treeSet54.toArray(obj_array60);
     java.lang.Object[] obj_array62 = arrayList36.toArray(obj_array60);
     java2.util2.Collections.shuffle((java2.util2.List)arrayList36);
@@ -21917,7 +21917,7 @@ public class TestClass0 {
     java2.util2.Collection collection30 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set29);
     java2.util2.Comparator comparator31 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj32 = java2.util2.Collections.max(collection30, comparator31);
-    java.lang.Object[] obj_array33 = new java.lang.Object[] { comparator31};
+    java.lang.Object[] obj_array33 = new java.lang.Object[] { comparator31 };
     java.lang.Object[] obj_array34 = treeSet27.toArray(obj_array33);
     java.lang.Object[] obj_array35 = arrayList9.toArray(obj_array33);
     java2.util2.Collections.shuffle((java2.util2.List)arrayList9);
@@ -22141,7 +22141,7 @@ public class TestClass0 {
     java2.util2.Collection collection30 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)set29);
     java2.util2.Comparator comparator31 = java2.util2.Collections.reverseOrder();
     java.lang.Object obj32 = java2.util2.Collections.max(collection30, comparator31);
-    java.lang.Object[] obj_array33 = new java.lang.Object[] { comparator31};
+    java.lang.Object[] obj_array33 = new java.lang.Object[] { comparator31 };
     java.lang.Object[] obj_array34 = treeSet27.toArray(obj_array33);
     java.lang.Object[] obj_array35 = arrayList9.toArray(obj_array33);
     java2.util2.TreeSet treeSet36 = new java2.util2.TreeSet((java2.util2.Collection)arrayList9);

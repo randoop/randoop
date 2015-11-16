@@ -56,7 +56,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
-    java.lang.Byte byte4 = new java.lang.Byte((byte)10);
+    byte byte4 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList2, (java.lang.Object)byte4);
     
     // Regression assertion (captures the current behavior of the code)
@@ -103,7 +103,7 @@ public class Naive0 {
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
-    java.lang.Double d1 = new java.lang.Double(1.0d);
+    double d1 = 1.0d;
     int i2 = linkedList0.indexOf((java.lang.Object)d1);
     
     // Regression assertion (captures the current behavior of the code)
@@ -121,7 +121,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
-    java.lang.Byte byte4 = new java.lang.Byte((byte)10);
+    byte byte4 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList2, (java.lang.Object)byte4);
     java2.util2.Iterator iterator6 = linkedList2.iterator();
     
@@ -139,7 +139,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test009"); }
 
 
-    java.lang.Byte byte0 = new java.lang.Byte((byte)(-1));
+    byte byte0 = (byte)(-1);
     java2.util2.List list1 = java2.util2.Collections.singletonList((java.lang.Object)byte0);
     
     // Regression assertion (captures the current behavior of the code)
@@ -174,7 +174,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java.lang.String str2 = "";
-    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2};
+    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2 };
     java.lang.Object[] obj_array4 = linkedList0.toArray(obj_array3);
     
     // Regression assertion (captures the current behavior of the code)
@@ -225,7 +225,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     int i7 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList5, (java2.util2.List)linkedList6);
-    java.lang.Byte byte8 = new java.lang.Byte((byte)10);
+    byte byte8 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList6, (java.lang.Object)byte8);
     boolean b10 = linkedList1.removeAll((java2.util2.Collection)linkedList6);
     
@@ -345,7 +345,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java.lang.String str6 = "";
-    java.lang.Object[] obj_array7 = new java.lang.Object[] { str6};
+    java.lang.Object[] obj_array7 = new java.lang.Object[] { str6 };
     java.lang.Object[] obj_array8 = linkedList4.toArray(obj_array7);
     int i9 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList2, (java2.util2.List)linkedList4);
     
@@ -369,7 +369,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test019"); }
 
 
-    java.lang.Short s0 = new java.lang.Short((short)1);
+    short s0 = (short)1;
     java2.util2.List list1 = java2.util2.Collections.singletonList((java.lang.Object)s0);
     
     // Regression assertion (captures the current behavior of the code)
@@ -407,7 +407,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     int i7 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList5, (java2.util2.List)linkedList6);
-    java.lang.Byte byte8 = new java.lang.Byte((byte)10);
+    byte byte8 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList6, (java.lang.Object)byte8);
     boolean b10 = linkedList1.removeAll((java2.util2.Collection)linkedList6);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
@@ -443,9 +443,9 @@ public class Naive0 {
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
-    java.lang.Byte byte4 = new java.lang.Byte((byte)10);
+    byte byte4 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList2, (java.lang.Object)byte4);
-    java.lang.Integer i6 = new java.lang.Integer(1);
+    int i6 = 1;
     java2.util2.Collections.rotate((java2.util2.List)linkedList2, (int)i6);
     
     // Regression assertion (captures the current behavior of the code)
@@ -467,7 +467,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     int i7 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList5, (java2.util2.List)linkedList6);
-    java.lang.Byte byte8 = new java.lang.Byte((byte)10);
+    byte byte8 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList6, (java.lang.Object)byte8);
     boolean b10 = linkedList1.removeAll((java2.util2.Collection)linkedList6);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
@@ -512,7 +512,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
-    java.lang.Byte byte4 = new java.lang.Byte((byte)10);
+    byte byte4 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList2, (java.lang.Object)byte4);
     java2.util2.Iterator iterator6 = linkedList2.iterator();
     
@@ -530,7 +530,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test025"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
 
   }
@@ -597,7 +597,7 @@ public class Naive0 {
     java2.util2.Collections.copy((java2.util2.List)linkedList1, (java2.util2.List)linkedList5);
     java2.util2.LinkedList linkedList7 = new java2.util2.LinkedList();
     boolean b8 = linkedList1.removeAll((java2.util2.Collection)linkedList7);
-    java.lang.Integer i9 = new java.lang.Integer(1);
+    int i9 = 1;
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -630,7 +630,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     int i7 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList5, (java2.util2.List)linkedList6);
-    java.lang.Byte byte8 = new java.lang.Byte((byte)10);
+    byte byte8 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList6, (java.lang.Object)byte8);
     boolean b10 = linkedList1.removeAll((java2.util2.Collection)linkedList6);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
@@ -689,10 +689,10 @@ public class Naive0 {
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
-    java.lang.Double d1 = new java.lang.Double(1.0d);
+    double d1 = 1.0d;
     int i2 = linkedList0.indexOf((java.lang.Object)d1);
-    java.lang.Integer i3 = new java.lang.Integer(100);
-    java.lang.Integer i4 = new java.lang.Integer(1);
+    int i3 = 100;
+    int i4 = 1;
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -722,7 +722,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     int i7 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList5, (java2.util2.List)linkedList6);
-    java.lang.Byte byte8 = new java.lang.Byte((byte)10);
+    byte byte8 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList6, (java.lang.Object)byte8);
     boolean b10 = linkedList1.removeAll((java2.util2.Collection)linkedList6);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
@@ -762,11 +762,11 @@ public class Naive0 {
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
-    java.lang.Byte byte4 = new java.lang.Byte((byte)10);
+    byte byte4 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList2, (java.lang.Object)byte4);
     java2.util2.Iterator iterator6 = linkedList2.iterator();
-    java.lang.Integer i7 = new java.lang.Integer((-1));
-    java.lang.Double d8 = new java.lang.Double((-1.0d));
+    int i7 = (-1);
+    double d8 = (-1.0d);
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -812,7 +812,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test034"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     arrayList1.trimToSize();
 
@@ -824,7 +824,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test035"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -851,7 +851,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test036"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -860,7 +860,7 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
     
     // Regression assertion (captures the current behavior of the code)
@@ -880,14 +880,14 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test037"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
-    java.lang.Integer i2 = new java.lang.Integer(10);
+    int i2 = 10;
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList((java2.util2.Collection)linkedList3);
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList();
     int i6 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList4, (java2.util2.List)linkedList5);
-    java.lang.Byte byte7 = new java.lang.Byte((byte)10);
+    byte byte7 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList5, (java.lang.Object)byte7);
     java2.util2.Iterator iterator9 = linkedList5.iterator();
     // The following exception was thrown during execution.
@@ -922,7 +922,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     int i7 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList5, (java2.util2.List)linkedList6);
-    java.lang.Byte byte8 = new java.lang.Byte((byte)10);
+    byte byte8 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList6, (java.lang.Object)byte8);
     boolean b10 = linkedList1.removeAll((java2.util2.Collection)linkedList6);
     // The following exception was thrown during execution.
@@ -972,7 +972,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList17 = new java2.util2.LinkedList((java2.util2.Collection)linkedList16);
     java2.util2.LinkedList linkedList18 = new java2.util2.LinkedList();
     int i19 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList17, (java2.util2.List)linkedList18);
-    java.lang.Byte byte20 = new java.lang.Byte((byte)10);
+    byte byte20 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList18, (java.lang.Object)byte20);
     boolean b22 = linkedList13.removeAll((java2.util2.Collection)linkedList18);
     java2.util2.LinkedList linkedList23 = new java2.util2.LinkedList();
@@ -1043,7 +1043,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test041"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(10);
+    int i0 = 10;
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList((java2.util2.Collection)linkedList1);
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList();
@@ -1067,7 +1067,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test042"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(10);
+    int i0 = 10;
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList((java2.util2.Collection)linkedList1);
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList();
@@ -1103,7 +1103,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     int i2 = linkedList1.size();
-    java.lang.Short s3 = new java.lang.Short((short)100);
+    short s3 = (short)100;
     int i4 = linkedList1.indexOf((java.lang.Object)s3);
     
     // Regression assertion (captures the current behavior of the code)
@@ -1123,7 +1123,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java.lang.String str2 = "";
-    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2};
+    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2 };
     java.lang.Object[] obj_array4 = linkedList0.toArray(obj_array3);
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
@@ -1176,7 +1176,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList((java2.util2.Collection)linkedList5);
     java.lang.String str7 = "";
-    java.lang.Object[] obj_array8 = new java.lang.Object[] { str7};
+    java.lang.Object[] obj_array8 = new java.lang.Object[] { str7 };
     java.lang.Object[] obj_array9 = linkedList5.toArray(obj_array8);
     java.lang.Object[] obj_array10 = linkedList2.toArray(obj_array8);
     
@@ -1200,9 +1200,9 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test047"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
-    java.lang.Integer i2 = new java.lang.Integer((-1));
+    int i2 = (-1);
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -1258,7 +1258,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test049"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -1267,9 +1267,9 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
-    java.lang.Integer i11 = new java.lang.Integer(0);
+    int i11 = 0;
     java2.util2.LinkedList linkedList12 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList13 = new java2.util2.LinkedList((java2.util2.Collection)linkedList12);
     java2.util2.LinkedList linkedList14 = new java2.util2.LinkedList();
@@ -1321,7 +1321,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test050"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -1330,9 +1330,9 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
-    java.lang.Integer i11 = new java.lang.Integer(1);
+    int i11 = 1;
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -1360,7 +1360,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test051"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(10);
+    int i0 = 10;
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList((java2.util2.Collection)linkedList1);
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList();
@@ -1377,7 +1377,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList14 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList15 = new java2.util2.LinkedList((java2.util2.Collection)linkedList14);
     java.lang.String str16 = "";
-    java.lang.Object[] obj_array17 = new java.lang.Object[] { str16};
+    java.lang.Object[] obj_array17 = new java.lang.Object[] { str16 };
     java.lang.Object[] obj_array18 = linkedList14.toArray(obj_array17);
     java.lang.Object[] obj_array19 = linkedList11.toArray(obj_array17);
     java.lang.Object[] obj_array20 = linkedList6.toArray(obj_array17);
@@ -1421,7 +1421,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test053"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -1430,9 +1430,9 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
-    java.lang.Integer i11 = new java.lang.Integer(0);
+    int i11 = 0;
     java2.util2.LinkedList linkedList12 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList13 = new java2.util2.LinkedList((java2.util2.Collection)linkedList12);
     java2.util2.LinkedList linkedList14 = new java2.util2.LinkedList();
@@ -1451,7 +1451,7 @@ public class Naive0 {
     java2.util2.Collections.sort((java2.util2.List)linkedList25);
     java2.util2.Map map28 = java2.util2.Collections.singletonMap((java.lang.Object)linkedList17, (java.lang.Object)linkedList25);
     boolean b29 = arrayList1.addAll((int)i11, (java2.util2.Collection)linkedList25);
-    java.lang.Integer i30 = new java.lang.Integer(100);
+    int i30 = 100;
     java2.util2.LinkedList linkedList31 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList32 = new java2.util2.LinkedList((java2.util2.Collection)linkedList31);
     java2.util2.LinkedList linkedList33 = new java2.util2.LinkedList();
@@ -1506,7 +1506,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test054"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -1515,7 +1515,7 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer(100);
+    int i9 = 100;
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -1574,10 +1574,10 @@ public class Naive0 {
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
-    java.lang.Byte byte4 = new java.lang.Byte((byte)10);
+    byte byte4 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList2, (java.lang.Object)byte4);
     java2.util2.Iterator iterator6 = linkedList2.iterator();
-    java.lang.Integer i7 = new java.lang.Integer(0);
+    int i7 = 0;
     boolean b8 = linkedList2.add((java.lang.Object)i7);
     
     // Regression assertion (captures the current behavior of the code)
@@ -1642,7 +1642,7 @@ public class Naive0 {
     java2.util2.Iterator iterator14 = linkedList13.iterator();
     java2.util2.Collections.sort((java2.util2.List)linkedList13);
     java2.util2.Map map16 = java2.util2.Collections.singletonMap((java.lang.Object)linkedList5, (java.lang.Object)linkedList13);
-    java.lang.Integer i17 = new java.lang.Integer(0);
+    int i17 = 0;
     java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList(i17);
     java2.util2.LinkedList linkedList19 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList20 = new java2.util2.LinkedList((java2.util2.Collection)linkedList19);
@@ -1651,9 +1651,9 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList21);
     java.lang.Object[] obj_array24 = linkedList21.toArray();
     boolean b25 = arrayList18.add((java.lang.Object)linkedList21);
-    java.lang.Integer i26 = new java.lang.Integer((-1));
+    int i26 = (-1);
     arrayList18.ensureCapacity((int)i26);
-    java.lang.Integer i28 = new java.lang.Integer(0);
+    int i28 = 0;
     java2.util2.LinkedList linkedList29 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList30 = new java2.util2.LinkedList((java2.util2.Collection)linkedList29);
     java2.util2.LinkedList linkedList31 = new java2.util2.LinkedList();
@@ -1722,7 +1722,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
-    java.lang.Byte byte4 = new java.lang.Byte((byte)10);
+    byte byte4 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList2, (java.lang.Object)byte4);
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
@@ -1753,7 +1753,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     int i7 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList5, (java2.util2.List)linkedList6);
-    java.lang.Byte byte8 = new java.lang.Byte((byte)10);
+    byte byte8 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList6, (java.lang.Object)byte8);
     boolean b10 = linkedList1.removeAll((java2.util2.Collection)linkedList6);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
@@ -1775,7 +1775,7 @@ public class Naive0 {
     java2.util2.Collections.copy((java2.util2.List)linkedList17, (java2.util2.List)linkedList21);
     java2.util2.List list28 = java2.util2.Collections.singletonList((java.lang.Object)linkedList21);
     boolean b29 = linkedList12.containsAll((java2.util2.Collection)linkedList21);
-    java.lang.Integer i30 = new java.lang.Integer(10);
+    int i30 = 10;
     java2.util2.LinkedList linkedList31 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList32 = new java2.util2.LinkedList((java2.util2.Collection)linkedList31);
     java2.util2.LinkedList linkedList33 = new java2.util2.LinkedList();
@@ -1784,7 +1784,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList36 = new java2.util2.LinkedList((java2.util2.Collection)linkedList35);
     java2.util2.LinkedList linkedList37 = new java2.util2.LinkedList();
     int i38 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList36, (java2.util2.List)linkedList37);
-    java.lang.Byte byte39 = new java.lang.Byte((byte)10);
+    byte byte39 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList37, (java.lang.Object)byte39);
     boolean b41 = linkedList32.removeAll((java2.util2.Collection)linkedList37);
     java2.util2.LinkedList linkedList42 = new java2.util2.LinkedList();
@@ -1863,7 +1863,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList((java2.util2.Collection)linkedList3);
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList();
     int i6 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList4, (java2.util2.List)linkedList5);
-    java.lang.Byte byte7 = new java.lang.Byte((byte)10);
+    byte byte7 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList5, (java.lang.Object)byte7);
     boolean b9 = linkedList1.containsAll((java2.util2.Collection)linkedList5);
     
@@ -1893,7 +1893,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList7 = new java2.util2.LinkedList((java2.util2.Collection)linkedList6);
     java.lang.String str8 = "";
-    java.lang.Object[] obj_array9 = new java.lang.Object[] { str8};
+    java.lang.Object[] obj_array9 = new java.lang.Object[] { str8 };
     java.lang.Object[] obj_array10 = linkedList6.toArray(obj_array9);
     java.lang.Object[] obj_array11 = linkedList3.toArray(obj_array9);
     boolean b12 = treeSet0.add((java.lang.Object)obj_array9);
@@ -1941,7 +1941,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList17 = new java2.util2.LinkedList((java2.util2.Collection)linkedList16);
     java2.util2.LinkedList linkedList18 = new java2.util2.LinkedList();
     int i19 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList17, (java2.util2.List)linkedList18);
-    java.lang.Byte byte20 = new java.lang.Byte((byte)10);
+    byte byte20 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList18, (java.lang.Object)byte20);
     boolean b22 = linkedList13.removeAll((java2.util2.Collection)linkedList18);
     java2.util2.LinkedList linkedList23 = new java2.util2.LinkedList();
@@ -1995,7 +1995,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java.lang.String str6 = "";
-    java.lang.Object[] obj_array7 = new java.lang.Object[] { str6};
+    java.lang.Object[] obj_array7 = new java.lang.Object[] { str6 };
     java.lang.Object[] obj_array8 = linkedList4.toArray(obj_array7);
     int i9 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList2, (java2.util2.List)linkedList4);
     java2.util2.Iterator iterator10 = linkedList2.iterator();
@@ -2042,7 +2042,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList((java2.util2.Collection)linkedList1);
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList();
     int i4 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList2, (java2.util2.List)linkedList3);
-    java.lang.Byte byte5 = new java.lang.Byte((byte)10);
+    byte byte5 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList3, (java.lang.Object)byte5);
     java2.util2.Iterator iterator7 = linkedList3.iterator();
     boolean b8 = treeSet0.remove((java.lang.Object)linkedList3);
@@ -2119,7 +2119,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList16 = new java2.util2.LinkedList((java2.util2.Collection)linkedList15);
     java2.util2.LinkedList linkedList17 = new java2.util2.LinkedList();
     int i18 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList16, (java2.util2.List)linkedList17);
-    java.lang.Byte byte19 = new java.lang.Byte((byte)10);
+    byte byte19 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList17, (java.lang.Object)byte19);
     boolean b21 = linkedList13.containsAll((java2.util2.Collection)linkedList17);
     boolean b22 = linkedList5.remove((java.lang.Object)linkedList13);
@@ -2217,7 +2217,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList((java2.util2.Collection)linkedList3);
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList();
     int i6 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList4, (java2.util2.List)linkedList5);
-    java.lang.Byte byte7 = new java.lang.Byte((byte)10);
+    byte byte7 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList5, (java.lang.Object)byte7);
     java2.util2.Iterator iterator9 = linkedList5.iterator();
     boolean b10 = treeSet2.remove((java.lang.Object)linkedList5);
@@ -2255,11 +2255,11 @@ public class Naive0 {
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList7 = new java2.util2.LinkedList((java2.util2.Collection)linkedList6);
     java.lang.String str8 = "";
-    java.lang.Object[] obj_array9 = new java.lang.Object[] { str8};
+    java.lang.Object[] obj_array9 = new java.lang.Object[] { str8 };
     java.lang.Object[] obj_array10 = linkedList6.toArray(obj_array9);
     java.lang.Object[] obj_array11 = linkedList3.toArray(obj_array9);
     boolean b12 = treeSet0.add((java.lang.Object)obj_array9);
-    java.lang.Integer i13 = new java.lang.Integer(10);
+    int i13 = 10;
     java2.util2.LinkedList linkedList14 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList15 = new java2.util2.LinkedList((java2.util2.Collection)linkedList14);
     java2.util2.LinkedList linkedList16 = new java2.util2.LinkedList();
@@ -2317,7 +2317,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test074"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -2326,9 +2326,9 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
-    java.lang.Integer i11 = new java.lang.Integer(0);
+    int i11 = 0;
     java2.util2.LinkedList linkedList12 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList13 = new java2.util2.LinkedList((java2.util2.Collection)linkedList12);
     java2.util2.LinkedList linkedList14 = new java2.util2.LinkedList();
@@ -2347,7 +2347,7 @@ public class Naive0 {
     java2.util2.Collections.sort((java2.util2.List)linkedList25);
     java2.util2.Map map28 = java2.util2.Collections.singletonMap((java.lang.Object)linkedList17, (java.lang.Object)linkedList25);
     boolean b29 = arrayList1.addAll((int)i11, (java2.util2.Collection)linkedList25);
-    java.lang.Long long30 = new java.lang.Long((-1L));
+    long long30 = (-1L);
     int i31 = arrayList1.lastIndexOf((java.lang.Object)long30);
     
     // Regression assertion (captures the current behavior of the code)
@@ -2427,12 +2427,12 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test076"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
     int i4 = linkedList3.size();
-    java.lang.Short s5 = new java.lang.Short((short)100);
+    short s5 = (short)100;
     int i6 = linkedList3.indexOf((java.lang.Object)s5);
     int i7 = arrayList1.lastIndexOf((java.lang.Object)linkedList3);
     
@@ -2453,7 +2453,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test077"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -2462,7 +2462,7 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList12 = new java2.util2.LinkedList((java2.util2.Collection)linkedList11);
@@ -2472,7 +2472,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList16 = new java2.util2.LinkedList((java2.util2.Collection)linkedList15);
     java2.util2.LinkedList linkedList17 = new java2.util2.LinkedList();
     int i18 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList16, (java2.util2.List)linkedList17);
-    java.lang.Byte byte19 = new java.lang.Byte((byte)10);
+    byte byte19 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList17, (java.lang.Object)byte19);
     boolean b21 = linkedList12.removeAll((java2.util2.Collection)linkedList17);
     java2.util2.LinkedList linkedList22 = new java2.util2.LinkedList();
@@ -2550,7 +2550,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)linkedList4);
     java2.util2.Collections.copy((java2.util2.List)linkedList1, (java2.util2.List)linkedList5);
-    java.lang.Integer i7 = new java.lang.Integer(1);
+    int i7 = 1;
     java2.util2.Collections.rotate((java2.util2.List)linkedList5, (int)i7);
     
     // Regression assertion (captures the current behavior of the code)
@@ -2567,7 +2567,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java.lang.String str2 = "";
-    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2};
+    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2 };
     java.lang.Object[] obj_array4 = linkedList0.toArray(obj_array3);
     java2.util2.Iterator iterator5 = linkedList0.iterator();
     
@@ -2588,7 +2588,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test080"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -2597,7 +2597,7 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList12 = new java2.util2.LinkedList((java2.util2.Collection)linkedList11);
@@ -2607,7 +2607,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList16 = new java2.util2.LinkedList((java2.util2.Collection)linkedList15);
     java2.util2.LinkedList linkedList17 = new java2.util2.LinkedList();
     int i18 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList16, (java2.util2.List)linkedList17);
-    java.lang.Byte byte19 = new java.lang.Byte((byte)10);
+    byte byte19 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList17, (java.lang.Object)byte19);
     boolean b21 = linkedList12.removeAll((java2.util2.Collection)linkedList17);
     java2.util2.LinkedList linkedList22 = new java2.util2.LinkedList();
@@ -2679,15 +2679,15 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test081"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
     int i4 = linkedList3.size();
-    java.lang.Short s5 = new java.lang.Short((short)100);
+    short s5 = (short)100;
     int i6 = linkedList3.indexOf((java.lang.Object)s5);
     int i7 = arrayList1.lastIndexOf((java.lang.Object)linkedList3);
-    java.lang.Integer i8 = new java.lang.Integer(10);
+    int i8 = 10;
     java2.util2.LinkedList linkedList9 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList10 = new java2.util2.LinkedList((java2.util2.Collection)linkedList9);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
@@ -2704,7 +2704,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList22 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList23 = new java2.util2.LinkedList((java2.util2.Collection)linkedList22);
     java.lang.String str24 = "";
-    java.lang.Object[] obj_array25 = new java.lang.Object[] { str24};
+    java.lang.Object[] obj_array25 = new java.lang.Object[] { str24 };
     java.lang.Object[] obj_array26 = linkedList22.toArray(obj_array25);
     java.lang.Object[] obj_array27 = linkedList19.toArray(obj_array25);
     java.lang.Object[] obj_array28 = linkedList14.toArray(obj_array25);
@@ -2751,9 +2751,9 @@ public class Naive0 {
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java.lang.String str2 = "";
-    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2};
+    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2 };
     java.lang.Object[] obj_array4 = linkedList0.toArray(obj_array3);
-    java.lang.Integer i5 = new java.lang.Integer(1);
+    int i5 = 1;
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -2797,11 +2797,11 @@ public class Naive0 {
     java2.util2.LinkedList linkedList16 = new java2.util2.LinkedList((java2.util2.Collection)linkedList15);
     java2.util2.LinkedList linkedList17 = new java2.util2.LinkedList();
     int i18 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList16, (java2.util2.List)linkedList17);
-    java.lang.Byte byte19 = new java.lang.Byte((byte)10);
+    byte byte19 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList17, (java.lang.Object)byte19);
     boolean b21 = linkedList13.containsAll((java2.util2.Collection)linkedList17);
     boolean b22 = linkedList5.remove((java.lang.Object)linkedList13);
-    java.lang.Integer i23 = new java.lang.Integer(0);
+    int i23 = 0;
     // The following exception was thrown during execution.
     // This behavior will recorded for regression testing.
     try {
@@ -2838,7 +2838,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test084"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -2847,9 +2847,9 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
-    java.lang.Integer i11 = new java.lang.Integer(0);
+    int i11 = 0;
     java2.util2.LinkedList linkedList12 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList13 = new java2.util2.LinkedList((java2.util2.Collection)linkedList12);
     java2.util2.LinkedList linkedList14 = new java2.util2.LinkedList();
@@ -2868,9 +2868,9 @@ public class Naive0 {
     java2.util2.Collections.sort((java2.util2.List)linkedList25);
     java2.util2.Map map28 = java2.util2.Collections.singletonMap((java.lang.Object)linkedList17, (java.lang.Object)linkedList25);
     boolean b29 = arrayList1.addAll((int)i11, (java2.util2.Collection)linkedList25);
-    java.lang.Long long30 = new java.lang.Long((-1L));
+    long long30 = (-1L);
     int i31 = arrayList1.lastIndexOf((java.lang.Object)long30);
-    java.lang.Integer i32 = new java.lang.Integer(0);
+    int i32 = 0;
     java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList(i32);
     java2.util2.LinkedList linkedList34 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList35 = new java2.util2.LinkedList((java2.util2.Collection)linkedList34);
@@ -2879,9 +2879,9 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList36);
     java.lang.Object[] obj_array39 = linkedList36.toArray();
     boolean b40 = arrayList33.add((java.lang.Object)linkedList36);
-    java.lang.Integer i41 = new java.lang.Integer((-1));
+    int i41 = (-1);
     arrayList33.ensureCapacity((int)i41);
-    java.lang.Integer i43 = new java.lang.Integer(0);
+    int i43 = 0;
     java2.util2.LinkedList linkedList44 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList45 = new java2.util2.LinkedList((java2.util2.Collection)linkedList44);
     java2.util2.LinkedList linkedList46 = new java2.util2.LinkedList();
@@ -2900,7 +2900,7 @@ public class Naive0 {
     java2.util2.Collections.sort((java2.util2.List)linkedList57);
     java2.util2.Map map60 = java2.util2.Collections.singletonMap((java.lang.Object)linkedList49, (java.lang.Object)linkedList57);
     boolean b61 = arrayList33.addAll((int)i43, (java2.util2.Collection)linkedList57);
-    java.lang.Long long62 = new java.lang.Long((-1L));
+    long long62 = (-1L);
     int i63 = arrayList33.lastIndexOf((java.lang.Object)long62);
     int i64 = arrayList1.indexOf((java.lang.Object)arrayList33);
     
@@ -2972,7 +2972,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList1 = new java2.util2.LinkedList((java2.util2.Collection)linkedList0);
     java.lang.String str2 = "";
-    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2};
+    java.lang.Object[] obj_array3 = new java.lang.Object[] { str2 };
     java.lang.Object[] obj_array4 = linkedList0.toArray(obj_array3);
     java2.util2.Iterator iterator5 = linkedList0.iterator();
     // The following exception was thrown during execution.
@@ -3009,7 +3009,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList((java2.util2.Collection)linkedList3);
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList();
     int i6 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList4, (java2.util2.List)linkedList5);
-    java.lang.Byte byte7 = new java.lang.Byte((byte)10);
+    byte byte7 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList5, (java.lang.Object)byte7);
     java2.util2.Iterator iterator9 = linkedList5.iterator();
     boolean b10 = treeSet2.remove((java.lang.Object)linkedList5);
@@ -3080,7 +3080,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList((java2.util2.Collection)linkedList5);
     int i7 = java2.util2.Collections.binarySearch((java2.util2.List)linkedList2, (java.lang.Object)linkedList5);
-    java.lang.Integer i8 = new java.lang.Integer(0);
+    int i8 = 0;
     linkedList5.addFirst((java.lang.Object)i8);
     
     // Regression assertion (captures the current behavior of the code)
@@ -3097,7 +3097,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test089"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -3106,7 +3106,7 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
     java2.util2.LinkedList linkedList11 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList12 = new java2.util2.LinkedList((java2.util2.Collection)linkedList11);
@@ -3116,7 +3116,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList16 = new java2.util2.LinkedList((java2.util2.Collection)linkedList15);
     java2.util2.LinkedList linkedList17 = new java2.util2.LinkedList();
     int i18 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList16, (java2.util2.List)linkedList17);
-    java.lang.Byte byte19 = new java.lang.Byte((byte)10);
+    byte byte19 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList17, (java.lang.Object)byte19);
     boolean b21 = linkedList12.removeAll((java2.util2.Collection)linkedList17);
     java2.util2.LinkedList linkedList22 = new java2.util2.LinkedList();
@@ -3192,12 +3192,12 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test090"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
     int i4 = linkedList3.size();
-    java.lang.Short s5 = new java.lang.Short((short)100);
+    short s5 = (short)100;
     int i6 = linkedList3.indexOf((java.lang.Object)s5);
     int i7 = arrayList1.lastIndexOf((java.lang.Object)linkedList3);
     java2.util2.LinkedList linkedList8 = new java2.util2.LinkedList();
@@ -3252,7 +3252,7 @@ public class Naive0 {
 
 
     java2.util2.LinkedList linkedList0 = new java2.util2.LinkedList();
-    java.lang.Double d1 = new java.lang.Double(1.0d);
+    double d1 = 1.0d;
     int i2 = linkedList0.indexOf((java.lang.Object)d1);
     java2.util2.Collections.reverse((java2.util2.List)linkedList0);
     
@@ -3267,7 +3267,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test093"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -3276,7 +3276,7 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
     boolean b11 = arrayList1.isEmpty();
     
@@ -3349,7 +3349,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList((java2.util2.Collection)linkedList3);
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList();
     int i6 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList4, (java2.util2.List)linkedList5);
-    java.lang.Byte byte7 = new java.lang.Byte((byte)10);
+    byte byte7 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList5, (java.lang.Object)byte7);
     java2.util2.Iterator iterator9 = linkedList5.iterator();
     boolean b10 = treeSet2.remove((java.lang.Object)linkedList5);
@@ -3382,7 +3382,7 @@ public class Naive0 {
     if (debug) { System.out.format("%n%s%n","Naive0.test096"); }
 
 
-    java.lang.Integer i0 = new java.lang.Integer(0);
+    int i0 = 0;
     java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
     java2.util2.LinkedList linkedList2 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList3 = new java2.util2.LinkedList((java2.util2.Collection)linkedList2);
@@ -3391,7 +3391,7 @@ public class Naive0 {
     java2.util2.Collections.shuffle((java2.util2.List)linkedList4);
     java.lang.Object[] obj_array7 = linkedList4.toArray();
     boolean b8 = arrayList1.add((java.lang.Object)linkedList4);
-    java.lang.Integer i9 = new java.lang.Integer((-1));
+    int i9 = (-1);
     arrayList1.ensureCapacity((int)i9);
     boolean b11 = arrayList1.isEmpty();
     java2.util2.LinkedList linkedList12 = new java2.util2.LinkedList();
@@ -3443,7 +3443,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList6 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList7 = new java2.util2.LinkedList((java2.util2.Collection)linkedList6);
     java.lang.String str8 = "";
-    java.lang.Object[] obj_array9 = new java.lang.Object[] { str8};
+    java.lang.Object[] obj_array9 = new java.lang.Object[] { str8 };
     java.lang.Object[] obj_array10 = linkedList6.toArray(obj_array9);
     java.lang.Object[] obj_array11 = linkedList3.toArray(obj_array9);
     boolean b12 = treeSet0.add((java.lang.Object)obj_array9);
@@ -3478,7 +3478,7 @@ public class Naive0 {
     int i3 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList1, (java2.util2.List)linkedList2);
     java2.util2.Collections.shuffle((java2.util2.List)linkedList2);
     java.lang.Object[] obj_array5 = linkedList2.toArray();
-    java.lang.Integer i6 = new java.lang.Integer(1);
+    int i6 = 1;
     java2.util2.LinkedList linkedList7 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList8 = new java2.util2.LinkedList((java2.util2.Collection)linkedList7);
     java2.util2.LinkedList linkedList9 = new java2.util2.LinkedList();
@@ -3543,7 +3543,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList4 = new java2.util2.LinkedList((java2.util2.Collection)linkedList3);
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList();
     int i6 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList4, (java2.util2.List)linkedList5);
-    java.lang.Byte byte7 = new java.lang.Byte((byte)10);
+    byte byte7 = (byte)10;
     java2.util2.Collections.fill((java2.util2.List)linkedList5, (java.lang.Object)byte7);
     boolean b9 = linkedList1.containsAll((java2.util2.Collection)linkedList5);
     java2.util2.Collections.sort((java2.util2.List)linkedList1);
@@ -3576,7 +3576,7 @@ public class Naive0 {
     java2.util2.LinkedList linkedList8 = new java2.util2.LinkedList();
     java2.util2.LinkedList linkedList9 = new java2.util2.LinkedList((java2.util2.Collection)linkedList8);
     java2.util2.Collections.copy((java2.util2.List)linkedList5, (java2.util2.List)linkedList9);
-    java.lang.Integer i11 = new java.lang.Integer(1);
+    int i11 = 1;
     java2.util2.Collections.rotate((java2.util2.List)linkedList9, (int)i11);
     int i13 = java2.util2.Collections.indexOfSubList((java2.util2.List)linkedList2, (java2.util2.List)linkedList9);
     

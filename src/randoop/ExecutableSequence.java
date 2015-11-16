@@ -195,15 +195,6 @@ public class ExecutableSequence implements Serializable {
     return b.toString();
   }
 
-  /** True for a primitive or String literal, but not for a null literal. */
-  public static boolean canUseShortFormat(Operation statementCreatingVar) {
-    return (statementCreatingVar instanceof NonreceiverTerm
-            // Do not use the short output format if the value is null, because
-            // the variable type may disambiguate among overloaded methods.
-            // (It would be even nicer to use the short output format unless
-            // disambiguation is truly needed.)
-            && ((NonreceiverTerm) statementCreatingVar).getValue() != null);
-  }
 
   /** 
    * Returns an id based on the contents of the sequence alone.  The id
@@ -218,7 +209,7 @@ public class ExecutableSequence implements Serializable {
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
       if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(sequence.getStatementKind(i))) {
+          && sequence.getStatement(i).getShortForm() != null) {
         continue;
       }
       
@@ -247,7 +238,7 @@ public class ExecutableSequence implements Serializable {
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
       if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(sequence.getStatementKind(i))) {
+          && sequence.getStatement(i).getShortForm() != null) {
         continue;
       }
       
@@ -373,18 +364,18 @@ public class ExecutableSequence implements Serializable {
     for (int ri = 0 ; ri < runtimeObjects.length ; ri++) {
       if (runtimeObjects[ri] == null) {
         int creatingStatementIdx = inputs.get(ri).getDeclIndex();
-        Operation creatingStatement = s.getStatementKind(creatingStatementIdx);
+        Statement creatingStatement = s.getStatement(creatingStatementIdx);
 
         // If receiver position of a method, don't continue execution.
         if (ri == 0) {
-          Operation st = s.getStatementKind(i);
-          if (st instanceof MethodCall && (!((MethodCall)st).isStatic())) {
+          Statement st = s.getStatement(i);
+          if (st.isStatic() && st.isMethodCall()) {
             return false;
           }
         }
         // If null value is implicitly passed (i.e. not passed from a
         // statement like "x = null;" don't continue execution.
-        if (!(creatingStatement instanceof NonreceiverTerm)) {
+        if (!(creatingStatement.isPrimitiveInitialization())) {
           return false;
         }
       }
@@ -408,9 +399,9 @@ public class ExecutableSequence implements Serializable {
   // Precondition: this method has been invoked on 0..index-1.
   public static void executeStatement(Sequence s, List<ExecutionOutcome> outcome,
       int index, Object[] inputVariables) {
-    Operation statement = s.getStatementKind(index);
+    Statement statement = s.getStatement(index);
 
-    // Capture any output  Syncronize with ProgressDisplay so that
+    // Capture any output  Synchronize with ProgressDisplay so that
     // we don't capture its output as well.
     synchronized (ProgressDisplay.print_synchro) {
       PrintStream orig_out = System.out;
@@ -422,8 +413,8 @@ public class ExecutableSequence implements Serializable {
         System.setErr (ps_output_buffer);
       }
       
-      assert ((statement instanceof MethodCall && !((MethodCall)statement).isStatic()) ? inputVariables[0] != null : true);
-      
+      assert ((statement.isMethodCall() && !statement.isStatic()) ? inputVariables[0] != null : true);
+
       ExecutionOutcome r = statement.execute(inputVariables, Globals.blackHole);
       assert r != null;
       if (GenInputsAbstract.capture_output) {

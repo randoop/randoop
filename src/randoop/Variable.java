@@ -52,12 +52,12 @@ public class Variable implements Comparable<Variable>, Serializable {
 
   /** The declared type of the value */
   public Class<?> getType() {
-    return this.sequence.getStatementKind(index).getOutputType();
+    return this.sequence.getStatement(index).getOutputType();
   }
   
   /** The statement that produced this variable. */
-  public Operation getDeclaringStatement() {
-    return this.sequence.getStatementKind(index);
+  public Statement getDeclaringStatement() {
+    return this.sequence.getStatement(index);
   }
 
   /** The index of the statement that creates this value. */

@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
 import randoop.ComponentManager;
 import randoop.EverythingIsDifferentMatcher;
 import randoop.ForwardGenerator;
 import randoop.IStopper;
 import randoop.ObjectCache;
-import randoop.SeedSequences;
 import randoop.Operation;
+import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
@@ -21,6 +20,8 @@ import randoop.test.issta2006.TreeMap;
 import randoop.util.DefaultReflectionFilter;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
+
+import junit.framework.TestCase;
 
 /**
  * This test ensures that Randoop achieves a certain level of coverage
@@ -44,7 +45,7 @@ public class ICSE07ContainersTest extends TestCase {
       Pattern pattern, IStopper stopper) {
 
     System.out.println("ICSE 2006 container: " + name);
-
+    
     List<Operation> statements = 
       Reflection.getStatements(classList, new DefaultReflectionFilter(pattern));
     

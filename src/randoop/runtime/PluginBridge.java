@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import plume.Pair;
 import randoop.AbstractGenerator;
 import randoop.ExecutableSequence;
 import randoop.FailureSet;
@@ -14,8 +13,10 @@ import randoop.IEventListener;
 import randoop.ITestFilter;
 import randoop.JunitFileWriter;
 import randoop.NoExceptionCheck;
-import randoop.Operation;
+import randoop.Statement;
 import randoop.main.GenInputsAbstract;
+
+import plume.Pair;
 
 public class PluginBridge implements ITestFilter, IEventListener {
 
@@ -25,7 +26,7 @@ public class PluginBridge implements ITestFilter, IEventListener {
   //public List<File> additionalJunitFiles;
   public List<String> additionalJunitClasses;
   
-  public Set<Pair<Operation,Class<?>>> errors = new LinkedHashSet<Pair<Operation,Class<?>>>();
+  public Set<Pair<Statement,Class<?>>> errors = new LinkedHashSet<>();
   
   public PluginBridge(AbstractGenerator generator, MessageSender sender) {
     if (generator == null) {
@@ -37,7 +38,7 @@ public class PluginBridge implements ITestFilter, IEventListener {
     this.generator = generator;  
     this.msgSender = sender;
     //this.additionalJunitFiles = new LinkedList<File>();
-    this.additionalJunitClasses = new LinkedList<String>();
+    this.additionalJunitClasses = new LinkedList<>();
   }
 
   @Override
@@ -48,7 +49,7 @@ public class PluginBridge implements ITestFilter, IEventListener {
     }
 
     for (FailureSet.Failure failure : f.getFailures()) {
-      if (errors.add(new Pair<Operation, Class<?>>(failure.st, failure.viocls))) {
+      if (errors.add(new Pair<Statement, Class<?>>(failure.st, failure.viocls))) {
         String description = failure.viocls.toString();
         if (failure.viocls.equals(NoExceptionCheck.class)) {
           description = "NPEs / Assertion violations";

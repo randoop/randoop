@@ -259,17 +259,17 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (Log.isLoggingOn()) Log.logLine("-------------------------------------------");
 
-    Operation statement = null;
+    Operation operation = null;
 
-    if (this.statements.isEmpty())
+    if (this.operations.isEmpty())
       return null;
 
     // Select a StatementInfo
-    statement = Randomness.randomMember(this.statements);
-    if (Log.isLoggingOn()) Log.logLine("Selected statement: " + statement.toString());
+    operation = Randomness.randomMember(this.operations);
+    if (Log.isLoggingOn()) Log.logLine("Selected operation: " + operation.toString());
 
     // jhp: add flags here
-    InputsAndSuccessFlag  sequences = selectInputs(statement);
+    InputsAndSuccessFlag  sequences = selectInputs(operation);
 
     if (!sequences.success) {
       if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");
@@ -285,19 +285,19 @@ public class ForwardGenerator extends AbstractGenerator {
       inputs.add(v);
     }
 
-    Sequence newSequence = concatSeq.extend(statement, inputs);
+    Sequence newSequence = concatSeq.extend(operation, inputs);
 
     // With .5 probability, do a primitive value heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
-      newSequence = newSequence.repeatLast(times);
+      newSequence = newSequence.repeat(operation, times);
       if (Log.isLoggingOn()) Log.log(">>>" + times + newSequence.toCodeString());
     }
 
     // If parameterless statement, subsequence inputs
     // will all be redundant, so just remove it from list of statements.
-    if (statement.getInputTypes().size() == 0) {
-      statements.remove(statement);
+    if (operation.getInputTypes().size() == 0) {
+      operations.remove(operation);
     }
 
     // If sequence is larger than size limit, try again.
@@ -385,12 +385,12 @@ public class ForwardGenerator extends AbstractGenerator {
   // that create values of some type required by the statement), the success flag
   // of the returned object is false.
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(Operation statement) {
+  private InputsAndSuccessFlag selectInputs(Operation operation) {
 
     // Variable inputTypes containsthe  values required as input to the
     // statement given as a parameter to the selectInputs method.
 
-    List<Class<?>> inputTypes = statement.getInputTypes();
+    List<Class<?>> inputTypes = operation.getInputTypes();
 
 
     // The rest of the code in this method will attempt to create
@@ -442,8 +442,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // true if statement st represents an instance method, and we are currently
       // selecting a value to act as the receiver for the method.
-      boolean isReceiver = (i == 0 && (statement instanceof MethodCall)
-          && (!((MethodCall) statement).isStatic()));
+      boolean isReceiver = (i == 0 && (operation.isMessage()) && (!operation.isStatic()));
 
       // If alias ratio is given, attempt with some probability to use a variable already in S.
       if (GenInputsAbstract.alias_ratio != 0 &&
@@ -491,7 +490,7 @@ public class ForwardGenerator extends AbstractGenerator {
         
         // 2. If T=inputTypes[i] is an array type, ask the component manager for all sequences
         //    of type T (list l1), but also try to directly build some sequences that create arrays (list l2).
-         SimpleList<Sequence> l1 = componentManager.getSequencesForType(statement, i);
+         SimpleList<Sequence> l1 = componentManager.getSequencesForType(operation, i);
          if (Log.isLoggingOn()) Log.logLine("Array creation heuristic: will create helper array of type " + t);
          SimpleList<Sequence> l2 = HelperSequenceCreator.createSequence(componentManager, t);
          l = new ListOfLists<Sequence>(l1, l2);
@@ -500,7 +499,7 @@ public class ForwardGenerator extends AbstractGenerator {
         
         // 3. COMMON CASE: ask the component manager for all sequences that yield the required type.
         if (Log.isLoggingOn()) Log.logLine("Will query component set for objects of type" + t);
-        l = componentManager.getSequencesForType(statement, i);
+        l = componentManager.getSequencesForType(operation, i);
       }
       assert l != null;
       
@@ -566,17 +565,16 @@ public class ForwardGenerator extends AbstractGenerator {
       // If we were unlucky and selected a null value as the receiver
       // for a method call, return with failure.
       if (i == 0
-          && (statement instanceof MethodCall)
-          && (!((MethodCall) statement).isStatic())
-          && chosenSeq.getCreatingStatement(randomVariable) instanceof NonreceiverTerm)
+          && operation.isMessage() && !(operation.isStatic())
+          && chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization())
         return new InputsAndSuccessFlag (false, null, null);
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
         // Update types and typesToVars.
         for (int j = 0 ; j < chosenSeq.size() ; j++) {
-          Operation stk = chosenSeq.getStatementKind(j);
-          if (stk instanceof NonreceiverTerm)
+          Statement stk = chosenSeq.getStatement(j);
+          if (stk.isPrimitiveInitialization())
             continue; // Prim decl not an interesting candidate for multiple uses.
           Class<?> outType = stk.getOutputType();
           types.add(outType);

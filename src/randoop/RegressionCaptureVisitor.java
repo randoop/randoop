@@ -74,19 +74,9 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     = new LinkedHashMap<Class<?>, List<Method>>();
   
   public static boolean isObserverInvocation(Statement statement) {
-    return isObserverInvocation(statement.statement);
+    return statement.isMethodIn(RegressionCaptureVisitor.observer_map.get(statement.getDeclaringClass()));
   }
 
-  public static boolean isObserverInvocation(Operation statement) {
-    if (! (statement instanceof MethodCall)) {
-      return false;
-    }
-    
-    MethodCall rmethod = (MethodCall) statement;
-    Method method = rmethod.getMethod();
-    List<Method> observer_methods = RegressionCaptureVisitor.observer_map.get(method.getDeclaringClass());
-    return (observer_methods != null && observer_methods.contains(method));
-  }
 
   // Populate observer_map from observers file.
   static {
@@ -157,7 +147,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     // Recall there are as many values as statements in the sequence.
     for (int i = 0; i < s.sequence.size() ; i++) {
 
-      Operation st = s.sequence.getStatementKind(i);
+      Statement st = s.sequence.getStatement(i);
       ExecutionOutcome result = s.getResult(i);
 
       if (result instanceof NormalExecution
@@ -166,7 +156,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         NormalExecution e = (NormalExecution)result;
         // If value is like x in "int x = 3" don't capture
         // checks (nothing interesting).
-        if (st instanceof NonreceiverTerm)
+        if (st.isPrimitiveInitialization())
           continue;
 
 
@@ -180,11 +170,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         // If value is the result of Object.toString() or
         // Object.hashCode(), don't capture checks (value is
         // likely to be non-deterministic across runs).
-        if (st instanceof MethodCall) {
-          Method method = ((MethodCall)st).getMethod();
-          if (method.equals(objectHashCode))
-            continue;
-          if (method.equals(objectToString))
+        if (st.callsTheMethod(objectHashCode) || st.callsTheMethod(objectToString)) {
             continue;
         }
 
@@ -226,8 +212,8 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           if (s.sequence.getInputs(i).size() > 0) {
             Variable var0 = s.sequence.getInputs (i).get(0);
             if (var0.getType() == java.util.Date.class) {
-              Operation sk = s.sequence.getCreatingStatement (var0);
-              if ((sk instanceof ConstructorCall) &&
+              Statement sk = s.sequence.getCreatingStatement (var0);
+              if ((sk.isConstructorCall()) &&
                   (s.sequence.getInputs(i).size() == 1))
                 continue;
               // System.out.printf ("var type %s comes from date %s / %s%n",
@@ -253,7 +239,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           // Assert that the value is not null.
           // Exception: if the value comes directly from a constructor call, 
           // not interesting that it's non-null; omit the check.
-          if (!(st instanceof ConstructorCall)) {
+          if (!(st.isConstructorCall())) {
             s.addCheck(idx, new ObjectCheck(new IsNotNull(), i, var), true);
           }
 

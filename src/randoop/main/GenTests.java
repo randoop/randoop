@@ -66,6 +66,7 @@ import randoop.RegressionCaptureVisitor;
 import randoop.ReplayVisitor;
 import randoop.SeedSequences;
 import randoop.Sequence;
+import randoop.Statement;
 import randoop.Operation;
 import randoop.Variable;
 import randoop.experimental.GreedySequenceSimplifier;
@@ -271,7 +272,7 @@ public class GenTests extends GenInputsAbstract {
         for (Member m : Reflection.loadMethodsAndCtorsFromFile(new File(methodlist))) {
           if (m instanceof Method) {
               if (reflectionFilter.canUse((Method)m)) {
-                statements.add(MethodCall.getRMethod((Method)m));
+                statements.add(MethodCall.getMethodCall((Method)m));
               }
           } else {
             assert m instanceof Constructor<?>;

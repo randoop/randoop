@@ -84,8 +84,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
   private long gentime;
   private long exectime;
 
-  private static SequenceCollection prims = new SequenceCollection(
-      SeedSequences.defaultSeeds());
+  private static SequenceCollection prims = new SequenceCollection(SeedSequences.defaultSeeds());
 
   public RandomWalkGenerator(List<Operation> statements,
       long timeMillis, int maxSequences, ComponentManager componentMgr,
@@ -213,7 +212,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // First, may need to execute primitive declarations.
     for (int i = oldsize ; i < sequence.size() - 1 ; i++) {
-      assert sequence.getStatementKind(i) instanceof NonreceiverTerm;
+      assert sequence.getStatement(i).isPrimitiveInitialization();
       executionVisitor.visitBefore(eseq, i);
       ExecutableSequence.executeStatement(sequence, exec, i, new Object[0]);
       executionVisitor.visitAfter(eseq, i);
@@ -378,7 +377,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // There may be primitive declarations that fed into the last
     // statement; remove them also.
-    while (sequence.size() > 0 && sequence.getLastStatement() instanceof NonreceiverTerm) {
+    while (sequence.size() > 0 && sequence.getLastStatement().isPrimitiveInitialization()) {
       removeLast();
     }
 
@@ -434,11 +433,11 @@ public class RandomWalkGenerator extends AbstractGenerator {
     for (Class<?> tc : st.getInputTypes()) {
 
       if (tc.isPrimitive() || tc.equals(String.class)) {
-        Sequence news = Randomness.randomMember(prims.getSequencesForType(tc,
-            true));
+        //XXX why selecting from sequences when just selecting an Operation?
+        Sequence news = Randomness.randomMember(prims.getSequencesForType(tc, true));
         assert news.size() == 1;
-
-        sequence = sequence.extend(news.getStatementKind(0), Collections.<Variable>emptyList());
+        //TODO make this select operation instead of sequence
+        sequence = sequence.extend(news.getStatement(0), Collections.<Variable>emptyList());
         // Increase the size of exec, obs.
         exec.add(NotExecuted.create());
         obs.add(new ArrayList<Check>());
@@ -553,7 +552,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // valuesSoFar contains all the variables
     for (int i = 0 ; i < sequence.size() ; i++) {
-      if (sequence.getStatementKind(i) instanceof NonreceiverTerm)
+      if (sequence.getStatement(i).isPrimitiveInitialization())
         continue;
       assert valuesSoFar.contains(i) : i;
     }

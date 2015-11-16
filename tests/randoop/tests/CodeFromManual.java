@@ -21,6 +21,7 @@ import randoop.MethodCall;
 import randoop.ReplayVisitor;
 import randoop.Sequence;
 import randoop.SequenceParseException;
+import randoop.Statement;
 import randoop.Operation;
 import randoop.Variable;
 
@@ -30,10 +31,10 @@ public class CodeFromManual extends TestCase {
 
     Operation newLL = ConstructorCall.getRConstructor(LinkedList.class.getConstructor());
     Operation newOb = ConstructorCall.getRConstructor(Object.class.getConstructor());
-    Operation addFist = MethodCall.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
-    Operation size = MethodCall.getRMethod(LinkedList.class.getMethod("size"));
+    Operation addFist = MethodCall.getMethodCall(LinkedList.class.getMethod("addFirst", Object.class));
+    Operation size = MethodCall.getMethodCall(LinkedList.class.getMethod("size"));
     Operation newTS = ConstructorCall.getRConstructor(TreeSet.class.getConstructor(Collection.class));
-    Operation syncS = MethodCall.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+    Operation syncS = MethodCall.getMethodCall(Collections.class.getMethod("synchronizedSet", Set.class));
 
     Sequence s = new Sequence();
     s = s.extend(newLL);

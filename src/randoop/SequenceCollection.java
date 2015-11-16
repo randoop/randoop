@@ -235,11 +235,11 @@ public class SequenceCollection {
 
   }
 
-  public Set<Operation> getAllStatements() {
-    Set<Operation> result = new LinkedHashSet<Operation>();
+  public Set<Statement> getAllStatements() {
+    Set<Statement> result = new LinkedHashSet<>();
     for (Sequence s: getAllSequences()) {
       for (Statement stmtWithInputs : s.getStatementsWithInputs().toJDKList()) {
-        result.add(stmtWithInputs.statement);
+        result.add(stmtWithInputs);
       }
     }
     return result;

@@ -10,12 +10,15 @@ public class FailureSet {
   private Set<Failure> failures = new LinkedHashSet<Failure>();
   
   public static class Failure {
-    public final Operation st;
+    
+    public final Statement st;
     public final Class<?> viocls;
-    public Failure(Operation st, Class<?> viocls) {
-      this.st = st;
+    
+    public Failure(Statement st2, Class<?> viocls) {
+      this.st = st2;
       this.viocls = viocls;
     }
+    
     public boolean equals(Object o) {
       if (o == null) return false;
       if (o == this) return true;
@@ -24,6 +27,7 @@ public class FailureSet {
       if (!viocls.equals(other.viocls)) return false;
       return true;
     }
+    
     public int hashCode() {
       int hash = 7;
       hash = hash*31 + st.hashCode();
@@ -41,7 +45,7 @@ public class FailureSet {
     
     for (Check obs : es.getFailures(idx)) {
       Class<?> vioCls = obs.getClass();
-      Operation st = null;
+      Statement st = null;
 
       if (obs instanceof ObjectCheck && ((ObjectCheck)obs).contract instanceof ObjectContract) {
 
@@ -61,7 +65,7 @@ public class FailureSet {
           Class<?> cls = runtimeval.getClass();
           // We record this as an error in the equals method.
           try {
-            st = MethodCall.getRMethod(cls.getMethod("equals", Object.class));
+            st = new Statement(MethodCall.getMethodCall(cls.getMethod("equals", Object.class)));
           } catch (Exception e) {
             throw new Error(e);
           }
@@ -70,14 +74,14 @@ public class FailureSet {
           vioCls = ex.getClass();
           
         } else {
-          st = es.sequence.getStatementKind(idx);
+          st = es.sequence.getStatement(idx);
         }
 
       } else {
-        st = es.sequence.getStatementKind(idx);
+        st = es.sequence.getStatement(idx);
 
-        MSequence mseq = es.sequence.toModifiableSequence();
-        List<MVariable> vars = new ArrayList<MVariable>();
+        MutableSequence mseq = es.sequence.toModifiableSequence();
+        List<MutableVariable> vars = new ArrayList<MutableVariable>();
         for (Variable v : es.sequence.getInputs(idx)) {
           vars.add(mseq.getVariable(v.index));
         }
