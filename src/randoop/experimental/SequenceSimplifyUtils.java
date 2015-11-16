@@ -10,9 +10,9 @@ import java.util.Set;
 
 import randoop.Check;
 import randoop.ExecutableSequence;
-import randoop.MSequence;
-import randoop.MStatement;
-import randoop.MVariable;
+import randoop.MutableSequence;
+import randoop.MutableStatement;
+import randoop.MutableVariable;
 import randoop.ObjectCheck;
 import randoop.Sequence;
 import randoop.Variable;
@@ -143,20 +143,20 @@ public class SequenceSimplifyUtils {
     //int new_size = retained.size();
     Collections.sort(retained);
     //the original sequence
-    MSequence msequence = original_sequence.toModifiableSequence();
+    MutableSequence msequence = original_sequence.toModifiableSequence();
     //create a simplified sequence
-    MSequence simplifiedSequence = new MSequence();
-    List<MVariable> newvars = new LinkedList<MVariable>();
+    MutableSequence simplifiedSequence = new MutableSequence();
+    List<MutableVariable> newvars = new LinkedList<MutableVariable>();
     for (int i = 0; i < retained.size(); i++) {
       String name = original_sequence.getVariable(retained.get(i) /*index in the original sequence*/).getName();
-      newvars.add(new MVariable(simplifiedSequence, name));
+      newvars.add(new MutableVariable(simplifiedSequence, name));
     }
     //creates a bunch of statements
-    List<MStatement> statements = new ArrayList<MStatement>();
+    List<MutableStatement> statements = new ArrayList<MutableStatement>();
     for (int i = 0; i < retained.size(); i++) {
-      MStatement mstatement = msequence.statements.get(retained.get(i));
-      List<MVariable> newinputs = new ArrayList<MVariable>();
-      for (MVariable v : mstatement.inputs) {
+      MutableStatement mstatement = msequence.statements.get(retained.get(i));
+      List<MutableVariable> newinputs = new ArrayList<MutableVariable>();
+      for (MutableVariable v : mstatement.inputs) {
         int indexInOriginalStatement = v.getDeclIndex();
         if (!retained.contains(indexInOriginalStatement)) {
           //you remove some statements that you should not
@@ -164,10 +164,10 @@ public class SequenceSimplifyUtils {
         }
         //get the variable
         int indexOfRetained = retained.indexOf(indexInOriginalStatement);
-        MVariable mv = newvars.get(indexOfRetained);
+        MutableVariable mv = newvars.get(indexOfRetained);
         newinputs.add(mv);
       }
-      statements.add(new MStatement(mstatement.statementKind, newinputs, newvars.get(i)));
+      statements.add(new MutableStatement(mstatement.operation, newinputs, newvars.get(i)));
     }
     
     simplifiedSequence.statements = statements;
@@ -184,31 +184,31 @@ public class SequenceSimplifyUtils {
     assert index > -1 && index < original_sequence.size() :
     "The index is not valid: " + index
       + " for a sequence of length: " + original_sequence.size();
-    MSequence msequence = original_sequence.toModifiableSequence();
+    MutableSequence msequence = original_sequence.toModifiableSequence();
     
     //no that you need to
     int new_size = original_sequence.size() - 1;
-    MSequence new_sequence = new MSequence();
-    List<MVariable> newvars = new LinkedList<MVariable>();
+    MutableSequence new_sequence = new MutableSequence();
+    List<MutableVariable> newvars = new LinkedList<MutableVariable>();
     for (int i = 0; i < new_size; i++) {
       String name = i < index ? original_sequence.getVariable(i).getName()
         : original_sequence.getVariable(i + 1).getName();
-      newvars.add(new MVariable(new_sequence, name));
+      newvars.add(new MutableVariable(new_sequence, name));
     }
     
-    List<MStatement> statements = new ArrayList<MStatement>();
+    List<MutableStatement> statements = new ArrayList<MutableStatement>();
     for (int i = 0; i < new_size; i++) {
-      MStatement mstatement = i < index ? msequence.statements.get(i)
+      MutableStatement mstatement = i < index ? msequence.statements.get(i)
         : msequence.statements.get(i + 1);
-      List<MVariable> newinputs = new ArrayList<MVariable>();
-      for (MVariable v : mstatement.inputs) {
+      List<MutableVariable> newinputs = new ArrayList<MutableVariable>();
+      for (MutableVariable v : mstatement.inputs) {
         int vindex = v.getDeclIndex();
         if (vindex >= index) {
           vindex = vindex - 1;
         }
         newinputs.add(newvars.get(vindex));
       }
-      statements.add(new MStatement(mstatement.statementKind, newinputs, newvars.get(i)));
+      statements.add(new MutableStatement(mstatement.operation, newinputs, newvars.get(i)));
     }
     
     new_sequence.statements = statements;
@@ -225,7 +225,7 @@ public class SequenceSimplifyUtils {
         int varIndex = v.getDeclIndex();
         inputs.add(sequence.getVariable(varIndex));
       }
-      sequence = sequence.extend(seq.getStatementKind(i), inputs);
+      sequence = sequence.extend(seq.getStatement(i), inputs);
     }
     return sequence;
   }

@@ -9,19 +9,19 @@ import java.util.List;
 /**
  * A statement that is part of a mutable sequence.
  */
-public class MStatement {
+public class MutableStatement {
 
-  public final Operation statementKind;
+  public final Operation operation;
 
-  public final List<MVariable> inputs;
+  public final List<MutableVariable> inputs;
 
-  public final MVariable result;
+  public final MutableVariable result;
   
   public String toString() {
     StringBuilder b = new StringBuilder();
     b.append(result.toString());
     b.append(" = ");
-    b.append(statementKind.toString());
+    b.append(operation.toString());
     b.append(" ");
     b.append(inputs);
     return b.toString();
@@ -31,9 +31,9 @@ public class MStatement {
    * Create a new statement of type statement that takes as input the
    * given values.
    */
-  public MStatement(Operation statement, List<MVariable> inputVariables, MVariable result) {
-    this.statementKind = statement;
-    this.inputs = new ArrayList<MVariable>(inputVariables);
+  public MutableStatement(Operation statement, List<MutableVariable> inputVariables, MutableVariable result) {
+    this.operation = statement;
+    this.inputs = new ArrayList<MutableVariable>(inputVariables);
     this.result = result;
   }
 }

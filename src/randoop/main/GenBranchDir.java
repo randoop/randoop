@@ -21,14 +21,15 @@ import java.util.zip.GZIPInputStream;
 
 import randoop.DummyVisitor;
 import randoop.ExecutableSequence;
-import randoop.MSequence;
-import randoop.MStatement;
-import randoop.MVariable;
+import randoop.MutableSequence;
+import randoop.MutableStatement;
+import randoop.MutableVariable;
 import randoop.NonreceiverTerm;
 import randoop.MethodCall;
 import randoop.Sequence;
 import randoop.SequenceCollection;
 import randoop.SequenceParseException;
+import randoop.Statement;
 import randoop.Operation;
 import randoop.Variable;
 import randoop.experiments.DFResultsOneSeq;
@@ -361,10 +362,9 @@ public class GenBranchDir {
     if (null_is_interesting) {
       // Try single-variable null flip strategy on variables that were null.
       for (int i = 0 ; i < r.sequence.size() ; i++) {
-        Operation st = r.sequence.getStatementKind(i);
+        Statement st = r.sequence.getStatement(i);
         // If i-th statement is "x = null;" ...
-        if (st instanceof NonreceiverTerm
-            && ((NonreceiverTerm)st).getValue() == null) {
+        if (st.isNullInitialization()) {
           Variable v = r.sequence.getVariable(i);
 
           // See if there is already a variable info for this variable.
@@ -479,16 +479,13 @@ public class GenBranchDir {
   private static Pair<Branch, Sequence> twoVarsAliasLastStatementVars(
       DFResultsOneSeq r) {
 
-    Operation st = r.sequence.getLastStatement();
+    Statement st = r.sequence.getLastStatement();
     List<Class<?>> types = r.sequence.getLastStatement().getInputTypes();
     List<Variable> vars = r.sequence.getInputs(r.sequence.size() - 1);
     assert vars.size() == types.size();
     Branch goalBranch = ((Branch)r.frontierBranch).getOppositeBranch();
 
-    boolean isInstanceMethod =
-      (st instanceof MethodCall)
-      && (!((MethodCall)st).isStatic());
-
+    boolean isInstanceMethod = st.isMethodCall() && !st.isStatic();
 
     for (int i = 0 ; i < types.size() ; i++) {
       for (int j = 0 ; j < types.size() ; j++) {
@@ -497,13 +494,13 @@ public class GenBranchDir {
         // See if we can replace i <- j.
         if (!Reflection.canBeUsedAs(types.get(j), types.get(i)))
           continue;
-        Operation jSt = r.sequence.getStatementKind(vars.get(j).getDeclIndex());
-        if (i == 0 && isInstanceMethod && jSt instanceof NonreceiverTerm)
+        Statement jSt = r.sequence.getStatement(vars.get(j).getDeclIndex());
+        if (i == 0 && isInstanceMethod && jSt.isPrimitiveInitialization())
           continue;
 
         // Ok to replace.
-        MSequence s = r.sequence.toModifiableSequence();
-        MStatement lastSt = s.statements.get(s.size() - 1);
+        MutableSequence s = r.sequence.toModifiableSequence();
+        MutableStatement lastSt = s.statements.get(s.size() - 1);
         lastSt.inputs.set(i, lastSt.inputs.get(j));
 
         out.println("WILL TRY TO REPLACE " + i + "th INPUT TO LAST STATEMENT WITH " + j + "th INPUT.");
@@ -535,18 +532,18 @@ public class GenBranchDir {
       for (int j = 0 ; j < vars.length ; j++) {
         if (i == j)
           continue;
-        MSequence s = r.sequence.toModifiableSequence();
-        MVariable ith = s.getVariable(vars[i].value.getDeclIndex());
-        MVariable jth = s.getVariable(vars[j].value.getDeclIndex());
+        MutableSequence s = r.sequence.toModifiableSequence();
+        MutableVariable ith = s.getVariable(vars[i].value.getDeclIndex());
+        MutableVariable jth = s.getVariable(vars[j].value.getDeclIndex());
         if (i > j) {
           if (!moveJthBeforeIth(s, jth, ith))
             continue;
         }
         if (!canReplace(s, ith, jth))
             continue;
-        MSequence s2 = s.makeCopy();
-        MVariable s2i = s2.getVariable(ith.getDeclIndex());
-        MVariable s2j = s2.getVariable(jth.getDeclIndex());
+        MutableSequence s2 = s.makeCopy();
+        MutableVariable s2i = s2.getVariable(ith.getDeclIndex());
+        MutableVariable s2j = s2.getVariable(jth.getDeclIndex());
         replaceUses(s2, s2i, s2j);
         out.println("WILL TRY TO REPLACE " + i + "th VAR WITH " + j + "th VAR.");
         out.println("MODIFIED SEQUENCE:");
@@ -575,25 +572,25 @@ public class GenBranchDir {
     return null;
   }
 
-  private static void replaceUsesWithCopy(MSequence mseq, MVariable mv1,
-      MVariable mv2) {
+  private static void replaceUsesWithCopy(MutableSequence mseq, MutableVariable mv1,
+      MutableVariable mv2) {
 
-    MSequence copy = mseq.makeCopy();
-    MVariable mv1_copy = copy.getVariable(mv1.getDeclIndex());
-    Set<MVariable> predecessors = getPredecessors(mv1_copy);
-    List<MVariable> sorted = sortByDeclIndex(predecessors);
-    List<MStatement> newsts = new ArrayList<MStatement>();
-    for (MVariable v : sorted) {
+    MutableSequence copy = mseq.makeCopy();
+    MutableVariable mv1_copy = copy.getVariable(mv1.getDeclIndex());
+    Set<MutableVariable> predecessors = getPredecessors(mv1_copy);
+    List<MutableVariable> sorted = sortByDeclIndex(predecessors);
+    List<MutableStatement> newsts = new ArrayList<MutableStatement>();
+    for (MutableVariable v : sorted) {
       newsts.add(copy.statements.get(v.getDeclIndex()));
     }
     copy.statements = newsts;
     copy.checkRep();
 
-    Map<MVariable, MVariable> map = mseq.insert(0, copy);
-    MVariable mv1_new = map.get(mv1_copy);
+    Map<MutableVariable, MutableVariable> map = mseq.insert(0, copy);
+    MutableVariable mv1_new = map.get(mv1_copy);
 
     for (int i = mv2.getDeclIndex() + 1 ; i < mseq.size() ; i++) {
-      MStatement st = mseq.getStatement(i);
+      MutableStatement st = mseq.getStatement(i);
       for (int j = 0 ; j < st.inputs.size() ; j++) {
         if (st.inputs.get(j).equals(mv2)) {
           st.inputs.set(j, mv1_new);
@@ -602,20 +599,20 @@ public class GenBranchDir {
     }
   }
 
-  private static List<MVariable> sortByDeclIndex(Set<MVariable> predecessors) {
-    Comparator<MVariable> c = new Comparator<MVariable>() {
-      public int compare(MVariable o1, MVariable o2) {
+  private static List<MutableVariable> sortByDeclIndex(Set<MutableVariable> predecessors) {
+    Comparator<MutableVariable> c = new Comparator<MutableVariable>() {
+      public int compare(MutableVariable o1, MutableVariable o2) {
         return new Integer(o1.getDeclIndex()).compareTo(new Integer(o2.getDeclIndex()));
       }
     };
-    List<MVariable> list = new ArrayList<MVariable>(predecessors);
+    List<MutableVariable> list = new ArrayList<MutableVariable>(predecessors);
     Collections.sort(list, c);
     return list;
   }
 
-  private static void replaceUses(MSequence mseq, MVariable mv1, MVariable mv2) {
+  private static void replaceUses(MutableSequence mseq, MutableVariable mv1, MutableVariable mv2) {
     for (int i = mv2.getDeclIndex() + 1 ; i < mseq.size() ; i++) {
-      MStatement st = mseq.getStatement(i);
+      MutableStatement st = mseq.getStatement(i);
       for (int j = 0 ; j < st.inputs.size() ; j++) {
         if (st.inputs.get(j).equals(mv2)) {
           st.inputs.set(j, mv1);
@@ -624,7 +621,7 @@ public class GenBranchDir {
     }
   }
 
-  private static boolean canReplace(MSequence seq, MVariable v1, MVariable v2) {
+  private static boolean canReplace(MutableSequence seq, MutableVariable v1, MutableVariable v2) {
     // Check if v1 is type-compatible with all uses of v2.
     for (int statementIndex : seq.getUses(v2)) {
       for (int ithInput = 0 ; ithInput < seq.getInputs(statementIndex).size() ; ithInput++) {
@@ -666,20 +663,22 @@ public class GenBranchDir {
 
     Branch goalBranch = (frontierBranch).getOppositeBranch();
 
-    Operation st = sequence.getStatementKind(var.getDeclIndex());
+    Statement st = sequence.getStatement(var.getDeclIndex());
 
-    if (st instanceof NonreceiverTerm) {
+    if (st.isPrimitiveInitialization()) {
 
-      NonreceiverTerm decl = (NonreceiverTerm)st;
       if (st.getOutputType().isPrimitive() || st.getOutputType().equals(String.class)) {
         out.println("Primitive value or string...");
         return null;
       }
-      assert decl.getValue() == null : sequence + "," + var;
-
-      // Find su-bsequences that creates the type.
+      
+      //TODO statement.getValue is a hack that need to revisit
+      assert st.getValue() == null : sequence + "," + var;
+ 
+      
+      // Find subsequences that create the type.
       // TODO do components have things like "x = null"? We don't want those.
-      SimpleList<Sequence> comps = getComponents(decl.getType(), false);
+      SimpleList<Sequence> comps = getComponents(st.getOutputType(), false);
       if (comps.size() == 0) {
         out.println("NO COMPONENTS.");
         return null;
@@ -700,23 +699,23 @@ public class GenBranchDir {
 
       // Choose a variable in the sub-sequence. We'll call it the "new
       // variable".
-      List<Variable> varsOfType = comp.getVariablesOfType(decl.getType(),
+      List<Variable> varsOfType = comp.getVariablesOfType(st.getOutputType(),
           Match.COMPATIBLE_TYPE);
       Variable compvar = getLast(varsOfType);
 
 
       // Translate everything into the modifiable sequence world.
       // The old (original) sequence.
-      MSequence seq = sequence.toModifiableSequence();
+      MutableSequence seq = sequence.toModifiableSequence();
       // The old (its uses to be replaced) variable.
-      MVariable oldvar = seq.getVariable(var.getDeclIndex());
+      MutableVariable oldvar = seq.getVariable(var.getDeclIndex());
       // The sub-sequence to insert.
-      MSequence subseq = comp.toModifiableSequence();
+      MutableSequence subseq = comp.toModifiableSequence();
       // The variable to replace oldvar's uses.
-      MVariable newvar = subseq.getVariable(compvar.getDeclIndex());
+      MutableVariable newvar = subseq.getVariable(compvar.getDeclIndex());
 
       // Insert sub-sequence into old sequence, right before the old var declaration.
-      Map<MVariable,MVariable> varmap = seq.insert(oldvar.getDeclIndex(), subseq);
+      Map<MutableVariable,MutableVariable> varmap = seq.insert(oldvar.getDeclIndex(), subseq);
       // update newvar to its MVariable in the modified sequence.
       newvar = varmap.get(newvar);
       assert newvar != null;
@@ -751,16 +750,16 @@ public class GenBranchDir {
 
       // Translate everything into the modifiable sequence world.
       // The old (original) sequence.
-      MSequence seq = sequence.toModifiableSequence();
+      MutableSequence seq = sequence.toModifiableSequence();
       // The old (its uses to be replaced) variable.
-      MVariable oldvar = seq.getVariable(var.getDeclIndex());
+      MutableVariable oldvar = seq.getVariable(var.getDeclIndex());
       // The sub-sequence to insert.
-      MSequence subseq = comp.toModifiableSequence();
+      MutableSequence subseq = comp.toModifiableSequence();
       // The variable to replace oldvar's uses.
-      MVariable newvar = subseq.getVariable(compvar.getDeclIndex());
+      MutableVariable newvar = subseq.getVariable(compvar.getDeclIndex());
 
       // Insert sub-sequence into old sequence, right before the old var declaration.
-      Map<MVariable,MVariable> varmap = seq.insert(oldvar.getDeclIndex(), subseq);
+      Map<MutableVariable,MutableVariable> varmap = seq.insert(oldvar.getDeclIndex(), subseq);
       // update newvar to its MVariable in the modified sequence.
       newvar = varmap.get(newvar);
       assert newvar != null;
@@ -924,11 +923,10 @@ public class GenBranchDir {
     // Try negating.
     {
       out.println("WILL TRY NEGATING " + var);
-      Operation st = r.sequence.getStatementKind(var.getDeclIndex());
-      assert st instanceof NonreceiverTerm;
-      NonreceiverTerm prim = (NonreceiverTerm)st;
-      assert prim.getType().equals(int.class);
-      int value = (Integer) prim.getValue();
+      Statement st = r.sequence.getStatement(var.getDeclIndex());
+      assert st.isPrimitiveInitialization();
+      assert st.getDeclaringClass().equals(int.class);
+      int value = (Integer) st.getValue();
       Sequence news = replaceVarValue(r.sequence, var, -value, goalBranch);
       if (coversUncovered(news, goalBranch, "prim negate")) {
         out.println("SUCCESS! (onevarnum)");
@@ -951,11 +949,10 @@ public class GenBranchDir {
       {
         {
           out.println("WILL TRY ADDING " + i + " TO " + var);
-          Operation st = r.sequence.getStatementKind(var.getDeclIndex());
-          assert st instanceof NonreceiverTerm;
-          NonreceiverTerm prim = (NonreceiverTerm)st;
-          assert prim.getType().equals(int.class);
-          int value = (Integer) prim.getValue();
+          Statement st = r.sequence.getStatement(var.getDeclIndex());
+          assert st.isPrimitiveInitialization();
+          assert st.getDeclaringClass().equals(int.class);
+          int value = (Integer) st.getValue();
           Sequence news = replaceVarValue(r.sequence, var, value + i, goalBranch);
           if (coversUncovered(news, goalBranch, "prim plus " + var )) {
             out.println("SUCCESS! (onevarnum)");
@@ -964,10 +961,9 @@ public class GenBranchDir {
         }
         {
           out.println("WILL TRY SETTING " + i + " TO " + var);
-          Operation st = r.sequence.getStatementKind(var.getDeclIndex());
-          assert st instanceof NonreceiverTerm;
-          NonreceiverTerm prim = (NonreceiverTerm)st;
-          assert prim.getType().equals(int.class);
+          Statement st = r.sequence.getStatement(var.getDeclIndex());
+          assert st.isPrimitiveInitialization();
+          assert st.getDeclaringClass().equals(int.class);
           Sequence news = replaceVarValue(r.sequence, var, i, goalBranch);
           if (coversUncovered(news, goalBranch, "prim set to " + var)) {
             out.println("SUCCESS! (onevarnum)");
@@ -982,11 +978,10 @@ public class GenBranchDir {
     // Try adding 1.
     {
       out.println("WILL TRY SUBTRACTING 1 " + var);
-      Operation st = r.sequence.getStatementKind(var.getDeclIndex());
-      assert st instanceof NonreceiverTerm;
-      NonreceiverTerm prim = (NonreceiverTerm)st;
-      assert prim.getType().equals(int.class);
-      int value = (Integer) prim.getValue();
+      Statement st = r.sequence.getStatement(var.getDeclIndex());
+      assert st.isPrimitiveInitialization();
+      assert st.getDeclaringClass().equals(int.class);
+      int value = (Integer) st.getValue();
       Sequence news = replaceVarValue(r.sequence, var, value - 1, goalBranch);
       if (coversUncovered(news, goalBranch, "prim -1")) {
         out.println("SUCCESS! (onevarnum)");
@@ -1006,11 +1001,11 @@ public class GenBranchDir {
       int val, Branch goalBranch) {
     assert var.sequence == sequence;
 
-    MSequence seq = sequence.toModifiableSequence();
+    MutableSequence seq = sequence.toModifiableSequence();
 
-    MVariable mvar = seq.getVariable(var.getDeclIndex());
+    MutableVariable mvar = seq.getVariable(var.getDeclIndex());
     Operation st = new NonreceiverTerm(mvar.getType(), val);
-    seq.statements.set(var.getDeclIndex(), new MStatement(st, new ArrayList<MVariable>(), mvar));
+    seq.statements.set(var.getDeclIndex(), new MutableStatement(st, new ArrayList<MutableVariable>(), mvar));
     // out.println("@@@" + seq.toCodeString());
 
     return seq.toImmutableSequence();
@@ -1063,30 +1058,30 @@ public class GenBranchDir {
     return frontierWasCovered;
   }
 
-  private static boolean moveJthBeforeIth(MSequence s, MVariable oldv, MVariable newv) {
+  private static boolean moveJthBeforeIth(MutableSequence s, MutableVariable oldv, MutableVariable newv) {
     assert oldv.getDeclIndex() < newv.getDeclIndex();
 
     // Create a new sequence where oldv comes after newv, not before.
-    Set<MVariable> newvPreds = getPredecessors(newv);
+    Set<MutableVariable> newvPreds = getPredecessors(newv);
     if (newvPreds.contains(oldv))
       return false;
-    List<MVariable> valuesAfter = valuesAfter(oldv);
+    List<MutableVariable> valuesAfter = valuesAfter(oldv);
     valuesAfter.retainAll(newvPreds);
     // newvPreds has the values that newv depends on that come after v.
     // Those (and newv itself) are the values that we have to move to before oldv.
-    List<MVariable> valuesAfter2 = valuesAfter(oldv);
+    List<MutableVariable> valuesAfter2 = valuesAfter(oldv);
     valuesAfter2.removeAll(newvPreds);
 
-    List<MStatement> newStatements = new ArrayList<MStatement>();
+    List<MutableStatement> newStatements = new ArrayList<MutableStatement>();
     for (int i = 0 ; i < oldv.getDeclIndex() ; i++) {
       newStatements.add(s.statements.get(i));
     }
     // At this point, add the values from newv.
-    for (MVariable v : valuesAfter) {
+    for (MutableVariable v : valuesAfter) {
       newStatements.add(v.getCreatingStatementWithInputs());
     }
     newStatements.add(oldv.getCreatingStatementWithInputs());
-    for (MVariable v : valuesAfter2) {
+    for (MutableVariable v : valuesAfter2) {
       newStatements.add(v.getCreatingStatementWithInputs());
     }
 
@@ -1094,8 +1089,8 @@ public class GenBranchDir {
     return true;
   }
 
-  private static List<MVariable> valuesAfter(MVariable oldv) {
-    List<MVariable> valuesAfter = new ArrayList<MVariable>();
+  private static List<MutableVariable> valuesAfter(MutableVariable oldv) {
+    List<MutableVariable> valuesAfter = new ArrayList<MutableVariable>();
     for (int i = oldv.getDeclIndex() + 1 ; i < oldv.owner.size() ; i++) {
       valuesAfter.add(oldv.owner.getVariable(i));
     }
@@ -1106,20 +1101,20 @@ public class GenBranchDir {
    * Returns a set that includes v and any variables that are
    * inputs to its declaring statement, recursively.
    */
-  private static Set<MVariable> getPredecessors(MVariable v) {
+  private static Set<MutableVariable> getPredecessors(MutableVariable v) {
     if (v == null)
       throw new IllegalArgumentException();
-    List<MVariable> inputs = v.getCreatingStatementWithInputs().inputs;
-    Set<MVariable> inputsSet = new LinkedHashSet<MVariable>(inputs);
+    List<MutableVariable> inputs = v.getCreatingStatementWithInputs().inputs;
+    Set<MutableVariable> inputsSet = new LinkedHashSet<MutableVariable>(inputs);
     inputsSet.add(v);
     if (inputs.isEmpty())
       return inputsSet;
-    for (MVariable input : inputs) {
+    for (MutableVariable input : inputs) {
       inputsSet.addAll(getPredecessors(input));
     }
     // Sanity check: all values belong to same sequence.
-    MSequence owner = v.owner;
-    for (MVariable input : inputsSet)
+    MutableSequence owner = v.owner;
+    for (MutableVariable input : inputsSet)
       assert input.owner == owner;
     return inputsSet;
   }

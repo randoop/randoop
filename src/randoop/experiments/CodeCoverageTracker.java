@@ -75,7 +75,7 @@ public class CodeCoverageTracker implements IEventListener {
           // Atom belongs to a method.
           // Add to method stats (and implicitly, global stats).
           Method method = (Method)member;
-          addToCount(MethodCall.getRMethod(method), 1);
+          addToCount(MethodCall.getMethodCall(method), 1);
           continue;
         }
 
@@ -143,7 +143,7 @@ public class CodeCoverageTracker implements IEventListener {
           // Atom belongs to a method.
           // Add to method stats (and implicitly, global stats).
           Method method = (Method) member;
-          addToCount(MethodCall.getRMethod(method), 1);
+          addToCount(MethodCall.getMethodCall(method), 1);
           continue;
         }
 

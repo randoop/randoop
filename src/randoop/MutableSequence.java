@@ -14,9 +14,9 @@ import randoop.util.Reflection;
  * A sequence that can be mutated (unlike a Sequence, which is immutable).
  * The "M" stands for "Mutable".
  */
-public class MSequence {
+public class MutableSequence {
 
-  public List<MStatement> statements;
+  public List<MutableStatement> statements;
 
   /**
    * Checks the following well-formedness properties for every statement in the
@@ -31,38 +31,38 @@ public class MSequence {
    * </ul>
    */
   public void checkRep() {
-    Set<MVariable> prevVars = new LinkedHashSet<MVariable>();
-    for (MStatement st : statements) {
-      assert st.inputs.size() == st.statementKind.getInputTypes().size();
+    Set<MutableVariable> prevVars = new LinkedHashSet<MutableVariable>();
+    for (MutableStatement st : statements) {
+      assert st.inputs.size() == st.operation.getInputTypes().size();
       for (int i = 0 ; i < st.inputs.size() ; i++) {
-        MVariable in = st.inputs.get(i);
+        MutableVariable in = st.inputs.get(i);
         assert prevVars.contains(in) : this;
         assert in.owner == this : this;
-        assert Reflection.canBeUsedAs(in.getType(), st.statementKind.getInputTypes().get(i));
+        assert Reflection.canBeUsedAs(in.getType(), st.operation.getInputTypes().get(i));
       }
       assert !prevVars.contains(st.result);
       prevVars.add(st.result);
     }
   }
 
-  public MSequence makeCopy() {
-    MSequence newSeq = new MSequence();
+  public MutableSequence makeCopy() {
+    MutableSequence newSeq = new MutableSequence();
 
     // Create a list of new variables, one per index.
-    List<MVariable> newvars = new ArrayList<MVariable>();
+    List<MutableVariable> newvars = new ArrayList<MutableVariable>();
     for (int i = 0 ; i < size() ; i++) {
-      newvars.add(new MVariable(newSeq, getVariable(i).getName()));
+      newvars.add(new MutableVariable(newSeq, getVariable(i).getName()));
     }
 
     // Create a list of new statements that use the new variables.
-    List<MStatement> statements = new ArrayList<MStatement>();
+    List<MutableStatement> statements = new ArrayList<MutableStatement>();
     for (int i = 0 ; i < size() ; i++) {
-      MStatement sti = this.statements.get(i);
-      List<MVariable> newinputs = new ArrayList<MVariable>();
-      for (MVariable v : sti.inputs) {
+      MutableStatement sti = this.statements.get(i);
+      List<MutableVariable> newinputs = new ArrayList<MutableVariable>();
+      for (MutableVariable v : sti.inputs) {
         newinputs.add(newvars.get(v.getDeclIndex()));
       }
-      statements.add(new MStatement(sti.statementKind, newinputs, newvars.get(i)));
+      statements.add(new MutableStatement(sti.operation, newinputs, newvars.get(i)));
     }
 
     // Set the statements of the new sequence to the new statements.
@@ -74,7 +74,7 @@ public class MSequence {
   /**
    * Returns all the indices of statements where v is an input to the statement.
    */
-  public List<Integer> getUses(MVariable v) {
+  public List<Integer> getUses(MutableVariable v) {
     List<Integer> uses = new ArrayList<Integer>();
     // All uses will come after declaration.
     for (int i = v.getDeclIndex() + 1 ; i < size() ; i++) {
@@ -85,15 +85,15 @@ public class MSequence {
   }
 
   @SuppressWarnings("unchecked")
-  public int numInfluencingStatements(int maxIdx, List<MVariable> vars) {
-    Set<MVariable> influencingVars = new LinkedHashSet<MVariable>();
-    for (MVariable v : vars) {
+  public int numInfluencingStatements(int maxIdx, List<MutableVariable> vars) {
+    Set<MutableVariable> influencingVars = new LinkedHashSet<MutableVariable>();
+    for (MutableVariable v : vars) {
       findInfluencingVars(v, influencingVars);
     }
     int count = 0;
     for (int i = 0 ; i <= maxIdx ; i++) {
-      MStatement st = statements.get(i);
-      Set<MVariable> statementVars = new LinkedHashSet<MVariable>(st.inputs);
+      MutableStatement st = statements.get(i);
+      Set<MutableVariable> statementVars = new LinkedHashSet<MutableVariable>(st.inputs);
       statementVars.add(st.result);
       if (!CollectionsExt.intersection(influencingVars, statementVars).isEmpty()) {
         count++;
@@ -102,11 +102,11 @@ public class MSequence {
     return count;
   }
 
-  private void findInfluencingVars(MVariable v, Set<MVariable> infvars) {
+  private void findInfluencingVars(MutableVariable v, Set<MutableVariable> infvars) {
     infvars.add(v);
 
-    for (MVariable v2 : v.getCreatingStatementWithInputs().inputs) {
-      if (v2.getCreatingStatementWithInputs().statementKind
+    for (MutableVariable v2 : v.getCreatingStatementWithInputs().inputs) {
+      if (v2.getCreatingStatementWithInputs().operation
           instanceof NonreceiverTerm)
         continue;
       if (!infvars.contains(v2)) {
@@ -117,16 +117,16 @@ public class MSequence {
 
     for (Integer i : getUses(v)) {
 
-      MVariable result = statements.get(i).result;
+      MutableVariable result = statements.get(i).result;
       if (!infvars.contains(result)) {
-        assert !(result.getCreatingStatementWithInputs().statementKind
+        assert !(result.getCreatingStatementWithInputs().operation
                  instanceof NonreceiverTerm);
         infvars.add(result);
         findInfluencingVars(result, infvars);
       }
 
-      for (MVariable v2 : statements.get(i).inputs) {
-        if (v2.getCreatingStatementWithInputs().statementKind
+      for (MutableVariable v2 : statements.get(i).inputs) {
+        if (v2.getCreatingStatementWithInputs().operation
             instanceof NonreceiverTerm)
           continue;
         if (!infvars.contains(v2)) {
@@ -140,26 +140,26 @@ public class MSequence {
 
   public String toString() {
     StringBuilder b = new StringBuilder();
-    for (MStatement st : statements) {
+    for (MutableStatement st : statements) {
       b.append(st.toString());
       b.append(Globals.lineSep);
     }
     return b.toString();
   }
 
-  public MStatement getDeclaringStatement(MVariable v) {
+  public MutableStatement getDeclaringStatement(MutableVariable v) {
     return statements.get(getIndex(v));
   }
 
-  public MStatement getStatement(int i) {
+  public MutableStatement getStatement(int i) {
     return statements.get(i);
   }
 
-  public int getIndex(MVariable v) {
+  public int getIndex(MutableVariable v) {
     if (v == null) throw new IllegalArgumentException();
     if (v.owner != this) throw new IllegalArgumentException();
     for (int i = 0 ; i < statements.size() ; i++) {
-      MStatement st = statements.get(i);
+      MutableStatement st = statements.get(i);
       if (st.result == v)
         return i;
     }
@@ -170,7 +170,7 @@ public class MSequence {
     return statements.size();
   }
 
-  public MVariable getVariable(int i) {
+  public MutableVariable getVariable(int i) {
     if (i < 0 || i >= this.size()) throw new IllegalArgumentException();
     return this.statements.get(i).result;
   }
@@ -179,10 +179,10 @@ public class MSequence {
     Sequence seq = new Sequence();
     for (int i = 0 ; i < this.size() ; i++) {
       List<Variable> inputs = new ArrayList<Variable>();
-      for (MVariable sv : this.statements.get(i).inputs) {
+      for (MutableVariable sv : this.statements.get(i).inputs) {
         inputs.add(seq.getVariable(sv.getDeclIndex()));
       }
-      seq = seq.extend(this.statements.get(i).statementKind, inputs);
+      seq = seq.extend(this.statements.get(i).operation, inputs);
     }
     return seq;
   }
@@ -206,7 +206,7 @@ public class MSequence {
    * @return A mapping from variables in the parameter sequence to their
    *         corresponding variables in this sequence.
    */
-  public Map<MVariable, MVariable> insert(int index, MSequence seq) {
+  public Map<MutableVariable, MutableVariable> insert(int index, MutableSequence seq) {
     if (seq == null) {
       throw new IllegalArgumentException("seq cannot be null.");
     }
@@ -215,23 +215,23 @@ public class MSequence {
       throw new IllegalArgumentException(msg);
     }
 
-    List<MStatement> sts = new ArrayList<MStatement>();
+    List<MutableStatement> sts = new ArrayList<MutableStatement>();
 
-    Map<MVariable, MVariable> varmap = new LinkedHashMap<MVariable, MVariable>();
+    Map<MutableVariable, MutableVariable> varmap = new LinkedHashMap<MutableVariable, MutableVariable>();
 
-    for (MStatement oldst : seq.statements) {
+    for (MutableStatement oldst : seq.statements) {
 
       // Create input list for statement.
-      List<MVariable> newInputs = new ArrayList<MVariable>(oldst.inputs.size());
-      for (MVariable var : oldst.inputs) {
-        MVariable newvar = varmap.get(var);
+      List<MutableVariable> newInputs = new ArrayList<MutableVariable>(oldst.inputs.size());
+      for (MutableVariable var : oldst.inputs) {
+        MutableVariable newvar = varmap.get(var);
         assert newvar != null;
         assert newvar.owner == this;
         newInputs.add(newvar);
       }
-      MVariable newvar = new MVariable(this, oldst.result.getName());
+      MutableVariable newvar = new MutableVariable(this, oldst.result.getName());
       varmap.put(oldst.result, newvar);
-      MStatement newStatement = new MStatement(oldst.statementKind, newInputs, newvar);
+      MutableStatement newStatement = new MutableStatement(oldst.operation, newInputs, newvar);
       sts.add(newStatement);
     }
 
@@ -240,11 +240,11 @@ public class MSequence {
     return varmap;
   }
 
-  public List<MVariable> getInputs(int statementIndex) {
+  public List<MutableVariable> getInputs(int statementIndex) {
     return statements.get(statementIndex).inputs;
   }
 
   public Operation getStatementKind(int statementIndex) {
-    return statements.get(statementIndex).statementKind;
+    return statements.get(statementIndex).operation;
   }
 }
