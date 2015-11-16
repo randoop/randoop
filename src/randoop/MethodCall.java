@@ -90,13 +90,15 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * Returns the statement corresponding to the given constructor.
+   * Returns the statement corresponding to the given method.
    */
   public static MethodCall getMethodCall(Method method) {
     return new MethodCall(method);
   }
 
-  /** Reset/clear the overloads field. */
+  /** 
+   * Reset/clear the overloads field. 
+   */
   public void resetOverloads() {
     overloads = new ArrayList<Set<Class<?>>>();
     // For Java 8:  for (int i=0; i<method.getParameterCount(); i++) {
@@ -114,11 +116,22 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
     }
   }
 
+  /**
+   * toString outputs a parseable text representation of the method call.
+   */
   @Override
   public String toString() {
     return toParseableString();
   }
 
+  /**
+   * appendCode adds a code representation of this method call to the given
+   * StringBuilder.
+   * @param inputVars is the list of actual arguments to be printed.
+   * @param sb is the string builder for the output.
+   * @see Operation#appendCode(List, StringBuilder)
+   */
+  @Override
   public void appendCode(List<Variable> inputVars, StringBuilder sb) {
     
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
@@ -145,12 +158,10 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format) {
-        String shortForm = statementCreatingVar.getShortForm();
-        if (shortForm != null) {
-          sb.append(shortForm);
-        }
+      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
+      String shortForm = statementCreatingVar.getShortForm();
+      if (!GenInputsAbstract.long_format && shortForm != null) {
+        sb.append(shortForm);
       } else {
         sb.append(inputVars.get(i).getName());
       }
@@ -236,9 +247,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
     if (this == o)
       return true;
     MethodCall other = (MethodCall) o;
-    if (!this.method.equals(other.method))
-      return false;
-    return true;
+    return this.method.equals(other.method);
   }
 
   @Override
@@ -253,6 +262,12 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   public long calls_time = 0;
   public int calls_num = 0;
 
+  /**
+   * execute performs the method call represented by this object. 
+   * @param statementInput arguments to method calls.
+   * @param out the output stream for printing any output.
+   */
+  @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
 
     assert statementInput.length == getInputTypes().size();
@@ -289,6 +304,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * Returns the input types of this method.
    */
+  @Override
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
       Class<?>[] methodParameterTypes = method.getParameterTypes();
@@ -306,6 +322,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * Returns the return type of this method.
    */
+  @Override
   public Class<?> getOutputType() {
     if (outputTypeCached == null) {
       outputTypeCached = method.getReturnType();
@@ -313,6 +330,11 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
     return outputTypeCached;
   }
 
+  /**
+   * isVoid is a predicate to indicate whether this method has a void return types.
+   * 
+   * @return true if this method has a void return type, false otherwise.
+   */
   public boolean isVoid() {
     if (!isVoidComputed) {
       isVoidComputed = true;
@@ -348,18 +370,38 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
     return MethodCall.getMethodCall(Reflection.getMethodForSignature(s));
   }
 
+  /**
+   * getDeclaringClass returns the class in which this method is declared.
+   */
+  @Override
   public Class<?> getDeclaringClass() {
     return method.getDeclaringClass();
   }
 
+  /**
+   * isMethodIn determines whether the current method object
+   * calls one of the methods in the list.
+   * @param list method objects to compare against.
+   * @return true if method called by this object is in the given list.
+   */
   public boolean isMethodIn(List<Method> list) {
     return list != null && list.contains(method);
   }
 
+  /**
+   * callsTheMethod determines whether the method that this object calls is 
+   * method given in the parameter.
+   * @param m method to test against.
+   * @return true, if m corresponds to the method in this object, false, otherwise.
+   */
   public boolean callsTheMethod(Method m) {
     return method.equals(m);
   }
 
+  /**
+   * isMessage is a predicate to indicate that this method call is a message to a receiver object.
+   * @return true always. 
+   */
   @Override
   public boolean isMessage() {
     return true;

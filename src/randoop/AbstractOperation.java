@@ -28,5 +28,10 @@ public abstract class AbstractOperation implements Operation {
   public boolean isNonreceivingValue() {
     return false;
   }
+  
+  @Override
+  public Object getValue() {
+    throw new IllegalArgumentException("No value for this kind of operation.");
+  }
 
 }
