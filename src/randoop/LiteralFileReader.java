@@ -85,7 +85,7 @@ public class LiteralFileReader {
           try {
             NonreceiverTerm p = NonreceiverTerm.parse(lines.get(i));
             map.add(cls, p);
-          } catch (StatementKindParseException e) {
+          } catch (OperationParseException e) {
             throwInvalidRecordError(e, lines, i);
           }
         }

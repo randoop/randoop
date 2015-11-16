@@ -131,8 +131,6 @@ public class SequenceTests extends TestCase {
       throw new RuntimeException(e);
     }
 
-    StringBuilder errorMsg = new StringBuilder();
-    
     checkListsEqual(sequenceLines, Arrays.asList(sequence.toParseableString().split(Globals.lineSep)), testId);
     
     ExecutableSequence ds = new ExecutableSequence(sequence);
@@ -140,7 +138,6 @@ public class SequenceTests extends TestCase {
     checkListsEqual(expectedCode, Arrays.asList(ds.toCodeString().split(Globals.lineSep)), testId);
   }
   
-  @SuppressWarnings("deprecation")
   private static void checkListsEqual(List<String> expected, List<String> actual, String testId) {
 
     expected = trimmedLines(expected);
@@ -151,7 +148,7 @@ public class SequenceTests extends TestCase {
     }
 
     for (int i = 0; i < expected.size(); i++) {
-      Assert.assertEquals(failureMessage(testId, "(lists differ at index " + i + ")", expected, actual), expected.get(i), actual.get(i));
+      assertEquals(failureMessage(testId, "(lists differ at index " + i + ")", expected, actual), expected.get(i), actual.get(i));
     }
   }
   
