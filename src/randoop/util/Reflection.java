@@ -34,8 +34,8 @@ import randoop.InstanceField;
 import randoop.ConstructorCall;
 import randoop.MethodCall;
 import randoop.Operation;
-import randoop.StatementKindParseException;
-import randoop.StatementKinds;
+import randoop.OperationParseException;
+import randoop.OperationParser;
 import randoop.StaticFinalField;
 import randoop.StaticField;
 import randoop.main.GenInputsAbstract;
@@ -491,8 +491,8 @@ public final class Reflection {
         continue;
       Operation stk;
       try {
-        stk = StatementKinds.parse(line);
-      } catch (StatementKindParseException e) {
+        stk = OperationParser.parse(line);
+      } catch (OperationParseException e) {
         throw new Error(e);
       }
       if (stk instanceof MethodCall) {
@@ -612,7 +612,7 @@ public final class Reflection {
             Log.logLine(String.format("Considering method %s", m));
           }
           if (filter.canUse(m)) {
-            MethodCall mc = MethodCall.getRMethod(m);
+            MethodCall mc = MethodCall.getMethodCall(m);
             statements.add(mc);
           }
         }

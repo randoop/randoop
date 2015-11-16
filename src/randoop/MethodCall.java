@@ -65,7 +65,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /** Version that doesn't include a Method **/
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableRMethod(method);
+    return new SerializableMethodCall(method);
   }
 
   /**

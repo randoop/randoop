@@ -51,7 +51,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   private boolean hashCodeComputed = false;
 
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableRConstructor(constructor);
+    return new SerializableConstructorCall(constructor);
   }
 
   /** 

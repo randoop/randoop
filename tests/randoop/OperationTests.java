@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import junit.framework.TestCase;
 
 
-public class StatementKindTests extends TestCase {
+public class OperationTests extends TestCase {
 
   public void testPrimStKind() {
 
@@ -54,7 +54,7 @@ public class StatementKindTests extends TestCase {
   public void testRMethod() {
 
     for (Method m : ArrayList.class.getMethods()) {
-      checkParse(MethodCall.getRMethod(m));
+      checkParse(MethodCall.getMethodCall(m));
     }
   }
 
@@ -80,8 +80,8 @@ public class StatementKindTests extends TestCase {
     System.out.println(stStr);
     Operation st2;
     try {
-      st2 = StatementKinds.parse(StatementKinds.getId(st) + ":" + stStr);
-    } catch (StatementKindParseException e) {
+      st2 = OperationParser.parse(OperationParser.getId(st) + ":" + stStr);
+    } catch (OperationParseException e) {
       throw new Error(e);
     }
     assertNotNull(st2);

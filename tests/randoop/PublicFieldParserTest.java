@@ -14,7 +14,7 @@ public class PublicFieldParserTest {
       assertEquals("parse(\"t:v\").toParseableString() should equal \"t:v\"", fieldPair, pf.toParseableString());
       assertEquals("toString acts like toParseableString", pf.toParseableString(), pf.toString());
       assertTrue("object is an instance field", pf instanceof InstanceField);
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
   }
@@ -27,7 +27,7 @@ public class PublicFieldParserTest {
       assertEquals("parse(\"t:v\").toParseableString() should equal \"t:v\"", fieldPair, pf.toParseableString());
       assertEquals("toString acts like toParseableString", pf.toParseableString(), pf.toString());
       assertTrue("object is a static field", pf instanceof StaticField);
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
   }
@@ -40,7 +40,7 @@ public class PublicFieldParserTest {
       assertEquals("parse(\"t:v\").toParseableString() should equal \"t:v\"", fieldPair, pf.toParseableString());
       assertEquals("toString acts like toParseableString", pf.toParseableString(), pf.toString());
       assertTrue("object is a static final field", pf instanceof StaticFinalField);
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       fail("Parse error: " + e.getMessage());
     }
   }
@@ -65,7 +65,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(missingColon);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = "A field description must be of the form \"" +
           "<type>:<field>\" but description is \"" + missingColon + "\".";
       assertEquals("Expecting missing colon message",msg,e.getMessage());
@@ -77,7 +77,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(missingType);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingType + errorPrefix2 + " No type given.";
       assertEquals("Expecting missing type message",msg,e.getMessage());
     }
@@ -85,7 +85,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(missingValue);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingValue + errorPrefix2 + " No field name given.";
       assertEquals("Expecting missing variable message",msg,e.getMessage());
     }
@@ -93,7 +93,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(spaceInType);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + spaceInType + errorPrefix2 + " The type has unexpected whitespace characters.";
       assertEquals("Expecting space in type message",msg,e.getMessage());
     }
@@ -101,7 +101,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(spaceInValue);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + spaceInValue + errorPrefix2 + " The field name has unexpected whitespace characters.";
       assertEquals("Expecting space in field message",msg,e.getMessage());
     }
@@ -109,7 +109,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(badType);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + badType + errorPrefix2 + " The type given \"NATR\" was not recognized.";
       assertEquals("Expecting bad type message",msg,e.getMessage());
     }
@@ -117,7 +117,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(badValueNoField);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + badValueNoField + errorPrefix2 + " The field name given \"twoField\" is not a field of the class \"randoop.ClassWithFields\".";
       assertEquals("Expecting bad field message",msg,e.getMessage());
     }
@@ -125,7 +125,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(badValueNoClass);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + badValueNoClass + errorPrefix2 + " No class name given in field name \"oneField\".";
       assertEquals("Expecting bad field message",msg,e.getMessage());
     }
@@ -133,7 +133,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(badValueBadClass);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + badValueBadClass + errorPrefix2 + " The class name \"NATC\" of the field name \"NATC.oneField\" was not recognized as a class.";
       assertEquals("Expecting bad field message",msg,e.getMessage());
     }
@@ -141,7 +141,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(nonField);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + nonField + errorPrefix2 + " The field name given \"oneMethod\"" +
              " is not a field of the class \"randoop.ClassWithFields\".";
       assertEquals("Expecting not a field message",msg,e.getMessage());
@@ -150,7 +150,7 @@ public class PublicFieldParserTest {
     try {
       PublicField pf = parser.parse(wrongType);
       fail("Expected StatementKindParseException to be thrown");
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
       String msg = errorPrefix1 + wrongType + errorPrefix2 + " The type of the field \"randoop.ClassWithFields.oneField\" is int, but given as double.";
       assertEquals("Expecting wrong type message",msg,e.getMessage());
     }
