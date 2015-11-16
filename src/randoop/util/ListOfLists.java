@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if
@@ -100,7 +101,6 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   @Override
   public Iterator<T> iterator() {
-    // TODO Auto-generated method stub
     return new LOLIterator(lists.iterator());
   }
   
@@ -110,7 +110,6 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     private Iterator<T> elemIterator;
 
     public LOLIterator(Iterator<SimpleList<T>> listIterator) {
-      // TODO Auto-generated constructor stub
       this.listIterator = listIterator;
       if (this.listIterator.hasNext()) {
         this.elemIterator = (this.listIterator).next().iterator();
@@ -119,17 +118,18 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
     @Override
     public boolean hasNext() {
-      // TODO Auto-generated method stub
-      return elemIterator.hasNext() || listIterator.hasNext();
+      return (listIterator.hasNext() || (elemIterator != null && elemIterator.hasNext()));
     }
 
     @Override
     public T next() {
-      // TODO Auto-generated method stub
-      if (!elemIterator.hasNext()) {
-        elemIterator = listIterator.next().iterator();
+      if (elemIterator != null) {
+        if (!elemIterator.hasNext()) {
+          elemIterator = listIterator.next().iterator();
+        }
+        return elemIterator.next();
       }
-      return elemIterator.next();
+      throw new NoSuchElementException("end of ListOfLists reached");
     }
     
   }
