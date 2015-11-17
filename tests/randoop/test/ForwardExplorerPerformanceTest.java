@@ -4,10 +4,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.ForwardGenerator;
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.sequence.ForwardGenerator;
 import randoop.util.Reflection;
 import randoop.util.Timer;
 

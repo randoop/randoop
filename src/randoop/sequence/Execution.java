@@ -1,7 +1,10 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import randoop.ExecutionOutcome;
+import randoop.NotExecuted;
 
 /**
  * Represents the unfolding execution of a sequence.

@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 /**
  * A variable that is part of a mutable sequence.

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.operation.NonreceiverTerm;
+import randoop.sequence.Sequence;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 

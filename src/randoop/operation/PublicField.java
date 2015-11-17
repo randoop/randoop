@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import randoop.BugInRandoopException;
-import randoop.Variable;
+import randoop.sequence.Variable;
 
 /**
  * PublicField is an abstract class representing a public field of a class object, 

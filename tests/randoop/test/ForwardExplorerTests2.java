@@ -3,10 +3,10 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.ForwardGenerator;
-import randoop.Sequence;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.sequence.ForwardGenerator;
+import randoop.sequence.Sequence;
 import randoop.test.treeadd.TreeAdd;
 import randoop.test.treeadd.TreeNode;
 import randoop.util.Reflection;

@@ -7,12 +7,12 @@ import java.util.regex.Pattern;
 
 import randoop.ComponentManager;
 import randoop.EverythingIsDifferentMatcher;
-import randoop.ForwardGenerator;
 import randoop.IStopper;
-import randoop.ObjectCache;
 import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.sequence.ForwardGenerator;
+import randoop.sequence.ObjectCache;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;

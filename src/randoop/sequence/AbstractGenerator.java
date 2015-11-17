@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,6 +6,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import randoop.ComponentManager;
+import randoop.DefaultTestFilter;
+import randoop.FailureSet;
+import randoop.Globals;
+import randoop.IStopper;
+import randoop.ITestFilter;
+import randoop.MultiVisitor;
+import randoop.RandoopListenerManager;
+import randoop.RandoopStat;
 import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;

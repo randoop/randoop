@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 import randoop.util.Files;
 import randoop.util.Log;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
-import randoop.util.TimeoutExceededException;
 
 /**
  * An execution visitor that records regression checks on the values
@@ -47,12 +49,8 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
   
   @Override
   public void initialize(ExecutableSequence s) {
-    s.checks.clear();
-    s.checksResults.clear();
-    for (int i = 0 ; i < s.sequence.size() ; i++) {
-      s.checks.add(new ArrayList<Check>(1));
-      s.checksResults.add(new ArrayList<Boolean>(1));
-    }
+    s.initializeResults();
+    s.initializeChecks();
   }
 
 

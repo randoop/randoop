@@ -8,9 +8,9 @@ import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.Statement;
-import randoop.Variable;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 
 /**
  * FieldSetter is an adapter for a {@link PublicField} as a {@link Operation}

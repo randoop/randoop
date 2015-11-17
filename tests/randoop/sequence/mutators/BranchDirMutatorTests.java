@@ -1,9 +1,10 @@
 package randoop.sequence.mutators;
 
-import junit.framework.TestCase;
-import randoop.MutableSequence;
-import randoop.Sequence;
 import randoop.experiments.BranchDirMutator;
+import randoop.sequence.MutableSequence;
+import randoop.sequence.Sequence;
+
+import junit.framework.TestCase;
 
 public class BranchDirMutatorTests extends TestCase {
   

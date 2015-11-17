@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import randoop.ComponentManager;
-import randoop.ForwardGenerator;
 import randoop.SeedSequences;
-import randoop.Sequence;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.sequence.ForwardGenerator;
+import randoop.sequence.Sequence;
 import randoop.test.bh.BH;
 import randoop.test.bh.Body;
 import randoop.test.bh.Cell;

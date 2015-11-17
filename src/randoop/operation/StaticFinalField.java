@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.Variable;
+import randoop.sequence.Variable;
 
 /**
  * StaticFinalField represents a public static final field of a class.

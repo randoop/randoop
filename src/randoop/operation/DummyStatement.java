@@ -7,7 +7,7 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.Variable;
+import randoop.sequence.Variable;
 
 public class DummyStatement extends AbstractOperation implements Operation, Serializable {
 

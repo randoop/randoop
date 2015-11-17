@@ -14,9 +14,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
-import randoop.Sequence;
-import randoop.Statement;
 import randoop.experiments.DataFlowInput;
+import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
 import randoop.util.Files;
 
 import cov.Branch;

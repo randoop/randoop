@@ -10,9 +10,9 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.Statement;
-import randoop.Variable;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 import randoop.util.Reflection;
 
 /**

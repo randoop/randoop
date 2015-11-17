@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -6,11 +6,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.Sequence.RelativeNegativeIndex;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
 import randoop.operation.AbstractOperation;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
 import randoop.operation.OperationParser;
+import randoop.sequence.Sequence.RelativeNegativeIndex;
 import randoop.util.PrimitiveTypes;
 
 /**

@@ -1,14 +1,10 @@
-package randoop.experimental;
+package randoop.sequence;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import randoop.ExecutableSequence;
-import randoop.MutableSequence;
 import randoop.MultiVisitor;
-import randoop.Sequence;
-import randoop.Variable;
 import randoop.util.Reflection;
 
 public class GreedySequenceSimplifier extends AbstractSimplifier {

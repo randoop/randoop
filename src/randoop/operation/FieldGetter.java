@@ -8,7 +8,7 @@ import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.Variable;
+import randoop.sequence.Variable;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from

@@ -1,5 +1,7 @@
 package randoop;
 
+import randoop.sequence.ExecutableSequence;
+
 /**
  * Defines various event during Randoop's generation at which an
  * implementing class can be notified and perform some action.

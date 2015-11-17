@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 
 /**

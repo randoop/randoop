@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.operation.MethodCall;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.MutableSequence;
+import randoop.sequence.MutableVariable;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 
 public class FailureSet {
   

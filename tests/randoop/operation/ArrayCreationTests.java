@@ -3,9 +3,9 @@ package randoop.operation;
 import java.util.ArrayList;
 
 import randoop.Globals;
-import randoop.Sequence;
-import randoop.Statement;
-import randoop.Variable;
+import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 
 import junit.framework.TestCase;
 

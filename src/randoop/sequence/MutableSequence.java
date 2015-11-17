@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import randoop.BugInRandoopException;
+import randoop.Globals;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.util.CollectionsExt;

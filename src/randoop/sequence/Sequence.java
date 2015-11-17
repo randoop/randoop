@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import randoop.Globals;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;

@@ -6,9 +6,9 @@ import java.util.Set;
 import org.junit.Test;
 
 import randoop.SeedSequences;
-import randoop.Sequence;
 import randoop.TestValue;
 import randoop.operation.NonreceiverTerm;
+import randoop.sequence.Sequence;
 
 import junit.framework.TestCase;
 

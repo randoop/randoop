@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.List;
 

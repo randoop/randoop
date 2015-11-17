@@ -8,9 +8,9 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.Sequence;
-import randoop.Variable;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.StringEscapeUtils;

@@ -1,6 +1,6 @@
 package randoop.experiments;
 
-import randoop.ExecutableSequence;
+import randoop.sequence.ExecutableSequence;
 import randoop.util.Histogram;
 
 public class SizeEqualizer {

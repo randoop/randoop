@@ -10,16 +10,16 @@ import java.util.TreeSet;
 
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsReflexive;
-import randoop.ExecutableSequence;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.ObjectContract;
 import randoop.ReplayVisitor;
-import randoop.Sequence;
-import randoop.SequenceParseException;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceParseException;
 
 import junit.framework.TestCase;
 

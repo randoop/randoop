@@ -3,10 +3,10 @@ package randoop.test;
 import java.util.ArrayList;
 
 import randoop.DummyVisitor;
-import randoop.ExecutableSequence;
-import randoop.Sequence;
-import randoop.Variable;
 import randoop.operation.ConstructorCall;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.ReflectionExecutor;
 import randoop.util.TimeoutExceededException;
 

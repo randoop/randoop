@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import randoop.ExecutableSequence;
 import randoop.IEventListener;
-import randoop.Sequence;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
 
 import cov.Branch;
 import cov.Coverage;

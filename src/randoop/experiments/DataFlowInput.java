@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import plume.Pair;
-import plume.UtilMDE;
 import randoop.Globals;
-import randoop.Sequence;
+import randoop.sequence.Sequence;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
+
 import cov.Branch;
+import plume.Pair;
+import plume.UtilMDE;
 
 /**
  * A collection of frontier branches and sequences that reach them.

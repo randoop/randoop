@@ -13,21 +13,22 @@ import java.util.Scanner;
 import java.util.Set;
 
 import randoop.Globals;
-import randoop.Sequence;
-import randoop.Variable;
 import randoop.experiments.DFResultsOneSeq;
+import randoop.experiments.DFResultsOneSeq.VariableInfo;
 import randoop.experiments.DataFlowInput;
 import randoop.experiments.DataFlowOutput;
-import randoop.experiments.DFResultsOneSeq.VariableInfo;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.Files;
 import randoop.util.SerializationHelper;
 import randoop.util.StreamRedirectThread;
 import randoop.util.Timer;
+
+import cov.Branch;
 import plume.Option;
 import plume.Options;
-import plume.UtilMDE;
 import plume.Options.ArgException;
-import cov.Branch;
+import plume.UtilMDE;
 
 /**
  * Computes dynamic data flow information affecting specific branches in

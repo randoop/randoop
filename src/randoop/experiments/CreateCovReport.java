@@ -13,14 +13,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import randoop.Sequence;
+import randoop.sequence.Sequence;
 import randoop.util.Reflection;
-import plume.Option;
-import plume.Options;
-import plume.Options.ArgException;
+
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
 
 /**
  * Creates a textual report of the coverage achieved for a collections

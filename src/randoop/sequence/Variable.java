@@ -1,11 +1,11 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import randoop.experimental.VariableRenamer;
+import randoop.VariableRenamer;
 
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable>, Serializable {

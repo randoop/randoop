@@ -7,6 +7,8 @@ import java.util.Set;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.ArrayCreation;
 import randoop.operation.NonreceiverTerm;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
 import randoop.util.Reflection.Match;

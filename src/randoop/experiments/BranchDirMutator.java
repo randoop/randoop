@@ -5,9 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import randoop.MutableSequence;
-import randoop.MutableStatement;
-import randoop.MutableVariable;
+import randoop.sequence.MutableSequence;
+import randoop.sequence.MutableStatement;
+import randoop.sequence.MutableVariable;
 import randoop.util.Reflection;
 
 public class BranchDirMutator {

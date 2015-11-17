@@ -1,13 +1,11 @@
-package randoop.experimental;
+package randoop.sequence;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import randoop.Check;
-import randoop.ExecutableSequence;
 import randoop.MultiVisitor;
-import randoop.Sequence;
 
 /**
  * An abstract class encapsulating common fields and utility functions in

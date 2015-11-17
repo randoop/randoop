@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
-import randoop.Variable;
+import randoop.sequence.Variable;
 
 /**
  * Represents an operation (in the term algebra sense) that can occur in a statement 

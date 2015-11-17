@@ -6,9 +6,9 @@ import java.io.PrintStream;
 import java.util.List;
 
 import randoop.Globals;
-import randoop.Sequence;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.sequence.Sequence;
 
 public final class Log {
 

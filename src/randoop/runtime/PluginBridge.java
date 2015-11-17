@@ -6,15 +6,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import randoop.AbstractGenerator;
-import randoop.ExecutableSequence;
 import randoop.FailureSet;
 import randoop.IEventListener;
 import randoop.ITestFilter;
 import randoop.JunitFileWriter;
 import randoop.NoExceptionCheck;
-import randoop.Statement;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.AbstractGenerator;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Statement;
 
 import plume.Pair;
 

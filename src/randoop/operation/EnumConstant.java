@@ -10,7 +10,7 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.Variable;
+import randoop.sequence.Variable;
 import randoop.util.Reflection;
 
 import checkers.units.quals.s;

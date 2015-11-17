@@ -11,9 +11,9 @@ import org.junit.Test;
 
 import randoop.Globals;
 import randoop.NormalExecution;
-import randoop.Sequence;
-import randoop.Statement;
-import randoop.Variable;
+import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 
 /**
  * EnumConstantTest defines unit tests for {@link randoop.EnumConstant}.

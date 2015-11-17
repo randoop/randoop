@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,6 +8,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.Check;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.ExecutionVisitor;
+import randoop.ExpectedExceptionCheck;
+import randoop.Globals;
+import randoop.NormalExecution;
+import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
 import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
@@ -381,6 +389,11 @@ public class ExecutableSequence implements Serializable {
       }
     }
     return true;
+  }
+  
+  public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
+    // TODO Auto-generated method stub
+    return getRuntimeValuesForVars(vars, execution.theList);
   }
   
   protected static Object[] getRuntimeValuesForVars(List<Variable> vars, List<ExecutionOutcome> execution) {    
@@ -851,4 +864,32 @@ public class ExecutableSequence implements Serializable {
 
     return cnt;
   }
+
+  /**
+   * initialize - used by ExecutionVisitors
+   */
+  public void initializeResults() {
+    // TODO Auto-generated method stub
+    checksResults.clear();
+    for (int i = 0; i < sequence.size(); i++) {
+      checksResults.add(new ArrayList<Boolean>(1));
+    }
+  }
+
+  public void performChecks(int i) {
+    // TODO Auto-generated method stub
+    for (Check c : getChecks(i)) {
+      checksResults.get(i).add(c.evaluate(executionResults));
+    }
+  }
+
+  public void initializeChecks() {
+    // TODO Auto-generated method stub
+    checks.clear();
+    for (int i = 0; i < sequence.size(); i++) {
+      checks.add(new ArrayList<Check>());
+    }
+  }
+
+ 
 }

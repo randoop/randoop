@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import junit.framework.TestCase;
 
 
-public class OperationTests extends TestCase {
+public class OperationParseTests extends TestCase {
 
   public void testPrimStKind() {
 

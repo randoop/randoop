@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,6 +6,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.BugInRandoopException;
+import randoop.ComponentManager;
+import randoop.EqualsMethodMatcher;
+import randoop.Globals;
+import randoop.HelperSequenceCreator;
+import randoop.IStopper;
+import randoop.ITestFilter;
+import randoop.NormalExecution;
+import randoop.RandoopListenerManager;
+import randoop.RegressionCaptureVisitor;
+import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;

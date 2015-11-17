@@ -1,9 +1,11 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
@@ -16,7 +18,7 @@ import randoop.util.SimpleList;
  */
 public class MappedSequences<T> {
 
-  Map<T, SequenceCollection> map;
+  private Map<T, SequenceCollection> map;
   
   public MappedSequences() {
     this.map = new LinkedHashMap<T, SequenceCollection>();
@@ -57,4 +59,11 @@ public class MappedSequences<T> {
     emptyList = new ListOfLists<Sequence>(emptyJDKList);
   }
 
+  public Set<Sequence> getAllSequences() {
+    Set<Sequence> result = new LinkedHashSet<>();
+    for (SequenceCollection c : map.values()) {
+      result.addAll(c.getAllSequences());
+    }
+    return result;
+  }
 }

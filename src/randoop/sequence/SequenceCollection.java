@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,13 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import randoop.Globals;
+import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.Reflection;
-import randoop.util.SimpleList;
 import randoop.util.Reflection.Match;
+import randoop.util.SimpleList;
 
 /**
  * A collection of sequences that makes its efficient to ask for
@@ -33,7 +35,7 @@ import randoop.util.Reflection.Match;
  * 
  * <p>
  *
- * This class makes the above search faster by maintanining two data structures:
+ * This class makes the above search faster by maintaining two data structures:
  *
  * <ul>
  * <li> A map from types to the sets of all sequences that create one

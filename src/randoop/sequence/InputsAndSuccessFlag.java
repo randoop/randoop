@@ -1,9 +1,11 @@
 /**
  * 
  */
-package randoop;
+package randoop.sequence;
 
 import java.util.List;
+
+import randoop.sequence.Sequence;
 
 /**
  * Return type for ForwardGenerator's selectInputs method, which is

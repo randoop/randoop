@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.List;
 
+import randoop.sequence.Sequence;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
 

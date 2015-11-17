@@ -3,6 +3,8 @@ package randoop;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.sequence.ExecutableSequence;
+
 /**
  * An execution visitor that chains a list of visitors in sequence. It can be
  * used if the user wants to use more than one visitor to visit a sequence

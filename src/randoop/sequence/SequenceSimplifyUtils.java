@@ -1,21 +1,14 @@
-package randoop.experimental;
+package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import randoop.Check;
-import randoop.ExecutableSequence;
-import randoop.MutableSequence;
-import randoop.MutableStatement;
-import randoop.MutableVariable;
 import randoop.ObjectCheck;
-import randoop.Sequence;
-import randoop.Variable;
 
 public class SequenceSimplifyUtils {
 

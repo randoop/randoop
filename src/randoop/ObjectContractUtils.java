@@ -1,5 +1,6 @@
 package randoop;
 
+import randoop.sequence.Variable;
 import randoop.util.ReflectionCode;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;

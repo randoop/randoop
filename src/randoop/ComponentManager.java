@@ -8,6 +8,10 @@ import java.util.Set;
 import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
+import randoop.sequence.ClassLiterals;
+import randoop.sequence.PackageLiterals;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceCollection;
 import randoop.util.ListOfLists;
 import randoop.util.PrimitiveTypes;
 import randoop.util.SimpleList;
@@ -206,14 +210,10 @@ public class ComponentManager {
     
     Set<Sequence> ret = new LinkedHashSet<Sequence>();
     if (classLiterals != null) {
-      for (SequenceCollection c : classLiterals.map.values()) {
-        ret.addAll(c.getAllSequences());
-      }
+      ret.addAll(classLiterals.getAllSequences());
     }
     if (packageLiterals != null) {
-      for (SequenceCollection c : packageLiterals.map.values()) {
-        ret.addAll(c.getAllSequences());
-      }
+      ret.addAll(packageLiterals.getAllSequences());
     }
     for (Class<?> c : PrimitiveTypes.getPrimitiveTypesAndString()) {
       ret.addAll(gralComponents.getSequencesForType(c, true).toJDKList());

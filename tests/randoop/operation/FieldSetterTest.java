@@ -13,9 +13,9 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
-import randoop.Sequence;
-import randoop.Statement;
-import randoop.Variable;
+import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 import randoop.util.Reflection;
 
 

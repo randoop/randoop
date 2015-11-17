@@ -3,9 +3,9 @@ package randoop.test;
 import java.io.InputStream;
 import java.util.List;
 
-import randoop.ForwardGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.sequence.ForwardGenerator;
 import randoop.util.Reflection;
 
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
