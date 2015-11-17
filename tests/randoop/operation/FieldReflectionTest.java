@@ -14,9 +14,9 @@ import java.util.TreeSet;
 
 import org.junit.Test;
 
-import randoop.util.DefaultReflectionFilter;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ReflectionPredicate;
 import randoop.util.Reflection;
-import randoop.util.ReflectionFilter;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -125,7 +125,7 @@ public class FieldReflectionTest {
       exclude.add(f);
     }
     
-    ReflectionFilter filter = new DefaultReflectionFilter(null, excludeNames);
+    ReflectionPredicate filter = new DefaultReflectionPredicate(null, excludeNames);
     List<Operation> actual = Reflection.getStatements(classes, filter);
     
     assertEquals("number of statements", 2, actual.size());

@@ -53,6 +53,10 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.NotPrivateVisibilityPredicate;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.VisibilityPredicate;
 import randoop.runtime.ClosingStream;
 import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.IMessage;
@@ -66,7 +70,6 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.util.ClassFileConstants;
 import randoop.util.CollectionsExt;
-import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -184,6 +187,12 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
     
+    VisibilityPredicate visibility;
+    if (GenInputsAbstract.public_only) {
+      visibility = new PublicVisibilityPredicate();
+    } else {
+      visibility = new NotPrivateVisibilityPredicate();
+    }
     
     List<Class<?>> allClasses = findClassesFromArgs(options);
 
@@ -193,7 +202,7 @@ public class GenTests extends GenInputsAbstract {
     for (Class<?> c : allClasses) {
       if (Reflection.isAbstract (c)) {
         System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
-      } else if (! Reflection.isVisible (c)) {
+      } else if (! visibility.isVisible (c)) {
         System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
       } else {
         classes.add(c);
@@ -203,7 +212,7 @@ public class GenTests extends GenInputsAbstract {
     // Make sure each of the classes is visible.  Should really make sure
     // there is at least one visible constructor/factory in each class as well.
     for (Class<?> c : classes) {
-      if (!Reflection.isVisible (c)) {
+      if (!visibility.isVisible (c)) {
         throw new Error ("Specified class " + c + " is not visible");
       }
     }
@@ -247,7 +256,7 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     
-    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods, omitFields);
+    DefaultReflectionPredicate reflectionFilter = new DefaultReflectionPredicate(omitmethods, omitFields,visibility);
     List<Operation> model = Reflection.getStatements(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).

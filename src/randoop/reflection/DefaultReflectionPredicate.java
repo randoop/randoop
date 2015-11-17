@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import randoop.CheckRep;
+import randoop.util.Log;
+import randoop.util.Reflection;
 
 /**
  * Returns true for public members, with some exceptions (see
@@ -19,34 +21,41 @@ import randoop.CheckRep;
  * (the method will be used as a contract checker, not
  *  as a method under test).
  */
-public class DefaultReflectionFilter implements ReflectionFilter {
+public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   private Pattern omitMethods = null;
   private Set<String> omitFields;
+  private VisibilityPredicate visibility;
   
-  public DefaultReflectionFilter() {
-    this(null, new HashSet<String>());
+  public DefaultReflectionPredicate() {
+    this(null);
   }
   
   /** If omitMethods is null, then no methods are omitted. */
-  public DefaultReflectionFilter(Pattern omitMethods) {
+  public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
+  }
+
+  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
+   this(omitMethods, omitFields, new PublicVisibilityPredicate());
   }
 
   /** 
    * DefaultReflectionFilter creates a filter object that uses default
    * criteria for inclusion of reflection objects. 
    * @param omitMethods pattern for methods to omit, if null then no methods omitted.
-   * @see Reflection#getStatements(java.util.Collection, ReflectionFilter) 
+   * @param visibility 
+   * @see Reflection#getStatements(java.util.Collection, ReflectionPredicate) 
    */
-  public DefaultReflectionFilter(Pattern omitMethods, Set<String> omitFields) {
+  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
     super();
     this.omitMethods = omitMethods;
     this.omitFields = omitFields;
+    this.visibility = visibility;
   }
 
   public boolean canUse(Class<?> c) {
-    return Reflection.isVisible (c);
+    return visibility.isVisible (c);
   }
 
   public boolean canUse(Method m) {
@@ -89,14 +98,14 @@ public class DefaultReflectionFilter implements ReflectionFilter {
       return false;
     }
 
-    if (!Reflection.isVisible(m.getModifiers())) {
+    if (!visibility.isVisible(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: randoop.util.Reflection.isVisible(int modifiers) returned false ");
       }
       return false;
     }
-    if (!Reflection.isVisible(m.getReturnType())) {
+    if (!visibility.isVisible(m.getReturnType())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: randoop.util.Reflection.isVisible(Class<?> cls) returned false for method's return type");
@@ -192,7 +201,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     if (Modifier.isAbstract(c.getDeclaringClass().getModifiers()))
       return false;
 
-    return Reflection.isVisible (c.getModifiers());
+    return visibility.isVisible(c);
   }
 
   private boolean matchesOmitMethodPattern(String name) {
@@ -222,7 +231,7 @@ public class DefaultReflectionFilter implements ReflectionFilter {
     }
     
     String name = f.getDeclaringClass().getName() + "." + f.getName();
-    boolean result = !omitFields.contains(name);
+    boolean result = visibility.isVisible(f) && !omitFields.contains(name);
     if (Log.isLoggingOn()) {
       if (result) {
         Log.logLine(String.format("Including field '%s'", name));

@@ -11,9 +11,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.TestCase;
 import randoop.Globals;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.VisibilityPredicate;
 import randoop.util.Reflection;
+
+import junit.framework.TestCase;
 
 public class ReflectionTests extends TestCase{
 
@@ -116,17 +119,20 @@ public class ReflectionTests extends TestCase{
   }
 
   public void testIsPublic1() throws Exception {
-    assertFalse(Reflection.isVisible(randoop.test.A3.class));
+    VisibilityPredicate pred = new PublicVisibilityPredicate();
+    assertFalse(pred.isVisible(randoop.test.A3.class));
   }
 
   public void testIsPublic2() throws Exception {
+    VisibilityPredicate pred = new PublicVisibilityPredicate();
     Class<?> c= Class.forName("java.lang.String");
-    assertTrue(Reflection.isVisible(c));
+    assertTrue(pred.isVisible(c));
   }
 
   public void testIsPublic3() throws Exception {
+    VisibilityPredicate pred = new PublicVisibilityPredicate();
     Class<?> c= Class.forName("java.util.Map$Entry");
-    assertTrue(Reflection.isVisible(c));
+    assertTrue(pred.isVisible(c));
   }
 
 

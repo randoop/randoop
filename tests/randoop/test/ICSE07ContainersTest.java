@@ -11,13 +11,13 @@ import randoop.IStopper;
 import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.reflection.DefaultReflectionPredicate;
 import randoop.sequence.ForwardGenerator;
 import randoop.sequence.ObjectCache;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
 import randoop.test.issta2006.TreeMap;
-import randoop.util.DefaultReflectionFilter;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 
@@ -47,7 +47,7 @@ public class ICSE07ContainersTest extends TestCase {
     System.out.println("ICSE 2006 container: " + name);
     
     List<Operation> statements = 
-      Reflection.getStatements(classList, new DefaultReflectionFilter(pattern));
+      Reflection.getStatements(classList, new DefaultReflectionPredicate(pattern));
     
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer = new ForwardGenerator(statements,
