@@ -24,30 +24,30 @@ import randoop.ExecutableSequence;
 import randoop.MutableSequence;
 import randoop.MutableStatement;
 import randoop.MutableVariable;
-import randoop.NonreceiverTerm;
-import randoop.MethodCall;
 import randoop.Sequence;
 import randoop.SequenceCollection;
 import randoop.SequenceParseException;
 import randoop.Statement;
-import randoop.Operation;
 import randoop.Variable;
 import randoop.experiments.DFResultsOneSeq;
-import randoop.experiments.DataFlowOutput;
 import randoop.experiments.DFResultsOneSeq.VariableInfo;
+import randoop.experiments.DataFlowOutput;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
 import randoop.util.Files;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Reflection;
-import randoop.util.SimpleList;
 import randoop.util.Reflection.Match;
-import plume.Option;
-import plume.Options;
-import plume.Pair;
-import plume.Options.ArgException;
+import randoop.util.SimpleList;
+
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
+import plume.Pair;
 
 public class GenBranchDir {
 

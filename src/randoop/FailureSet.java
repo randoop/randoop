@@ -5,6 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.operation.MethodCall;
+
 public class FailureSet {
   
   private Set<Failure> failures = new LinkedHashSet<Failure>();

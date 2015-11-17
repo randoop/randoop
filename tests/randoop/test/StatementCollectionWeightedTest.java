@@ -1,15 +1,15 @@
 package randoop.test;
 
-import java.io.InputStream;
-import java.io.StringReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-import randoop.Operation;
+import randoop.operation.Operation;
 import randoop.util.Reflection;
 import randoop.util.Util;
+
+import junit.framework.TestCase;
 
 public class StatementCollectionWeightedTest extends TestCase {
 

@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
+import randoop.operation.ArrayCreation;
+import randoop.operation.NonreceiverTerm;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
 import randoop.util.Reflection.Match;
+import randoop.util.SimpleList;
 
 
 public class HelperSequenceCreator {

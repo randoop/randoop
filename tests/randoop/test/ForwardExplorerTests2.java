@@ -3,14 +3,15 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import randoop.ForwardGenerator;
 import randoop.Sequence;
-import randoop.Operation;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.test.treeadd.TreeAdd;
 import randoop.test.treeadd.TreeNode;
 import randoop.util.Reflection;
+
+import junit.framework.TestCase;
 
 public class ForwardExplorerTests2 extends TestCase {
 

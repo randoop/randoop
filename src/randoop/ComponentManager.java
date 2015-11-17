@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
 import randoop.util.ListOfLists;
 import randoop.util.PrimitiveTypes;
 import randoop.util.SimpleList;

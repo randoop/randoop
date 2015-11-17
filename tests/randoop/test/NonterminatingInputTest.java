@@ -2,15 +2,15 @@ package randoop.test;
 
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
 import randoop.DummyVisitor;
 import randoop.ExecutableSequence;
-import randoop.ConstructorCall;
 import randoop.Sequence;
-import randoop.Statement;
 import randoop.Variable;
+import randoop.operation.ConstructorCall;
 import randoop.util.ReflectionExecutor;
 import randoop.util.TimeoutExceededException;
+
+import junit.framework.TestCase;
 
 public class NonterminatingInputTest extends TestCase {
 

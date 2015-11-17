@@ -6,6 +6,8 @@ package randoop;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.operation.Operation;
+
 /**
  * A statement that is part of a mutable sequence.
  */

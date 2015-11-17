@@ -16,15 +16,15 @@ import java.util.zip.GZIPInputStream;
 
 import randoop.Sequence;
 import randoop.Statement;
-import randoop.Operation;
 import randoop.experiments.DataFlowInput;
 import randoop.util.Files;
-import plume.Option;
-import plume.Options;
-import plume.Options.ArgException;
+
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
 
 public class ComputeFrontierBranches {
 

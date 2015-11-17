@@ -419,18 +419,18 @@ test-constants: bin
 
 # runs JUnit4 tests on enum tests
 test-enums: bin
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.EnumConstantTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.EnumReflectionTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumConstantTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumReflectionTest
 
 # run JUnit4 tests on fields
 test-fields: bin
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.InstanceFieldTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.StaticFieldTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.StaticFinalFieldTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.PublicFieldParserTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldGetterTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldSetterTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.FieldReflectionTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.InstanceFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.StaticFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.StaticFinalFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.PublicFieldParserTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldGetterTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldSetterTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldReflectionTest
 
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin

@@ -3,9 +3,9 @@ package randoop.test;
 import java.io.InputStream;
 import java.util.List;
 
-import randoop.Operation;
 import randoop.experiments.RandomWalkGenerator;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.util.Reflection;
 
 public class NaivePerformanceTest extends AbstractPerformanceTest {

@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import randoop.Operation;
+import randoop.operation.Operation;
 import randoop.util.PrimitiveTypes;
 
 /**

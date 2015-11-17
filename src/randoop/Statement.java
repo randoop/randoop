@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.Sequence.RelativeNegativeIndex;
+import randoop.operation.AbstractOperation;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+import randoop.operation.OperationParser;
 import randoop.util.PrimitiveTypes;
 
 /**

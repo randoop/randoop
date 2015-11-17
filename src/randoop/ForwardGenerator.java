@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -14,8 +16,8 @@ import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
-import randoop.util.SimpleList;
 import randoop.util.Reflection.Match;
+import randoop.util.SimpleList;
 
 /**
  * Randoop's forward, component-based generator.

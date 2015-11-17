@@ -2,6 +2,8 @@ package randoop;
 
 import java.util.List;
 
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.OperationParseException;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;

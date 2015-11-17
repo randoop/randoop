@@ -7,8 +7,8 @@ import java.util.List;
 
 import randoop.Globals;
 import randoop.Sequence;
-import randoop.Operation;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 
 public final class Log {
 

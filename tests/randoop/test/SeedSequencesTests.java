@@ -1,19 +1,16 @@
 package randoop.test;
 
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 import java.util.Set;
 
-import junit.extensions.TestSetup;
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
-import randoop.NonreceiverTerm;
 import randoop.SeedSequences;
 import randoop.Sequence;
 import randoop.TestValue;
+import randoop.operation.NonreceiverTerm;
+
+import junit.framework.TestCase;
 
 public class SeedSequencesTests extends TestCase {
 

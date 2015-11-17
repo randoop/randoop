@@ -10,17 +10,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import plume.Option;
-import plume.Unpublicized;
 import randoop.ExecutableSequence;
 import randoop.IEventListener;
-import randoop.ConstructorCall;
-import randoop.MethodCall;
 import randoop.Sequence;
-import randoop.Operation;
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
+import plume.Option;
+import plume.Unpublicized;
 
 
 public class CodeCoverageTracker implements IEventListener {

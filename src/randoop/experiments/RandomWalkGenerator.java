@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import plume.Pair;
 import randoop.AbstractGenerator;
 import randoop.Check;
 import randoop.ComponentManager;
@@ -27,17 +26,16 @@ import randoop.IStopper;
 import randoop.ITestFilter;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.NonreceiverTerm;
 import randoop.RandoopListenerManager;
 import randoop.RandoopStat;
 import randoop.SeedSequences;
 import randoop.Sequence;
 import randoop.SequenceCollection;
 import randoop.Statement;
-import randoop.Operation;
 import randoop.SubTypeSet;
 import randoop.Variable;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.CollectionsExt;
 import randoop.util.ListOfLists;
@@ -49,6 +47,8 @@ import randoop.util.ReversibleMultiMap;
 import randoop.util.ReversibleSet;
 import randoop.util.SimpleList;
 import randoop.util.Util;
+
+import plume.Pair;
 
 /**
  * Experimental code.

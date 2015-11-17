@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
 import randoop.util.CollectionsExt;
 import randoop.util.Reflection;
 

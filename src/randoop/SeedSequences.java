@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.operation.NonreceiverTerm;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 

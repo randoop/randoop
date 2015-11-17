@@ -6,16 +6,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import plume.Option;
-import plume.OptionGroup;
-import plume.Unpublicized;
 import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
+
+import plume.Option;
+import plume.OptionGroup;
+import plume.Unpublicized;
 
 /**
  * Algorithm template for implementing a test generator.

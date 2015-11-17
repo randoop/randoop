@@ -4,13 +4,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import randoop.Globals;
-import randoop.Operation;
 import randoop.experiments.RandomWalkGenerator;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.util.Reflection;
 import randoop.util.Timer;
+
+import junit.framework.TestCase;
 
 public class NaiveExplorerPerformanceTest extends TestCase {
 

@@ -8,22 +8,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsReflexive;
 import randoop.ExecutableSequence;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.ObjectContract;
-import randoop.ConstructorCall;
-import randoop.MethodCall;
 import randoop.ReplayVisitor;
 import randoop.Sequence;
 import randoop.SequenceParseException;
-import randoop.Statement;
-import randoop.Operation;
-import randoop.Variable;
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+
+import junit.framework.TestCase;
 
 public class CodeFromManual extends TestCase {
 

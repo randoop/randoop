@@ -4,32 +4,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
 import randoop.ComponentManager;
 import randoop.ForwardGenerator;
 import randoop.SeedSequences;
 import randoop.Sequence;
-import randoop.SequenceCollection;
-import randoop.Operation;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.test.bh.BH;
 import randoop.test.bh.Body;
 import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
-import randoop.test.perimeter.BlackNode;
-import randoop.test.perimeter.GreyNode;
-import randoop.test.perimeter.NorthEast;
-import randoop.test.perimeter.NorthWest;
-import randoop.test.perimeter.Perimeter;
-import randoop.test.perimeter.QuadTreeNode;
-import randoop.test.perimeter.Quadrant;
-import randoop.test.perimeter.SouthEast;
-import randoop.test.perimeter.SouthWest;
-import randoop.test.perimeter.WhiteNode;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
+
+import junit.framework.TestCase;
 
 public class ForwardExplorerTests extends TestCase {
 
