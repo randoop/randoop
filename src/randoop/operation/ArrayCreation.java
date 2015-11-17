@@ -198,16 +198,21 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
    * Example:
    * 
    * int[3]
+   * @throws OperationParseException 
    * 
    */
-  public static Operation parse(String str) {
+  public static Operation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');
     String elementTypeStr = str.substring(0, openBr);
     String lengthStr = str.substring(openBr + 1, closeBr);
-    Class<?> elementType = Reflection.classForName(elementTypeStr);
+    try {
+    Class<?> elementType = Class.forName(elementTypeStr);
     int length = Integer.parseInt(lengthStr);
     return new ArrayCreation(elementType, length);
+    } catch (ClassNotFoundException e) {
+      throw new OperationParseException("Type not found for array element type " + elementTypeStr);
+    }
   }
 
   @Override

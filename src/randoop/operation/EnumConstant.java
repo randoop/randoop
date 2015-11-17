@@ -11,7 +11,7 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
 import checkers.units.quals.s;
 
@@ -94,7 +94,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
-    b.append(Reflection.getCompilableName(type()) + "." + this.value.name());
+    b.append(TypeNames.getCompilableName(type()) + "." + this.value.name());
   }
 
   /**
@@ -158,8 +158,10 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
       throw new OperationParseException(msg);
     }
     
-    Class<?> type = Reflection.classForName(typeName,true);
-    if (type == null) {
+    Class<?> type;
+    try {
+      type = Class.forName(typeName);
+    } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
       throw new OperationParseException(msg);
     }

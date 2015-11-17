@@ -18,6 +18,12 @@ public class SerializableNonreceiverTerm implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException {
-    return new NonreceiverTerm(Reflection.classForName(type), value);
+    Class<?> c;
+    try {
+      c = Class.forName(type);
+    } catch (ClassNotFoundException e) {
+      c = null;
+    }
+    return new NonreceiverTerm(c, value);
   }
 }

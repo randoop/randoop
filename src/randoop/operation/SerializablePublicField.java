@@ -19,7 +19,12 @@ public class SerializablePublicField implements Serializable {
     int pos = fieldRep.lastIndexOf('.');
     String className = fieldRep.substring(0,pos);
     String fieldName = fieldRep.substring(pos + 1);
-    Class<?> c = Reflection.classForName(className);
+    Class<?> c;
+    try {
+      c = Class.forName(className);
+    } catch (ClassNotFoundException e) {
+      c = null;
+    }
     Field field = PublicFieldParser.fieldFor(c, fieldName);
     if (field != null) {
       return PublicFieldParser.recognize(field);

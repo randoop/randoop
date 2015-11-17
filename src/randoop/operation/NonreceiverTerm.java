@@ -273,8 +273,10 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       typeString = "java.lang.String";
     }
     
-    Class<?> type = Reflection.classForName(typeString, true);
-    if (type == null) {
+    Class<?> type;
+    try {
+      type = Class.forName(typeString);
+    } catch (ClassNotFoundException e) {
       String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the <type> given (\"" + typeString + "\") was unrecognized.";
       throw new OperationParseException(msg);

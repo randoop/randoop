@@ -13,7 +13,6 @@ import randoop.ExecutionOutcome;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Files;
-import randoop.util.Reflection;
 
 import cov.Branch;
 import cov.Coverage;
@@ -32,9 +31,13 @@ public class Execute {
       throw new Error(e);
     }
     for (String className : covClassNames) {
-      Class<?> cls = Reflection.classForName(className);
-      System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
-      covClasses.add(cls);
+      try {
+        Class<?> cls = Class.forName(className);
+        System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
+        covClasses.add(cls);
+      } catch (ClassNotFoundException e1) {
+        //ignore
+      }
     }
     
     DataFlowInput dfin = DataFlowInput.parse(args[1]);

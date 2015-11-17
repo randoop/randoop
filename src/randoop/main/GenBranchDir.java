@@ -181,9 +181,13 @@ public class GenBranchDir {
     }
     Set<CoverageAtom> allBranches = new LinkedHashSet<CoverageAtom>();
     for (String className : covClassNames) {
-      Class<?> cls = Reflection.classForName(className);
+      try {
+      Class<?> cls = Class.forName(className);
       covClasses.add(cls);
       allBranches.addAll(Coverage.getBranches(cls));
+      } catch (ClassNotFoundException e) {
+        //ignore
+      }
     }
     System.out.println("ALL BRANCHES=" + allBranches.size());
 

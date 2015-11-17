@@ -519,8 +519,13 @@ public class Coverage {
    */
   public static Member getMemberContaining(CoverageAtom cov) {
     if (cov == null) throw new IllegalArgumentException("cov cannot be null.");
-    Class<?> cls = Reflection.classForName(cov.getClassName());
-    initCoverage(cls);
+
+    try {
+      initCoverage(Class.forName(cov.getClassName()));
+    } catch (ClassNotFoundException e) {
+      //ignor
+    }
+
     return atomsToMembers.get(cov);
   }
 
@@ -528,12 +533,17 @@ public class Coverage {
    * Increments the count for the given branch by 1.
    */
   public static void touch(Branch br) {
-    Class<?> cls = Reflection.classForName(br.getClassName());
-    if (br.branch) {
-      getTrueBranches(cls)[br.branchNumber]++;
-    } else {
-      getFalseBranches(cls)[br.branchNumber]++;
+    try {
+      Class<?> cls = Class.forName(br.getClassName());
+      if (br.branch) {
+        getTrueBranches(cls)[br.branchNumber]++;
+      } else {
+        getFalseBranches(cls)[br.branchNumber]++;
+      }
+    } catch (ClassNotFoundException e) {
+      //ignore
     }
+ 
   }
 
 }

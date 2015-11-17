@@ -18,7 +18,13 @@ public class SerializableArrayCreation implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException {
-    return new ArrayCreation(Reflection.classForName(elementType), length);
+    Class<?> c;
+    try {
+      c = Class.forName(elementType);
+    } catch (ClassNotFoundException e) {
+      c = null;
+    }
+    return new ArrayCreation(c, length);
   }
 
 }

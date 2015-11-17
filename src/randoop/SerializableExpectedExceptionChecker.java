@@ -3,8 +3,6 @@ package randoop;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import randoop.util.Reflection;
-
 public class SerializableExpectedExceptionChecker implements Serializable {
 
   private static final long serialVersionUID = 20100429; 
@@ -17,9 +15,14 @@ public class SerializableExpectedExceptionChecker implements Serializable {
     this.statementIdx = statementIdx;
   }
 
+  @SuppressWarnings("unchecked")
   private Object readResolve() throws ObjectStreamException {
-    @SuppressWarnings("unchecked")
-    Class<? extends Throwable> c = (Class<? extends Throwable>) Reflection.classForName(exceptionClass);
+    Class<? extends Throwable> c = null;
+    try {
+      c = (Class<? extends Throwable>) Class.forName(exceptionClass);
+    } catch (ClassNotFoundException e) {
+      //ignore
+    }
     return new ExpectedExceptionCheck (c, statementIdx);
   }
 

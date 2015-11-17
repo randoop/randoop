@@ -392,7 +392,6 @@ public class ExecutableSequence implements Serializable {
   }
   
   public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
-    // TODO Auto-generated method stub
     return getRuntimeValuesForVars(vars, execution.theList);
   }
   

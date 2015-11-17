@@ -17,6 +17,7 @@ import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.TypeNames;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
@@ -139,7 +140,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     // of printing "new Foo(x,y.z)" we have to print "x.new Foo(y,z)".
 
     // TODO the last replace is ugly. There should be a method that does it.
-    String declaringClassStr = Reflection.getCompilableName(declaringClass);
+    String declaringClassStr = TypeNames.getCompilableName(declaringClass);
 
     b.append((isNonStaticMember ? inputVars.get(0) + "." : "")
         + "new "
