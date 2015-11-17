@@ -70,7 +70,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /** Version that doesn't include a Method **/
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableMethodCall(method);
+    return new SerializableMethodCall(this);
   }
 
   /**
@@ -368,7 +368,21 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * java.util.ArrayList.add(int,java.lang.Object)
    */
   public String toParseableString() {
-    return Reflection.getSignature(method);
+    return this.getSignature();
+  }
+
+  public String getSignature() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(method.getDeclaringClass().getName() + ".");
+    sb.append(method.getName() + "(");
+    Class<?>[] params = method.getParameterTypes();
+    for (int j = 0; j < params.length; j++) {
+      sb.append(params[j].getName());
+      if (j < (params.length - 1))
+        sb.append(",");
+    }
+    sb.append(")");
+    return sb.toString();
   }
 
   public static Operation parse(String s) {

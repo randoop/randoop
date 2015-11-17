@@ -4,6 +4,7 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import randoop.operation.MethodCall;
 import randoop.util.Reflection;
 
 public class SerializableObserverEqValue implements Serializable {
@@ -13,7 +14,7 @@ public class SerializableObserverEqValue implements Serializable {
   private final Object value;
 
   public SerializableObserverEqValue (Method observer, Object value) {
-    this.observer = Reflection.getSignature(observer);
+    this.observer = (new MethodCall(observer)).getSignature();
     this.value = value;
     // System.out.printf ("Serializing %s %s %s%n", this.observer, var, value);
   }

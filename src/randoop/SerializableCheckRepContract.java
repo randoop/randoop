@@ -4,6 +4,7 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import randoop.operation.MethodCall;
 import randoop.util.Reflection;
 
 public class SerializableCheckRepContract implements Serializable {
@@ -12,7 +13,7 @@ public class SerializableCheckRepContract implements Serializable {
   private final String checkRepMethod;
 
   public SerializableCheckRepContract(Method checkRepMethod) {
-    this.checkRepMethod = Reflection.getSignature(checkRepMethod);
+    this.checkRepMethod = (new MethodCall(checkRepMethod)).getSignature();
   }
 
   private Object readResolve() throws ObjectStreamException {
