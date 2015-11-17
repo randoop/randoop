@@ -200,9 +200,9 @@ public class GenTests extends GenInputsAbstract {
     // and interfaces.
     List<Class<?>> classes = new ArrayList<>(allClasses.size());
     for (Class<?> c : allClasses) {
-      if (Reflection.isAbstract (c)) {
+      if (Modifier.isAbstract (c.getModifiers()) && !c.isEnum()) {
         System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
-      } else if (! visibility.isVisible (c)) {
+      } else if ( !visibility.isVisible (c) ) {
         System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
       } else {
         classes.add(c);
