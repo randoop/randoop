@@ -11,8 +11,8 @@ public class SerializableConstructorCall implements Serializable {
   private static final long serialVersionUID = -4118503748722441553L;
   private final String constructor;
 
-  public SerializableConstructorCall(Constructor<?> constructor) {
-    this.constructor = Reflection.getSignature(constructor);
+  public SerializableConstructorCall(ConstructorCall constructor) {
+    this.constructor = constructor.getSignature();
   }
 
   private Object readResolve() throws ObjectStreamException {

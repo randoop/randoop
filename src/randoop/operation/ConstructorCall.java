@@ -57,7 +57,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   private boolean hashCodeComputed = false;
 
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableConstructorCall(constructor);
+    return new SerializableConstructorCall(this);
   }
 
   /** 
@@ -264,7 +264,22 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    *
    */
   public String toParseableString() {
-    return Reflection.getSignature(constructor);
+    return this.getSignature();
+  }
+
+  //XXX stolen from Constructor.toString - but we don't need modifiers or exceptions
+  // and we need a slightly different format
+  public String getSignature() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(constructor.getName() + ".<init>(");
+    Class<?>[] params = constructor.getParameterTypes();
+    for (int j = 0; j < params.length; j++) {
+      sb.append(params[j].getName());
+      if (j < (params.length - 1))
+        sb.append(",");
+    }
+    sb.append(")");
+    return sb.toString();
   }
 
   public static Operation parse(String s) {
