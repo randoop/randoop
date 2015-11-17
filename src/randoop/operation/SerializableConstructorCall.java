@@ -2,9 +2,6 @@ package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-
-import randoop.util.Reflection;
 
 public class SerializableConstructorCall implements Serializable {
 
@@ -16,7 +13,7 @@ public class SerializableConstructorCall implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException {
-    return ConstructorCall.getRConstructor(Reflection.getConstructorForSignature(constructor));
+    return ConstructorCall.getRConstructor(ConstructorParser.getConstructorForSignature(constructor));
   }
 
 }

@@ -25,7 +25,6 @@ import randoop.sequence.Variable;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
 import randoop.util.PrimitiveTypes;
-import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 
 /**
@@ -386,7 +385,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   public static Operation parse(String s) {
-    return MethodCall.getMethodCall(Reflection.getMethodForSignature(s));
+    return MethodCall.getMethodCall(MethodParser.getMethodForSignature(s));
   }
 
   /**

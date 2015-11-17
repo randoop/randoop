@@ -84,7 +84,7 @@ public class FieldGetterTest {
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
       ConstructorCall cons = new ConstructorCall(
-          Reflection.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
+          ConstructorParser.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
       Statement st1 = new Statement(cons);
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();

@@ -19,7 +19,6 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.TypeNames;
 import randoop.util.ConstructorReflectionCode;
-import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
@@ -283,7 +282,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   public static Operation parse(String s) {
-    return ConstructorCall.getRConstructor(Reflection.getConstructorForSignature(s));
+    return ConstructorCall.getRConstructor(ConstructorParser.getConstructorForSignature(s));
   }
 
   /**

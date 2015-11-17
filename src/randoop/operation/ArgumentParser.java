@@ -1,0 +1,30 @@
+package randoop.operation;
+
+/**
+ * ArgumentParser recognizes method/constructor arguments in a string
+ * and returns the list of argument types as Class<?> objects.
+ * @see MethodParser
+ * @see ConstructorParser
+ * 
+ * @author bjkeller
+ *
+ */
+public class ArgumentParser {
+  public static Class<?>[] recognizeArguments(String argsOneStr) {
+    Class<?>[] argTypes = new Class<?>[0];
+    if (argsOneStr.trim().length() > 0) {
+      String[] argsStrs = argsOneStr.split(",");
+      argTypes = new Class<?>[argsStrs.length];
+      for (int i = 0 ; i < argsStrs.length ; i++) {
+        Class<?> c;
+        try {
+          c = Class.forName(argsStrs[i].trim());
+        } catch (ClassNotFoundException e) {
+          c = null;
+        }
+        argTypes[i] = c;
+      }
+    }
+    return argTypes;
+  }
+}
