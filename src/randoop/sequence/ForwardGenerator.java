@@ -450,9 +450,6 @@ public class ForwardGenerator extends AbstractGenerator {
     for (int i = 0; i < inputTypes.size(); i++) {
       Class<?> t = inputTypes.get(i);
 
-      // TODO Does this ever happen?
-      if (!Reflection.isVisible(t)) return new InputsAndSuccessFlag (false, null, null);
-
       // true if statement st represents an instance method, and we are currently
       // selecting a value to act as the receiver for the method.
       boolean isReceiver = (i == 0 && (operation.isMessage()) && (!operation.isStatic()));
