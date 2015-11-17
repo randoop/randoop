@@ -41,7 +41,7 @@ public class FieldReflectionTest {
     
     @SuppressWarnings("unchecked")
     List<Field> fields = Arrays.asList(c.getFields());
-    List<Operation> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = Reflection.getOperations(classes, null);
     
     //number of statements is twice number of fields plus constructor and getter minus one for each constant
     //in this case, 11
@@ -94,7 +94,7 @@ public class FieldReflectionTest {
         expected.add(f);
       }
     }
-    List<Operation> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = Reflection.getOperations(classes, null);
     
     assertEquals("number of statements", 2*expected.size() - 1 + 2, actual.size());
     
@@ -126,7 +126,7 @@ public class FieldReflectionTest {
     }
     
     ReflectionPredicate filter = new DefaultReflectionPredicate(null, excludeNames);
-    List<Operation> actual = Reflection.getStatements(classes, filter);
+    List<Operation> actual = Reflection.getOperations(classes, filter);
     
     assertEquals("number of statements", 2, actual.size());
     

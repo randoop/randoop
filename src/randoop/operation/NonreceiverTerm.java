@@ -12,7 +12,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.util.PrimitiveTypes;
-import randoop.util.Reflection;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
 

@@ -22,7 +22,7 @@ public class StatementCollectionWeightedTest extends TestCase {
     classes.add(java.util.ArrayList.class);
 
     List<Operation> statements = 
-      Reflection.getStatements(classes, null);
+      Reflection.getOperations(classes, null);
 
     StringBuilder weightedMethods = new StringBuilder();
     weightedMethods.append("java.util.ArrayList.add(java.lang.Object)" + Util.newLine);

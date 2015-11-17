@@ -16,7 +16,6 @@ import randoop.NormalExecution;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.util.Reflection;
 
 
 /**

@@ -45,7 +45,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * criteria for inclusion of reflection objects. 
    * @param omitMethods pattern for methods to omit, if null then no methods omitted.
    * @param visibility 
-   * @see Reflection#getStatements(java.util.Collection, ReflectionPredicate) 
+   * @see Reflection#getOperations(java.util.Collection, ReflectionPredicate) 
    */
   public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
     super();

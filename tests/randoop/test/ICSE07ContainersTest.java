@@ -47,7 +47,7 @@ public class ICSE07ContainersTest extends TestCase {
     System.out.println("ICSE 2006 container: " + name);
     
     List<Operation> statements = 
-      Reflection.getStatements(classList, new DefaultReflectionPredicate(pattern));
+      Reflection.getOperations(classList, new DefaultReflectionPredicate(pattern));
     
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer = new ForwardGenerator(statements,

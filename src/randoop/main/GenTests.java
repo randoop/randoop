@@ -257,7 +257,7 @@ public class GenTests extends GenInputsAbstract {
     }
     
     DefaultReflectionPredicate reflectionFilter = new DefaultReflectionPredicate(omitmethods, omitFields,visibility);
-    List<Operation> model = Reflection.getStatements(classes, reflectionFilter);
+    List<Operation> model = Reflection.getOperations(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).
     ConstructorCall objectConstructor = null;

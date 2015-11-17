@@ -3,8 +3,6 @@ package randoop.operation;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import randoop.util.Reflection;
-
 public class SerializableNonreceiverTerm implements Serializable {
 
   private static final long serialVersionUID = 6934946167409672994L;

@@ -3,8 +3,6 @@ package randoop.operation;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import randoop.util.Reflection;
-
 public class SerializableArrayCreation implements Serializable {
 
   private static final long serialVersionUID = 4091673456327607771L;

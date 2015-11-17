@@ -4,8 +4,6 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
-import randoop.util.Reflection;
-
 public class SerializablePublicField implements Serializable {
 
   private static final long serialVersionUID = 9109946164794213814L;

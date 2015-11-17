@@ -13,7 +13,6 @@ import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.util.Reflection;
 
 /**
  * Immutable.

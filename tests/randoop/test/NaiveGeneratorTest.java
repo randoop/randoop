@@ -18,7 +18,7 @@ public class NaiveGeneratorTest extends TestCase {
     classes.add(ArrayList.class);
     classes.add(Object.class);
     
-    List<Operation> statements = Reflection.getStatements(classes, null);
+    List<Operation> statements = Reflection.getOperations(classes, null);
 
     RandomWalkGenerator gen = new RandomWalkGenerator(statements, Long.MAX_VALUE, 1000000, null, null, null, null);
 

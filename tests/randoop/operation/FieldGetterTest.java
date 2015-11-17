@@ -16,7 +16,6 @@ import randoop.NormalExecution;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.util.Reflection;
 
 /**
  * FieldGetterTest defines unit tests for FieldGetter class.
@@ -85,7 +84,6 @@ public class FieldGetterTest {
       // - sequence where one is declared and initialized by constructed object
       ConstructorCall cons = new ConstructorCall(
           ConstructorParser.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
-      Statement st1 = new Statement(cons);
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seqInit, 0)); 
