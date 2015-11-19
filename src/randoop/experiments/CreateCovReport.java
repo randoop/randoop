@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
+import randoop.main.ClassTypeLoader;
 import randoop.sequence.Sequence;
-import randoop.util.Reflection;
 
 import cov.Branch;
 import cov.Coverage;
@@ -65,7 +65,7 @@ public class CreateCovReport {
     List<Class<?>> covClasses = new ArrayList<Class<?>>();
     File covClassesFile = new File(input_cov_class_list);
     try {
-      covClasses = Reflection.loadClassesFromFile(covClassesFile);
+      covClasses = ClassTypeLoader.loadClassesFromFile(covClassesFile);
     } catch (IOException e) {
       throw new Error(e);
     }

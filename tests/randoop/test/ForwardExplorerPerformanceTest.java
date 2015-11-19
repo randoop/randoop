@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.Globals;
+import randoop.main.ClassTypeLoader;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
 import randoop.reflection.OperationExtractor;
 import randoop.sequence.ForwardGenerator;
-import randoop.util.Reflection;
 import randoop.util.Timer;
 
 import junit.framework.TestCase;
@@ -42,7 +42,7 @@ public class ForwardExplorerPerformanceTest extends TestCase {
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
     List<Operation> model =
-      OperationExtractor.getOperations(Reflection.loadClassesFromStream(classStream, resourcename),null);
+      OperationExtractor.getOperations(ClassTypeLoader.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
