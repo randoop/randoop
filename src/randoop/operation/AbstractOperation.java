@@ -33,5 +33,10 @@ public abstract class AbstractOperation implements Operation {
   public Object getValue() {
     throw new IllegalArgumentException("No value for this kind of operation.");
   }
+  
+  @Override
+  public int compareTo(Operation op) {
+    return (this.toParseableString()).compareTo(op.toParseableString());
+  }
 
 }

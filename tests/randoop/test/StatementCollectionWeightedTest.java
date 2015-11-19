@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.operation.Operation;
-import randoop.util.Reflection;
+import randoop.reflection.OperationExtractor;
 import randoop.util.Util;
 
 import junit.framework.TestCase;
@@ -22,8 +22,8 @@ public class StatementCollectionWeightedTest extends TestCase {
     classes.add(java.util.ArrayList.class);
 
     List<Operation> statements = 
-      Reflection.getOperations(classes, null);
-
+      OperationExtractor.getOperations(classes, null);
+    assertFalse("model should not be empty", statements.isEmpty());
     StringBuilder weightedMethods = new StringBuilder();
     weightedMethods.append("java.util.ArrayList.add(java.lang.Object)" + Util.newLine);
     weightedMethods.append("10");

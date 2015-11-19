@@ -6,7 +6,7 @@ import java.util.List;
 
 import randoop.experiments.RandomWalkGenerator;
 import randoop.operation.Operation;
-import randoop.util.Reflection;
+import randoop.reflection.OperationExtractor;
 
 import junit.framework.TestCase;
 
@@ -18,7 +18,7 @@ public class NaiveGeneratorTest extends TestCase {
     classes.add(ArrayList.class);
     classes.add(Object.class);
     
-    List<Operation> statements = Reflection.getOperations(classes, null);
+    List<Operation> statements = OperationExtractor.getOperations(classes, null);
 
     RandomWalkGenerator gen = new RandomWalkGenerator(statements, Long.MAX_VALUE, 1000000, null, null, null, null);
 
