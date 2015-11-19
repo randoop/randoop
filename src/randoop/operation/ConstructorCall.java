@@ -37,16 +37,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   private final Constructor<?> constructor;
 
-  /**
-   * A list with as many sublists as the formal parameters of this constructor.
-   * The <em>i</em>th set indicates all the possible argument types for the
-   * <em>i</im>th formal parameter, for overloads of this constructor with the
-   * same number of formal parameters.  At a call site, if the declared
-   * type of an actual argument is not uniquely determined, then the actual
-   * should be casted at the call site.
-   */ 
-  public List<Set<Class<?>>> overloads;
-
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
   // getter method.
@@ -87,26 +77,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    */
   public static ConstructorCall getRConstructor(Constructor<?> constructor) {
     return new ConstructorCall(constructor);
-  }
-
-  /** 
-   * Reset/clear the overloads field. 
-   */
-  public void resetOverloads() {
-    overloads = new ArrayList<Set<Class<?>>>();
-    // For Java 8: for (int i=0; i<constructor.getParameterCount(); i++) {
-    for (int i=0; i<constructor.getParameterTypes().length; i++) {
-      overloads.add(new HashSet<Class<?>>());
-    }
-    addToOverloads(constructor);
-  }
-
-  public void addToOverloads(Constructor<?> c) {
-    Class<?>[] ptypes = c.getParameterTypes();
-    assert ptypes.length == overloads.size();
-    for (int i=0; i<overloads.size(); i++) {
-      overloads.get(i).add(ptypes[i]);
-    }
   }
 
   /**

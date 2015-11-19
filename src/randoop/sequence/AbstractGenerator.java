@@ -141,8 +141,6 @@ public abstract class AbstractGenerator {
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> testfilters) {
     assert operations != null;
 
-    Reflection.setOverloads(operations);
-
     this.maxTimeMillis = timeMillis;
 
     this.maxSequences = maxSequences;
