@@ -4,6 +4,8 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
+import randoop.types.TypeNames;
+
 public class SerializablePublicField implements Serializable {
 
   private static final long serialVersionUID = 9109946164794213814L;
@@ -13,16 +15,11 @@ public class SerializablePublicField implements Serializable {
     this.fieldRep = field.getDeclaringClass().getName() + "." + field.getName();
   }
   
-  private Object readResolve() throws ObjectStreamException {
+  private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
     int pos = fieldRep.lastIndexOf('.');
     String className = fieldRep.substring(0,pos);
     String fieldName = fieldRep.substring(pos + 1);
-    Class<?> c;
-    try {
-      c = Class.forName(className);
-    } catch (ClassNotFoundException e) {
-      c = null;
-    }
+    Class<?> c = TypeNames.recognizeType(className);
     Field field = PublicFieldParser.fieldFor(c, fieldName);
     if (field != null) {
       return PublicFieldParser.recognize(field);

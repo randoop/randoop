@@ -3,6 +3,8 @@ package randoop.operation;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
+import randoop.types.TypeNames;
+
 public class SerializableNonreceiverTerm implements Serializable {
 
   private static final long serialVersionUID = 6934946167409672994L;
@@ -15,13 +17,8 @@ public class SerializableNonreceiverTerm implements Serializable {
     this.value = value;
   }
 
-  private Object readResolve() throws ObjectStreamException {
-    Class<?> c;
-    try {
-      c = Class.forName(type);
-    } catch (ClassNotFoundException e) {
-      c = null;
-    }
+  private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
+    Class<?> c = TypeNames.recognizeType(type);
     return new NonreceiverTerm(c, value);
   }
 }

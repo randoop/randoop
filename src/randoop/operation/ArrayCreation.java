@@ -13,6 +13,7 @@ import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.TypeNames;
 
 /**
  * Immutable.
@@ -106,7 +107,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
 
   @Override
   public String toString() {
-    return "array_of_" + this.elementType.getSimpleName() + "_of_size_" + this.length;
+    return toParseableString();
   }
 
   public String toStringShort() {
@@ -183,6 +184,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     return true;
   }
 
+  @Override
   public String toParseableString() {
     return elementType.getName() + "[" + Integer.toString(length) + "]";
   }
@@ -206,7 +208,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     String elementTypeStr = str.substring(0, openBr);
     String lengthStr = str.substring(openBr + 1, closeBr);
     try {
-    Class<?> elementType = Class.forName(elementTypeStr);
+    Class<?> elementType = TypeNames.recognizeType(elementTypeStr);
     int length = Integer.parseInt(lengthStr);
     return new ArrayCreation(elementType, length);
     } catch (ClassNotFoundException e) {
@@ -218,4 +220,5 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   public Class<?> getDeclaringClass() {
     return getOutputType();
   }
+  
 }

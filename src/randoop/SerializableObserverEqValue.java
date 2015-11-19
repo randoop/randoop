@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 
 import randoop.operation.MethodCall;
 import randoop.operation.MethodParser;
-import randoop.util.Reflection;
+import randoop.operation.OperationParseException;
 
 public class SerializableObserverEqValue implements Serializable {
 
@@ -20,7 +20,7 @@ public class SerializableObserverEqValue implements Serializable {
     // System.out.printf ("Serializing %s %s %s%n", this.observer, var, value);
   }
 
-  private Object readResolve() throws ObjectStreamException {
+  private Object readResolve() throws ObjectStreamException, OperationParseException {
     Method  m = MethodParser.getMethodForSignature(observer);
     return ObserverEqValue.getObserverEqValue(m, value);
   }

@@ -34,6 +34,7 @@ import randoop.sequence.SequenceCollection;
 import randoop.sequence.SequenceParseException;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.TypeNames;
 import randoop.util.Files;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
@@ -182,7 +183,7 @@ public class GenBranchDir {
     Set<CoverageAtom> allBranches = new LinkedHashSet<CoverageAtom>();
     for (String className : covClassNames) {
       try {
-      Class<?> cls = Class.forName(className);
+      Class<?> cls = TypeNames.recognizeType(className);
       covClasses.add(cls);
       allBranches.addAll(Coverage.getBranches(cls));
       } catch (ClassNotFoundException e) {

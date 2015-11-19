@@ -11,6 +11,7 @@ import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
+import randoop.types.TypeNames;
 import randoop.util.PrimitiveTypes;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
@@ -184,6 +185,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
     return new NonreceiverTerm(c, null);
   }
 
+  @Override
   public String toParseableString() {
 
     String valStr = null;
@@ -274,14 +276,14 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
     
     Class<?> type;
     try {
-      type = Class.forName(typeString);
-    } catch (ClassNotFoundException e) {
+      type = TypeNames.recognizeType(typeString);
+    } catch (ClassNotFoundException e1) {
       String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
-        + "<type>:<value>" + " but the <type> given (\"" + typeString + "\") was unrecognized.";
-      throw new OperationParseException(msg);
+          + "<type>:<value>" + " but the <type> given (\"" + typeString + "\") was unrecognized.";
+        throw new OperationParseException(msg);
     }
+    
     Object value = null;
-
     if (type.equals(char.class)) {
       try {
         value = (char)Integer.parseInt(valString, 16);

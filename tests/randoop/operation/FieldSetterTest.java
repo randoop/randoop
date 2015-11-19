@@ -118,6 +118,8 @@ public class FieldSetterTest {
       fail("test failed because object instantiation failed.");
     } catch (IllegalAccessException e) {
       fail("test failed because of unexpected access exception.");
+    } catch (OperationParseException e) {
+      fail("test failed because ClassWithFields constructor not found");
     }
   }
   

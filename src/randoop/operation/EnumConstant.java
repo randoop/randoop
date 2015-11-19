@@ -160,7 +160,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     
     Class<?> type;
     try {
-      type = Class.forName(typeName);
+      type = TypeNames.recognizeType(typeName);
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
       throw new OperationParseException(msg);
@@ -213,4 +213,5 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   public Class<?> getDeclaringClass() {
     return value.getDeclaringClass();
   }
+  
 }

@@ -12,7 +12,7 @@ public class SerializableConstructorCall implements Serializable {
     this.constructor = constructor.getSignature();
   }
 
-  private Object readResolve() throws ObjectStreamException {
+  private Object readResolve() throws ObjectStreamException, OperationParseException {
     return ConstructorCall.getRConstructor(ConstructorParser.getConstructorForSignature(constructor));
   }
 

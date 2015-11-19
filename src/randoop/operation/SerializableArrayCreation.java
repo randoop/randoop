@@ -3,6 +3,8 @@ package randoop.operation;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
+import randoop.types.TypeNames;
+
 public class SerializableArrayCreation implements Serializable {
 
   private static final long serialVersionUID = 4091673456327607771L;
@@ -15,13 +17,8 @@ public class SerializableArrayCreation implements Serializable {
     this.length = length;
   }
 
-  private Object readResolve() throws ObjectStreamException {
-    Class<?> c;
-    try {
-      c = Class.forName(elementType);
-    } catch (ClassNotFoundException e) {
-      c = null;
-    }
+  private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
+    Class<?> c = TypeNames.recognizeType(elementType);
     return new ArrayCreation(c, length);
   }
 

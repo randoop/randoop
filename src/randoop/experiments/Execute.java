@@ -12,6 +12,7 @@ import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.types.TypeNames;
 import randoop.util.Files;
 
 import cov.Branch;
@@ -32,7 +33,7 @@ public class Execute {
     }
     for (String className : covClassNames) {
       try {
-        Class<?> cls = Class.forName(className);
+        Class<?> cls = TypeNames.recognizeType(className);
         System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
         covClasses.add(cls);
       } catch (ClassNotFoundException e1) {

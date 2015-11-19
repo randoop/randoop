@@ -124,6 +124,8 @@ public class FieldGetterTest {
     } catch (IllegalAccessException e) {
       fail("test failed because of unexpected access exception when creating instance");
       e.printStackTrace();
+    } catch (OperationParseException e) {
+      fail("test failed because ClassWithFields constructor not found");
     }
 
   }

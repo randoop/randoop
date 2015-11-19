@@ -3,6 +3,8 @@ package randoop.operation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import randoop.types.TypeNames;
+
 /**
  * PublicFieldParser defines a parser to recognize a descriptor of a field in a string,
  * and return an object representing the sort of field it is in the corresponding class.
@@ -75,7 +77,7 @@ public class PublicFieldParser {
 
     Class<?> type;
     try {
-      type = Class.forName(typeName);
+      type = TypeNames.recognizeType(typeName);
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The type given \"" + typeName +"\" was not recognized.";
       throw new OperationParseException(msg);
@@ -89,7 +91,7 @@ public class PublicFieldParser {
 
     Class<?> classType;
     try {
-      classType = Class.forName(className);
+      classType = TypeNames.recognizeType(className);
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The class name \"" + className + "\" of the field name \"" +
           qualifiedFieldName + "\" was not recognized as a class.";

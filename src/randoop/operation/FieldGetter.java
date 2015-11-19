@@ -172,4 +172,5 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   public Class<?> getDeclaringClass() {
     return field.getDeclaringClass();
   }
+  
 }

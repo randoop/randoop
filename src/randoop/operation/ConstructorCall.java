@@ -262,6 +262,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * java.util.ArrayList.&lt;init&gt;(java.util.Collection)
    *
    */
+  @Override
   public String toParseableString() {
     return this.getSignature();
   }
@@ -281,7 +282,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     return sb.toString();
   }
 
-  public static Operation parse(String s) {
+  public static Operation parse(String s) throws OperationParseException {
     return ConstructorCall.getRConstructor(ConstructorParser.getConstructorForSignature(s));
   }
 

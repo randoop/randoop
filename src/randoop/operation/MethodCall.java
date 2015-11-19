@@ -366,6 +366,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * java.util.ArrayList.get(int)
    * java.util.ArrayList.add(int,java.lang.Object)
    */
+  @Override
   public String toParseableString() {
     return this.getSignature();
   }
@@ -384,7 +385,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
     return sb.toString();
   }
 
-  public static Operation parse(String s) {
+  public static Operation parse(String s) throws OperationParseException {
     return MethodCall.getMethodCall(MethodParser.getMethodForSignature(s));
   }
 

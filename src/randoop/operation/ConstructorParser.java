@@ -11,7 +11,7 @@ import java.lang.reflect.Constructor;
  */
 public class ConstructorParser {
 
-  public static Constructor<?> getConstructorForSignature(String signature) {
+  public static Constructor<?> getConstructorForSignature(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }

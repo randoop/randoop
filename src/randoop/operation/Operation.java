@@ -22,7 +22,7 @@ import randoop.sequence.Variable;
  *  <li> Update method StatementKinds.getId(StatementKing) to handle statement kinds of type C.
  *  </ul> 
  */
-public interface Operation {
+public interface Operation extends Comparable<Operation> {
 
   /**
    * getInputTypes returns the ordered list of input types for this operation.

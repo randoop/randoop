@@ -10,6 +10,7 @@ import randoop.main.GenInputsAbstract;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.TypeNames;
 import randoop.util.Files;
 import randoop.util.Log;
 import randoop.util.PrimitiveTypes;
@@ -100,7 +101,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         methodname = methodname.replaceFirst ("[()]*$", "");
         Class<?> obs_class = null;
         try {
-          obs_class = Class.forName (classname);
+          obs_class = TypeNames.recognizeType(classname);
         } catch (Exception e) {
           throw new RuntimeException ("Can't load observer class " + classname,
                                       e);

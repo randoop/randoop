@@ -12,7 +12,7 @@ public class SerializableMethodCall implements Serializable {
     this.method = method.getSignature();
   }
 
-  private Object readResolve() throws ObjectStreamException {
+  private Object readResolve() throws ObjectStreamException, OperationParseException {
     return MethodCall.getMethodCall(MethodParser.getMethodForSignature(method));
   }
 

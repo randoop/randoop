@@ -1,5 +1,7 @@
 package randoop.types;
 
+import randoop.util.PrimitiveTypes;
+
 import plume.UtilMDE;
 
 public class TypeNames {
@@ -21,5 +23,13 @@ public class TypeNames {
     retval = retval.replace('$', '.');
 
     return retval;
+  }
+  
+  public static Class<?> recognizeType(String typeName) throws ClassNotFoundException {
+    Class<?> c = PrimitiveTypes.getClassForName(typeName);
+    if (c == null) {
+        c = Class.forName(typeName);
+    }
+    return c;
   }
 }

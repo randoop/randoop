@@ -324,4 +324,8 @@ public final class PrimitiveTypes {
     return retval;
   }
 
+  public static Class<?> getClassForName(String typeName) {
+    return typeNameToPrimitiveOrString.get(typeName);
+  }
+
 }

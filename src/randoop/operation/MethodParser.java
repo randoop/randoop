@@ -2,6 +2,8 @@ package randoop.operation;
 
 import java.lang.reflect.Method;
 
+import randoop.types.TypeNames;
+
 /**
  * MethodParser provides methods to recognize and extract methods from
  * string representations of their signature.
@@ -11,7 +13,7 @@ import java.lang.reflect.Method;
  */
 public class MethodParser {
 
-  public static Method getMethodForSignature(String signature) {
+  public static Method getMethodForSignature(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -35,7 +37,7 @@ public class MethodParser {
     
     Class<?> cls;
     try {
-      cls = Class.forName(clsName);
+      cls = TypeNames.recognizeType(clsName);
       return cls.getDeclaredMethod(methodName, argTypes);
     } catch (ClassNotFoundException e1) {
       throw new Error(e1);
