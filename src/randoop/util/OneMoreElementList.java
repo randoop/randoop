@@ -78,5 +78,9 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
       throw new NoSuchElementException("end of OneMoreElementList reached");
     }
     
+    @Override
+    public void remove() {
+      //does nothing
+    }
   }
 }

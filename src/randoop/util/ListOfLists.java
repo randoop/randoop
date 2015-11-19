@@ -132,5 +132,10 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
       throw new NoSuchElementException("end of ListOfLists reached");
     }
     
+    @Override
+    public void remove() {
+      //does nothing
+    }
+    
   }
 }
