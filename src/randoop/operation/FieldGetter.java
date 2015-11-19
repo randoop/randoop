@@ -8,6 +8,7 @@ import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 
 /**
@@ -173,4 +174,13 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
     return field.getDeclaringClass();
   }
   
+  /**
+   * satisfies determines whether enclosed {@link Field} satisfies the given predicate.
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the field used in this getter satisfies predicate.canUse.
+   */
+  @Override
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return field.satisfies(predicate);
+  }
 }

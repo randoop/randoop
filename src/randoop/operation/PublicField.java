@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import randoop.BugInRandoopException;
+import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 
 /**
@@ -166,6 +167,17 @@ public abstract class PublicField implements Serializable {
 
   public boolean isStatic() {
     return false;
+  }
+
+  /**
+   * satisfies checks whether the enclosed {@link Field} object satisfies
+   * the given predicate.
+   * 
+   * @param predicate the {@link ReflectionPredicate} to check this.field against.
+   * @return true if this.field satisfies predicate.canUse(field).
+   */
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return predicate.canUse(field);
   }
   
 }

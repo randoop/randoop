@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
+import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 
 /**
@@ -113,6 +114,8 @@ public interface Operation extends Comparable<Operation> {
    * @throws IllegalArgumentException if no meaningful definition of "value" for type.
    */
   Object getValue();
+
+  boolean satisfies(ReflectionPredicate reflectionPredicate);
 
 
 }

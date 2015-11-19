@@ -53,6 +53,8 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.MethodCall;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
+import randoop.operation.OperationParseException;
+import randoop.operation.OperationParser;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.NotPrivateVisibilityPredicate;
 import randoop.reflection.OperationExtractor;
@@ -239,7 +241,7 @@ public class GenTests extends GenInputsAbstract {
     if (coverage_instrumented_classes != null) {
       File covClassesFile = new File(coverage_instrumented_classes);
       try {
-        covClasses = Reflection.loadClassesFromFile(covClassesFile);
+        covClasses = ClassTypeLoader.loadClassesFromFile(covClassesFile);
       } catch (IOException e) {
         throw new Error(e);
       }
@@ -271,29 +273,23 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (methodlist != null) {
-      Set<Operation> statements = new LinkedHashSet<Operation>();
-      try {
-        for (Member m : Reflection.loadMethodsAndCtorsFromFile(new File(methodlist))) {
-          if (m instanceof Method) {
-              if (reflectionPredicate.canUse((Method)m)) {
-                statements.add(MethodCall.getMethodCall((Method)m));
-              }
-          } else {
-            assert m instanceof Constructor<?>;
-            if (reflectionPredicate.canUse((Constructor<?>)m)) {
-              statements.add(ConstructorCall.getRConstructor((Constructor<?>)m));
-                  }
-            statements.add(ConstructorCall.getRConstructor((Constructor<?>)m));
+        
+      try (EntryReader rdr = new EntryReader(new File(methodlist), "^#.*", null)) {
+        
+        for (String line : rdr) {
+          Operation op = OperationParser.parse(line);
+          if (op.satisfies(reflectionPredicate) && !model.contains(op)) { 
+            model.add(op);
           }
         }
+        
       } catch (IOException e) {
         System.out.println("Error while reading method list file " + methodlist);
         System.exit(1);
+      } catch (OperationParseException e) {
+        throw new Error(e);
       }
-      for (Operation st : statements) {
-        if (!model.contains(st))
-          model.add(st);
-      }
+      
     }
 
     // Don't remove observers; they create useful values.

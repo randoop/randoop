@@ -7,14 +7,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
+import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.TypeNames;
@@ -275,4 +274,13 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     return true;
   }
 
+  /**
+   * satisfies determines whether enclosed {@link Constructor<?>} satisfies the given predicate.
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the constructor in this object satisfies the canUse(Constructor) of predicate.
+   */
+  @Override
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return predicate.canUse(constructor);
+  }
 }

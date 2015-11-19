@@ -12,14 +12,13 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
+import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.util.CollectionsExt;
@@ -396,4 +395,14 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
     return true;
   }
 
+  /**
+   * satisfies determines whether enclosed {@link Method} satisfies the given predicate.
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the method in this object satisfies the canUse(Method) of predicate.
+   */
+  @Override
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return predicate.canUse(method);
+  }
+  
 }
