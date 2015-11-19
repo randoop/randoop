@@ -68,12 +68,12 @@ public class ForwardGenerator extends AbstractGenerator {
     this.objectCache = newCache;
   }
 
-  public ForwardGenerator(List<Operation> statements,
+  public ForwardGenerator(List<Operation> operations,
       long timeMillis, int maxSequences,
       ComponentManager componentManager,
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> fs) {
 
-    super(statements, timeMillis, maxSequences, componentManager, stopper, listenerManager, fs);
+    super(operations, timeMillis, maxSequences, componentManager, stopper, listenerManager, fs);
 
     this.allSequences = new LinkedHashSet<Sequence>();
 

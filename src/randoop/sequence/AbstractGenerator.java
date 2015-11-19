@@ -128,7 +128,7 @@ public abstract class AbstractGenerator {
   /**
    * Constructs a generator with the given parameters.
    * 
-   * @param statements Statements (e.g. methods and constructors) used to create sequences. Cannot be null.
+   * @param operations Statements (e.g. methods and constructors) used to create sequences. Cannot be null.
    * @param timeMillis maximum time to spend in generation. Must be non-negative.
    * @param maxSequences maximum number of sequences to generate. Must be non-negative.
    * @param componentManager component manager to use to store sequences during component-based generation.
@@ -137,17 +137,17 @@ public abstract class AbstractGenerator {
    * @param listenerManager Manager that stores and calls any listeners to use during generation. Can be null.
    * @param testfilters List of filters to determine which sequences to output. Can be null or empty.
    */
-  public AbstractGenerator(List<Operation> statements, long timeMillis, int maxSequences, ComponentManager componentManager,
+  public AbstractGenerator(List<Operation> operations, long timeMillis, int maxSequences, ComponentManager componentManager,
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> testfilters) {
-    assert statements != null;
+    assert operations != null;
 
-    Reflection.setOverloads(statements);
+    Reflection.setOverloads(operations);
 
     this.maxTimeMillis = timeMillis;
 
     this.maxSequences = maxSequences;
 
-    this.operations = statements;
+    this.operations = operations;
 
     this.executionVisitor = new MultiVisitor();
 
