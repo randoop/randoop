@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,6 +24,9 @@ import randoop.operation.StaticFinalField;
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link Operation}
  * objects through its visit methods as called by {@link ReflectionManager#apply(Class)}.
  * 
+ * @see ReflectionManager
+ * @see ClassVisitor
+ * 
  * @author bjkeller
  *
  */
@@ -32,12 +34,18 @@ public class OperationExtractor implements ClassVisitor {
 
   private Set<Operation> operations;
  
+  /**
+   * OperationExtractor() creates a visitor object that collects Operation objects corresponding
+   * to class members visited by {@link ReflectionManager}. Stores {@link Operation} objects in
+   * ordered set to ensure strict order once flattened to list --- needed to guarantee determinism
+   * between Randoop runs with same classes and parameters. 
+   */
   public OperationExtractor() {
     this.operations = new TreeSet<>();
   }
   
-  public Set<Operation> getOperations() {
-    return operations;
+  public List<Operation> getOperations() {
+    return new ArrayList<Operation>(operations);
   }
   
   /**
@@ -56,7 +64,7 @@ public class OperationExtractor implements ClassVisitor {
     for (Class<?> c : classListing) {
       mgr.apply(c);
     }
-    return new ArrayList<Operation>(op.getOperations());
+    return op.getOperations();
   }
 
   /**

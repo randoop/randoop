@@ -20,7 +20,6 @@ import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
-import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
 

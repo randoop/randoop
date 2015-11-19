@@ -69,9 +69,9 @@ public class ReflectionManager {
 
       if (Log.isLoggingOn()) Log.logLine("Applying visitors to class " + c.getName());
 
-      visitBefore(c);
+      visitBefore(c); //perform any previsit steps
       
-      if (c.isEnum()) {
+      if (c.isEnum()) { //treat enum classes differently
         applyEnum(c);
       } else {
 
