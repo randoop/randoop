@@ -55,6 +55,7 @@ import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.NotPrivateVisibilityPredicate;
+import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.runtime.ClosingStream;
@@ -256,8 +257,8 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     
-    DefaultReflectionPredicate reflectionFilter = new DefaultReflectionPredicate(omitmethods, omitFields,visibility);
-    List<Operation> model = Reflection.getOperations(classes, reflectionFilter);
+    DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields,visibility);
+    List<Operation> model = OperationExtractor.getOperations(classes, reflectionPredicate);
 
     // Always add Object constructor (it's often useful).
     ConstructorCall objectConstructor = null;
@@ -274,12 +275,12 @@ public class GenTests extends GenInputsAbstract {
       try {
         for (Member m : Reflection.loadMethodsAndCtorsFromFile(new File(methodlist))) {
           if (m instanceof Method) {
-              if (reflectionFilter.canUse((Method)m)) {
+              if (reflectionPredicate.canUse((Method)m)) {
                 statements.add(MethodCall.getMethodCall((Method)m));
               }
           } else {
             assert m instanceof Constructor<?>;
-            if (reflectionFilter.canUse((Constructor<?>)m)) {
+            if (reflectionPredicate.canUse((Constructor<?>)m)) {
               statements.add(ConstructorCall.getRConstructor((Constructor<?>)m));
                   }
             statements.add(ConstructorCall.getRConstructor((Constructor<?>)m));
