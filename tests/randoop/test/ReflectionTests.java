@@ -13,7 +13,7 @@ import java.util.Set;
 
 import randoop.Globals;
 import randoop.main.ClassTypeLoader;
-import randoop.operation.MethodCall;
+import randoop.operation.MethodSignatures;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.util.Reflection;
@@ -113,10 +113,10 @@ public class ReflectionTests extends TestCase{
 
   public void testSignature1() throws Exception {
     Method bhHasModeElements = Class.forName("randoop.test.bh.Body$1Enumerate").getMethod("hasMoreElements", new Class[0]);
-    assertEquals("randoop.test.bh.Body$1Enumerate.hasMoreElements()", (new MethodCall(bhHasModeElements)).getSignature());
+    assertEquals("randoop.test.bh.Body$1Enumerate.hasMoreElements()", MethodSignatures.getSignature(bhHasModeElements));
 
     Method stringLength = String.class.getMethod("length", new Class[0]);
-    assertEquals("java.lang.String.length()", (new MethodCall(stringLength)).getSignature());
+    assertEquals("java.lang.String.length()", MethodSignatures.getSignature(stringLength));
 
   }
 

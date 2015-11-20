@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import randoop.operation.MethodCall;
-import randoop.operation.MethodParser;
+import randoop.operation.MethodSignatures;
 import randoop.operation.OperationParseException;
 
 public class SerializableCheckRepContract implements Serializable {
@@ -14,11 +14,11 @@ public class SerializableCheckRepContract implements Serializable {
   private final String checkRepMethod;
 
   public SerializableCheckRepContract(Method checkRepMethod) {
-    this.checkRepMethod = (new MethodCall(checkRepMethod)).getSignature();
+    this.checkRepMethod = MethodSignatures.getSignature(checkRepMethod);
   }
 
   private Object readResolve() throws ObjectStreamException, OperationParseException {
-    Method m = MethodParser.getMethodForSignature(checkRepMethod);
+    Method m = MethodSignatures.getMethodForSignature(checkRepMethod);
     return new CheckRepContract(m);
   }
 }

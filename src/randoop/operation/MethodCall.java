@@ -58,7 +58,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /** Version that doesn't include a Method **/
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableMethodCall(this);
+    return new SerializableMethodCall(this.method);
   }
 
   /**
@@ -339,26 +339,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    */
   @Override
   public String toParseableString() {
-    return this.getSignature();
-  }
-
-  /**
-   * getSignature generates a string representation of the signature of the method.
-   * 
-   * @return string representing the method signature.
-   */
-  public String getSignature() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(method.getDeclaringClass().getName() + ".");
-    sb.append(method.getName() + "(");
-    Class<?>[] params = method.getParameterTypes();
-    for (int j = 0; j < params.length; j++) {
-      sb.append(params[j].getName());
-      if (j < (params.length - 1))
-        sb.append(",");
-    }
-    sb.append(")");
-    return sb.toString();
+    return MethodSignatures.getSignature(this.method);
   }
 
   /**
@@ -371,7 +352,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * @throws OperationParseException if s does not match expected descriptor.
    */
   public static Operation parse(String s) throws OperationParseException {
-    return MethodCall.getMethodCall(MethodParser.getMethodForSignature(s));
+    return MethodCall.getMethodCall(MethodSignatures.getMethodForSignature(s));
   }
 
   /**

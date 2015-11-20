@@ -5,14 +5,19 @@ import java.lang.reflect.Method;
 import randoop.types.TypeNames;
 
 /**
- * MethodParser provides methods to recognize and extract methods from
- * string representations of their signature.
- * 
- * @author bjkeller
- *
+ * MethodSignatures provides static methods to write as well as recognize and extract methods 
+ * from string representations of their signature.
  */
-public class MethodParser {
+public class MethodSignatures {
 
+  /**
+   * getMethodForSignature parses a method signature as produced by getSignature
+   * and returns the corresponding reflective {@link Method} object. 
+   * 
+   * @param signature a string representing a method signature.
+   * @return reflective {@link Method} object corresponding to signature.
+   * @throws OperationParseException
+   */
   public static Method getMethodForSignature(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
@@ -48,4 +53,22 @@ public class MethodParser {
     }
   }
 
+  /**
+   * getSignature generates a string representation of the signature of the method.
+   * 
+   * @return string representing the method signature.
+   */
+  public static String getSignature(Method method) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(method.getDeclaringClass().getName() + ".");
+    sb.append(method.getName() + "(");
+    Class<?>[] params = method.getParameterTypes();
+    for (int j = 0; j < params.length; j++) {
+      sb.append(params[j].getName());
+      if (j < (params.length - 1))
+        sb.append(",");
+    }
+    sb.append(")");
+    return sb.toString();
+  }
 }

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import randoop.operation.MethodCall;
-import randoop.operation.MethodParser;
+import randoop.operation.MethodSignatures;
 import randoop.operation.OperationParseException;
 
 public class SerializableObserverEqValue implements Serializable {
@@ -15,13 +15,13 @@ public class SerializableObserverEqValue implements Serializable {
   private final Object value;
 
   public SerializableObserverEqValue (Method observer, Object value) {
-    this.observer = (new MethodCall(observer)).getSignature();
+    this.observer = MethodSignatures.getSignature(observer);
     this.value = value;
     // System.out.printf ("Serializing %s %s %s%n", this.observer, var, value);
   }
 
   private Object readResolve() throws ObjectStreamException, OperationParseException {
-    Method  m = MethodParser.getMethodForSignature(observer);
+    Method  m = MethodSignatures.getMethodForSignature(observer);
     return ObserverEqValue.getObserverEqValue(m, value);
   }
 
