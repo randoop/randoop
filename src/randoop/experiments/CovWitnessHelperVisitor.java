@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import plume.Triple;
-import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
-import randoop.Sequence;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
 
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
+import plume.Triple;
 
 /**
  * This class is only used by the branch-directed generation research project.

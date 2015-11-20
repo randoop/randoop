@@ -13,14 +13,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import randoop.Sequence;
-import randoop.util.Reflection;
-import plume.Option;
-import plume.Options;
-import plume.Options.ArgException;
+import randoop.main.ClassTypeLoader;
+import randoop.sequence.Sequence;
+
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
 
 /**
  * Creates a textual report of the coverage achieved for a collections
@@ -64,7 +65,7 @@ public class CreateCovReport {
     List<Class<?>> covClasses = new ArrayList<Class<?>>();
     File covClassesFile = new File(input_cov_class_list);
     try {
-      covClasses = Reflection.loadClassesFromFile(covClassesFile);
+      covClasses = ClassTypeLoader.loadClassesFromFile(covClassesFile);
     } catch (IOException e) {
       throw new Error(e);
     }

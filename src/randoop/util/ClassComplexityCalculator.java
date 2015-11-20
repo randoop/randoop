@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import randoop.Globals;
+import randoop.types.TypeNames;
 
 
 /**
@@ -125,13 +126,13 @@ return result;
     Set<Class<?>> classes= new LinkedHashSet<Class<?>>();
     args= args[0].split(Globals.lineSep);
     int classCount= 0;
-    for (String className : args) {
-      String classNa = className.substring(0, className.length() - ".class".length());
-      System.out.println("loading " +classNa + " " + (classCount++) + " of " + args.length);
+    for (String arg : args) {
+      String className = arg.substring(0, arg.length() - ".class".length());
+      System.out.println("loading " +className + " " + (classCount++) + " of " + args.length);
       try {
-        classes.add(Class.forName(classNa));
+        classes.add(TypeNames.recognizeType(className));
       } catch (NoClassDefFoundError e) {
-        System.out.println("Not found:" + classNa);
+        System.out.println("Not found:" + className);
         // keep going
       }
     }

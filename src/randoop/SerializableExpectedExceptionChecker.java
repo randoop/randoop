@@ -3,8 +3,14 @@ package randoop;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
+/**
+ * Serialized form of {@link ExpectedExceptionChecker} allowing tests to
+ * be serialized.
+ * 
+ * Also see <code>ExpectedExceptionChecker.writeReplace</code>.
+ */
 public class SerializableExpectedExceptionChecker implements Serializable {
 
   private static final long serialVersionUID = 20100429; 
@@ -17,9 +23,9 @@ public class SerializableExpectedExceptionChecker implements Serializable {
     this.statementIdx = statementIdx;
   }
 
-  private Object readResolve() throws ObjectStreamException {
-    @SuppressWarnings("unchecked")
-    Class<? extends Throwable> c = (Class<? extends Throwable>) Reflection.classForName(exceptionClass);
+  @SuppressWarnings("unchecked")
+  private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
+    Class<? extends Throwable> c = (Class<? extends Throwable>) TypeNames.recognizeType(exceptionClass);
     return new ExpectedExceptionCheck (c, statementIdx);
   }
 

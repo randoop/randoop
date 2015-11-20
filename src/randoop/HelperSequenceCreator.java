@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
+import randoop.operation.ArrayCreation;
+import randoop.operation.NonreceiverTerm;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
-import randoop.util.SimpleList;
 import randoop.util.Reflection.Match;
+import randoop.util.SimpleList;
 
 
 public class HelperSequenceCreator {
@@ -37,7 +41,7 @@ public class HelperSequenceCreator {
         if (GenInputsAbstract.forbid_null) {
           // No sequences that produce appropriate component values found, and null forbidden.
           // Return the empty array.
-          ArrayDeclaration decl = new ArrayDeclaration(cls.getComponentType(), 0);
+          ArrayCreation decl = new ArrayCreation(cls.getComponentType(), 0);
           s = new Sequence();
           s = s.extend(decl);
         } else {
@@ -45,16 +49,16 @@ public class HelperSequenceCreator {
           // TODO: We should also randomly return the empty array--it's a perfectly good case
           //       even if null is allowed.
           // Return the array [ null ].
-          ArrayDeclaration decl = new ArrayDeclaration(cls.getComponentType(), 1);
+          ArrayCreation decl = new ArrayCreation(cls.getComponentType(), 1);
           s = new Sequence();
-          s = s.extend(PrimitiveOrStringOrNullDecl.nullOrZeroDecl(cls.getComponentType()));
+          s = s.extend(NonreceiverTerm.createCanonicalTerm(cls.getComponentType()));
           List<Variable> ins = new ArrayList<Variable>();
           ins.add(s.getVariable(0));
           s = s.extend(decl, ins);
         }
       } else {
         // Return the array [ x ] where x is the last value in the sequence.
-        ArrayDeclaration decl = new ArrayDeclaration(cls.getComponentType(), 1);
+        ArrayCreation decl = new ArrayCreation(cls.getComponentType(), 1);
         s = candidates.get(Randomness.nextRandomInt(candidates.size()));
         List<Variable> ins = new ArrayList<Variable>();
         // XXX IS THIS OLD COMMENT TRUE? : this assumes that last statement will have such a var,
@@ -77,13 +81,13 @@ public class HelperSequenceCreator {
     List<Variable> emptylist = new ArrayList<Variable>();
     for (int i = 0 ; i < length ; i++) {
       Object elt = Randomness.randomSetMember(potentialElts);
-      s = s.extend(new PrimitiveOrStringOrNullDecl(componentType, elt), emptylist);
+      s = s.extend(new NonreceiverTerm(componentType, elt), emptylist);
     }
     List<Variable> inputs = new ArrayList<Variable>();
     for (int i = 0 ; i < length ; i++) {
       inputs.add(s.getVariable(i));
     }
-    s = s.extend(new ArrayDeclaration(componentType, length), inputs);
+    s = s.extend(new ArrayCreation(componentType, length), inputs);
     return s;
   }
 

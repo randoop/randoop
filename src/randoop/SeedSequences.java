@@ -10,6 +10,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.operation.NonreceiverTerm;
+import randoop.sequence.Sequence;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 
@@ -49,7 +51,7 @@ public final class SeedSequences {
   public static Set<Sequence> objectsToSeeds(Collection<Object> objs) {
     Set<Sequence> retval = new LinkedHashSet<Sequence>();
     for (Object o : objs) {
-      retval.add(PrimitiveOrStringOrNullDecl.sequenceForPrimitive(o));
+      retval.add(NonreceiverTerm.sequenceForPrimitive(o));
     }
     return retval;
   }
@@ -163,7 +165,7 @@ public final class SeedSequences {
     Set<Sequence> retval = objectsToSeeds(primitives);
     if (nullString) {
       // Add "String x = null" statement.
-      retval.add(Sequence.create(PrimitiveOrStringOrNullDecl.nullOrZeroDecl(String.class)));
+      retval.add(Sequence.create(NonreceiverTerm.createCanonicalTerm(String.class)));
     }
     return retval;
   }

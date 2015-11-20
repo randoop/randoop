@@ -7,25 +7,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsHashcode;
-import randoop.EqualsSymmetric;
 import randoop.EqualsReflexive;
+import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
-import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MultiVisitor;
 import randoop.ObjectContract;
 import randoop.RegressionCaptureVisitor;
-import randoop.Sequence;
-import randoop.SequenceParseException;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceParseException;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Util;
+
+import junit.framework.TestCase;
 
 public class SequenceTests extends TestCase {
 
@@ -131,8 +131,6 @@ public class SequenceTests extends TestCase {
       throw new RuntimeException(e);
     }
 
-    StringBuilder errorMsg = new StringBuilder();
-    
     checkListsEqual(sequenceLines, Arrays.asList(sequence.toParseableString().split(Globals.lineSep)), testId);
     
     ExecutableSequence ds = new ExecutableSequence(sequence);
@@ -140,7 +138,6 @@ public class SequenceTests extends TestCase {
     checkListsEqual(expectedCode, Arrays.asList(ds.toCodeString().split(Globals.lineSep)), testId);
   }
   
-  @SuppressWarnings("deprecation")
   private static void checkListsEqual(List<String> expected, List<String> actual, String testId) {
 
     expected = trimmedLines(expected);
@@ -151,7 +148,7 @@ public class SequenceTests extends TestCase {
     }
 
     for (int i = 0; i < expected.size(); i++) {
-      Assert.assertEquals(failureMessage(testId, "(lists differ at index " + i + ")", expected, actual), expected.get(i), actual.get(i));
+      assertEquals(failureMessage(testId, "(lists differ at index " + i + ")", expected, actual), expected.get(i), actual.get(i));
     }
   }
   

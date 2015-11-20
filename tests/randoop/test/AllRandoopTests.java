@@ -1,6 +1,8 @@
 package randoop.test;
 
+import randoop.operation.ArrayCreationTests;
 import randoop.tests.CodeFromManual;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -23,7 +25,7 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(ListOfListsIteratorTests.class);
     suite.addTestSuite(RandomnessTest.class);
     suite.addTestSuite(StatementCollectionWeightedTest.class);
-    suite.addTestSuite(ArrayDeclarationTests.class);
+    suite.addTestSuite(ArrayCreationTests.class);
     suite.addTestSuite(EqualsNotSymmetricTests.class);
     suite.addTestSuite(EqualsNotTransitiveTests.class);
     suite.addTestSuite(EqualsToNullTests.class);

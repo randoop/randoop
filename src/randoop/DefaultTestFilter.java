@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
 
 /**
  * <p>Randoop's default test filter determines if a generated test should be output

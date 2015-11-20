@@ -6,16 +6,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import plume.Pair;
-import randoop.AbstractGenerator;
-import randoop.ExecutableSequence;
 import randoop.FailureSet;
 import randoop.IEventListener;
 import randoop.ITestFilter;
 import randoop.JunitFileWriter;
 import randoop.NoExceptionCheck;
-import randoop.StatementKind;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.AbstractGenerator;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Statement;
+
+import plume.Pair;
 
 public class PluginBridge implements ITestFilter, IEventListener {
 
@@ -25,7 +26,7 @@ public class PluginBridge implements ITestFilter, IEventListener {
   //public List<File> additionalJunitFiles;
   public List<String> additionalJunitClasses;
   
-  public Set<Pair<StatementKind,Class<?>>> errors = new LinkedHashSet<Pair<StatementKind,Class<?>>>();
+  public Set<Pair<Statement,Class<?>>> errors = new LinkedHashSet<>();
   
   public PluginBridge(AbstractGenerator generator, MessageSender sender) {
     if (generator == null) {
@@ -37,7 +38,7 @@ public class PluginBridge implements ITestFilter, IEventListener {
     this.generator = generator;  
     this.msgSender = sender;
     //this.additionalJunitFiles = new LinkedList<File>();
-    this.additionalJunitClasses = new LinkedList<String>();
+    this.additionalJunitClasses = new LinkedList<>();
   }
 
   @Override
@@ -48,13 +49,13 @@ public class PluginBridge implements ITestFilter, IEventListener {
     }
 
     for (FailureSet.Failure failure : f.getFailures()) {
-      if (errors.add(new Pair<StatementKind, Class<?>>(failure.st, failure.viocls))) {
-        String description = failure.viocls.toString();
-        if (failure.viocls.equals(NoExceptionCheck.class)) {
+      if (errors.add(new Pair<Statement, Class<?>>(failure.statement, failure.violationClass))) {
+        String description = failure.violationClass.toString();
+        if (failure.violationClass.equals(NoExceptionCheck.class)) {
           description = "NPEs / Assertion violations";
         }
         List<String> failureClassList = new LinkedList<String>();
-        failureClassList.add(failure.st.toString());
+        failureClassList.add(failure.statement.toString());
 
         List<ExecutableSequence> singleSequenceList = new LinkedList<ExecutableSequence>();
         singleSequenceList.add(s);

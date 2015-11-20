@@ -2,6 +2,7 @@ package randoop.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializable {
@@ -44,6 +45,11 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
   @Override
   public String toString() {
     return toJDKList().toString();
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return theList.iterator();
   }
 
 }

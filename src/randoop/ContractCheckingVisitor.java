@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
@@ -56,12 +57,8 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
 
   @Override
   public void initialize(ExecutableSequence s) {
-    s.checks.clear();
-    s.checksResults.clear();
-    for (int i = 0 ; i < s.sequence.size() ; i++) {
-      s.checks.add(new ArrayList<Check>(1));
-      s.checksResults.add(new ArrayList<Boolean>(1));
-    }
+    s.initializeChecks();
+    s.initializeResults();
   }
 
 
@@ -225,7 +222,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
 
       assert result instanceof NormalExecution;
 
-      Class<?> outputType = s.sequence.getStatementKind(i).getOutputType();
+      Class<?> outputType = s.sequence.getStatement(i).getOutputType();
 
       if (outputType.equals(void.class))
         continue;

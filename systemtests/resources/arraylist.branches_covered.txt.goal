@@ -1,8 +1,5 @@
-classname=java2.util2.AbstractCollection,methodname=contains,line=94,id=0,direction=false
-classname=java2.util2.AbstractCollection,methodname=contains,line=99,id=3,direction=false
 classname=java2.util2.AbstractCollection,methodname=containsAll,line=284,id=14,direction=false
 classname=java2.util2.AbstractCollection,methodname=containsAll,line=284,id=14,direction=true
-classname=java2.util2.AbstractCollection,methodname=containsAll,line=285,id=15,direction=false
 classname=java2.util2.AbstractCollection,methodname=containsAll,line=285,id=15,direction=true
 classname=java2.util2.AbstractCollection,methodname=remove,line=245,id=9,direction=false
 classname=java2.util2.AbstractCollection,methodname=remove,line=253,id=12,direction=false
@@ -43,6 +40,7 @@ classname=java2.util2.ArrayList,methodname=add,line=370,id=16,direction=false
 classname=java2.util2.ArrayList,methodname=add,line=370,id=16,direction=true
 classname=java2.util2.ArrayList,methodname=addAll,line=459,id=19,direction=false
 classname=java2.util2.ArrayList,methodname=addAll,line=459,id=19,direction=true
+classname=java2.util2.ArrayList,methodname=addAll,line=468,id=20,direction=false
 classname=java2.util2.ArrayList,methodname=addAll,line=468,id=20,direction=true
 classname=java2.util2.ArrayList,methodname=clear,line=414,id=18,direction=false
 classname=java2.util2.ArrayList,methodname=clear,line=414,id=18,direction=true

@@ -4,13 +4,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-import randoop.ForwardGenerator;
 import randoop.Globals;
-import randoop.StatementKind;
+import randoop.main.ClassTypeLoader;
 import randoop.main.GenInputsAbstract;
-import randoop.util.Reflection;
+import randoop.operation.Operation;
+import randoop.reflection.OperationExtractor;
+import randoop.sequence.ForwardGenerator;
 import randoop.util.Timer;
+
+import junit.framework.TestCase;
 
 // DEPRECATED. Will delete after testing other performance tests
 // in different machines.
@@ -39,8 +41,8 @@ public class ForwardExplorerPerformanceTest extends TestCase {
     InputStream classStream =
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
-    List<StatementKind> model =
-      Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
+    List<Operation> model =
+      OperationExtractor.getOperations(ClassTypeLoader.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;

@@ -13,31 +13,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import plume.Pair;
-import randoop.AbstractGenerator;
 import randoop.Check;
 import randoop.ComponentManager;
 import randoop.DummyVisitor;
 import randoop.ExceptionalExecution;
-import randoop.ExecutableSequence;
-import randoop.Execution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.IStopper;
 import randoop.ITestFilter;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.PrimitiveOrStringOrNullDecl;
 import randoop.RandoopListenerManager;
 import randoop.RandoopStat;
 import randoop.SeedSequences;
-import randoop.Sequence;
-import randoop.SequenceCollection;
-import randoop.Statement;
-import randoop.StatementKind;
 import randoop.SubTypeSet;
-import randoop.Variable;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
+import randoop.sequence.AbstractGenerator;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Execution;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceCollection;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.CollectionsExt;
 import randoop.util.ListOfLists;
@@ -50,16 +48,18 @@ import randoop.util.ReversibleSet;
 import randoop.util.SimpleList;
 import randoop.util.Util;
 
+import plume.Pair;
+
 /**
  * Experimental code.
  */
 public class RandomWalkGenerator extends AbstractGenerator {
 
-  private List<StatementKind> initialEnabledStatements = new ArrayList<StatementKind>();
-  private Map<Class<?>, Set<StatementKind>> initialMissingTypesToStatements = new LinkedHashMap<Class<?>, Set<StatementKind>>();
-  private Map<StatementKind, Set<Class<?>>> initialInactiveStatements = new LinkedHashMap<StatementKind, Set<Class<?>>>();
+  private List<Operation> initialEnabledStatements = new ArrayList<Operation>();
+  private Map<Class<?>, Set<Operation>> initialMissingTypesToStatements = new LinkedHashMap<Class<?>, Set<Operation>>();
+  private Map<Operation, Set<Class<?>>> initialInactiveStatements = new LinkedHashMap<Operation, Set<Class<?>>>();
 
-  List<StatementKind> allStatements;
+  List<Operation> allStatements;
 
   private int numSeqs = 0;
   
@@ -68,9 +68,9 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
   SubTypeSet availableTypes = new SubTypeSet(true);
   ReversibleMultiMap<Class<?>, Integer> typesToVals;
-  ReversibleSet<StatementKind> enabledStatements;
-  ReversibleMultiMap<Class<?>, StatementKind> missingTypesToStatements;
-  ReversibleMultiMap<StatementKind, Class<?>> inactiveStatements;
+  ReversibleSet<Operation> enabledStatements;
+  ReversibleMultiMap<Class<?>, Operation> missingTypesToStatements;
+  ReversibleMultiMap<Operation, Class<?>> inactiveStatements;
 
   Sequence sequence;
 
@@ -84,20 +84,19 @@ public class RandomWalkGenerator extends AbstractGenerator {
   private long gentime;
   private long exectime;
 
-  private static SequenceCollection prims = new SequenceCollection(
-      SeedSequences.defaultSeeds());
+  private static SequenceCollection prims = new SequenceCollection(SeedSequences.defaultSeeds());
 
-  public RandomWalkGenerator(List<StatementKind> statements,
+  public RandomWalkGenerator(List<Operation> statements,
       long timeMillis, int maxSequences, ComponentManager componentMgr,
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> fs) {
     super(statements, timeMillis, maxSequences, componentMgr, stopper, listenerManager, fs);
 
     this.allStatements = statements;
 
-    initialEnabledStatements = new ArrayList<StatementKind>();
-    initialMissingTypesToStatements = new LinkedHashMap<Class<?>, Set<StatementKind>>();
-    initialInactiveStatements = new LinkedHashMap<StatementKind, Set<Class<?>>>();
-    for (StatementKind st : allStatements) {
+    initialEnabledStatements = new ArrayList<Operation>();
+    initialMissingTypesToStatements = new LinkedHashMap<Class<?>, Set<Operation>>();
+    initialInactiveStatements = new LinkedHashMap<Operation, Set<Class<?>>>();
+    for (Operation st : allStatements) {
       List<Class<?>> inputTypes = new ArrayList<Class<?>>(st.getInputTypes());
       for (java.util.Iterator<Class<?>> it = inputTypes.iterator(); it
           .hasNext();) {
@@ -114,9 +113,9 @@ public class RandomWalkGenerator extends AbstractGenerator {
       initialInactiveStatements
           .put(st, new LinkedHashSet<Class<?>>(inputTypes));
       for (Class<?> cls : inputTypes) {
-        Set<StatementKind> s = initialMissingTypesToStatements.get(cls);
+        Set<Operation> s = initialMissingTypesToStatements.get(cls);
         if (s == null) {
-          s = new LinkedHashSet<StatementKind>();
+          s = new LinkedHashSet<Operation>();
           initialMissingTypesToStatements.put(cls, s);
         }
         s.add(st);
@@ -140,21 +139,21 @@ public class RandomWalkGenerator extends AbstractGenerator {
     availableTypes = new SubTypeSet(true);
     typesToVals = new ReversibleMultiMap<Class<?>, Integer>();
     sequence = new Sequence();
-    enabledStatements = new ReversibleSet<StatementKind>();
-    for (StatementKind stk : initialEnabledStatements) {
+    enabledStatements = new ReversibleSet<Operation>();
+    for (Operation stk : initialEnabledStatements) {
       enabledStatements.add(stk);
     }
-    inactiveStatements = new ReversibleMultiMap<StatementKind, Class<?>>();
-    for (Map.Entry<StatementKind, Set<Class<?>>> e : initialInactiveStatements
+    inactiveStatements = new ReversibleMultiMap<Operation, Class<?>>();
+    for (Map.Entry<Operation, Set<Class<?>>> e : initialInactiveStatements
         .entrySet()) {
       for (Class<?> c2 : e.getValue()) {
         inactiveStatements.add(e.getKey(), c2);
       }
     }
-    missingTypesToStatements = new ReversibleMultiMap<Class<?>, StatementKind>();
-    for (Map.Entry<Class<?>, Set<StatementKind>> e : initialMissingTypesToStatements
+    missingTypesToStatements = new ReversibleMultiMap<Class<?>, Operation>();
+    for (Map.Entry<Class<?>, Set<Operation>> e : initialMissingTypesToStatements
         .entrySet())
-      for (StatementKind stk : e.getValue()) {
+      for (Operation stk : e.getValue()) {
         missingTypesToStatements.add(e.getKey(), stk);
       }
 
@@ -162,7 +161,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
     exectime = 0;
   }
 
-  private Set<Class<?>> getInputTypesSet(StatementKind st) {
+  private Set<Class<?>> getInputTypesSet(Operation st) {
     return new LinkedHashSet<Class<?>>(st.getInputTypes());
   }
 
@@ -213,7 +212,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // First, may need to execute primitive declarations.
     for (int i = oldsize ; i < sequence.size() - 1 ; i++) {
-      assert sequence.getStatementKind(i) instanceof PrimitiveOrStringOrNullDecl;
+      assert sequence.getStatement(i).isPrimitiveInitialization();
       executionVisitor.visitBefore(eseq, i);
       ExecutableSequence.executeStatement(sequence, exec, i, new Object[0]);
       executionVisitor.visitAfter(eseq, i);
@@ -330,14 +329,14 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // update missingTypesToStatements, activeStatements and
     // inactiveStatements.
-    List<Pair<Class<?>, StatementKind>> pairsToRemove =
-      new ArrayList<Pair<Class<?>, StatementKind>>();
+    List<Pair<Class<?>, Operation>> pairsToRemove =
+      new ArrayList<Pair<Class<?>, Operation>>();
 
     for (Class<?> c2 : missingTypesToStatements.keySet()) {
-      Set<StatementKind> sts = missingTypesToStatements.getValues(c2);
+      Set<Operation> sts = missingTypesToStatements.getValues(c2);
       if (c2.isAssignableFrom(retType)) {
-        for (StatementKind st2 : sts) {
-          pairsToRemove.add(new Pair<Class<?>, StatementKind>(c2, st2));
+        for (Operation st2 : sts) {
+          pairsToRemove.add(new Pair<Class<?>, Operation>(c2, st2));
           inactiveStatements.remove(st2, c2);
           if (!inactiveStatements.keySet().contains(st2)) {
             enabledStatements.add(st2);
@@ -346,7 +345,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
       }
     }
 
-    for (Pair<Class<?>, StatementKind> p : pairsToRemove) {
+    for (Pair<Class<?>, Operation> p : pairsToRemove) {
       missingTypesToStatements.remove(p.a, p.b);
     }
 
@@ -378,7 +377,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // There may be primitive declarations that fed into the last
     // statement; remove them also.
-    while (sequence.size() > 0 && sequence.getLastStatement() instanceof PrimitiveOrStringOrNullDecl) {
+    while (sequence.size() > 0 && sequence.getLastStatement().isPrimitiveInitialization()) {
       removeLast();
     }
 
@@ -419,11 +418,11 @@ public class RandomWalkGenerator extends AbstractGenerator {
     inactiveStatements.mark();
   }
 
-  Set<StatementKind> errors = new LinkedHashSet<StatementKind>();
+  Set<Operation> errors = new LinkedHashSet<Operation>();
 
   private boolean extendRandomly() {
 
-    StatementKind st = Randomness.randomSetMember(enabledStatements.getElements());
+    Operation st = Randomness.randomSetMember(enabledStatements.getElements());
 
     if (Log.isLoggingOn()) Log.logLine("Selected statement: " + st);
 
@@ -434,11 +433,11 @@ public class RandomWalkGenerator extends AbstractGenerator {
     for (Class<?> tc : st.getInputTypes()) {
 
       if (tc.isPrimitive() || tc.equals(String.class)) {
-        Sequence news = Randomness.randomMember(prims.getSequencesForType(tc,
-            true));
+        //XXX why selecting from sequences when just selecting an Operation?
+        Sequence news = Randomness.randomMember(prims.getSequencesForType(tc, true));
         assert news.size() == 1;
-
-        sequence = sequence.extend(news.getStatementKind(0), Collections.<Variable>emptyList());
+        //TODO make this select operation instead of sequence
+        sequence = sequence.extend(news.getStatement(0), Collections.<Variable>emptyList());
         // Increase the size of exec, obs.
         exec.add(NotExecuted.create());
         obs.add(new ArrayList<Check>());
@@ -500,7 +499,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
   @SuppressWarnings( { "unchecked" })
   void repInvariantCheck2() {
 
-    Set<StatementKind> activeStatementsAsSet = new LinkedHashSet<StatementKind>(
+    Set<Operation> activeStatementsAsSet = new LinkedHashSet<Operation>(
         enabledStatements.getElements());
 
     // activeStatements is a subset of allStatements.
@@ -509,10 +508,10 @@ public class RandomWalkGenerator extends AbstractGenerator {
     // activeStatements and inactiveStatements partition allStatements.
     assert CollectionsExt.intersection(activeStatementsAsSet,
         inactiveStatements.keySet()).isEmpty();
-    Set<StatementKind> union = new LinkedHashSet<StatementKind>(
+    Set<Operation> union = new LinkedHashSet<Operation>(
         enabledStatements.getElements());
     union.addAll(inactiveStatements.keySet());
-    assert union.equals(new LinkedHashSet<StatementKind>(allStatements));
+    assert union.equals(new LinkedHashSet<Operation>(allStatements));
 
     // missingTypes and activeTypes are disjoint.
     assert CollectionsExt.intersection(availableTypes.getElements(),
@@ -522,17 +521,17 @@ public class RandomWalkGenerator extends AbstractGenerator {
     // missing classes is the same.
     Set<Class<?>> classSet1 = missingTypesToStatements.keySet();
     Set<Class<?>> classSet2 = new LinkedHashSet<Class<?>>();
-    for (StatementKind sta : inactiveStatements.keySet()) {
+    for (Operation sta : inactiveStatements.keySet()) {
       classSet2.addAll(inactiveStatements.getValues(sta));
     }
     assert classSet1.equals(classSet2) : classSet1 + "," + classSet2;
 
     // missingTypesToStatements and inactiveStatements: the collections of
     // inactive statements is the same.
-    Set<StatementKind> stSet1 = inactiveStatements.keySet();
-    Set<StatementKind> stSet2 = new LinkedHashSet<StatementKind>();
+    Set<Operation> stSet1 = inactiveStatements.keySet();
+    Set<Operation> stSet2 = new LinkedHashSet<Operation>();
     for (Class<?> c2 : missingTypesToStatements.keySet()) {
-      for (StatementKind s : missingTypesToStatements.getValues(c2)) {
+      for (Operation s : missingTypesToStatements.getValues(c2)) {
         stSet2.add(s);
       }
     }
@@ -553,7 +552,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     // valuesSoFar contains all the variables
     for (int i = 0 ; i < sequence.size() ; i++) {
-      if (sequence.getStatementKind(i) instanceof PrimitiveOrStringOrNullDecl)
+      if (sequence.getStatement(i).isPrimitiveInitialization())
         continue;
       assert valuesSoFar.contains(i) : i;
     }
@@ -566,16 +565,16 @@ public class RandomWalkGenerator extends AbstractGenerator {
       assert c != null;
     }
 
-    for (StatementKind st : inactiveStatements.keySet()) {
+    for (Operation st : inactiveStatements.keySet()) {
       assert st != null;
     }
 
     // TODO move this to repCheck for List<StatementKind>.
-    for (StatementKind st : allStatements) {
+    for (Operation st : allStatements) {
       assert st != null;
     }
 
-    for (StatementKind st : allStatements) {
+    for (Operation st : allStatements) {
 
       boolean isInActiveStatements = enabledStatements.contains(st);
 
@@ -610,7 +609,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
       Set<Class<?>> missingTypesForSt2 = new LinkedHashSet<Class<?>>();
       for (Class<?> c3 : missingTypesToStatements.keySet()) {
-        Set<StatementKind> sts = missingTypesToStatements.getValues(c3);
+        Set<Operation> sts = missingTypesToStatements.getValues(c3);
         if (sts.contains(st)) {
           missingTypesForSt2.add(c3);
         }
@@ -650,21 +649,21 @@ public class RandomWalkGenerator extends AbstractGenerator {
 
     writer.write("===MISSINGTYPES" + Globals.lineSep);
     for (Class<?> c2 : missingTypesToStatements.keySet()) {
-      Set<StatementKind> sts = missingTypesToStatements.getValues(c2);
+      Set<Operation> sts = missingTypesToStatements.getValues(c2);
       writer.write(c2 + Globals.lineSep);
-      for (StatementKind s : sts)
+      for (Operation s : sts)
         writer.write("   " + s.toString() + Globals.lineSep);
     }
     writer.write(Globals.lineSep);
 
     writer.write("===ACTIVESTATEMENTS" + Globals.lineSep);
-    for (StatementKind st : enabledStatements.getElements()) {
+    for (Operation st : enabledStatements.getElements()) {
       writer.write(st.toString() + Globals.lineSep);
     }
     writer.write(Globals.lineSep);
 
     writer.write("===INACTIVESTATEMENTS" + Globals.lineSep);
-    for (StatementKind sta : inactiveStatements.keySet()) {
+    for (Operation sta : inactiveStatements.keySet()) {
       writer.write(sta.toString() + Globals.lineSep);
       for (Class<?> cla : inactiveStatements.getValues(sta)) {
         writer.write("   " + cla + Globals.lineSep);

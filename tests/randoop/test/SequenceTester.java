@@ -11,20 +11,21 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import junit.framework.Assert;
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsHashcode;
 import randoop.EqualsReflexive;
 import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
-import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MultiVisitor;
 import randoop.ObjectContract;
 import randoop.RegressionCaptureVisitor;
-import randoop.Sequence;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
 import randoop.util.Util;
+
+import junit.framework.Assert;
 
 public class SequenceTester {
 

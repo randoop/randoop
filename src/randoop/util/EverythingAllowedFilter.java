@@ -4,7 +4,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class EverythingAllowedFilter implements ReflectionFilter {
+import randoop.reflection.ReflectionPredicate;
+
+public class EverythingAllowedFilter implements ReflectionPredicate {
 
   public boolean canUse(Class<?> c) {
     return true;

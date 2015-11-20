@@ -5,29 +5,57 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.operation.MethodCall;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.MutableSequence;
+import randoop.sequence.MutableVariable;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
+
+/**
+ * FailureSet represents a set of failures that occurred in the execution of a particular
+ * {@link ExecutableSequence}. 
+ *
+ */
 public class FailureSet {
   
   private Set<Failure> failures = new LinkedHashSet<Failure>();
   
+  /**
+   * FailureSet.Failure represents an execution failure and holds the
+   * statement and class where the failure occurred.
+   *
+   */
   public static class Failure {
-    public final StatementKind st;
-    public final Class<?> viocls;
-    public Failure(StatementKind st, Class<?> viocls) {
-      this.st = st;
-      this.viocls = viocls;
+    
+    /**
+     * statement is the statement in the {@link ExecutableSequence} where the failure occurred.
+     */
+    public final Statement statement;
+    
+    /**
+     * violationClass is the type of the {@link ObjectContract}
+     */
+    public final Class<?> violationClass;
+    
+    public Failure(Statement st, Class<?> viocls) {
+      this.statement = st;
+      this.violationClass = viocls;
     }
+    
     public boolean equals(Object o) {
       if (o == null) return false;
       if (o == this) return true;
       Failure other = (Failure)o;
-      if (!st.equals(other.st)) return false;
-      if (!viocls.equals(other.viocls)) return false;
+      if (!statement.equals(other.statement)) return false;
+      if (!violationClass.equals(other.violationClass)) return false;
       return true;
     }
+    
     public int hashCode() {
       int hash = 7;
-      hash = hash*31 + st.hashCode();
-      hash = hash*31 + viocls.hashCode();
+      hash = hash*31 + statement.hashCode();
+      hash = hash*31 + violationClass.hashCode();
       return hash;
     }
   }
@@ -41,7 +69,7 @@ public class FailureSet {
     
     for (Check obs : es.getFailures(idx)) {
       Class<?> vioCls = obs.getClass();
-      StatementKind st = null;
+      Statement st = null;
 
       if (obs instanceof ObjectCheck && ((ObjectCheck)obs).contract instanceof ObjectContract) {
 
@@ -61,7 +89,7 @@ public class FailureSet {
           Class<?> cls = runtimeval.getClass();
           // We record this as an error in the equals method.
           try {
-            st = RMethod.getRMethod(cls.getMethod("equals", Object.class));
+            st = new Statement(MethodCall.getMethodCall(cls.getMethod("equals", Object.class)));
           } catch (Exception e) {
             throw new Error(e);
           }
@@ -70,14 +98,14 @@ public class FailureSet {
           vioCls = ex.getClass();
           
         } else {
-          st = es.sequence.getStatementKind(idx);
+          st = es.sequence.getStatement(idx);
         }
 
       } else {
-        st = es.sequence.getStatementKind(idx);
+        st = es.sequence.getStatement(idx);
 
-        MSequence mseq = es.sequence.toModifiableSequence();
-        List<MVariable> vars = new ArrayList<MVariable>();
+        MutableSequence mseq = es.sequence.toModifiableSequence();
+        List<MutableVariable> vars = new ArrayList<MutableVariable>();
         for (Variable v : es.sequence.getInputs(idx)) {
           vars.add(mseq.getVariable(v.index));
         }

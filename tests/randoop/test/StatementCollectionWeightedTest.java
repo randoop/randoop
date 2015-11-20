@@ -1,15 +1,15 @@
 package randoop.test;
 
-import java.io.InputStream;
-import java.io.StringReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-import randoop.StatementKind;
-import randoop.util.Reflection;
+import randoop.operation.Operation;
+import randoop.reflection.OperationExtractor;
 import randoop.util.Util;
+
+import junit.framework.TestCase;
 
 public class StatementCollectionWeightedTest extends TestCase {
 
@@ -21,9 +21,9 @@ public class StatementCollectionWeightedTest extends TestCase {
     List<Class<?>> classes = new ArrayList<Class<?>>();
     classes.add(java.util.ArrayList.class);
 
-    List<StatementKind> statements = 
-      Reflection.getStatements(classes, null);
-
+    List<Operation> statements = 
+      OperationExtractor.getOperations(classes, null);
+    assertFalse("model should not be empty", statements.isEmpty());
     StringBuilder weightedMethods = new StringBuilder();
     weightedMethods.append("java.util.ArrayList.add(java.lang.Object)" + Util.newLine);
     weightedMethods.append("10");

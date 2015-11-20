@@ -14,11 +14,12 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import randoop.Sequence;
+import randoop.sequence.Sequence;
+
+import cov.CoverageAtom;
 import plume.Option;
 import plume.Options;
 import plume.Options.ArgException;
-import cov.CoverageAtom;
 
 /**
  * Used to combine the coverage results of multiple Randoop runs.

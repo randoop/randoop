@@ -1,5 +1,7 @@
 package randoop;
 
+import randoop.sequence.ExecutableSequence;
+
 /**
  * Used by Randoop's test generator to determine if a given sequence should be output to the user.
  * 

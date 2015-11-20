@@ -2,7 +2,9 @@ package randoop.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if
@@ -34,8 +36,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     this.totalelements = 0;
     for (int i = 0; i < lists.length ; i++) {
       SimpleList<T> l = lists[i];
-      if (l == null)
+      if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
+      }
       this.totalelements += l.size();
       this.accumulatedSize[i] = this.totalelements;
     }
@@ -49,8 +52,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     this.totalelements = 0;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<T> l = lists.get(i);
-      if (l == null)
+      if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
+      }
       this.totalelements += l.size();
       this.accumulatedSize[i] = this.totalelements;
     }
@@ -70,8 +74,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
   @Override
   public T get(int index) {
     if (index < 0 || index > this.totalelements - 1)
-      throw new IllegalArgumentException(
-          "index must be between 0 and size()-1");
+      throw new IllegalArgumentException("index must be between 0 and size()-1");
     int previousListSize = 0;
     for (int i = 0; i < this.accumulatedSize.length; i++) {
       if (index < this.accumulatedSize[i])
@@ -94,5 +97,45 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
   @Override
   public String toString() {
     return toJDKList().toString();
+  }
+
+  @Override
+  public Iterator<T> iterator() {
+    return new LOLIterator(lists.iterator());
+  }
+  
+  private class LOLIterator implements Iterator<T> {
+
+    private Iterator<SimpleList<T>> listIterator;
+    private Iterator<T> elemIterator;
+
+    public LOLIterator(Iterator<SimpleList<T>> listIterator) {
+      this.listIterator = listIterator;
+      if (this.listIterator.hasNext()) {
+        this.elemIterator = (this.listIterator).next().iterator();
+      }
+    }
+
+    @Override
+    public boolean hasNext() {
+      return (listIterator.hasNext() || (elemIterator != null && elemIterator.hasNext()));
+    }
+
+    @Override
+    public T next() {
+      if (elemIterator != null) {
+        if (!elemIterator.hasNext()) {
+          elemIterator = listIterator.next().iterator();
+        }
+        return elemIterator.next();
+      }
+      throw new NoSuchElementException("end of ListOfLists reached");
+    }
+    
+    @Override
+    public void remove() {
+      //does nothing
+    }
+    
   }
 }

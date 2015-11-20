@@ -3,7 +3,7 @@ package randoop.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.AbstractGenerator;
+import randoop.sequence.AbstractGenerator;
 
 
 /**
