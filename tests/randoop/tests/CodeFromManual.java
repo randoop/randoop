@@ -27,11 +27,11 @@ public class CodeFromManual extends TestCase {
 
   public static void test() throws SecurityException, NoSuchMethodException, SequenceParseException {
 
-    Operation newLL = ConstructorCall.getRConstructor(LinkedList.class.getConstructor());
-    Operation newOb = ConstructorCall.getRConstructor(Object.class.getConstructor());
+    Operation newLL = ConstructorCall.getConstructorCall(LinkedList.class.getConstructor());
+    Operation newOb = ConstructorCall.getConstructorCall(Object.class.getConstructor());
     Operation addFist = MethodCall.getMethodCall(LinkedList.class.getMethod("addFirst", Object.class));
     Operation size = MethodCall.getMethodCall(LinkedList.class.getMethod("size"));
-    Operation newTS = ConstructorCall.getRConstructor(TreeSet.class.getConstructor(Collection.class));
+    Operation newTS = ConstructorCall.getConstructorCall(TreeSet.class.getConstructor(Collection.class));
     Operation syncS = MethodCall.getMethodCall(Collections.class.getMethod("synchronizedSet", Set.class));
 
     Sequence s = new Sequence();

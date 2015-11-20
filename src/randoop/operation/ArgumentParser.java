@@ -6,7 +6,7 @@ import randoop.types.TypeNames;
  * ArgumentParser recognizes method/constructor arguments in a string
  * and returns the list of argument types as Class<?> objects.
  * @see MethodSignatures
- * @see ConstructorParser
+ * @see ConstructorSignatures
  * 
  * @author bjkeller
  *

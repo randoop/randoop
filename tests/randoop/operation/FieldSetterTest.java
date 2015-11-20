@@ -81,7 +81,7 @@ public class FieldSetterTest {
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConstructorCall cons = new ConstructorCall(ConstructorParser.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
+      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
       Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();

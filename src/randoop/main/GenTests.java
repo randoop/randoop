@@ -265,7 +265,7 @@ public class GenTests extends GenInputsAbstract {
     // Always add Object constructor (it's often useful).
     ConstructorCall objectConstructor = null;
     try {
-      objectConstructor = ConstructorCall.getRConstructor(Object.class.getConstructor());
+      objectConstructor = ConstructorCall.getConstructorCall(Object.class.getConstructor());
       if (!model.contains(objectConstructor))
         model.add(objectConstructor);
     } catch (Exception e) {

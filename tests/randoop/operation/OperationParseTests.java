@@ -66,7 +66,7 @@ public class OperationParseTests extends TestCase {
   public void testRConstructor() {
 
     for (Constructor<?> c : ArrayList.class.getConstructors()) {
-      checkParse(ConstructorCall.getRConstructor(c));
+      checkParse(ConstructorCall.getConstructorCall(c));
     }
   }
 

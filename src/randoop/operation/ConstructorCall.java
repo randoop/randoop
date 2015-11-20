@@ -22,16 +22,20 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
 /**
- * ConstructorCall represents a call to a constructor, and holds a reference to
+ * ConstructorCall is an {@link Operation} that represents a call to a constructor, and holds a reference to
  * a reflective {@link java.lang.reflect.Constructor} object.  
- * As an {@link Operation}, the inputs are parameters to the constructor
- * and outputs include the new object.
+ * 
+ * As an {@link Operation}, a call to constructor c with n arguments is represented as 
+ * c : [t1,...,tn] -> c, where the output type c is also the name of the class. 
  */
 public final class ConstructorCall extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
-  /** ID for parsing purposes (see StatementKinds.parse method) */
+  /** 
+   * ID for parsing purposes. 
+   * @see OperationParser#getId(Operation)
+   */
   public static final String ID = "cons";
 
   private final Constructor<?> constructor;
@@ -44,18 +48,22 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   private int hashCodeCached = 0;
   private boolean hashCodeComputed = false;
 
+  /*
+   * writeReplace is a serialization method and returns a serializable copy of the method call object.
+   */
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableConstructorCall(this);
+    return new SerializableConstructorCall(this.constructor);
   }
 
   /** 
-   * Creates the ConstructorCall corresponding to the given reflection constructor.
+   * ConstructorCall creates object corresponding to the given reflection constructor.
    * @param constructor reflective object for a constructor.
    */
   public ConstructorCall(Constructor<?> constructor) {
     if (constructor == null)
       throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
+    this.outputTypeCached = constructor.getDeclaringClass();
     // TODO move this earlier in the process: check first that all
     // methods to be used can be made accessible.
     // XXX this should not be here but I get infinite loop when comment out
@@ -71,15 +79,15 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   /**
-   * Creates the ConstructorCall corresponding to the given reflection constructor.
+   * getConstructorCall creates the ConstructorCall corresponding to the given reflection constructor.
    * @return a new ConstructorCall object for the given {@link Constructor<?>} instance.
    */
-  public static ConstructorCall getRConstructor(Constructor<?> constructor) {
+  public static ConstructorCall getConstructorCall(Constructor<?> constructor) {
     return new ConstructorCall(constructor);
   }
 
   /**
-   * Returns concise string representation of this ConstructorCallInfo
+   * Returns concise string representation of this ConstructorCall
    */
   @Override
   public String toString() {
@@ -172,7 +180,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   public int calls_num = 0;
 
   /**
-   * execute performs call to the constructor given the objects as actual parameters, 
+   * {@inheritDoc}
+   * Performs call to the constructor given the objects as actual parameters, 
    * and the output stream for any output.
    * 
    * @param statementInput is an array of values corresponding to signature of the constructor.
@@ -199,7 +208,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   /**
-   * Returns the input types of this constructor.
+   * {@inheritDoc}
+   * @return list of parameter types for constructor.
    */
   @Override
   public List<Class<?>> getInputTypes() {
@@ -210,17 +220,16 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   /**
-   * Returns the return type of this constructor.
+   * {@inheritDoc}
+   * @return type of the object created (i.e., class for constructor).
    */
   @Override
   public Class<?> getOutputType() {
-    if (outputTypeCached == null) {
-      outputTypeCached = constructor.getDeclaringClass();
-    }
     return outputTypeCached;
   }
 
   /**
+   * {@inheritDoc}
    * A string representing this constructor. The string is of the form:
    *
    * CONSTRUCTOR
@@ -233,30 +242,25 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    */
   @Override
   public String toParseableString() {
-    return this.getSignature();
-  }
-
-  //XXX stolen from Constructor.toString - but we don't need modifiers or exceptions
-  // and we need a slightly different format
-  public String getSignature() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(constructor.getName() + ".<init>(");
-    Class<?>[] params = constructor.getParameterTypes();
-    for (int j = 0; j < params.length; j++) {
-      sb.append(params[j].getName());
-      if (j < (params.length - 1))
-        sb.append(",");
-    }
-    sb.append(")");
-    return sb.toString();
-  }
-
-  public static Operation parse(String s) throws OperationParseException {
-    return ConstructorCall.getRConstructor(ConstructorParser.getConstructorForSignature(s));
+    return ConstructorSignatures.getSignature(constructor);
   }
 
   /**
-   * getDeclaringClass returns the class that declared the enclosed constructor.
+   * parse recognizes a constructor call in a string with the format generated by
+   * {@link ConstructorCall#toParseableString()} and returns the corresponding
+   * {@link ConstructorCall} object.
+   * @see OperationParser#parse(String)
+   * 
+   * @param s a string descriptor of a constructor call.
+   * @return {@link ConstructorCall} object corresponding to the given signature.
+   * @throws OperationParseException
+   */
+  public static Operation parse(String s) throws OperationParseException {
+    return ConstructorCall.getConstructorCall(ConstructorSignatures.getConstructorForSignature(s));
+  }
+
+  /**
+   * {@inheritDoc}
    * @return class object representing declaring class for the constructor.
    */
   @Override
@@ -265,9 +269,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   /**
-   * isConstructorCall is a predicate to indicate that this {@link Operation} is 
-   * a {@link ConstructorCall} as opposed to another form of operation.
-   * @see Operation#isConstructorCall()
+   * {@inheritDoc}
+   * @return true, because this is a {@link ConstructorCall}.
    */
   @Override
   public boolean isConstructorCall() {
@@ -275,8 +278,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   /**
-   * satisfies determines whether enclosed {@link Constructor<?>} satisfies the given predicate.
-   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * {@inheritDoc}
+   * Determines whether enclosed {@link Constructor<?>} satisfies the given predicate.
    * @return true only if the constructor in this object satisfies the canUse(Constructor) of predicate.
    */
   @Override
