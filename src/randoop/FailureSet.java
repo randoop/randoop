@@ -12,33 +12,50 @@ import randoop.sequence.MutableVariable;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 
+/**
+ * FailureSet represents a set of failures that occurred in the execution of a particular
+ * {@link ExecutableSequence}. 
+ *
+ */
 public class FailureSet {
   
   private Set<Failure> failures = new LinkedHashSet<Failure>();
   
+  /**
+   * FailureSet.Failure represents an execution failure and holds the
+   * statement and class where the failure occurred.
+   *
+   */
   public static class Failure {
     
-    public final Statement st;
-    public final Class<?> viocls;
+    /**
+     * statement is the statement in the {@link ExecutableSequence} where the failure occurred.
+     */
+    public final Statement statement;
     
-    public Failure(Statement st2, Class<?> viocls) {
-      this.st = st2;
-      this.viocls = viocls;
+    /**
+     * violationClass is the type of the {@link ObjectContract}
+     */
+    public final Class<?> violationClass;
+    
+    public Failure(Statement st, Class<?> viocls) {
+      this.statement = st;
+      this.violationClass = viocls;
     }
     
     public boolean equals(Object o) {
       if (o == null) return false;
       if (o == this) return true;
       Failure other = (Failure)o;
-      if (!st.equals(other.st)) return false;
-      if (!viocls.equals(other.viocls)) return false;
+      if (!statement.equals(other.statement)) return false;
+      if (!violationClass.equals(other.violationClass)) return false;
       return true;
     }
     
     public int hashCode() {
       int hash = 7;
-      hash = hash*31 + st.hashCode();
-      hash = hash*31 + viocls.hashCode();
+      hash = hash*31 + statement.hashCode();
+      hash = hash*31 + violationClass.hashCode();
       return hash;
     }
   }

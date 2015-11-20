@@ -49,13 +49,13 @@ public class PluginBridge implements ITestFilter, IEventListener {
     }
 
     for (FailureSet.Failure failure : f.getFailures()) {
-      if (errors.add(new Pair<Statement, Class<?>>(failure.st, failure.viocls))) {
-        String description = failure.viocls.toString();
-        if (failure.viocls.equals(NoExceptionCheck.class)) {
+      if (errors.add(new Pair<Statement, Class<?>>(failure.statement, failure.violationClass))) {
+        String description = failure.violationClass.toString();
+        if (failure.violationClass.equals(NoExceptionCheck.class)) {
           description = "NPEs / Assertion violations";
         }
         List<String> failureClassList = new LinkedList<String>();
-        failureClassList.add(failure.st.toString());
+        failureClassList.add(failure.statement.toString());
 
         List<ExecutableSequence> singleSequenceList = new LinkedList<ExecutableSequence>();
         singleSequenceList.add(s);
