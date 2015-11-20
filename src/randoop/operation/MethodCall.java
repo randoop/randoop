@@ -317,8 +317,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * Returns true if method represented by this MethodCallInfo is a static
-   * method.
+   * {@inheritDoc}
+   * @return true if this method is static, and false, otherwise.
    */
   @Override
   public boolean isStatic() {
@@ -330,16 +330,23 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * A string representing this method's signature. Examples:
-   *
-   * java.util.ArrayList.get(int)
-   * java.util.ArrayList.add(int,java.lang.Object)
+   * {@inheritDoc}
+   * The descriptor for a method is a string representing the method signature.
+   *  
+   * Examples:
+   *  java.util.ArrayList.get(int)
+   *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
   public String toParseableString() {
     return this.getSignature();
   }
 
+  /**
+   * getSignature generates a string representation of the signature of the method.
+   * 
+   * @return string representing the method signature.
+   */
   public String getSignature() {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName() + ".");
@@ -354,12 +361,22 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
     return sb.toString();
   }
 
+  /**
+   * parse recognizes a method call in a string descriptor and returns a {@link MethodCall} object.
+   * Should satisfy parse(op.toParseableString()).equals(op) for Operation op.
+   * @see OperationParser#parse(String)
+   * 
+   * @param s a string descriptor
+   * @return the {@link MethodCall} object described by the string.
+   * @throws OperationParseException if s does not match expected descriptor.
+   */
   public static Operation parse(String s) throws OperationParseException {
     return MethodCall.getMethodCall(MethodParser.getMethodForSignature(s));
   }
 
   /**
-   * getDeclaringClass returns the class in which this method is declared.
+   * {@inheritDoc}
+   * @return the class in which this method is declared.
    */
   @Override
   public Class<?> getDeclaringClass() {
@@ -367,28 +384,28 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * isMethodIn determines whether the current method object
+   * callsMethodIn determines whether the current method object
    * calls one of the methods in the list.
    * @param list method objects to compare against.
    * @return true if method called by this object is in the given list.
    */
-  public boolean isMethodIn(List<Method> list) {
+  public boolean callsMethodIn(List<Method> list) {
     return list != null && list.contains(method);
   }
 
   /**
-   * callsTheMethod determines whether the method that this object calls is 
+   * callsMethod determines whether the method that this object calls is 
    * method given in the parameter.
    * @param m method to test against.
    * @return true, if m corresponds to the method in this object, false, otherwise.
    */
-  public boolean callsTheMethod(Method m) {
+  public boolean callsMethod(Method m) {
     return method.equals(m);
   }
 
   /**
-   * isMessage is a predicate to indicate that this method call is a message to a receiver object.
-   * @return true always. 
+   * {@inheritDoc}
+   * @return true always, since this is a method call. 
    */
   @Override
   public boolean isMessage() {
@@ -396,7 +413,9 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * satisfies determines whether enclosed {@link Method} satisfies the given predicate.
+   * {@inheritDoc}
+   * Determines whether enclosed {@link Method} satisfies the given predicate.
+   * 
    * @param predicate the {@link ReflectionPredicate} to be checked.
    * @return true only if the method in this object satisfies the canUse(Method) of predicate.
    */

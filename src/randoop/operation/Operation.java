@@ -16,11 +16,11 @@ import randoop.sequence.Variable;
  * 
  *  <ul>
  *  <li> A public static String field that contains a unique ID for the statement kind.
- *  <li> A public static parse(String) method that returns a new StatementKind given
+ *  <li> A public static parse(String) method that returns a new Operation given
  *       a string description. The following property should hold:
  *         C.parse(x.toParseableString()).equals(x)
- *  <li> Update method StatementKinds.parse(String) to parse statement kinds of type C.
- *  <li> Update method StatementKinds.getId(StatementKing) to handle statement kinds of type C.
+ *  <li> Update method Operations.parse(String) to parse statement kinds of type C.
+ *  <li> Update method OperationParser.getId(Operation) to handle statement kinds of type C.
  *  </ul> 
  */
 public interface Operation extends Comparable<Operation> {
@@ -29,11 +29,15 @@ public interface Operation extends Comparable<Operation> {
    * getInputTypes returns the ordered list of input types for this operation.
    * If a method call or field access, the first input corresponds to the
    * receiver, which must be an object of the declaring class.
+   * 
+   * @return list of types as {@link Class} objects.
    */
   List<Class<?>> getInputTypes();
 
   /**
    * getOutputTypes gives the type returned by the operation.
+   * 
+   * @return type returned by the {@link Operation} as a {@link Class} object.
    */
   Class<?> getOutputType();
 
@@ -55,11 +59,12 @@ public interface Operation extends Comparable<Operation> {
   void appendCode(List<Variable> inputVars, StringBuilder b);
 
   /**
-   * Returns a string representation of this StatementKind, which can
-   * subsequently be used in this class's parse method. For a class C
-   * implementing the StatementKind interface, this method should return a
-   * String s such that parsing the string returns an object equivalent to
-   * this object, i.e. C.parse(this.s).equals(this).
+   * toParseableString returns a string representation of this Operation, which can
+   * subsequently be used in this class's parse method. For a class C implementing the 
+   * Operation interface, this method should return a String s such that parsing the string 
+   * returns an object equivalent to this object, i.e. C.parse(this.s).equals(this).
+   * 
+   * @return string descriptor of {@link Operation} object.
    */
   String toParseableString();
 
@@ -115,6 +120,13 @@ public interface Operation extends Comparable<Operation> {
    */
   Object getValue();
 
+  /**
+   * satisfies determines whether the reflective object in this {@link Operation} satisfies
+   * the <code>canUse</code> criteria of the given {@link ReflectionPredicate}.
+   * 
+   * @param reflectionPredicate a {@link ReflectionPredicate} used to test object.
+   * @return result of applying reflectionPredicate to object.
+   */
   boolean satisfies(ReflectionPredicate reflectionPredicate);
 
 

@@ -195,7 +195,7 @@ public final class Statement implements Serializable {
    */
   public boolean isMethodIn(List<Method> list) {
     if (operation instanceof MethodCall) {
-      return ((MethodCall)operation).isMethodIn(list);
+      return ((MethodCall)operation).callsMethodIn(list);
     }
     return false;
   }
@@ -209,7 +209,7 @@ public final class Statement implements Serializable {
    */
   public boolean callsTheMethod(Method m) {
     if (operation instanceof MethodCall) {
-      return ((MethodCall)operation).callsTheMethod(m);
+      return ((MethodCall)operation).callsMethod(m);
     }
     return false;
   }
