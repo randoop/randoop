@@ -5,6 +5,12 @@ import java.io.Serializable;
 
 import randoop.types.TypeNames;
 
+/**
+ * Serializable version of {@link ArrayCreation} allowing tests to be
+ * serialized.
+ * 
+ * Also see <code>ArrayCreation.writeReplace</code>.
+ */
 public class SerializableArrayCreation implements Serializable {
 
   private static final long serialVersionUID = 4091673456327607771L;

@@ -6,6 +6,12 @@ import java.lang.reflect.Field;
 
 import randoop.types.TypeNames;
 
+/**
+ * Serializable representation of {@link PublicField} allowing tests to 
+ * be serialized. 
+ * 
+ * Also see <code>PublicField.writeReplace</code>.
+ */
 public class SerializablePublicField implements Serializable {
 
   private static final long serialVersionUID = 9109946164794213814L;

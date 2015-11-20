@@ -573,10 +573,14 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // If we were unlucky and selected a null value as the receiver
       // for a method call, return with failure.
-      if (i == 0
-          && operation.isMessage() && !(operation.isStatic())
-          && chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization())
+      if (i == 0 && 
+          operation.isMessage() && 
+          !(operation.isStatic()) && 
+          chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization()) {
+        
         return new InputsAndSuccessFlag (false, null, null);
+        
+      }
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {

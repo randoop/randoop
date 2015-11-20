@@ -49,6 +49,10 @@ public class StaticField extends PublicField {
    return new ArrayList<>();
   }
   
+  /**
+   * isStatic is a predicate to determine if the field is declared as static.
+   * @return true since object is a {@link StaticField}.
+   */
   @Override
   public boolean isStatic() {
     return true;

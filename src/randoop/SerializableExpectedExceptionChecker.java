@@ -5,6 +5,12 @@ import java.io.Serializable;
 
 import randoop.types.TypeNames;
 
+/**
+ * Serialized form of {@link ExpectedExceptionChecker} allowing tests to
+ * be serialized.
+ * 
+ * Also see <code>ExpectedExceptionChecker.writeReplace</code>.
+ */
 public class SerializableExpectedExceptionChecker implements Serializable {
 
   private static final long serialVersionUID = 20100429; 

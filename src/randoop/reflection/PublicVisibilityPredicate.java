@@ -14,26 +14,45 @@ import java.lang.reflect.Modifier;
  */
 public class PublicVisibilityPredicate implements VisibilityPredicate {
 
+  /**
+   * {@inheritDoc}
+   * @return true if class is declared public, false otherwise.
+   */
   @Override
   public boolean isVisible(Class<?> c) {
     return isVisible(c.getModifiers());
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if method is declared public, false otherwise.
+   */
   @Override
   public boolean isVisible(Method m) {
     return isVisible(m.getModifiers());
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if constructor is declared public, false otherwise.
+   */
   @Override
   public boolean isVisible(Constructor<?> c) {
     return isVisible(c.getModifiers());
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if field is declared public, false otherwise.
+   */
   @Override
   public boolean isVisible(Field f) {
     return isVisible(f.getModifiers());
   }
   
+  /*
+   * Checks whether the provided modifiers indicate public bit is set.
+   */
   private boolean isVisible(int mods) {
     return Modifier.isPublic(mods);
   }

@@ -391,6 +391,15 @@ public class ExecutableSequence implements Serializable {
     return true;
   }
   
+  /**
+   * Returns the values for the given variables in the {@link Execution} object.
+   * The variables are {@link Variable} objects in the {@link Sequence} of this
+   * {@link ExecutableSequence} object.
+   * 
+   * @param vars a list of {@link Variable} objects.
+   * @param execution representing outcome of executing this sequence.
+   * @return array of values corresponding to variables.
+   */
   public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.theList);
   }
@@ -865,25 +874,32 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-   * initialize - used by ExecutionVisitors
+   * Initializes the array that captures {@link Check} results performed on
+   * execution of the sequence. For use by {@link ExecutionVisitor} implementations.
    */
   public void initializeResults() {
-    // TODO Auto-generated method stub
     checksResults.clear();
     for (int i = 0; i < sequence.size(); i++) {
       checksResults.add(new ArrayList<Boolean>(1));
     }
   }
 
+  /**  
+   * Applies {@link Check#evaluate(Execution)} for each registered {@link Check}.
+   * For use by {@link ExecutionVisitor} implementations.
+   * @param i index into checkResults to set value.
+   */
   public void performChecks(int i) {
-    // TODO Auto-generated method stub
     for (Check c : getChecks(i)) {
       checksResults.get(i).add(c.evaluate(executionResults));
     }
   }
 
+  /**
+   * Clears and initializes array of {@link Check} objects.
+   * For use by {@link ExecutionVisitor} implementations.
+   */
   public void initializeChecks() {
-    // TODO Auto-generated method stub
     checks.clear();
     for (int i = 0; i < sequence.size(); i++) {
       checks.add(new ArrayList<Check>());

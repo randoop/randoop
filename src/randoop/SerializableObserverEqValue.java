@@ -8,6 +8,12 @@ import randoop.operation.MethodCall;
 import randoop.operation.MethodSignatures;
 import randoop.operation.OperationParseException;
 
+/**
+ * Serialized form of {@link ObserverEqValue} allowing tests to be
+ * serialized. 
+ * 
+ * Also see <code>ObserverEqValue.writeReplace</code>.
+ */
 public class SerializableObserverEqValue implements Serializable {
 
   private static final long serialVersionUID = 20090716L;

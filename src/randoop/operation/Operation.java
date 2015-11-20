@@ -42,7 +42,7 @@ import randoop.sequence.Variable;
  *  <li> A public static parse(String) method that returns a new Operation given
  *       a string description. The following property should hold:
  *         C.parse(x.toParseableString()).equals(x)
- *  <li> Update method Operations.parse(String) to parse statement kinds of type C.
+ *  <li> Update method OperationParser.parse(String) to parse statement kinds of type C.
  *  <li> Update method OperationParser.getId(Operation) to handle statement kinds of type C.
  *  </ul> 
  */

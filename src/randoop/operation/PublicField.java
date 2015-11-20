@@ -98,6 +98,9 @@ public abstract class PublicField implements Serializable {
     return field.getType().getName() + ":" + field.getDeclaringClass().getName() + "." + field.getName();
   }
 
+  /**
+   * toString uses {@link PublicField#toParseableString()} to create string representation.
+   */
   @Override
   public String toString() {
     return toParseableString();
@@ -165,6 +168,10 @@ public abstract class PublicField implements Serializable {
     return new SerializablePublicField(field);
   }
 
+  /**
+   * isStatic returns the default that a field is not static.
+   * @return false (default for a field).
+   */
   public boolean isStatic() {
     return false;
   }

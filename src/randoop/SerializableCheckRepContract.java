@@ -4,10 +4,14 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import randoop.operation.MethodCall;
 import randoop.operation.MethodSignatures;
 import randoop.operation.OperationParseException;
 
+/**
+ * Serialized form of {@link CheckRep} allowing tests to be serialized.
+ * 
+ * Also see <code>CheckRep.writeReplace</code>.
+ */
 public class SerializableCheckRepContract implements Serializable {
 
   private static final long serialVersionUID = -7030830526035671668L;

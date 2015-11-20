@@ -5,6 +5,12 @@ import java.io.Serializable;
 
 import randoop.types.TypeNames;
 
+/**
+ * Serializable form of {@link NonreceiverTerm} allowing tests to be
+ * serialized.
+ * 
+ * Also see <code>NonreceiverTerm.writeReplace</code>.
+ */
 public class SerializableNonreceiverTerm implements Serializable {
 
   private static final long serialVersionUID = 6934946167409672994L;

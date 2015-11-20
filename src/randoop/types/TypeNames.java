@@ -5,6 +5,13 @@ import randoop.util.PrimitiveTypes;
 import plume.UtilMDE;
 
 public class TypeNames {
+  
+  /**
+   * Generates a name for the given type in a format that can be compiled.
+   * 
+   * @param cls is the type for which name is to be generated.
+   * @return string that is a compilable version of type name.
+   */
   public static String getCompilableName(Class<?> cls) {
     String retval = cls.getName();
 
@@ -25,6 +32,14 @@ public class TypeNames {
     return retval;
   }
   
+  /**
+   * Recognizes a type from a string and returns the {@link Class} object for the type.
+   * Handles primitive types as well.
+   * 
+   * @param typeName string representation of a type.
+   * @return {@link Class} object for type given in string.
+   * @throws ClassNotFoundException if string is not a recognized type.
+   */
   public static Class<?> recognizeType(String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.getClassForName(typeName);
     if (c == null) {
