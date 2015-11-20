@@ -8,9 +8,32 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 
 /**
- * Represents an operation (in the term algebra sense) that can occur in a statement 
- * as part of a test sequence. Operations include method calls, constructor calls, field
- * accesses, enum constant values, or primitive values.
+ * Operation represents the constructs that can occur in a statement as part of a test sequence. 
+ * These include method calls, constructor calls, field accesses, enum constant values, or 
+ * primitive values. They are used both as symbols in constructing statements as part of tests, 
+ * and as a computational action in reflective execution of test sequences.
+ * 
+ * The concept of an operation comes from logic and universal algebra, where operations are 
+ * used to build terms, which represent values. 
+ * (To dive into the formality, see, e.g., the <a href="https://en.wikipedia.org/wiki/Term_algebra>Term Algebra</a> Wikipedia entry.)
+ * 
+ * An operation op has a type-signature 
+ * op: [T1, T2, ..., Tn] -> T, where [T1, T2, ..., Tn] is the list of input types, and 
+ * T is the output type. The input types are represented by an ordered list of 
+ * {@link Class} objects, and the output type is a single {@link Class} object. 
+ *  
+ * For a non-static method call or instance field access, the first input type
+ * is always the class to which the method or field belongs. If we have a method 
+ * <code>int A.m(double d)</code>, it is represented as an operation m : [A, double] -> int. 
+ * A value, such as an int or enum constant, can be represented as an operation with no input 
+ * types, and its own type as the output type. So, the number 5 is represented by the operation 
+ * 5 : [] -> int. Non-class values are represented by {@link NonreceiverTerm} objects.
+ * 
+ * When an Operation is used in a statement the actual inputs have to be identified. Execution of the
+ * statement will call {@link Operation#execute(Object[], PrintStream)} with concrete values for each
+ * of the inputs.
+ * @see Statement
+ * @see randoop.sequence.ExecutableSequence#execute(randoop.ExecutionVisitor)
  * 
  * To support text-based serialization, an implementing class C should also provide:
  * 
@@ -124,7 +147,7 @@ public interface Operation extends Comparable<Operation> {
    * satisfies determines whether the reflective object in this {@link Operation} satisfies
    * the <code>canUse</code> criteria of the given {@link ReflectionPredicate}.
    * 
-   * @param reflectionPredicate a {@link ReflectionPredicate} used to test object.
+   * @param reflectionPredicate a {@link ReflectionPredicate} to be checked.
    * @return result of applying reflectionPredicate to object.
    */
   boolean satisfies(ReflectionPredicate reflectionPredicate);

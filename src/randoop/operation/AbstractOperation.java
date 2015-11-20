@@ -4,7 +4,8 @@ import randoop.reflection.ReflectionPredicate;
 
 /**
  * AbstractOperation is an abstract implementation of the Operation interface
- * to provide default implementations of Operation predicates.
+ * to provide default implementations of Operation predicates that are false
+ * except for a few kinds of operations.
  * 
  * @author bjkeller
  *

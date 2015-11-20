@@ -230,14 +230,12 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   * A string representing this constructor. The string is of the form:
+   * Generates a string representation of the constructor signature.
    *
-   * CONSTRUCTOR
-   *
-   * Where CONSTRUCTOR is a string representation of the constrctor signature. Examples:
-   *
-   * java.util.ArrayList.&lt;init&gt;()
-   * java.util.ArrayList.&lt;init&gt;(java.util.Collection)
+   * Examples:
+   *  java.util.ArrayList.&lt;init&gt;()
+   *  java.util.ArrayList.&lt;init&gt;(java.util.Collection)
+   * @see ConstructorSignatures#getSignature(Constructor)
    *
    */
   @Override

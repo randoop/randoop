@@ -16,9 +16,14 @@ import randoop.sequence.Variable;
 import randoop.types.TypeNames;
 
 /**
- * Immutable.
- * Represents a one-dimensional
- * array creation statement, e.g. "int[] x = new int[2] { 3, 7 };"
+ * ArrayCreation is an {@link Operation} representing the construction of a one-dimensional
+ * array such as "int[] x = new int[2] { 3, 7 };"
+ * 
+ * In terms of the notation used for {@link Operation}, an array creation of an array of elements 
+ * of type e and length n has a signature [e,...,e] -> t where [e,...,e] is a list of length n, 
+ * and t is the array type.
+ * 
+ * Objects are immutable.
  */
 public final class ArrayCreation extends AbstractOperation implements Operation, Serializable {
 
@@ -40,6 +45,9 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   private boolean hashCodeComputed= false;
 
   /**
+   * ArrayCreation creates an object representing the construction of an array that holds
+   * values of the element type and has the given length.
+   * 
    * @param elementType type of objects in the array
    * @param length number of objects allowed in the array
    */
@@ -55,6 +63,9 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     this.outputTypeCached = Array.newInstance(elementType, 0).getClass();
   }
 
+  /*
+   * writeReplace is a Serialization method that creates a serializable version of an object.
+   */
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableArrayCreation(elementType, length);
   }
@@ -74,9 +85,10 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
-   * Extracts the input constraints for this ArrayDeclarationInfo
-   * @return list of input constraints
+   * {@inheritDoc}
+   * @return list of element types matching length of created array.
    */
+  @Override
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
       this.inputTypesCached = new ArrayList<Class<?>>(length);
@@ -88,9 +100,8 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
-   * Executes this statement, given the inputs to the statement. Returns
-   * the results of execution as an ResultOrException object and can 
-   * output results to specified PrintStream.
+   * {@inheritDoc}
+   * @return {@link NormalExecution} object containing constructed array.
    */
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
     if (statementInput.length > length)
@@ -119,16 +130,18 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
-   * Returns constraint to represent new reference to this statement,
-   * namely the receiver that is generated.
+   * {@inheritDoc}
+   * @return type of created array.
    */
+  @Override
   public Class<?> getOutputType() {
     return outputTypeCached;
   }
 
   /**
-   * Appends string representation of ArrayDeclarationInfo into b.
+   * {@inheritDoc}
    */
+  @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     if (inputVars.size() > length)
       throw new IllegalArgumentException("Too many arguments:"
@@ -184,23 +197,28 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   * Creates string of the form
+   *   TYPE[NUMELEMS]
+   * where TYPE is the type of the array, and NUMELEMS is the number of elements.
+   * 
+   * Example:
+   *   int[3]
+   *   
+   * @return string descriptor for array creation.
+   */
   @Override
   public String toParseableString() {
     return elementType.getName() + "[" + Integer.toString(length) + "]";
   }
 
   /**
-   * A string representing this array declaration. The string is of the form:
+   * parse recognizes an array declaration in a string descriptor in the form generated
+   * by {@link ArrayCreation#toParseableString()}.
    * 
-   * TYPE[NUMELEMS]
-   * 
-   * Where TYPE is the type of the array, and NUMELEMS is the number of elements.
-   * 
-   * Example:
-   * 
-   * int[3]
+   * @see OperationParser#parse(String)
    * @throws OperationParseException 
-   * 
    */
   public static Operation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');

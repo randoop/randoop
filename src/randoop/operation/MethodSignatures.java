@@ -16,7 +16,7 @@ public class MethodSignatures {
    * 
    * @param signature a string representing a method signature.
    * @return reflective {@link Method} object corresponding to signature.
-   * @throws OperationParseException
+   * @throws OperationParseException if signature parameter does not match expected format.
    */
   public static Method getMethodForSignature(String signature) throws OperationParseException {
     if (signature == null) {

@@ -9,6 +9,11 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
 
+/**
+ * DummyStatement is an {@link Operation} representing a noop.
+ * As an operation a DummyStatement with name noop is represented as noop : [] -> void, 
+ * an operation with no input types and void output. It does nothing when executed.
+ */
 public class DummyStatement extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = -3153094271647824398L;
@@ -49,39 +54,47 @@ public class DummyStatement extends AbstractOperation implements Operation, Seri
     return toString();
   }
 
+  @Override
   public Class<?> getOutputType() {
     return void.class;
   }
 
+  @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     b.append("//DummyStatement");
   }
 
+  @Override
   public boolean equals(Object o) {
     if (!(o instanceof DummyStatement)) return false;
     DummyStatement other = (DummyStatement)o;
     return name.equals(other.name);
   }
 
+  @Override
   public int hashCode() {
     return name.hashCode();
   }
 
-  @Override
-  public String toParseableString() {
-    return "(" + name + ")";
-  }
-
   /**
-   * A string representing this dummy statement. The string is of the form:
+   * {@inheritDoc}
+   * Generates a string is of the form:
    * 
    * (NAME)
    * 
    * Where NAME is the name of the dummy statement.
    * 
    * Example:
-   * 
-   * (foobar)
+   *   (foobar)
+   */
+  @Override
+  public String toParseableString() {
+    return "(" + name + ")";
+  }
+
+  /**
+   * parse recognizes a string representing this dummy statement as produced by 
+   * {@link DummyStatement#toParseableString()}. 
    * 
    */
   public static Operation parse(String description) {

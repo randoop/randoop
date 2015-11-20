@@ -1,6 +1,3 @@
-/**
- * 
- */
 package randoop.operation;
 
 import java.io.PrintStream;
@@ -16,7 +13,10 @@ import randoop.types.TypeNames;
 import checkers.units.quals.s;
 
 /**
- * EnumConstant represents a constant value from an enum.
+ * EnumConstant is an {@link Operation} representing a constant value from an enum.
+ * 
+ * As a formal operation, a constant named BLUE from the enum Colors is an operation 
+ * BLUE : [] -> Colors. Execution simply returns the constant value. 
  * 
  * @author bjkeller
  *
@@ -60,8 +60,9 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     return toParseableString();
   }
 
-  /* (non-Javadoc)
-   * @see randoop.StatementKind#getInputTypes()
+  /**
+   * {@inheritDoc}
+   * @return an empty list.
    */
   @Override
   public List<Class<?>> getInputTypes() {
@@ -71,17 +72,17 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   public Class<?> type() { return value.getDeclaringClass(); }
   
   /**
-   * getOutputType returns the type of the enum constant.
-   * 
-   * @see randoop.Operation#getOutputType()
+   * {@inheritDoc} 
+   * @return the enum type.
    */
   @Override
   public Class<?> getOutputType() {
     return type();
   }
 
-  /* (non-Javadoc)
-   * @see randoop.StatementKind#execute(java.lang.Object[], java.io.PrintStream)
+  /**
+   * {@inheritDoc}
+   * @return a {@link NormalExecution} object holding the value of the enum constant.
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -89,8 +90,9 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     return new NormalExecution(this.value,0);
   }
 
-  /* (non-Javadoc)
-   * @see randoop.StatementKind#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)
+  /**
+   * {@inheritDoc}
+   * @return qualified name of enum constant.
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
@@ -98,11 +100,11 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   }
 
   /**
-   * toParseableString issues a string representation of an enum constant as a
+   * {@inheritDoc}
+   * Issues a string representation of an enum constant as a
    * type-value pair. The parse function should return an equivalent object.
    * 
    * @see EnumConstant#parse(String)
-   * @see randoop.Operation#toParseableString()
    */
   @Override
   public String toParseableString() {
@@ -110,7 +112,8 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   }
 
   /**
-   * parse recognizes the description of an enum constant value in a string.
+   * parse recognizes the description of an enum constant value in a string as returned by
+   * {@link EnumConstant#toParseableString()}.
    * 
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
@@ -206,9 +209,17 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     return this.value;
   }
   
+  /**
+   * {@inheritDoc}
+   * @return value of enum constant.
+   */
   @Override
   public Object getValue() { return value(); }
 
+  /**
+   * {@inheritDoc}
+   * @return enclosing enum type.
+   */
   @Override
   public Class<?> getDeclaringClass() {
     return value.getDeclaringClass();

@@ -27,9 +27,16 @@ import randoop.util.PrimitiveTypes;
 import randoop.util.ReflectionExecutor;
 
 /**
- * MethodCall is a {@link Operation} that represents a call to a method of a class.
- * It is a wrapper for a reflective Method object, and caches values of computed 
- * reflective calls.
+ * MethodCall is a {@link Operation} that represents a call to a method. It is a wrapper 
+ * for a reflective Method object, and caches values of computed reflective calls.
+ * 
+ * An an {@link Operation}, a call to a non-static method 
+ *   T mname (T1,...,Tn)
+ * of class C can be represented formally as an operation mname: [C, T1,...,Tn] -> T.
+ * If this method is static, then we could write the operation as C.mname: [T1,...,Tn] -> T 
+ * (a class instance not being needed as an input).
+ * 
+ * The execution of a MethodCall executes the enclosed {@link Method} given values for the inputs.
  * 
  * Previously called RMethod.
  */
@@ -38,7 +45,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   private static final long serialVersionUID = -7616184807726929835L;
 
   /** 
-   * ID for parsing purposes (see StatementKinds.parse method) 
+   * ID for parsing purposes
+   * @see OperationParser#getId(Operation)
    */
   public static final String ID = "method";
 
@@ -56,20 +64,24 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   private boolean isStaticComputed = false;
   private boolean isStaticCached = false;
 
-  /** Version that doesn't include a Method **/
+  /*
+   * writeReplace is a serialization method that writes a copy of object that 
+   * replaces Method by its string representation. 
+   */
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableMethodCall(this.method);
   }
 
   /**
-   * Returns Method object represented by this MethodCallInfo
+   * getMethod returns Method object of this MethodCall.
+   * @return {@link Method} object called by this {@link MethodCall}
    */
   public Method getMethod() {
     return this.method;
   }
 
   /**
-   * Creates the MethodCall corresponding to the given reflection method.
+   * MethodCall creates an object corresponding to the given reflection method.
    */
   public MethodCall(Method method) {
     if (method == null)
@@ -83,7 +95,9 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * Returns the statement corresponding to the given method.
+   * getMethodCall a static method that creates a {@link MethodCall} corresponding 
+   * to the given {@link Method}.
+   * @return constructed {@link MethodCall}.
    */
   public static MethodCall getMethodCall(Method method) {
     return new MethodCall(method);
@@ -91,6 +105,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * toString outputs a parseable text representation of the method call.
+   * @return string representation constructed by {@link MethodCall#toParseableString()}
    */
   @Override
   public String toString() {
@@ -98,11 +113,10 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * appendCode adds a code representation of this method call to the given
-   * StringBuilder.
+   * {@inheritDoc}
+   * Issues the code that corresponds to calling the method with the provided 
+   * {@link Variable} objects as arguments.
    * @param inputVars is the list of actual arguments to be printed.
-   * @param sb is the string builder for the output.
-   * @see Operation#appendCode(List, StringBuilder)
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder sb) {
@@ -145,8 +159,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   // XXX this is a pretty bogus workaround for a bug in javac (type inference
   // fails sometimes)
   // It is bogus because what we produce here may be different from correct
-  // infered type.
-  public String getTypeArguments() {
+  // inferred type.
+  private String getTypeArguments() {
     TypeVariable<Method>[] typeParameters = method.getTypeParameters();
     if (typeParameters.length == 0)
       return "";
@@ -236,9 +250,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   public int calls_num = 0;
 
   /**
-   * execute performs the method call represented by this object. 
-   * @param statementInput arguments to method calls.
-   * @param out the output stream for printing any output.
+   * {@inheritDoc}
+   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link ExceptionalExecution} if an exception thrown.
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -275,7 +288,11 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * Returns the input types of this method.
+   * {@inheritDoc}
+   * If the method is non-static the first element of the list is the
+   * type of the class to which the method belongs.
+   * 
+   * @return list of argument types for this method.
    */
   @Override
   public List<Class<?>> getInputTypes() {
@@ -293,7 +310,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * Returns the return type of this method.
+   * {@inheritDoc}
+   * @return return type of this method.
    */
   @Override
   public Class<?> getOutputType() {

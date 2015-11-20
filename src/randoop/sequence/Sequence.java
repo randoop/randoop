@@ -371,7 +371,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * given class.
    */
   public static Sequence zero(Class<?> c) {
-    return create(NonreceiverTerm.nullOrZeroDecl(c));
+    return create(NonreceiverTerm.createCanonicalTerm(c));
   }
 
 

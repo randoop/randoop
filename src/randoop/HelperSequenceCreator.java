@@ -51,7 +51,7 @@ public class HelperSequenceCreator {
           // Return the array [ null ].
           ArrayCreation decl = new ArrayCreation(cls.getComponentType(), 1);
           s = new Sequence();
-          s = s.extend(NonreceiverTerm.nullOrZeroDecl(cls.getComponentType()));
+          s = s.extend(NonreceiverTerm.createCanonicalTerm(cls.getComponentType()));
           List<Variable> ins = new ArrayList<Variable>();
           ins.add(s.getVariable(0));
           s = s.extend(decl, ins);
