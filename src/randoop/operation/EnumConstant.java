@@ -14,8 +14,6 @@ import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.util.Reflection;
 
-import checkers.units.quals.s;
-
 /**
  * EnumConstant represents a constant value from an enum.
  * 
