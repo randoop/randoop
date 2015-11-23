@@ -19,7 +19,7 @@ import randoop.util.SimpleList;
 public class MappedSequences<T> {
 
   private Map<T, SequenceCollection> map;
-  
+
   public MappedSequences() {
     this.map = new LinkedHashMap<T, SequenceCollection>();
   }
@@ -38,7 +38,7 @@ public class MappedSequences<T> {
     }
     c.add(seq);
   }
-  
+
   /**
    * Returns the set of sequences (as a list) that are associated with
    * the given key and create values of the desiredType.
@@ -59,6 +59,10 @@ public class MappedSequences<T> {
     emptyList = new ListOfLists<Sequence>(emptyJDKList);
   }
 
+  /**
+   * Returns all sequences by merging all of the sequence collections.
+   * @return the set of all sequence objects in this set of collections.
+   */
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<>();
     for (SequenceCollection c : map.values()) {

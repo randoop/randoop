@@ -13,7 +13,7 @@ import randoop.operation.Operation;
  */
 public class MutableStatement {
 
-  public final Operation statementKind;
+  public final Operation operation;
 
   public final List<MutableVariable> inputs;
 
@@ -23,7 +23,7 @@ public class MutableStatement {
     StringBuilder b = new StringBuilder();
     b.append(result.toString());
     b.append(" = ");
-    b.append(statementKind.toString());
+    b.append(operation.toString());
     b.append(" ");
     b.append(inputs);
     return b.toString();
@@ -34,7 +34,7 @@ public class MutableStatement {
    * given values.
    */
   public MutableStatement(Operation statement, List<MutableVariable> inputVariables, MutableVariable result) {
-    this.statementKind = statement;
+    this.operation = statement;
     this.inputs = new ArrayList<MutableVariable>(inputVariables);
     this.result = result;
   }

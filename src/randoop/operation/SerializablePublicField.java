@@ -4,8 +4,14 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
+/**
+ * Serializable representation of {@link PublicField} allowing tests to 
+ * be serialized. 
+ * 
+ * Also see <code>PublicField.writeReplace</code>.
+ */
 public class SerializablePublicField implements Serializable {
 
   private static final long serialVersionUID = 9109946164794213814L;
@@ -15,11 +21,11 @@ public class SerializablePublicField implements Serializable {
     this.fieldRep = field.getDeclaringClass().getName() + "." + field.getName();
   }
   
-  private Object readResolve() throws ObjectStreamException {
+  private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
     int pos = fieldRep.lastIndexOf('.');
     String className = fieldRep.substring(0,pos);
     String fieldName = fieldRep.substring(pos + 1);
-    Class<?> c = Reflection.classForName(className);
+    Class<?> c = TypeNames.recognizeType(className);
     Field field = PublicFieldParser.fieldFor(c, fieldName);
     if (field != null) {
       return PublicFieldParser.recognize(field);

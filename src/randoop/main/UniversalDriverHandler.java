@@ -31,6 +31,7 @@ public class UniversalDriverHandler extends CommandHandler {
 
     Options parsedArgs = new Options(usage_synopsis,
         WriteModelCheckerDriver.class);
+    @SuppressWarnings("unused")
     String non_options[] = null;
 
     try {
@@ -73,9 +74,9 @@ public class UniversalDriverHandler extends CommandHandler {
     }
     if (classlist != null) {
       File classListingFile = new File(classlist);
-      classes.addAll(Reflection.loadClassesFromFile(classListingFile));
+      classes.addAll(ClassTypeLoader.loadClassesFromFile(classListingFile));
     }
-    classes.addAll(Reflection.loadClassesFromList(test_class, GenInputsAbstract.silently_ignore_bad_class_names));
+    classes.addAll(ClassTypeLoader.loadClassesFromList(test_class, GenInputsAbstract.silently_ignore_bad_class_names));
     assert classes.size() > 0;
     return classes;
   }

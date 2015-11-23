@@ -71,8 +71,8 @@ public final class Sequence implements Serializable, WeightedElement {
    * The statement for the statement at the given index.
    */
 
-  public final Operation getOperation(int index) {
-    return getStatementWithInputs(index).statement;
+  public final Statement getStatement(int index) {
+    return getStatementWithInputs(index);
   }
 
   /**
@@ -122,15 +122,15 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /** The last Statement in the sequence. */
-  public Operation getLastStatement() {
-    return this.getOperation(this.size() - 1);
+  public Statement getLastStatement() {
+    return this.getStatement(this.size() - 1);
   }
 
   /** The statement that created this value. */
-  public Operation getCreatingStatement(Variable value) {
+  public Statement getCreatingStatement(Variable value) {
     if (value.sequence != this)
       throw new IllegalArgumentException("value.owner != this");
-    return statements.get((value).index).statement;
+    return statements.get((value).index);
   }
 
   /** The inputs for the ith statement.
@@ -347,8 +347,9 @@ public final class Sequence implements Serializable, WeightedElement {
    */
   public Variable getVariableForInput(int statementPosition, RelativeNegativeIndex input) {
     int absoluteIndex = statementPosition + input.index;
-    if (absoluteIndex < 0)
+    if (absoluteIndex < 0) {
       throw new IllegalArgumentException("invalid index (expeciting non-negative): " + absoluteIndex);
+    }
     return new Variable(this, absoluteIndex);
   }
 
@@ -370,7 +371,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * given class.
    */
   public static Sequence zero(Class<?> c) {
-    return create(NonreceiverTerm.nullOrZeroDecl(c));
+    return create(NonreceiverTerm.createCanonicalTerm(c));
   }
 
 
@@ -395,11 +396,9 @@ public final class Sequence implements Serializable, WeightedElement {
   // The number of statements that are not primitive declarations, i.e. "int var7 = 0".
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
-    for (int i = 0; i < statements.size(); i++) {
-      Operation s = statements.get(i).statement;
-      if (s instanceof NonreceiverTerm)
-        continue;
-       netSize++;
+    for (Statement s : statements) {
+      if (!s.isPrimitiveInitialization())
+        netSize++;
     }
     return netSize;
   }
@@ -430,23 +429,23 @@ public final class Sequence implements Serializable, WeightedElement {
       Statement si = this.statements.get(this.statements.size() - 1);
 
       // Process return value
-      if (si.statement.getOutputType().equals(void.class)) {
+      if (si.getOutputType().equals(void.class)) {
         lastStatementTypes.add(void.class); // used for void methods and Dummy statements
       } else {
-        lastStatementTypes.add(si.statement.getOutputType());
+        lastStatementTypes.add(si.getOutputType());
       }
       lastStatementVariables.add(new Variable(this, this.statements.size() - 1));
 
       // Process input arguments.
-      if (si.inputs.size() != si.statement.getInputTypes().size())
-        throw new RuntimeException(si.inputs + ", " + si.statement.getInputTypes() + ", " + si.statement.toString());
+      if (si.inputs.size() != si.getInputTypes().size())
+        throw new RuntimeException(si.inputs + ", " + si.getInputTypes() + ", " + si.toString());
 
       List<Variable> v = this.getInputs(this.statements.size() - 1);
-      if (v.size() != si.statement.getInputTypes().size()) throw new RuntimeException();
+      if (v.size() != si.getInputTypes().size()) throw new RuntimeException();
 
       for (int i = 0; i < v.size(); i++) {
         Variable value = v.get(i);
-        assert Reflection.canBeUsedAs(value.getType(), si.statement.getInputTypes().get(i));
+        assert Reflection.canBeUsedAs(value.getType(), si.getInputTypes().get(i));
         lastStatementTypes.add(value.getType());
         Variable idx = getVariableForInput(this.size() - 1, si.inputs.get(i)); // XXX bogus. Isn't this just recomputing v from above?
         lastStatementVariables.add(idx);
@@ -472,26 +471,26 @@ public final class Sequence implements Serializable, WeightedElement {
       // No nulls.
       if (statementWithInputs == null)
         throw new IllegalStateException("Null statement in sequence:" + Globals.lineSep + this.toString());
-      if (statementWithInputs.statement == null || statementWithInputs.inputs == null)
+      if (statementWithInputs.inputs == null)
         throw new IllegalArgumentException("parameters cannot be null.");
 
       // The inputs to the statement are valid: there's the right number
       // of them,
       // and they refer to appropriate input values.
-      if (statementWithInputs.statement.getInputTypes().size() != statementWithInputs.inputs.size())
+      if (statementWithInputs.getInputTypes().size() != statementWithInputs.inputs.size())
         throw new IllegalArgumentException("statement.getInputConstraints().size()="
-            + statementWithInputs.statement.getInputTypes().size() + " is different from inputIndices.length="
+            + statementWithInputs.getInputTypes().size() + " is different from inputIndices.length="
             + statementWithInputs.inputs.size() + ", sequence: " + this.toString());
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
         if (index >= 0)
           throw new IllegalStateException();
-        Class<?> newRefConstraint = statements.get(si + statementWithInputs.inputs.get(i).index).statement.getOutputType();
+        Class<?> newRefConstraint = statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
         if (newRefConstraint == null)
           throw new IllegalStateException();
-        if (!Reflection.canBeUsedAs(newRefConstraint, statementWithInputs.statement.getInputTypes().get(i)))
+        if (!Reflection.canBeUsedAs(newRefConstraint, statementWithInputs.getInputTypes().get(i)))
           throw new IllegalArgumentException(i + "th input constraint " + newRefConstraint + " does not imply " + "statement's " + i
-              + "th input constraint " + statementWithInputs.statement.getInputTypes().get(i) + Globals.lineSep + ".Sequence:" + Globals.lineSep
+              + "th input constraint " + statementWithInputs.getInputTypes().get(i) + Globals.lineSep + ".Sequence:" + Globals.lineSep
               + this.toString());
       }
     }
@@ -511,22 +510,15 @@ public final class Sequence implements Serializable, WeightedElement {
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size())
       return GenInputsAbstract.debug_checks ? verifyFalse("size", other) : false;
       for (int i = 0; i < this.statements.size(); i++) {
-        Statement thisS = null;
-        Statement otherS = null;
-        thisS = this.statements.get(i);
-        otherS = other.statements.get(i);
+        Statement thisStatement = this.statements.get(i);
+        Statement otherStatement = other.statements.get(i);
         if (GenInputsAbstract.debug_checks) {
-          assert this.statements.get(i) == thisS;
-          assert other.statements.get(i) == otherS;
+          assert this.statements.get(i) == thisStatement;
+          assert other.statements.get(i) == otherStatement;
         }
-        if (!thisS.statement.equals(otherS.statement))
+        if (!thisStatement.equals(otherStatement)) {
           return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i, other) : false;
-          if (thisS.inputs.size() != otherS.inputs.size())
-            return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i + " inputs size ", other) : false;
-            for (int j = 0; j < thisS.inputs.size(); j++) {
-              if (!thisS.inputs.get(j).equals(otherS.inputs.get(j)))
-                return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i + " input " + j, other) : false;
-            }
+        }
       }
       return true;
   }
@@ -577,7 +569,7 @@ public final class Sequence implements Serializable, WeightedElement {
    */
   protected final Statement getStatementWithInputs(int index) {
     if (!isValidIndex(index))
-      throw new IllegalArgumentException("Index " + index + " not valid for sequece " + this);
+      throw new IllegalArgumentException("Index " + index + " not valid for sequence " + this);
     return this.getStatementsWithInputs().get(index);
   }
 
@@ -614,7 +606,7 @@ public final class Sequence implements Serializable, WeightedElement {
     for (int ithOutputIndex = 0; ithOutputIndex < this.lastStatementVariables.size(); ithOutputIndex++) {
       Variable i = this.lastStatementVariables.get(ithOutputIndex);
       Statement s = statements.get(i.index);
-      if (!s.isVoidMethodCall() && varTypeMatches(s.statement.getOutputType(), clazz, match)) {
+      if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), clazz, match)) {
         possibleIndices.add(i);
       }
     }
@@ -631,7 +623,7 @@ public final class Sequence implements Serializable, WeightedElement {
     for (int i = 0 ; i < this.size() ; i++) {
       Statement s = statements.get(i);
       if (!s.isVoidMethodCall()
-          && varTypeMatches(s.statement.getOutputType(), clazz, match)) {
+          && varTypeMatches(s.getOutputType(), clazz, match)) {
         possibleIndices.add(getVariable(i));
       }
     }
@@ -658,36 +650,49 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
    */
-  public final Sequence extend(Operation statement, List<Variable> inputVariables) {
-    checkInputs(statement, inputVariables);
+  public final Sequence extend(Operation operation, List<Variable> inputVariables) {
+    checkInputs(operation, inputVariables);
     List<RelativeNegativeIndex> indexList = new ArrayList<RelativeNegativeIndex>(1);
     for (Variable v : inputVariables) {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
-    Statement newStatement = new Statement(statement, indexList);
-    int newNetSize = (statement instanceof NonreceiverTerm) ? this.savedNetSize : this.savedNetSize + 1;
-    return new Sequence(new OneMoreElementList<Statement>(this.statements, newStatement), this.savedHashCode
-        + newStatement.hashCode(), newNetSize);
+    Statement statement = new Statement(operation, indexList);
+    int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
+    return new Sequence(new OneMoreElementList<Statement>(this.statements, statement), this.savedHashCode
+        + statement.hashCode(), newNetSize);
   }
 
   /**
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
    */
-  public final Sequence extend(Operation statement, Variable... inputs) {
-    return extend(statement, Arrays.asList(inputs));
+  public final Sequence extend(Operation operation, Variable... inputs) {
+    return extend(operation, Arrays.asList(inputs));
   }
 
+  /**
+   * extend adds a new statement to a sequence using the operation of the given statement.
+   * Intended as only place we reach inside a {@link Statement} for its operation.
+   * 
+   * @param statement is a {@link Statement} object from which the operation is copied.
+   * @param inputs is the list of variables for input.
+   * @return sequence constructed from this one plus the operation 
+   * @see Sequence#extend(Operation, List)
+   */
+  public Sequence extend(Statement statement, List<Variable> inputs) {
+    return extend(statement.getOperation(), inputs);
+  }
+  
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
-  private void checkInputs(Operation statement, List<Variable> inputVariables) {
-    if (statement.getInputTypes().size() != inputVariables.size()) {
+  private void checkInputs(Operation operation, List<Variable> inputVariables) {
+    if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg = "statement.getInputTypes().size():"
-        + statement.getInputTypes().size()
+        + operation.getInputTypes().size()
         + " inputVariables.size():"
         + inputVariables.size()
         +" statement:"
-        + statement;
+        + operation;
       throw new IllegalArgumentException(msg);
     }
     for (int i = 0; i < inputVariables.size(); i++) {
@@ -700,14 +705,14 @@ public final class Sequence implements Serializable, WeightedElement {
           + toString()
           + Globals.lineSep
           + "statement:"
-          + statement
+          + operation
           + Globals.lineSep
           + "inputVariables:"
           + inputVariables;
         throw new IllegalArgumentException(msg);
       }
       Class<?> newRefConstraint =
-        statements.get(inputVariables.get(i).index).statement.getOutputType();
+        statements.get(inputVariables.get(i).index).getOutputType();
       if (newRefConstraint == null) {
         String msg = "newRefConstraint == null for"
           + Globals.lineSep
@@ -715,13 +720,13 @@ public final class Sequence implements Serializable, WeightedElement {
           + toString()
           + Globals.lineSep
           + "statement:"
-          + statement
+          + operation
           + Globals.lineSep
           + "inputVariables:"
           + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!Reflection.canBeUsedAs(newRefConstraint, statement.getInputTypes().get(i))) {
+      if (!Reflection.canBeUsedAs(newRefConstraint, operation.getInputTypes().get(i))) {
         String msg = i
           + "th input constraint "
           + newRefConstraint
@@ -729,7 +734,7 @@ public final class Sequence implements Serializable, WeightedElement {
           + "statement's "
           + i
           + "th input constraint "
-          + statement.getInputTypes().get(i)
+          + operation.getInputTypes().get(i)
           + Globals.lineSep
           + ".Sequence:"
           + Globals.lineSep
@@ -737,7 +742,7 @@ public final class Sequence implements Serializable, WeightedElement {
           + this.toString()
           + Globals.lineSep
           + "statement:"
-          + statement
+          + operation
           + Globals.lineSep
           + "inputVariables:"
           + inputVariables;
@@ -783,12 +788,11 @@ public final class Sequence implements Serializable, WeightedElement {
   public void printStatement(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
     // Example: { "var2", "(int)3" }
-    getOperation(index).appendCode(getVariable(index), getInputs(index), b);
+    getStatement(index).appendCode(getVariable(index), getInputs(index), b);
   }
 
-  public Sequence repeatLast(int times) {
+  public Sequence repeat(Operation operation, int times) {
     Sequence retval = new Sequence(this.statements);
-    Operation statementToRepeat = retval.getLastStatement();
     for (int i = 0 ; i < times ; i++) {
       List<Integer> vil = new ArrayList<Integer>();
       for (Variable v : retval.getInputs(retval.size()-1)) {
@@ -804,7 +808,7 @@ public final class Sequence implements Serializable, WeightedElement {
       for (Integer vi : vil) {
         vl.add(retval.getVariable(vi));
       }
-      retval = retval.extend(statementToRepeat,  vl);
+      retval = retval.extend(operation,  vl);
     }
     return retval;
   }
@@ -818,13 +822,13 @@ public final class Sequence implements Serializable, WeightedElement {
     List<MutableStatement> statements = new ArrayList<MutableStatement>();
     for (int i = 0 ; i < size() ; i++) {
       Statement sti = this.statements.get(i);
-      Operation st = sti.statement;
+      //Operation st = sti.statement;
       List<MutableVariable> inputs = new ArrayList<MutableVariable>();
       for (Variable v : getInputs(i)) {
         inputs.add(values.get(v.index));
       }
-      MutableStatement slowSti =
-        new MutableStatement(st, inputs, values.get(i));
+      MutableStatement slowSti = sti.toModifiableStatement(inputs,values.get(i));
+      //  new MStatement(st, inputs, values.get(i));
       statements.add(slowSti);
     }
     slowSeq.statements = statements;
@@ -855,17 +859,8 @@ public final class Sequence implements Serializable, WeightedElement {
     assert statementSep != null;
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      Operation sk = getOperation(i);
-      b.append(Variable.classToVariableName(sk.getOutputType()) + i);
-      b.append(" =  ");
-      b.append(OperationParser.getId(sk));
-      b.append(" : ");
-      b.append(sk.toParseableString());
-      b.append(" : ");
-      for (Variable v : getInputs(i)) {
-        b.append(v.toString());
-        b.append(" ");
-      }
+      Statement sk = getStatement(i);
+      b.append(sk.toParseableString(Variable.classToVariableName(sk.getOutputType()) + i, getInputs(i)));
       b.append(statementSep);
     }
     return b.toString();  
@@ -919,7 +914,7 @@ public final class Sequence implements Serializable, WeightedElement {
         statement = statement.trim();
 
         // Extract elements:
-        //   var    =    <statementkind>    :    var ... var
+        //   var    =     <operation>     :     var ... var
         //    |                |                     |
         //    |                |                     |
         // newVar           stKind                inVars
@@ -943,7 +938,7 @@ public final class Sequence implements Serializable, WeightedElement {
         }
         
         String newVar = statement.substring(0, equalsInd).trim();
-        String stKind = statement.substring(equalsInd + 1, colonInd).trim();
+        String opStr = statement.substring(equalsInd + 1, colonInd).trim();
         String inVarsStr = statement.substring(colonInd + 1).trim();
 
         if (valueMap.containsKey(newVar)) {
@@ -953,10 +948,10 @@ public final class Sequence implements Serializable, WeightedElement {
           throw new SequenceParseException(msg, statements, statementCount);
         }
 
-        // Parse statement kind.
+        // Parse operation.
         Operation st;
         try {
-          st = OperationParser.parse(stKind);
+          st = OperationParser.parse(opStr);
         } catch (OperationParseException e) {
           throw new SequenceParseException(e.getMessage(), statements, statementCount);
         }
@@ -1009,7 +1004,7 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * Parse a sequence encoded as a strings. Convience method for {@link #parse(List)},
+   * Parse a sequence encoded as a strings. Convenience method for {@link #parse(List)},
    * which parses a sequence of strings, each representing a Statement. See
    * that method for more documentation on the string representation of a sequence.
    *
@@ -1076,13 +1071,9 @@ public final class Sequence implements Serializable, WeightedElement {
    * "Foo var0 = null" or "int var0 = 1".
    */
   public boolean isPrimitive() {
-    if (size() != 1) {
-      return false;
-    }
-    if (!(getOperation(0) instanceof NonreceiverTerm)) {
-      return false;
-    }
-    return true;
+    return (size() == 1 && getStatement(0).isPrimitiveInitialization());
   }
+
+
   
 }

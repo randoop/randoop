@@ -12,48 +12,45 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.sequence.ExecutableSequence;
+import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
 import randoop.util.PrimitiveTypes;
-import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 
 /**
- * Represents a method call.
- *
- * The "R" stands for "Randoop", to underline the distinction from
- * java.lang.reflect.Method.
+ * MethodCall is a {@link Operation} that represents a call to a method. It is a wrapper 
+ * for a reflective Method object, and caches values of computed reflective calls.
+ * 
+ * An an {@link Operation}, a call to a non-static method 
+ *   T mname (T1,...,Tn)
+ * of class C can be represented formally as an operation mname: [C, T1,...,Tn] -> T.
+ * If this method is static, then we could write the operation as C.mname: [T1,...,Tn] -> T 
+ * (a class instance not being needed as an input).
+ * 
+ * The execution of a MethodCall executes the enclosed {@link Method} given values for the inputs.
+ * 
+ * Previously called RMethod.
  */
-public final class MethodCall implements Operation, Serializable {
+public final class MethodCall extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = -7616184807726929835L;
 
-  /** ID for parsing purposes (see StatementKinds.parse method) */
+  /** 
+   * ID for parsing purposes
+   * @see OperationParser#getId(Operation)
+   */
   public static final String ID = "method";
 
-  // State variable.
   private final Method method;
-
-  /**
-   * A list with as many sublists as the formal paramters of this method.
-   * The <em>i</em>th set indicates all the possible argument types for the
-   * <em>i</im>th formal parameter, for overloads of this method with the
-   * same number of formal parameters.  At a call site, if the declared
-   * type of an actual argument is not uniquely determined, then the acutal
-   * should be casted at the call site.
-   */ 
-  public List<Set<Class<?>>> overloads;
 
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
@@ -67,20 +64,24 @@ public final class MethodCall implements Operation, Serializable {
   private boolean isStaticComputed = false;
   private boolean isStaticCached = false;
 
-  /** Version that doesn't include a Method **/
+  /*
+   * writeReplace is a serialization method that writes a copy of object that 
+   * replaces Method by its string representation. 
+   */
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableMethodCall(method);
+    return new SerializableMethodCall(this.method);
   }
 
   /**
-   * Returns Method object represented by this MethodCallInfo
+   * getMethod returns Method object of this MethodCall.
+   * @return {@link Method} object called by this {@link MethodCall}
    */
   public Method getMethod() {
     return this.method;
   }
 
   /**
-   * Creates the Rmethod corresponding to the given reflection method.
+   * MethodCall creates an object corresponding to the given reflection method.
    */
   public MethodCall(Method method) {
     if (method == null)
@@ -94,40 +95,32 @@ public final class MethodCall implements Operation, Serializable {
   }
 
   /**
-   * Returns the statement corresponding to the given constructor.
+   * getMethodCall a static method that creates a {@link MethodCall} corresponding 
+   * to the given {@link Method}.
+   * @return constructed {@link MethodCall}.
    */
-  public static MethodCall getRMethod(Method method) {
+  public static MethodCall getMethodCall(Method method) {
     return new MethodCall(method);
   }
 
-  /** Reset/clear the overloads field. */
-  public void resetOverloads() {
-    overloads = new ArrayList<Set<Class<?>>>();
-    // For Java 8:  for (int i=0; i<method.getParameterCount(); i++) {
-    for (int i=0; i<method.getParameterTypes().length; i++) {
-      overloads.add(new HashSet<Class<?>>());
-    }
-    addToOverloads(method);
-  }
-
-  public void addToOverloads(Method m) {
-    Class<?>[] ptypes = m.getParameterTypes();
-    assert ptypes.length == overloads.size();
-    for (int i=0; i<overloads.size(); i++) {
-      overloads.get(i).add(ptypes[i]);
-    }
-  }
-
+  /**
+   * toString outputs a parseable text representation of the method call.
+   * @return string representation constructed by {@link MethodCall#toParseableString()}
+   */
   @Override
   public String toString() {
     return toParseableString();
   }
 
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder sb) {
-    if (!isVoid()) {
-      sb.append(Reflection.getCompilableName(this.method.getReturnType()));
-      sb.append(" " + newVar.getName() + " = ");
-    }
+  /**
+   * {@inheritDoc}
+   * Issues the code that corresponds to calling the method with the provided 
+   * {@link Variable} objects as arguments.
+   * @param inputVars is the list of actual arguments to be printed.
+   */
+  @Override
+  public void appendCode(List<Variable> inputVars, StringBuilder sb) {
+    
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     appendReceiverOrClassForStatics(receiverString, sb);
 
@@ -152,24 +145,22 @@ public final class MethodCall implements Operation, Serializable {
 
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        Object val = ((NonreceiverTerm) statementCreatingVar).getValue();
-        sb.append(PrimitiveTypes.toCodeString(val));
+      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
+      String shortForm = statementCreatingVar.getShortForm();
+      if (!GenInputsAbstract.long_format && shortForm != null) {
+        sb.append(shortForm);
       } else {
         sb.append(inputVars.get(i).getName());
       }
     }
-
-    sb.append(");" + Globals.lineSep);
+    sb.append(")");
   }
   
   // XXX this is a pretty bogus workaround for a bug in javac (type inference
   // fails sometimes)
   // It is bogus because what we produce here may be different from correct
-  // infered type.
-  public String getTypeArguments() {
+  // inferred type.
+  private String getTypeArguments() {
     TypeVariable<Method>[] typeParameters = method.getTypeParameters();
     if (typeParameters.length == 0)
       return "";
@@ -243,9 +234,7 @@ public final class MethodCall implements Operation, Serializable {
     if (this == o)
       return true;
     MethodCall other = (MethodCall) o;
-    if (!this.method.equals(other.method))
-      return false;
-    return true;
+    return this.method.equals(other.method);
   }
 
   @Override
@@ -260,6 +249,11 @@ public final class MethodCall implements Operation, Serializable {
   public long calls_time = 0;
   public int calls_num = 0;
 
+  /**
+   * {@inheritDoc}
+   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link ExceptionalExecution} if an exception thrown.
+   */
+  @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
 
     assert statementInput.length == getInputTypes().size();
@@ -294,8 +288,13 @@ public final class MethodCall implements Operation, Serializable {
   }
 
   /**
-   * Returns the input types of this method.
+   * {@inheritDoc}
+   * If the method is non-static the first element of the list is the
+   * type of the class to which the method belongs.
+   * 
+   * @return list of argument types for this method.
    */
+  @Override
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
       Class<?>[] methodParameterTypes = method.getParameterTypes();
@@ -311,8 +310,10 @@ public final class MethodCall implements Operation, Serializable {
   }
 
   /**
-   * Returns the return type of this method.
+   * {@inheritDoc}
+   * @return return type of this method.
    */
+  @Override
   public Class<?> getOutputType() {
     if (outputTypeCached == null) {
       outputTypeCached = method.getReturnType();
@@ -320,6 +321,11 @@ public final class MethodCall implements Operation, Serializable {
     return outputTypeCached;
   }
 
+  /**
+   * isVoid is a predicate to indicate whether this method has a void return types.
+   * 
+   * @return true if this method has a void return type, false otherwise.
+   */
   public boolean isVoid() {
     if (!isVoidComputed) {
       isVoidComputed = true;
@@ -329,9 +335,10 @@ public final class MethodCall implements Operation, Serializable {
   }
 
   /**
-   * Returns true if method represented by this MethodCallInfo is a static
-   * method.
+   * {@inheritDoc}
+   * @return true if this method is static, and false, otherwise.
    */
+  @Override
   public boolean isStatic() {
     if (!isStaticComputed) {
       isStaticComputed = true;
@@ -341,18 +348,79 @@ public final class MethodCall implements Operation, Serializable {
   }
 
   /**
-   * A string representing this method's signature. Examples:
-   *
-   * java.util.ArrayList.get(int)
-   * java.util.ArrayList.add(int,java.lang.Object)
+   * {@inheritDoc}
+   * The descriptor for a method is a string representing the method signature.
+   *  
+   * Examples:
+   *  java.util.ArrayList.get(int)
+   *  java.util.ArrayList.add(int,java.lang.Object)
    */
+  @Override
   public String toParseableString() {
-    return Reflection.getSignature(method);
+    return MethodSignatures.getSignature(this.method);
   }
 
-  public static Operation parse(String s) {
-    return MethodCall.getRMethod(Reflection.getMethodForSignature(s));
+  /**
+   * parse recognizes a method call in a string descriptor and returns a {@link MethodCall} object.
+   * Should satisfy parse(op.toParseableString()).equals(op) for Operation op.
+   * @see OperationParser#parse(String)
+   * 
+   * @param s a string descriptor
+   * @return the {@link MethodCall} object described by the string.
+   * @throws OperationParseException if s does not match expected descriptor.
+   */
+  public static Operation parse(String s) throws OperationParseException {
+    return MethodCall.getMethodCall(MethodSignatures.getMethodForSignature(s));
   }
 
+  /**
+   * {@inheritDoc}
+   * @return the class in which this method is declared.
+   */
+  @Override
+  public Class<?> getDeclaringClass() {
+    return method.getDeclaringClass();
+  }
 
+  /**
+   * callsMethodIn determines whether the current method object
+   * calls one of the methods in the list.
+   * @param list method objects to compare against.
+   * @return true if method called by this object is in the given list.
+   */
+  public boolean callsMethodIn(List<Method> list) {
+    return list != null && list.contains(method);
+  }
+
+  /**
+   * callsMethod determines whether the method that this object calls is 
+   * method given in the parameter.
+   * @param m method to test against.
+   * @return true, if m corresponds to the method in this object, false, otherwise.
+   */
+  public boolean callsMethod(Method m) {
+    return method.equals(m);
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true always, since this is a method call. 
+   */
+  @Override
+  public boolean isMessage() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   * Determines whether enclosed {@link Method} satisfies the given predicate.
+   * 
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the method in this object satisfies the canUse(Method) of predicate.
+   */
+  @Override
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return predicate.canUse(method);
+  }
+  
 }
