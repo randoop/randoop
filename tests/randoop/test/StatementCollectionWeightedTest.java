@@ -1,15 +1,15 @@
 package randoop.test;
 
-import java.io.InputStream;
-import java.io.StringReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-import randoop.StatementKind;
+import randoop.operation.Operation;
 import randoop.util.Reflection;
 import randoop.util.Util;
+
+import junit.framework.TestCase;
 
 public class StatementCollectionWeightedTest extends TestCase {
 
@@ -21,7 +21,7 @@ public class StatementCollectionWeightedTest extends TestCase {
     List<Class<?>> classes = new ArrayList<Class<?>>();
     classes.add(java.util.ArrayList.class);
 
-    List<StatementKind> statements = 
+    List<Operation> statements = 
       Reflection.getStatements(classes, null);
 
     StringBuilder weightedMethods = new StringBuilder();

@@ -1,11 +1,12 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import randoop.Sequence.RelativeNegativeIndex;
+import randoop.operation.Operation;
+import randoop.sequence.Sequence.RelativeNegativeIndex;
 
 /**
  * The elements of a Sequence. Each of these contains two pieces of information:
@@ -17,7 +18,7 @@ public final class Statement implements Serializable {
 
   // The kind of statement (method call, constructor call,
   // primitive values declaration, etc.).
-  public final StatementKind statement;
+  public final Operation statement;
 
   // The list of values used as input to the statement.
   //
@@ -30,7 +31,7 @@ public final class Statement implements Serializable {
    * Create a new statement of type statement that takes as input the given
    * values.
    */
-  public Statement(StatementKind statement,
+  public Statement(Operation statement,
       List<RelativeNegativeIndex> inputVariables) {
     this.statement = statement;
     this.inputs = Collections

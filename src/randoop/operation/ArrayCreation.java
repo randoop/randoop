@@ -1,4 +1,4 @@
-package randoop;
+package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.PrintStream;
@@ -8,7 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Variable;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 
@@ -17,7 +22,7 @@ import randoop.util.Reflection;
  * Represents a one-dimensional
  * array creation statement, e.g. "int[] x = new int[2] { 3, 7 };"
  */
-public final class ArrayDeclaration implements StatementKind, Serializable {
+public final class ArrayCreation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -40,7 +45,7 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
    * @param elementType type of objects in the array
    * @param length number of objects allowed in the array
    */
-  public ArrayDeclaration(Class<?> elementType, int length) {
+  public ArrayCreation(Class<?> elementType, int length) {
 
     // Check legality of arguments.
     if (elementType == null) throw new IllegalArgumentException("elementType cannot be null.");
@@ -52,7 +57,7 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
   }
 
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableArrayDeclaration(elementType, length);
+    return new SerializableArrayCreation(elementType, length);
   }
 
   /**
@@ -144,10 +149,10 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
       
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+        b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
       } else {
         b.append(inputVars.get(i).getName());
       }
@@ -168,11 +173,11 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof ArrayDeclaration))
+    if (!(o instanceof ArrayCreation))
       return false;
     if (this == o)
       return true;
-    ArrayDeclaration otherArrayDecl = (ArrayDeclaration) o;
+    ArrayCreation otherArrayDecl = (ArrayCreation) o;
     if (!this.elementType.equals(otherArrayDecl.elementType))
       return false;
     if (this.length != otherArrayDecl.length)
@@ -196,13 +201,13 @@ public final class ArrayDeclaration implements StatementKind, Serializable {
    * int[3]
    * 
    */
-  public static StatementKind parse(String str) {
+  public static Operation parse(String str) {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');
     String elementTypeStr = str.substring(0, openBr);
     String lengthStr = str.substring(openBr + 1, closeBr);
     Class<?> elementType = Reflection.classForName(elementTypeStr);
     int length = Integer.parseInt(lengthStr);
-    return new ArrayDeclaration(elementType, length);
+    return new ArrayCreation(elementType, length);
   }
 }

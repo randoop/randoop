@@ -7,11 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import randoop.main.GenInputsAbstract;
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 import randoop.util.Files;
 import randoop.util.Log;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
-import randoop.util.TimeoutExceededException;
 
 /**
  * An execution visitor that records regression checks on the values
@@ -47,14 +53,9 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
   
   @Override
   public void initialize(ExecutableSequence s) {
-    s.checks.clear();
-    s.checksResults.clear();
-    for (int i = 0 ; i < s.sequence.size() ; i++) {
-      s.checks.add(new ArrayList<Check>(1));
-      s.checksResults.add(new ArrayList<Boolean>(1));
-    }
+    s.initializeResults();
+    s.initializeChecks();
   }
-
 
   // We don't create regression checks for these methods.
   private static final Method objectToString;
@@ -77,12 +78,12 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     return isObserverInvocation(statement.statement);
   }
 
-  public static boolean isObserverInvocation(StatementKind statement) {
-    if (! (statement instanceof RMethod)) {
+  public static boolean isObserverInvocation(Operation statement) {
+    if (! (statement instanceof MethodCall)) {
       return false;
     }
     
-    RMethod rmethod = (RMethod) statement;
+    MethodCall rmethod = (MethodCall) statement;
     Method method = rmethod.getMethod();
     List<Method> observer_methods = RegressionCaptureVisitor.observer_map.get(method.getDeclaringClass());
     return (observer_methods != null && observer_methods.contains(method));
@@ -157,7 +158,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     // Recall there are as many values as statements in the sequence.
     for (int i = 0; i < s.sequence.size() ; i++) {
 
-      StatementKind st = s.sequence.getStatementKind(i);
+      Operation st = s.sequence.getOperation(i);
       ExecutionOutcome result = s.getResult(i);
 
       if (result instanceof NormalExecution
@@ -166,7 +167,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         NormalExecution e = (NormalExecution)result;
         // If value is like x in "int x = 3" don't capture
         // checks (nothing interesting).
-        if (st instanceof PrimitiveOrStringOrNullDecl)
+        if (st instanceof NonreceiverTerm)
           continue;
 
 
@@ -180,8 +181,8 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         // If value is the result of Object.toString() or
         // Object.hashCode(), don't capture checks (value is
         // likely to be non-deterministic across runs).
-        if (st instanceof RMethod) {
-          Method method = ((RMethod)st).getMethod();
+        if (st instanceof MethodCall) {
+          Method method = ((MethodCall)st).getMethod();
           if (method.equals(objectHashCode))
             continue;
           if (method.equals(objectToString))
@@ -226,8 +227,8 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           if (s.sequence.getInputs(i).size() > 0) {
             Variable var0 = s.sequence.getInputs (i).get(0);
             if (var0.getType() == java.util.Date.class) {
-              StatementKind sk = s.sequence.getCreatingStatement (var0);
-              if ((sk instanceof RConstructor) &&
+              Operation sk = s.sequence.getCreatingStatement (var0);
+              if ((sk instanceof ConstructorCall) &&
                   (s.sequence.getInputs(i).size() == 1))
                 continue;
               // System.out.printf ("var type %s comes from date %s / %s%n",
@@ -253,7 +254,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
           // Assert that the value is not null.
           // Exception: if the value comes directly from a constructor call, 
           // not interesting that it's non-null; omit the check.
-          if (!(st instanceof RConstructor)) {
+          if (!(st instanceof ConstructorCall)) {
             s.addCheck(idx, new ObjectCheck(new IsNotNull(), i, var), true);
           }
 

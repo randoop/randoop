@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,21 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.BugInRandoopException;
+import randoop.ComponentManager;
+import randoop.EqualsMethodMatcher;
+import randoop.Globals;
+import randoop.HelperSequenceCreator;
+import randoop.IStopper;
+import randoop.ITestFilter;
+import randoop.NormalExecution;
+import randoop.RandoopListenerManager;
+import randoop.RegressionCaptureVisitor;
+import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.MethodCall;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -14,8 +28,8 @@ import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Randomness;
 import randoop.util.Reflection;
-import randoop.util.SimpleList;
 import randoop.util.Reflection.Match;
+import randoop.util.SimpleList;
 
 /**
  * Randoop's forward, component-based generator.
@@ -55,7 +69,7 @@ public class ForwardGenerator extends AbstractGenerator {
     this.objectCache = newCache;
   }
 
-  public ForwardGenerator(List<StatementKind> statements,
+  public ForwardGenerator(List<Operation> statements,
       long timeMillis, int maxSequences,
       ComponentManager componentManager,
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> fs) {
@@ -235,7 +249,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && !PrimitiveTypes.stringLengthOK((String)runtimeValue);
         if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
-          componentManager.addGeneratedSequence(PrimitiveOrStringOrNullDecl.sequenceForPrimitive(runtimeValue));
+          componentManager.addGeneratedSequence(NonreceiverTerm.sequenceForPrimitive(runtimeValue));
         }
       } else if (GenInputsAbstract.use_object_cache) {
         objectCache.setActiveFlags(seq, i);
@@ -259,7 +273,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (Log.isLoggingOn()) Log.logLine("-------------------------------------------");
 
-    StatementKind statement = null;
+    Operation statement = null;
 
     if (this.statements.isEmpty())
       return null;
@@ -385,7 +399,7 @@ public class ForwardGenerator extends AbstractGenerator {
   // that create values of some type required by the statement), the success flag
   // of the returned object is false.
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(StatementKind statement) {
+  private InputsAndSuccessFlag selectInputs(Operation statement) {
 
     // Variable inputTypes containsthe  values required as input to the
     // statement given as a parameter to the selectInputs method.
@@ -442,8 +456,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // true if statement st represents an instance method, and we are currently
       // selecting a value to act as the receiver for the method.
-      boolean isReceiver = (i == 0 && (statement instanceof RMethod)
-          && (!((RMethod) statement).isStatic()));
+      boolean isReceiver = (i == 0 && (statement instanceof MethodCall)
+          && (!((MethodCall) statement).isStatic()));
 
       // If alias ratio is given, attempt with some probability to use a variable already in S.
       if (GenInputsAbstract.alias_ratio != 0 &&
@@ -514,7 +528,7 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag (false, null, null);
         } else {
           if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          StatementKind st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
+          Operation st = NonreceiverTerm.nullOrZeroDecl(t);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
           sequences.add(seq);
@@ -532,7 +546,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (!isReceiver&& GenInputsAbstract.null_ratio != 0
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn()) Log.logLine("null-ratio option given. Randomly decided to use null as input.");
-        StatementKind st = PrimitiveOrStringOrNullDecl.nullOrZeroDecl(t);
+        Operation st = NonreceiverTerm.nullOrZeroDecl(t);
         Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
         variables.add(totStatements);
         sequences.add(seq);
@@ -566,17 +580,17 @@ public class ForwardGenerator extends AbstractGenerator {
       // If we were unlucky and selected a null value as the receiver
       // for a method call, return with failure.
       if (i == 0
-          && (statement instanceof RMethod)
-          && (!((RMethod) statement).isStatic())
-          && chosenSeq.getCreatingStatement(randomVariable) instanceof PrimitiveOrStringOrNullDecl)
+          && (statement instanceof MethodCall)
+          && (!((MethodCall) statement).isStatic())
+          && chosenSeq.getCreatingStatement(randomVariable) instanceof NonreceiverTerm)
         return new InputsAndSuccessFlag (false, null, null);
 
       // [Optimization.] Update optimization-related variables "types" and "typesToVars".
       if (GenInputsAbstract.alias_ratio != 0) {
         // Update types and typesToVars.
         for (int j = 0 ; j < chosenSeq.size() ; j++) {
-          StatementKind stk = chosenSeq.getStatementKind(j);
-          if (stk instanceof PrimitiveOrStringOrNullDecl)
+          Operation stk = chosenSeq.getOperation(j);
+          if (stk instanceof NonreceiverTerm)
             continue; // Prim decl not an interesting candidate for multiple uses.
           Class<?> outType = stk.getOutputType();
           types.add(outType);

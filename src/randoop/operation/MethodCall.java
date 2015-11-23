@@ -1,4 +1,4 @@
-package randoop;
+package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.PrintStream;
@@ -16,7 +16,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Variable;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
 import randoop.util.PrimitiveTypes;
@@ -29,7 +35,7 @@ import randoop.util.ReflectionExecutor;
  * The "R" stands for "Randoop", to underline the distinction from
  * java.lang.reflect.Method.
  */
-public final class RMethod implements StatementKind, Serializable {
+public final class MethodCall implements Operation, Serializable {
 
   private static final long serialVersionUID = -7616184807726929835L;
 
@@ -63,7 +69,7 @@ public final class RMethod implements StatementKind, Serializable {
 
   /** Version that doesn't include a Method **/
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableRMethod(method);
+    return new SerializableMethodCall(method);
   }
 
   /**
@@ -76,7 +82,7 @@ public final class RMethod implements StatementKind, Serializable {
   /**
    * Creates the Rmethod corresponding to the given reflection method.
    */
-  public RMethod(Method method) {
+  public MethodCall(Method method) {
     if (method == null)
       throw new IllegalArgumentException("method should not be null.");
 
@@ -90,8 +96,8 @@ public final class RMethod implements StatementKind, Serializable {
   /**
    * Returns the statement corresponding to the given constructor.
    */
-  public static RMethod getRMethod(Method method) {
-    return new RMethod(method);
+  public static MethodCall getRMethod(Method method) {
+    return new MethodCall(method);
   }
 
   /** Reset/clear the overloads field. */
@@ -146,10 +152,10 @@ public final class RMethod implements StatementKind, Serializable {
 
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        Object val = ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue();
+        Object val = ((NonreceiverTerm) statementCreatingVar).getValue();
         sb.append(PrimitiveTypes.toCodeString(val));
       } else {
         sb.append(inputVars.get(i).getName());
@@ -232,11 +238,11 @@ public final class RMethod implements StatementKind, Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof RMethod))
+    if (!(o instanceof MethodCall))
       return false;
     if (this == o)
       return true;
-    RMethod other = (RMethod) o;
+    MethodCall other = (MethodCall) o;
     if (!this.method.equals(other.method))
       return false;
     return true;
@@ -344,8 +350,8 @@ public final class RMethod implements StatementKind, Serializable {
     return Reflection.getSignature(method);
   }
 
-  public static StatementKind parse(String s) {
-    return RMethod.getRMethod(Reflection.getMethodForSignature(s));
+  public static Operation parse(String s) {
+    return MethodCall.getRMethod(Reflection.getMethodForSignature(s));
   }
 
 

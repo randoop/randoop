@@ -10,9 +10,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import randoop.Globals;
-import randoop.Sequence;
-import randoop.SequenceParseException;
-import randoop.Variable;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceParseException;
+import randoop.sequence.Variable;
 
 import cov.Branch;
 import cov.CoverageAtom;

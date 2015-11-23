@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import randoop.NotPartOfState;
-
 
 
 
@@ -31,7 +29,6 @@ public class FibHeap {
 
     //public native boolean checkAbstractState(int which);
 
-    @NotPartOfState
     private Vector<Node> cachedNodes = new Vector<Node>();
 
     public static Set<String> tests = new HashSet<String>();

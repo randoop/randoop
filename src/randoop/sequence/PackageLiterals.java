@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 /**
  * For a given package P, PackageLiterals maps P (if present) to a

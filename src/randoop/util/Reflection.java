@@ -26,19 +26,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import randoop.EnumConstant;
-import randoop.FieldGetter;
-import randoop.FieldSetter;
 import randoop.Globals;
-import randoop.InstanceField;
-import randoop.RConstructor;
-import randoop.RMethod;
-import randoop.StatementKind;
-import randoop.StatementKindParseException;
-import randoop.StatementKinds;
-import randoop.StaticFinalField;
-import randoop.StaticField;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.ConstructorCall;
+import randoop.operation.EnumConstant;
+import randoop.operation.FieldGetter;
+import randoop.operation.FieldSetter;
+import randoop.operation.InstanceField;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+import randoop.operation.OperationParseException;
+import randoop.operation.OperationParser;
+import randoop.operation.StaticField;
+import randoop.operation.StaticFinalField;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ReflectionPredicate;
 
 import plume.EntryReader;
 import plume.Pair;
@@ -489,17 +491,17 @@ public final class Reflection {
       String trimmed = line.trim();
       if (trimmed.equals("") || trimmed.startsWith("#"))
         continue;
-      StatementKind stk;
+      Operation stk;
       try {
-        stk = StatementKinds.parse(line);
-      } catch (StatementKindParseException e) {
+        stk = OperationParser.parse(line);
+      } catch (OperationParseException e) {
         throw new Error(e);
       }
-      if (stk instanceof RMethod) {
-        result.add(((RMethod)stk).getMethod());
+      if (stk instanceof MethodCall) {
+        result.add(((MethodCall)stk).getMethod());
       } else {
-        assert (stk instanceof RConstructor);
-        result.add(((RConstructor)stk).getConstructor());
+        assert (stk instanceof ConstructorCall);
+        result.add(((ConstructorCall)stk).getConstructor());
       }
     }
     return result;
@@ -567,38 +569,38 @@ public final class Reflection {
 
   /**
    * getStatements collects the methods, constructor and enum constants for a collection of classes.
-   * Returns a filtered list of StatementKind objects.
+   * Returns a filtered list of Operation objects.
    * 
    * @param classListing collection of class objects from which to extract.
    * @param filter filter object determines whether method/constructor/enum constant can be used.
-   * @return list of StatementKind objects representing filtered set.
+   * @return list of Operation objects representing filtered set.
    */
-  public static List<StatementKind> getStatements(Collection<Class<?>> classListing, ReflectionFilter filter) {
-    if (filter == null) filter = new DefaultReflectionFilter();
-    Set<StatementKind> statements = new LinkedHashSet<StatementKind>();
+  public static List<Operation> getStatements(Collection<Class<?>> classListing, ReflectionPredicate filter) {
+    if (filter == null) filter = new DefaultReflectionPredicate();
+    Set<Operation> statements = new LinkedHashSet<Operation>();
     for (Class<?> c : classListing) {
       // System.out.printf ("Considering class %s, filter = %s%n", c, filter);
       getStatementsForClass(filter, statements, c);
     }
     List<String> statementsAsString = new ArrayList<String>(); // For testing purposes.
-    for (StatementKind st : statements)
+    for (Operation st : statements)
       statementsAsString.add(st.toString());
     assert statementsAsString.size() == new LinkedHashSet<String>(statementsAsString).size();
 
-    return new ArrayList<StatementKind>(statements);
+    return new ArrayList<Operation>(statements);
   }
 
   /**
    * getStatementsForClass uses reflection to identify the methods, constructors and enum constants
    * of a particular class that meets the filter's canUse criteria, and returns the corresponding 
-   * StatementKind objects. 
+   * Operation objects. 
    * Note that it looks for inner enums, but not inner classes.
    *  
    * @param filter object that determines whether to extract from class, or to include members
-   * @param statements collection of {@link StatementKind} objects constructed
+   * @param statements collection of {@link Operation} objects constructed
    * @param c class object from which members are extracted
    */
-  private static void getStatementsForClass(ReflectionFilter filter, Set<StatementKind> statements, Class<?> c) {
+  private static void getStatementsForClass(ReflectionPredicate filter, Set<Operation> statements, Class<?> c) {
     if (filter.canUse(c)) {
       
       if (Log.isLoggingOn()) Log.logLine("Will add members for class " + c.getName());
@@ -612,7 +614,7 @@ public final class Reflection {
             Log.logLine(String.format("Considering method %s", m));
           }
           if (filter.canUse(m)) {
-            RMethod mc = RMethod.getRMethod(m);
+            MethodCall mc = MethodCall.getRMethod(m);
             statements.add(mc);
           }
         }
@@ -620,7 +622,7 @@ public final class Reflection {
         for (Constructor<?> co : getDeclaredConstructorsOrdered(c)) {
           // System.out.printf ("Considering constructor %s%n", co);
           if (filter.canUse(co)) {
-            RConstructor mc = RConstructor.getRConstructor(co);
+            ConstructorCall mc = ConstructorCall.getRConstructor(co);
             statements.add(mc);
           }
         }
@@ -650,13 +652,13 @@ public final class Reflection {
 
 
   /**
-   * getFieldStatements adds the {@link StatementKind} objects corresponding to 
+   * getFieldStatements adds the {@link Operation} objects corresponding to 
    * getters and setters appropriate to the kind of field.
    * 
    * @param statements
    * @param f
    */
-  private static void getFieldStatements(Set<StatementKind> statements, Field f) {
+  private static void getFieldStatements(Set<Operation> statements, Field f) {
     int mods = f.getModifiers();
     if (Modifier.isPublic(mods)) {
       if (Modifier.isStatic(mods)) {
@@ -679,15 +681,15 @@ public final class Reflection {
 
   /**
    * getEnumStatements gets and adds the enum constants and methods for the given class 
-   * to the set of {@link StatementKind} objects. A method is included if it satisfies the filter,
+   * to the set of {@link Operation} objects. A method is included if it satisfies the filter,
    * and either is declared in the enum, or in the anonymous class of some constant.
    * If the class is not an enum, then nothing will be added to the statement set.
    * @param filter 
    * 
-   * @param statements collection of {@link StatementKind} objects constructed
+   * @param statements collection of {@link Operation} objects constructed
    * @param c class object from which enum constants are extracted
    */
-  private static void getEnumStatements(ReflectionFilter filter, Set<StatementKind> statements, Class<?> c) {
+  private static void getEnumStatements(ReflectionPredicate filter, Set<Operation> statements, Class<?> c) {
     //get enum constants and capture methods attached to them, if any
     Set<String> overrideMethods = new HashSet<String>();
     for (Object obj : c.getEnumConstants()) {
@@ -703,24 +705,24 @@ public final class Reflection {
     for (Method m : c.getDeclaredMethods()) {
       if (filter.canUse(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
-          statements.add(new RMethod(m));
+          statements.add(new MethodCall(m));
         }
       }
     }
     //get any inherited methods that seem to be overridden in anonymous class of some constant
     for (Method m : c.getMethods()) { 
       if (filter.canUse(m) && overrideMethods.contains(m.getName())) {
-        statements.add(new RMethod(m));
+        statements.add(new MethodCall(m));
       }
     }
   }
 
 
   /** Sets the overloads field of each RMethod or RConstructor in the list. */
-  public static void setOverloads(List<StatementKind> model) {
-    for (StatementKind sk : model) {
-      if (sk instanceof RMethod) {
-        RMethod rm = (RMethod) sk;
+  public static void setOverloads(List<Operation> model) {
+    for (Operation sk : model) {
+      if (sk instanceof MethodCall) {
+        MethodCall rm = (MethodCall) sk;
         rm.resetOverloads();
         Method m = rm.getMethod();
 
@@ -732,9 +734,9 @@ public final class Reflection {
           possibleOverloads = new ArrayList<Method>(Arrays.asList(m.getDeclaringClass().getMethods()));
           // We should to find overloads in any subclass of a superclass
           // that declares the method.  For now, just look in the model.
-          for (StatementKind possibleOverloadSk : model) {
-            if (possibleOverloadSk instanceof RMethod) {
-              Method possibleOverload = ((RMethod) possibleOverloadSk).getMethod();
+          for (Operation possibleOverloadSk : model) {
+            if (possibleOverloadSk instanceof MethodCall) {
+              Method possibleOverload = ((MethodCall) possibleOverloadSk).getMethod();
               possibleOverloads.add(possibleOverload);
             }
           }
@@ -744,8 +746,8 @@ public final class Reflection {
             rm.addToOverloads(possibleOverload);
           }
         }
-      } else if (sk instanceof RConstructor) {
-        RConstructor rc = (RConstructor) sk;
+      } else if (sk instanceof ConstructorCall) {
+        ConstructorCall rc = (ConstructorCall) sk;
         rc.resetOverloads();
         Constructor<?> c = rc.getConstructor();
 

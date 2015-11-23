@@ -1,21 +1,23 @@
 /**
  * 
  */
-package randoop;
+package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.operation.Operation;
+
 /**
  * A statement that is part of a mutable sequence.
  */
-public class MStatement {
+public class MutableStatement {
 
-  public final StatementKind statementKind;
+  public final Operation statementKind;
 
-  public final List<MVariable> inputs;
+  public final List<MutableVariable> inputs;
 
-  public final MVariable result;
+  public final MutableVariable result;
   
   public String toString() {
     StringBuilder b = new StringBuilder();
@@ -31,9 +33,9 @@ public class MStatement {
    * Create a new statement of type statement that takes as input the
    * given values.
    */
-  public MStatement(StatementKind statement, List<MVariable> inputVariables, MVariable result) {
+  public MutableStatement(Operation statement, List<MutableVariable> inputVariables, MutableVariable result) {
     this.statementKind = statement;
-    this.inputs = new ArrayList<MVariable>(inputVariables);
+    this.inputs = new ArrayList<MutableVariable>(inputVariables);
     this.result = result;
   }
 }

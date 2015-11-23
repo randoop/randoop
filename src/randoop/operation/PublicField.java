@@ -1,16 +1,19 @@
-package randoop;
+package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import randoop.BugInRandoopException;
+import randoop.sequence.Variable;
+
 /**
  * PublicField is an abstract class representing a public field of a class object, 
  * which can be an instance field, a static field, or a static final field.
  * Each is implemented as a separate class.
  * Meant to be adapted by either {@link FieldSetter} or {@link FieldGetter} for use as
- * a {@link StatementKind}.
+ * a {@link Operation}.
  *
  * @see InstanceField
  * @see StaticField

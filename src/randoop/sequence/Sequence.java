@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +11,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import randoop.Globals;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
+import randoop.operation.OperationParseException;
+import randoop.operation.OperationParser;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
@@ -19,9 +24,9 @@ import randoop.util.Randomness;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Reflection;
+import randoop.util.Reflection.Match;
 import randoop.util.SimpleList;
 import randoop.util.WeightedElement;
-import randoop.util.Reflection.Match;
 
 /**
  * Immutable.
@@ -66,7 +71,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * The statement for the statement at the given index.
    */
 
-  public final StatementKind getStatementKind(int index) {
+  public final Operation getOperation(int index) {
     return getStatementWithInputs(index).statement;
   }
 
@@ -117,12 +122,12 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /** The last Statement in the sequence. */
-  public StatementKind getLastStatement() {
-    return this.getStatementKind(this.size() - 1);
+  public Operation getLastStatement() {
+    return this.getOperation(this.size() - 1);
   }
 
   /** The statement that created this value. */
-  public StatementKind getCreatingStatement(Variable value) {
+  public Operation getCreatingStatement(Variable value) {
     if (value.sequence != this)
       throw new IllegalArgumentException("value.owner != this");
     return statements.get((value).index).statement;
@@ -356,7 +361,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a sequence that consists of a single primitive declaration
    * statement (e.g. int i = 1;)
    */
-  public static Sequence create(PrimitiveOrStringOrNullDecl info) {
+  public static Sequence create(NonreceiverTerm info) {
     return new Sequence().extend(info, new ArrayList<Variable>());
   }
 
@@ -365,7 +370,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * given class.
    */
   public static Sequence zero(Class<?> c) {
-    return create(PrimitiveOrStringOrNullDecl.nullOrZeroDecl(c));
+    return create(NonreceiverTerm.nullOrZeroDecl(c));
   }
 
 
@@ -391,8 +396,8 @@ public final class Sequence implements Serializable, WeightedElement {
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
     for (int i = 0; i < statements.size(); i++) {
-      StatementKind s = statements.get(i).statement;
-      if (s instanceof PrimitiveOrStringOrNullDecl)
+      Operation s = statements.get(i).statement;
+      if (s instanceof NonreceiverTerm)
         continue;
        netSize++;
     }
@@ -653,14 +658,14 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
    */
-  public final Sequence extend(StatementKind statement, List<Variable> inputVariables) {
+  public final Sequence extend(Operation statement, List<Variable> inputVariables) {
     checkInputs(statement, inputVariables);
     List<RelativeNegativeIndex> indexList = new ArrayList<RelativeNegativeIndex>(1);
     for (Variable v : inputVariables) {
       indexList.add(getRelativeIndexForVariable(size(), v));
     }
     Statement newStatement = new Statement(statement, indexList);
-    int newNetSize = (statement instanceof PrimitiveOrStringOrNullDecl) ? this.savedNetSize : this.savedNetSize + 1;
+    int newNetSize = (statement instanceof NonreceiverTerm) ? this.savedNetSize : this.savedNetSize + 1;
     return new Sequence(new OneMoreElementList<Statement>(this.statements, newStatement), this.savedHashCode
         + newStatement.hashCode(), newNetSize);
   }
@@ -669,13 +674,13 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
    */
-  public final Sequence extend(StatementKind statement, Variable... inputs) {
+  public final Sequence extend(Operation statement, Variable... inputs) {
     return extend(statement, Arrays.asList(inputs));
   }
 
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
-  private void checkInputs(StatementKind statement, List<Variable> inputVariables) {
+  private void checkInputs(Operation statement, List<Variable> inputVariables) {
     if (statement.getInputTypes().size() != inputVariables.size()) {
       String msg = "statement.getInputTypes().size():"
         + statement.getInputTypes().size()
@@ -778,18 +783,18 @@ public final class Sequence implements Serializable, WeightedElement {
   public void printStatement(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
     // Example: { "var2", "(int)3" }
-    getStatementKind(index).appendCode(getVariable(index), getInputs(index), b);
+    getOperation(index).appendCode(getVariable(index), getInputs(index), b);
   }
 
   public Sequence repeatLast(int times) {
     Sequence retval = new Sequence(this.statements);
-    StatementKind statementToRepeat = retval.getLastStatement();
+    Operation statementToRepeat = retval.getLastStatement();
     for (int i = 0 ; i < times ; i++) {
       List<Integer> vil = new ArrayList<Integer>();
       for (Variable v : retval.getInputs(retval.size()-1)) {
         if (v.getType().equals(int.class)) {
           int randint = Randomness.nextRandomInt(100);
-          retval = retval.extend(new PrimitiveOrStringOrNullDecl(int.class, randint));
+          retval = retval.extend(new NonreceiverTerm(int.class, randint));
           vil.add(retval.size() - 1);
         } else {
           vil.add(v.getDeclIndex());
@@ -804,22 +809,22 @@ public final class Sequence implements Serializable, WeightedElement {
     return retval;
   }
 
-  public MSequence toModifiableSequence() {
-    MSequence slowSeq = new MSequence();
-    List<MVariable> values = new ArrayList<MVariable>();
+  public MutableSequence toModifiableSequence() {
+    MutableSequence slowSeq = new MutableSequence();
+    List<MutableVariable> values = new ArrayList<MutableVariable>();
     for (int i = 0 ; i < size() ; i++) {
-      values.add(new MVariable(slowSeq, getVariable(i).getName()));
+      values.add(new MutableVariable(slowSeq, getVariable(i).getName()));
     }
-    List<MStatement> statements = new ArrayList<MStatement>();
+    List<MutableStatement> statements = new ArrayList<MutableStatement>();
     for (int i = 0 ; i < size() ; i++) {
       Statement sti = this.statements.get(i);
-      StatementKind st = sti.statement;
-      List<MVariable> inputs = new ArrayList<MVariable>();
+      Operation st = sti.statement;
+      List<MutableVariable> inputs = new ArrayList<MutableVariable>();
       for (Variable v : getInputs(i)) {
         inputs.add(values.get(v.index));
       }
-      MStatement slowSti =
-        new MStatement(st, inputs, values.get(i));
+      MutableStatement slowSti =
+        new MutableStatement(st, inputs, values.get(i));
       statements.add(slowSti);
     }
     slowSeq.statements = statements;
@@ -850,10 +855,10 @@ public final class Sequence implements Serializable, WeightedElement {
     assert statementSep != null;
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      StatementKind sk = getStatementKind(i);
+      Operation sk = getOperation(i);
       b.append(Variable.classToVariableName(sk.getOutputType()) + i);
       b.append(" =  ");
-      b.append(StatementKinds.getId(sk));
+      b.append(OperationParser.getId(sk));
       b.append(" : ");
       b.append(sk.toParseableString());
       b.append(" : ");
@@ -949,10 +954,10 @@ public final class Sequence implements Serializable, WeightedElement {
         }
 
         // Parse statement kind.
-        StatementKind st;
+        Operation st;
         try {
-          st = StatementKinds.parse(stKind);
-        } catch (StatementKindParseException e) {
+          st = OperationParser.parse(stKind);
+        } catch (OperationParseException e) {
           throw new SequenceParseException(e.getMessage(), statements, statementCount);
         }
 
@@ -1074,7 +1079,7 @@ public final class Sequence implements Serializable, WeightedElement {
     if (size() != 1) {
       return false;
     }
-    if (!(getStatementKind(0) instanceof PrimitiveOrStringOrNullDecl)) {
+    if (!(getOperation(0) instanceof NonreceiverTerm)) {
       return false;
     }
     return true;

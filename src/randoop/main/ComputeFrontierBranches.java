@@ -14,16 +14,17 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.GZIPInputStream;
 
-import randoop.Sequence;
-import randoop.StatementKind;
 import randoop.experiments.DataFlowInput;
+import randoop.operation.Operation;
+import randoop.sequence.Sequence;
 import randoop.util.Files;
-import plume.Option;
-import plume.Options;
-import plume.Options.ArgException;
+
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
 
 public class ComputeFrontierBranches {
 
@@ -113,12 +114,12 @@ public class ComputeFrontierBranches {
       assert candidates != null;
       assert !candidates.isEmpty();
 
-      Map<StatementKind,Integer> statements = new LinkedHashMap<StatementKind, Integer>();
+      Map<Operation,Integer> statements = new LinkedHashMap<Operation, Integer>();
 
       Set<Sequence> ss = new LinkedHashSet<Sequence>();
 
       for (Sequence s : candidates) {
-        StatementKind st = s.getLastStatement();
+        Operation st = s.getLastStatement();
         Integer count = statements.get(st);
         if (count == null) {
           count = 0;

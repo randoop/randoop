@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,16 +6,27 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import plume.Option;
-import plume.OptionGroup;
-import plume.Unpublicized;
+import randoop.ComponentManager;
+import randoop.DefaultTestFilter;
+import randoop.FailureSet;
+import randoop.Globals;
+import randoop.IStopper;
+import randoop.ITestFilter;
+import randoop.MultiVisitor;
+import randoop.RandoopListenerManager;
+import randoop.RandoopStat;
 import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
+
+import plume.Option;
+import plume.OptionGroup;
+import plume.Unpublicized;
 
 /**
  * Algorithm template for implementing a test generator.
@@ -66,7 +77,7 @@ public abstract class AbstractGenerator {
    * used to generate sequences. In other words, statements specifies the universe
    * of operations from which sequences are generated.
    */
-  public List<StatementKind> statements;
+  public List<Operation> statements;
   
   /**
    * Container for execution visitors used during execution of sequences. 
@@ -132,7 +143,7 @@ public abstract class AbstractGenerator {
    *  
    * @param testfilters List of filters to determine which sequences to output. Can be null or empty.
    */
-  public AbstractGenerator(List<StatementKind> statements, long timeMillis, int maxSequences, ComponentManager componentManager,
+  public AbstractGenerator(List<Operation> statements, long timeMillis, int maxSequences, ComponentManager componentManager,
       IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> testfilters) {
     assert statements != null;
 

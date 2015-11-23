@@ -1,4 +1,4 @@
-package randoop;
+package randoop.operation;
 
 public enum SimpleEnumForTests {
   ONE,

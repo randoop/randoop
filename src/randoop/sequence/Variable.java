@@ -1,11 +1,11 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import randoop.experimental.VariableRenamer;
+import randoop.operation.Operation;
 
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable>, Serializable {
@@ -52,12 +52,12 @@ public class Variable implements Comparable<Variable>, Serializable {
 
   /** The declared type of the value */
   public Class<?> getType() {
-    return this.sequence.getStatementKind(index).getOutputType();
+    return this.sequence.getOperation(index).getOutputType();
   }
   
   /** The statement that produced this variable. */
-  public StatementKind getDeclaringStatement() {
-    return this.sequence.getStatementKind(index);
+  public Operation getDeclaringStatement() {
+    return this.sequence.getOperation(index);
   }
 
   /** The index of the statement that creates this value. */

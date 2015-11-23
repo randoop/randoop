@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
  * should be used in randoop's exploration.
  *
  */
-public interface ReflectionFilter {
+public interface ReflectionPredicate {
 
   public boolean canUse(Class<?> c);
   public boolean canUse(Method m);

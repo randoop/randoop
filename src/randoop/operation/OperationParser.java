@@ -1,10 +1,10 @@
-package randoop;
+package randoop.operation;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class StatementKinds {
+public class OperationParser {
 
   /**
    * Parses a string representing a StatementKind. The string is expected to be
@@ -27,7 +27,7 @@ public class StatementKinds {
    * For more details on the exact form of DESCRIPTION, see the different
    * classes implementing StatementKind.
    */
-  public static StatementKind parse(String str) throws StatementKindParseException {
+  public static Operation parse(String str) throws OperationParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
@@ -37,7 +37,7 @@ public class StatementKinds {
     if (colonIdx == -1) {
       String msg = "A statement description must be of the form " + "<id> : <description> but the statement \""
           + str + "\" does not have a valid form (no colon).";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     String id = str.substring(0, colonIdx).trim();
@@ -46,17 +46,17 @@ public class StatementKinds {
     Set<String> validIds = new LinkedHashSet<String>();
 
     // If you add a statement kind, add its ID to this set.
-    validIds.addAll(Arrays.asList(PrimitiveOrStringOrNullDecl.ID, RMethod.ID, RConstructor.ID, ArrayDeclaration.ID, DummyStatement.ID));
+    validIds.addAll(Arrays.asList(NonreceiverTerm.ID, MethodCall.ID, ConstructorCall.ID, ArrayCreation.ID, DummyStatement.ID));
 
     // Call appropriate parsing method.
-    if (id.equals(PrimitiveOrStringOrNullDecl.ID)) {
-      return PrimitiveOrStringOrNullDecl.parse(descr);
-    } else if (id.equals(RMethod.ID)) {
-      return RMethod.parse(descr);
-    } else if (id.equals(RConstructor.ID)) {
-      return RConstructor.parse(descr);
-    } else if (id.equals(ArrayDeclaration.ID)) {
-      return ArrayDeclaration.parse(descr);
+    if (id.equals(NonreceiverTerm.ID)) {
+      return NonreceiverTerm.parse(descr);
+    } else if (id.equals(MethodCall.ID)) {
+      return MethodCall.parse(descr);
+    } else if (id.equals(ConstructorCall.ID)) {
+      return ConstructorCall.parse(descr);
+    } else if (id.equals(ArrayCreation.ID)) {
+      return ArrayCreation.parse(descr);
     } else if (id.equals(EnumConstant.ID)) {
       return EnumConstant.parse(descr);
     } else if (id.equals(FieldGetter.ID)) {
@@ -70,7 +70,7 @@ public class StatementKinds {
         + "<id> <description>"
         + " with <id> in " + validIds.toString()
         + " but the statement \"" + str + "\" does not have a valid <id>.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
   }
 
@@ -78,16 +78,16 @@ public class StatementKinds {
    * The "id" is really the kind or a tag, such as "prim".
    * It's not a unique identifier for this statement.
    */
-  public static String getId(StatementKind st) {
+  public static String getId(Operation st) {
     if (st == null) throw new IllegalArgumentException("st cannot be null.");
-    if (st instanceof PrimitiveOrStringOrNullDecl)
-      return PrimitiveOrStringOrNullDecl.ID;
-    if (st instanceof RMethod)
-      return RMethod.ID;
-    if (st instanceof RConstructor)
-      return RConstructor.ID;
-    if (st instanceof ArrayDeclaration)
-      return ArrayDeclaration.ID;
+    if (st instanceof NonreceiverTerm)
+      return NonreceiverTerm.ID;
+    if (st instanceof MethodCall)
+      return MethodCall.ID;
+    if (st instanceof ConstructorCall)
+      return ConstructorCall.ID;
+    if (st instanceof ArrayCreation)
+      return ArrayCreation.ID;
     if (st instanceof EnumConstant)
       return EnumConstant.ID;
     if (st instanceof FieldGetter)

@@ -1,4 +1,4 @@
-package randoop;
+package randoop.operation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,9 +14,9 @@ import java.util.TreeSet;
 
 import org.junit.Test;
 
-import randoop.util.DefaultReflectionFilter;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ReflectionPredicate;
 import randoop.util.Reflection;
-import randoop.util.ReflectionFilter;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -41,7 +41,7 @@ public class FieldReflectionTest {
     
     @SuppressWarnings("unchecked")
     List<Field> fields = Arrays.asList(c.getFields());
-    List<StatementKind> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = Reflection.getStatements(classes, null);
     
     //number of statements is twice number of fields plus constructor and getter minus one for each constant
     //in this case, 11
@@ -57,11 +57,11 @@ public class FieldReflectionTest {
     }
     
     for (Field f : fields) {
-      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getStatementKinds(f)));
+      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
     }
     
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getStatementKinds(f)));
+      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
     }
     
   }
@@ -94,16 +94,16 @@ public class FieldReflectionTest {
         expected.add(f);
       }
     }
-    List<StatementKind> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = Reflection.getStatements(classes, null);
     
     assertEquals("number of statements", 2*expected.size() - 1 + 2, actual.size());
     
     for (Field f : expected) {
-      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getStatementKinds(f)));
+      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
     }
     
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getStatementKinds(f)));
+      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
     }
   }
   
@@ -125,27 +125,27 @@ public class FieldReflectionTest {
       exclude.add(f);
     }
     
-    ReflectionFilter filter = new DefaultReflectionFilter(null, excludeNames);
-    List<StatementKind> actual = Reflection.getStatements(classes, filter);
+    ReflectionPredicate filter = new DefaultReflectionPredicate(null, excludeNames);
+    List<Operation> actual = Reflection.getStatements(classes, filter);
     
     assertEquals("number of statements", 2, actual.size());
     
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getStatementKinds(f)));
+      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
     }
     
   }
   
   /**
-   * getStatementKinds maps a field into possible statements.
+   * getOperations maps a field into possible statements.
    * Looks at modifiers to decide which kind of field wrapper
    * to create and then builds list with getter and setter.
    * 
    * @param f - reflective Field object
    * @return List of getter/setter statements for the field
    */
-  private Collection<?> getStatementKinds(Field f) {
-    List<StatementKind> statements = new ArrayList<>();
+  private Collection<?> getOperations(Field f) {
+    List<Operation> statements = new ArrayList<>();
     int mods = f.getModifiers();
     if (Modifier.isStatic(mods)) {
       if (Modifier.isFinal(mods)) {

@@ -1,4 +1,4 @@
-package randoop;
+package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.PrintStream;
@@ -6,12 +6,18 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import plume.UtilMDE;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.NormalExecution;
+import randoop.main.GenInputsAbstract;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
-import randoop.main.GenInputsAbstract;
+
+import plume.UtilMDE;
 
 /**
  * Represents a non-receiver value (primitive, String and null values) as a
@@ -20,7 +26,7 @@ import randoop.main.GenInputsAbstract;
  * This decl info is for primitives, strings and nulls (of any type).
  * Such values are never used as receivers when generating method calls.
  */
-public final class PrimitiveOrStringOrNullDecl implements StatementKind, Serializable {
+public final class NonreceiverTerm implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -33,13 +39,13 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
   private final Object value;
 
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializablePrimitiveOrStringOrNullDecl(type, value);
+    return new SerializableNonreceiverTerm(type, value);
   }
   
   /**
    * Constructs a PrimitiveOrStringOrNullDeclInfo of type t and value o
    */
-  public PrimitiveOrStringOrNullDecl(Class<?> t, Object o) {
+  public NonreceiverTerm(Class<?> t, Object o) {
     if (t == null)
       throw new IllegalArgumentException("t should not be null.");
 
@@ -74,11 +80,11 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
    */
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof PrimitiveOrStringOrNullDecl))
+    if (!(o instanceof NonreceiverTerm))
       return false;
     if (this == o)
       return true;
-    PrimitiveOrStringOrNullDecl other = (PrimitiveOrStringOrNullDecl) o;
+    NonreceiverTerm other = (NonreceiverTerm) o;
 
     return this.type.equals(other.type)
     && Util.equalsWithNull(this.value, other.value);
@@ -168,26 +174,26 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
    * Returns the appropriate PrimitiveOrStringOrNullDeclInfo representative of 
    * the specified class c.
    */
-  public static PrimitiveOrStringOrNullDecl nullOrZeroDecl(Class<?> c) {
+  public static NonreceiverTerm nullOrZeroDecl(Class<?> c) {
     if (String.class.equals(c))
-      return new PrimitiveOrStringOrNullDecl(String.class, "");
+      return new NonreceiverTerm(String.class, "");
     if (Character.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Character.TYPE, 'a'); // TODO This is not null or zero...
+      return new NonreceiverTerm(Character.TYPE, 'a'); // TODO This is not null or zero...
     if (Byte.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Byte.TYPE, (byte)0);
+      return new NonreceiverTerm(Byte.TYPE, (byte)0);
     if (Short.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Short.TYPE, (short)0);
+      return new NonreceiverTerm(Short.TYPE, (short)0);
     if (Integer.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Integer.TYPE, (Integer.valueOf(0)).intValue());
+      return new NonreceiverTerm(Integer.TYPE, (Integer.valueOf(0)).intValue());
     if (Long.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Long.TYPE, (Long.valueOf(0)).longValue());
+      return new NonreceiverTerm(Long.TYPE, (Long.valueOf(0)).longValue());
     if (Float.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Float.TYPE, (Float.valueOf(0)).floatValue());
+      return new NonreceiverTerm(Float.TYPE, (Float.valueOf(0)).floatValue());
     if (Double.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Double.TYPE, (Double.valueOf(0)).doubleValue());
+      return new NonreceiverTerm(Double.TYPE, (Double.valueOf(0)).doubleValue());
     if (Boolean.TYPE.equals(c))
-      return new PrimitiveOrStringOrNullDecl(Boolean.TYPE,false);
-    return new PrimitiveOrStringOrNullDecl(c, null);
+      return new NonreceiverTerm(Boolean.TYPE,false);
+    return new NonreceiverTerm(c, null);
   }
 
   public String toParseableString() {
@@ -225,7 +231,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       throw new IllegalArgumentException("o is a string of length > " + GenInputsAbstract.string_maxlen);
     }
 
-    return Sequence.create(new PrimitiveOrStringOrNullDecl(PrimitiveTypes.primitiveType(cls), o));
+    return Sequence.create(new NonreceiverTerm(PrimitiveTypes.primitiveType(cls), o));
   }
 
   /**
@@ -254,13 +260,13 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
    * 
    * Note that a string type can be given as both "String" or "java.lang.String".
    */
-  public static PrimitiveOrStringOrNullDecl parse(String s) throws StatementKindParseException {
+  public static NonreceiverTerm parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
       String msg = "A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the description \"" + s + "\" does not have this form.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     // Extract type and value.
     String typeString = s.substring(0, colonIdx);
@@ -270,7 +276,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
     if (typeString.matches(".*\\s+.*")) {
       String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the <type> description \"" + s + "\" contains invalid whitespace characters.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     
     // Convert "String" to "java.lang.String"
@@ -282,7 +288,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
     if (type == null) {
       String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
         + "<type>:<value>" + " but the <type> given (\"" + typeString + "\") was unrecognized.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     Object value = null;
 
@@ -292,7 +298,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(byte.class)) {
       try {
@@ -300,7 +306,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(short.class)) {
       try {
@@ -308,7 +314,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(int.class)) {
       try {
@@ -316,7 +322,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(long.class)) {
       try {
@@ -324,7 +330,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(float.class)) {
       try {
@@ -332,7 +338,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(double.class)) {
       try {
@@ -340,7 +346,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } catch (NumberFormatException e) {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(boolean.class)) {
       if (valString.equals("true") || valString.equals("false")) {
@@ -348,7 +354,7 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } else {
         String msg = "Error when parsing type/value pair " + s +  ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <value> given (\"" + valString + "\") was not parseable.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     } else if (type.equals(String.class)) {
       if (valString.equals("null")) {
@@ -358,11 +364,11 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
         if (valString.charAt(0) != '"' || valString.charAt(valString.length() - 1) != '"') {
           String msg = "Error when parsing type/value pair " + s +  ". A String value declaration description must be of the form "
             + "java.lang.String:\"thestring\"" + " but the string given was not enclosed in quotation marks.";
-          throw new StatementKindParseException(msg);
+          throw new OperationParseException(msg);
         }
         value = UtilMDE.unescapeNonJava(valString.substring(1, valString.length() - 1));
         if (!PrimitiveTypes.stringLengthOK((String)value)) {
-          throw new StatementKindParseException("Error when parsing String; length is greater than " + GenInputsAbstract.string_maxlen);
+          throw new OperationParseException("Error when parsing String; length is greater than " + GenInputsAbstract.string_maxlen);
         }
       }
     } else {
@@ -371,10 +377,10 @@ public final class PrimitiveOrStringOrNullDecl implements StatementKind, Seriali
       } else {
         String msg = "Error when parsing type/value pair " + s +  ". A primitve value declaration description that is not a primitive value or a string must be of the form "
           + "<type>:null but the string given (\"" + valString + "\") was not of this form.";
-        throw new StatementKindParseException(msg);
+        throw new OperationParseException(msg);
       }
     }
 
-    return new PrimitiveOrStringOrNullDecl(type, value);
+    return new NonreceiverTerm(type, value);
   }
 }

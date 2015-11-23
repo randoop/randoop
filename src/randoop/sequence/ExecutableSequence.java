@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,7 +8,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.Check;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.ExecutionVisitor;
+import randoop.ExpectedExceptionCheck;
+import randoop.Globals;
+import randoop.NormalExecution;
+import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.MethodCall;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
 import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
 
@@ -196,13 +207,13 @@ public class ExecutableSequence implements Serializable {
   }
 
   /** True for a primitive or String literal, but not for a null literal. */
-  public static boolean canUseShortFormat(StatementKind statementCreatingVar) {
-    return (statementCreatingVar instanceof PrimitiveOrStringOrNullDecl
+  public static boolean canUseShortFormat(Operation statementCreatingVar) {
+    return (statementCreatingVar instanceof NonreceiverTerm
             // Do not use the short output format if the value is null, because
             // the variable type may disambiguate among overloaded methods.
             // (It would be even nicer to use the short output format unless
             // disambiguation is truly needed.)
-            && ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue() != null);
+            && ((NonreceiverTerm) statementCreatingVar).getValue() != null);
   }
 
   /** 
@@ -218,7 +229,7 @@ public class ExecutableSequence implements Serializable {
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
       if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(sequence.getStatementKind(i))) {
+          && ExecutableSequence.canUseShortFormat(sequence.getOperation(i))) {
         continue;
       }
       
@@ -247,7 +258,7 @@ public class ExecutableSequence implements Serializable {
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
       if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(sequence.getStatementKind(i))) {
+          && ExecutableSequence.canUseShortFormat(sequence.getOperation(i))) {
         continue;
       }
       
@@ -373,23 +384,36 @@ public class ExecutableSequence implements Serializable {
     for (int ri = 0 ; ri < runtimeObjects.length ; ri++) {
       if (runtimeObjects[ri] == null) {
         int creatingStatementIdx = inputs.get(ri).getDeclIndex();
-        StatementKind creatingStatement = s.getStatementKind(creatingStatementIdx);
+        Operation creatingStatement = s.getOperation(creatingStatementIdx);
 
         // If receiver position of a method, don't continue execution.
         if (ri == 0) {
-          StatementKind st = s.getStatementKind(i);
-          if (st instanceof RMethod && (!((RMethod)st).isStatic())) {
+          Operation st = s.getOperation(i);
+          if (st instanceof MethodCall && (!((MethodCall)st).isStatic())) {
             return false;
           }
         }
         // If null value is implicitly passed (i.e. not passed from a
         // statement like "x = null;" don't continue execution.
-        if (!(creatingStatement instanceof PrimitiveOrStringOrNullDecl)) {
+        if (!(creatingStatement instanceof NonreceiverTerm)) {
           return false;
         }
       }
     }
     return true;
+  }
+  
+  /**
+   * Returns the values for the given variables in the {@link Execution} object.
+   * The variables are {@link Variable} objects in the {@link Sequence} of this
+   * {@link ExecutableSequence} object.
+   *
+   * @param vars a list of {@link Variable} objects.
+   * @param execution representing outcome of executing this sequence.
+   * @return array of values corresponding to variables.
+   */
+  public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
+    return getRuntimeValuesForVars(vars, execution.theList);
   }
   
   protected static Object[] getRuntimeValuesForVars(List<Variable> vars, List<ExecutionOutcome> execution) {    
@@ -408,7 +432,7 @@ public class ExecutableSequence implements Serializable {
   // Precondition: this method has been invoked on 0..index-1.
   public static void executeStatement(Sequence s, List<ExecutionOutcome> outcome,
       int index, Object[] inputVariables) {
-    StatementKind statement = s.getStatementKind(index);
+    Operation statement = s.getOperation(index);
 
     // Capture any output  Syncronize with ProgressDisplay so that
     // we don't capture its output as well.
@@ -422,7 +446,7 @@ public class ExecutableSequence implements Serializable {
         System.setErr (ps_output_buffer);
       }
       
-      assert ((statement instanceof RMethod && !((RMethod)statement).isStatic()) ? inputVariables[0] != null : true);
+      assert ((statement instanceof MethodCall && !((MethodCall)statement).isStatic()) ? inputVariables[0] != null : true);
       
       ExecutionOutcome r = statement.execute(inputVariables, Globals.blackHole);
       assert r != null;
@@ -860,4 +884,38 @@ public class ExecutableSequence implements Serializable {
 
     return cnt;
   }
+  
+  /**
+   * Initializes the array that captures {@link Check} results performed on
+   * execution of the sequence. For use by {@link ExecutionVisitor} implementations.
+   */
+  public void initializeResults() {
+    checksResults.clear();
+    for (int i = 0; i < sequence.size(); i++) {
+      checksResults.add(new ArrayList<Boolean>(1));
+    }
+  }
+
+  /**  
+   * Applies {@link Check#evaluate(Execution)} for each registered {@link Check}.
+   * For use by {@link ExecutionVisitor} implementations.
+   * @param i index into checkResults to set value.
+   */
+  public void performChecks(int i) {
+    for (Check c : getChecks(i)) {
+      checksResults.get(i).add(c.evaluate(executionResults));
+    }
+  }
+
+  /**
+   * Clears and initializes array of {@link Check} objects.
+   * For use by {@link ExecutionVisitor} implementations.
+   */
+  public void initializeChecks() {
+    checks.clear();
+    for (int i = 0; i < sequence.size(); i++) {
+      checks.add(new ArrayList<Check>());
+    }
+  }
+
 }

@@ -5,6 +5,13 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+import randoop.sequence.ClassLiterals;
+import randoop.sequence.PackageLiterals;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceCollection;
 import randoop.util.ListOfLists;
 import randoop.util.PrimitiveTypes;
 import randoop.util.SimpleList;
@@ -155,7 +162,7 @@ public class ComponentManager {
    * package-level literals, those are added to the collection as well.
    */
   @SuppressWarnings("unchecked")
-  public SimpleList<Sequence> getSequencesForType(StatementKind statement, int i) {
+  public SimpleList<Sequence> getSequencesForType(Operation statement, int i) {
 
     Class<?> neededType = statement.getInputTypes().get(i);
 
@@ -164,10 +171,10 @@ public class ComponentManager {
     if (classLiterals != null || packageLiterals != null) {
 
       Class<?> declaringCls = null;
-      if (statement instanceof RMethod) {
-        declaringCls = ((RMethod) statement).getMethod().getDeclaringClass();
-      } else if (statement instanceof RConstructor) {
-        declaringCls = ((RConstructor) statement).getConstructor().getDeclaringClass();
+      if (statement instanceof MethodCall) {
+        declaringCls = ((MethodCall) statement).getMethod().getDeclaringClass();
+      } else if (statement instanceof ConstructorCall) {
+        declaringCls = ((ConstructorCall) statement).getConstructor().getDeclaringClass();
       }
 
       if (classLiterals != null) {
@@ -203,14 +210,10 @@ public class ComponentManager {
     
     Set<Sequence> ret = new LinkedHashSet<Sequence>();
     if (classLiterals != null) {
-      for (SequenceCollection c : classLiterals.map.values()) {
-        ret.addAll(c.getAllSequences());
-      }
+      ret.addAll(classLiterals.getAllSequences());
     }
     if (packageLiterals != null) {
-      for (SequenceCollection c : packageLiterals.map.values()) {
-        ret.addAll(c.getAllSequences());
-      }
+      ret.addAll(packageLiterals.getAllSequences());
     }
     for (Class<?> c : PrimitiveTypes.getPrimitiveTypesAndString()) {
       ret.addAll(gralComponents.getSequencesForType(c, true).toJDKList());

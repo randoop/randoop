@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import randoop.CheckRep;
+import randoop.util.Log;
+import randoop.util.Reflection;
 
 /**
  * Returns true for public members, with some exceptions (see
@@ -19,17 +21,17 @@ import randoop.CheckRep;
  * (the method will be used as a contract checker, not
  *  as a method under test).
  */
-public class DefaultReflectionFilter implements ReflectionFilter {
+public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   private Pattern omitMethods = null;
   private Set<String> omitFields;
   
-  public DefaultReflectionFilter() {
+  public DefaultReflectionPredicate() {
     this(null, new HashSet<String>());
   }
   
   /** If omitMethods is null, then no methods are omitted. */
-  public DefaultReflectionFilter(Pattern omitMethods) {
+  public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
   }
 
@@ -37,9 +39,9 @@ public class DefaultReflectionFilter implements ReflectionFilter {
    * DefaultReflectionFilter creates a filter object that uses default
    * criteria for inclusion of reflection objects. 
    * @param omitMethods pattern for methods to omit, if null then no methods omitted.
-   * @see Reflection#getStatements(java.util.Collection, ReflectionFilter) 
+   * @see Reflection#getStatements(java.util.Collection, ReflectionPredicate) 
    */
-  public DefaultReflectionFilter(Pattern omitMethods, Set<String> omitFields) {
+  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
     super();
     this.omitMethods = omitMethods;
     this.omitFields = omitFields;

@@ -5,14 +5,21 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.MutableSequence;
+import randoop.sequence.MutableVariable;
+import randoop.sequence.Variable;
+
 public class FailureSet {
   
   private Set<Failure> failures = new LinkedHashSet<Failure>();
   
   public static class Failure {
-    public final StatementKind st;
+    public final Operation st;
     public final Class<?> viocls;
-    public Failure(StatementKind st, Class<?> viocls) {
+    public Failure(Operation st, Class<?> viocls) {
       this.st = st;
       this.viocls = viocls;
     }
@@ -41,7 +48,7 @@ public class FailureSet {
     
     for (Check obs : es.getFailures(idx)) {
       Class<?> vioCls = obs.getClass();
-      StatementKind st = null;
+      Operation st = null;
 
       if (obs instanceof ObjectCheck && ((ObjectCheck)obs).contract instanceof ObjectContract) {
 
@@ -61,7 +68,7 @@ public class FailureSet {
           Class<?> cls = runtimeval.getClass();
           // We record this as an error in the equals method.
           try {
-            st = RMethod.getRMethod(cls.getMethod("equals", Object.class));
+            st = MethodCall.getRMethod(cls.getMethod("equals", Object.class));
           } catch (Exception e) {
             throw new Error(e);
           }
@@ -70,14 +77,14 @@ public class FailureSet {
           vioCls = ex.getClass();
           
         } else {
-          st = es.sequence.getStatementKind(idx);
+          st = es.sequence.getOperation(idx);
         }
 
       } else {
-        st = es.sequence.getStatementKind(idx);
+        st = es.sequence.getOperation(idx);
 
-        MSequence mseq = es.sequence.toModifiableSequence();
-        List<MVariable> vars = new ArrayList<MVariable>();
+        MutableSequence mseq = es.sequence.toModifiableSequence();
+        List<MutableVariable> vars = new ArrayList<MutableVariable>();
         for (Variable v : es.sequence.getInputs(idx)) {
           vars.add(mseq.getVariable(v.index));
         }

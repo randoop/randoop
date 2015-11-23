@@ -1,4 +1,4 @@
-package randoop;
+package randoop.operation;
 
 import static org.junit.Assert.*;
 

@@ -1,21 +1,28 @@
-package randoop;
+package randoop.operation;
 
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.List;
 
+import randoop.BugInRandoopException;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Variable;
 import randoop.util.PrimitiveTypes;
 
 /**
- * FieldSetter is an adapter for a {@link PublicField} as a {@link StatementKind}
+ * FieldSetter is an adapter for a {@link PublicField} as a {@link Operation}
  * that acts like a setter for the field. 
  * 
  * @see PublicField
  * 
  * @author bjkeller
  */
-public class FieldSetter implements StatementKind, Serializable{
+public class FieldSetter implements Operation, Serializable{
 
   private static final long serialVersionUID = -5905429635469194115L;
   
@@ -24,7 +31,7 @@ public class FieldSetter implements StatementKind, Serializable{
   private PublicField field;
 
   /**
-   * FieldSetter creates a setter {@link StatementKind} object for a field of a class.
+   * FieldSetter creates a setter {@link Operation} object for a field of a class.
    * Throws an exception if the field is static final.
    * @param field – field object to be set by setter statements.
    * @throws IllegalArgumentException if field is static final.
@@ -112,9 +119,9 @@ public class FieldSetter implements StatementKind, Serializable{
     int index = inputVars.size() - 1;
 
     //TODO this is duplicate code from RMethod - should factor out behavior
-    StatementKind statementCreatingVar = inputVars.get(index).getDeclaringStatement();
+    Operation statementCreatingVar = inputVars.get(index).getDeclaringStatement();
     if (!GenInputsAbstract.long_format && ExecutableSequence.canUseShortFormat(statementCreatingVar )) {
-      Object val = ((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue();
+      Object val = ((NonreceiverTerm) statementCreatingVar).getValue();
       b.append(PrimitiveTypes.toCodeString(val));
     } else {
       b.append(inputVars.get(index).getName());
@@ -155,25 +162,25 @@ public class FieldSetter implements StatementKind, Serializable{
    * "<set>" is literally what is expected.
    * @param descr - string containing descriptor of field setter.
    * @return FieldSetter object corresponding to setter descriptor.
-   * @throws StatementKindParseException if descr does not have expected form.
+   * @throws OperationParseException if descr does not have expected form.
    * @see PublicFieldParser#parse(String)
    */
-  public static FieldSetter parse(String descr) throws StatementKindParseException {
+  public static FieldSetter parse(String descr) throws OperationParseException {
     int parPos = descr.indexOf('(');
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
     if (parPos < 0) {
       String msg = errorPrefix + " expecting parentheses.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     String prefix = descr.substring(0, parPos);
     if (!prefix.equals("<set>")) {
       String msg = errorPrefix + " expecting <set>( <field-descriptor> ).";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     int lastParPos = descr.lastIndexOf(')');
     if (lastParPos < 0) {
       String msg = errorPrefix + " no closing parentheses found.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
     PublicField pf = (new PublicFieldParser()).parse(fieldDescriptor);

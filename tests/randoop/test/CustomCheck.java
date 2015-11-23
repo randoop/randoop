@@ -1,8 +1,8 @@
 package randoop.test;
 
 import randoop.Check;
-import randoop.Execution;
-import randoop.Variable;
+import randoop.sequence.Execution;
+import randoop.sequence.Variable;
 
 /**
  * A custom check for class randoop.test.A.

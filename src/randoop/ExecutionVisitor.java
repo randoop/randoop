@@ -1,5 +1,6 @@
 package randoop;
 
+import randoop.sequence.ExecutableSequence;
 
 /**
  * A visitor that is invoked as the execution of a sequence unfolds.

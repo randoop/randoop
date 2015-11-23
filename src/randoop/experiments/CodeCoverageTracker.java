@@ -10,17 +10,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import plume.Option;
-import plume.Unpublicized;
-import randoop.ExecutableSequence;
 import randoop.IEventListener;
-import randoop.RConstructor;
-import randoop.RMethod;
-import randoop.Sequence;
-import randoop.StatementKind;
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
+import plume.Option;
+import plume.Unpublicized;
 
 
 public class CodeCoverageTracker implements IEventListener {
@@ -39,7 +40,7 @@ public class CodeCoverageTracker implements IEventListener {
   public final Set<Branch> branchesCovered;
   private int branchtot;
   private int branchcov;
-  Map<StatementKind,Integer> membersToBranchTot;
+  Map<Operation,Integer> membersToBranchTot;
 
   /**
    * Creates a coverage tracker that tracks the classes specified
@@ -56,7 +57,7 @@ public class CodeCoverageTracker implements IEventListener {
     branchesCovered = new LinkedHashSet<Branch>();
     branchtot = 0;
     branchcov = 0;
-    membersToBranchTot = new LinkedHashMap<StatementKind, Integer>();
+    membersToBranchTot = new LinkedHashMap<Operation, Integer>();
     
     // Setup STAT_BRANCHTOT for the coverage classes.
     for (Class<?> cls : coverageInstrumentedClasses) {
@@ -75,7 +76,7 @@ public class CodeCoverageTracker implements IEventListener {
           // Atom belongs to a method.
           // Add to method stats (and implicitly, global stats).
           Method method = (Method)member;
-          addToCount(RMethod.getRMethod(method), 1);
+          addToCount(MethodCall.getRMethod(method), 1);
           continue;
         }
 
@@ -83,13 +84,13 @@ public class CodeCoverageTracker implements IEventListener {
         // Add to constructor stats (and implicitly, global stats).
         assert member instanceof Constructor<?> : member.toString();
         Constructor<?> cons = (Constructor<?>)member;
-        addToCount(RConstructor.getRConstructor(cons), 1);
+        addToCount(ConstructorCall.getRConstructor(cons), 1);
       }
     }
 
   }
   
-  private void addToCount(StatementKind member, int i) {
+  private void addToCount(Operation member, int i) {
     Integer count = membersToBranchTot.get(member);
     if (count == null) {
       count = 0;
@@ -143,7 +144,7 @@ public class CodeCoverageTracker implements IEventListener {
           // Atom belongs to a method.
           // Add to method stats (and implicitly, global stats).
           Method method = (Method) member;
-          addToCount(RMethod.getRMethod(method), 1);
+          addToCount(MethodCall.getRMethod(method), 1);
           continue;
         }
 
@@ -151,7 +152,7 @@ public class CodeCoverageTracker implements IEventListener {
         // Add to constructor stats (and implicitly, global stats).
         assert member instanceof Constructor<?> : member.toString();
         Constructor<?> cons = (Constructor<?>) member;
-        addToCount(RConstructor.getRConstructor(cons), 1);
+        addToCount(ConstructorCall.getRConstructor(cons), 1);
       }
 
     }

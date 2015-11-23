@@ -1,14 +1,10 @@
-package randoop.experimental;
+package randoop.sequence;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import randoop.ExecutableSequence;
-import randoop.MSequence;
 import randoop.MultiVisitor;
-import randoop.Sequence;
-import randoop.Variable;
 import randoop.util.Reflection;
 
 public class GreedySequenceSimplifier extends AbstractSimplifier {
@@ -92,7 +88,7 @@ public class GreedySequenceSimplifier extends AbstractSimplifier {
     Collections.sort(replacable_var_index); //not necessary?
     for (int i : replacable_var_index) {
       Variable replace_var = sequence.getVariable(i);
-      MSequence msequence = sequence.toModifiableSequence();
+      MutableSequence msequence = sequence.toModifiableSequence();
       msequence.getInputs(stmt_num).remove(input_index);
       msequence.getInputs(stmt_num).add(input_index, msequence.getVariable(replace_var.index));
       Sequence replaced_sequence = msequence.toImmutableSequence();
@@ -120,7 +116,7 @@ public class GreedySequenceSimplifier extends AbstractSimplifier {
         + maxIndex + " is not correct for sequence size: " + sequence.size();
     List<Integer> compatible_indices = new LinkedList<Integer>();
     for (int i = 0 ; i < maxIndex; i++) {
-      Class<?> outputType = sequence.getStatementKind(i).getOutputType();
+      Class<?> outputType = sequence.getOperation(i).getOutputType();
       if (Reflection.canBeUsedAs(outputType, type)) {
         compatible_indices.add(i);
       }

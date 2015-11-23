@@ -1,4 +1,4 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,13 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import randoop.Globals;
+import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.Reflection;
-import randoop.util.SimpleList;
 import randoop.util.Reflection.Match;
+import randoop.util.SimpleList;
 
 /**
  * A collection of sequences that makes its efficient to ask for
@@ -235,8 +238,8 @@ public class SequenceCollection {
 
   }
 
-  public Set<StatementKind> getAllStatements() {
-    Set<StatementKind> result = new LinkedHashSet<StatementKind>();
+  public Set<Operation> getAllStatements() {
+    Set<Operation> result = new LinkedHashSet<Operation>();
     for (Sequence s: getAllSequences()) {
       for (Statement stmtWithInputs : s.getStatementsWithInputs().toJDKList()) {
         result.add(stmtWithInputs.statement);

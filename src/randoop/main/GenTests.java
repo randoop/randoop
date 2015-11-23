@@ -1,12 +1,9 @@
 package randoop.main;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,10 +15,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,56 +25,48 @@ import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import plume.EntryReader;
-import plume.Option;
-import plume.OptionGroup;
-import plume.Options;
-import plume.SimpleLog;
-import plume.Unpublicized;
-import plume.Options.ArgException;
-import randoop.AbstractGenerator;
 import randoop.BugInRandoopException;
 import randoop.Check;
 import randoop.CheckRep;
 import randoop.CheckRepContract;
 import randoop.ComponentManager;
 import randoop.ContractCheckingVisitor;
+import randoop.DefaultTestFilter;
 import randoop.EqualsHashcode;
 import randoop.EqualsReflexive;
 import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
-import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
 import randoop.ExpectedExceptionCheck;
-import randoop.DefaultTestFilter;
-import randoop.ForwardGenerator;
 import randoop.Globals;
 import randoop.ITestFilter;
 import randoop.JunitFileWriter;
 import randoop.LiteralFileReader;
 import randoop.ObjectContract;
-import randoop.PrimitiveOrStringOrNullDecl;
-import randoop.RConstructor;
-import randoop.RMethod;
 import randoop.RandoopListenerManager;
 import randoop.RegressionCaptureVisitor;
 import randoop.ReplayVisitor;
 import randoop.SeedSequences;
-import randoop.Sequence;
-import randoop.StatementKind;
-import randoop.Variable;
-import randoop.experimental.GreedySequenceSimplifier;
 import randoop.experiments.CodeCoverageTracker;
 import randoop.experiments.CovWitnessHelperVisitor;
-import randoop.experiments.RandomWalkGenerator;
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
+import randoop.reflection.DefaultReflectionPredicate;
 import randoop.runtime.ClosingStream;
 import randoop.runtime.CreatedJUnitFile;
 import randoop.runtime.IMessage;
 import randoop.runtime.MessageSender;
 import randoop.runtime.PluginBridge;
+import randoop.sequence.AbstractGenerator;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.ForwardGenerator;
+import randoop.sequence.GreedySequenceSimplifier;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.ClassFileConstants;
 import randoop.util.CollectionsExt;
-import randoop.util.DefaultReflectionFilter;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
@@ -87,8 +74,16 @@ import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.RunCmd;
 import randoop.util.TimeoutExceededException;
+
 import cov.Branch;
 import cov.Coverage;
+import plume.EntryReader;
+import plume.Option;
+import plume.OptionGroup;
+import plume.Options;
+import plume.Options.ArgException;
+import plume.SimpleLog;
+import plume.Unpublicized;
 
 public class GenTests extends GenInputsAbstract {
 
@@ -252,13 +247,13 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     
-    DefaultReflectionFilter reflectionFilter = new DefaultReflectionFilter(omitmethods, omitFields);
-    List<StatementKind> model = Reflection.getStatements(classes, reflectionFilter);
+    DefaultReflectionPredicate reflectionFilter = new DefaultReflectionPredicate(omitmethods, omitFields);
+    List<Operation> model = Reflection.getStatements(classes, reflectionFilter);
 
     // Always add Object constructor (it's often useful).
-    RConstructor objectConstructor = null;
+    ConstructorCall objectConstructor = null;
     try {
-      objectConstructor = RConstructor.getRConstructor(Object.class.getConstructor());
+      objectConstructor = ConstructorCall.getRConstructor(Object.class.getConstructor());
       if (!model.contains(objectConstructor))
         model.add(objectConstructor);
     } catch (Exception e) {
@@ -266,26 +261,26 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (methodlist != null) {
-      Set<StatementKind> statements = new LinkedHashSet<StatementKind>();
+      Set<Operation> statements = new LinkedHashSet<Operation>();
       try {
         for (Member m : Reflection.loadMethodsAndCtorsFromFile(new File(methodlist))) {
           if (m instanceof Method) {
               if (reflectionFilter.canUse((Method)m)) {
-                statements.add(RMethod.getRMethod((Method)m));
+                statements.add(MethodCall.getRMethod((Method)m));
               }
           } else {
             assert m instanceof Constructor<?>;
             if (reflectionFilter.canUse((Constructor<?>)m)) {
-              statements.add(RConstructor.getRConstructor((Constructor<?>)m));
+              statements.add(ConstructorCall.getRConstructor((Constructor<?>)m));
                   }
-            statements.add(RConstructor.getRConstructor((Constructor<?>)m));
+            statements.add(ConstructorCall.getRConstructor((Constructor<?>)m));
           }
         }
       } catch (IOException e) {
         System.out.println("Error while reading method list file " + methodlist);
         System.exit(1);
       }
-      for (StatementKind st : statements) {
+      for (Operation st : statements) {
         if (!model.contains(st))
           model.add(st);
       }
@@ -701,7 +696,7 @@ public class GenTests extends GenInputsAbstract {
 
     // Add a (1-element) sequence corresponding to each literal to the component manager. 
     for (String filename : GenInputsAbstract.literals_file) {
-      MultiMap<Class<?>, PrimitiveOrStringOrNullDecl> literalmap;
+      MultiMap<Class<?>, NonreceiverTerm> literalmap;
       if (filename.equals("CLASSES")) {
         Collection<ClassFileConstants.ConstantSet> css
           = new ArrayList<ClassFileConstants.ConstantSet>(allClasses.size());
@@ -715,7 +710,7 @@ public class GenTests extends GenInputsAbstract {
 
       for (Class<?> cls : literalmap.keySet()) {
         Package pkg = (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
-        for (PrimitiveOrStringOrNullDecl p : literalmap.getValues(cls)) {
+        for (NonreceiverTerm p : literalmap.getValues(cls)) {
           Sequence seq = Sequence.create(p);
           switch (GenInputsAbstract.literals_level) {
           case CLASS:

@@ -1,4 +1,4 @@
-package randoop;
+package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;

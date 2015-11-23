@@ -1,17 +1,17 @@
-package randoop;
+package randoop.sequence;
 
 /**
  * A variable that is part of a mutable sequence.
  */
-public class MVariable {
+public class MutableVariable {
 
   // Do not override equals/hashcode! Two MVariables
   // should be equal iff they are ==.
   
-  public final MSequence owner;
+  public final MutableSequence owner;
   private final String name;
 
-  public MVariable(MSequence owner, String name) {
+  public MutableVariable(MutableSequence owner, String name) {
     if (owner == null) throw new IllegalArgumentException();
     if (name == null) throw new IllegalArgumentException();
 
@@ -19,7 +19,7 @@ public class MVariable {
     this.name = name;
   }
 
-  public MStatement getCreatingStatementWithInputs() {
+  public MutableStatement getCreatingStatementWithInputs() {
     return owner.getDeclaringStatement(this);
   }
 

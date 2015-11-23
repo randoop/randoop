@@ -6,7 +6,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import randoop.Globals;
-import randoop.StatementKind;
+import randoop.operation.Operation;
 import randoop.experiments.RandomWalkGenerator;
 import randoop.main.GenInputsAbstract;
 import randoop.util.Reflection;
@@ -37,7 +37,7 @@ public class NaiveExplorerPerformanceTest extends TestCase {
     InputStream classStream =
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
-    List<StatementKind> model =
+    List<Operation> model =
       Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?

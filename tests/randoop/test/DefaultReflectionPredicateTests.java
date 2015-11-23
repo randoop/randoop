@@ -6,16 +6,17 @@ import java.text.BreakIterator;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
-import randoop.util.DefaultReflectionFilter;
+import randoop.reflection.DefaultReflectionPredicate;
 
-public class DefaultReflectionFilterTests extends TestCase{
-  private DefaultReflectionFilter filter;
+import junit.framework.TestCase;
+
+public class DefaultReflectionPredicateTests extends TestCase{
+  private DefaultReflectionPredicate filter;
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    filter = new DefaultReflectionFilter(null);
+    filter = new DefaultReflectionPredicate(null);
   }
 
   public void testObjectMethods1() throws Exception {

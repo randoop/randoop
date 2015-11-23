@@ -1,7 +1,9 @@
-package randoop;
+package randoop.sequence;
 
 import java.io.Serializable;
 
+import randoop.NormalExecution;
+import randoop.StateMatcher;
 import randoop.util.Log;
 
 public class ObjectCache implements Serializable {

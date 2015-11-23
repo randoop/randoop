@@ -1,9 +1,9 @@
 package randoop.main;
 
-import randoop.ExecutableSequence;
 import randoop.MultiVisitor;
 import randoop.RegressionCaptureVisitor;
-import randoop.Sequence;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
 import randoop.util.Files;
 
 

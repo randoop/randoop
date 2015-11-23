@@ -1,8 +1,10 @@
-package randoop;
+package randoop.operation;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import randoop.sequence.Variable;
 
 /**
  * PublicStaticField represents a public static field of a class. 

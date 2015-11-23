@@ -8,8 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import randoop.Sequence;
+import randoop.sequence.Sequence;
 import randoop.util.CollectionsExt;
+
 import cov.Branch;
 import cov.CoverageAtom;
 

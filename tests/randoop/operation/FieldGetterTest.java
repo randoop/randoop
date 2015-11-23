@@ -1,12 +1,20 @@
-package randoop;
+package randoop.operation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.NormalExecution;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.Reflection;
 
 /**
@@ -32,7 +40,7 @@ public class FieldGetterTest {
       assertEquals("Output type should match type of field", sf.getType(), rhs.getOutputType());
 
       //code generation
-      String expected = "int i0 = randoop.ClassWithFields.fourField;" + Globals.lineSep;
+      String expected = "int i0 = randoop.operation.ClassWithFields.fourField;" + Globals.lineSep;
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
       StringBuilder b = new StringBuilder();
@@ -73,8 +81,8 @@ public class FieldGetterTest {
 
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
-      RConstructor cons = new RConstructor(
-          Reflection.getConstructorForSignature("randoop.ClassWithFields.ClassWithFields()"));
+      ConstructorCall cons = new ConstructorCall(
+          Reflection.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seqInit, 0)); 
@@ -131,7 +139,7 @@ public class FieldGetterTest {
       assertEquals("Output type should match type of field", f.getType(), rhs.getOutputType());
 
       //code generation
-      String expected = "int i0 = randoop.ClassWithFields.FIVEFIELD;" + Globals.lineSep;
+      String expected = "int i0 = randoop.operation.ClassWithFields.FIVEFIELD;" + Globals.lineSep;
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
       StringBuilder b = new StringBuilder();
@@ -156,11 +164,11 @@ public class FieldGetterTest {
 
   @Test
   public void parseable() {
-    String getterDescr = "<get>(int:randoop.ClassWithFields.oneField)";
+    String getterDescr = "<get>(int:randoop.operation.ClassWithFields.oneField)";
     try {
       FieldGetter getter = FieldGetter.parse(getterDescr);
       assertEquals("parse should return object that converts to string", getterDescr, getter.toParseableString());
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
      fail("Parse error: " + e.getMessage());
     }
     

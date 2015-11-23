@@ -3,19 +3,19 @@ package randoop.experimental;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import plume.UtilMDE;
-
-import randoop.ExecutableSequence;
 import randoop.Globals;
-import randoop.RMethod;
-import randoop.Sequence;
-import randoop.StatementKind;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.VariableRenamer;
 import randoop.util.Files;
+
+import plume.UtilMDE;
 
 public class SequencePrettyPrinter {
   
@@ -131,7 +131,7 @@ public class SequencePrettyPrinter {
       Sequence sequence = eseq.sequence;
       int length = sequence.size();
       for (int i = 0; i < length; i++) {
-        StatementKind statement = sequence.getStatementKind(i);
+        Operation statement = sequence.getOperation(i);
         Class<?> outputType = statement.getOutputType();
         outputType = this.getComponentType(outputType);
         
@@ -148,8 +148,8 @@ public class SequencePrettyPrinter {
         }
         //if it is a RMethod, consider the case it may be
         //static method
-        if (statement instanceof RMethod) {
-          RMethod rmethod = (RMethod)statement;
+        if (statement instanceof MethodCall) {
+          MethodCall rmethod = (MethodCall)statement;
           if (rmethod.isStatic()) {
             Class<?> declaring_class = rmethod.getMethod().getDeclaringClass();
             if (needImport(declaring_class)) {

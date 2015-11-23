@@ -1,10 +1,9 @@
-package randoop;
+package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Variable;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
@@ -27,7 +32,7 @@ import randoop.util.Util;
  * java.lang.reflect.Constructor.
  *
  */
-public final class RConstructor implements StatementKind, Serializable {
+public final class ConstructorCall implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -56,11 +61,11 @@ public final class RConstructor implements StatementKind, Serializable {
   private boolean hashCodeComputed = false;
 
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableRConstructor(constructor);
+    return new SerializableConstructorCall(constructor);
   }
 
   // Creates the RConstructor corresponding to the given reflection constructor.
-  public RConstructor(Constructor<?> constructor) {
+  public ConstructorCall(Constructor<?> constructor) {
     if (constructor == null)
       throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
@@ -80,8 +85,8 @@ public final class RConstructor implements StatementKind, Serializable {
   /**
    * Creates the RConstructor corresponding to the given reflection constructor.
    */
-  public static RConstructor getRConstructor(Constructor<?> constructor) {
-    return new RConstructor(constructor);
+  public static ConstructorCall getRConstructor(Constructor<?> constructor) {
+    return new ConstructorCall(constructor);
   }
 
   /** Reset/clear the overloads field. */
@@ -144,10 +149,10 @@ public final class RConstructor implements StatementKind, Serializable {
       // or string literal, like "int x = 3" are not added to a sequence;
       // instead, the value (e.g. "3") is inserted directly added as
       // arguments to method calls.
-      StatementKind statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        b.append(PrimitiveTypes.toCodeString(((PrimitiveOrStringOrNullDecl) statementCreatingVar).getValue()));
+        b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
       } else {
         b.append(inputVars.get(i).getName());
       }
@@ -162,9 +167,9 @@ public final class RConstructor implements StatementKind, Serializable {
       return false;
     if (this == o)
       return true;
-    if (!(o instanceof RConstructor))
+    if (!(o instanceof ConstructorCall))
       return false;
-    RConstructor other = (RConstructor) o;
+    ConstructorCall other = (ConstructorCall) o;
     if (!this.constructor.equals(other.constructor))
       return false;
     return true;
@@ -235,7 +240,7 @@ public final class RConstructor implements StatementKind, Serializable {
     return Reflection.getSignature(constructor);
   }
 
-  public static StatementKind parse(String s) {
-    return RConstructor.getRConstructor(Reflection.getConstructorForSignature(s));
+  public static Operation parse(String s) {
+    return ConstructorCall.getRConstructor(Reflection.getConstructorForSignature(s));
   }
 }

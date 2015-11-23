@@ -1,4 +1,4 @@
-package randoop;
+package randoop.operation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,6 +9,12 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.NormalExecution;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
 import randoop.util.Reflection;
 
 
@@ -34,9 +40,9 @@ public class FieldSetterTest {
       assertEquals("Output type should be void", void.class, rhs.getOutputType());
       
       //code generation
-      String expected = "randoop.ClassWithFields.fourField = 24;" + Globals.lineSep;
+      String expected = "randoop.operation.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      Sequence seq0 = new Sequence().extend(new PrimitiveOrStringOrNullDecl(int.class,24), new ArrayList<Variable>());
+      Sequence seq0 = new Sequence().extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq0,0));
       rhs.appendCode(null, vars, b);
@@ -74,9 +80,9 @@ public class FieldSetterTest {
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      RConstructor cons = new RConstructor(Reflection.getConstructorForSignature("randoop.ClassWithFields.ClassWithFields()"));
+      ConstructorCall cons = new ConstructorCall(Reflection.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
-      Sequence seq1 = seq0.extend(new PrimitiveOrStringOrNullDecl(int.class,24), new ArrayList<Variable>());
+      Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1,0));
       vars.add(new Variable(seq1,1));
@@ -134,11 +140,11 @@ public class FieldSetterTest {
   
   @Test
   public void parseable() {
-    String setterDesc = "<set>(int:randoop.ClassWithFields.oneField)";
+    String setterDesc = "<set>(int:randoop.operation.ClassWithFields.oneField)";
     try {
       FieldSetter setter = FieldSetter.parse(setterDesc);
       assertEquals("parse should return object that converts to string", setterDesc, setter.toParseableString());
-    } catch (StatementKindParseException e) {
+    } catch (OperationParseException e) {
      fail("Parse error: " + e.getMessage());
     }
     

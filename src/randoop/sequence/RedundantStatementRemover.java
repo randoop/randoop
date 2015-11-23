@@ -1,15 +1,16 @@
-package randoop.experimental;
+package randoop.sequence;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import randoop.Check;
-import randoop.ExecutableSequence;
 import randoop.MultiVisitor;
-import randoop.Sequence;
+import randoop.sequence.AbstractSimplifier;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceSimplifyUtils;
 
 public class RedundantStatementRemover extends AbstractSimplifier {
 

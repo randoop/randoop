@@ -1,5 +1,6 @@
 package randoop;
 
+import randoop.sequence.ExecutableSequence;
 
 /** A visitor that does nothing and adds no checks. */
 public final class DummyVisitor implements ExecutionVisitor {

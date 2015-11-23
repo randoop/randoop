@@ -1,13 +1,19 @@
-package randoop;
+package randoop.operation;
 
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.List;
 
+import randoop.BugInRandoopException;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.Globals;
+import randoop.NormalExecution;
+import randoop.sequence.Variable;
 import randoop.util.Reflection;
 
 /**
- * FieldGetter is an adapter that creates a {@link StatementKind} from
+ * FieldGetter is an adapter that creates a {@link Operation} from
  * a {@link PublicField} and behaves like a getter for the field.
  * 
  * @see PublicField
@@ -15,7 +21,7 @@ import randoop.util.Reflection;
  * @author bjkeller
  *
  */
-public class FieldGetter implements StatementKind,Serializable {
+public class FieldGetter implements Operation,Serializable {
 
   private static final long serialVersionUID = 3966201727170073093L;
   
@@ -132,25 +138,25 @@ public class FieldGetter implements StatementKind,Serializable {
    * 
    * @param descr - string containing descriptor of getter for a field.
    * @return - getter object in string.
-   * @throws StatementKindParseException if any error in descriptor string
+   * @throws OperationParseException if any error in descriptor string
    * @see PublicFieldParser#parse(String)
    */
-  public static FieldGetter parse(String descr) throws StatementKindParseException {
+  public static FieldGetter parse(String descr) throws OperationParseException {
     int parPos = descr.indexOf('(');
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
     if (parPos < 0) {
       String msg = errorPrefix + " expecting parentheses.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     String prefix = descr.substring(0, parPos);
     if (!prefix.equals("<get>")) {
       String msg = errorPrefix + " expecting <get>( <field-descriptor> ).";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     int lastParPos = descr.lastIndexOf(')');
     if (lastParPos < 0) {
       String msg = errorPrefix + " no closing parentheses found.";
-      throw new StatementKindParseException(msg);
+      throw new OperationParseException(msg);
     }
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
     PublicField pf = (new PublicFieldParser()).parse(fieldDescriptor);

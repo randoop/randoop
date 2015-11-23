@@ -4,38 +4,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
 import randoop.ComponentManager;
-import randoop.ForwardGenerator;
 import randoop.SeedSequences;
-import randoop.Sequence;
-import randoop.SequenceCollection;
-import randoop.StatementKind;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
+import randoop.sequence.ForwardGenerator;
+import randoop.sequence.Sequence;
 import randoop.test.bh.BH;
 import randoop.test.bh.Body;
 import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
-import randoop.test.perimeter.BlackNode;
-import randoop.test.perimeter.GreyNode;
-import randoop.test.perimeter.NorthEast;
-import randoop.test.perimeter.NorthWest;
-import randoop.test.perimeter.Perimeter;
-import randoop.test.perimeter.QuadTreeNode;
-import randoop.test.perimeter.Quadrant;
-import randoop.test.perimeter.SouthEast;
-import randoop.test.perimeter.SouthWest;
-import randoop.test.perimeter.WhiteNode;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
+
+import junit.framework.TestCase;
 
 public class ForwardExplorerTests extends TestCase {
 
   public static void test1() {
 
-    List<StatementKind> model =
+    List<Operation> model =
       Reflection.getStatements(Arrays.<Class<?>>asList(Long.class), null);
 
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
@@ -63,7 +53,7 @@ public class ForwardExplorerTests extends TestCase {
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 200;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    List<StatementKind> model = Reflection.getStatements(classes, null);
+    List<Operation> model = Reflection.getStatements(classes, null);
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 200, mgr, null, null, null);
     exp.explore();
@@ -106,7 +96,7 @@ public class ForwardExplorerTests extends TestCase {
     System.out.println(classes);
 
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    List<StatementKind> model = Reflection.getStatements(classes, null);
+    List<Operation> model = Reflection.getStatements(classes, null);
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 200, mgr, null, null, null);
     GenInputsAbstract.forbid_null = false;
