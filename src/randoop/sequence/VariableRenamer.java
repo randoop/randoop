@@ -1,9 +1,7 @@
-package randoop;
+package randoop.sequence;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import randoop.sequence.Sequence;
 
 public class VariableRenamer {
 

@@ -35,7 +35,7 @@ import randoop.util.Reflection;
  *      visitors to inspect.
  * <li> <b>Checks.</b> A check is an object representing an expected runtime behavior
  *      of the sequence. Clients can add checks to specific indices of the sequence.
- *      For example, a client might add a <code>NotNull</code> check to the ith index 
+ *      For example, a client might add a <code>NotNull</code> check to the ith index
  *      of a sequence to signify that the value returned by the statement at index i
  *      should not be null.
  * <li> <b>Check evaluation results.</b> Corresponding to every check is a boolean value that
@@ -43,18 +43,18 @@ import randoop.util.Reflection;
  *      of the sequence.
  * </ul>
  * <p>
- * 
+ *
  * Of the three pieces of data above, an ExecutableSequence only directly manages
  * the first one, i.e. the execution results. Other pieces of data, including
  * checks and check evaluation results, are added or removed by the
  * client of the ExecutableSequence. One way of doing this is by implementing an
  * {@link ExecutionVisitor} and passing it as an argument to the <code>execute</code>
  * method.
- * 
+ *
  * <p>
- * 
- * The method <code>execute(ExecutionVisitor v)</code> executes the code that the 
- * sequence represents. This method uses reflection to execute each element in the 
+ *
+ * The method <code>execute(ExecutionVisitor v)</code> executes the code that the
+ * sequence represents. This method uses reflection to execute each element in the
  * sequence (method call, constructor call, primitive or array declaration, etc).
  * Before executing each statement (e.g. the i-th statement), execute(v)
  * calls v.visitBefore(this, i), and after executing each statement, it calls
@@ -62,9 +62,9 @@ import randoop.util.Reflection;
  * execution, and take some action depending on its intended purpose. For example,
  * it may decorate the sequence with {@link Check}s about the
  * execution.
- * 
+ *
  * <p>
- * 
+ *
  * NOTES.
  *
  * <ul>
@@ -91,7 +91,7 @@ public class ExecutableSequence implements Serializable {
   // sequence element. Invariant: sequence.size() == checks.size().
   // TODO: don't expose this field directly.
   protected List<List<Check>> checks;
-  
+
   // Contains the fail/pass results of executing the checks in this.checks.
   // The <i,j>-th element of this list is true if during execution,
   // the <i,j>-th check passed, and false if it failed.
@@ -204,7 +204,7 @@ public class ExecutableSequence implements Serializable {
   }
 
 
-  /** 
+  /**
    * Returns an id based on the contents of the sequence alone.  The id
    * will match for any identical sequences (no matter how they are
    * constructed).  Used for debugging
@@ -212,7 +212,7 @@ public class ExecutableSequence implements Serializable {
   public int seq_id() {
     StringBuilder b = new StringBuilder();
     for (int i = 0 ; i < sequence.size() ; i++) {
-      
+
       // If short format, don't print out primitive declarations
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
@@ -220,7 +220,7 @@ public class ExecutableSequence implements Serializable {
           && sequence.getStatement(i).getShortForm() != null) {
         continue;
       }
-      
+
       StringBuilder oneStatement = new StringBuilder();
       sequence.printStatement(oneStatement, i);
 
@@ -241,7 +241,7 @@ public class ExecutableSequence implements Serializable {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0 ; i < sequence.size() ; i++) {
-      
+
       // If short format, don't print out primitive declarations
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
@@ -249,7 +249,7 @@ public class ExecutableSequence implements Serializable {
           && sequence.getStatement(i).getShortForm() != null) {
         continue;
       }
-      
+
       StringBuilder oneStatement = new StringBuilder();
       sequence.printStatement(oneStatement, i);
 
@@ -295,7 +295,7 @@ public class ExecutableSequence implements Serializable {
    * Execute this sequence, invoking the given visitor as the execution
    * unfolds. After invoking this method, the client can query the outcome
    * of executing each statement via the method <code>getResult(i)</code>.
-   * 
+   *
    * <ul>
    * <li> Before the sequence is executed, clears execution results and
    *      calls <code>visitor.initialize(this)</code>.
@@ -363,12 +363,12 @@ public class ExecutableSequence implements Serializable {
 
   public static boolean getRuntimeInputs(Sequence s, List<ExecutionOutcome> outcome,
       int i, List<Variable> inputs, Object[] runtimeObjects) {
-    
+
     Object[] ros = getRuntimeValuesForVars(inputs, outcome);
     for (int ri = 0 ; ri < ros.length ; ri++) {
       runtimeObjects[ri] = ros[ri];
     }
-    
+
     for (int ri = 0 ; ri < runtimeObjects.length ; ri++) {
       if (runtimeObjects[ri] == null) {
         int creatingStatementIdx = inputs.get(ri).getDeclIndex();
@@ -390,12 +390,12 @@ public class ExecutableSequence implements Serializable {
     }
     return true;
   }
-  
+
   /**
    * Returns the values for the given variables in the {@link Execution} object.
    * The variables are {@link Variable} objects in the {@link Sequence} of this
    * {@link ExecutableSequence} object.
-   * 
+   *
    * @param vars a list of {@link Variable} objects.
    * @param execution representing outcome of executing this sequence.
    * @return array of values corresponding to variables.
@@ -403,8 +403,8 @@ public class ExecutableSequence implements Serializable {
   public static Object[] getRuntimeValuesForVars(List<Variable> vars, Execution execution) {
     return getRuntimeValuesForVars(vars, execution.theList);
   }
-  
-  protected static Object[] getRuntimeValuesForVars(List<Variable> vars, List<ExecutionOutcome> execution) {    
+
+  protected static Object[] getRuntimeValuesForVars(List<Variable> vars, List<ExecutionOutcome> execution) {
     Object[] runtimeObjects = new Object[vars.size()];
     for (int j = 0 ; j < runtimeObjects.length ; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
@@ -433,7 +433,7 @@ public class ExecutableSequence implements Serializable {
         System.setOut (ps_output_buffer);
         System.setErr (ps_output_buffer);
       }
-      
+
       assert ((statement.isMethodCall() && !statement.isStatic()) ? inputVariables[0] != null : true);
 
       ExecutionOutcome r = statement.execute(inputVariables, Globals.blackHole);
@@ -457,7 +457,7 @@ public class ExecutableSequence implements Serializable {
     sequence.checkIndex(index);
     return executionResults.get(index);
   }
-  
+
   public List<List<Boolean>> getChecksResults() {
     return checksResults;
   }
@@ -526,8 +526,8 @@ public class ExecutableSequence implements Serializable {
       checks.get(i).clear();
     }
   }
-  
-  
+
+
 
 
   public boolean hasCheck(Class<? extends Check> clazz) {
@@ -575,7 +575,7 @@ public class ExecutableSequence implements Serializable {
     }
     return false;
   }
-  
+
   public int getFailureIndex() {
     for (int i = 0 ; i < sequence.size() ; i++) {
       if (hasFailure(i)) {
@@ -584,11 +584,11 @@ public class ExecutableSequence implements Serializable {
     }
     return -1;
   }
-  
+
   public boolean hasFailure() {
     return getFailureIndex() != -1;
   }
-  
+
   public List<Check> getFailures(int idx) {
     List<Check> failedContracts = new ArrayList<Check>();
     for (int i = 0 ; i < checksResults.get(idx).size() ; i++) {
@@ -764,7 +764,7 @@ public class ExecutableSequence implements Serializable {
                                obs2.size());
             System.out.printf ("Sequence1: %n%s%n", this);
             System.out.printf ("Sequence2: %n%s%n", es);
-            System.out.printf ("Sequence1 [%08x]: %n%s%n", seq_id(), 
+            System.out.printf ("Sequence1 [%08x]: %n%s%n", seq_id(),
                                toCodeString());
             System.out.printf ("Sequence2 [%08x]: %n%s%n", seq_id(),
                                es.toCodeString());
@@ -777,7 +777,7 @@ public class ExecutableSequence implements Serializable {
       }
 
       // Find any checks that mismatch between the two runs of the
-      // Sequence.  
+      // Sequence.
       int o2i = 0;
       for (int o1i = 0; o1i < obs1.size(); o1i++) {
         Check ob1 = obs1.get(o1i);
@@ -810,7 +810,7 @@ public class ExecutableSequence implements Serializable {
         if (match) {
           for (int jj = o2i_start; jj < o2i; jj++) {
             diff_obs2.add (0, jj);
-            print_diffs (print_diffs, "obs2 missing", null, obs2.get(jj), o1i, 
+            print_diffs (print_diffs, "obs2 missing", null, obs2.get(jj), o1i,
                          o2i, es);
           }
           o2i++;
@@ -825,7 +825,7 @@ public class ExecutableSequence implements Serializable {
         print_diffs (print_diffs, "extra obs2", null, obs2.get(o2i), -1, o2i,
                      es);
       }
-            
+
       // Remove any checks that don't match
       if (remove_diffs) {
         for (int obs : diff_obs1) {
@@ -842,7 +842,7 @@ public class ExecutableSequence implements Serializable {
   }
 
   /** Prints information about any diffs found when comparing checks **/
-  private void print_diffs (boolean print_diffs, String msg, Check obs1, 
+  private void print_diffs (boolean print_diffs, String msg, Check obs1,
                          Check obs2, int o1i, int o2i, ExecutableSequence es) {
 
     if (!print_diffs)
@@ -884,7 +884,7 @@ public class ExecutableSequence implements Serializable {
     }
   }
 
-  /**  
+  /**
    * Applies {@link Check#evaluate(Execution)} for each registered {@link Check}.
    * For use by {@link ExecutionVisitor} implementations.
    * @param i index into checkResults to set value.
@@ -906,5 +906,4 @@ public class ExecutableSequence implements Serializable {
     }
   }
 
- 
 }

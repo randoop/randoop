@@ -1,4 +1,4 @@
-package randoop.util;
+package randoop.reflection;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 
 import randoop.reflection.ReflectionPredicate;
 
-public class EverythingAllowedFilter implements ReflectionPredicate {
+public class EverythingAllowedPredicate implements ReflectionPredicate {
 
   public boolean canUse(Class<?> c) {
     return true;

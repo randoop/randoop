@@ -55,7 +55,7 @@ RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
 all: clean build tests
 
 # Build, run tests, create manual, create distribution.
-all-dist: all manual distribution-files 
+all-dist: all manual distribution-files
 
 # Remove Randoop classes.
 clean:
@@ -613,8 +613,8 @@ GENTESTS_OPTIONS_JAVA = \
       src/randoop/main/GenInputsAbstract.java \
       src/randoop/util/Log.java \
       src/randoop/util/ReflectionExecutor.java \
-      src/randoop/ForwardGenerator.java \
-      src/randoop/AbstractGenerator.java
+      src/randoop/sequence/ForwardGenerator.java \
+      src/randoop/sequence/AbstractGenerator.java
 
 # "build" is a prerequisite because javadoc reads .class files to determine
 # annotations.

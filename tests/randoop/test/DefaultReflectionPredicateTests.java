@@ -10,7 +10,7 @@ import randoop.reflection.DefaultReflectionPredicate;
 
 import junit.framework.TestCase;
 
-public class DefaultReflectionFilterTests extends TestCase{
+public class DefaultReflectionPredicateTests extends TestCase{
   private DefaultReflectionPredicate filter;
 
   @Override

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import randoop.VariableRenamer;
-
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable>, Serializable {
 
@@ -19,7 +17,7 @@ public class Variable implements Comparable<Variable>, Serializable {
   public final Sequence sequence;
 
   public Variable(Sequence owner, int i) {
-    if (owner == null) 
+    if (owner == null)
       throw new IllegalArgumentException("missing owner");
     if (i < 0)
       throw new IllegalArgumentException("negative index:" + i);
@@ -54,7 +52,7 @@ public class Variable implements Comparable<Variable>, Serializable {
   public Class<?> getType() {
     return this.sequence.getStatement(index).getOutputType();
   }
-  
+
   /** The statement that produced this variable. */
   public Statement getDeclaringStatement() {
     return this.sequence.getStatement(index);
