@@ -61,7 +61,6 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
     s.initializeResults();
   }
 
-
   public void visitBefore(ExecutableSequence sequence, int i) {
     // no body.
   }

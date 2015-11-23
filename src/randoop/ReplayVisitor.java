@@ -2,6 +2,8 @@ package randoop;
 
 import randoop.sequence.ExecutableSequence;
 
+import randoop.sequence.ExecutableSequence;
+
 /**
  * An execution visitor that evaluates the checks in the
  * given executable sequence, and returns <code>false</code>

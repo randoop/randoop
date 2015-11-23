@@ -58,11 +58,11 @@ public class FieldReflectionTest {
     }
     
     for (Field f : fields) {
-      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getStatementKinds(f)));
+      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
     }
     
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getStatementKinds(f)));
+      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
     }
     
   }
@@ -100,11 +100,11 @@ public class FieldReflectionTest {
     assertEquals("number of statements", 2*expected.size() - 1 + 2, actual.size());
     
     for (Field f : expected) {
-      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getStatementKinds(f)));
+      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
     }
     
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getStatementKinds(f)));
+      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
     }
   }
   
@@ -132,13 +132,13 @@ public class FieldReflectionTest {
     assertEquals("number of statements", 2, actual.size());
     
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getStatementKinds(f)));
+      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
     }
     
   }
   
   /**
-   * getStatementKinds maps a field into possible statements.
+   * getOperations maps a field into possible statements.
    * Looks at modifiers to decide which kind of field wrapper
    * to create and then builds list with getter and setter.
    * 

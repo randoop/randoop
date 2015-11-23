@@ -54,7 +54,6 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     s.initializeChecks();
   }
 
-
   // We don't create regression checks for these methods.
   private static final Method objectToString;
   private static final Method objectHashCode;

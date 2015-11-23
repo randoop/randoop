@@ -631,7 +631,7 @@ public class GenBranchDir {
     for (int statementIndex : seq.getUses(v2)) {
       for (int ithInput = 0 ; ithInput < seq.getInputs(statementIndex).size() ; ithInput++) {
         if (seq.getInputs(statementIndex).get(ithInput).equals(v2)) {
-          Class<?> inputType = seq.getStatementKind(statementIndex).getInputTypes().get(ithInput);
+          Class<?> inputType = seq.getOperation(statementIndex).getInputTypes().get(ithInput);
           if (!Reflection.canBeUsedAs(v1.getType(), inputType)) {
             return false;
           }

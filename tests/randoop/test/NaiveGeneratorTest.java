@@ -10,6 +10,8 @@ import randoop.reflection.OperationExtractor;
 
 import junit.framework.TestCase;
 
+import junit.framework.TestCase;
+
 public class NaiveGeneratorTest extends TestCase {
 
   public void test() throws IOException {

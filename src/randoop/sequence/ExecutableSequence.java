@@ -17,6 +17,9 @@ import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.MethodCall;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
 import randoop.util.ProgressDisplay;
 import randoop.util.Reflection;
 
