@@ -7,10 +7,6 @@ import java.util.Set;
 
 import randoop.Check;
 import randoop.MultiVisitor;
-import randoop.sequence.AbstractSimplifier;
-import randoop.sequence.ExecutableSequence;
-import randoop.sequence.Sequence;
-import randoop.sequence.SequenceSimplifyUtils;
 
 public class RedundantStatementRemover extends AbstractSimplifier {
 

@@ -3,8 +3,14 @@ package randoop.operation;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
+/**
+ * Serializable form of {@link NonreceiverTerm} allowing tests to be
+ * serialized.
+ * 
+ * Also see <code>NonreceiverTerm.writeReplace</code>.
+ */
 public class SerializableNonreceiverTerm implements Serializable {
 
   private static final long serialVersionUID = 6934946167409672994L;
@@ -17,7 +23,8 @@ public class SerializableNonreceiverTerm implements Serializable {
     this.value = value;
   }
 
-  private Object readResolve() throws ObjectStreamException {
-    return new NonreceiverTerm(Reflection.classForName(type), value);
+  private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
+    Class<?> c = TypeNames.recognizeType(type);
+    return new NonreceiverTerm(c, value);
   }
 }

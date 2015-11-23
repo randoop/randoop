@@ -1,6 +1,3 @@
-/**
- * 
- */
 package randoop.operation;
 
 import java.io.PrintStream;
@@ -9,18 +6,20 @@ import java.util.Collections;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
 /**
- * EnumConstant represents a constant value from an enum.
+ * EnumConstant is an {@link Operation} representing a constant value from an enum.
+ * 
+ * As a formal operation, a constant named BLUE from the enum Colors is an operation 
+ * BLUE : [] -> Colors. Execution simply returns the constant value. 
  * 
  * @author bjkeller
  *
  */
-public class EnumConstant implements Operation, Serializable {
+public class EnumConstant extends AbstractOperation implements Operation, Serializable {
   
   private static final long serialVersionUID = 849994347169442078L;
   
@@ -59,8 +58,9 @@ public class EnumConstant implements Operation, Serializable {
     return toParseableString();
   }
 
-  /* (non-Javadoc)
-   * @see randoop.StatementKind#getInputTypes()
+  /**
+   * {@inheritDoc}
+   * @return an empty list.
    */
   @Override
   public List<Class<?>> getInputTypes() {
@@ -70,17 +70,17 @@ public class EnumConstant implements Operation, Serializable {
   public Class<?> type() { return value.getDeclaringClass(); }
   
   /**
-   * getOutputType returns the type of the enum constant.
-   * 
-   * @see randoop.StatementKind#getOutputType()
+   * {@inheritDoc} 
+   * @return the enum type.
    */
   @Override
   public Class<?> getOutputType() {
     return type();
   }
 
-  /* (non-Javadoc)
-   * @see randoop.StatementKind#execute(java.lang.Object[], java.io.PrintStream)
+  /**
+   * {@inheritDoc}
+   * @return a {@link NormalExecution} object holding the value of the enum constant.
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -88,26 +88,21 @@ public class EnumConstant implements Operation, Serializable {
     return new NormalExecution(this.value,0);
   }
 
-  /* (non-Javadoc)
-   * @see randoop.StatementKind#appendCode(randoop.Variable, java.util.List, java.lang.StringBuilder)
+  /**
+   * {@inheritDoc}
+   * @return qualified name of enum constant.
    */
   @Override
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
-    b.append(Reflection.getCompilableName(type()));
-    b.append(" ");
-    b.append(newVar.getName());
-    b.append(" = ");
-    b.append(Reflection.getCompilableName(type()) + "." + this.value.name());
-    b.append(";");
-    b.append(Globals.lineSep);
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
+    b.append(TypeNames.getCompilableName(type()) + "." + this.value.name());
   }
 
   /**
-   * toParseableString issues a string representation of an enum constant as a
+   * {@inheritDoc}
+   * Issues a string representation of an enum constant as a
    * type-value pair. The parse function should return an equivalent object.
    * 
    * @see EnumConstant#parse(String)
-   * @see randoop.StatementKind#toParseableString()
    */
   @Override
   public String toParseableString() {
@@ -115,32 +110,33 @@ public class EnumConstant implements Operation, Serializable {
   }
 
   /**
-   * parse recognizes the description of an enum constant value in a string.
+   * parse recognizes the description of an enum constant value in a string as returned by
+   * {@link EnumConstant#toParseableString()}.
    * 
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
    * 
-   * @param s string representing type-value pair for an enum constant
+   * @param desc string representing type-value pair for an enum constant
    * @return an EnumConstant representing the enum constant value in {@link s}
    * @throws OperationParseException
    */
-  public static EnumConstant parse(String s) throws OperationParseException {
-    if (s == null) {
+  public static EnumConstant parse(String desc) throws OperationParseException {
+    if (desc == null) {
       throw new IllegalArgumentException("s cannot be null");
     }
-    int colonIdx = s.indexOf(':');
+    int colonIdx = desc.indexOf(':');
     if (colonIdx < 0) {
       String msg = "An enum constant description must be of the form \"" +
-          "<type>:<value>" + " but description is \"" + s + "\".";
+          "<type>:<value>" + " but description is \"" + desc + "\".";
       throw new OperationParseException(msg);
     }
     
-    String typeName = s.substring(0, colonIdx).trim();
-    String valueName = s.substring(colonIdx+1).trim();
+    String typeName = desc.substring(0, colonIdx).trim();
+    String valueName = desc.substring(colonIdx+1).trim();
     
     Enum<?> value = null;
     
-    String errorPrefix = "Error when parsing type-value pair " + s + 
+    String errorPrefix = "Error when parsing type-value pair " + desc + 
         " for an enum description of the form <type>:<value>.";
     
     if (typeName.isEmpty()) {
@@ -163,8 +159,10 @@ public class EnumConstant implements Operation, Serializable {
       throw new OperationParseException(msg);
     }
     
-    Class<?> type = Reflection.classForName(typeName,true);
-    if (type == null) {
+    Class<?> type;
+    try {
+      type = TypeNames.recognizeType(typeName);
+    } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
       throw new OperationParseException(msg);
     }
@@ -208,4 +206,21 @@ public class EnumConstant implements Operation, Serializable {
   public Enum<?> value() {
     return this.value;
   }
+  
+  /**
+   * {@inheritDoc}
+   * @return value of enum constant.
+   */
+  @Override
+  public Object getValue() { return value(); }
+
+  /**
+   * {@inheritDoc}
+   * @return enclosing enum type.
+   */
+  @Override
+  public Class<?> getDeclaringClass() {
+    return value.getDeclaringClass();
+  }
+  
 }

@@ -5,6 +5,8 @@ package randoop.sequence;
 
 import java.util.List;
 
+import randoop.sequence.Sequence;
+
 /**
  * Return type for ForwardGenerator's selectInputs method, which is
  * responsible for selecting a set of component sequences to be

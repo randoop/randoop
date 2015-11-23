@@ -12,6 +12,7 @@ import org.junit.Test;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 
 /**
@@ -48,7 +49,7 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(missingColon);
-      fail("Expected OperationParseException to be thrown");
+      fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = "An enum constant description must be of the form \"" +
           "<type>:<value>" + " but description is \"" + missingColon + "\".";
@@ -60,7 +61,7 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(missingType);
-      fail("Expected OperationParseException to be thrown");
+      fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingType + errorPrefix2 + " No type given.";
       assertEquals("Expecting missing type message",msg,e.getMessage());
@@ -68,7 +69,7 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(missingValue);
-      fail("Expected OperationParseException to be thrown");
+      fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingValue + errorPrefix2 + " No value given.";
       assertEquals("Expecting missing value message",msg,e.getMessage());
@@ -76,7 +77,7 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(spaceInType);
-      fail("Expected OperationParseException to be thrown");
+      fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + spaceInType + errorPrefix2 + " The type has unexpected whitespace characters.";
       assertEquals("Expecting space in type message",msg,e.getMessage());
@@ -84,7 +85,7 @@ public class EnumConstantTest {
 
     try {
       EnumConstant ec = EnumConstant.parse(spaceInValue);
-      fail("Expected OperationParseException to be thrown");
+      fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + spaceInValue + errorPrefix2 + " The value has unexpected whitespace characters.";
       assertEquals("Expecting space in value message",msg,e.getMessage());
@@ -92,21 +93,21 @@ public class EnumConstantTest {
     
     try {
       EnumConstant ec = EnumConstant.parse(badType);
-      fail("Expected OperationParseException to be thrown");
+      fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + badType + errorPrefix2 + " The type given \"SEFT\" was not recognized.";
       assertEquals("Expecting bad type message",msg,e.getMessage());
     }
     try {
       EnumConstant ec = EnumConstant.parse(badValue);
-      fail("Expected OperationParseException to be thrown");
+      fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + badValue + errorPrefix2 + " The value given \"FOUR\" is not a constant of the enum randoop.operation.SimpleEnumForTests.";
       assertEquals("Expecting bad value message",msg,e.getMessage());
     }
     try {
       EnumConstant ec = EnumConstant.parse(nonEnum);
-      fail("Expected OperationParseException to be thrown");
+      fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + nonEnum + errorPrefix2 + " The type given \"randoop.operation.EnumConstantTest\" is not an enum.";
       assertEquals("Expecting nonenum message",msg,e.getMessage());
@@ -137,10 +138,11 @@ public class EnumConstantTest {
     //code generation
     //need a sequence where variable lives
     String expected = "randoop.operation.SimpleEnumForTests simpleEnumForTests0 = randoop.operation.SimpleEnumForTests.TWO;" + Globals.lineSep;
+    Statement st = new Statement(ec2);
     Sequence seq = new Sequence().extend(ec2, new ArrayList<Variable>());
     Variable var = new Variable(seq,0);
     StringBuilder b = new StringBuilder();
-    ec2.appendCode(var, new ArrayList<Variable>(), b);
+    st.appendCode(var, new ArrayList<Variable>(), b);
     assertEquals("Expect fully qualified initialization of variable by constant.",expected,b.toString());
   }
 

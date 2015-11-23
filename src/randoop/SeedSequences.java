@@ -165,7 +165,7 @@ public final class SeedSequences {
     Set<Sequence> retval = objectsToSeeds(primitives);
     if (nullString) {
       // Add "String x = null" statement.
-      retval.add(Sequence.create(NonreceiverTerm.nullOrZeroDecl(String.class)));
+      retval.add(Sequence.create(NonreceiverTerm.createCanonicalTerm(String.class)));
     }
     return retval;
   }

@@ -7,10 +7,9 @@ import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
+import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.util.Reflection;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from
@@ -21,7 +20,7 @@ import randoop.util.Reflection;
  * @author bjkeller
  *
  */
-public class FieldGetter implements Operation,Serializable {
+public class FieldGetter extends AbstractOperation implements Operation,Serializable {
 
   private static final long serialVersionUID = 3966201727170073093L;
   
@@ -94,14 +93,8 @@ public class FieldGetter implements Operation,Serializable {
    * @param b - StringBuilder that strings are appended to.
    */
   @Override
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
-    b.append(Reflection.getCompilableName(field.getType()));
-    b.append(" ");
-    b.append(newVar.getName());
-    b.append(" = ");
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     b.append(field.toCode(inputVars));
-    b.append(";");
-    b.append(Globals.lineSep);
   }
 
   /**
@@ -161,5 +154,33 @@ public class FieldGetter implements Operation,Serializable {
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
     PublicField pf = (new PublicFieldParser()).parse(fieldDescriptor);
     return new FieldGetter(pf);
+  }
+
+  @Override
+  public boolean isStatic() {
+    return field.isStatic();
+  }
+ 
+  /**
+   * A FieldGetter is a method call because it acts like a getter.
+   */
+  @Override
+  public boolean isMessage() {
+    return true;
+  }
+  
+  @Override
+  public Class<?> getDeclaringClass() {
+    return field.getDeclaringClass();
+  }
+  
+  /**
+   * satisfies determines whether enclosed {@link Field} satisfies the given predicate.
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the field used in this getter satisfies predicate.canUse.
+   */
+  @Override
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return field.satisfies(predicate);
   }
 }

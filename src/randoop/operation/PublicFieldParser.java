@@ -3,7 +3,7 @@ package randoop.operation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
 /**
  * PublicFieldParser defines a parser to recognize a descriptor of a field in a string,
@@ -75,8 +75,10 @@ public class PublicFieldParser {
     }
 
 
-    Class<?> type = Reflection.classForName(typeName,true);
-    if (type == null) {
+    Class<?> type;
+    try {
+      type = TypeNames.recognizeType(typeName);
+    } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The type given \"" + typeName +"\" was not recognized.";
       throw new OperationParseException(msg);
     }
@@ -87,8 +89,10 @@ public class PublicFieldParser {
       throw new OperationParseException(msg);
     }
 
-    Class<?> classType = Reflection.classForName(className,true);
-    if (classType == null) {
+    Class<?> classType;
+    try {
+      classType = TypeNames.recognizeType(className);
+    } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The class name \"" + className + "\" of the field name \"" +
           qualifiedFieldName + "\" was not recognized as a class.";
       throw new OperationParseException(msg);

@@ -7,12 +7,11 @@ import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.sequence.ExecutableSequence;
+import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.util.PrimitiveTypes;
 
 /**
  * FieldSetter is an adapter for a {@link PublicField} as a {@link Operation}
@@ -22,7 +21,7 @@ import randoop.util.PrimitiveTypes;
  * 
  * @author bjkeller
  */
-public class FieldSetter implements Operation, Serializable{
+public class FieldSetter extends AbstractOperation implements Operation, Serializable{
 
   private static final long serialVersionUID = -5905429635469194115L;
   
@@ -109,7 +108,7 @@ public class FieldSetter implements Operation, Serializable{
    * @param b - StringBuilder to which code is issued. 
    */
   @Override
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == 1 || inputVars.size() == 2;
     
     b.append(field.toCode(inputVars));
@@ -119,15 +118,16 @@ public class FieldSetter implements Operation, Serializable{
     int index = inputVars.size() - 1;
 
     //TODO this is duplicate code from RMethod - should factor out behavior
-    Operation statementCreatingVar = inputVars.get(index).getDeclaringStatement();
-    if (!GenInputsAbstract.long_format && ExecutableSequence.canUseShortFormat(statementCreatingVar )) {
-      Object val = ((NonreceiverTerm) statementCreatingVar).getValue();
-      b.append(PrimitiveTypes.toCodeString(val));
+    Statement statementCreatingVar = inputVars.get(index).getDeclaringStatement();
+    if (!GenInputsAbstract.long_format) {
+      String shortForm = statementCreatingVar.getShortForm();
+      if (shortForm != null) {
+        b.append(shortForm);
+      }
     } else {
       b.append(inputVars.get(index).getName());
     }
     
-    b.append(";" + Globals.lineSep);
   }
 
   /**
@@ -187,4 +187,31 @@ public class FieldSetter implements Operation, Serializable{
     return new FieldSetter(pf);
   }
 
+  @Override
+  public Class<?> getDeclaringClass() {
+    return field.getDeclaringClass();
+  }
+  
+  @Override
+  public boolean isStatic() {
+    return field.isStatic();
+  }
+ 
+  /**
+   * A FieldSetter is a method call because it acts like a setter.
+   */
+  @Override
+  public boolean isMessage() {
+    return true;
+  }
+
+  /**
+   * satisfies determines whether enclosed {@link Field} satisfies the given predicate.
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the field used in this setter satisfies predicate.canUse.
+   */
+  @Override
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return field.satisfies(predicate);
+  }
 }
