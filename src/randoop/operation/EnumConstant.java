@@ -10,8 +10,6 @@ import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.TypeNames;
 
-import checkers.units.quals.s;
-
 /**
  * EnumConstant is an {@link Operation} representing a constant value from an enum.
  * 
