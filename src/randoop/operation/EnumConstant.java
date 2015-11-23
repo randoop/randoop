@@ -116,27 +116,27 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
    * 
-   * @param s string representing type-value pair for an enum constant
+   * @param desc string representing type-value pair for an enum constant
    * @return an EnumConstant representing the enum constant value in {@link s}
    * @throws OperationParseException
    */
-  public static EnumConstant parse(String s) throws OperationParseException {
-    if (s == null) {
+  public static EnumConstant parse(String desc) throws OperationParseException {
+    if (desc == null) {
       throw new IllegalArgumentException("s cannot be null");
     }
-    int colonIdx = s.indexOf(':');
+    int colonIdx = desc.indexOf(':');
     if (colonIdx < 0) {
       String msg = "An enum constant description must be of the form \"" +
-          "<type>:<value>" + " but description is \"" + s + "\".";
+          "<type>:<value>" + " but description is \"" + desc + "\".";
       throw new OperationParseException(msg);
     }
     
-    String typeName = s.substring(0, colonIdx).trim();
-    String valueName = s.substring(colonIdx+1).trim();
+    String typeName = desc.substring(0, colonIdx).trim();
+    String valueName = desc.substring(colonIdx+1).trim();
     
     Enum<?> value = null;
     
-    String errorPrefix = "Error when parsing type-value pair " + s + 
+    String errorPrefix = "Error when parsing type-value pair " + desc + 
         " for an enum description of the form <type>:<value>.";
     
     if (typeName.isEmpty()) {
