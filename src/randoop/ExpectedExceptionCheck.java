@@ -1,8 +1,9 @@
 package randoop;
 
-import java.lang.reflect.Modifier;
 import java.io.ObjectStreamException;
+import java.lang.reflect.Modifier;
 
+import randoop.sequence.Execution;
 import randoop.util.Reflection;
 
 /**

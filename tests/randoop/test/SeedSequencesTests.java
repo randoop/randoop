@@ -1,19 +1,16 @@
 package randoop.test;
 
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 import java.util.Set;
 
-import junit.extensions.TestSetup;
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
-import randoop.PrimitiveOrStringOrNullDecl;
 import randoop.SeedSequences;
-import randoop.Sequence;
 import randoop.TestValue;
+import randoop.operation.NonreceiverTerm;
+import randoop.sequence.Sequence;
+
+import junit.framework.TestCase;
 
 public class SeedSequencesTests extends TestCase {
 
@@ -67,7 +64,7 @@ public class SeedSequencesTests extends TestCase {
     Set<Sequence> s4 = SeedSequences.getSeedsFromAnnotatedFields(SeedSequencesTests.TestValueExamples.class);
     Set<Sequence> expected = SeedSequences.objectsToSeeds(Arrays.asList(new Object[] { 0, 1, 2, 3, (String)"hi", false, (byte)3,
         'c', 3L, (float)1.3, (double)1.4 }));
-    expected.add(Sequence.create(PrimitiveOrStringOrNullDecl.nullOrZeroDecl(String.class)));
+    expected.add(Sequence.create(NonreceiverTerm.nullOrZeroDecl(String.class)));
     assertEquals(expected, s4);
     
     

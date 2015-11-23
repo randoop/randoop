@@ -5,15 +5,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
-import randoop.util.DefaultReflectionFilter;
-import randoop.util.ReflectionFilter;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.ReflectionPredicate;
 
-public class JPFExperimentFilter implements ReflectionFilter {
+public class JPFExperimentFilter implements ReflectionPredicate {
 
-  private DefaultReflectionFilter baseFilter;
+  private DefaultReflectionPredicate baseFilter;
 
   public JPFExperimentFilter(Pattern omitmethods) {
-    baseFilter = new DefaultReflectionFilter(omitmethods);
+    baseFilter = new DefaultReflectionPredicate(omitmethods);
   }
 
   public boolean canUse(Class<?> c) {

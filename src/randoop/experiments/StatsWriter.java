@@ -5,12 +5,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import randoop.FailureSet;
+import randoop.sequence.ExecutableSequence;
+
 import plume.Option;
 import plume.Options;
-import plume.UtilMDE;
 import plume.Options.ArgException;
-import randoop.ExecutableSequence;
-import randoop.FailureSet;
+import plume.UtilMDE;
 
 public class StatsWriter {
 

@@ -2,6 +2,9 @@ package randoop;
 
 import java.io.Serializable;
 
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Execution;
+
 // A better name for Check would be SequenceDecoration.
 
 /**

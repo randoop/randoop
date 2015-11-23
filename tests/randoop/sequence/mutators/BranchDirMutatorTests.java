@@ -1,9 +1,10 @@
 package randoop.sequence.mutators;
 
-import junit.framework.TestCase;
-import randoop.MSequence;
-import randoop.Sequence;
 import randoop.experiments.BranchDirMutator;
+import randoop.sequence.MutableSequence;
+import randoop.sequence.Sequence;
+
+import junit.framework.TestCase;
 
 public class BranchDirMutatorTests extends TestCase {
   
@@ -40,7 +41,7 @@ public class BranchDirMutatorTests extends TestCase {
     
     Sequence s = getSeq1();
     
-    MSequence ss = s.toModifiableSequence();
+    MutableSequence ss = s.toModifiableSequence();
     BranchDirMutator.replace(ss, ss.getVariable(13), ss.getVariable(1));
 
     System.out.println(ss.toCodeString());

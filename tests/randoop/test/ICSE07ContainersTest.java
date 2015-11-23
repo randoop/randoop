@@ -5,22 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
 import randoop.ComponentManager;
 import randoop.EverythingIsDifferentMatcher;
-import randoop.ForwardGenerator;
 import randoop.IStopper;
-import randoop.ObjectCache;
 import randoop.SeedSequences;
-import randoop.StatementKind;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.sequence.ForwardGenerator;
+import randoop.sequence.ObjectCache;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
 import randoop.test.issta2006.TreeMap;
-import randoop.util.DefaultReflectionFilter;
 import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
+
+import junit.framework.TestCase;
 
 /**
  * This test ensures that Randoop achieves a certain level of coverage
@@ -45,8 +46,8 @@ public class ICSE07ContainersTest extends TestCase {
 
     System.out.println("ICSE 2006 container: " + name);
 
-    List<StatementKind> statements = 
-      Reflection.getStatements(classList, new DefaultReflectionFilter(pattern));
+    List<Operation> statements = 
+      Reflection.getStatements(classList, new DefaultReflectionPredicate(pattern));
     
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer = new ForwardGenerator(statements,

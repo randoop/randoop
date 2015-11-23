@@ -1,5 +1,7 @@
 package randoop;
 
+import randoop.sequence.Execution;
+
 /**
  * Checks that no exception is thrown after a given statement
  * in a sequence.

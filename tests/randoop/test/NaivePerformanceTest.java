@@ -3,9 +3,9 @@ package randoop.test;
 import java.io.InputStream;
 import java.util.List;
 
-import randoop.StatementKind;
 import randoop.experiments.RandomWalkGenerator;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.Operation;
 import randoop.util.Reflection;
 
 public class NaivePerformanceTest extends AbstractPerformanceTest {
@@ -17,7 +17,7 @@ public class NaivePerformanceTest extends AbstractPerformanceTest {
     InputStream classStream =
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
-    List<StatementKind> model =
+    List<Operation> model =
       Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?

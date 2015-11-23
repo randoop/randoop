@@ -2,6 +2,11 @@ package randoop;
 
 import java.util.Arrays;
 
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Execution;
+import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
+
 /**
  * A check that checks for expected properties of one or more objects
  * generated during the execution of a {@link Sequence}, for example:
@@ -109,7 +114,7 @@ public class ObjectCheck implements Check {
 
   @Override
   public boolean evaluate(Execution execution) {
-    Object[] obs = ExecutableSequence.getRuntimeValuesForVars(Arrays.asList(vars), execution.theList);
+    Object[] obs = ExecutableSequence.getRuntimeValuesForVars(Arrays.asList(vars), execution);
     try {
       return contract.evaluate(obs);
     } catch (ThreadDeath t) {

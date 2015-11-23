@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import plume.Options;
-import randoop.ExecutableSequence;
 import randoop.RegressionCaptureVisitor;
+import randoop.sequence.ExecutableSequence;
 import randoop.util.ReflectionExecutor;
+
+import plume.Options;
 
 public class RmDiffObservations extends CommandHandler {
 

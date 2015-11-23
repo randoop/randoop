@@ -9,11 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import randoop.DummyVisitor;
-import randoop.ExecutableSequence;
 import randoop.ExecutionOutcome;
-import randoop.Sequence;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
 import randoop.util.Files;
 import randoop.util.Reflection;
+
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;

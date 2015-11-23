@@ -2,10 +2,10 @@ package randoop.test;
 
 import java.lang.reflect.Method;
 
-import randoop.ExecutableSequence;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
 import randoop.NormalExecution;
+import randoop.sequence.ExecutableSequence;
 
 /**
  * A visitor that inserts calls "r = a.a1(A)" to every instance a of A found in

@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import randoop.StatementKind;
+import randoop.operation.Operation;
 import randoop.util.PrimitiveTypes;
 
 /**
@@ -21,7 +21,7 @@ public class WriteModelCheckerDriver {
 
   private static String driverClassName = null; // Set in main method.
   private static List<Class<?>> classes = null; // Set in main method.
-  private static List<StatementKind> statements = null; // Set in main method.
+  private static List<Operation> statements = null; // Set in main method.
   private static PrintStream out = null; // Set in main method.
   private static int maxSequenceSize = -1; // Set in main method.
   private static Target target = Target.RANDOM;
@@ -53,7 +53,7 @@ public class WriteModelCheckerDriver {
   private static void findAllTypes() {
     allTypes = new LinkedHashSet<Class<?>>();
     for (int i = 0 ; i < statements.size() ; i++) {
-      StatementKind s = statements.get(i);
+      Operation s = statements.get(i);
       allTypes.add(s.getOutputType());
       List<Class<?>> inputTypes = s.getInputTypes();
       for (int ti = 0 ; ti < inputTypes.size() ; ti++) {
@@ -101,7 +101,7 @@ public class WriteModelCheckerDriver {
   // the statement, and storing its return value in the  "values" list.
   private static void printCallerMethods() {
     for (int i = 0 ; i < statements.size() ; i++) {
-      StatementKind s = statements.get(i);
+      Operation s = statements.get(i);
       out.println(" public static boolean call_" + i + "() { ");
 
       // Select inputs to statement.
@@ -192,7 +192,7 @@ public class WriteModelCheckerDriver {
     out.println("    int nextMethod = " + getInteger(Integer.toString(statements.size())) + ";");
     out.println("    switch(nextMethod) {");
     for (int i = 0 ; i < statements.size() ; i++) {
-      StatementKind s = statements.get(i);
+      Operation s = statements.get(i);
       out.println("      case " + i + " : ");
       out.println("        if (!call_" + i + "()) { return; }");
       out.println("        break;");

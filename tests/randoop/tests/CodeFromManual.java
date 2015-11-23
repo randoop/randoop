@@ -8,32 +8,31 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsReflexive;
-import randoop.ExecutableSequence;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.ObjectContract;
-import randoop.RConstructor;
-import randoop.RMethod;
 import randoop.ReplayVisitor;
-import randoop.Sequence;
-import randoop.SequenceParseException;
-import randoop.StatementKind;
-import randoop.Variable;
+import randoop.operation.ConstructorCall;
+import randoop.operation.MethodCall;
+import randoop.operation.Operation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceParseException;
+
+import junit.framework.TestCase;
 
 public class CodeFromManual extends TestCase {
 
   public static void test() throws SecurityException, NoSuchMethodException, SequenceParseException {
 
-    StatementKind newLL = RConstructor.getRConstructor(LinkedList.class.getConstructor());
-    StatementKind newOb = RConstructor.getRConstructor(Object.class.getConstructor());
-    StatementKind addFist = RMethod.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
-    StatementKind size = RMethod.getRMethod(LinkedList.class.getMethod("size"));
-    StatementKind newTS = RConstructor.getRConstructor(TreeSet.class.getConstructor(Collection.class));
-    StatementKind syncS = RMethod.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
+    Operation newLL = ConstructorCall.getRConstructor(LinkedList.class.getConstructor());
+    Operation newOb = ConstructorCall.getRConstructor(Object.class.getConstructor());
+    Operation addFist = MethodCall.getRMethod(LinkedList.class.getMethod("addFirst", Object.class));
+    Operation size = MethodCall.getRMethod(LinkedList.class.getMethod("size"));
+    Operation newTS = ConstructorCall.getRConstructor(TreeSet.class.getConstructor(Collection.class));
+    Operation syncS = MethodCall.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
 
     Sequence s = new Sequence();
     s = s.extend(newLL);

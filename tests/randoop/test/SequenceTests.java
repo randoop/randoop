@@ -7,25 +7,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import randoop.ContractCheckingVisitor;
 import randoop.EqualsHashcode;
-import randoop.EqualsSymmetric;
 import randoop.EqualsReflexive;
+import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
-import randoop.ExecutableSequence;
 import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.MultiVisitor;
 import randoop.ObjectContract;
 import randoop.RegressionCaptureVisitor;
-import randoop.Sequence;
-import randoop.SequenceParseException;
 import randoop.main.GenInputsAbstract;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceParseException;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Util;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 public class SequenceTests extends TestCase {
 

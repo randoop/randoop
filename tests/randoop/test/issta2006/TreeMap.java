@@ -1,10 +1,7 @@
 package randoop.test.issta2006;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-
-import randoop.NotPartOfState;
 
 
 
