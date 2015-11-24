@@ -545,7 +545,7 @@ public class Coverage {
         getFalseBranches(cls)[br.branchNumber]++;
       }
     } catch (ClassNotFoundException e) {
-      //ignore
+      throw new BugInRandoopException("Error in Coverage.touch: " + e);
     }
  
   }
