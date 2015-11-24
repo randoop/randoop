@@ -18,11 +18,11 @@ public class SerializableCheckRepContract implements Serializable {
   private final String checkRepMethod;
 
   public SerializableCheckRepContract(Method checkRepMethod) {
-    this.checkRepMethod = MethodSignatures.getSignature(checkRepMethod);
+    this.checkRepMethod = MethodSignatures.getSignatureString(checkRepMethod);
   }
 
   private Object readResolve() throws ObjectStreamException, OperationParseException {
-    Method m = MethodSignatures.getMethodForSignature(checkRepMethod);
+    Method m = MethodSignatures.getMethodForSignatureString(checkRepMethod);
     return new CheckRepContract(m);
   }
 }

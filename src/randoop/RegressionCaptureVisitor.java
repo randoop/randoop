@@ -100,7 +100,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
         methodname = methodname.replaceFirst ("[()]*$", "");
         Class<?> obs_class = null;
         try {
-          obs_class = TypeNames.recognizeType(classname);
+          obs_class = TypeNames.getTypeForName(classname);
         } catch (Exception e) {
           throw new RuntimeException ("Can't load observer class " + classname,
                                       e);

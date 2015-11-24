@@ -44,12 +44,11 @@ public class FailureSet {
     }
     
     public boolean equals(Object o) {
-      if (o == null) return false;
-      if (o == this) return true;
-      Failure other = (Failure)o;
-      if (!statement.equals(other.statement)) return false;
-      if (!violationClass.equals(other.violationClass)) return false;
-      return true;
+      if (o instanceof Failure) {    
+        Failure other = (Failure)o;
+        return statement.equals(other.statement) && violationClass.equals(other.violationClass);
+      }
+      return false;
     }
     
     public int hashCode() {
@@ -89,7 +88,7 @@ public class FailureSet {
           Class<?> cls = runtimeval.getClass();
           // We record this as an error in the equals method.
           try {
-            st = new Statement(MethodCall.getMethodCall(cls.getMethod("equals", Object.class)));
+            st = new Statement(MethodCall.createMethodCall(cls.getMethod("equals", Object.class)));
           } catch (Exception e) {
             throw new Error(e);
           }

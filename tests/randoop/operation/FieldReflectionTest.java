@@ -24,8 +24,6 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 /**
  * FieldReflectionTest consists of tests of {@link Reflection#getStatements}
  * method to verify that field statements are collected as expected.
- * 
- * @author bjkeller
  *
  */
 public class FieldReflectionTest {

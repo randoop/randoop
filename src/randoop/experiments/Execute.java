@@ -33,11 +33,11 @@ public class Execute {
     }
     for (String className : covClassNames) {
       try {
-        Class<?> cls = TypeNames.recognizeType(className);
+        Class<?> cls = TypeNames.getTypeForName(className);
         System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
         covClasses.add(cls);
       } catch (ClassNotFoundException e1) {
-        //ignore
+        throw new Error("Error finding coverage class " + e1);
       }
     }
     

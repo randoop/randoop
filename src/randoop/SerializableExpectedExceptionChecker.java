@@ -25,7 +25,7 @@ public class SerializableExpectedExceptionChecker implements Serializable {
 
   @SuppressWarnings("unchecked")
   private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
-    Class<? extends Throwable> c = (Class<? extends Throwable>) TypeNames.recognizeType(exceptionClass);
+    Class<? extends Throwable> c = (Class<? extends Throwable>) TypeNames.getTypeForName(exceptionClass);
     return new ExpectedExceptionCheck (c, statementIdx);
   }
 

@@ -3,21 +3,22 @@ package randoop.operation;
 import java.lang.reflect.Constructor;
 
 /**
- * ConstructorParser provides static methods to write as well as recognize
- * and extract a constructor from a string representation of the constructor's signature.
+ * ConstructorParser provides static methods to write as well as parse 
+ * a string representation of a constructor signature.
  */
 public class ConstructorSignatures {
 
   /**
-   * getConstructorForSignature parses a constructor signature as produced by 
-   * {@link ConstructorSignatures#getSignature(Constructor)} and returns the corresponding
-   * reflective {@link Constructor<?>} object.
+   * Parses a constructor signature as produced by 
+   * {@link ConstructorSignatures#getSignatureString(Constructor)} 
+   * and returns the corresponding reflective {@link Constructor} object.
    * 
    * @param signature a string representing a constructor signature.
    * @return reflective {@link Constructor} method corresponding to signature.
-   * @throws OperationParseException if signature parameter does not match expected format.
+   * @throws OperationParseException if signature parameter does not match 
+   *         expected format.
    */
-  public static Constructor<?> getConstructorForSignature(String signature) throws OperationParseException {
+  public static Constructor<?> getConstructorForSignatureString(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -38,7 +39,7 @@ public class ConstructorSignatures {
     String argsOneStr = signature.substring(openPar + 1, closePar);
     
     // Extract parameter types.
-    Class<?>[] argTypes = ArgumentParser.recognizeArguments(argsOneStr);
+    Class<?>[] argTypes = TypeArgumentList.getTypeArgumentsForString(argsOneStr);
     
     Class<?> cls;
     try {
@@ -55,20 +56,16 @@ public class ConstructorSignatures {
 
   
 /**
- * getSignature generates a string representation of the signature of the constructor.
+ * Generates a string representation of the signature of the constructor.
  * 
  * @param constructor for which signature string is to be generated.
  * @return string representing signature of the parameter constructor.
  */
-  public static String getSignature(Constructor<?> constructor) {
+  public static String getSignatureString(Constructor<?> constructor) {
     StringBuilder sb = new StringBuilder();
     sb.append(constructor.getName() + ".<init>(");
     Class<?>[] params = constructor.getParameterTypes();
-    for (int j = 0; j < params.length; j++) {
-      sb.append(params[j].getName());
-      if (j < (params.length - 1))
-        sb.append(",");
-    }
+    TypeArgumentList.getTypeArgumentString(sb, params);
     sb.append(")");
     return sb.toString();
   }

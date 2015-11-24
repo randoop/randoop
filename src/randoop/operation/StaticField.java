@@ -9,7 +9,6 @@ import randoop.sequence.Variable;
 /**
  * PublicStaticField represents a public static field of a class. 
  * @see PublicField
- * @author bjkeller
  *
  */
 public class StaticField extends PublicField {

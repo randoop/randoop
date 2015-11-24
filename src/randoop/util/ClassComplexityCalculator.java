@@ -130,7 +130,7 @@ return result;
       String className = arg.substring(0, arg.length() - ".class".length());
       System.out.println("loading " +className + " " + (classCount++) + " of " + args.length);
       try {
-        classes.add(TypeNames.recognizeType(className));
+        classes.add(TypeNames.getTypeForName(className));
       } catch (NoClassDefFoundError e) {
         System.out.println("Not found:" + className);
         // keep going

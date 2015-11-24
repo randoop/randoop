@@ -6,8 +6,6 @@ import randoop.reflection.ReflectionPredicate;
  * AbstractOperation is an abstract implementation of the Operation interface
  * to provide default implementations of Operation predicates that are false
  * except for a few kinds of operations.
- * 
- * @author bjkeller
  *
  */
 public abstract class AbstractOperation implements Operation {
@@ -38,8 +36,12 @@ public abstract class AbstractOperation implements Operation {
   }
   
   /**
-   * compareTo(Operation) compares two {@link Operation} objects.
-   * Uses canonical string representation of operations to compare.
+   * Compares two {@link Operation} objects.
+   * Uses order on result of {@link Operation#toParseableString()}.
+   * 
+   * @return value &lt; 0 if this parseable string is less than for op,
+   *         0 if the strings are equal, and 
+   *         &gt; 0 if string for this object greater than for op.
    */
   @Override
   public int compareTo(Operation op) {
@@ -47,8 +49,10 @@ public abstract class AbstractOperation implements Operation {
   }
 
   /**
-   * satisfies checks to see if reflective object contained in this {@link Operation}
-   * satisfies the predicate. Since there is no reflective object, this returns false.
+   * Checks whether reflective object contained in an {@link Operation}
+   * satisfies the predicate. 
+   * Since there is no reflective object in an {@code AbstractOperation}, returns false.
+   * 
    * @param predicate {@link ReflectionPredicate} against which object to be checked.
    * @return false as there is no object to check.
    */

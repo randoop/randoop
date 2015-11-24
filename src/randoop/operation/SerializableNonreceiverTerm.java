@@ -9,7 +9,7 @@ import randoop.types.TypeNames;
  * Serializable form of {@link NonreceiverTerm} allowing tests to be
  * serialized.
  * 
- * Also see <code>NonreceiverTerm.writeReplace</code>.
+ * @see NonreceiverTerm#writeReplace
  */
 public class SerializableNonreceiverTerm implements Serializable {
 
@@ -24,7 +24,7 @@ public class SerializableNonreceiverTerm implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
-    Class<?> c = TypeNames.recognizeType(type);
+    Class<?> c = TypeNames.getTypeForName(type);
     return new NonreceiverTerm(c, value);
   }
 }

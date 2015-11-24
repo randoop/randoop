@@ -181,7 +181,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // If an initializer method was specified, execute it
-    execute_init_routine(1);
+    executeInitializationRoutine(1);
 
     // Find classes to test.
     if (classlist == null && methodlist == null && testclass.size() == 0) {
@@ -241,7 +241,7 @@ public class GenTests extends GenInputsAbstract {
     if (coverage_instrumented_classes != null) {
       File covClassesFile = new File(coverage_instrumented_classes);
       try {
-        covClasses = ClassTypeLoader.loadClassesFromFile(covClassesFile);
+        covClasses = TypeReader.getTypesForFile(covClassesFile);
       } catch (IOException e) {
         throw new Error(e);
       }
@@ -265,7 +265,7 @@ public class GenTests extends GenInputsAbstract {
     // Always add Object constructor (it's often useful).
     ConstructorCall objectConstructor = null;
     try {
-      objectConstructor = ConstructorCall.getConstructorCall(Object.class.getConstructor());
+      objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
       if (!model.contains(objectConstructor))
         model.add(objectConstructor);
     } catch (Exception e) {
@@ -742,7 +742,7 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param output_dir string name of output directory.
    * @param seq a list of sequences to write.
-   * @param additionalJUnitCLasses other classes to write (may be null).
+   * @param additionalJUnitClasses other classes to write (may be null).
    * @return list of files written.
    **/
   public static List<File> write_junit_tests (String output_dir,
@@ -785,10 +785,11 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Execute the init routine (if user specified one)
-   * @param phase
+   * Execute the initialization routine (if user specified one)
+   * 
+   * @param phase  the phase number passed to initialization routine
    */
-  public static void execute_init_routine (int phase) {
+  public static void executeInitializationRoutine (int phase) {
 
     if (GenInputsAbstract.init_routine == null)
       return;

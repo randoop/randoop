@@ -11,24 +11,25 @@ import java.util.TreeSet;
 import randoop.util.Log;
 
 /**
- * ReflectionManager reflectively visits a {@link Class<?>} instance to apply a set of 
+ * ReflectionManager reflectively visits a {@link Class} instance to apply a set of 
  * {@link ClassVisitor} objects to the class members. Uses a {@link ReflectionPredicate} 
  * and heuristics to determine which classes and class members to visit.
  * 
  * For a non-enum class visits:
- * - all methods satisfying predicate.
- * - all constructors satisfying predicate.
- * - all fields that satisfy predicate and are not hidden. (A hidden field is a member of 
+ * <ul>
+ * <li> all methods satisfying predicate.
+ * <li> all constructors satisfying predicate.
+ * <li> all fields that satisfy predicate and are not hidden. (A hidden field is a member of 
  *   superclass with field of same name in current class. These are accessible via reflection.).
- * - inner enums satisfying predicate.
+ * <li> inner enums satisfying predicate.
+ * </ul>
  * 
  * For an enum visits:
- *  - all enum constants.
- *  - methods of the enum satisfying predicate other than <code>values</code> and <code>valueOf</code>.
- *  - methods defined for enum constants that satisfy predicate.
- *  
- * @author bjkeller
- *
+ * <ul>
+ * <li> all enum constants.
+ * <li> methods of the enum satisfying predicate other than <code>values</code> and <code>valueOf</code>.
+ * <li> methods defined for enum constants that satisfy predicate.
+ * </ul>
  */
 public class ReflectionManager {
 
@@ -36,11 +37,12 @@ public class ReflectionManager {
   private ArrayList<ClassVisitor> visitors;
 
   /**
-   * ReflectionManager(ReflectionPredicate) creates a manager object that uses the
-   * given predicate to determine which classes, methods and constructors should
-   * be visited. The list of visitors is initially empty.
+   * Creates a manager object that uses the given predicate to determine which 
+   * classes, methods and constructors should be visited. 
+   * The list of visitors is initially empty.
    * 
-   * @param predicate is used to determine whether class and its members should be visited.
+   * @param predicate is used to determine whether class and its members should 
+   *        be visited.
    */
   public ReflectionManager(ReflectionPredicate predicate) {
     this.predicate = predicate;
@@ -48,7 +50,7 @@ public class ReflectionManager {
   }
 
   /**
-   * add(ClassVisitor) registers a {@link ClassVisitor} for use by the 
+   * Registers a {@link ClassVisitor} for use by the 
    * {@link ReflectionManager#apply(Class)} method.
    * 
    * @param visitor a {@link ClassVisitor} object.
@@ -58,7 +60,7 @@ public class ReflectionManager {
   }
 
   /**
-   * apply applies the registered {@link ClassVisitor} objects of this object to the
+   * Applies the registered {@link ClassVisitor} objects of this object to the
    * given class.
    *  
    * @param c a {@link Class} object to be visited.
@@ -108,19 +110,20 @@ public class ReflectionManager {
 
 
   /**
-   * applyEnum applies the visitors to the constants and methods of the given enum. 
-   * A method is included if it satisfies the predicate, and either is declared in the enum, 
-   * or in the anonymous class of some constant.
-   * Note that methods will either belong to the enum itself, or to an anonymous class
-   * attached to a constant. Ordinarily, the type of the constant is the enum, but when there
-   * is an anonymous class for constant e, e.getClass() returns the anonymous class. This is
-   * used to check for method overrides (could include Object methods) within the constant.
+   * Applies the visitors to the constants and methods of the given enum. 
+   * A method is included if it satisfies the predicate, and either is declared
+   * in the enum, or in the anonymous class of some constant.
+   * Note that methods will either belong to the enum itself, or to an anonymous
+   * class attached to a constant. Ordinarily, the type of the constant is the 
+   * enum, but when there is an anonymous class for constant e, e.getClass() 
+   * returns the anonymous class. This is used to check for method overrides 
+   * (could include Object methods) within the constant.
    * 
    * Heuristically exclude methods <code>values</code> and <code>valueOf</code>
-   * since their definition is implicit, and we aren't testing Java enum implementation.
+   * since their definition is implicit, and we aren't testing Java enum 
+   * implementation.
    *
    * @param c enum class object from which constants and methods are extracted
-   * @see Enum
    */
   private void applyEnum(Class<?> c) {
     Set<String> overrideMethods = new HashSet<String>();
@@ -150,9 +153,9 @@ public class ReflectionManager {
   }
   
   /**
-   * applyField(Class) determines which fields of the given class the visitors
-   * will be applied to. Only excludes fields hidden by inheritance that are
-   * otherwise still accessible via reflection.
+   * Determines which fields of the given class the visitors will be applied to. 
+   * Only excludes fields hidden by inheritance that are otherwise still 
+   * accessible via reflection.
    * 
    * @param c
    */
@@ -165,46 +168,76 @@ public class ReflectionManager {
     }
     for (Field f : c.getFields()) { //for all public fields
       //keep a field that satisfies filter, and is not inherited and hidden by local declaration
-      if (predicate.canUse(f) && (!declaredNames.contains(f.getName()) || c.equals(f.getDeclaringClass()))) {
+      if (predicate.canUse(f) && 
+          (!declaredNames.contains(f.getName()) || 
+              c.equals(f.getDeclaringClass()))) {
         visitField(f);
       }
     }
   }
 
-  /*
-   * visit methods - each applies all of the visitors to its parameter object.
+  /**
+   * Apply all registered visitors to a field.
+   * 
+   * @param f  the field to be visited.
    */
-
   private void visitField(Field f) {
     for (ClassVisitor v : visitors) {
       v.visit(f);
     }
   }
 
+  /**
+   * Apply all registered visitors to the constructor.
+   * 
+   * @param co  the constructor to be visited.
+   */
   private void visitConstructor(Constructor<?> co) {
     for (ClassVisitor v : visitors) {
       v.visit(co);
     }
   }
 
+  /**
+   * Apply all registered visitors to the method.
+   * 
+   * @param m  the method to be visited.
+   */
   private void visitMethod(Method m) {
     for (ClassVisitor v : visitors) {
       v.visit(m);
     }
   }
   
+  /**
+   * Apply all registered visitors to the enum value.
+   * 
+   * @param e  the enum value to be visited.
+   */
   private void visitEnum(Enum<?> e) {
     for (ClassVisitor v : visitors) {
       v.visit(e);
     }
   }
 
+  /**
+   * Apply all registered visitors to the class.
+   * Called at the end of {@link #apply(Class)}.
+   * 
+   * @param c  the class to be visited.
+   */
   private void visitAfter(Class<?> c) {
     for (ClassVisitor v : visitors) {
       v.visitAfter(c);
     }
   }
 
+  /**
+   * Apply all registered visitors to the class.
+   * Called at the beginning of {@link #apply(Class)}.
+   * 
+   * @param c  the class to be visited.
+   */
   private void visitBefore(Class<?> c) {
     for (ClassVisitor v : visitors) {
       v.visitBefore(c);

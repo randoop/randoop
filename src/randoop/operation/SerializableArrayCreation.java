@@ -9,7 +9,7 @@ import randoop.types.TypeNames;
  * Serializable version of {@link ArrayCreation} allowing tests to be
  * serialized.
  * 
- * Also see <code>ArrayCreation.writeReplace</code>.
+ * @see ArrayCreation#writeReplace
  */
 public class SerializableArrayCreation implements Serializable {
 
@@ -24,7 +24,7 @@ public class SerializableArrayCreation implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
-    Class<?> c = TypeNames.recognizeType(elementType);
+    Class<?> c = TypeNames.getTypeForName(elementType);
     return new ArrayCreation(c, length);
   }
 

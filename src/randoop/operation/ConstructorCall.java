@@ -22,11 +22,14 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
 /**
- * ConstructorCall is an {@link Operation} that represents a call to a constructor, and holds a reference to
- * a reflective {@link java.lang.reflect.Constructor} object.  
+ * ConstructorCall is an {@link Operation} that represents a call to a 
+ * constructor, and holds a reference to a reflective 
+ * {@link java.lang.reflect.Constructor} object.  
  * 
- * As an {@link Operation}, a call to constructor c with n arguments is represented as 
- * c : [t1,...,tn] -> c, where the output type c is also the name of the class. 
+ * As an {@link Operation}, a call to constructor <i>c</i> with <i>n</i> 
+ * arguments is represented as 
+ * <i>c</i> : [<i>t1,...,tn</i>] &rarr; <i>c</i>, 
+ * where the output type <i>c</i> is also the name of the class. 
  */
 public final class ConstructorCall extends AbstractOperation implements Operation, Serializable {
 
@@ -44,26 +47,29 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   // are computed upon the first invocation of the respective
   // getter method.
   private List<Class<?>> inputTypesCached;
-  private Class<?> outputTypeCached;
+  private Class<?> outputType;
   private int hashCodeCached = 0;
   private boolean hashCodeComputed = false;
 
-  /*
-   * writeReplace is a serialization method and returns a serializable copy of the method call object.
+  /**
+   * Converts this object to a form that can be serialized.
+   * 
+   * @return serializable form of this object
+   * @see SerializableConstructorCall
    */
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableConstructorCall(this.constructor);
   }
 
   /** 
-   * ConstructorCall creates object corresponding to the given reflection constructor.
+   * Creates object corresponding to the given reflection constructor.
    * @param constructor reflective object for a constructor.
    */
   public ConstructorCall(Constructor<?> constructor) {
     if (constructor == null)
       throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
-    this.outputTypeCached = constructor.getDeclaringClass();
+    this.outputType = constructor.getDeclaringClass();
     // TODO move this earlier in the process: check first that all
     // methods to be used can be made accessible.
     // XXX this should not be here but I get infinite loop when comment out
@@ -71,23 +77,27 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   /**
-   * getConstructor returns the reflection constructor corresponding to this ConstructorCall.
-   * @return {@link Constructor<?>} object called by this constructor call.
+   * Return the reflective constructor corresponding to this ConstructorCall.
+   * 
+   * @return {@link Constructor} object called by this constructor call.
    */
   public Constructor<?> getConstructor() {
     return this.constructor;
   }
 
   /**
-   * getConstructorCall creates the ConstructorCall corresponding to the given reflection constructor.
-   * @return a new ConstructorCall object for the given {@link Constructor<?>} instance.
+   * Creates the {@code ConstructorCall} corresponding to the given reflection 
+   * constructor.
+   * 
+   * @param constructor  the {@link Constructor} object for calls
+   * @return a new {@code ConstructorCall} object for the given {@code Constructor} instance.
    */
-  public static ConstructorCall getConstructorCall(Constructor<?> constructor) {
+  public static ConstructorCall createConstructorCall(Constructor<?> constructor) {
     return new ConstructorCall(constructor);
   }
 
   /**
-   * Returns concise string representation of this ConstructorCall
+   * Returns concise string representation of this ConstructorCall.
    */
   @Override
   public String toString() {
@@ -95,10 +105,11 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   /**
-   * appendCode adds code for a constructor call to the given {@link StringBuilder}.
+   * Adds code for a constructor call to the given {@link StringBuilder}.
    * 
-   * @param inputVars a list of variables representing the actual arguments for the constructor call.
-   * @param b the StringBuilder to which the output is appended.
+   * @param inputVars  a list of variables representing the actual arguments 
+   *                   for the constructor call.
+   * @param b  the StringBuilder to which the output is appended.
    * @see Operation#appendCode(List, StringBuilder)
    */
   @Override
@@ -106,7 +117,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     assert inputVars.size() == this.getInputTypes().size();
 
     Class<?> declaringClass = constructor.getDeclaringClass();
-    boolean isNonStaticMember = !Modifier.isStatic(declaringClass.getModifiers()) && declaringClass.isMemberClass();
+    boolean isNonStaticMember = !Modifier.isStatic(declaringClass.getModifiers()) 
+        && declaringClass.isMemberClass();
     assert Util.implies(isNonStaticMember, inputVars.size() > 0);
 
     // Note on isNonStaticMember: if a class is a non-static member class, the
@@ -147,21 +159,21 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   }
 
   /**
-   * equals tests whether the parameter is a call to the same constructor.
+   * Tests whether the parameter is a call to the same constructor.
    * 
-   * @param o an object
+   * @param o  an object
    * @return true if o is a ConstructorCall referring to same constructor object; false otherwise.
    */
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (this == o)
-      return true;
-    if (!(o instanceof ConstructorCall))
-      return false;
-    ConstructorCall other = (ConstructorCall) o;
-    return this.constructor.equals(other.constructor);
+    if (o instanceof ConstructorCall) {
+      if (this == o)
+        return true;
+    
+      ConstructorCall other = (ConstructorCall) o;
+      return this.constructor.equals(other.constructor);
+    }
+    return false;
   }
 
   /**
@@ -184,8 +196,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * Performs call to the constructor given the objects as actual parameters, 
    * and the output stream for any output.
    * 
-   * @param statementInput is an array of values corresponding to signature of the constructor.
-   * @param out is a stream for any output.
+   * @param statementInput  is an array of values corresponding to signature of the constructor.
+   * @param out  is a stream for any output.
    * @see Operation#execute(Object[], PrintStream)
    */
   @Override
@@ -225,7 +237,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    */
   @Override
   public Class<?> getOutputType() {
-    return outputTypeCached;
+    return outputType;
   }
 
   /**
@@ -233,28 +245,31 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * Generates a string representation of the constructor signature.
    *
    * Examples:
+   * <pre><code>
    *  java.util.ArrayList.&lt;init&gt;()
    *  java.util.ArrayList.&lt;init&gt;(java.util.Collection)
-   * @see ConstructorSignatures#getSignature(Constructor)
+   * </code></pre>
+   * @see ConstructorSignatures#getSignatureString(Constructor)
    *
+   * @return signature string for constructor.
    */
   @Override
   public String toParseableString() {
-    return ConstructorSignatures.getSignature(constructor);
+    return ConstructorSignatures.getSignatureString(constructor);
   }
 
   /**
-   * parse recognizes a constructor call in a string with the format generated by
+   * Parse a constructor call in a string with the format generated by
    * {@link ConstructorCall#toParseableString()} and returns the corresponding
    * {@link ConstructorCall} object.
    * @see OperationParser#parse(String)
    * 
    * @param s a string descriptor of a constructor call.
    * @return {@link ConstructorCall} object corresponding to the given signature.
-   * @throws OperationParseException
+   * @throws OperationParseException if no constructor found for signature. 
    */
   public static Operation parse(String s) throws OperationParseException {
-    return ConstructorCall.getConstructorCall(ConstructorSignatures.getConstructorForSignature(s));
+    return ConstructorCall.createConstructorCall(ConstructorSignatures.getConstructorForSignatureString(s));
   }
 
   /**
@@ -277,8 +292,11 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   * Determines whether enclosed {@link Constructor<?>} satisfies the given predicate.
-   * @return true only if the constructor in this object satisfies the canUse(Constructor) of predicate.
+   * Determines whether enclosed {@link Constructor} satisfies the given 
+   * predicate.
+   * 
+   * @return true only if the constructor in this object satisfies the 
+   * {@link ReflectionPredicate#canUse(Constructor)} implemented by predicate.
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {

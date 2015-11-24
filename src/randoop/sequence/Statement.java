@@ -47,7 +47,8 @@ public final class Statement implements Serializable {
 
   /**
    * Creates a statement based on the given operation
-   * @param 
+   * 
+   * @param operation  the operation for action of this statement.
    */
   public Statement(Operation operation) {
     this(operation,new ArrayList<RelativeNegativeIndex>());
@@ -56,6 +57,8 @@ public final class Statement implements Serializable {
 
   /**
    * True iff this statement is a void method call.
+   * 
+   * @return true if output type is void.
    */
   public boolean isVoidMethodCall() {
     return operation.getOutputType().equals(void.class);

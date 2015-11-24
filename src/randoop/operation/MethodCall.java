@@ -27,18 +27,22 @@ import randoop.util.PrimitiveTypes;
 import randoop.util.ReflectionExecutor;
 
 /**
- * MethodCall is a {@link Operation} that represents a call to a method. It is a wrapper 
- * for a reflective Method object, and caches values of computed reflective calls.
- * 
- * An an {@link Operation}, a call to a non-static method 
- *   T mname (T1,...,Tn)
- * of class C can be represented formally as an operation mname: [C, T1,...,Tn] -> T.
- * If this method is static, then we could write the operation as C.mname: [T1,...,Tn] -> T 
+ * MethodCall is a {@link Operation} that represents a call to a method. It is 
+ * a wrapper for a reflective Method object, and caches values of computed 
+ * reflective calls.
+ * <p>
+ * An an {@link Operation}, a call to a non-static method<br> 
+ *   <code>T mname (T1,...,Tn)</code><br>
+ * of class C can be represented formally as an operation 
+ * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.
+ * If this method is static, then we could write the operation as 
+ * <i>C.mname</i>: [<i>T1,...,Tn</i>] &rarr; <i>T</i> 
  * (a class instance not being needed as an input).
- * 
- * The execution of a MethodCall executes the enclosed {@link Method} given values for the inputs.
- * 
- * Previously called RMethod.
+ * <p>
+ * The execution of a {@code MethodCall} executes the enclosed {@link Method} 
+ * given values for the inputs.
+ * <p>
+ * (Class previously called RMethod.)
  */
 public final class MethodCall extends AbstractOperation implements Operation, Serializable {
 
@@ -64,9 +68,11 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   private boolean isStaticComputed = false;
   private boolean isStaticCached = false;
 
-  /*
-   * writeReplace is a serialization method that writes a copy of object that 
-   * replaces Method by its string representation. 
+  /**
+   * Converts this object to a form that can be serialized.
+   * 
+   * @return serializable form of this object
+   * @see SerializableMethodCall
    */
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableMethodCall(this.method);
@@ -81,7 +87,9 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * MethodCall creates an object corresponding to the given reflection method.
+   * MethodCall creates an object corresponding to the given reflective method.
+   * 
+   * @param method  the reflective method object.
    */
   public MethodCall(Method method) {
     if (method == null)
@@ -95,11 +103,12 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   /**
-   * getMethodCall a static method that creates a {@link MethodCall} corresponding 
-   * to the given {@link Method}.
-   * @return constructed {@link MethodCall}.
+   * Creates {@code MethodCall} object for the given reflective method.
+   * 
+   * @param  method the {@link Method} object
+   * @return constructed {@link MethodCall}
    */
-  public static MethodCall getMethodCall(Method method) {
+  public static MethodCall createMethodCall(Method method) {
     return new MethodCall(method);
   }
 
@@ -143,8 +152,9 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
         sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
       }
 
-      // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
-      // the value (e.g. "3") is inserted directly added as arguments to method calls.
+      // In the short output format, statements like "int x = 3" are not added 
+      // to a sequence; instead, the value (e.g. "3") is inserted directly added 
+      // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
       String shortForm = statementCreatingVar.getShortForm();
       if (!GenInputsAbstract.long_format && shortForm != null) {
@@ -251,7 +261,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * @return {@link NormalExecution} with return value if execution normal, otherwise {@link ExceptionalExecution} if an exception thrown.
+   * @return {@link NormalExecution} with return value if execution normal, 
+   *         otherwise {@link ExceptionalExecution} if an exception thrown.
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -357,20 +368,21 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    */
   @Override
   public String toParseableString() {
-    return MethodSignatures.getSignature(this.method);
+    return MethodSignatures.getSignatureString(this.method);
   }
 
   /**
-   * parse recognizes a method call in a string descriptor and returns a {@link MethodCall} object.
-   * Should satisfy parse(op.toParseableString()).equals(op) for Operation op.
+   * Parses a method call in a string descriptor and returns a {@link MethodCall}
+   * object. Should satisfy <code>parse(op.toParseableString()).equals(op)</code>
+   * for Operation op.
    * @see OperationParser#parse(String)
    * 
-   * @param s a string descriptor
+   * @param s  a string descriptor
    * @return the {@link MethodCall} object described by the string.
    * @throws OperationParseException if s does not match expected descriptor.
    */
   public static Operation parse(String s) throws OperationParseException {
-    return MethodCall.getMethodCall(MethodSignatures.getMethodForSignature(s));
+    return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
   }
 
   /**

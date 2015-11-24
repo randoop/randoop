@@ -10,7 +10,7 @@ import randoop.types.TypeNames;
  * Serializable representation of {@link PublicField} allowing tests to 
  * be serialized. 
  * 
- * Also see <code>PublicField.writeReplace</code>.
+ * @see PublicField#writeReplace
  */
 public class SerializablePublicField implements Serializable {
 
@@ -25,8 +25,8 @@ public class SerializablePublicField implements Serializable {
     int pos = fieldRep.lastIndexOf('.');
     String className = fieldRep.substring(0,pos);
     String fieldName = fieldRep.substring(pos + 1);
-    Class<?> c = TypeNames.recognizeType(className);
-    Field field = PublicFieldParser.fieldFor(c, fieldName);
+    Class<?> c = TypeNames.getTypeForName(className);
+    Field field = PublicFieldParser.fieldForName(c, fieldName);
     if (field != null) {
       return PublicFieldParser.recognize(field);
     }

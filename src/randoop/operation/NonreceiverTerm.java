@@ -19,12 +19,13 @@ import randoop.util.Util;
 import plume.UtilMDE;
 
 /**
- * Represents a value that either cannot (primitive or null values), or we don't care to have (String)
- * be a receiver for a method call as an {@link Operation}.
+ * Represents a value that either cannot (primitive or null values), or we don't 
+ * care to have (String) be a receiver for a method call as an {@link Operation}.
  *
- * As an {@link Operation} a value v of type T is formally represented by an operation v : [] -> T, with
- * no input types, and the type of the value as the output type. This kind of operation is a 
- * <i>ground</i> term &emdash; it requires no inputs.
+ * As an {@link Operation} a value v of type T is formally represented by an 
+ * operation v : [] &rarr; T, with no input types, and the type of the value as the 
+ * output type. 
+ * This kind of operation is a <i>ground</i> term &mdash; it requires no inputs.
  * 
  * The execution of this {@link Operation} simply returns the value.
  */
@@ -43,16 +44,21 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   // This value is guaranteed to be null, a String, or a boxed primitive.
   private final Object value;
 
-  /*
-   * writeReplace is a serialization method that converts the object to a form
-   * that can be serialized.
+  /**
+   * Converts this object to a form that can be serialized.
+   * 
+   * @return serializable form of this object
+   * @see SerializableNonreceiverTerm
    */
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableNonreceiverTerm(type, value);
   }
   
   /**
-   * NonreceiverTerm Constructs a PrimitiveOrStringOrNullDeclInfo of type t and value o
+   * Constructs a NonreceiverTerm with type t and value o.
+   * 
+   * @param t  the type of the term
+   * @param o  the value of the term
    */
   public NonreceiverTerm(Class<?> t, Object o) {
     if (t == null)
@@ -85,7 +91,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   }
 
   /**
-   * Indicates whether this PrimitiveOrStringOrNullDeclInfo is equal to o
+   * Indicates whether this object is equal to o
    */
   @Override
   public boolean equals(Object o) {
@@ -95,12 +101,11 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
       return true;
     NonreceiverTerm other = (NonreceiverTerm) o;
 
-    return this.type.equals(other.type)
-    && Util.equalsWithNull(this.value, other.value);
+    return this.type.equals(other.type) && Util.equalsWithNull(this.value, other.value);
   }
 
   /**
-   * Returns a hash code value for this PrimitiveOrStringOrNullDeclInfo
+   * Returns a hash code value for this NonreceiverTerm
    */
   @Override
   public int hashCode() {
@@ -108,7 +113,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   }
 
   /**
-   * Returns string representation of this PrimitiveOrStringOrNullDeclInfo
+   * Returns string representation of this NonreceiverTerm
    */
   @Override
   public String toString() {
@@ -173,13 +178,13 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   }
 
   /**
-   * createCanonicalTerm returns a NonreceiverTerm representative of 
-   * the specified class c.
+   * Returns a NonreceiverTerm holding the zero value for the specified class c.
+   * In the case of characters there is no natural zero, so the value 'a' is used.
    * 
-   * @param c type of value desired.
+   * @param c  the type of value desired.
    * @return a {@link NonreceiverTerm} with a canonical representative of the given type.
    */
-  public static NonreceiverTerm createCanonicalTerm(Class<?> c) {
+  public static NonreceiverTerm createNullOrZeroTerm(Class<?> c) {
     if (String.class.equals(c))
       return new NonreceiverTerm(String.class, "");
     if (Character.TYPE.equals(c))
@@ -203,16 +208,17 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   * * A string representing this primitive declaration. The string is of the form:
+   * Returns a string representing this primitive declaration. The string is of 
+   * the form:<br>
    * 
-   * TYPE:VALUE
+   * <code>TYPE:VALUE</code><br>
    * 
    * Where TYPE is the type of the primitive declaration, and VALUE is its value.
    * If VALUE is "null" then the value is null (not the String "null"). If
    * TYPE is "char" then (char)Integer.parseInt(VALUE, 16) yields the character value.
-   * 
+   * <p>
    * Examples:
-   * 
+   * <pre>
    * String:null                  represents: String x = null
    * java.lang.String:""          represents: String x = "";
    * String:""                    represents: String x = "";
@@ -225,7 +231,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
    * int:0                        represents: int x = 0;
    * boolean:false                represents: boolean x = false;
    * char:20                      represents: char x = ' ';
-   * 
+   * </pre>
    * Note that a string type can be given as both "String" or "java.lang.String".
    * @return string representation of primitive, String or null value.
    */
@@ -251,13 +257,12 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   }
 
   /**
-   * sequenceForPrimitive is a static method that returns a sequence corresponding 
-   * to the given non-null primitive value.
+   * Creates a sequence corresponding to the given non-null primitive value.
    * 
    * @param o non-null reference to a primitive or String value
    * @return a {@link Sequence} consisting of a statement created with the object.
    */
-  public static Sequence sequenceForPrimitive(Object o) {
+  public static Sequence createSequenceForPrimitive(Object o) {
     if (o == null) throw new IllegalArgumentException("o is null");
     Class<?> cls = o.getClass();    
     if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(cls)) {
@@ -271,12 +276,12 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   }
 
   /**
-   * parse recognizes a non-receiver value in a string in the form generated by 
+   * Parse a non-receiver value in a string in the form generated by 
    * {@link NonreceiverTerm#toParseableString()}.
    * 
    * @param s a string representing a value of a non-receiver type.
    * @return a {@link NonreceiverTerm} object containing the recognized value.
-   * @throws OperationParseException 
+   * @throws OperationParseException if string does not represent valid object. 
    */
   public static NonreceiverTerm parse(String s) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
@@ -304,7 +309,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
     
     Class<?> type;
     try {
-      type = TypeNames.recognizeType(typeString);
+      type = TypeNames.getTypeForName(typeString);
     } catch (ClassNotFoundException e1) {
       String msg = "Error when parsing type/value pair " + s + ". A primitive value declaration description must be of the form "
           + "<type>:<value>" + " but the <type> given (\"" + typeString + "\") was unrecognized.";

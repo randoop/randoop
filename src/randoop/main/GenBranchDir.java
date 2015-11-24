@@ -183,11 +183,11 @@ public class GenBranchDir {
     Set<CoverageAtom> allBranches = new LinkedHashSet<CoverageAtom>();
     for (String className : covClassNames) {
       try {
-      Class<?> cls = TypeNames.recognizeType(className);
-      covClasses.add(cls);
-      allBranches.addAll(Coverage.getBranches(cls));
+        Class<?> cls = TypeNames.getTypeForName(className);
+        covClasses.add(cls);
+        allBranches.addAll(Coverage.getBranches(cls));
       } catch (ClassNotFoundException e) {
-        //ignore
+        throw new Error("Error loading coverage class: " + e);
       }
     }
     System.out.println("ALL BRANCHES=" + allBranches.size());

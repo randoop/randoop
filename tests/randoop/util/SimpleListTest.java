@@ -11,9 +11,7 @@ import java.util.TreeSet;
 import org.junit.Test;
 
 /**
- * Test (mainly) to make sure iterators over simple lists work
- * 
- * @author bjkeller
+ * Test (mainly) to make sure iterators over simple lists work.
  *
  */
 public class SimpleListTest {

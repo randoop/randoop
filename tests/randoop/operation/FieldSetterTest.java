@@ -22,8 +22,6 @@ import randoop.sequence.Variable;
  * FieldSetterTest defines unit tests for FieldSetter class.
  * There is a test method for each kind of PublicField, and each
  * checks types returned, code generation, and execution behavior.
- * 
- * @author bjkeller
  *
  */
 public class FieldSetterTest {
@@ -81,7 +79,7 @@ public class FieldSetterTest {
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
+      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignatureString("randoop.operation.ClassWithFields.ClassWithFields()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
       Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();

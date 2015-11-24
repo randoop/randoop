@@ -17,8 +17,6 @@ import randoop.sequence.Variable;
 
 /**
  * EnumConstantTest defines unit tests for {@link randoop.EnumConstant}.
- * 
- * @author bjkeller
  *
  */
 public class EnumConstantTest {

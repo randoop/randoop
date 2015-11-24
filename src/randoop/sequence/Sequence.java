@@ -371,7 +371,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * given class.
    */
   public static Sequence zero(Class<?> c) {
-    return create(NonreceiverTerm.createCanonicalTerm(c));
+    return create(NonreceiverTerm.createNullOrZeroTerm(c));
   }
 
 
@@ -843,9 +843,11 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a string representing this sequence. The string can be parsed back
    * into a sequence using the method Sequence.parse(String). In particular, the
    * following invariant holds:
-   *  <pre>st.equals(parse(st.toParseableCode()))</pre>
-   *  See the {@link randoop.Sequence#parse(List) parse} for the 
+   *  <code>st.equals(parse(st.toParseableCode()))</code>
+   *  See the {@link #parse(List)} for the 
    *  required format of a String representing a Sequence.
+   *  
+   *  @return parseable string description of sequence.
    */
   public String toParseableString() {
     return toParseableString(Globals.lineSep);

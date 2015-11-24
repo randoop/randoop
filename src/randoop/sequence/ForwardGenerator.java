@@ -247,7 +247,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && !PrimitiveTypes.stringLengthOK((String)runtimeValue);
         if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
-          componentManager.addGeneratedSequence(NonreceiverTerm.sequenceForPrimitive(runtimeValue));
+          componentManager.addGeneratedSequence(NonreceiverTerm.createSequenceForPrimitive(runtimeValue));
         }
       } else if (GenInputsAbstract.use_object_cache) {
         objectCache.setActiveFlags(seq, i);
@@ -522,7 +522,7 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag (false, null, null);
         } else {
           if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          Operation st = NonreceiverTerm.createCanonicalTerm(t);
+          Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
           sequences.add(seq);
@@ -540,7 +540,7 @@ public class ForwardGenerator extends AbstractGenerator {
       if (!isReceiver&& GenInputsAbstract.null_ratio != 0
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn()) Log.logLine("null-ratio option given. Randomly decided to use null as input.");
-        Operation st = NonreceiverTerm.createCanonicalTerm(t);
+        Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
         Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
         variables.add(totStatements);
         sequences.add(seq);

@@ -9,8 +9,6 @@ import randoop.sequence.Variable;
 /**
  * StaticFinalField represents a public static final field of a class.
  * @see PublicField
- * 
- * @author bjkeller
  *
  */
 public class StaticFinalField extends PublicField {

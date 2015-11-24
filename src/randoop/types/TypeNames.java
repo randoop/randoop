@@ -33,14 +33,14 @@ public class TypeNames {
   }
   
   /**
-   * Recognizes a type from a string and returns the {@link Class} object for the type.
-   * Handles primitive types as well.
+   * Returns {@link Class} object for a fully qualified class name or primitive 
+   * type name.
    * 
-   * @param typeName string representation of a type.
+   * @param typeName a fully qualified class name or primitive type name.
    * @return {@link Class} object for type given in string.
    * @throws ClassNotFoundException if string is not a recognized type.
    */
-  public static Class<?> recognizeType(String typeName) throws ClassNotFoundException {
+  public static Class<?> getTypeForName(String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.getClassForName(typeName);
     if (c == null) {
         c = Class.forName(typeName);

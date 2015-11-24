@@ -16,8 +16,6 @@ import randoop.sequence.Variable;
  * a {@link PublicField} and behaves like a getter for the field.
  * 
  * @see PublicField
- * 
- * @author bjkeller
  *
  */
 public class FieldGetter extends AbstractOperation implements Operation,Serializable {
@@ -88,7 +86,6 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   /**
    * appendCode adds the text for an initialization of a variable from a field to 
    * the StringBuilder.
-   * @param newVar - variable to be initialized.
    * @param inputVars - list of variables to be used (ignored).
    * @param b - StringBuilder that strings are appended to.
    */
@@ -124,15 +121,15 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   public int hashCode() { return field.hashCode(); }
 
   /**
-   * parse recognizes a getter for a field in a string.
-   * A getter description has the form "<get>( field-descriptor )"
-   * where "<get>" is literal ("<" and ">" included, and field-descriptor
+   * Parses a getter for a field in a string.
+   * A getter description has the form "&lt;get&gt;( field-descriptor )"
+   * where &lt;get&gt;" is literal ("&lt;" and "&gt;" included), and field-descriptor
    * is as recognized by {@link PublicFieldParser#parse(String)}.
-   * 
-   * @param descr - string containing descriptor of getter for a field.
-   * @return - getter object in string.
-   * @throws OperationParseException if any error in descriptor string
    * @see PublicFieldParser#parse(String)
+   * 
+   * @param descr  the string containing descriptor of getter for a field.
+   * @return the getter object in string.
+   * @throws OperationParseException if any error in descriptor string
    */
   public static FieldGetter parse(String descr) throws OperationParseException {
     int parPos = descr.indexOf('(');
@@ -162,7 +159,8 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   }
  
   /**
-   * A FieldGetter is a method call because it acts like a getter.
+   * {@inheritDoc}
+   * @return true, always.
    */
   @Override
   public boolean isMessage() {
@@ -175,7 +173,9 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   }
   
   /**
-   * satisfies determines whether enclosed {@link Field} satisfies the given predicate.
+   * Determines whether enclosed {@link java.lang.reflect.Field} satisfies the 
+   * given predicate.
+   * 
    * @param predicate the {@link ReflectionPredicate} to be checked.
    * @return true only if the field used in this getter satisfies predicate.canUse.
    */

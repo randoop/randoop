@@ -16,13 +16,20 @@ import randoop.sequence.Variable;
 import randoop.types.TypeNames;
 
 /**
- * ArrayCreation is an {@link Operation} representing the construction of a one-dimensional
- * array such as "int[] x = new int[2] { 3, 7 };"
- * 
- * In terms of the notation used for {@link Operation}, an array creation of an array of elements 
- * of type e and length n has a signature [e,...,e] -> t where [e,...,e] is a list of length n, 
- * and t is the array type.
- * 
+ * ArrayCreation is an {@link Operation} representing the construction of a 
+ * one-dimensional array with a given element type and length.
+ * The operation requires a list of elements in an initializer.
+ * For instance, <code>new int[2]</code> is the {@code ArrayCreation} in the 
+ * initialization<br>
+ * <code>int[] x = new int[2] { 3, 7 };</code><br>
+ * with the initializer list as inputs.
+ * <p>
+ * In terms of the notation used for {@link Operation}, an array creation of an 
+ * array of elements of type <i>e</i> and length <i>n</i> has a signature 
+ * [<i>e,...,e</i>] &rarr; <i>t</i> 
+ * where [<i>e,...,e</i>] is a list of length <i>n</i>, and <i>t</i> is the 
+ * array type.
+ * <p>
  * Objects are immutable.
  */
 public final class ArrayCreation extends AbstractOperation implements Operation, Serializable {
@@ -45,7 +52,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   private boolean hashCodeComputed= false;
 
   /**
-   * ArrayCreation creates an object representing the construction of an array that holds
+   * Creates an object representing the construction of an array that holds
    * values of the element type and has the given length.
    * 
    * @param elementType type of objects in the array
@@ -63,23 +70,29 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     this.outputTypeCached = Array.newInstance(elementType, 0).getClass();
   }
 
-  /*
-   * writeReplace is a Serialization method that creates a serializable version of an object.
+  /**
+   * Converts this object to a form that can be serialized.
+   * 
+   * @return serializable form of this object
+   * @see SerializableArrayCreation
    */
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableArrayCreation(elementType, length);
   }
 
   /**
-   * Returns the class of type of elements held in this ArrayDeclarationInfo
+   * {@inheritDoc}
+   * @return the type of elements held in created array.
    */
   public Class<?> getElementType() {
     return this.elementType;
   }
   
   /**
-   * Returns the length of elements held in this ArrayDeclarationInfo
-   * */
+   * Returns the length of created array.
+   * 
+   * @return length of array created by this object.
+   */
   public int getLength() {
     return this.length;
   }
@@ -156,8 +169,9 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
       if (i > 0)
         b.append(", ");
       
-      // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
-      // the value (e.g. "3") is inserted directly added as arguments to method calls.
+      // In the short output format, statements like "int x = 3" are not added 
+      // to a sequence; instead, the value (e.g. "3") is inserted directly added 
+      // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format && 
           statementCreatingVar.isPrimitiveInitialization() &&
@@ -214,11 +228,13 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
-   * parse recognizes an array declaration in a string descriptor in the form generated
+   * Parses an array declaration in a string descriptor in the form generated
    * by {@link ArrayCreation#toParseableString()}.
-   * 
    * @see OperationParser#parse(String)
-   * @throws OperationParseException 
+   * 
+   * @param str  the string to be parsed for the {@code ArrayCreation}.
+   * @return the {@code ArrayCreation} object for the string.  
+   * @throws OperationParseException if string does not have expected form.
    */
   public static Operation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');
@@ -226,7 +242,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     String elementTypeStr = str.substring(0, openBr);
     String lengthStr = str.substring(openBr + 1, closeBr);
     try {
-    Class<?> elementType = TypeNames.recognizeType(elementTypeStr);
+    Class<?> elementType = TypeNames.getTypeForName(elementTypeStr);
     int length = Integer.parseInt(lengthStr);
     return new ArrayCreation(elementType, length);
     } catch (ClassNotFoundException e) {

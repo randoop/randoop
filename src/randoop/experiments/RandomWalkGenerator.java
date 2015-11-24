@@ -569,7 +569,7 @@ public class RandomWalkGenerator extends AbstractGenerator {
       assert st != null;
     }
 
-    // TODO move this to repCheck for List<StatementKind>.
+    // TODO move this to CheckRep for List<Operation>.
     for (Operation st : allStatements) {
       assert st != null;
     }

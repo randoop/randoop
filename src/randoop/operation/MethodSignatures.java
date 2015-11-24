@@ -5,20 +5,21 @@ import java.lang.reflect.Method;
 import randoop.types.TypeNames;
 
 /**
- * MethodSignatures provides static methods to write as well as recognize and extract methods 
- * from string representations of their signature.
+ * MethodSignatures provides static methods to write as well as parse  
+ * a string representation of a method signature.
  */
 public class MethodSignatures {
 
   /**
-   * getMethodForSignature parses a method signature as produced by getSignature
+   * Parses a method signature as produced by getSignature
    * and returns the corresponding reflective {@link Method} object. 
    * 
    * @param signature a string representing a method signature.
    * @return reflective {@link Method} object corresponding to signature.
-   * @throws OperationParseException if signature parameter does not match expected format.
+   * @throws OperationParseException if signature parameter does not match 
+   *         expected format.
    */
-  public static Method getMethodForSignature(String signature) throws OperationParseException {
+  public static Method getMethodForSignatureString(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -38,11 +39,11 @@ public class MethodSignatures {
     String argsOneStr = signature.substring(openPar + 1, closePar);
     
     // Extract parameter types.
-    Class<?>[] argTypes = ArgumentParser.recognizeArguments(argsOneStr);
+    Class<?>[] argTypes = TypeArgumentList.getTypeArgumentsForString(argsOneStr);
     
     Class<?> cls;
     try {
-      cls = TypeNames.recognizeType(clsName);
+      cls = TypeNames.getTypeForName(clsName);
       return cls.getDeclaredMethod(methodName, argTypes);
     } catch (ClassNotFoundException e1) {
       throw new Error(e1);
@@ -54,21 +55,20 @@ public class MethodSignatures {
   }
 
   /**
-   * getSignature generates a string representation of the signature of the method.
+   * Generates a string representation of the signature of the method.
    * 
+   * @param method  the method.
    * @return string representing the method signature.
    */
-  public static String getSignature(Method method) {
+  public static String getSignatureString(Method method) {
     StringBuilder sb = new StringBuilder();
     sb.append(method.getDeclaringClass().getName() + ".");
     sb.append(method.getName() + "(");
     Class<?>[] params = method.getParameterTypes();
-    for (int j = 0; j < params.length; j++) {
-      sb.append(params[j].getName());
-      if (j < (params.length - 1))
-        sb.append(",");
-    }
+    TypeArgumentList.getTypeArgumentString(sb, params);
     sb.append(")");
     return sb.toString();
   }
+
+ 
 }

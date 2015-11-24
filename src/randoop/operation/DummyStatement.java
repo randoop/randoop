@@ -11,7 +11,8 @@ import randoop.sequence.Variable;
 
 /**
  * DummyStatement is an {@link Operation} representing a noop.
- * As an operation a DummyStatement with name noop is represented as noop : [] -> void, 
+ * As an operation a DummyStatement with name noop is represented as 
+ * <i>noop</i> : [] &rarr; void, 
  * an operation with no input types and void output. It does nothing when executed.
  */
 public class DummyStatement extends AbstractOperation implements Operation, Serializable {
@@ -79,13 +80,13 @@ public class DummyStatement extends AbstractOperation implements Operation, Seri
   /**
    * {@inheritDoc}
    * Generates a string is of the form:
-   * 
+   * <code>
    * (NAME)
-   * 
-   * Where NAME is the name of the dummy statement.
+   * </code>
+   * Where <tt>NAME</tt> is the name of the dummy statement.
    * 
    * Example:
-   *   (foobar)
+   *   <code>(foobar)</code>
    */
   @Override
   public String toParseableString() {
@@ -93,9 +94,11 @@ public class DummyStatement extends AbstractOperation implements Operation, Seri
   }
 
   /**
-   * parse recognizes a string representing this dummy statement as produced by 
+   * Parses a string representing this dummy statement as produced by 
    * {@link DummyStatement#toParseableString()}. 
    * 
+   * @param description  the string description of an operation.
+   * @return a DummyStatement object corresponding to the string.
    */
   public static Operation parse(String description) {
     assert description.charAt(0) == '(';

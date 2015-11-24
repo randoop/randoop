@@ -35,7 +35,7 @@ import plume.Unpublicized;
  * sequence, and stops the process when the time or sequence limit expires.
  * The process of generating a new sequences is left abstract.
  * 
- * @see randoop.ForwardGenerator
+ * @see ForwardGenerator
  */
 public abstract class AbstractGenerator {
 

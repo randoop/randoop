@@ -17,7 +17,7 @@ public class NonterminatingInputTest extends TestCase {
   public void test() throws SecurityException, NoSuchMethodException {
 
     Sequence s = new Sequence();
-    ConstructorCall con = ConstructorCall.getConstructorCall(Looper.class.getConstructor());
+    ConstructorCall con = ConstructorCall.createConstructorCall(Looper.class.getConstructor());
     s = s.extend(con, new ArrayList<Variable>());
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 500;

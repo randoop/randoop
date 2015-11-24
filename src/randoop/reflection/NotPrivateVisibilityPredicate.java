@@ -9,8 +9,6 @@ import java.lang.reflect.Modifier;
  * NotPrivateVisibilityPredicate is a {@link VisibilityPredicate} that returns
  * true in the case that the class/method/constructor/field is not declared to
  * be private.
- * 
- * @author bjkeller
  *
  */
 public class NotPrivateVisibilityPredicate implements VisibilityPredicate {

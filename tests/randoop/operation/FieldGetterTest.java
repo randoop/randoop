@@ -21,8 +21,6 @@ import randoop.sequence.Variable;
  * FieldGetterTest defines unit tests for FieldGetter class.
  * There is a test method for each kind of PublicField, and each
  * checks types returned, code generation, and execution behavior.
- * 
- * @author bjkeller
  *
  */
 public class FieldGetterTest {
@@ -83,7 +81,7 @@ public class FieldGetterTest {
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
       ConstructorCall cons = new ConstructorCall(
-          ConstructorSignatures.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
+          ConstructorSignatures.getConstructorForSignatureString("randoop.operation.ClassWithFields.ClassWithFields()"));
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seqInit, 0)); 

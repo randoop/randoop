@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.Globals;
-import randoop.main.ClassTypeLoader;
+import randoop.main.TypeReader;
 import randoop.operation.MethodSignatures;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -80,7 +80,7 @@ public class ReflectionTests extends TestCase{
 
     List<Class<?>> expected = Collections.emptyList();
 
-    assertEquals(expected, ClassTypeLoader.loadClassesFromReader(br, "empty reader"));     
+    assertEquals(expected, TypeReader.getTypesForReader(br, "empty reader"));     
     r.close(); br.close();
   }
 
@@ -92,7 +92,7 @@ public class ReflectionTests extends TestCase{
 
     List<Class<String>> expected = Arrays.<Class<String>>asList(java.lang.String.class);
 
-    assertEquals(expected, ClassTypeLoader.loadClassesFromReader(br, "reader with java.lang.String"));     
+    assertEquals(expected, TypeReader.getTypesForReader(br, "reader with java.lang.String"));     
     r.close(); br.close();
   }
 
@@ -107,16 +107,16 @@ public class ReflectionTests extends TestCase{
 
     List<Class<?>> expected = Arrays.<Class<?>>asList(java.util.List.class, AbstractList.class, ArrayList.class, Object.class);
 
-    assertEquals(expected, ClassTypeLoader.loadClassesFromReader(br, "reader with List, AbstractList, ArrayList, Object"));
+    assertEquals(expected, TypeReader.getTypesForReader(br, "reader with List, AbstractList, ArrayList, Object"));
     r.close(); br.close();
   }
 
   public void testSignature1() throws Exception {
     Method bhHasModeElements = Class.forName("randoop.test.bh.Body$1Enumerate").getMethod("hasMoreElements", new Class[0]);
-    assertEquals("randoop.test.bh.Body$1Enumerate.hasMoreElements()", MethodSignatures.getSignature(bhHasModeElements));
+    assertEquals("randoop.test.bh.Body$1Enumerate.hasMoreElements()", MethodSignatures.getSignatureString(bhHasModeElements));
 
     Method stringLength = String.class.getMethod("length", new Class[0]);
-    assertEquals("java.lang.String.length()", MethodSignatures.getSignature(stringLength));
+    assertEquals("java.lang.String.length()", MethodSignatures.getSignatureString(stringLength));
 
   }
 

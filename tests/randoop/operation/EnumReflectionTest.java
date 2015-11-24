@@ -28,8 +28,6 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  * to verify what is collected from enums and classes using enums. In particular, 
  * want to collect enum constants, methods of enum (esp. if abstract), enums that are
  * are inner types.
- * 
- * @author bjkeller
  *
  */
 public class EnumReflectionTest {

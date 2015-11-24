@@ -14,10 +14,7 @@ import randoop.types.TypeNames;
  * EnumConstant is an {@link Operation} representing a constant value from an enum.
  * 
  * As a formal operation, a constant named BLUE from the enum Colors is an operation 
- * BLUE : [] -> Colors. Execution simply returns the constant value. 
- * 
- * @author bjkeller
- *
+ * BLUE : [] &rarr; Colors. Execution simply returns the constant value. 
  */
 public class EnumConstant extends AbstractOperation implements Operation, Serializable {
   
@@ -90,7 +87,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
   /**
    * {@inheritDoc}
-   * @return qualified name of enum constant.
+   * Adds qualified name of enum constant.
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
@@ -110,15 +107,15 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   }
 
   /**
-   * parse recognizes the description of an enum constant value in a string as returned by
+   * Parses the description of an enum constant value in a string as returned by
    * {@link EnumConstant#toParseableString()}.
    * 
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
    * 
    * @param desc string representing type-value pair for an enum constant
-   * @return an EnumConstant representing the enum constant value in {@link s}
-   * @throws OperationParseException
+   * @return an EnumConstant representing the enum constant value in desc
+   * @throws OperationParseException if desc does not match expected form.
    */
   public static EnumConstant parse(String desc) throws OperationParseException {
     if (desc == null) {
@@ -161,7 +158,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     
     Class<?> type;
     try {
-      type = TypeNames.recognizeType(typeName);
+      type = TypeNames.getTypeForName(typeName);
     } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The type given \"" + typeName + "\" was not recognized.";
       throw new OperationParseException(msg);

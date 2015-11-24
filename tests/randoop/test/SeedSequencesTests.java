@@ -64,7 +64,7 @@ public class SeedSequencesTests extends TestCase {
     Set<Sequence> s4 = SeedSequences.getSeedsFromAnnotatedFields(SeedSequencesTests.TestValueExamples.class);
     Set<Sequence> expected = SeedSequences.objectsToSeeds(Arrays.asList(new Object[] { 0, 1, 2, 3, (String)"hi", false, (byte)3,
         'c', 3L, (float)1.3, (double)1.4 }));
-    expected.add(Sequence.create(NonreceiverTerm.createCanonicalTerm(String.class)));
+    expected.add(Sequence.create(NonreceiverTerm.createNullOrZeroTerm(String.class)));
     assertEquals(expected, s4);
     
     

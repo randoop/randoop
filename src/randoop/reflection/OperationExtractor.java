@@ -26,8 +26,6 @@ import randoop.operation.StaticFinalField;
  * 
  * @see ReflectionManager
  * @see ClassVisitor
- * 
- * @author bjkeller
  *
  */
 public class OperationExtractor implements ClassVisitor {
