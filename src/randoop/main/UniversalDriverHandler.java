@@ -76,7 +76,11 @@ public class UniversalDriverHandler extends CommandHandler {
       File classListingFile = new File(classlist);
       classes.addAll(TypeReader.getTypesForFile(classListingFile));
     }
-    classes.addAll(TypeReader.getTypesForNames(test_class, GenInputsAbstract.silently_ignore_bad_class_names));
+    ClassNameErrorHandler errorHandler = new ThrowClassNameError();
+    if (GenInputsAbstract.silently_ignore_bad_class_names) {
+      errorHandler = new WarnOnBadClassName();
+    }
+    classes.addAll(TypeReader.getTypesForNames(test_class, errorHandler));
     assert classes.size() > 0;
     return classes;
   }

@@ -29,19 +29,17 @@ public class TypeReader {
    * <code>ignoreBadNames</code> is false.
    * 
    * @param classNames  the list of fully qualified class names.
-   * @param ignoreBadNames  a flag to indicate that {@code ClassNotFoundExceptions} should be ignored. 
+   * @param errorHandler  an object to determine behavior for erroneous class name. 
    * @return list of {@link Class} objects corresponding to elements of list.
    */
-  public static List<Class<?>> getTypesForNames(List<String> classNames, boolean ignoreBadNames) {
+  public static List<Class<?>> getTypesForNames(List<String> classNames, ClassNameErrorHandler errorHandler) {
     List<Class<?>> result = new ArrayList<Class<?>>(classNames.size());
     for (String className : classNames) {
       try {
         Class<?> c = TypeNames.getTypeForName(className);
         result.add(c);
       } catch (ClassNotFoundException e) {
-        if (ignoreBadNames) {
-          throw new Error("No class found for type name \"" + className + "\"");
-        }
+        errorHandler.handle(className);
       }
     }
     return result;

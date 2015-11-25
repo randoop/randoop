@@ -577,17 +577,24 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   List<Class<?>> findClassesFromArgs(Options printUsageTo) {
     List<Class<?>> classes = new ArrayList<Class<?>>();
-    try {
-      if (classlist != null) {
-        File classListingFile = new File(classlist);
+
+    if (classlist != null) {
+      File classListingFile = new File(classlist);
+      try {
         classes.addAll(TypeReader.getTypesForFile(classListingFile));
+      } catch (Exception e) {
+        String msg = Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
+        System.out.println(msg);
+        System.exit(1);
       }
-      classes.addAll(TypeReader.getTypesForNames(testclass, silently_ignore_bad_class_names));
-    } catch (Exception e) {
-      String msg = Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
-      System.out.println(msg);
-      System.exit(1);
     }
+    
+    ClassNameErrorHandler errorHandler = new ThrowClassNameError();
+    if (silently_ignore_bad_class_names) {
+      errorHandler = new WarnOnBadClassName();
+    }
+    classes.addAll(TypeReader.getTypesForNames(testclass, errorHandler));
+
     return classes;
   }
 }
