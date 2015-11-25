@@ -13,7 +13,7 @@ import randoop.util.Reflection;
  * The parser first checks that the descriptor is in the right syntactic form, then extracts
  * the type and field-name and uses reflection to determine if the field belongs to the class,
  * and the types match.
- * 
+ *
  * @author bjkeller
  *
  */
@@ -23,7 +23,7 @@ public class PublicFieldParser {
    * parse recognizes a type-field pair in a string, and
    * returns the relevant object based on properties of the field
    * determined by reflection.
-   * 
+   *
    * @param s - a string in the form of "<type>:<field-name>"
    * @return a reference to a PublicField object represented by the pair in the string.
    * @throws OperationParseException
@@ -111,9 +111,9 @@ public class PublicFieldParser {
 
   /**
    * recognize determines what sort of field is given.
-   * Looking for a field to be an instance field, 
+   * Looking for a field to be an instance field,
    * a static field, or a static final field.
-   * 
+   *
    * @param field
    * @return an object of a subclass of PublicField.
    */
@@ -127,7 +127,11 @@ public class PublicFieldParser {
         pf = new StaticField(field);
       }
     } else {
-      pf = new InstanceField(field);
+      if (Modifier.isFinal(mods)) {
+        pf = new FinalInstanceField(field);
+      } else {
+        pf = new InstanceField(field);
+      }
     }
     assert pf != null;
     return pf;
@@ -135,7 +139,7 @@ public class PublicFieldParser {
 
   /**
    * fieldFor searches the field list of a class for a field that has the given name.
-   * 
+   *
    * @param type - class object.
    * @param fieldName - field name for which to search the class.
    * @return field of the class with the given name.

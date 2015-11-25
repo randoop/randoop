@@ -32,6 +32,7 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGetter;
 import randoop.operation.FieldSetter;
+import randoop.operation.FinalInstanceField;
 import randoop.operation.InstanceField;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
@@ -196,9 +197,9 @@ public final class Reflection {
   /**
    * Gets the class corresponding to the given string. Assumes the string is
    * in the format output by the method java.lang.Class.toString().
-   * 
+   *
    * If noerr==true and Class.forName(classname) throws an exception, throws an Error.
-   * 
+   *
    * If noerr==false and Class.forName(classname) throws an exception, returns null.
    */
   public static Class<?> classForName(String classname, boolean noerr) {
@@ -388,7 +389,7 @@ public final class Reflection {
 
   /**
    * Returns a list of classes, given a list of class names.
-   * 
+   *
    * if noerr=true, any classnames where Class.forName(classname) are ignored
    * and not added to the list. Otherwise, an exception is thrown in this situation.
    */
@@ -550,7 +551,7 @@ public final class Reflection {
    * isAbstract checks to see if class is abstract.
    * Note: an enum can look like an abstract class under certain circumstances,
    * but this returns false for enums.
-   * 
+   *
    * @param c class to test.
    * @return true if non-enum class that is abstract, false otherwise.
    */
@@ -570,7 +571,7 @@ public final class Reflection {
   /**
    * getStatements collects the methods, constructor and enum constants for a collection of classes.
    * Returns a filtered list of Operation objects.
-   * 
+   *
    * @param classListing collection of class objects from which to extract.
    * @param filter filter object determines whether method/constructor/enum constant can be used.
    * @return list of Operation objects representing filtered set.
@@ -592,23 +593,23 @@ public final class Reflection {
 
   /**
    * getStatementsForClass uses reflection to identify the methods, constructors and enum constants
-   * of a particular class that meets the filter's canUse criteria, and returns the corresponding 
-   * Operation objects. 
+   * of a particular class that meets the filter's canUse criteria, and returns the corresponding
+   * Operation objects.
    * Note that it looks for inner enums, but not inner classes.
-   *  
+   *
    * @param filter object that determines whether to extract from class, or to include members
    * @param statements collection of {@link Operation} objects constructed
    * @param c class object from which members are extracted
    */
   private static void getStatementsForClass(ReflectionPredicate filter, Set<Operation> statements, Class<?> c) {
     if (filter.canUse(c)) {
-      
+
       if (Log.isLoggingOn()) Log.logLine("Will add members for class " + c.getName());
 
       if (c.isEnum()) {
         getEnumStatements(filter,statements,c);
       } else {
-        
+
         for (Method m : getMethodsOrdered(c)) {
           if (Log.isLoggingOn()) {
             Log.logLine(String.format("Considering method %s", m));
@@ -618,7 +619,7 @@ public final class Reflection {
             statements.add(mc);
           }
         }
-        
+
         for (Constructor<?> co : getDeclaredConstructorsOrdered(c)) {
           // System.out.printf ("Considering constructor %s%n", co);
           if (filter.canUse(co)) {
@@ -626,13 +627,13 @@ public final class Reflection {
             statements.add(mc);
           }
         }
-        
+
         for (Class<?> ic : c.getDeclaredClasses()) { //look for inner enums
           if (ic.isEnum() && filter.canUse(ic)) {
             getEnumStatements(filter,statements, ic);
           }
         }
-        
+
         //The set of fields declared in class c is needed to ensure we don't collect
         //inherited fields that are hidden by local declaration
         Set<String> declaredNames = new TreeSet<>(); //get names of fields declared
@@ -645,16 +646,16 @@ public final class Reflection {
             getFieldStatements(statements,f);
           }
         }
-        
+
       }
     }
   }
 
 
   /**
-   * getFieldStatements adds the {@link Operation} objects corresponding to 
+   * getFieldStatements adds the {@link Operation} objects corresponding to
    * getters and setters appropriate to the kind of field.
-   * 
+   *
    * @param statements
    * @param f
    */
@@ -671,21 +672,26 @@ public final class Reflection {
           statements.add(new FieldSetter(s));
         }
       } else {
-        InstanceField i = new InstanceField(f);
-        statements.add(new FieldGetter(i));
-        statements.add(new FieldSetter(i));
+        if (Modifier.isFinal(mods)) {
+          FinalInstanceField i = new FinalInstanceField(f);
+          statements.add(new FieldGetter(i));
+        } else {
+          InstanceField i = new InstanceField(f);
+          statements.add(new FieldGetter(i));
+          statements.add(new FieldSetter(i));
+        }
       }
     }
-    
+
   }
 
   /**
-   * getEnumStatements gets and adds the enum constants and methods for the given class 
+   * getEnumStatements gets and adds the enum constants and methods for the given class
    * to the set of {@link Operation} objects. A method is included if it satisfies the filter,
    * and either is declared in the enum, or in the anonymous class of some constant.
    * If the class is not an enum, then nothing will be added to the statement set.
-   * @param filter 
-   * 
+   * @param filter
+   *
    * @param statements collection of {@link Operation} objects constructed
    * @param c class object from which enum constants are extracted
    */
@@ -710,7 +716,7 @@ public final class Reflection {
       }
     }
     //get any inherited methods that seem to be overridden in anonymous class of some constant
-    for (Method m : c.getMethods()) { 
+    for (Method m : c.getMethods()) {
       if (filter.canUse(m) && overrideMethods.contains(m.getName())) {
         statements.add(new MethodCall(m));
       }
