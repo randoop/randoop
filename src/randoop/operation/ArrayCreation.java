@@ -24,7 +24,7 @@ import randoop.util.Reflection;
  */
 public final class ArrayCreation implements Operation, Serializable {
 
-  private static final long serialVersionUID = 20100429; 
+  private static final long serialVersionUID = 20100429;
 
   /** ID for parsing purposes (see StatementKinds.parse method) */
   public static final String ID = "array";
@@ -37,7 +37,7 @@ public final class ArrayCreation implements Operation, Serializable {
   // are computed upon the first invocation of the respective
   // getter method.
   private List<Class<?>> inputTypesCached;
-  private Class<?> outputTypeCached;    
+  private Class<?> outputTypeCached;
   private int hashCodeCached;
   private boolean hashCodeComputed= false;
 
@@ -66,7 +66,7 @@ public final class ArrayCreation implements Operation, Serializable {
   public Class<?> getElementType() {
     return this.elementType;
   }
-  
+
   /**
    * Returns the length of elements held in this ArrayDeclarationInfo
    * */
@@ -90,7 +90,7 @@ public final class ArrayCreation implements Operation, Serializable {
 
   /**
    * Executes this statement, given the inputs to the statement. Returns
-   * the results of execution as an ResultOrException object and can 
+   * the results of execution as an ResultOrException object and can
    * output results to specified PrintStream.
    */
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -138,18 +138,18 @@ public final class ArrayCreation implements Operation, Serializable {
       throw new IllegalArgumentException("Too many arguments:"
           + inputVars.size() + " capacity:" + length);
     String declaringClass = this.elementType.getCanonicalName();
-    String var = Variable.classToVariableName(this.elementType) + "_array" + newVar.index;
-      
+    String var = Variable.classToVariableName(this.elementType) + newVar.index;
+
     b.append(declaringClass + "[] "
              + var
              + " = new " + declaringClass + "[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
       if (i > 0)
         b.append(", ");
-      
+
       // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
       // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement();
       if (!GenInputsAbstract.long_format
           && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
         b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
@@ -191,15 +191,15 @@ public final class ArrayCreation implements Operation, Serializable {
 
   /**
    * A string representing this array declaration. The string is of the form:
-   * 
+   *
    * TYPE[NUMELEMS]
-   * 
+   *
    * Where TYPE is the type of the array, and NUMELEMS is the number of elements.
-   * 
+   *
    * Example:
-   * 
+   *
    * int[3]
-   * 
+   *
    */
   public static Operation parse(String str) {
     int openBr = str.indexOf('[');
