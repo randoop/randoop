@@ -12,8 +12,8 @@ import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.types.TypeNames;
 import randoop.util.Files;
-import randoop.util.Reflection;
 
 import cov.Branch;
 import cov.Coverage;
@@ -32,9 +32,13 @@ public class Execute {
       throw new Error(e);
     }
     for (String className : covClassNames) {
-      Class<?> cls = Reflection.classForName(className);
-      System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
-      covClasses.add(cls);
+      try {
+        Class<?> cls = TypeNames.getTypeForName(className);
+        System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
+        covClasses.add(cls);
+      } catch (ClassNotFoundException e1) {
+        throw new Error("Error finding coverage class " + e1);
+      }
     }
     
     DataFlowInput dfin = DataFlowInput.parse(args[1]);

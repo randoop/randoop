@@ -36,7 +36,7 @@ import randoop.util.SimpleList;
  * 
  * <p>
  *
- * This class makes the above search faster by maintanining two data structures:
+ * This class makes the above search faster by maintaining two data structures:
  *
  * <ul>
  * <li> A map from types to the sets of all sequences that create one
@@ -238,11 +238,11 @@ public class SequenceCollection {
 
   }
 
-  public Set<Operation> getAllStatements() {
-    Set<Operation> result = new LinkedHashSet<Operation>();
+  public Set<Statement> getAllStatements() {
+    Set<Statement> result = new LinkedHashSet<>();
     for (Sequence s: getAllSequences()) {
       for (Statement stmtWithInputs : s.getStatementsWithInputs().toJDKList()) {
-        result.add(stmtWithInputs.statement);
+        result.add(stmtWithInputs);
       }
     }
     return result;

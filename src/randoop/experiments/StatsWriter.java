@@ -107,8 +107,8 @@ public class StatsWriter {
 
     if (fa.getFailures().size() > 0) {
       for (FailureSet.Failure f : fa.getFailures()) {
-        classif.append(f.viocls.getSimpleName() + "\n");
-        classif.append(f.st + "\n");
+        classif.append(f.violationClass.getSimpleName() + "\n");
+        classif.append(f.statement + "\n");
         classif.append("0" + "\n"); // Means nothing but keeping for backwards compatibility.
         numclassifications++;
       }

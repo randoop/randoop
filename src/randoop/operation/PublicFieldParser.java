@@ -3,30 +3,29 @@ package randoop.operation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
 /**
- * PublicFieldParser defines a parser to recognize a descriptor of a field in a string,
- * and return an object representing the sort of field it is in the corresponding class.
- * The descriptor is expected to be in the form <type>:<field-name> where the <field-name>
- * is a fully qualified name of the form <package>.<class-name>.<name>.
- * The parser first checks that the descriptor is in the right syntactic form, then extracts
- * the type and field-name and uses reflection to determine if the field belongs to the class,
- * and the types match.
+ * PublicFieldParser defines a parser to recognize a descriptor of a field in a 
+ * string, and return an object representing the sort of field it is in the 
+ * corresponding class.
+ * The descriptor is expected to be in the form <tt>TYPE:FIELD-NAME</tt> where the 
+ * <tt>FIELD-NAME</tt> is a fully qualified name of the form 
+ * <i>package</i>.<i>class-name</i>.<i>name</i>.
+ * The parser first checks that the descriptor is in the right syntactic form, 
+ * then extracts the type and field-name and uses reflection to determine if 
+ * the field belongs to the class, and whether the types match.
  * 
- * @author bjkeller
- *
  */
 public class PublicFieldParser {
 
   /**
-   * parse recognizes a type-field pair in a string, and
-   * returns the relevant object based on properties of the field
-   * determined by reflection.
+   * Parses a type-field pair in a string, and returns the relevant object based 
+   * on properties of the field determined by reflection.
    * 
-   * @param s - a string in the form of "<type>:<field-name>"
+   * @param s  a string in the form of "TYPE:FIELDNAME"
    * @return a reference to a PublicField object represented by the pair in the string.
-   * @throws OperationParseException
+   * @throws OperationParseException if input string is not expected format.
    * @see PublicField
    */
   public PublicField parse(String s) throws OperationParseException {
@@ -75,8 +74,10 @@ public class PublicFieldParser {
     }
 
 
-    Class<?> type = Reflection.classForName(typeName,true);
-    if (type == null) {
+    Class<?> type;
+    try {
+      type = TypeNames.getTypeForName(typeName);
+    } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The type given \"" + typeName +"\" was not recognized.";
       throw new OperationParseException(msg);
     }
@@ -87,14 +88,16 @@ public class PublicFieldParser {
       throw new OperationParseException(msg);
     }
 
-    Class<?> classType = Reflection.classForName(className,true);
-    if (classType == null) {
+    Class<?> classType;
+    try {
+      classType = TypeNames.getTypeForName(className);
+    } catch (ClassNotFoundException e) {
       String msg = errorPrefix + " The class name \"" + className + "\" of the field name \"" +
           qualifiedFieldName + "\" was not recognized as a class.";
       throw new OperationParseException(msg);
     }
 
-    Field field = fieldFor(classType, fieldName);
+    Field field = fieldForName(classType, fieldName);
     if (field == null) {
       String msg = errorPrefix + " The field name given \"" + fieldName + "\" is not a field of the class " +
           "\"" + className + "\".";
@@ -110,12 +113,11 @@ public class PublicFieldParser {
   }
 
   /**
-   * recognize determines what sort of field is given.
-   * Looking for a field to be an instance field, 
-   * a static field, or a static final field.
+   * Create a {@code PublicField} object based on field given.
+   * The field may be an instance field, a static field, or a static final field.
    * 
-   * @param field
-   * @return an object of a subclass of PublicField.
+   * @param field  the {@link Field} object for which to create a wrapper object.
+   * @return an object of a subclass of {@link PublicField}.
    */
   public static PublicField recognize(Field field) {
     PublicField pf = null;
@@ -134,14 +136,14 @@ public class PublicFieldParser {
   }
 
   /**
-   * fieldFor searches the field list of a class for a field that has the given name.
+   * Searches the field list of a class for a field that has the given name.
    * 
    * @param type - class object.
    * @param fieldName - field name for which to search the class.
    * @return field of the class with the given name.
    */
 
-  public static Field fieldFor(Class<?> type, String fieldName) {
+  public static Field fieldForName(Class<?> type, String fieldName) {
     for (Field f : type.getDeclaredFields()) {
       if (fieldName.equals(f.getName())) {
         return f;

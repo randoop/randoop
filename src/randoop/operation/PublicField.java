@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import randoop.BugInRandoopException;
+import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 
 /**
@@ -18,8 +19,6 @@ import randoop.sequence.Variable;
  * @see InstanceField
  * @see StaticField
  * @see StaticFinalField
- * 
- * @author bjkeller
  *
  */
 public abstract class PublicField implements Serializable {
@@ -29,9 +28,9 @@ public abstract class PublicField implements Serializable {
   private Field field;
 
   /**
-   * PublicField sets the {@link Field} object for the public field.
+   * Create the public field object for the given {@code Field}.
    * 
-   * @param field
+   * @param field  the field.
    */
   public PublicField(Field field) {
     this.field = field;
@@ -97,6 +96,9 @@ public abstract class PublicField implements Serializable {
     return field.getType().getName() + ":" + field.getDeclaringClass().getName() + "." + field.getName();
   }
 
+  /**
+   * toString uses {@link PublicField#toParseableString()} to create string representation.
+   */
   @Override
   public String toString() {
     return toParseableString();
@@ -155,13 +157,33 @@ public abstract class PublicField implements Serializable {
   }
 
   /**
-   * writeReplace creates {@link Serializable} version of field.
-   * 
-   * @return representation of field.
+   * Converts this object to a form that can be serialized.
    * @see SerializablePublicField
+   * 
+   * @return serializable form of this object
+   * @throws ObjectStreamException if serialization fails.
    */
   protected Object writeReplace() throws ObjectStreamException {
     return new SerializablePublicField(field);
+  }
+
+  /**
+   * isStatic returns the default that a field is not static.
+   * @return false (default for a field).
+   */
+  public boolean isStatic() {
+    return false;
+  }
+
+  /**
+   * satisfies checks whether the enclosed {@link Field} object satisfies
+   * the given predicate.
+   * 
+   * @param predicate the {@link ReflectionPredicate} to check this.field against.
+   * @return true if this.field satisfies predicate.canUse(field).
+   */
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return predicate.canUse(field);
   }
   
 }

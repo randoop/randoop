@@ -221,7 +221,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
 
       assert result instanceof NormalExecution;
 
-      Class<?> outputType = s.sequence.getOperation(i).getOutputType();
+      Class<?> outputType = s.sequence.getStatement(i).getOutputType();
 
       if (outputType.equals(void.class))
         continue;

@@ -7,22 +7,18 @@ import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.sequence.ExecutableSequence;
+import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.util.PrimitiveTypes;
 
 /**
  * FieldSetter is an adapter for a {@link PublicField} as a {@link Operation}
  * that acts like a setter for the field. 
- * 
  * @see PublicField
- * 
- * @author bjkeller
  */
-public class FieldSetter implements Operation, Serializable{
+public class FieldSetter extends AbstractOperation implements Operation, Serializable{
 
   private static final long serialVersionUID = -5905429635469194115L;
   
@@ -31,7 +27,7 @@ public class FieldSetter implements Operation, Serializable{
   private PublicField field;
 
   /**
-   * FieldSetter creates a setter {@link Operation} object for a field of a class.
+   * Creates a setter {@link Operation} object for a field of a class.
    * Throws an exception if the field is static final.
    * @param field – field object to be set by setter statements.
    * @throws IllegalArgumentException if field is static final.
@@ -62,7 +58,7 @@ public class FieldSetter implements Operation, Serializable{
   }
 
   /**
-   * execute performs the act of setting the value of the field. Should the action 
+   * Sets the value of the field given the inputs. Should the action 
    * raise an exception, those are captured and returned as an {@link ExecutionOutcome}.
    * Exceptions should only be {@link NullPointerException}, which happens when input 
    * is null but field is an instance field. {@link PublicField#getValue(Object)} suppresses 
@@ -99,17 +95,18 @@ public class FieldSetter implements Operation, Serializable{
   }
 
   /**
-   * appendCode generates code for setting a field.
-   * Should look like
-   *   field = <value/variable>;
+   * Generates code for setting a field.
+   * Should look like<br>
+   *   <code>field = value;</code><br>
+   * or<br>
+   * <code>field = variable;</code>   
    * 
-   * @param newVar - variable that is ignored in this method.
    * @param inputVars - list of input variables. Last element is value to assign. 
    *                    If an instance field, first is instance, second is value. 
    * @param b - StringBuilder to which code is issued. 
    */
   @Override
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == 1 || inputVars.size() == 2;
     
     b.append(field.toCode(inputVars));
@@ -119,20 +116,23 @@ public class FieldSetter implements Operation, Serializable{
     int index = inputVars.size() - 1;
 
     //TODO this is duplicate code from RMethod - should factor out behavior
-    Operation statementCreatingVar = inputVars.get(index).getDeclaringStatement();
-    if (!GenInputsAbstract.long_format && ExecutableSequence.canUseShortFormat(statementCreatingVar )) {
-      Object val = ((NonreceiverTerm) statementCreatingVar).getValue();
-      b.append(PrimitiveTypes.toCodeString(val));
+    Statement statementCreatingVar = inputVars.get(index).getDeclaringStatement();
+    if (!GenInputsAbstract.long_format) {
+      String shortForm = statementCreatingVar.getShortForm();
+      if (shortForm != null) {
+        b.append(shortForm);
+      }
     } else {
       b.append(inputVars.get(index).getName());
     }
     
-    b.append(";" + Globals.lineSep);
   }
 
   /**
-   * toParseableString returns string descriptor for field that can be parsed by
-   * PublicFieldParser.
+   * Returns the string descriptor for field that can be parsed by
+   * {@link PublicFieldParser}.
+   * 
+   * @return parseable string descriptor for this setter.
    */
   @Override
   public String toParseableString() {
@@ -157,11 +157,11 @@ public class FieldSetter implements Operation, Serializable{
   public int hashCode() { return field.hashCode(); }
 
   /**
-   * parse recognizes a description of a field setter in the given string.
-   * A setter description has the form "<set>( field-descriptor )" where
-   * "<set>" is literally what is expected.
-   * @param descr - string containing descriptor of field setter.
-   * @return FieldSetter object corresponding to setter descriptor.
+   * Parses a description of a field setter in the given string.
+   * A setter description has the form "&lt;set&gt;( field-descriptor )" where
+   * "&lt;set&gt;" is literally what is expected.
+   * @param descr  string containing descriptor of field setter.
+   * @return {@code FieldSetter} object corresponding to setter descriptor.
    * @throws OperationParseException if descr does not have expected form.
    * @see PublicFieldParser#parse(String)
    */
@@ -187,4 +187,33 @@ public class FieldSetter implements Operation, Serializable{
     return new FieldSetter(pf);
   }
 
+  @Override
+  public Class<?> getDeclaringClass() {
+    return field.getDeclaringClass();
+  }
+  
+  @Override
+  public boolean isStatic() {
+    return field.isStatic();
+  }
+ 
+  /**
+   * A FieldSetter is a method call because it acts like a setter.
+   */
+  @Override
+  public boolean isMessage() {
+    return true;
+  }
+
+  /**
+   * Determines whether enclosed {@link java.lang.reflect.Field Field} satisfies
+   * the given predicate.
+   * 
+   * @param predicate the {@link ReflectionPredicate} to be checked.
+   * @return true only if the field used in this setter satisfies predicate.canUse.
+   */
+  @Override
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return field.satisfies(predicate);
+  }
 }

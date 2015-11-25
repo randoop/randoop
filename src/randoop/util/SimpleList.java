@@ -10,7 +10,8 @@ import java.util.List;
  * IMPLEMENTATION NOTE
  * <p>
  *
- * Randoop's main generator ({@link randoop.ForwardGenerator} creates new
+ * Randoop's main generator 
+ * ({@link randoop.sequence.ForwardGenerator ForwardGenerator}) creates new
  * sequences by concatenation existing sequences and appending a
  * statement at the end. A naive implementation of concatenation
  * copies the elements of the concatenated sub-sequences into a new
@@ -40,11 +41,11 @@ import java.util.List;
  * creation time) proportional to N, not to the length of the new sequence.
  * <p>
  * When extending a Sequence with a new statement, we store the old sequence's
- * statements plus the new statement in a OneMoreElementList, which takes up
+ * statements plus the new statement in a {@code OneMoreElementList}, which takes up
  * only 2 references in memory (and constant creation time).
  * <p>
  */
-public abstract class SimpleList<T> {
+public abstract class SimpleList<T> implements Iterable<T> {
 
   public abstract int size();
 
@@ -56,6 +57,8 @@ public abstract class SimpleList<T> {
 
   /**
    * Returns a java.util.List version of this list.
+   * 
+   * @return {@link java.util.List} for this list.
    */
   public abstract List<T> toJDKList();
 }

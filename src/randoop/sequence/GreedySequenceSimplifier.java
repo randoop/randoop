@@ -116,7 +116,7 @@ public class GreedySequenceSimplifier extends AbstractSimplifier {
         + maxIndex + " is not correct for sequence size: " + sequence.size();
     List<Integer> compatible_indices = new LinkedList<Integer>();
     for (int i = 0 ; i < maxIndex; i++) {
-      Class<?> outputType = sequence.getOperation(i).getOutputType();
+      Class<?> outputType = sequence.getStatement(i).getOutputType();
       if (Reflection.canBeUsedAs(outputType, type)) {
         compatible_indices.add(i);
       }

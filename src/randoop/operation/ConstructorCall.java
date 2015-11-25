@@ -7,68 +7,69 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.sequence.ExecutableSequence;
+import randoop.reflection.ReflectionPredicate;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.TypeNames;
 import randoop.util.ConstructorReflectionCode;
-import randoop.util.PrimitiveTypes;
-import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Util;
 
 /**
- * Represents a constructor call. The inputs are parameters to the constructor
- * and outputs include the new object.
- *
- * The "R" stands for "Randoop", to underline the distinction from
- * java.lang.reflect.Constructor.
- *
+ * ConstructorCall is an {@link Operation} that represents a call to a 
+ * constructor, and holds a reference to a reflective 
+ * {@link java.lang.reflect.Constructor} object.  
+ * 
+ * As an {@link Operation}, a call to constructor <i>c</i> with <i>n</i> 
+ * arguments is represented as 
+ * <i>c</i> : [<i>t1,...,tn</i>] &rarr; <i>c</i>, 
+ * where the output type <i>c</i> is also the name of the class. 
  */
-public final class ConstructorCall implements Operation, Serializable {
+public final class ConstructorCall extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
-  /** ID for parsing purposes (see StatementKinds.parse method) */
+  /** 
+   * ID for parsing purposes. 
+   * @see OperationParser#getId(Operation)
+   */
   public static final String ID = "cons";
 
-  // State variable.
   private final Constructor<?> constructor;
-
-  /**
-   * A list with as many sublists as the formal paramters of this constructor.
-   * The <em>i</em>th set indicates all the possible argument types for the
-   * <em>i</im>th formal parameter, for overloads of this constructor with the
-   * same number of formal parameters.  At a call site, if the declared
-   * type of an actual argument is not uniquely determined, then the acutal
-   * should be casted at the call site.
-   */ 
-  public List<Set<Class<?>>> overloads;
 
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
   // getter method.
   private List<Class<?>> inputTypesCached;
-  private Class<?> outputTypeCached;
+  private Class<?> outputType;
   private int hashCodeCached = 0;
   private boolean hashCodeComputed = false;
 
+  /**
+   * Converts this object to a form that can be serialized.
+   * 
+   * @return serializable form of this object
+   * @see SerializableConstructorCall
+   */
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableConstructorCall(constructor);
+    return new SerializableConstructorCall(this.constructor);
   }
 
-  // Creates the RConstructor corresponding to the given reflection constructor.
+  /** 
+   * Creates object corresponding to the given reflection constructor.
+   * @param constructor reflective object for a constructor.
+   */
   public ConstructorCall(Constructor<?> constructor) {
     if (constructor == null)
       throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
+    this.outputType = constructor.getDeclaringClass();
     // TODO move this earlier in the process: check first that all
     // methods to be used can be made accessible.
     // XXX this should not be here but I get infinite loop when comment out
@@ -76,51 +77,48 @@ public final class ConstructorCall implements Operation, Serializable {
   }
 
   /**
-   * Returns the reflection constructor corresponding to this RConstructor.
+   * Return the reflective constructor corresponding to this ConstructorCall.
+   * 
+   * @return {@link Constructor} object called by this constructor call.
    */
   public Constructor<?> getConstructor() {
     return this.constructor;
   }
 
   /**
-   * Creates the RConstructor corresponding to the given reflection constructor.
+   * Creates the {@code ConstructorCall} corresponding to the given reflection 
+   * constructor.
+   * 
+   * @param constructor  the {@link Constructor} object for calls
+   * @return a new {@code ConstructorCall} object for the given {@code Constructor} instance.
    */
-  public static ConstructorCall getRConstructor(Constructor<?> constructor) {
+  public static ConstructorCall createConstructorCall(Constructor<?> constructor) {
     return new ConstructorCall(constructor);
   }
 
-  /** Reset/clear the overloads field. */
-  public void resetOverloads() {
-    overloads = new ArrayList<Set<Class<?>>>();
-    // For Java 8: for (int i=0; i<constructor.getParameterCount(); i++) {
-    for (int i=0; i<constructor.getParameterTypes().length; i++) {
-      overloads.add(new HashSet<Class<?>>());
-    }
-    addToOverloads(constructor);
-  }
-
-  public void addToOverloads(Constructor<?> c) {
-    Class<?>[] ptypes = c.getParameterTypes();
-    assert ptypes.length == overloads.size();
-    for (int i=0; i<overloads.size(); i++) {
-      overloads.get(i).add(ptypes[i]);
-    }
-  }
-
   /**
-   * Returns concise string representation of this ConstructorCallInfo
+   * Returns concise string representation of this ConstructorCall.
    */
   @Override
   public String toString() {
     return toParseableString();
   }
 
-  // TODO: integrate with below method
-  public void appendCode(Variable varName, List<Variable> inputVars, StringBuilder b) {
+  /**
+   * Adds code for a constructor call to the given {@link StringBuilder}.
+   * 
+   * @param inputVars  a list of variables representing the actual arguments 
+   *                   for the constructor call.
+   * @param b  the StringBuilder to which the output is appended.
+   * @see Operation#appendCode(List, StringBuilder)
+   */
+  @Override
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == this.getInputTypes().size();
 
     Class<?> declaringClass = constructor.getDeclaringClass();
-    boolean isNonStaticMember = !Modifier.isStatic(declaringClass.getModifiers()) && declaringClass.isMemberClass();
+    boolean isNonStaticMember = !Modifier.isStatic(declaringClass.getModifiers()) 
+        && declaringClass.isMemberClass();
     assert Util.implies(isNonStaticMember, inputVars.size() > 0);
 
     // Note on isNonStaticMember: if a class is a non-static member class, the
@@ -130,10 +128,9 @@ public final class ConstructorCall implements Operation, Serializable {
     // of printing "new Foo(x,y.z)" we have to print "x.new Foo(y,z)".
 
     // TODO the last replace is ugly. There should be a method that does it.
-    String declaringClassStr = Reflection.getCompilableName(declaringClass);
+    String declaringClassStr = TypeNames.getCompilableName(declaringClass);
 
-    b.append(declaringClassStr + " " + varName.getName() + " = "
-        + (isNonStaticMember ? inputVars.get(0) + "." : "")
+    b.append((isNonStaticMember ? inputVars.get(0) + "." : "")
         + "new "
         + (isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr)
         + "(");
@@ -149,32 +146,39 @@ public final class ConstructorCall implements Operation, Serializable {
       // or string literal, like "int x = 3" are not added to a sequence;
       // instead, the value (e.g. "3") is inserted directly added as
       // arguments to method calls.
-      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
+      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      String shortForm = statementCreatingVar.getShortForm();
+      if (!GenInputsAbstract.long_format && shortForm != null) {
+        b.append(shortForm);
       } else {
         b.append(inputVars.get(i).getName());
       }
     }
-    b.append(");");
-    b.append(Globals.lineSep);
+    b.append(")");
+    
   }
 
+  /**
+   * Tests whether the parameter is a call to the same constructor.
+   * 
+   * @param o  an object
+   * @return true if o is a ConstructorCall referring to same constructor object; false otherwise.
+   */
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (this == o)
-      return true;
-    if (!(o instanceof ConstructorCall))
-      return false;
-    ConstructorCall other = (ConstructorCall) o;
-    if (!this.constructor.equals(other.constructor))
-      return false;
-    return true;
+    if (o instanceof ConstructorCall) {
+      if (this == o)
+        return true;
+    
+      ConstructorCall other = (ConstructorCall) o;
+      return this.constructor.equals(other.constructor);
+    }
+    return false;
   }
 
+  /**
+   * hashCode returns the hashCode for the constructor called by this object.
+   */
   @Override
   public int hashCode() {
     if (!hashCodeComputed) {
@@ -187,6 +191,16 @@ public final class ConstructorCall implements Operation, Serializable {
   public long calls_time = 0;
   public int calls_num = 0;
 
+  /**
+   * {@inheritDoc}
+   * Performs call to the constructor given the objects as actual parameters, 
+   * and the output stream for any output.
+   * 
+   * @param statementInput  is an array of values corresponding to signature of the constructor.
+   * @param out  is a stream for any output.
+   * @see Operation#execute(Object[], PrintStream)
+   */
+  @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
 
     assert statementInput.length == this.getInputTypes().size();
@@ -206,8 +220,10 @@ public final class ConstructorCall implements Operation, Serializable {
   }
 
   /**
-   * Returns the input types of this constructor.
+   * {@inheritDoc}
+   * @return list of parameter types for constructor.
    */
+  @Override
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
       inputTypesCached = new ArrayList<Class<?>>(Arrays.asList(constructor.getParameterTypes()));
@@ -216,31 +232,74 @@ public final class ConstructorCall implements Operation, Serializable {
   }
 
   /**
-   * Returns the return type of this constructor.
+   * {@inheritDoc}
+   * @return type of the object created (i.e., class for constructor).
    */
+  @Override
   public Class<?> getOutputType() {
-    if (outputTypeCached == null) {
-      outputTypeCached = constructor.getDeclaringClass();
-    }
-    return outputTypeCached;
+    return outputType;
   }
 
   /**
-   * A string representing this constructor. The string is of the form:
+   * {@inheritDoc}
+   * Generates a string representation of the constructor signature.
    *
-   * CONSTRUCTOR
+   * Examples:
+   * <pre><code>
+   *  java.util.ArrayList.&lt;init&gt;()
+   *  java.util.ArrayList.&lt;init&gt;(java.util.Collection)
+   * </code></pre>
+   * @see ConstructorSignatures#getSignatureString(Constructor)
    *
-   * Where CONSTRUCTOR is a string representation of the constrctor signature. Examples:
-   *
-   * java.util.ArrayList.&lt;init&gt;()
-   * java.util.ArrayList.&lt;init&gt;(java.util.Collection)
-   *
+   * @return signature string for constructor.
    */
+  @Override
   public String toParseableString() {
-    return Reflection.getSignature(constructor);
+    return ConstructorSignatures.getSignatureString(constructor);
   }
 
-  public static Operation parse(String s) {
-    return ConstructorCall.getRConstructor(Reflection.getConstructorForSignature(s));
+  /**
+   * Parse a constructor call in a string with the format generated by
+   * {@link ConstructorCall#toParseableString()} and returns the corresponding
+   * {@link ConstructorCall} object.
+   * @see OperationParser#parse(String)
+   * 
+   * @param s a string descriptor of a constructor call.
+   * @return {@link ConstructorCall} object corresponding to the given signature.
+   * @throws OperationParseException if no constructor found for signature. 
+   */
+  public static Operation parse(String s) throws OperationParseException {
+    return ConstructorCall.createConstructorCall(ConstructorSignatures.getConstructorForSignatureString(s));
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return class object representing declaring class for the constructor.
+   */
+  @Override
+  public Class<?> getDeclaringClass() {
+    return constructor.getDeclaringClass();
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return true, because this is a {@link ConstructorCall}.
+   */
+  @Override
+  public boolean isConstructorCall() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   * Determines whether enclosed {@link Constructor} satisfies the given 
+   * predicate.
+   * 
+   * @return true only if the constructor in this object satisfies the 
+   * {@link ReflectionPredicate#canUse(Constructor)} implemented by predicate.
+   */
+  @Override
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return predicate.canUse(constructor);
   }
 }

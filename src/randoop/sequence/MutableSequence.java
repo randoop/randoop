@@ -37,12 +37,12 @@ public class MutableSequence {
   public void checkRep() {
     Set<MutableVariable> prevVars = new LinkedHashSet<MutableVariable>();
     for (MutableStatement st : statements) {
-      assert st.inputs.size() == st.statementKind.getInputTypes().size();
+      assert st.inputs.size() == st.operation.getInputTypes().size();
       for (int i = 0 ; i < st.inputs.size() ; i++) {
         MutableVariable in = st.inputs.get(i);
         assert prevVars.contains(in) : this;
         assert in.owner == this : this;
-        assert Reflection.canBeUsedAs(in.getType(), st.statementKind.getInputTypes().get(i));
+        assert Reflection.canBeUsedAs(in.getType(), st.operation.getInputTypes().get(i));
       }
       assert !prevVars.contains(st.result);
       prevVars.add(st.result);
@@ -66,7 +66,7 @@ public class MutableSequence {
       for (MutableVariable v : sti.inputs) {
         newinputs.add(newvars.get(v.getDeclIndex()));
       }
-      statements.add(new MutableStatement(sti.statementKind, newinputs, newvars.get(i)));
+      statements.add(new MutableStatement(sti.operation, newinputs, newvars.get(i)));
     }
 
     // Set the statements of the new sequence to the new statements.
@@ -110,7 +110,7 @@ public class MutableSequence {
     infvars.add(v);
 
     for (MutableVariable v2 : v.getCreatingStatementWithInputs().inputs) {
-      if (v2.getCreatingStatementWithInputs().statementKind
+      if (v2.getCreatingStatementWithInputs().operation
           instanceof NonreceiverTerm)
         continue;
       if (!infvars.contains(v2)) {
@@ -123,14 +123,14 @@ public class MutableSequence {
 
       MutableVariable result = statements.get(i).result;
       if (!infvars.contains(result)) {
-        assert !(result.getCreatingStatementWithInputs().statementKind
+        assert !(result.getCreatingStatementWithInputs().operation
                  instanceof NonreceiverTerm);
         infvars.add(result);
         findInfluencingVars(result, infvars);
       }
 
       for (MutableVariable v2 : statements.get(i).inputs) {
-        if (v2.getCreatingStatementWithInputs().statementKind
+        if (v2.getCreatingStatementWithInputs().operation
             instanceof NonreceiverTerm)
           continue;
         if (!infvars.contains(v2)) {
@@ -186,7 +186,7 @@ public class MutableSequence {
       for (MutableVariable sv : this.statements.get(i).inputs) {
         inputs.add(seq.getVariable(sv.getDeclIndex()));
       }
-      seq = seq.extend(this.statements.get(i).statementKind, inputs);
+      seq = seq.extend(this.statements.get(i).operation, inputs);
     }
     return seq;
   }
@@ -235,7 +235,7 @@ public class MutableSequence {
       }
       MutableVariable newvar = new MutableVariable(this, oldst.result.getName());
       varmap.put(oldst.result, newvar);
-      MutableStatement newStatement = new MutableStatement(oldst.statementKind, newInputs, newvar);
+      MutableStatement newStatement = new MutableStatement(oldst.operation, newInputs, newvar);
       sts.add(newStatement);
     }
 
@@ -249,6 +249,6 @@ public class MutableSequence {
   }
 
   public Operation getOperation(int statementIndex) {
-    return statements.get(statementIndex).statementKind;
+    return statements.get(statementIndex).operation;
   }
 }

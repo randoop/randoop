@@ -5,8 +5,6 @@ import java.util.TreeMap;
 
 /**
  * CoinPurse class using {@link Coin} enum for use in Randoop tests.
- * 
- * @author bjkeller
  *
  */
 public class CoinPurse {
