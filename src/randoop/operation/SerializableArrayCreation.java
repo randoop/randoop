@@ -3,8 +3,14 @@ package randoop.operation;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
+/**
+ * Serializable version of {@link ArrayCreation} allowing tests to be
+ * serialized.
+ * 
+ * @see ArrayCreation#writeReplace
+ */
 public class SerializableArrayCreation implements Serializable {
 
   private static final long serialVersionUID = 4091673456327607771L;
@@ -17,8 +23,9 @@ public class SerializableArrayCreation implements Serializable {
     this.length = length;
   }
 
-  private Object readResolve() throws ObjectStreamException {
-    return new ArrayCreation(Reflection.classForName(elementType), length);
+  private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
+    Class<?> c = TypeNames.getTypeForName(elementType);
+    return new ArrayCreation(c, length);
   }
 
 }

@@ -59,7 +59,7 @@ public class CleanObservations extends CommandHandler {
     String output_file = nonargs[1];
 
     // If an initializer routine was specified, execute it
-    GenTests.execute_init_routine(2);
+    GenTests.executeInitializationRoutine(2);
 
     // Read the list of sequences from the serialized file
     List<ExecutableSequence> seqs = GenTests.read_sequences(input_file);

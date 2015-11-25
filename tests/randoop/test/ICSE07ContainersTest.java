@@ -1,8 +1,11 @@
 package randoop.test;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import randoop.ComponentManager;
@@ -12,13 +15,13 @@ import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OperationExtractor;
 import randoop.sequence.ForwardGenerator;
 import randoop.sequence.ObjectCache;
 import randoop.test.issta2006.BinTree;
 import randoop.test.issta2006.BinomialHeap;
 import randoop.test.issta2006.FibHeap;
 import randoop.test.issta2006.TreeMap;
-import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 
 import junit.framework.TestCase;
@@ -42,13 +45,13 @@ public class ICSE07ContainersTest extends TestCase {
   ForwardGenerator explorer = null;
 
   public static void runRandoop(String name, List<Class<?>> classList,
-      Pattern pattern, IStopper stopper) {
+      Pattern pattern, IStopper stopper, Set<String> excludeNames) {
 
     System.out.println("ICSE 2006 container: " + name);
-
-    List<Operation> statements = 
-      Reflection.getStatements(classList, new DefaultReflectionPredicate(pattern));
     
+    List<Operation> statements = 
+      OperationExtractor.getOperations(classList, new DefaultReflectionPredicate(pattern,excludeNames));
+    assertTrue("model should not be empty", !statements.isEmpty());
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer = new ForwardGenerator(statements,
         120000 /* two minutes */, Integer.MAX_VALUE, componentMgr, stopper, null, null);
@@ -71,7 +74,13 @@ public class ICSE07ContainersTest extends TestCase {
         return FibHeap.tests.size() >= 96;
       }
     };
-    runRandoop("FibHeap", classList, Pattern.compile("decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty()|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"), stopper);
+    Set<String> excludeNames = new TreeSet<>();
+    for (Class<?> c : classList) {
+      for (Field f : c.getFields()) {
+        excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
+      }
+    }
+    runRandoop("FibHeap", classList, Pattern.compile("decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty()|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"), stopper, excludeNames);
     assertEquals(96, FibHeap.tests.size());
   }
 
@@ -85,7 +94,13 @@ public class ICSE07ContainersTest extends TestCase {
         return BinTree.tests.size() >= 54;
       }
     };
-    runRandoop("BinTree", classList, Pattern.compile("find\\(int\\)|gen_native"), stopper);
+    Set<String> excludeNames = new TreeSet<>();
+    for (Class<?> c : classList) {
+      for (Field f : c.getFields()) {
+        excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
+      }
+    }
+    runRandoop("BinTree", classList, Pattern.compile("find\\(int\\)|gen_native"), stopper, excludeNames);
     assertEquals(54, BinTree.tests.size());
   }
 
@@ -99,7 +114,7 @@ public class ICSE07ContainersTest extends TestCase {
         return TreeMap.tests.size() >= 106;
       }
     };
-    runRandoop("TreeMap", classList, Pattern.compile("toString|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"), stopper);
+    runRandoop("TreeMap", classList, Pattern.compile("toString|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"), stopper, new TreeSet<String>());
     assertEquals(106, TreeMap.tests.size());
   }
 
@@ -113,7 +128,13 @@ public class ICSE07ContainersTest extends TestCase {
         return BinomialHeap.tests.size() >= 101;
       }
     };
-    runRandoop("BinomialHeap", classList, Pattern.compile("findMinimum()"), stopper);
+    Set<String> excludeNames = new TreeSet<>();
+    for (Class<?> c : classList) {
+      for (Field f : c.getFields()) {
+        excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
+      }
+    }
+    runRandoop("BinomialHeap", classList, Pattern.compile("findMinimum()"), stopper, excludeNames);
     assertEquals(101, randoop.test.issta2006.BinomialHeap.tests.size());
   }
 

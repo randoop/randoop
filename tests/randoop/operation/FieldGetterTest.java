@@ -14,15 +14,13 @@ import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.util.Reflection;
 
 /**
  * FieldGetterTest defines unit tests for FieldGetter class.
  * There is a test method for each kind of PublicField, and each
  * checks types returned, code generation, and execution behavior.
- * 
- * @author bjkeller
  *
  */
 public class FieldGetterTest {
@@ -41,10 +39,11 @@ public class FieldGetterTest {
 
       //code generation
       String expected = "int i0 = randoop.operation.ClassWithFields.fourField;" + Globals.lineSep;
+      Statement st = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
       StringBuilder b = new StringBuilder();
-      rhs.appendCode(var, new ArrayList<Variable>(), b);
+      st.appendCode(var, new ArrayList<Variable>(), b);
       assertEquals("Expect initialization of variable from static field", expected, b.toString());
 
       //execution - should be 4 (haven't changed value yet)
@@ -82,11 +81,12 @@ public class FieldGetterTest {
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
       ConstructorCall cons = new ConstructorCall(
-          Reflection.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
+          ConstructorSignatures.getConstructorForSignatureString("randoop.operation.ClassWithFields.ClassWithFields()"));
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seqInit, 0)); 
       // bind getter "call" to initialization
+      Statement st_rhs = new Statement(rhs);
       Sequence seq = seqInit.extend(rhs, vars);
       // - first variable is object
       Variable var1 = new Variable(seq, 0);
@@ -95,7 +95,7 @@ public class FieldGetterTest {
       vars = new ArrayList<>();
       vars.add(var1);
       StringBuilder b = new StringBuilder();
-      rhs.appendCode(var2, vars, b);
+      st_rhs.appendCode(var2, vars, b);
       assertEquals("Expect initialization of variable from static field", expected, b.toString());
 
       //execution
@@ -122,6 +122,8 @@ public class FieldGetterTest {
     } catch (IllegalAccessException e) {
       fail("test failed because of unexpected access exception when creating instance");
       e.printStackTrace();
+    } catch (OperationParseException e) {
+      fail("test failed because ClassWithFields constructor not found");
     }
 
   }
@@ -140,10 +142,11 @@ public class FieldGetterTest {
 
       //code generation
       String expected = "int i0 = randoop.operation.ClassWithFields.FIVEFIELD;" + Globals.lineSep;
+      Statement st_rhs = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
       StringBuilder b = new StringBuilder();
-      rhs.appendCode(var, new ArrayList<Variable>(), b);
+      st_rhs.appendCode(var, new ArrayList<Variable>(), b);
       assertEquals("Expect initialization of variable from static final field",
           expected, b.toString());
 

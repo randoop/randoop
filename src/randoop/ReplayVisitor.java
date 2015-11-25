@@ -1,6 +1,6 @@
 package randoop;
 
-import java.util.ArrayList;
+import randoop.sequence.ExecutableSequence;
 
 import randoop.sequence.ExecutableSequence;
 

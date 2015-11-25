@@ -36,10 +36,10 @@ public class BranchDirMutator {
   private static void checkTypesOk(MutableSequence s, MutableVariable oldv, MutableVariable newv) {
     for (int i = 0 ; i < s.size() ; i++) {
       MutableStatement st = s.statements.get(i);
-      assert st.inputs.size() == st.statementKind.getInputTypes().size();
+      assert st.inputs.size() == st.operation.getInputTypes().size();
       for (int j = 0 ; j < st.inputs.size() ; j++) {
         if (st.inputs.get(j).equals(oldv)) {
-          assert Reflection.canBeUsedAs(newv.getType(), st.statementKind.getInputTypes().get(j));
+          assert Reflection.canBeUsedAs(newv.getType(), st.operation.getInputTypes().get(j));
         }
       }
     }
@@ -50,7 +50,7 @@ public class BranchDirMutator {
     MutableSequence s = oldv.owner;
     for (int i = 0 ; i < s.size() ; i++) {
       MutableStatement st = s.statements.get(i);
-      assert st.inputs.size() == st.statementKind.getInputTypes().size();
+      assert st.inputs.size() == st.operation.getInputTypes().size();
       for (int j = 0 ; j < st.inputs.size() ; j++) {
         if (st.inputs.get(j).equals(oldv)) {
           return i;

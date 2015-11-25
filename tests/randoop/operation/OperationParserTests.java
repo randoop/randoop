@@ -54,14 +54,14 @@ public class OperationParserTests extends TestCase {
   public void testRMethod() {
 
     for (Method m : ArrayList.class.getMethods()) {
-      checkParse(MethodCall.getRMethod(m));
+      checkParse(MethodCall.createMethodCall(m));
     }
   }
 
   public void testRConstructor() {
 
     for (Constructor<?> c : ArrayList.class.getConstructors()) {
-      checkParse(ConstructorCall.getRConstructor(c));
+      checkParse(ConstructorCall.createConstructorCall(c));
     }
   }
 

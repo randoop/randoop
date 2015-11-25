@@ -25,9 +25,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   private Pattern omitMethods = null;
   private Set<String> omitFields;
+  private VisibilityPredicate visibility;
   
   public DefaultReflectionPredicate() {
-    this(null, new HashSet<String>());
+    this(null);
   }
   
   /** If omitMethods is null, then no methods are omitted. */
@@ -35,20 +36,26 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     this(omitMethods, new HashSet<String>());
   }
 
+  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
+   this(omitMethods, omitFields, new PublicVisibilityPredicate());
+  }
+
   /** 
    * DefaultReflectionFilter creates a filter object that uses default
    * criteria for inclusion of reflection objects. 
    * @param omitMethods pattern for methods to omit, if null then no methods omitted.
-   * @see Reflection#getStatements(java.util.Collection, ReflectionPredicate) 
+   * @param visibility 
+   * @see OperationExtractor#getOperations(java.util.Collection, ReflectionPredicate)
    */
-  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
+  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
     super();
     this.omitMethods = omitMethods;
     this.omitFields = omitFields;
+    this.visibility = visibility;
   }
 
   public boolean canUse(Class<?> c) {
-    return Reflection.isVisible (c);
+    return visibility.isVisible (c);
   }
 
   public boolean canUse(Method m) {
@@ -91,14 +98,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    if (!Reflection.isVisible(m.getModifiers())) {
+    if (!visibility.isVisible(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: randoop.util.Reflection.isVisible(int modifiers) returned false ");
       }
       return false;
     }
-    if (!Reflection.isVisible(m.getReturnType())) {
+    if (!visibility.isVisible(m.getReturnType())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: randoop.util.Reflection.isVisible(Class<?> cls) returned false for method's return type");
@@ -194,7 +201,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     if (Modifier.isAbstract(c.getDeclaringClass().getModifiers()))
       return false;
 
-    return Reflection.isVisible (c.getModifiers());
+    return visibility.isVisible(c);
   }
 
   private boolean matchesOmitMethodPattern(String name) {
@@ -224,7 +231,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
     
     String name = f.getDeclaringClass().getName() + "." + f.getName();
-    boolean result = !omitFields.contains(name);
+    boolean result = visibility.isVisible(f) && !omitFields.contains(name);
     if (Log.isLoggingOn()) {
       if (result) {
         Log.logLine(String.format("Including field '%s'", name));

@@ -8,8 +8,6 @@ import java.util.List;
  * Started as simple example and ended up basically being
  * Card example from Java language specification: 
  * https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.9
- * 
- * @author bjkeller
  *
  */
 public class PlayingCard {

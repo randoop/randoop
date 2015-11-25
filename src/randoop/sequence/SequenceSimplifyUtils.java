@@ -160,7 +160,7 @@ public class SequenceSimplifyUtils {
         MutableVariable mv = newvars.get(indexOfRetained);
         newinputs.add(mv);
       }
-      statements.add(new MutableStatement(mstatement.statementKind, newinputs, newvars.get(i)));
+      statements.add(new MutableStatement(mstatement.operation, newinputs, newvars.get(i)));
     }
     
     simplifiedSequence.statements = statements;
@@ -201,7 +201,7 @@ public class SequenceSimplifyUtils {
         }
         newinputs.add(newvars.get(vindex));
       }
-      statements.add(new MutableStatement(mstatement.statementKind, newinputs, newvars.get(i)));
+      statements.add(new MutableStatement(mstatement.operation, newinputs, newvars.get(i)));
     }
     
     new_sequence.statements = statements;
@@ -218,7 +218,7 @@ public class SequenceSimplifyUtils {
         int varIndex = v.getDeclIndex();
         inputs.add(sequence.getVariable(varIndex));
       }
-      sequence = sequence.extend(seq.getOperation(i), inputs);
+      sequence = sequence.extend(seq.getStatement(i), inputs);
     }
     return sequence;
   }
