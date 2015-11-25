@@ -76,10 +76,12 @@ public class VariableRenamer {
     }
     // renaming for array type
     if (clz.isArray()) {
+      String arraySuffix = "";
       while (clz.isArray()) {
+        arraySuffix += "_array";
         clz = clz.getComponentType();
       }
-      return getVariableName(clz) + "_array";
+      return getVariableName(clz) + arraySuffix;
     }
     //for object, string, class types
     if (clz.equals(Object.class)) {

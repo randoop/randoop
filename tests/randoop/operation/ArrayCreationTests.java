@@ -14,7 +14,7 @@ public class ArrayCreationTests extends TestCase{
   public void test1() throws Exception {
     ArrayCreation ad= new ArrayCreation(String.class, 1);
     StringBuilder b= new StringBuilder();
-    Sequence seq = new Sequence().extend(new NonreceiverTerm(String.class, "mystring")); 
+    Sequence seq = new Sequence().extend(new NonreceiverTerm(String.class, "mystring"));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<Variable>();
@@ -26,7 +26,7 @@ public class ArrayCreationTests extends TestCase{
   public void test2() throws Exception {
     ArrayCreation ad= new ArrayCreation(char.class, 1);
     StringBuilder b= new StringBuilder();
-    Sequence seq = new Sequence().extend(new NonreceiverTerm(char.class, 'c')); 
+    Sequence seq = new Sequence().extend(new NonreceiverTerm(char.class, 'c'));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<Variable>();
@@ -38,13 +38,13 @@ public class ArrayCreationTests extends TestCase{
   public void test3() throws Exception {
     ArrayCreation ad= new ArrayCreation(char[].class, 1);
     StringBuilder b= new StringBuilder();
-    Sequence seq = new Sequence().extend(new ArrayCreation(char[].class, 0)); 
+    Sequence seq = new Sequence().extend(new ArrayCreation(char[].class, 0));
     Variable var0 = new Variable(seq, 0);
     Variable var1 = new Variable(seq, 1);
     ArrayList<Variable> input = new ArrayList<Variable>();
     input.add(var0);
     ad.appendCode(var1, input, b);
-    assertEquals("char[][] char_array_array1 = new char[][] { char_array0};" + Globals.lineSep + "", b.toString());
+    assertEquals("char[][] char_array_array1 = new char[][] { char_array_array0};" + Globals.lineSep + "", b.toString());
   }
 
 }

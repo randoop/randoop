@@ -37,7 +37,7 @@ public final class ArrayCreation implements Operation, Serializable {
   // are computed upon the first invocation of the respective
   // getter method.
   private List<Class<?>> inputTypesCached;
-  private Class<?> outputTypeCached;
+  private Class<?> outputType;
   private int hashCodeCached;
   private boolean hashCodeComputed= false;
 
@@ -54,6 +54,7 @@ public final class ArrayCreation implements Operation, Serializable {
     // Set state variables.
     this.elementType = elementType;
     this.length = length;
+    this.outputType = Array.newInstance(elementType, 0).getClass();
   }
 
   private Object writeReplace() throws ObjectStreamException {
@@ -124,10 +125,7 @@ public final class ArrayCreation implements Operation, Serializable {
    * namely the receiver that is generated.
    */
   public Class<?> getOutputType() {
-    if (outputTypeCached == null) {
-      outputTypeCached = Array.newInstance(elementType, 0).getClass();
-    }
-    return outputTypeCached;
+    return outputType;
   }
 
   /**
@@ -138,7 +136,7 @@ public final class ArrayCreation implements Operation, Serializable {
       throw new IllegalArgumentException("Too many arguments:"
           + inputVars.size() + " capacity:" + length);
     String declaringClass = this.elementType.getCanonicalName();
-    String var = Variable.classToVariableName(this.elementType) + newVar.index;
+    String var = Variable.classToVariableName(outputType) + newVar.index;
 
     b.append(declaringClass + "[] "
              + var
