@@ -119,15 +119,15 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
     int index = inputVars.size() - 1;
 
     //TODO this is duplicate code from RMethod - should factor out behavior
+    String rhs = inputVars.get(index).getName();
     Statement statementCreatingVar = inputVars.get(index).getDeclaringStatement();
     if (!GenInputsAbstract.long_format) {
       String shortForm = statementCreatingVar.getShortForm();
       if (shortForm != null) {
-        b.append(shortForm);
+        rhs = shortForm;
       }
-    } else {
-      b.append(inputVars.get(index).getName());
-    }
+    } 
+    b.append(rhs);
     
   }
 

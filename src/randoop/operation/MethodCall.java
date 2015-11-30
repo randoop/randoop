@@ -152,16 +152,20 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
         sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
       }
 
+      String param = inputVars.get(i).getName();
+      
       // In the short output format, statements like "int x = 3" are not added 
       // to a sequence; instead, the value (e.g. "3") is inserted directly added 
       // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      String shortForm = statementCreatingVar.getShortForm();
-      if (!GenInputsAbstract.long_format && shortForm != null) {
-        sb.append(shortForm);
-      } else {
-        sb.append(inputVars.get(i).getName());
+      if (!GenInputsAbstract.long_format) {
+        String shortForm = statementCreatingVar.getShortForm();
+        if (shortForm != null) {
+          param = shortForm;
+        }
       }
+      sb.append(param);
+      
     }
     sb.append(")");
   }

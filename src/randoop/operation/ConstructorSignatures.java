@@ -3,7 +3,7 @@ package randoop.operation;
 import java.lang.reflect.Constructor;
 
 /**
- * ConstructorParser provides static methods to write as well as parse 
+ * ConstructorSignatures provides static methods to write as well as parse 
  * a string representation of a constructor signature.
  */
 public class ConstructorSignatures {
@@ -17,12 +17,16 @@ public class ConstructorSignatures {
    * @return reflective {@link Constructor} method corresponding to signature.
    * @throws OperationParseException if signature parameter does not match 
    *         expected format.
+   * @throws Error  if there is a reflection exception: the class name is not 
+   *                valid, there is no method with the name, or there is a 
+   *                security exception.
    */
   public static Constructor<?> getConstructorForSignatureString(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
     
+    //TODO simplify argument recognition using regex
     int openPar = signature.indexOf('(');
     int closePar = signature.indexOf(')');
     // Verify only one open/close paren, and close paren is last char.

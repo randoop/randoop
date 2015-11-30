@@ -18,19 +18,19 @@ import randoop.types.TypeNames;
 /**
  * ArrayCreation is an {@link Operation} representing the construction of a 
  * one-dimensional array with a given element type and length.
- * The operation requires a list of elements in an initializer.
+ * The The ArrayCreation operation requires a list of elements in an initializer.
  * For instance, <code>new int[2]</code> is the {@code ArrayCreation} in the 
  * initialization<br>
  * <code>int[] x = new int[2] { 3, 7 };</code><br>
  * with the initializer list as inputs.
  * <p>
- * In terms of the notation used for {@link Operation}, an array creation of an 
- * array of elements of type <i>e</i> and length <i>n</i> has a signature 
- * [<i>e,...,e</i>] &rarr; <i>t</i> 
+ * In terms of the notation used for the {@link Operation} class, 
+ * a creation of an array of elements of type <i>e</i> with length <i>n</i> 
+ * has a signature [<i>e,...,e</i>] &rarr; <i>t</i>, 
  * where [<i>e,...,e</i>] is a list of length <i>n</i>, and <i>t</i> is the 
  * array type.
  * <p>
- * Objects are immutable.
+ * ArrayCreation objects are immutable.
  */
 public final class ArrayCreation extends AbstractOperation implements Operation, Serializable {
 
@@ -99,7 +99,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
 
   /**
    * {@inheritDoc}
-   * @return list of element types matching length of created array.
+   * @return list of identical element types matching length of created array.
    */
   @Override
   public List<Class<?>> getInputTypes() {
@@ -167,8 +167,10 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
       if (i > 0)
         b.append(", ");
       
+      String param = inputVars.get(i).getName();
+      
       // In the short output format, statements like "int x = 3" are not added 
-      // to a sequence; instead, the value (e.g. "3") is inserted directly added 
+      // to a sequence; instead, the value (e.g. "3") is inserted directly  
       // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
       if (!GenInputsAbstract.long_format && 
@@ -176,11 +178,10 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
           !statementCreatingVar.isNullInitialization()) {
         String shortForm = statementCreatingVar.getShortForm();
         if (shortForm != null) {
-          b.append(shortForm);
+          param = shortForm;
         }
-      } else {
-        b.append(inputVars.get(i).getName());
       }
+      b.append(param);
     }
     b.append(" }");
   }
@@ -239,13 +240,16 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     int closeBr = str.indexOf(']');
     String elementTypeStr = str.substring(0, openBr);
     String lengthStr = str.substring(openBr + 1, closeBr);
+    
+    Class<?> elementType;
     try {
-    Class<?> elementType = TypeNames.getTypeForName(elementTypeStr);
-    int length = Integer.parseInt(lengthStr);
-    return new ArrayCreation(elementType, length);
+      elementType = TypeNames.getTypeForName(elementTypeStr);
     } catch (ClassNotFoundException e) {
       throw new OperationParseException("Type not found for array element type " + elementTypeStr);
     }
+    
+    int length = Integer.parseInt(lengthStr);
+    return new ArrayCreation(elementType, length);
   }
 
   @Override

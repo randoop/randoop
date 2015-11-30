@@ -58,7 +58,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * @see SerializableConstructorCall
    */
   private Object writeReplace() throws ObjectStreamException {
-    return new SerializableConstructorCall(this.constructor);
+    return new SerializableConstructorCall(constructor);
   }
 
   /** 
@@ -142,17 +142,20 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
       if (!inputVars.get(i).getType().equals(getInputTypes().get(i)))
         b.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
       
+      String param = inputVars.get(i).getName();
+      
       // In the short output format, statements that assign to a primitive
       // or string literal, like "int x = 3" are not added to a sequence;
       // instead, the value (e.g. "3") is inserted directly added as
       // arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
-      String shortForm = statementCreatingVar.getShortForm();
-      if (!GenInputsAbstract.long_format && shortForm != null) {
-        b.append(shortForm);
-      } else {
-        b.append(inputVars.get(i).getName());
+      if (!GenInputsAbstract.long_format) {
+        String shortForm = statementCreatingVar.getShortForm();
+        if (shortForm != null) {
+          param = shortForm;
+        }
       }
+      b.append(param);
     }
     b.append(")");
     

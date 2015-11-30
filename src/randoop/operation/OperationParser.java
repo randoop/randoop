@@ -50,7 +50,15 @@ public class OperationParser {
     Set<String> validIds = new LinkedHashSet<String>();
 
     // If you add a statement kind, add its ID to this set.
-    validIds.addAll(Arrays.asList(NonreceiverTerm.ID, MethodCall.ID, ConstructorCall.ID, ArrayCreation.ID, DummyStatement.ID));
+    validIds.addAll(Arrays.asList(
+        NonreceiverTerm.ID, 
+        MethodCall.ID, 
+        ConstructorCall.ID,
+        ArrayCreation.ID, 
+        EnumConstant.ID, 
+        FieldGetter.ID, 
+        FieldSetter.ID
+        ));
 
     // Call appropriate parsing method.
     if (id.equals(NonreceiverTerm.ID)) {
@@ -67,8 +75,6 @@ public class OperationParser {
       return FieldGetter.parse(descr);
     } else if (id.equals(FieldSetter.ID)) {
       return FieldSetter.parse(descr);
-    } else if (id.equals(DummyStatement.ID)) {
-      return DummyStatement.parse(descr);
     } else {
       String msg = "A statement description must be of the form "
         + "<id> <description>"
@@ -102,8 +108,6 @@ public class OperationParser {
       return FieldGetter.ID;
     if (op instanceof FieldSetter)
       return FieldSetter.ID;
-    if (op instanceof DummyStatement)
-      return DummyStatement.ID;
     throw new Error();
   }
 
