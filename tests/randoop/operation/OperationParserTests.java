@@ -65,10 +65,6 @@ public class OperationParserTests extends TestCase {
     }
   }
 
-  public void testDummyStatement() {
-    checkParse(new DummyStatement("foobar"));
-  }
-
   public void testArrayDecl() {
     checkParse(new ArrayCreation(int.class, 3));
   }
