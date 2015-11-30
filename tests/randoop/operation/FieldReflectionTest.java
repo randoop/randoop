@@ -44,7 +44,7 @@ public class FieldReflectionTest {
     
     //number of statements is twice number of fields plus constructor and getter minus one for each constant
     //in this case, 11
-    assertEquals("number of statements twice number of fields", 2 * fields.size() + 2 - 1, actual.size());
+    assertEquals("number of statements twice number of fields", 2 * fields.size(), actual.size());
     
     //exclude private or protected fields
     List<Field> exclude = new ArrayList<>();
@@ -154,8 +154,12 @@ public class FieldReflectionTest {
         statements.add(new FieldSetter(new StaticField(f)));
       }
     } else {
-      statements.add(new FieldGetter(new InstanceField(f)));
-      statements.add(new FieldSetter(new InstanceField(f)));
+      if (Modifier.isFinal(mods)) {
+        statements.add(new FieldGetter(new FinalInstanceField(f)));
+      } else {
+        statements.add(new FieldGetter(new InstanceField(f)));
+        statements.add(new FieldSetter(new InstanceField(f)));
+      }
     }
     return statements;
   }

@@ -121,7 +121,7 @@ public interface Operation extends Comparable<Operation> {
   boolean isMessage();
 
   /**
-   * getDeclaringClass returns the type to which the operation belongs. 
+   * Returns the type to which the operation belongs. 
    * If a constructor or value, then the type should be the same as the output 
    * type.
    * 

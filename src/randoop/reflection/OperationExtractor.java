@@ -14,6 +14,7 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGetter;
 import randoop.operation.FieldSetter;
+import randoop.operation.FinalInstanceField;
 import randoop.operation.InstanceField;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
@@ -105,9 +106,14 @@ public class OperationExtractor implements ClassVisitor {
         operations.add(new FieldSetter(s));
       }
     } else {
-      InstanceField i = new InstanceField(f);
-      operations.add(new FieldGetter(i));
-      operations.add(new FieldSetter(i));
+      if (Modifier.isFinal(mods)) {
+        FinalInstanceField i = new FinalInstanceField(f);
+        operations.add(new FieldGetter(i));
+      } else {
+        InstanceField i = new InstanceField(f);
+        operations.add(new FieldGetter(i));
+        operations.add(new FieldSetter(i));
+      }
     }
   }
 

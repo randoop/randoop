@@ -36,6 +36,9 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
     if (field instanceof StaticFinalField) {
       throw new IllegalArgumentException("Field may not be static final for FieldSetter");
     }
+    if (field instanceof FinalInstanceField) {
+      throw new IllegalArgumentException("Field may not be final for FieldSetter");
+    }
     this.field = field;
   }
 

@@ -19,6 +19,7 @@ public class ClassWithFields {
   @SuppressWarnings("unused")
   private static int eightField = 8;
   protected int nineField = 9;
+  public final int tenField = 10;
   
   public int oneMethod() {
     return 0;

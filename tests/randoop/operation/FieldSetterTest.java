@@ -108,6 +108,7 @@ public class FieldSetterTest {
       assertTrue("Expect void result and zero execution", expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue() && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
       assertEquals("Expect value to have changed", 9, (int)f.getValue(inputs2[0]));
       
+      
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
@@ -118,6 +119,25 @@ public class FieldSetterTest {
       fail("test failed because of unexpected access exception.");
     } catch (OperationParseException e) {
       fail("test failed because ClassWithFields constructor not found");
+    }
+  }
+  
+  @Test
+  public void testFinalInstanceField() {
+    Class<?> c = ClassWithFields.class;
+    try {
+      FinalInstanceField f = new FinalInstanceField(c.getField("tenField"));
+      try {
+        @SuppressWarnings("unused")
+        FieldSetter rhs = new FieldSetter(f);
+        fail("IllegalArgumentException expected when final instance field given to FieldSetter constructor");
+      } catch (IllegalArgumentException e) {
+        assertEquals("Argument Exception", "Field may not be final for FieldSetter", e.getMessage());
+      }
+    } catch (NoSuchFieldException e) {
+      fail("test failed because field in test class not found");
+    } catch (SecurityException e) {
+      fail("test failed because of unexpected security exception");
     }
   }
   

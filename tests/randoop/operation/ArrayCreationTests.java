@@ -46,7 +46,7 @@ public class ArrayCreationTests extends TestCase{
     input.add(var0);
     Statement st_ad = new Statement(ad);
     st_ad.appendCode(var1, input, b);
-    assertEquals("char[][] char_array1 = new char[][] { char_array0 };" + Globals.lineSep + "", b.toString());
+    assertEquals("char[][] char_array_array1 = new char[][] { char_array_array0 };" + Globals.lineSep + "", b.toString());
   }
 
 }

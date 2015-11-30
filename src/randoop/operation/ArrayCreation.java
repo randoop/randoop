@@ -47,7 +47,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   // are computed upon the first invocation of the respective
   // getter method.
   private List<Class<?>> inputTypesCached;
-  private Class<?> outputTypeCached;    
+  private Class<?> outputType;    
   private int hashCodeCached;
   private boolean hashCodeComputed= false;
 
@@ -67,7 +67,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     // Set state variables.
     this.elementType = elementType;
     this.length = length;
-    this.outputTypeCached = Array.newInstance(elementType, 0).getClass();
+    this.outputType = Array.newInstance(elementType, 0).getClass();
   }
 
   /**
@@ -148,7 +148,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
    */
   @Override
   public Class<?> getOutputType() {
-    return outputTypeCached;
+    return outputType;
   }
 
   /**
@@ -160,11 +160,9 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
       throw new IllegalArgumentException("Too many arguments:"
           + inputVars.size() + " capacity:" + length);
     
-    //TODO fix naming in statement
-    String declaringClass = this.elementType.getCanonicalName();
-   // String var = Variable.classToVariableName(this.elementType) + "_array" + newVar.index;
+    String arrayTypeName = this.elementType.getCanonicalName();
       
-    b.append("new " + declaringClass + "[] { ");
+    b.append("new " + arrayTypeName + "[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
       if (i > 0)
         b.append(", ");

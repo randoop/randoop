@@ -129,7 +129,11 @@ public class PublicFieldParser {
         pf = new StaticField(field);
       }
     } else {
-      pf = new InstanceField(field);
+      if (Modifier.isFinal(mods)) {
+        pf = new FinalInstanceField(field);
+      } else {
+        pf = new InstanceField(field);
+      }
     }
     assert pf != null;
     return pf;
