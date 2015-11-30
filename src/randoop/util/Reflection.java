@@ -83,7 +83,6 @@ public final class Reflection {
     return Collections.unmodifiableSet(retval);
   }
 
-
   private static Set<Class<?>> getInterfacesTransitive(Class<?> c1) {
 
     Set<Class<?>> ret = new LinkedHashSet<Class<?>>();
@@ -247,7 +246,7 @@ public final class Reflection {
     } else
       return true;
   }
-
+ 
   /**
    * Looks for the specified method name in the specified class and all of its
    * superclasses

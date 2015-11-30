@@ -34,7 +34,7 @@ import randoop.types.TypeNames;
  */
 public final class ArrayCreation extends AbstractOperation implements Operation, Serializable {
 
-  private static final long serialVersionUID = 20100429; 
+  private static final long serialVersionUID = 20100429;
 
   /** ID for parsing purposes (see StatementKinds.parse method) */
   public static final String ID = "array";
@@ -47,7 +47,9 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   // are computed upon the first invocation of the respective
   // getter method.
   private List<Class<?>> inputTypesCached;
-  private Class<?> outputType;    
+
+  private Class<?> outputType;
+
   private int hashCodeCached;
   private boolean hashCodeComputed= false;
 
@@ -87,7 +89,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   public Class<?> getElementType() {
     return this.elementType;
   }
-  
+
   /**
    * Returns the length of created array.
    * 
@@ -113,8 +115,14 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
+<<<<<<< HEAD
    * {@inheritDoc}
    * @return {@link NormalExecution} object containing constructed array.
+=======
+   * Executes this statement, given the inputs to the statement. Returns
+   * the results of execution as an ResultOrException object and can
+   * output results to specified PrintStream.
+>>>>>>> master
    */
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
     if (statementInput.length > length)
@@ -180,6 +188,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
         if (shortForm != null) {
           param = shortForm;
         }
+
       }
       b.append(param);
     }
@@ -227,6 +236,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
+<<<<<<< HEAD
    * Parses an array declaration in a string descriptor in the form generated
    * by {@link ArrayCreation#toParseableString()}.
    * @see OperationParser#parse(String)
@@ -234,6 +244,18 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
    * @param str  the string to be parsed for the {@code ArrayCreation}.
    * @return the {@code ArrayCreation} object for the string.  
    * @throws OperationParseException if string does not have expected form.
+=======
+   * A string representing this array declaration. The string is of the form:
+   *
+   * TYPE[NUMELEMS]
+   *
+   * Where TYPE is the type of the array, and NUMELEMS is the number of elements.
+   *
+   * Example:
+   *
+   * int[3]
+   *
+>>>>>>> master
    */
   public static Operation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');

@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 2.0.0, released October 13, 2015.
+This is the manual for Randoop version 2.0.1, released November 30, 2015.
 The Randoop homepage is
 <a href="http://randoop.github.io/randoop/">http://randoop.github.io/randoop/</a>.
 </p>
@@ -252,7 +252,7 @@ and use the <tt>--classlist</tt> option: </p>
 Created file: my/home/directory/RandoopTest.java
 done.</pre>
 <p>
-The main test suite is in class <tt>RandoopTest</tt>. Compile and run the tests using a classpath including the code under test, the generated tests, and JUnit files <tt>junit.jar</tt> and <tt>hamcrest-core.jar</tt>. In this example, you should also add the current directory (&quot;.&quot;) when you run the tests. 
+The main test suite is in class <tt>RandoopTest</tt>. Compile and run the tests using a classpath including the code under test, the generated tests, and JUnit files <tt>junit.jar</tt> and <tt>hamcrest-core.jar</tt>. In this example, you should also add the current directory (&quot;.&quot;) when you run the tests.
 </p>
 
 <pre class="code">javac -classpath .:$JUNITPATH RandoopTest*.java
@@ -498,35 +498,35 @@ Randoop about your application, and that is how we recommend using Randoop.
     <ul>
       <li id="option:testclass"><b>--testclass=</b><i>string</i> <tt>[+]</tt>. Each element is the fully-qualified name of a class under test.</li>
       <li id="option:classlist"><b>--classlist=</b><i>string</i>. The name of a file that lists classes under test.
- 
+
  In the file, each class under test is specified by its
  fully-qualified name on a separate line.</li>
       <li id="option:methodlist"><b>--methodlist=</b><i>string</i>. The name of a file that lists methods under test.
- 
+
  In the file, each each method under test is specified on a separate
  line. The list of methods given by this argument augment
  any methods derived via the <tt>--testclass</tt> or
  <tt>--classlist</tt> option.
- 
- Also see the manual section on <a href="https://rawgit.com/randoop/randoop/master/doc/index.html#specifying-methods">specifying methods 
+
+ Also see the manual section on <a href="https://rawgit.com/randoop/randoop/master/doc/index.html#specifying-methods">specifying methods
  and constructors that may appear in a test</a>.</li>
       <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method#toString()</code> matches the regular expression
  given.  This does not prevent indirect calls to such methods from
  other, allowed methods.
  <p>
- 
+
  Randoop only calls methods
  that are specified by one of the <tt>--testclass</tt>,
  <tt>-classlist</tt>, or <tt>--methodlist</tt> command-line options;
  the purpose of <tt>--omitmethods</tt> is to override one of those other
  command-line options.</li>
- 
+
  	  <li id="option:omit-field-list"><b>--omit-field-list=</b><i>string</i>. A file containing the names of fields to exclude from generated tests. Fields should be fully qualified by package and class name (e.g., <tt>java.util.Collections.EMPTY_SET</tt>))</li>
       <li id="option:init-routine"><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method)</li>
       <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
       <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>. How to use literal values (see --literals-file). See: <code>ClassLiteralsMode</code>. [default CLASS]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
       <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
- 
+
  Literals in these files are used in addition to all other constants in the pool.
  For the format of this file, see documentation in class <code>randoop.LiteralFileReader</code>.
  The special value "CLASSES" (with no quotes) means to read literals from all classes under test.</li>
@@ -540,7 +540,7 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
     <ul>
       <li id="option:timelimit"><b>--timelimit=</b><i>int</i>. Maximum number of seconds to spend generating tests.
- 
+
  Used to determine when to stop test generation. Generation stops when
  either the time limit (--timelimit=int) OR the input limit
  (--inputlimit=int) is reached.
@@ -548,7 +548,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  Note that if you use this option, Randoop is nondeterministic: it
  may generate different test suites on different runs. [default 100]</li>
       <li id="option:inputlimit"><b>--inputlimit=</b><i>int</i>. Maximum number of tests generated.
- 
+
  Used to determine when to stop test generation. Generation stops when
  either the time limit (--timelimit=int) OR the input limit
  (--inputlimit=int) is reached.  The number of tests output
@@ -558,10 +558,10 @@ Randoop about your application, and that is how we recommend using Randoop.
  are generated.  Contrast to --inputlimit. [default 100000000]</li>
       <li id="option:maxsize"><b>--maxsize=</b><i>int</i>. Do not generate tests with more than this many statements [default 100]</li>
       <li id="option:forbid-null"><b>--forbid-null=</b><i>boolean</i>. Never use null as input to methods or constructors.
- 
+
  This option causes Randoop to abandon the method call rather than providing
  null as an input, when no non-null value of the appropriate type is available.
- 
+
  To ask Randoop to calls methods with null with greater frequency,
  see option --null-ratio. [default true]</li>
     </ul>
@@ -572,17 +572,17 @@ Randoop about your application, and that is how we recommend using Randoop.
  65KB (or about 10,000 characters) may be rejected by the Java
  compiler, according to the Java Virtual Machine specification. [default 10000]</li>
       <li id="option:null-ratio"><b>--null-ratio=</b><i>double</i>. Use null with the given frequency.
- 
+
  If a null ratio is given, it should be between 0 and 1. A ratio of X means that
  null will be used instead of a non-null value as a parameter to method calls,
  with X frequency (1 means always use null, 0 means never use null). For example,
  a ratio of 0.5 directs Randoop to use null inputs 50 percent of the time.
- 
+
  Randoop never uses null for receiver values. [default 0.0]</li>
       <li id="option:alias-ratio"><b>--alias-ratio=</b><i>double</i>. Try to reuse values from a sequence with the given frequency.
- 
+
  If an alias ratio is given, it should be between 0 and 1.
- 
+
  A ratio of 0 results in tests where each value created within a test input is typically used at most once
  as an argument in a method call. A ratio of 1 tries to maximize the number of times
  values are used as inputs to parameters within a test. [default 0.0]</li>
@@ -605,7 +605,7 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:observers"><b>--observers=</b><i>filename</i>. Use the methods specified in the given file to create regression assertions.</li>
       <li id="option:check-object-contracts"><b>--check-object-contracts=</b><i>boolean</i>. Use Randoop's default set of object contracts as assertions.
  If disabled, these assertions are not created.
- 
+
  <p>
  The default set of contracts includes:
    equals(Object) is reflexive,
@@ -629,7 +629,7 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written</li>
       <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>. Run Randoop but do not create JUnit tests [default false]</li>
       <li id="option:output-nonexec"><b>--output-nonexec=</b><i>boolean</i>. Output sequences even if they do not complete execution.
- 
+
   Randoop's default behavior is to output only tests consisting of
   method call sequences that execute every statement, rather than throwing
   an exception or failing a contract check before the last statement. [default false]</li>
@@ -658,17 +658,17 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:componentfile-ser"><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file</li>
       <li id="option:componentfile-txt"><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file (text-based)</li>
       <li id="option:output-components"><b>--output-components=</b><i>string</i>. Output components (serialized, GZIPPED) to the given file.
- 
+
  Suggestion: use a .gz suffix in file name.</li>
       <li id="option:output-tests-serialized"><b>--output-tests-serialized=</b><i>string</i>. Output tests (sequences plus checkers) in serialized form to the given file.
- 
+
  Suggestion: use a .gz suffix in file name.</li>
     </ul>
   </li>
   <li id="optiongroup:Notifications">Notifications
     <ul>
       <li id="option:comm-port"><b>--comm-port=</b><i>int</i>. Randoop uses the specified port for output, in serialized form (used by Eclipse plugin).
- 
+
  If this value is not -1, Randoop relays information about the
  program's execution over a connection to the specified port on the
  local machine. Information is sent using a serialized
@@ -1018,7 +1018,7 @@ java -ea -classpath randoop.jar randoop.main.Main help --unpub gentests
   it easier for them to diagnose the problem, fix Randoop, and verify the
   fix.  This generally includes
   <ul>
-    <li>the version of Randoop (please use the most recent released version or the current version from the version control repository),</li> 
+    <li>the version of Randoop (please use the most recent released version or the current version from the version control repository),</li>
     <li>the exact commands you ran (we recommend using the <tt>-ea</tt> option to java when running Randoop, which makes diagnosis easier),</li>
     <li>the exact and complete output of the commands, and</li>
     <li>all the files that are necessary to run those commands.</li>

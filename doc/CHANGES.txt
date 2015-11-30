@@ -1,16 +1,18 @@
-Version 2.0.1, to be released
+Version 2.0.1, released November 30, 2015
+
+Fixed a bug in the variable names for generated array declarations.
 
 Randoop now generates tests involving fields (fixes issues #21 and #47).
 A Randoop-generated test previously only invoked methods; now the
 generated tests may access and set fields as well.  Use command-line
 option --omit-field-list to make Randoop ignore certain fields.
- 
+
 Randoop now includes enums in generated tests (fixes issue #17).
 
 JUnit now executes Randoop-generated tests in a deterministic order:
 in ascending order by name.
 
-The Randoop Eclipse plugin has moved into its own repository: 
+The Randoop Eclipse plugin has moved into its own repository:
 https://github.com/randoop/randoop-eclipse-plugin
 
 
