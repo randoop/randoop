@@ -12,7 +12,7 @@ import java.util.List;
  *
  * Randoop's main generator 
  * ({@link randoop.sequence.ForwardGenerator ForwardGenerator}) creates new
- * sequences by concatenation existing sequences and appending a
+ * sequences by concatenating existing sequences and appending a
  * statement at the end. A naive implementation of concatenation
  * copies the elements of the concatenated sub-sequences into a new
  * list. The first implementation of Sequence concatenation took this
@@ -36,7 +36,7 @@ import java.util.List;
  * element.
  * </ul>
  * <p>
- * When concantenating N Sequences to create a new sequence, we store the
+ * When concatenating N Sequences to create a new sequence, we store the
  * concatenated sequence statements in a ListofLists, which takes space (and
  * creation time) proportional to N, not to the length of the new sequence.
  * <p>

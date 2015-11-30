@@ -671,8 +671,8 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * extend adds a new statement to a sequence using the operation of the given statement.
-   * Intended as only place we reach inside a {@link Statement} for its operation.
+   * extend adds a new statement to this sequence using the operation of the given statement.
+   * Intended as the only place that we reach inside a {@link Statement} for its operation.
    * 
    * @param statement is a {@link Statement} object from which the operation is copied.
    * @param inputs is the list of variables for input.
@@ -785,12 +785,27 @@ public final class Sequence implements Serializable, WeightedElement {
     return inputsAsVariables;
   }
 
+  /**
+   * Appends the statement at the given index to the {@code StringBuilder}.
+   * 
+   * @param b  the {@link StringBuilder} to which the code is appended.
+   * @param index  the position of the statement to print in this {@code Sequence}.
+   */
   public void printStatement(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
     // Example: { "var2", "(int)3" }
     getStatement(index).appendCode(getVariable(index), getInputs(index), b);
   }
 
+  /**
+   * Adds the given operation to a new {@code Sequence} with the statements of
+   * this object as a prefix, repeating the operation the given number of times.
+   * Used during generation.
+   * 
+   * @param operation  the {@link Operation} to repeat.
+   * @param times  the number of times to repeat the {@link Operation}.
+   * @return a new {@code Sequence} 
+   */
   public Sequence repeat(Operation operation, int times) {
     Sequence retval = new Sequence(this.statements);
     for (int i = 0 ; i < times ; i++) {
@@ -813,6 +828,11 @@ public final class Sequence implements Serializable, WeightedElement {
     return retval;
   }
 
+  /**
+   * Creates a {@code MutableSequence} from this sequence.
+   * 
+   * @return a {@link MutableSequence} objects with the same statements as this object.
+   */
   public MutableSequence toModifiableSequence() {
     MutableSequence slowSeq = new MutableSequence();
     List<MutableVariable> values = new ArrayList<MutableVariable>();
@@ -822,19 +842,23 @@ public final class Sequence implements Serializable, WeightedElement {
     List<MutableStatement> statements = new ArrayList<MutableStatement>();
     for (int i = 0 ; i < size() ; i++) {
       Statement sti = this.statements.get(i);
-      //Operation st = sti.statement;
       List<MutableVariable> inputs = new ArrayList<MutableVariable>();
       for (Variable v : getInputs(i)) {
         inputs.add(values.get(v.index));
       }
       MutableStatement slowSti = sti.toModifiableStatement(inputs,values.get(i));
-      //  new MStatement(st, inputs, values.get(i));
       statements.add(slowSti);
     }
     slowSeq.statements = statements;
     return slowSeq;
   }
 
+  /**
+   * Checks whether the variable is defined in this sequence.
+   * 
+   * @param v  the {@link Variable} to test.
+   * @return true if this object defines the variable, and false otherwise.
+   */
   public boolean isOwnerOf(Variable v) {
     return this == v.sequence;
   }
@@ -843,9 +867,11 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a string representing this sequence. The string can be parsed back
    * into a sequence using the method Sequence.parse(String). In particular, the
    * following invariant holds:
-   *  <code>st.equals(parse(st.toParseableCode()))</code>
-   *  See the {@link #parse(List)} for the 
-   *  required format of a String representing a Sequence.
+   * <pre>
+   *  st.equals(parse(st.toParseableCode()))
+   * </pre>
+   * See the {@link #parse(List)} for the 
+   * required format of a String representing a Sequence.
    *  
    *  @return parseable string description of sequence.
    */
@@ -856,6 +882,8 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Like toParseableString, but the client can specify a string that
    * will be used a separator between statements.
+   * 
+   * @param statementSep  the statement separator.
    */
   public String toParseableString(String statementSep) {
     assert statementSep != null;
@@ -873,32 +901,32 @@ public final class Sequence implements Serializable, WeightedElement {
    * one statement. This method is similar to parse(String), but expects the
    * individual statements already as separate strings. Each statement is
    * expected to be of the form:
-   *
-   * VAR = STATEMENT_KIND : VAR ... VAR
-   *
-   * Where the VAR are strings representing a variable name, and STATEMENT_KIND
-   * is a string representing a StatementKind. For more on STATEMENT_KIND, see
-   * the documentation for StatementKinds.parse(String).
+   * <pre>
+   *   VAR = OPERATION : VAR ... VAR
+   * </pre>
+   * where the VAR are strings representing a variable name, and OPERATION
+   * is a string representing a StatementKind. For more on OPERATION, see
+   * the documentation for {@link OperationParser#parse(String)}.
    *
    * The first VAR token represents the "output variable" that is the result of
-   * the statement call. The VAR tokens appearing after STATEMENT_KIND represent
+   * the statement call. The VAR tokens appearing after OPERATION represent
    * the "input variables" to the statement call. At the i-th line, the input
    * variable tokens should appear as an output variable for some previous j-th
    * line, j &lt; i.
    *
    * Here is an example of a list of lines representing a sequence.
-   *
+   * <pre>
    * var0 = cons : java.util.HashMap.&lt;init&gt;() :
    * var1 = prim : double:-1.0 :
    * var2 = prim : java.lang.String:"hi!" :
    * var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
-   *
+   * </pre>
    * The above sequence corresponds to the following java code (with package
    * names omitted for brevity):
-   *
+   * <pre>
    * HashMap var0 = new HashMap(); double var1 = -1.0; String var2 = "hi!";
    * Object var3 = var0.put(var1, var2);
-   *
+   * </pre>
    * When writing/reading sequences out to file: you have two options: serialize
    * the sequences using java's serialization mechanism, or write them out as
    * parseable text. Serialization is faster, and text is human-readable.
@@ -1076,6 +1104,4 @@ public final class Sequence implements Serializable, WeightedElement {
     return (size() == 1 && getStatement(0).isPrimitiveInitialization());
   }
 
-
-  
 }

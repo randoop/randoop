@@ -17,7 +17,7 @@ public interface ReflectionPredicate {
    * @param c  the class to test.
    * @return true if the class meets the predicate criteria, false, otherwise.
    */
-  public boolean canUse(Class<?> c);
+  public boolean test(Class<?> c);
   
   /**
    * Indicate whether a method meets the use criteria for the predicate.
@@ -25,7 +25,7 @@ public interface ReflectionPredicate {
    * @param m  the method to test.
    * @return true if the method meets the predicate criteria, false, otherwise.
    */
-  public boolean canUse(Method m);
+  public boolean test(Method m);
   
   /**
    * Indicate whether a constructor meets the use criteria for the predicate.
@@ -33,7 +33,7 @@ public interface ReflectionPredicate {
    * @param m  the constructor to test.
    * @return true if the constructor meets the predicate criteria, false, otherwise.
    */
-  public boolean canUse(Constructor<?> m);
+  public boolean test(Constructor<?> m);
   
   /**
    * Indicate whether a field meets the criteria for the predicate.
@@ -41,6 +41,6 @@ public interface ReflectionPredicate {
    * @param f  the field to test.
    * @return true if the field meets the predicate criteria, false, otherwise.
    */
-  public boolean canUse(Field f);
+  public boolean test(Field f);
 
 }

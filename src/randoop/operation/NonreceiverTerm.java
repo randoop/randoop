@@ -316,7 +316,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
         throw new OperationParseException(msg);
     }
     
-    Object value = null;
+    Object value;
     if (type.equals(char.class)) {
       try {
         value = (char)Integer.parseInt(valString, 16);

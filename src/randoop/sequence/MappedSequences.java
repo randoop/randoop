@@ -60,7 +60,8 @@ public class MappedSequences<T> {
   }
 
   /**
-   * Returns all sequences by merging all of the sequence collections.
+   * Returns all sequences as the union of all of the sequence collections.
+   * 
    * @return the set of all sequence objects in this set of collections.
    */
   public Set<Sequence> getAllSequences() {

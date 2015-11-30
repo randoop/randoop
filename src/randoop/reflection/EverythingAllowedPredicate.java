@@ -8,20 +8,20 @@ import randoop.reflection.ReflectionPredicate;
 
 public class EverythingAllowedPredicate implements ReflectionPredicate {
 
-  public boolean canUse(Class<?> c) {
+  public boolean test(Class<?> c) {
     return true;
   }
 
-  public boolean canUse(Method m) {
+  public boolean test(Method m) {
     return true;
   }
 
-  public boolean canUse(Constructor<?> m) {
+  public boolean test(Constructor<?> m) {
     return true;
   }
 
   @Override
-  public boolean canUse(Field f) {
+  public boolean test(Field f) {
     return true;
   }
 

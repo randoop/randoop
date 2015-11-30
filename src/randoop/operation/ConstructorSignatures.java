@@ -43,7 +43,7 @@ public class ConstructorSignatures {
     String argsOneStr = signature.substring(openPar + 1, closePar);
     
     // Extract parameter types.
-    Class<?>[] argTypes = TypeArgumentList.getTypeArgumentsForString(argsOneStr);
+    Class<?>[] argTypes = TypeArguments.getTypeArgumentsForString(argsOneStr);
     
     Class<?> cls;
     try {
@@ -69,7 +69,7 @@ public class ConstructorSignatures {
     StringBuilder sb = new StringBuilder();
     sb.append(constructor.getName() + ".<init>(");
     Class<?>[] params = constructor.getParameterTypes();
-    TypeArgumentList.getTypeArgumentString(sb, params);
+    TypeArguments.getTypeArgumentString(sb, params);
     sb.append(")");
     return sb.toString();
   }

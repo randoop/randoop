@@ -72,7 +72,10 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
     = new LinkedHashMap<Class<?>, List<Method>>();
   
   public static boolean isObserverInvocation(Statement statement) {
-    return statement.isMethodIn(RegressionCaptureVisitor.observer_map.get(statement.getDeclaringClass()));
+    if (observer_map.containsKey(statement.getDeclaringClass())) {
+      return statement.isMethodIn(RegressionCaptureVisitor.observer_map.get(statement.getDeclaringClass()));
+    }
+    return false;
   }
 
 

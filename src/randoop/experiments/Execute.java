@@ -32,13 +32,14 @@ public class Execute {
       throw new Error(e);
     }
     for (String className : covClassNames) {
+      Class<?> cls;
       try {
-        Class<?> cls = TypeNames.getTypeForName(className);
-        System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
-        covClasses.add(cls);
-      } catch (ClassNotFoundException e1) {
+        cls = TypeNames.getTypeForName(className);
+       } catch (ClassNotFoundException e1) {
         throw new Error("Error finding coverage class " + e1);
       }
+      System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
+      covClasses.add(cls);
     }
     
     DataFlowInput dfin = DataFlowInput.parse(args[1]);

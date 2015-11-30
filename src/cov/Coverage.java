@@ -513,13 +513,12 @@ public class Coverage {
 
 
   /**
-   * getMemberContaining retrieves the class member that contains the {@link CoverageAtom}
+   * Retrieves the class member that contains the {@link CoverageAtom}
    * 
    * @param cov
-   * @return Returns null if this coverage atom does not belong to a method or
-   *         constructor.
-   * @throws IllegalArgumentException if {@link CoverageAtom} argument is null.
-   * @throws BugInRandoopException if {@link CoverageAtom} argument does not correspond to a class.
+   * @return Returns the method or constructor to which this {@code CoverageAtom} belongs.
+   * @throws IllegalArgumentException if {@code CoverageAtom} argument is null.
+   * @throws BugInRandoopException if {@code CoverageAtom} argument does not correspond to a class.
    */
   public static Member getMemberContaining(CoverageAtom cov) {
     if (cov == null) throw new IllegalArgumentException("cov cannot be null.");
@@ -535,19 +534,23 @@ public class Coverage {
 
   /**
    * Increments the count for the given branch by 1.
+   * 
+   * @param br  the branch to update.
    */
   public static void touch(Branch br) {
+    
+    Class<?> cls;
     try {
-      Class<?> cls = Class.forName(br.getClassName());
-      if (br.branch) {
-        getTrueBranches(cls)[br.branchNumber]++;
-      } else {
-        getFalseBranches(cls)[br.branchNumber]++;
-      }
+      cls = Class.forName(br.getClassName());
     } catch (ClassNotFoundException e) {
       throw new BugInRandoopException("Error in Coverage.touch: " + e);
     }
- 
+    
+    if (br.branch) {
+      getTrueBranches(cls)[br.branchNumber]++;
+    } else {
+      getFalseBranches(cls)[br.branchNumber]++;
+    }
   }
 
 }

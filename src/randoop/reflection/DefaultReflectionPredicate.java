@@ -54,11 +54,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     this.visibility = visibility;
   }
 
-  public boolean canUse(Class<?> c) {
+  public boolean test(Class<?> c) {
     return visibility.isVisible (c);
   }
 
-  public boolean canUse(Method m) {
+  public boolean test(Method m) {
 
     // If it's a main entry method, don't use it (we're doing unit
     // testing, not running programs).
@@ -187,7 +187,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     return null;
   }
 
-  public boolean canUse(Constructor<?> c) {
+  public boolean test(Constructor<?> c) {
 
     if (matchesOmitMethodPattern(c.toString())) {
       if (Log.isLoggingOn()) {
@@ -224,7 +224,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @return true if field name does not occur in omitFields pattern, and false if it does.
    */
   @Override
-  public boolean canUse(Field f) {
+  public boolean test(Field f) {
 
     if (omitFields == null) {
       return true;

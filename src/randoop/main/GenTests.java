@@ -205,7 +205,7 @@ public class GenTests extends GenInputsAbstract {
     for (Class<?> c : allClasses) {
       if (Modifier.isAbstract (c.getModifiers()) && !c.isEnum()) {
         System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
-      } else if ( !visibility.isVisible (c) ) {
+      } else if (! visibility.isVisible (c)) {
         System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
       } else {
         classes.add(c);
@@ -215,7 +215,7 @@ public class GenTests extends GenInputsAbstract {
     // Make sure each of the classes is visible.  Should really make sure
     // there is at least one visible constructor/factory in each class as well.
     for (Class<?> c : classes) {
-      if (!visibility.isVisible (c)) {
+      if (! visibility.isVisible (c)) {
         throw new Error ("Specified class " + c + " is not visible");
       }
     }
@@ -241,7 +241,7 @@ public class GenTests extends GenInputsAbstract {
     if (coverage_instrumented_classes != null) {
       File covClassesFile = new File(coverage_instrumented_classes);
       try {
-        covClasses = TypeReader.getTypesForFile(covClassesFile);
+        covClasses = ClassReader.getClassesForFile(covClassesFile);
       } catch (IOException e) {
         throw new Error(e);
       }

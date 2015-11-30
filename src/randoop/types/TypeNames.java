@@ -4,13 +4,20 @@ import randoop.util.PrimitiveTypes;
 
 import plume.UtilMDE;
 
+/**
+ * TypeNames provides a pair of static methods to:
+ * <ul>
+ * <li> get string names for classes and primitive types, and
+ * <li> get the {@link Class} object for a string representing a class or primitive type.
+ * </ul>
+ */
 public class TypeNames {
   
   /**
-   * Generates a name for the given type in a format that can be compiled.
+   * Returns a compilable Java name for the type.
    * 
-   * @param cls is the type for which name is to be generated.
-   * @return string that is a compilable version of type name.
+   * @param cls  the type for which name is to be generated
+   * @return string that is a compilable version of type name
    */
   public static String getCompilableName(Class<?> cls) {
     String retval = cls.getName();
@@ -36,9 +43,9 @@ public class TypeNames {
    * Returns {@link Class} object for a fully qualified class name or primitive 
    * type name.
    * 
-   * @param typeName a fully qualified class name or primitive type name.
-   * @return {@link Class} object for type given in string.
-   * @throws ClassNotFoundException if string is not a recognized type.
+   * @param typeName  a fully-qualified class name or primitive type name
+   * @return {@link Class} object for type given in string
+   * @throws ClassNotFoundException if string is not a recognized type
    */
   public static Class<?> getTypeForName(String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.getClassForName(typeName);

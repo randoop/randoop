@@ -100,14 +100,14 @@ public final class ClassComplexityCalculator {
   private int minComplexityOfSubclass(Class<?> c) {
     if (minComplexityOfSubclass.containsKey(c))
       return minComplexityOfSubclass.get(c);
-//  System.out.println("minComplexityOfSubclass:" + c);
-int result= Integer.MAX_VALUE;
-for (Class<?> clazz : h.subClasses(c)) {
-  if (isConcreteClass(clazz))
-    result= Math.min(result, internalClassComplexity(clazz));
-}
-minComplexityOfSubclass.put(c, result);
-return result;
+    //  System.out.println("minComplexityOfSubclass:" + c);
+    int result= Integer.MAX_VALUE;
+    for (Class<?> clazz : h.subClasses(c)) {
+      if (isConcreteClass(clazz))
+        result= Math.min(result, internalClassComplexity(clazz));
+    }
+    minComplexityOfSubclass.put(c, result);
+    return result;
   }
 
   class CircularityException extends RuntimeException{
@@ -128,7 +128,7 @@ return result;
     int classCount= 0;
     for (String arg : args) {
       String className = arg.substring(0, arg.length() - ".class".length());
-      System.out.println("loading " +className + " " + (classCount++) + " of " + args.length);
+      System.out.println("loading " + className + " " + (classCount++) + " of " + args.length);
       try {
         classes.add(TypeNames.getTypeForName(className));
       } catch (NoClassDefFoundError e) {

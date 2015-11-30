@@ -34,10 +34,11 @@ public class OperationExtractor implements ClassVisitor {
   private Set<Operation> operations;
  
   /**
-   * OperationExtractor() creates a visitor object that collects Operation objects corresponding
-   * to class members visited by {@link ReflectionManager}. Stores {@link Operation} objects in
-   * ordered set to ensure strict order once flattened to list --- needed to guarantee determinism
-   * between Randoop runs with same classes and parameters. 
+   * Creates a visitor object that collects Operation objects corresponding
+   * to class members visited by {@link ReflectionManager}. 
+   * Stores {@link Operation} objects in an ordered collection to ensure they
+   * are strictly ordered once flattened to a list. This is needed to guarantee 
+   * determinism between Randoop runs with the same classes and parameters. 
    */
   public OperationExtractor() {
     this.operations = new TreeSet<>();
@@ -48,12 +49,12 @@ public class OperationExtractor implements ClassVisitor {
   }
   
   /**
-   * getStatements collects the methods, constructor and enum constants for a collection of classes.
-   * Returns a filtered list of StatementKind objects.
+   * Collects the members of a collection of classes.
+   * Returns a filtered list of {@code Operation} objects.
    * 
-   * @param classListing collection of class objects from which to extract.
-   * @param predicate filter object determines whether method/constructor/enum constant can be used.
-   * @return list of StatementKind objects representing filtered set.
+   * @param classListing  the collection of class objects from which to extract.
+   * @param predicate  determines whether to include class members in results.
+   * @return list of {@code Operation} objects satisfying the predicate.
    */
   public static List<Operation> getOperations(Collection<Class<?>> classListing, ReflectionPredicate predicate) {
     if (predicate == null) predicate = new DefaultReflectionPredicate();
@@ -67,9 +68,9 @@ public class OperationExtractor implements ClassVisitor {
   }
 
   /**
-   * visit(Constructor) creates a {@link ConstructorCall} object for the {@link Constructor}.
+   * Creates a {@link ConstructorCall} object for the {@link Constructor}.
    * 
-   * @param c a {@link Constructor} object to be represented as an {@link Operation}.
+   * @param c  a {@link Constructor} object to be represented as an {@link Operation}.
    */
   @Override
   public void visit(Constructor<?> c) {
@@ -77,40 +78,40 @@ public class OperationExtractor implements ClassVisitor {
   }
 
   /**
-   * visit(Method) creates a {@link MethodCall} object for the {@link Method}.
+   * Creates a {@link MethodCall} object for the {@link Method}.
    * 
-   * @param m a {@link Method} object to be represented as an {@link Operation}.
+   * @param method  a {@link Method} object to be represented as an {@link Operation}.
    */
   @Override
-  public void visit(Method m) {
-    operations.add(new MethodCall(m));
+  public void visit(Method method) {
+    operations.add(new MethodCall(method));
   }
 
   /**
-   * visit(Field) adds the {@link Operation} objects corresponding to 
+   * Adds the {@link Operation} objects corresponding to 
    * getters and setters appropriate to the kind of field.
    * 
-   * @param f a {@link Field} object to be represented as an {@link Operation}.
+   * @param field  a {@link Field} object to be represented as an {@link Operation}.
    */
   @Override
-  public void visit(Field f) {
-    int mods = f.getModifiers();
+  public void visit(Field field) {
+    int mods = field.getModifiers();
     
     if (Modifier.isStatic(mods)) {
       if (Modifier.isFinal(mods)) {
-        StaticFinalField s = new StaticFinalField(f);
+        StaticFinalField s = new StaticFinalField(field);
         operations.add(new FieldGetter(s));
       } else {
-        StaticField s = new StaticField(f);
+        StaticField s = new StaticField(field);
         operations.add(new FieldGetter(s));
         operations.add(new FieldSetter(s));
       }
     } else {
       if (Modifier.isFinal(mods)) {
-        FinalInstanceField i = new FinalInstanceField(f);
+        FinalInstanceField i = new FinalInstanceField(field);
         operations.add(new FieldGetter(i));
       } else {
-        InstanceField i = new InstanceField(f);
+        InstanceField i = new InstanceField(field);
         operations.add(new FieldGetter(i));
         operations.add(new FieldSetter(i));
       }
@@ -118,7 +119,7 @@ public class OperationExtractor implements ClassVisitor {
   }
 
   /**
-   * visit(Enum) creates a {@link EnumConstant} object for the {@link Enum}.
+   * Creates a {@link EnumConstant} object for the {@link Enum}.
    * 
    * @param e an {@link Enum} object to be represented as an {@link Operation}.
    */

@@ -67,7 +67,7 @@ public class ReflectionManager {
    */
   public void apply(Class<?> c) {
     
-    if (predicate.canUse(c)) {
+    if (predicate.test(c)) {
 
       if (Log.isLoggingOn()) Log.logLine("Applying visitors to class " + c.getName());
 
@@ -81,19 +81,19 @@ public class ReflectionManager {
           if (Log.isLoggingOn()) {
             Log.logLine(String.format("Considering method %s", m));
           }
-          if (predicate.canUse(m)) {
+          if (predicate.test(m)) {
             visitMethod(m);
           }
         }
 
         for (Constructor<?> co : c.getDeclaredConstructors()) {
-          if (predicate.canUse(co)) {
+          if (predicate.test(co)) {
             visitConstructor(co);
           }   
         }
 
         for (Class<?> ic : c.getDeclaredClasses()) { //look for inner enums
-          if (ic.isEnum() && predicate.canUse(ic)) {
+          if (ic.isEnum() && predicate.test(ic)) {
             applyEnum(ic);
           }
         }
@@ -138,7 +138,7 @@ public class ReflectionManager {
     }
     //get methods that are explicitly declared in the enum
     for (Method m : c.getDeclaredMethods()) {
-      if (predicate.canUse(m)) {
+      if (predicate.test(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
           visitMethod(m);
         }
@@ -146,7 +146,7 @@ public class ReflectionManager {
     }
     //get any inherited methods also declared in anonymous class of some constant
     for (Method m : c.getMethods()) { 
-      if (predicate.canUse(m) && overrideMethods.contains(m.getName())) {
+      if (predicate.test(m) && overrideMethods.contains(m.getName())) {
         visitMethod(m);
       }
     }
@@ -168,7 +168,7 @@ public class ReflectionManager {
     }
     for (Field f : c.getFields()) { //for all public fields
       //keep a field that satisfies filter, and is not inherited and hidden by local declaration
-      if (predicate.canUse(f) && 
+      if (predicate.test(f) && 
           (!declaredNames.contains(f.getName()) || 
               c.equals(f.getDeclaringClass()))) {
         visitField(f);

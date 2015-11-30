@@ -351,7 +351,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * @return true if this method is static, and false, otherwise.
+   * @return true if this method is static, and false otherwise.
    */
   @Override
   public boolean isStatic() {
@@ -405,7 +405,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * @return true if method called by this object is in the given list.
    */
   public boolean callsMethodIn(List<Method> list) {
-    return list != null && list.contains(method);
+    return list.contains(method);
   }
 
   /**
@@ -436,7 +436,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {
-    return predicate.canUse(method);
+    return predicate.test(method);
   }
   
 }

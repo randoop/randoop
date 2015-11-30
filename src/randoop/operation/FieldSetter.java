@@ -29,7 +29,7 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
   /**
    * Creates a setter {@link Operation} object for a field of a class.
    * Throws an exception if the field is static final.
-   * @param field – field object to be set by setter statements.
+   * @param field  the field object to be set by setter statements.
    * @throws IllegalArgumentException if field is static final.
    */
   public FieldSetter(PublicField field) {
@@ -43,7 +43,7 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
   }
 
   /** 
-   * getInputTypes returns the input types for a field treated as a setter.
+   * Returns the input types for a field treated as a setter.
    * @return list consisting of types of values needed to set the field.
    */
   @Override
@@ -52,7 +52,7 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
   }
 
   /**
-   * getOutputType returns object for void type since since represents
+   * Returns object for void type since since represents
    * setter for field.
    */
   @Override
@@ -68,8 +68,8 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
    * exceptions that occur because the field is not valid or accessible 
    * (specifically {@link IllegalArgumentException} and {@link IllegalAccessException}).
    * 
-   * @param statementInput - inputs for statement.
-   * @param out - stream for printing output (unused).
+   * @param statementInput  the inputs for statement.
+   * @param out  the stream for printing output (unused).
    * @return outcome of access, either void normal execution or captured exception.
    * @throws BugInRandoopException if field access throws bug exception.
    */
@@ -85,28 +85,30 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
     }
      
     try {
-      
       field.setValue(instance,input);
-      return new NormalExecution(null,0);
-      
     } catch (BugInRandoopException e) {
       throw e;
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown,0);
     }
     
+    return new NormalExecution(null,0);
   }
 
   /**
    * Generates code for setting a field.
-   * Should look like<br>
-   *   <code>field = value;</code><br>
-   * or<br>
-   * <code>field = variable;</code>   
+   * Should look like
+   * <pre>
+   *   field = value;
+   * </pre>
+   * or
+   * <pre>
+   *   field = variable;
+   * </pre>   
    * 
-   * @param inputVars - list of input variables. Last element is value to assign. 
+   * @param inputVars  the list of input variables. Last element is value to assign. 
    *                    If an instance field, first is instance, second is value. 
-   * @param b - StringBuilder to which code is issued. 
+   * @param b  the StringBuilder to which code is issued. 
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
@@ -135,7 +137,7 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
    * Returns the string descriptor for field that can be parsed by
    * {@link PublicFieldParser}.
    * 
-   * @return parseable string descriptor for this setter.
+   * @return the parseable string descriptor for this setter.
    */
   @Override
   public String toParseableString() {

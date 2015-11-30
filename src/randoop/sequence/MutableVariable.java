@@ -2,6 +2,7 @@ package randoop.sequence;
 
 /**
  * A variable that is part of a mutable sequence.
+ * @see MutableSequence
  */
 public class MutableVariable {
 

@@ -49,6 +49,13 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
     return isVisible(f.getModifiers());
   }
   
+  /**
+   * Returns true if the {@link java.lang.reflect.Modifier Modifier} value
+   * does not have private set.
+   * 
+   * @param mods  the modifiers value.
+   * @return true if the private bit is not set, false otherwise.
+   */
   private boolean isVisible(int mods) {
     return !Modifier.isPrivate(mods);
   }

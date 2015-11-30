@@ -73,7 +73,6 @@ public class PublicFieldParser {
       throw new OperationParseException(msg);
     }
 
-
     Class<?> type;
     try {
       type = TypeNames.getTypeForName(typeName);
@@ -81,7 +80,6 @@ public class PublicFieldParser {
       String msg = errorPrefix + " The type given \"" + typeName +"\" was not recognized.";
       throw new OperationParseException(msg);
     }
-
 
     if (className.isEmpty()) {
       String msg = errorPrefix + " The field name given \"" + qualifiedFieldName + "\" has no class name.";

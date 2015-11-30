@@ -179,7 +179,7 @@ public class JunitFileWriter {
   }
   
   /**
-   * Generates the list of test class names for previously generated test suite.
+   * Generates the list of test class names for previously generated test suites.
    * 
    * @return list of class names.
    */

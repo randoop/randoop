@@ -29,14 +29,15 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   /**
    * FieldGetter sets the public field for the getter statement.
    * 
-   * @param field - PublicField object from which to get values.
+   * @param field the {@link PublicField} object from which to get values.
    */
   public FieldGetter(PublicField field) {
     this.field = field;
   }
 
   /**
-   * getInputTypes returns the types required to access the field.
+   * Returns the types required to access the field.
+   * 
    * @return singleton list if field is instance field, empty if static
    */
   @Override
@@ -53,13 +54,13 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   }
 
   /**
-   * execute performs computation – getting value of field or capturing thrown exceptions.
+   * Performs computation of getting value of field or capturing thrown exceptions.
    * Exceptions should only be NullPointerException, which happens when input is null but 
    * field is an instance field. {@link PublicField#getValue(Object)} suppresses exceptions
    * that occur because field is not valid or accessible.
    * 
-   * @param statementInput - inputs for statement.
-   * @param out - stream for printing output (unused).
+   * @param statementInput  the inputs for statement.
+   * @param out  the stream for printing output (unused).
    * @return outcome of access.
    * @throws BugInRandoopException if field access throws bug exception.
    */
@@ -84,10 +85,11 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   }
 
   /**
-   * appendCode adds the text for an initialization of a variable from a field to 
+   * Adds the text for an initialization of a variable from a field to 
    * the StringBuilder.
-   * @param inputVars - list of variables to be used (ignored).
-   * @param b - StringBuilder that strings are appended to.
+   * 
+   * @param inputVars  the list of variables to be used (ignored).
+   * @param b  the StringBuilder that strings are appended to.
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
@@ -95,7 +97,7 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   }
 
   /**
-   * toParseableString returns string descriptor for field that can be parsed by
+   * Returns string descriptor for field that can be parsed by
    * PublicFieldParser.
    */
   @Override
@@ -121,14 +123,14 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   public int hashCode() { return field.hashCode(); }
 
   /**
-   * Parses a getter for a field in a string.
+   * Parses a getter for a field from a string.
    * A getter description has the form "&lt;get&gt;( field-descriptor )"
    * where &lt;get&gt;" is literal ("&lt;" and "&gt;" included), and field-descriptor
    * is as recognized by {@link PublicFieldParser#parse(String)}.
    * @see PublicFieldParser#parse(String)
    * 
    * @param descr  the string containing descriptor of getter for a field.
-   * @return the getter object in string.
+   * @return the getter object for the descriptor.
    * @throws OperationParseException if any error in descriptor string
    */
   public static FieldGetter parse(String descr) throws OperationParseException {

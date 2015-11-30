@@ -27,7 +27,7 @@ import randoop.sequence.Variable;
  * {@link Class} objects, and the output type is a single {@link Class} object. 
  * <p>
  * For a non-static method call or instance field access, the first input type
- * is always the class to which the method or field belongs. If we have a method 
+ * is always the declaring class of the method or field. If we have a method 
  * <code>int A.m(double d)</code>, it is represented as an operation 
  * m : [A, double] &rarr; int. 
  * A value, such as an int or enum constant, can be represented as an operation 
@@ -114,16 +114,16 @@ public interface Operation extends Comparable<Operation> {
   /**
    * Predicate to indicate whether object represents a method-call-like 
    * operation (either static or instance). 
-   * This include non-method operations that access fields.
+   * This includes field getters and setters, which are operations that access
+   * fields.
    * 
    * @return true if operation is method-like, and false otherwise.
    */
   boolean isMessage();
 
   /**
-   * Returns the type to which the operation belongs. 
-   * If a constructor or value, then the type should be the same as the output 
-   * type.
+   * Returns the class in which the operation is defined, or, if the operation
+   * represents a value, the type of the value.
    * 
    * @return class to which the operation belongs.
    */
@@ -138,7 +138,7 @@ public interface Operation extends Comparable<Operation> {
 
   /**
    * Predicate to indicate whether this object represents a value of a
-   * non-receiving type (includes numbers, strings and null).
+   * non-receiving type (includes numbers, strings, and null).
    * 
    * @return true if object is a non-receiving value, and false, otherwise.
    */

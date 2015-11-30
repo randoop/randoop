@@ -15,8 +15,7 @@ import randoop.util.CollectionsExt;
 import randoop.util.Reflection;
 
 /**
- * A sequence that can be mutated (unlike a Sequence, which is immutable).
- * The "M" stands for "Mutable".
+ * A sequence that can be mutated (unlike a {@code Sequence}, which is immutable).
  */
 public class MutableSequence {
 

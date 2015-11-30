@@ -299,10 +299,10 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * predicate.
    * 
    * @return true only if the constructor in this object satisfies the 
-   * {@link ReflectionPredicate#canUse(Constructor)} implemented by predicate.
+   * {@link ReflectionPredicate#test(Constructor)} implemented by predicate.
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {
-    return predicate.canUse(constructor);
+    return predicate.test(constructor);
   }
 }

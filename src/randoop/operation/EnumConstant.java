@@ -12,9 +12,11 @@ import randoop.types.TypeNames;
 
 /**
  * EnumConstant is an {@link Operation} representing a constant value from an enum.
- * 
- * As a formal operation, a constant named BLUE from the enum Colors is an operation 
- * BLUE : [] &rarr; Colors. Execution simply returns the constant value. 
+ * <p>
+ * Using the formal notation in {@link Operation}, a constant named BLUE from 
+ * the enum Colors is an operation BLUE : [] &rarr; Colors.
+ * <p> 
+ * Execution simply returns the constant value. 
  */
 public class EnumConstant extends AbstractOperation implements Operation, Serializable {
   

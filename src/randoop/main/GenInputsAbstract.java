@@ -581,7 +581,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (classlist != null) {
       File classListingFile = new File(classlist);
       try {
-        classes.addAll(TypeReader.getTypesForFile(classListingFile));
+        classes.addAll(ClassReader.getClassesForFile(classListingFile));
       } catch (Exception e) {
         String msg = Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
         System.out.println(msg);
@@ -593,7 +593,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     if (silently_ignore_bad_class_names) {
       errorHandler = new WarnOnBadClassName();
     }
-    classes.addAll(TypeReader.getTypesForNames(testclass, errorHandler));
+    classes.addAll(ClassReader.getClassesForNames(testclass, errorHandler));
 
     return classes;
   }

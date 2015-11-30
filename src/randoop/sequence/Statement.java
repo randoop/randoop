@@ -25,7 +25,9 @@ public final class Statement implements Serializable {
 
   private static final long serialVersionUID = -6876369784900176443L;
 
-  // The operation (method call, constructor call, primitive values declaration, etc.).
+  /**
+   * The operation (method call, constructor call, primitive values declaration, etc.).
+   */
   private final Operation operation;
 
   // The list of values used as input to the statement.
@@ -66,7 +68,8 @@ public final class Statement implements Serializable {
 
   /**
    * equals tests whether two Statement objects are equal:
-   * @return true if operation is the same, the number of inputs are the same, and inputs are equal.
+   * @return true if operation is the same, the number of inputs is the same, 
+   *         and inputs are equal.
    */
   @Override
   public boolean equals(Object obj) {
@@ -93,12 +96,7 @@ public final class Statement implements Serializable {
 
   @Override
   public int hashCode() {
-    int retval = 5;
-    retval += 7 ^ operation.hashCode();
-    for (int i = 0; i < inputs.size(); i++) {
-      retval += 13 ^ inputs.get(i).index;
-    }
-    return retval;
+    return java.util.Objects.hash(operation, inputs);
   }
 
   public Class<?> getOutputType() {
@@ -109,6 +107,14 @@ public final class Statement implements Serializable {
     return operation.getInputTypes();
   }
 
+  /**
+   * Adds code for the statement to the given {@code StringBuilder}.
+   * @see Sequence#printStatement(StringBuilder, int)
+   * 
+   * @param variable  the {@link Variable} to be used if an initialization.
+   * @param inputs  the input list for the operation of the statement.
+   * @param b  the {@code StringBuilder} to which code text is appended.
+   */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
     if (!isVoidMethodCall()) {
       Class<?> type = operation.getOutputType();

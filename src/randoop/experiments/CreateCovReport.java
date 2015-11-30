@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
-import randoop.main.TypeReader;
+import randoop.main.ClassReader;
 import randoop.sequence.Sequence;
 
 import cov.Branch;
@@ -65,7 +65,7 @@ public class CreateCovReport {
     List<Class<?>> covClasses = new ArrayList<Class<?>>();
     File covClassesFile = new File(input_cov_class_list);
     try {
-      covClasses = TypeReader.getTypesForFile(covClassesFile);
+      covClasses = ClassReader.getClassesForFile(covClassesFile);
     } catch (IOException e) {
       throw new Error(e);
     }

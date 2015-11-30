@@ -118,15 +118,16 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
     @Override
     public boolean hasNext() {
-      return (listIterator.hasNext() || (elemIterator != null && elemIterator.hasNext()));
+      while (listIterator.hasNext() 
+          && (elemIterator == null || !(elemIterator.hasNext()))) {
+        elemIterator = listIterator.next().iterator();
+      }
+      return elemIterator != null && elemIterator.hasNext();
     }
 
     @Override
     public T next() {
-      if (elemIterator != null) {
-        if (!elemIterator.hasNext()) {
-          elemIterator = listIterator.next().iterator();
-        }
+      if (this.hasNext()) {
         return elemIterator.next();
       }
       throw new NoSuchElementException("end of ListOfLists reached");
@@ -134,7 +135,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     
     @Override
     public void remove() {
-      //does nothing
+      throw new UnsupportedOperationException();
     }
     
   }

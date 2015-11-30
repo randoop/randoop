@@ -8,16 +8,16 @@ public class OperationParser {
 
   /**
    * Parses a string representing a StatementKind. The string is expected to be
-   * of the form:<br>
-   * 
-   * ID : DESCRIPTION<br>
-   * 
+   * of the form:
+   * <pre>
+   *   ID : DESCRIPTION
+   * </pre>
    * Where ID is a string identifying the type of StatementKind, and DESCRIPTION
    * represents more specifics of the StatementKind. For example, the following
    * String represents the constructor for HashMap:
-   * <p>
-   * cons : java.util.HashMap.&lt;init&gt;()
-   * <p>
+   * <pre>
+   *   cons : java.util.HashMap.&lt;init&gt;()
+   * </pre>
    * A class implementing StatementKind should define a static field named ID
    * that corresponds to the ID string used when parsing. The way this parse
    * method works is by using the ID string to determine the specific

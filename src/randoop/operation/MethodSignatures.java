@@ -39,7 +39,7 @@ public class MethodSignatures {
     String argsOneStr = signature.substring(openPar + 1, closePar);
     
     // Extract parameter types.
-    Class<?>[] argTypes = TypeArgumentList.getTypeArgumentsForString(argsOneStr);
+    Class<?>[] argTypes = TypeArguments.getTypeArgumentsForString(argsOneStr);
     
     Class<?> cls;
     try {
@@ -65,7 +65,7 @@ public class MethodSignatures {
     sb.append(method.getDeclaringClass().getName() + ".");
     sb.append(method.getName() + "(");
     Class<?>[] params = method.getParameterTypes();
-    TypeArgumentList.getTypeArgumentString(sb, params);
+    TypeArguments.getTypeArgumentString(sb, params);
     sb.append(")");
     return sb.toString();
   }

@@ -22,19 +22,20 @@ public class FailureSet {
   private Set<Failure> failures = new LinkedHashSet<Failure>();
   
   /**
-   * FailureSet.Failure represents an execution failure and holds the
-   * statement and class where the failure occurred.
+   * Represents an execution failure, and holds the
+   * statement where the failure occurred, and the type of contract that 
+   * was violated.
    *
    */
   public static class Failure {
     
     /**
-     * statement is the statement in the {@link ExecutableSequence} where the failure occurred.
+     * The statement in the {@link ExecutableSequence} where the failure occurred.
      */
     public final Statement statement;
     
     /**
-     * violationClass is the type of the {@link ObjectContract}
+     * The type of the {@link ObjectContract} that was violated.
      */
     public final Class<?> violationClass;
     
@@ -59,6 +60,11 @@ public class FailureSet {
     }
   }
 
+  /**
+   * Constructs the failure set for the given executable sequence.
+   * 
+   * @param es  the executable sequence
+   */
   public FailureSet(ExecutableSequence es) {
     int idx = es.getFailureIndex();
     

@@ -80,7 +80,7 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
     
     @Override
     public void remove() {
-      //does nothing
+      throw new UnsupportedOperationException();
     }
   }
 }

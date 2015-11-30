@@ -183,7 +183,7 @@ public abstract class PublicField implements Serializable {
    * @return true if this.field satisfies predicate.canUse(field).
    */
   public boolean satisfies(ReflectionPredicate predicate) {
-    return predicate.canUse(field);
+    return predicate.test(field);
   }
   
 }
