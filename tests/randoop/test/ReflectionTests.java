@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.Globals;
-import randoop.main.TypeReader;
+import randoop.main.ClassReader;
 import randoop.operation.MethodSignatures;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -80,7 +80,7 @@ public class ReflectionTests extends TestCase{
 
     List<Class<?>> expected = Collections.emptyList();
 
-    assertEquals(expected, TypeReader.getTypesForReader(br, "empty reader"));     
+    assertEquals(expected, ClassReader.getClassesForReader(br, "empty reader"));     
     r.close(); br.close();
   }
 
@@ -92,7 +92,7 @@ public class ReflectionTests extends TestCase{
 
     List<Class<String>> expected = Arrays.<Class<String>>asList(java.lang.String.class);
 
-    assertEquals(expected, TypeReader.getTypesForReader(br, "reader with java.lang.String"));     
+    assertEquals(expected, ClassReader.getClassesForReader(br, "reader with java.lang.String"));     
     r.close(); br.close();
   }
 
@@ -107,7 +107,7 @@ public class ReflectionTests extends TestCase{
 
     List<Class<?>> expected = Arrays.<Class<?>>asList(java.util.List.class, AbstractList.class, ArrayList.class, Object.class);
 
-    assertEquals(expected, TypeReader.getTypesForReader(br, "reader with List, AbstractList, ArrayList, Object"));
+    assertEquals(expected, ClassReader.getClassesForReader(br, "reader with List, AbstractList, ArrayList, Object"));
     r.close(); br.close();
   }
 

@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import randoop.experiments.RandomWalkGenerator;
-import randoop.main.TypeReader;
+import randoop.main.ClassReader;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
 import randoop.reflection.OperationExtractor;
@@ -19,7 +19,7 @@ public class NaivePerformanceTest extends AbstractPerformanceTest {
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
     List<Operation> model =
-      OperationExtractor.getOperations(TypeReader.getTypesForStream(classStream, resourcename),null);
+      OperationExtractor.getOperations(ClassReader.getClassesForStream(classStream, resourcename),null);
     assertFalse("model should not be empty", model.isEmpty());
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
