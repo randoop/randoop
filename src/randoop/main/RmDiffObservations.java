@@ -68,7 +68,7 @@ public class RmDiffObservations extends CommandHandler {
     }
 
     // If an initializer routine was specified, execute it
-    GenTests.execute_init_routine(3);
+    GenTests.executeInitializationRoutine(3);
 
     // Read the list of sequences from the serialized file
     List<ExecutableSequence> seqs = GenTests.read_sequences(input_file);

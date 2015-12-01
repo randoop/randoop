@@ -3,8 +3,6 @@ package randoop.operation;
 /**
  * ClassWithFields is a class used for tests of handling of 
  * public fields in setting up for test generation.
- * 
- * @author bjkeller
  *
  */
 public class ClassWithFields {
@@ -16,9 +14,12 @@ public class ClassWithFields {
   public static int fourField = 4;
   public static final int FIVEFIELD = 5;
   public static int sixField = 6;
+  @SuppressWarnings("unused")
   private int sevenField = 7;
+  @SuppressWarnings("unused")
   private static int eightField = 8;
   protected int nineField = 9;
+  public final int tenField = 10;
   
   public int oneMethod() {
     return 0;

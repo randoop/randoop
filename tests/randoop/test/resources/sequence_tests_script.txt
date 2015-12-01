@@ -9,7 +9,7 @@ SEQUENCE
 i0 =  prim : int:3 :
 
 EXPECTED_CODE
-java.lang.Integer i0 = new java.lang.Integer(3);
+int i0 = 3;
 
 END TEST
 
@@ -59,7 +59,7 @@ i0 =  prim : int:3 :
 arrayList1 =  cons : java.util.ArrayList.<init>(int) : i0
 
 EXPECTED_CODE
-java.lang.Integer i0 = new java.lang.Integer(3);
+int i0 = 3;
 java.util.ArrayList arrayList1 = new java.util.ArrayList(i0);
 
 END TEST
@@ -77,7 +77,7 @@ i1 =  cons : java.lang.Integer.<init>(int) : i0
 arrayList2 =  cons : java.util.ArrayList.<init>(int) : i1
 
 EXPECTED_CODE
-java.lang.Integer i0 = new java.lang.Integer(3);
+int i0 = 3;
 java.lang.Integer i1 = new java.lang.Integer(i0);
 java.util.ArrayList arrayList2 = new java.util.ArrayList((int)i1);
 // Regression assertion (captures the current behavior of the code)
@@ -99,7 +99,7 @@ arrayList1 =  cons : java.util.ArrayList.<init>(int) : i0
 b2 =  method : java.util.ArrayList.add(java.lang.Object) : arrayList1 i0
 
 EXPECTED_CODE
-java.lang.Integer i0 = new java.lang.Integer(3);
+int i0 = 3;
 java.util.ArrayList arrayList1 = new java.util.ArrayList(i0);
 boolean b2 = arrayList1.add((java.lang.Object)i0);
 // Regression assertion (captures the current behavior of the code)
@@ -121,7 +121,7 @@ b2 =  method : java.util.ArrayList.add(java.lang.Object) : arrayList1 i0
 b3 =  method : java.util.ArrayList.add(java.lang.Object) : arrayList1 i0
 
 EXPECTED_CODE
-java.lang.Integer i0 = new java.lang.Integer(3);
+int i0 = 3;
 java.util.ArrayList arrayList1 = new java.util.ArrayList(i0);
 boolean b2 = arrayList1.add((java.lang.Object)i0);
 boolean b3 = arrayList1.add((java.lang.Object)i0);
@@ -144,7 +144,7 @@ long0 =  prim : long:100 :
 byte1 =  method : java.lang.Long.byteValue() : long0
 
 EXPECTED_CODE
-java.lang.Long long0 = new java.lang.Long(100L);
+long long0 = 100L;
 byte byte1 = ((java.lang.Long)long0).byteValue();
 // Regression assertion (captures the current behavior of the code)
 org.junit.Assert.assertTrue(byte1 == (byte)100);
@@ -163,7 +163,7 @@ long0 =  prim : long:-100 :
 byte1 =  method : java.lang.Long.byteValue() : long0
 
 EXPECTED_CODE
-java.lang.Long long0 = new java.lang.Long((-100L));
+long long0 = (-100L);
 byte byte1 = ((java.lang.Long)long0).byteValue();
 // Regression assertion (captures the current behavior of the code)
 org.junit.Assert.assertTrue(byte1 == (byte)(-100));
@@ -183,7 +183,7 @@ arrayList1 =  cons : java.util.ArrayList.<init>() :
 obj2 =  method : java.util.ArrayList.get(int) : arrayList1 i0
 
 EXPECTED_CODE
-java.lang.Integer i0 = new java.lang.Integer((-1));
+int i0 = (-1);
 java.util.ArrayList arrayList1 = new java.util.ArrayList();
 // The following exception was thrown during execution.
 // This behavior will recorded for regression testing.
@@ -215,7 +215,7 @@ void6 =  method : ps1.RatTermVec.addElement(ps1.RatTerm) : ratTermVec4 ratTerm5
 void7 =  method : ps1.RatTermVec.addElement(ps1.RatTerm) : ratTermVec4 ratTerm5
 
 EXPECTED_CODE
-java.lang.Integer i0 = new java.lang.Integer(0);
+int i0 = 0;
 ps1.RatNum ratNum1 = new ps1.RatNum(i0);
 ps1.RatTermVec ratTermVec2 = new ps1.RatTermVec();
 ps1.RatTermVec ratTermVec3 = ratTermVec2.copy();

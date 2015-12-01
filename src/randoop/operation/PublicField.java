@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import randoop.BugInRandoopException;
+import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 
 /**
@@ -18,8 +19,11 @@ import randoop.sequence.Variable;
  * @see InstanceField
  * @see StaticField
  * @see StaticFinalField
+<<<<<<< HEAD
+=======
  *
  * @author bjkeller
+>>>>>>> master
  *
  */
 public abstract class PublicField implements Serializable {
@@ -29,16 +33,16 @@ public abstract class PublicField implements Serializable {
   private Field field;
 
   /**
-   * PublicField sets the {@link Field} object for the public field.
-   *
-   * @param field
+   * Create the public field object for the given {@code Field}.
+   * 
+   * @param field  the field.
    */
   public PublicField(Field field) {
     this.field = field;
   }
 
   /**
-   * getSetTypes returns a list of types needed to set a field.
+   * Returns a list of types needed to set a field.
    * What is returned depends on the implementing class.
    *
    * @return list of types needed to set the field.
@@ -46,14 +50,14 @@ public abstract class PublicField implements Serializable {
   public abstract List<Class<?>> getSetTypes();
 
   /**
-   * getAccessTypes returns a list of types needed to access the field.
+   * Returns a list of types needed to access the field.
    *
    * @return a singleton list with declaring class, or an empty list
    */
   public abstract List<Class<?>> getAccessTypes();
 
   /**
-   * getDeclaringClass returns the class in which the field is a member.
+   * Returns the class in which the field is a member.
    *
    * @return class where field is declared.
    */
@@ -62,7 +66,7 @@ public abstract class PublicField implements Serializable {
   }
 
   /**
-   * getType returns the type of the values held by the field.
+   * Returns the type of the values held by the field.
    *
    * @return object representing type of field.
    */
@@ -71,7 +75,7 @@ public abstract class PublicField implements Serializable {
   }
 
   /**
-   * getName returns the declared name of the field.
+   * Returns the declared name of the field.
    * @return unqualified name of the field.
    */
   public String getName() {
@@ -79,16 +83,16 @@ public abstract class PublicField implements Serializable {
   }
 
   /**
-   * toCode translates field into a string representing fully qualified
+   * Translates field into a string representing fully qualified
    * name.
    *
-   * @param inputVars - list of input variables
+   * @param inputVars  list of input variables
    * @return string representing code representation of field.
    */
   public abstract String toCode(List<Variable> inputVars);
 
   /**
-   * toParseableString returns a string descriptor of a field that can be parsed by
+   * Returns a string descriptor of a field that can be parsed by
    * {@link PublicFieldParser#parse(String)}.
    *
    * @return String for type-field pair describing field.
@@ -97,6 +101,9 @@ public abstract class PublicField implements Serializable {
     return field.getType().getName() + ":" + field.getDeclaringClass().getName() + "." + field.getName();
   }
 
+  /**
+   * Uses {@link PublicField#toParseableString()} to create string representation.
+   */
   @Override
   public String toString() {
     return toParseableString();
@@ -117,7 +124,7 @@ public abstract class PublicField implements Serializable {
   }
 
   /**
-   * getValue uses reflection to return the value of the field for the given object.
+   * Uses reflection to return the value of the field for the given object.
    * Suppresses exceptions that occur because PublicField was not correctly initialized.
    *
    * @param object - instance to which field belongs, or null if field is static.
@@ -137,7 +144,7 @@ public abstract class PublicField implements Serializable {
   }
 
   /**
-   * setValue uses reflection to set the value of the field for the given object.
+   * Uses reflection to set the value of the field for the given object.
    * Suppresses exceptions that occur because setup was incorrect.
    *
    * @param object - instance to which field belongs, or null if static.
@@ -155,13 +162,33 @@ public abstract class PublicField implements Serializable {
   }
 
   /**
-   * writeReplace creates {@link Serializable} version of field.
-   *
-   * @return representation of field.
+   * Converts this object to a form that can be serialized.
    * @see SerializablePublicField
+   * 
+   * @return serializable form of this object
+   * @throws ObjectStreamException if serialization fails.
    */
   protected Object writeReplace() throws ObjectStreamException {
     return new SerializablePublicField(field);
   }
 
+  /**
+   * isStatic returns the default that a field is not static.
+   * @return false (default for a field).
+   */
+  public boolean isStatic() {
+    return false;
+  }
+
+  /**
+   * satisfies checks whether the enclosed {@link Field} object satisfies
+   * the given predicate.
+   * 
+   * @param predicate the {@link ReflectionPredicate} to check this.field against.
+   * @return true if this.field satisfies predicate.canUse(field).
+   */
+  public boolean satisfies(ReflectionPredicate predicate) {
+    return predicate.test(field);
+  }
+  
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import randoop.Globals;
+import randoop.types.TypeNames;
 
 
 /**
@@ -99,14 +100,14 @@ public final class ClassComplexityCalculator {
   private int minComplexityOfSubclass(Class<?> c) {
     if (minComplexityOfSubclass.containsKey(c))
       return minComplexityOfSubclass.get(c);
-//  System.out.println("minComplexityOfSubclass:" + c);
-int result= Integer.MAX_VALUE;
-for (Class<?> clazz : h.subClasses(c)) {
-  if (isConcreteClass(clazz))
-    result= Math.min(result, internalClassComplexity(clazz));
-}
-minComplexityOfSubclass.put(c, result);
-return result;
+    //  System.out.println("minComplexityOfSubclass:" + c);
+    int result= Integer.MAX_VALUE;
+    for (Class<?> clazz : h.subClasses(c)) {
+      if (isConcreteClass(clazz))
+        result= Math.min(result, internalClassComplexity(clazz));
+    }
+    minComplexityOfSubclass.put(c, result);
+    return result;
   }
 
   class CircularityException extends RuntimeException{
@@ -125,13 +126,13 @@ return result;
     Set<Class<?>> classes= new LinkedHashSet<Class<?>>();
     args= args[0].split(Globals.lineSep);
     int classCount= 0;
-    for (String className : args) {
-      String classNa = className.substring(0, className.length() - ".class".length());
-      System.out.println("loading " +classNa + " " + (classCount++) + " of " + args.length);
+    for (String arg : args) {
+      String className = arg.substring(0, arg.length() - ".class".length());
+      System.out.println("loading " + className + " " + (classCount++) + " of " + args.length);
       try {
-        classes.add(Class.forName(classNa));
+        classes.add(TypeNames.getTypeForName(className));
       } catch (NoClassDefFoundError e) {
-        System.out.println("Not found:" + classNa);
+        System.out.println("Not found:" + className);
         // keep going
       }
     }

@@ -34,8 +34,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     this.totalelements = 0;
     for (int i = 0; i < lists.length ; i++) {
       SimpleList<T> l = lists[i];
-      if (l == null)
+      if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
+      }
       this.totalelements += l.size();
       this.accumulatedSize[i] = this.totalelements;
     }
@@ -49,8 +50,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     this.totalelements = 0;
     for (int i = 0; i < lists.size(); i++) {
       SimpleList<T> l = lists.get(i);
-      if (l == null)
+      if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
+      }
       this.totalelements += l.size();
       this.accumulatedSize[i] = this.totalelements;
     }
@@ -70,8 +72,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
   @Override
   public T get(int index) {
     if (index < 0 || index > this.totalelements - 1)
-      throw new IllegalArgumentException(
-          "index must be between 0 and size()-1");
+      throw new IllegalArgumentException("index must be between 0 and size()-1");
     int previousListSize = 0;
     for (int i = 0; i < this.accumulatedSize.length; i++) {
       if (index < this.accumulatedSize[i])
@@ -95,4 +96,5 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
   public String toString() {
     return toJDKList().toString();
   }
+
 }

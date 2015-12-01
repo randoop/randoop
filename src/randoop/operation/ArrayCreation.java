@@ -9,20 +9,30 @@ import java.util.Collections;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
-import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.util.PrimitiveTypes;
-import randoop.util.Reflection;
+import randoop.types.TypeNames;
 
 /**
- * Immutable.
- * Represents a one-dimensional
- * array creation statement, e.g. "int[] x = new int[2] { 3, 7 };"
+ * ArrayCreation is an {@link Operation} representing the construction of a 
+ * one-dimensional array with a given element type and length.
+ * The The ArrayCreation operation requires a list of elements in an initializer.
+ * For instance, <code>new int[2]</code> is the {@code ArrayCreation} in the 
+ * initialization<br>
+ * <code>int[] x = new int[2] { 3, 7 };</code><br>
+ * with the initializer list as inputs.
+ * <p>
+ * In terms of the notation used for the {@link Operation} class, 
+ * a creation of an array of elements of type <i>e</i> with length <i>n</i> 
+ * has a signature [<i>e,...,e</i>] &rarr; <i>t</i>, 
+ * where [<i>e,...,e</i>] is a list of length <i>n</i>, and <i>t</i> is the 
+ * array type.
+ * <p>
+ * ArrayCreation objects are immutable.
  */
-public final class ArrayCreation implements Operation, Serializable {
+public final class ArrayCreation extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429;
 
@@ -37,11 +47,16 @@ public final class ArrayCreation implements Operation, Serializable {
   // are computed upon the first invocation of the respective
   // getter method.
   private List<Class<?>> inputTypesCached;
+
   private Class<?> outputType;
+
   private int hashCodeCached;
   private boolean hashCodeComputed= false;
 
   /**
+   * Creates an object representing the construction of an array that holds
+   * values of the element type and has the given length.
+   * 
    * @param elementType type of objects in the array
    * @param length number of objects allowed in the array
    */
@@ -57,28 +72,38 @@ public final class ArrayCreation implements Operation, Serializable {
     this.outputType = Array.newInstance(elementType, 0).getClass();
   }
 
+  /**
+   * Converts this object to a form that can be serialized.
+   * 
+   * @return serializable form of this object
+   * @see SerializableArrayCreation
+   */
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableArrayCreation(elementType, length);
   }
 
   /**
-   * Returns the class of type of elements held in this ArrayDeclarationInfo
+   * {@inheritDoc}
+   * @return the type of elements held in created array.
    */
   public Class<?> getElementType() {
     return this.elementType;
   }
 
   /**
-   * Returns the length of elements held in this ArrayDeclarationInfo
-   * */
+   * Returns the length of created array.
+   * 
+   * @return length of array created by this object.
+   */
   public int getLength() {
     return this.length;
   }
 
   /**
-   * Extracts the input constraints for this ArrayDeclarationInfo
-   * @return list of input constraints
+   * {@inheritDoc}
+   * @return list of identical element types matching length of created array.
    */
+  @Override
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
       this.inputTypesCached = new ArrayList<Class<?>>(length);
@@ -90,9 +115,14 @@ public final class ArrayCreation implements Operation, Serializable {
   }
 
   /**
+<<<<<<< HEAD
+   * {@inheritDoc}
+   * @return {@link NormalExecution} object containing constructed array.
+=======
    * Executes this statement, given the inputs to the statement. Returns
    * the results of execution as an ResultOrException object and can
    * output results to specified PrintStream.
+>>>>>>> master
    */
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
     if (statementInput.length > length)
@@ -109,7 +139,7 @@ public final class ArrayCreation implements Operation, Serializable {
 
   @Override
   public String toString() {
-    return "array_of_" + this.elementType.getSimpleName() + "_of_size_" + this.length;
+    return toParseableString();
   }
 
   public String toStringShort() {
@@ -121,42 +151,48 @@ public final class ArrayCreation implements Operation, Serializable {
   }
 
   /**
-   * Returns constraint to represent new reference to this statement,
-   * namely the receiver that is generated.
+   * {@inheritDoc}
+   * @return type of created array.
    */
+  @Override
   public Class<?> getOutputType() {
     return outputType;
   }
 
   /**
-   * Appends string representation of ArrayDeclarationInfo into b.
+   * {@inheritDoc}
    */
-  public void appendCode(Variable newVar, List<Variable> inputVars, StringBuilder b) {
+  @Override
+  public void appendCode(List<Variable> inputVars, StringBuilder b) {
     if (inputVars.size() > length)
       throw new IllegalArgumentException("Too many arguments:"
           + inputVars.size() + " capacity:" + length);
-    String declaringClass = this.elementType.getCanonicalName();
-    String var = Variable.classToVariableName(outputType) + newVar.index;
-
-    b.append(declaringClass + "[] "
-             + var
-             + " = new " + declaringClass + "[] { ");
+    
+    String arrayTypeName = this.elementType.getCanonicalName();
+      
+    b.append("new " + arrayTypeName + "[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
       if (i > 0)
         b.append(", ");
+      
+      String param = inputVars.get(i).getName();
+      
+      // In the short output format, statements like "int x = 3" are not added 
+      // to a sequence; instead, the value (e.g. "3") is inserted directly  
+      // as arguments to method calls.
+      Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement(); 
+      if (!GenInputsAbstract.long_format && 
+          statementCreatingVar.isPrimitiveInitialization() &&
+          !statementCreatingVar.isNullInitialization()) {
+        String shortForm = statementCreatingVar.getShortForm();
+        if (shortForm != null) {
+          param = shortForm;
+        }
 
-      // In the short output format, statements like "int x = 3" are not added to a sequence; instead,
-      // the value (e.g. "3") is inserted directly added as arguments to method calls.
-      Operation statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (!GenInputsAbstract.long_format
-          && ExecutableSequence.canUseShortFormat(statementCreatingVar)) {
-        b.append(PrimitiveTypes.toCodeString(((NonreceiverTerm) statementCreatingVar).getValue()));
-      } else {
-        b.append(inputVars.get(i).getName());
       }
+      b.append(param);
     }
-    b.append("};");
-    b.append(Globals.lineSep);
+    b.append(" }");
   }
 
   @Override
@@ -183,11 +219,32 @@ public final class ArrayCreation implements Operation, Serializable {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   * Creates string of the form
+   *   TYPE[NUMELEMS]
+   * where TYPE is the type of the array, and NUMELEMS is the number of elements.
+   * 
+   * Example:
+   *   int[3]
+   *   
+   * @return string descriptor for array creation.
+   */
+  @Override
   public String toParseableString() {
     return elementType.getName() + "[" + Integer.toString(length) + "]";
   }
 
   /**
+<<<<<<< HEAD
+   * Parses an array declaration in a string descriptor in the form generated
+   * by {@link ArrayCreation#toParseableString()}.
+   * @see OperationParser#parse(String)
+   * 
+   * @param str  the string to be parsed for the {@code ArrayCreation}.
+   * @return the {@code ArrayCreation} object for the string.  
+   * @throws OperationParseException if string does not have expected form.
+=======
    * A string representing this array declaration. The string is of the form:
    *
    * TYPE[NUMELEMS]
@@ -198,14 +255,28 @@ public final class ArrayCreation implements Operation, Serializable {
    *
    * int[3]
    *
+>>>>>>> master
    */
-  public static Operation parse(String str) {
+  public static Operation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');
     int closeBr = str.indexOf(']');
     String elementTypeStr = str.substring(0, openBr);
     String lengthStr = str.substring(openBr + 1, closeBr);
-    Class<?> elementType = Reflection.classForName(elementTypeStr);
+    
+    Class<?> elementType;
+    try {
+      elementType = TypeNames.getTypeForName(elementTypeStr);
+    } catch (ClassNotFoundException e) {
+      throw new OperationParseException("Type not found for array element type " + elementTypeStr);
+    }
+    
     int length = Integer.parseInt(lengthStr);
     return new ArrayCreation(elementType, length);
   }
+
+  @Override
+  public Class<?> getDeclaringClass() {
+    return getOutputType();
+  }
+  
 }

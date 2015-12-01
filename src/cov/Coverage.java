@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import randoop.util.Reflection;
+import randoop.BugInRandoopException;
+
 import plume.Triple;
 
 /**
@@ -512,23 +513,39 @@ public class Coverage {
 
 
   /**
-   *
+   * Retrieves the class member that contains the {@link CoverageAtom}
+   * 
    * @param cov
-   * @return Returns null if this coverage atom does not belong to a method or
-   *         constructor.
+   * @return Returns the method or constructor to which this {@code CoverageAtom} belongs.
+   * @throws IllegalArgumentException if {@code CoverageAtom} argument is null.
+   * @throws BugInRandoopException if {@code CoverageAtom} argument does not correspond to a class.
    */
   public static Member getMemberContaining(CoverageAtom cov) {
     if (cov == null) throw new IllegalArgumentException("cov cannot be null.");
-    Class<?> cls = Reflection.classForName(cov.getClassName());
-    initCoverage(cls);
+
+    try {
+      initCoverage(Class.forName(cov.getClassName()));
+    } catch (ClassNotFoundException e) {
+      throw new BugInRandoopException("Coverage did not find instrumented class " + cov.getClassName());
+    }
+
     return atomsToMembers.get(cov);
   }
 
   /**
    * Increments the count for the given branch by 1.
+   * 
+   * @param br  the branch to update.
    */
   public static void touch(Branch br) {
-    Class<?> cls = Reflection.classForName(br.getClassName());
+    
+    Class<?> cls;
+    try {
+      cls = Class.forName(br.getClassName());
+    } catch (ClassNotFoundException e) {
+      throw new BugInRandoopException("Error in Coverage.touch: " + e);
+    }
+    
     if (br.branch) {
       getTrueBranches(cls)[br.branchNumber]++;
     } else {

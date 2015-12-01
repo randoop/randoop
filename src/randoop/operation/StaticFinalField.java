@@ -9,8 +9,6 @@ import randoop.sequence.Variable;
 /**
  * StaticFinalField represents a public static final field of a class.
  * @see PublicField
- * 
- * @author bjkeller
  *
  */
 public class StaticFinalField extends PublicField {
@@ -48,5 +46,12 @@ public class StaticFinalField extends PublicField {
     return new ArrayList<>();
   }
  
-
+  /**
+   * isStatic is a predicate to indicate whether field is declared as static.
+   * @return true, as object is {@link StaticFinalField}.
+   */
+  @Override
+  public boolean isStatic() {
+    return true;
+  }
 }

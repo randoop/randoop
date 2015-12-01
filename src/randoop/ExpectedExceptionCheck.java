@@ -51,7 +51,7 @@ public class ExpectedExceptionCheck implements Check {
 
   private Object writeReplace() throws ObjectStreamException {
     // System.out.printf ("writeReplace %s in StatementThrowsException%n", this);
-    return new SerializableExpectedExceptionChecker(exceptionClass, statementIdx);
+    return new SerializableExpectedExceptionCheck(exceptionClass, statementIdx);
   }
 
   public String toString() {

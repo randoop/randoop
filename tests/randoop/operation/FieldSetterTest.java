@@ -14,16 +14,14 @@ import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
 import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.util.Reflection;
 
 
 /**
  * FieldSetterTest defines unit tests for FieldSetter class.
  * There is a test method for each kind of PublicField, and each
  * checks types returned, code generation, and execution behavior.
- * 
- * @author bjkeller
  *
  */
 public class FieldSetterTest {
@@ -45,7 +43,8 @@ public class FieldSetterTest {
       Sequence seq0 = new Sequence().extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq0,0));
-      rhs.appendCode(null, vars, b);
+      Statement st_rhs = new Statement(rhs);
+      st_rhs.appendCode(null, vars, b);
       assertEquals("Expect assignment to static field",expected,b.toString());
       
       //execution -- gives back null
@@ -80,13 +79,14 @@ public class FieldSetterTest {
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConstructorCall cons = new ConstructorCall(Reflection.getConstructorForSignature("randoop.operation.ClassWithFields.ClassWithFields()"));
+      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignatureString("randoop.operation.ClassWithFields.ClassWithFields()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
       Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seq1,0));
       vars.add(new Variable(seq1,1));
-      rhs.appendCode(null, vars, b);
+      Statement st_rhs = new Statement(rhs);
+      st_rhs.appendCode(null, vars, b);
       assertEquals("Expect assignment to instance field",expected,b.toString());
       
       //execution
@@ -108,6 +108,7 @@ public class FieldSetterTest {
       assertTrue("Expect void result and zero execution", expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue() && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
       assertEquals("Expect value to have changed", 9, (int)f.getValue(inputs2[0]));
       
+      
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
@@ -116,6 +117,27 @@ public class FieldSetterTest {
       fail("test failed because object instantiation failed.");
     } catch (IllegalAccessException e) {
       fail("test failed because of unexpected access exception.");
+    } catch (OperationParseException e) {
+      fail("test failed because ClassWithFields constructor not found");
+    }
+  }
+  
+  @Test
+  public void testFinalInstanceField() {
+    Class<?> c = ClassWithFields.class;
+    try {
+      FinalInstanceField f = new FinalInstanceField(c.getField("tenField"));
+      try {
+        @SuppressWarnings("unused")
+        FieldSetter rhs = new FieldSetter(f);
+        fail("IllegalArgumentException expected when final instance field given to FieldSetter constructor");
+      } catch (IllegalArgumentException e) {
+        assertEquals("Argument Exception", "Field may not be final for FieldSetter", e.getMessage());
+      }
+    } catch (NoSuchFieldException e) {
+      fail("test failed because field in test class not found");
+    } catch (SecurityException e) {
+      fail("test failed because of unexpected security exception");
     }
   }
   

@@ -5,6 +5,7 @@ import java.util.List;
 
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.reflection.OperationExtractor;
 import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
 import randoop.test.treeadd.TreeAdd;
@@ -28,7 +29,8 @@ public class ForwardExplorerTests2 extends TestCase {
     System.out.println(classes);
 
     //SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
-    List<Operation> model = Reflection.getStatements(classes, null);
+    List<Operation> model = OperationExtractor.getOperations(classes, null);
+    assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 100, null, null, null, null);
     GenInputsAbstract.forbid_null = false;

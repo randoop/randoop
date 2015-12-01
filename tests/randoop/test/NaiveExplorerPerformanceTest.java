@@ -4,13 +4,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
 import randoop.Globals;
-import randoop.operation.Operation;
 import randoop.experiments.RandomWalkGenerator;
+import randoop.main.ClassReader;
 import randoop.main.GenInputsAbstract;
-import randoop.util.Reflection;
+import randoop.operation.Operation;
+import randoop.reflection.OperationExtractor;
 import randoop.util.Timer;
+
+import junit.framework.TestCase;
 
 public class NaiveExplorerPerformanceTest extends TestCase {
 
@@ -38,7 +40,8 @@ public class NaiveExplorerPerformanceTest extends TestCase {
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
     List<Operation> model =
-      Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
+      OperationExtractor.getOperations(ClassReader.getClassesForStream(classStream, resourcename),null);
+    assertFalse("model should not be empty", model.isEmpty());
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;

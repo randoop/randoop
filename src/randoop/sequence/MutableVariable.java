@@ -2,6 +2,7 @@ package randoop.sequence;
 
 /**
  * A variable that is part of a mutable sequence.
+ * @see MutableSequence
  */
 public class MutableVariable {
 
@@ -24,7 +25,7 @@ public class MutableVariable {
   }
 
   public Class<?> getType() {
-    return owner.getDeclaringStatement(this).statementKind.getOutputType();
+    return owner.getDeclaringStatement(this).operation.getOutputType();
   }
 
   public int getDeclIndex() {

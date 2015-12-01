@@ -5,8 +5,6 @@ package randoop.test;
  * intended to be used with tests in Randoop.
  * 
  * @see OperatorEnum 
- * 
- * @author bjkeller
  *
  */
 public class Expression {

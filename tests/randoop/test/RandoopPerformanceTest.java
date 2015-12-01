@@ -3,10 +3,11 @@ package randoop.test;
 import java.io.InputStream;
 import java.util.List;
 
+import randoop.main.ClassReader;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.reflection.OperationExtractor;
 import randoop.sequence.ForwardGenerator;
-import randoop.util.Reflection;
 
 public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
@@ -18,7 +19,8 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
     List<Operation> model =
-      Reflection.getStatements(Reflection.loadClassesFromStream(classStream, resourcename),null);
+      OperationExtractor.getOperations(ClassReader.getClassesForStream(classStream, resourcename),null);
+    assertFalse("model should not be empty", model.isEmpty());
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
