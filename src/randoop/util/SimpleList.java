@@ -45,7 +45,7 @@ import java.util.List;
  * only 2 references in memory (and constant creation time).
  * <p>
  */
-public abstract class SimpleList<T> implements Iterable<T> {
+public abstract class SimpleList<T> {
 
   public abstract int size();
 
@@ -61,4 +61,5 @@ public abstract class SimpleList<T> implements Iterable<T> {
    * @return {@link java.util.List} for this list.
    */
   public abstract List<T> toJDKList();
+
 }

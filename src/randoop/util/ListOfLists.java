@@ -2,9 +2,7 @@ package randoop.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Given a list of lists, defines methods that can access all the elements as if
@@ -99,44 +97,4 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     return toJDKList().toString();
   }
 
-  @Override
-  public Iterator<T> iterator() {
-    return new LOLIterator(lists.iterator());
-  }
-  
-  private class LOLIterator implements Iterator<T> {
-
-    private Iterator<SimpleList<T>> listIterator;
-    private Iterator<T> elemIterator;
-
-    public LOLIterator(Iterator<SimpleList<T>> listIterator) {
-      this.listIterator = listIterator;
-      if (this.listIterator.hasNext()) {
-        this.elemIterator = (this.listIterator).next().iterator();
-      }
-    }
-
-    @Override
-    public boolean hasNext() {
-      while (listIterator.hasNext() 
-          && (elemIterator == null || !(elemIterator.hasNext()))) {
-        elemIterator = listIterator.next().iterator();
-      }
-      return elemIterator != null && elemIterator.hasNext();
-    }
-
-    @Override
-    public T next() {
-      if (this.hasNext()) {
-        return elemIterator.next();
-      }
-      throw new NoSuchElementException("end of ListOfLists reached");
-    }
-    
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
-    
-  }
 }

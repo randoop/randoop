@@ -3,7 +3,6 @@ package randoop.util;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,9 +22,8 @@ public class SimpleListTest {
     
     SimpleList<String> sl = new ArrayListSimpleList<>(al);
     
-    Iterator<String> it = sl.iterator();
-    while (it.hasNext()) {
-      assertTrue("element should be in original",al.contains(it.next()));
+    for (int i = 0; i < sl.size(); i++) {
+      assertTrue("element should be in original",al.contains(sl.get(i)));
     }
   }
   
@@ -38,9 +36,8 @@ public class SimpleListTest {
     
     al.add("str" + 100);
     
-    Iterator<String> it = sl.iterator();
-    while (it.hasNext()) {
-      assertTrue("element should be in original",al.contains(it.next()));
+    for (int i = 0; i < sl.size(); i++) {
+      assertTrue("element should be in original",al.contains(sl.get(i)));
     }
   }
 
@@ -58,7 +55,7 @@ public class SimpleListTest {
     }
     
     for (int i = 0; i < 100; i++) {
-      if (!sub.isEmpty() && partitions.contains(i) ) {
+      if (partitions.contains(i) ) {
         lists.add(new ArrayListSimpleList<>(sub));
         sub = new ArrayList<>();
       }
@@ -73,9 +70,45 @@ public class SimpleListTest {
     
     SimpleList<String> sl = new ListOfLists<String>(lists);
     
-    Iterator<String> it = sl.iterator();
-    while (it.hasNext()) {
-      assertTrue("element should be in original",al.contains(it.next()));
+    for (int i = 0; i < sl.size(); i++) {
+      assertTrue("element should be in original",al.contains(sl.get(i)));
     }
+  }
+  
+  @Test
+  public void listOfMixed() {
+    
+    List<SimpleList<String>> lists = new ArrayList<>();
+    ArrayList<String> al = new ArrayList<>();
+    
+    SimpleList<String> base = new ArrayListSimpleList<>(new ArrayList<String>());
+        
+    int i;
+    for (i = 0; i < 50; i++) {
+      String v = "str" + i;
+      base = new OneMoreElementList<>(base, v);
+      al.add(v);
+    }
+    lists.add(base);
+    lists.add(new ArrayListSimpleList<>(new ArrayList<String>()));
+    base = new ListOfLists<>(lists);
+    for (i = 55; i < 70; i++) {
+      String v = "str" + i;
+      base = new OneMoreElementList<>(base, v);
+      al.add(v);
+    }
+    
+    for (int j = 0; i < base.size(); j++) {
+      assertTrue("element should be in original",al.contains(base.get(j)));
+    }
+  }
+  
+  @Test
+  public void emptyLOL() {
+    List<SimpleList<String>> lists = new ArrayList<>();
+    lists.add(new ArrayListSimpleList<>(new ArrayList<String>()));
+    SimpleList<String> sl = new ListOfLists<>(lists);
+      
+    assertTrue("should be no elements", sl.isEmpty());
   }
 }

@@ -393,12 +393,19 @@ public final class Sequence implements Serializable, WeightedElement {
     return hashCode;
   }
 
-  // The number of statements that are not primitive declarations, i.e. "int var7 = 0".
+  /**
+   * Counts the number of statements in a list that are not initializations with
+   * a primitive type. For instance <code>int var7 = 0</code>.
+   * 
+   * @param statements  the list of {@link Statement} objects
+   * @return count of statements other than primitive initializations 
+   */
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
-    for (Statement s : statements) {
-      if (!s.isPrimitiveInitialization())
+    for (int i = 0; i < statements.size(); i++) {
+      if (!(statements.get(i).isPrimitiveInitialization())) {
         netSize++;
+      }
     }
     return netSize;
   }
