@@ -106,7 +106,7 @@ public final class PrimValue implements ObjectContract {
       b.append("x0");
       b.append(", ");
       b.append(PrimitiveTypes.toCodeString(value));
-      b.append(");");
+      b.append(", 0);");
     } else if (printMode.equals(PrintMode.EQUALSMETHOD)) {
       b.append("org.junit.Assert.assertTrue(");
       // First add a message
