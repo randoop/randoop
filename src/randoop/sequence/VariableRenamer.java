@@ -27,7 +27,7 @@ public class VariableRenamer {
   public String getRenamedVar(int index) {
     String name = this.name_mapping.get(index);
     if (name == null) {
-      assert sequence.getOperation(index).getOutputType().equals(void.class) :
+      assert sequence.getStatement(index).getOutputType().equals(void.class) :
           "The index: " + index + "-th output should be void.";
       throw new Error("Error in Randoop, please report it.");
     }
@@ -43,7 +43,7 @@ public class VariableRenamer {
   private Map<Integer, String> renameVarsInSequence() {
     Map<Integer, String> index_var_map = new LinkedHashMap<Integer, String>();
     for (int i = 0; i < this.sequence.size(); i++) {
-      Class<?> outputType = this.sequence.getOperation(i).getOutputType();
+      Class<?> outputType = this.sequence.getStatement(i).getOutputType();
       if (outputType.equals(void.class)) {
         continue;
       }

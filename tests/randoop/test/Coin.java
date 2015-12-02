@@ -5,8 +5,6 @@ package randoop.test;
  * intended to be used with tests in Randoop.
  * 
  * @see CoinPurse
- * 
- * @author bjkeller
  *
  */
 public enum Coin {

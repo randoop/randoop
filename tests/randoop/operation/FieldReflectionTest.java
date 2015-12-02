@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import org.junit.Test;
 
 import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OperationExtractor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.util.Reflection;
 
@@ -23,8 +24,6 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 /**
  * FieldReflectionTest consists of tests of {@link Reflection#getStatements}
  * method to verify that field statements are collected as expected.
- * 
- * @author bjkeller
  *
  */
 public class FieldReflectionTest {
@@ -41,11 +40,11 @@ public class FieldReflectionTest {
     
     @SuppressWarnings("unchecked")
     List<Field> fields = Arrays.asList(c.getFields());
-    List<Operation> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = OperationExtractor.getOperations(classes, null);
     
     //number of statements is twice number of fields plus constructor and getter minus one for each constant
     //in this case, 11
-    assertEquals("number of statements twice number of fields", 2 * fields.size() + 2 - 1, actual.size());
+    assertEquals("number of statements twice number of fields", 2 * fields.size(), actual.size());
     
     //exclude private or protected fields
     List<Field> exclude = new ArrayList<>();
@@ -94,7 +93,7 @@ public class FieldReflectionTest {
         expected.add(f);
       }
     }
-    List<Operation> actual = Reflection.getStatements(classes, null);
+    List<Operation> actual = OperationExtractor.getOperations(classes, null);
     
     assertEquals("number of statements", 2*expected.size() - 1 + 2, actual.size());
     
@@ -126,7 +125,7 @@ public class FieldReflectionTest {
     }
     
     ReflectionPredicate filter = new DefaultReflectionPredicate(null, excludeNames);
-    List<Operation> actual = Reflection.getStatements(classes, filter);
+    List<Operation> actual = OperationExtractor.getOperations(classes, filter);
     
     assertEquals("number of statements", 2, actual.size());
     
@@ -155,8 +154,12 @@ public class FieldReflectionTest {
         statements.add(new FieldSetter(new StaticField(f)));
       }
     } else {
-      statements.add(new FieldGetter(new InstanceField(f)));
-      statements.add(new FieldSetter(new InstanceField(f)));
+      if (Modifier.isFinal(mods)) {
+        statements.add(new FieldGetter(new FinalInstanceField(f)));
+      } else {
+        statements.add(new FieldGetter(new InstanceField(f)));
+        statements.add(new FieldSetter(new InstanceField(f)));
+      }
     }
     return statements;
   }

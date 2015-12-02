@@ -34,6 +34,7 @@ import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
+import randoop.types.TypeNames;
 
 
 // Implementation notes:  All string, float, and double constants are in the
@@ -520,7 +521,7 @@ public class ClassFileConstants {
     for (ConstantSet cs : constantSets) {
       Class<?> clazz;
       try {
-        clazz = Class.forName(cs.classname);
+        clazz = TypeNames.getTypeForName(cs.classname);
       } catch (ClassNotFoundException e) {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }

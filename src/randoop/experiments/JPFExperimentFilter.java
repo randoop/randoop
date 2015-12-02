@@ -16,11 +16,11 @@ public class JPFExperimentFilter implements ReflectionPredicate {
     baseFilter = new DefaultReflectionPredicate(omitmethods);
   }
 
-  public boolean canUse(Class<?> c) {
-    return baseFilter.canUse(c);
+  public boolean test(Class<?> c) {
+    return baseFilter.test(c);
   }
 
-  public boolean canUse(Method m) {
+  public boolean test(Method m) {
     // Causes JPF to break.
     if (m.getDeclaringClass().equals(java.util.TimeZone.class) && m.getName().equals("getAvailableIDs")) {
       System.out.println("Will not use " + m.toString());
@@ -117,10 +117,10 @@ public class JPFExperimentFilter implements ReflectionPredicate {
       return false;
     }
 
-    return baseFilter.canUse(m);
+    return baseFilter.test(m);
   }
 
-  public boolean canUse(Constructor<?> m) {
+  public boolean test(Constructor<?> m) {
     if (m.getDeclaringClass().equals(java.util.Formatter.class) && m.getParameterTypes().length == 0) {
       System.out.println("Will not use " + m.toString());
       return false;
@@ -294,12 +294,12 @@ public class JPFExperimentFilter implements ReflectionPredicate {
     }
 
 
-    return baseFilter.canUse(m);
+    return baseFilter.test(m);
   }
 
   @Override
-  public boolean canUse(Field f) {
-    return baseFilter.canUse(f);
+  public boolean test(Field f) {
+    return baseFilter.test(f);
   }
 
 }

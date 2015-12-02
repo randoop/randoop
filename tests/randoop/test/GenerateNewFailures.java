@@ -3,13 +3,13 @@ package randoop.test;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import randoop.Globals;
+import randoop.util.Files;
+
 import junit.framework.Test;
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
-import randoop.Globals;
-import randoop.util.Files;
-import randoop.util.Reflection;
 
 public class GenerateNewFailures {
 
@@ -41,8 +41,16 @@ public class GenerateNewFailures {
     if (args.length == 0)
       System.exit(1);
     String junitClassName = args[0];
-    Class<? extends Test> test= Reflection.classForName(junitClassName).asSubclass(Test.class);
-    failureReproduced(test);
+    
+    Class<?> c;
+    try {
+      c = Class.forName(junitClassName);
+      Class<? extends Test> test= c.asSubclass(Test.class);
+      failureReproduced(test);
+    } catch (ClassNotFoundException e) {
+      //ignore
+    }
+    
     System.out.println("DONE");
   }
 

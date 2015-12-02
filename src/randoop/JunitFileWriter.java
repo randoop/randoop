@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import randoop.experimental.SequencePrettyPrinter;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
@@ -118,10 +117,6 @@ public class JunitFileWriter {
    * @return File object for generated java file.
    */
   private File writeTestClass(List<ExecutableSequence> sequences, String testClassName) {
-    if (GenInputsAbstract.pretty_print) {
-      SequencePrettyPrinter printer = new SequencePrettyPrinter(sequences, packageName, testClassName);
-      return printer.createFile(getDir().getAbsolutePath());
-    }
 
     String className = testClassName;
     File file = new File(getDir(), className + ".java");
@@ -163,8 +158,16 @@ public class JunitFileWriter {
   }
 
 /*
- * Writes a test method to the output stream for the sequence s with name "test"+testCounter. 
+ * 
  */
+  /**
+   * Writes a test method to the output stream for the sequence s.
+   * 
+   * @param out  the output stream for test class file.
+   * @param className  the name of test class.
+   * @param methodName  the name of test method.
+   * @param s  the {@link ExecutableSequence} for test method.
+   */
   private void writeTest(PrintStream out, String className, String methodName, ExecutableSequence s) {
     out.println("  @Test");
     out.println("  public void " + methodName + "() throws Throwable {");
@@ -175,6 +178,11 @@ public class JunitFileWriter {
     out.println("  }");
   }
   
+  /**
+   * Generates the list of test class names for previously generated test suites.
+   * 
+   * @return list of class names.
+   */
   private List<String> getTestClassNames() {
     List<String> junitTestSuites = new LinkedList<String>();
     NameGenerator classNameGen = new NameGenerator(masterTestClassName);
@@ -185,13 +193,14 @@ public class JunitFileWriter {
   }
   
   /**
-   * writeSuiteFile writes a JUnit4 suite consisting of test classes
-   * from createJunitTestFiles and additional classes provided as a
+   * Writes a JUnit4 suite consisting of test classes
+   * from {@link #writeJUnitTestFiles(List)} and additional classes provided as a
    * parameter.
    * The file is written to the directory pointed to by writer object 
-   * in a class whose name is the masterTestClassName.
+   * in a class whose name is the {@link #masterTestClassName}.
    * 
-   * @see createJunitTestFiles
+   * @param additionalTestClassNames  a list of class names to be added to suite.
+   * @return {@link File} object for test suite file.
    */
   public File writeSuiteFile(List<String> additionalTestClassNames) {
     File dir = this.getDir();
@@ -233,10 +242,9 @@ public class JunitFileWriter {
   /**
    * writeDriverFile writes non-reflective driver for tests as a main class.
    * The file is written to the directory pointed to by writer object 
-   * in a class whose name is the masterTestClassName.
+   * in a class whose name is the {@link #masterTestClassName}.
    * 
-   * @see writeSubSuite
-   * @return File object for generated Java file.
+   * @return {@link File} object for generated Java file.
    */
   public File writeDriverFile() {
     File dir = this.getDir();

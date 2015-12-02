@@ -10,8 +10,6 @@ import randoop.sequence.Variable;
  * InstanceField represents an instance field of a class.
  * This means that to be set, the field must be qualified
  * by the object.
- * 
- * @author bjkeller
  *
  */
 public class InstanceField extends PublicField {
@@ -23,7 +21,7 @@ public class InstanceField extends PublicField {
   }
 
   /**
-   * getSetTypes returns a list consisting of the declaring class
+   * Returns a list consisting of the declaring class
    * and the type of the field. These are types needed to set
    * an instance field.
    */
@@ -41,7 +39,7 @@ public class InstanceField extends PublicField {
   }
 
   /**
-   * getAccessTypes return list of types needed to access field.
+   * Returns list of types needed to access field.
    * Should be singleton list of declaring class.
    */
   @Override

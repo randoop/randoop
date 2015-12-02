@@ -9,23 +9,27 @@ public class OperationParser {
   /**
    * Parses a string representing a StatementKind. The string is expected to be
    * of the form:
-   * 
-   * ID : DESCRIPTION
-   * 
+   * <pre>
+   *   ID : DESCRIPTION
+   * </pre>
    * Where ID is a string identifying the type of StatementKind, and DESCRIPTION
    * represents more specifics of the StatementKind. For example, the following
    * String represents the constructor for HashMap:
-   * 
-   * cons : java.util.HashMap.&lt;init&gt;()
-   * 
+   * <pre>
+   *   cons : java.util.HashMap.&lt;init&gt;()
+   * </pre>
    * A class implementing StatementKind should define a static field named ID
    * that corresponds to the ID string used when parsing. The way this parse
    * method works is by using the ID string to determine the specific
    * StatementKind class C, and the calling C.parse(String) on the DESCRIPTION
    * String.
-   * 
+   * <p>
    * For more details on the exact form of DESCRIPTION, see the different
    * classes implementing StatementKind.
+   * 
+   * @param str  the string to be parsed.
+   * @return the operation corresponding to the string.
+   * @throws OperationParseException if the string does not have expected format.
    */
   public static Operation parse(String str) throws OperationParseException {
     if (str == null || str.length() == 0)
@@ -46,7 +50,15 @@ public class OperationParser {
     Set<String> validIds = new LinkedHashSet<String>();
 
     // If you add a statement kind, add its ID to this set.
-    validIds.addAll(Arrays.asList(NonreceiverTerm.ID, MethodCall.ID, ConstructorCall.ID, ArrayCreation.ID, DummyStatement.ID));
+    validIds.addAll(Arrays.asList(
+        NonreceiverTerm.ID, 
+        MethodCall.ID, 
+        ConstructorCall.ID,
+        ArrayCreation.ID, 
+        EnumConstant.ID, 
+        FieldGetter.ID, 
+        FieldSetter.ID
+        ));
 
     // Call appropriate parsing method.
     if (id.equals(NonreceiverTerm.ID)) {
@@ -63,8 +75,6 @@ public class OperationParser {
       return FieldGetter.parse(descr);
     } else if (id.equals(FieldSetter.ID)) {
       return FieldSetter.parse(descr);
-    } else if (id.equals(DummyStatement.ID)) {
-      return DummyStatement.parse(descr);
     } else {
       String msg = "A statement description must be of the form "
         + "<id> <description>"
@@ -75,27 +85,29 @@ public class OperationParser {
   }
 
   /**
-   * The "id" is really the kind or a tag, such as "prim".
-   * It's not a unique identifier for this statement.
+   * Returns the "id" for the Operation.
+   * The ID is really the kind or a tag, such as "prim".
+   * It is not a unique identifier for individual Operations.
+   * 
+   * @param op  the operation.
+   * @return the ID string for the operation.
    */
-  public static String getId(Operation st) {
-    if (st == null) throw new IllegalArgumentException("st cannot be null.");
-    if (st instanceof NonreceiverTerm)
+  public static String getId(Operation op) {
+    if (op == null) throw new IllegalArgumentException("st cannot be null.");
+    if (op instanceof NonreceiverTerm)
       return NonreceiverTerm.ID;
-    if (st instanceof MethodCall)
+    if (op instanceof MethodCall)
       return MethodCall.ID;
-    if (st instanceof ConstructorCall)
+    if (op instanceof ConstructorCall)
       return ConstructorCall.ID;
-    if (st instanceof ArrayCreation)
+    if (op instanceof ArrayCreation)
       return ArrayCreation.ID;
-    if (st instanceof EnumConstant)
+    if (op instanceof EnumConstant)
       return EnumConstant.ID;
-    if (st instanceof FieldGetter)
+    if (op instanceof FieldGetter)
       return FieldGetter.ID;
-    if (st instanceof FieldSetter)
+    if (op instanceof FieldSetter)
       return FieldSetter.ID;
-    if (st instanceof DummyStatement)
-      return DummyStatement.ID;
     throw new Error();
   }
 
