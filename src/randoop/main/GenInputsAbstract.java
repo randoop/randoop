@@ -28,17 +28,22 @@ public abstract class GenInputsAbstract extends CommandHandler {
   }
 
 
-  /** Each element is the fully-qualified name of a class under test. */
+  /**
+   * The fully-qualified name of a class to test.
+   * These classes are tested in addition to any specified using <tt>--classlist</tt>.
+   */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup ("Code under test")
   @Option("The fully-qualified name of a class under test")
   public static List<String> testclass = new ArrayList<String>();
 
   /**
-   * The name of a file that lists classes under test.
+   * The name of a file that lists classes to test.
    * 
    * In the file, each class under test is specified by its
    * fully-qualified name on a separate line.
+   * See an <a href="https://raw.githubusercontent.com/randoop/randoop/master/doc/class_list_example.txt">example</a>.
+   * These classes are tested in addition to any specified using <tt>--testclass</tt>.
    */
   @Option("The name of a file that lists classes under test")
   public static String classlist = null;
@@ -46,19 +51,38 @@ public abstract class GenInputsAbstract extends CommandHandler {
   // A relative URL like <a href="#specifying-methods"> works when this
   // Javadoc is pasted into the manual, but not in Javadoc proper.
   /**
-   * The name of a file that lists methods under test.
+   * The name of a file that lists methods to test.
    * 
    * In the file, each each method under test is specified on a separate
    * line. The list of methods given by this argument augment
    * any methods derived via the <tt>--testclass</tt> or
    * <tt>--classlist</tt> option.
    * 
-   * Also see the manual section on <a href="https://rawgit.com/randoop/randoop/master/doc/index.html#specifying-methods">specifying methods 
-   * and constructors that may appear in a test</a>.
+   * <p>
+   * A constructor line begins with <code>"cons :"</code> followed by the
+   * classname, the string <code>&lt;init&gt;</code> and the constructor's
+   * parameter types, enclosed in parentheses. Methods are specified in a
+   * similar way. For example:
+   * <pre class="code">
+   * cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
+   * method : Type0.method_name(Type1, Type2, ..., TypeN)
+   * </pre>
+   * Each <code>Type<i>i</i></code> must be <b>fully-qualified</b> (include package names).
+   *
+   * <p>
+   * See an <a href="https://raw.githubusercontent.com/randoop/randoop/master/doc/method_list_example.txt">example</a>.
    */
   @Option("The name of a file that lists methods under test")
   public static String methodlist = null;
 
+  /**
+   * File containing side-effect-free observer methods.
+   * These are used to create regression assertions, and to prune tests.
+   */
+  @Option("File containing observer functions")
+  // This file is used to populate RegressionCaptureVisitor.observer_map
+  public static File observers = null;
+  
   /**
    * Randoop will not attempt to directly call methods whose {@link
    * java.lang.reflect.Method#toString()} matches the regular expression
@@ -76,7 +100,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static Pattern omitmethods = null;
   
   /**
-   * omit_field_list is the name of a file that contains fully-qualified
+   * The name of a file that contains fully-qualified
    * field names to be excluded from test generation. Otherwise, Randoop
    * includes all public fields of a visible class.
    */
@@ -98,61 +122,47 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Specify whether to use only public members in tests")
   public static boolean public_only = true;
 
-  @Option("Specifies initialization routine (class.method)")
-  public static String init_routine = null;
-  
   @Option("Ignore class names specified by user that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
   
+
   /**
-   * The possible values of the literals_level command-line argument.
-   * @see #literals_level
-   */
-  public static enum ClassLiteralsMode {
-    /** do not use literals specified in a literals file */
-    NONE,
-      /** a literal for a given class is used as input only to methods of that class */
-      CLASS,
-      /** a literal is used as input to methods of any classes in the same package */
-      PACKAGE,
-      /** each literal is used as input to any method under test */
-      ALL;
-  }
-  
-  /**
-   * How to use literal values (see --literals-file).
-   * @see ClassLiteralsMode
-   */
-  @Option("How to use literal values (see --literals-file): ALL, PACKAGE, CLASS, or NONE")
-  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
-  
-  /**
-   * A file containing literal values to be used as inputs to methods under test.
+   * Use Randoop's default set of object contracts as assertions.
+   * If disabled, these assertions are not created.
    * 
-   * Literals in these files are used in addition to all other constants in the pool.
-   * For the format of this file, see documentation in class {@link randoop.LiteralFileReader}.
-   * The special value "CLASSES" (with no quotes) means to read literals from all classes under test.
+   * <p>
+   * The default set of contracts includes:
+   *   equals(Object) is reflexive,
+   *   equals(Object) is symmetric,
+   *   equals(Object) and hashCode() are consistent,
+   *   x.equals(null) returns false,
+   *   any nullary method annotated with {@code @CheckRep} returns true.
+   * </p>
    */
-  @Option("A file containing literal values to be used as inputs to methods under test")
-  public static List<String> literals_file = new ArrayList<String>(); 
-
-
-  /** The random seed to use in the generation process */
   ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Controlling randomness")
-  @Option("The random seed to use in the generation process")
-  public static int randomseed = (int) Randomness.SEED;
+  @OptionGroup("Creating test oracles")
+  @Option("Use Randoop's object contracts as assertions")
+  public static boolean check_object_contracts = true;
+
+  /**
+   * Capture the current behavior as assertions.
+   * This makes Randoop's tests act as regression tests that ensure that the
+   * code continues to behave as it did when the tests were generated.
+   */
+  @Option("Use current behavior as assertions")
+  public static boolean check_regression_behavior = true;
+
 
   
   /**
    * Maximum number of seconds to spend generating tests.
    * 
-   * Used to determine when to stop test generation. Generation stops when
+   * Test generation stops when
    * either the time limit (--timelimit=int) OR the input limit
    * (--inputlimit=int) is reached.
    *
    * The default value is appropriate for generating tests for a single
-   * class in the context of a larger program, but is too small to be effectiev
+   * class in the context of a larger program, but is too small to be effective
    * for generating tests for an entire program.
    *
    * Note that if you use this option, Randoop is nondeterministic: it
@@ -176,7 +186,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Maximum number of test candidates generated.
    * 
-   * Used to determine when to stop test generation. Generation stops when
+   * Test generation stops when
    * either the time limit (--timelimit=int) OR the input limit
    * (--inputlimit=int) is reached.  The number of tests output
    * may be smaller than then number of test candidates generated,
@@ -192,6 +202,24 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Do not generate tests with more than <int> statements")
   public static int maxsize = 100;
   
+
+
+  /**
+   * Use null with the given frequency as an argument to method calls.
+   * 
+   * For example, a null ratio of 0.05 directs Randoop to use
+   * <code>null</code> as an input 5 percent of the time when a
+   * non-<code>null</code> value of the appropriate type is available.  If
+   * no non-<code>null</code> value is available, Randoop will try
+   * <code>null</code> regardless of the value of this parameter.
+   * 
+   * Randoop never uses <code>null</code> for receiver values.
+   */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Values used in tests")
+  @Option("Use null as an input with the given frequency")
+  public static double null_ratio = 0;
+  
   /**
    * Never use null as input to methods or constructors.
    * 
@@ -205,32 +233,57 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean forbid_null = true;
 
 
+  /**
+   * A file containing literal values to be used as inputs to methods under test.
+   * 
+   * Literals in these files are used in addition to all other constants in the pool.
+   * For the format of this file, see documentation in class {@link randoop.LiteralFileReader}.
+   * The special value "CLASSES" (with no quotes) means to read literals from all classes under test.
+   */
+  @Option("A file containing literal values to be used as inputs to methods under test")
+  public static List<String> literals_file = new ArrayList<String>(); 
+
+
+  /**
+   * How to use literal values that are specified via the
+   * <tt>--literals-file</tt> command-line option.
+   * @see ClassLiteralsMode
+   */
+  @Option("How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, or NONE")
+  public static ClassLiteralsMode literals_level = ClassLiteralsMode.CLASS;
+  
+  /**
+   * The possible values of the literals_level command-line argument.
+   * @see #literals_level
+   */
+  public static enum ClassLiteralsMode {
+    /** do not use literals specified in a literals file */
+    NONE,
+      /** a literal for a given class is used as input only to methods of that class */
+      CLASS,
+      /** a literal is used as input to methods of any classes in the same package */
+      PACKAGE,
+      /** each literal is used as input to any method under test */
+      ALL;
+  }
+  
   // Implementation note: when checking whether a String S exceeds the given
   // maxlength, we test if StringEscapeUtils.escapeJava(S), because this is
   // the length of the string that will atually be printed out as code.
   /**
-   * Maximum length of strings in generated tests.  Strings longer than
+   * Maximum length of strings in generated tests, including in assertions.
+   * Strings longer than
    * 65KB (or about 10,000 characters) may be rejected by the Java
    * compiler, according to the Java Virtual Machine specification.
    */
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Varying the nature of generated tests")
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 10000;
-  
-  /**
-   * Use null with the given frequency.
-   * 
-   * If a null ratio is given, it should be between 0 and 1. A ratio of X means that
-   * null will be used instead of a non-null value as a parameter to method calls,
-   * with X frequency (1 means always use null, 0 means never use null). For example,
-   * a ratio of 0.5 directs Randoop to use null inputs 50 percent of the time.
-   * 
-   * Randoop never uses null for receiver values.
-   * 
-   */
-  @Option("Use null as an input with the given frequency")
-  public static double null_ratio = 0;
+ 
+
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Varying the nature of generated tests")
+  @Option("Specifies initialization routine (class.method)")
+  public static String init_routine = null;
   
   /**
    * Try to reuse values from a sequence with the given frequency.
@@ -247,7 +300,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Favor shorter sequences when assembling new sequences out of old ones.
    *
-   * Randoop generate new tests by combining old previously-generated tests.
+   * Randoop generates new tests by combining old previously-generated tests.
    * If this option is given, tests with fewer calls are given greater weight during
    * its random selection. This has the overall effect of producing smaller JUnit tests.
    */
@@ -267,46 +320,57 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int clear = 100000000;
 
   
-  /**
-   * Use the methods specified in the given file to create regression assertions.
-   */
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Creating test oracles")
-  @Option("File containing observer functions")
-  // This file is used to populate RegressionCaptureVisitor.observer_map
-  public static File observers = null;
-  
-  /**
-   * Use Randoop's default set of object contracts as assertions.
-   * If disabled, these assertions are not created.
-   * 
-   * <p>
-   * The default set of contracts includes:
-   *   equals(Object) is reflexive,
-   *   equals(Object) is symmetric,
-   *   equals(Object) and hashCode() are consistent,
-   *   x.equals(null) returns false,
-   *   any nullary method annotated with {@code @CheckRep} returns true.
-   * </p>
-   */
-  @Option("Use Randoop's object contracts as assertions")
-  public static boolean check_object_contracts = true;
-
-  /**
-   * Capture the current behavior as assertions.
-   * This makes Randoop's tests act as regression tests that ensure that the
-   * code continues to behave as it did when the tests were generated.
-   */
-  @Option("Use current behavior as assertions")
-  public static boolean check_regression_behavior = true;
-
-
-  
+  /** Whether to output error-revealing tests. */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup ("Outputting the JUnit tests")
+  @Option("Whether to output error-revealing tests")
+  public static boolean no_error_revealing_tests = false;
+
+  /**
+   * Whether to enforce the "No null pointer exceptions without <tt>null</tt>"
+   * contract.
+   */
+  @Option("Whether to enforce the contract about null pointer exceptions")
+  public static boolean no_npe_contract = false;
+
+  /** Whether to output regression tests. */
+  @Option("Whether to output regression tests")
+  public static boolean no_regression_tests = false;
+
+  /**
+   * Whether to include assertions in regression tests.
+   * If false, then the regression tests contain no assertions
+   * (except that if the test throws an exception, it should continue to
+   * throw an execption of the same type).
+   * Tests without assertions can be used to exercise the code, but they
+   * do not enforce any particular behavior, such as values returned.
+   */
+  @Option("Whether to include assertions in regression tests")
+  public static boolean no_regression_assertions = false;
+
+  /**
+   * The possible values of the regression_assertions_about_exceptions command-line argument.
+   * @see #regression_assertions_about_exceptions
+   */
+  public static enum ExceptionAssertionsMode {
+    /** Include no exceptional tests in the regression test suite */
+    NONE,
+    /** Include tests that throw checked exceptions in the regression test suite */
+    CHECKED,
+    /** Include every test in the regression test suite */
+    ALL;
+  }
+
+  /**
+   * If a test throws an exception, should it be included in the regression test suite?
+   */
+  @Option("Which exceptional tests to include in the regression test suite")
+  public static ExceptionAssertionsMode regression_assertions_about_exceptions = ExceptionAssertionsMode.ALL;
+
+
   // TODO make an enum. (But presently Options package requires upper-case
-  // strings for enums, which will break Make targets, plugin, etc.)
-  /** For details, see the Javadoc documentation for {@link DefaultTestFilter}. */
+  // strings for enums, which will require changes to Make targets, plugin, etc.)
+  /** For details, see the Javadoc documentation for {@link randoop.DefaultTestFilter}. */
   @Option("What kinds of tests to output: pass, fail, or all")
   public static String output_tests = "all";
   
@@ -324,6 +388,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests */
   @Option("Base name of the JUnit file(s) containing tests")
   public static String junit_classname = "RandoopTest";
+
+  /** Base name (no ".java" suffix) of the JUnit file containing error-revealing tests */
+  @Option("Base name of the JUnit file(s) containing error-revealing tests")
+  public static String error_revealing_test_name = "ErrorTest";
+
+  /** Base name (no ".java" suffix) of the JUnit file containing regression tests */
+  @Option("Base name of the JUnit file(s) containing regression tests")
+  public static String regression_test_name = "RegressionTest";
 
   /** Name of the package for the generated JUnit files */
   @Option("Name of the package for the generated JUnit files")
@@ -421,6 +493,59 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * randoop.runtime.Message object. Printing is also suppressed.
    */
   ///////////////////////////////////////////////////////////////////
+  @OptionGroup(value="Eliminating redundant tests")
+  @Option("Remove tests that are subsumed in other tests")
+  public static boolean remove_subsequences = true;
+
+  /**
+   * Run each test twice and compare the checks.  If the results differ,
+   * then disable the test.
+   */
+  @Option("Run each test twice and compare the checks")
+  public static boolean compare_checks = false;
+
+  @Option("Create clean checks for a serialized sequence")
+  public static File clean_checks = null;
+
+  @Option("Print any checks that are different in the clean run")
+  public static boolean print_diff_obs = false;
+
+  
+  ///////////////////////////////////////////////////////////////////
+  // These options are useful in the context of Carlos's PhD thesis
+  // experiments and shouldn't be needed by external users.
+  @OptionGroup(value="Pacheco thesis", unpublicized=true)
+  @Unpublicized
+  @Option("Write experiment results file")
+  public static FileWriter expfile = null;
+
+  @Unpublicized
+  @Option("Do not do online illegal")
+  public static boolean offline = false;
+
+  @Unpublicized
+  @Option("Use heuristic that may randomly repeat a method call several times")
+  public static boolean repeat_heuristic = false;
+  
+  @Unpublicized
+  @Option("Use object cache")
+  public static boolean use_object_cache = false;
+  
+
+  /**
+   * The random seed to use in the generation process.
+   *
+   * Note that Randoop is deterministic:  running it twice will produce the
+   * same test suite.  If you want to produced multiple different test
+   * suites, run Randoop multiple times with a different random seed.
+   */
+  ///////////////////////////////////////////////////////////////////
+  @OptionGroup("Controlling randomness")
+  @Option("The random seed to use in the generation process")
+  public static int randomseed = (int) Randomness.SEED;
+
+  
+  ///////////////////////////////////////////////////////////////////
   @OptionGroup("Notifications")
   @Option("Uses the specified port for notifications (used by Eclipse plugin).")
   public static int comm_port = -1;
@@ -506,45 +631,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static String output_branches = null;
   
 
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup(value="Eliminating redundant tests")
-  @Option("Remove tests that are subsumed in other tests")
-  public static boolean remove_subsequences = true;
 
-  /**
-   * Run each test twice and compare the checks.  If the results differ,
-   * then disable the test.
-   */
-  @Option("Run each test twice and compare the checks")
-  public static boolean compare_checks = false;
 
-  @Option("Create clean checks for a serialized sequence")
-  public static File clean_checks = null;
-
-  @Option("Print any checks that are different in the clean run")
-  public static boolean print_diff_obs = false;
-
-  
-  ///////////////////////////////////////////////////////////////////
-  // These options are useful in the context of Carlos's PhD thesis
-  // experiments and shouldn't be needed by external users.
-  @OptionGroup(value="Pacheco thesis", unpublicized=true)
-  @Unpublicized
-  @Option("Write experiment results file")
-  public static FileWriter expfile = null;
-
-  @Unpublicized
-  @Option("Do not do online illegal")
-  public static boolean offline = false;
-
-  @Unpublicized
-  @Option("Use heuristic that may randomly repeat a method call several times")
-  public static boolean repeat_heuristic = false;
-  
-  @Unpublicized
-  @Option("Use object cache")
-  public static boolean use_object_cache = false;
-  
   /**
    * Check that the options given satisfy any specified constraints, and fail if they do not.
    */

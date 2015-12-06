@@ -19,7 +19,7 @@ import plume.UtilMDE;
 public final class ReflectionExecutor {
 
   /**
-   * Use if Randoop is exhibiting nonterminating behavior: this is usually
+   * Use if Randoop is exhibiting nonterminating behavior, which is usually
    * due to execution of code under test that results in an infinite
    * loop. With this option, Randoop executes each test in a separate
    * thread and kills tests that take too long to finish. Tests killed in

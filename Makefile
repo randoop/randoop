@@ -94,7 +94,7 @@ javadoc:
 	\rm -rf doc/javadoc
 	mkdir -p doc/javadoc
 	find src/randoop -name "*.java" \
-		| xargs javadoc -d doc/javadoc -quiet -noqualifier all -notimestamp
+		| xargs javadoc -Xdoclint:all,-missing -d doc/javadoc -quiet -noqualifier all -notimestamp
 jdoc: javadoc
 
 ideas:

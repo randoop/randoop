@@ -10,7 +10,6 @@ import randoop.sequence.Variable;
 /**
  * A check that checks for expected properties of one or more objects
  * generated during the execution of a {@link Sequence}, for example:
- * <p>
  * <ul>
  * <li> Checking that the objects created during execution of a sequence 
  *      respect reflexivity, transitivity and symmetry of equality.
@@ -19,7 +18,6 @@ import randoop.sequence.Variable;
  * </ul>  
  * <p>
  * An <code>ObjectCheck</code> has two parts:
- * <p>
  * <ul>
  * <li>A {@link ObjectContract} responsible for performing
  *     the actual check on a set of runtime values. For example.
@@ -28,7 +26,7 @@ import randoop.sequence.Variable;
  *     it returns <code>true</code>.
  *     
  * <li>A list of {@link Variable}s, which describe the specific
- *     objects in the sequence that the check is over.  </ul> <p>
+ *     objects in the sequence that the check is over.  </ul>
  */
 public class ObjectCheck implements Check {
 

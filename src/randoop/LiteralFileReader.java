@@ -31,7 +31,7 @@ import randoop.util.RecordProcessor;
  * More specifically, Class.forName(classname) must return a valid Class object.
  * <li>Each type:value pair describes the type and value of a literal (for
  * example, <tt>int:3</tt>).  For the exact format, see
- * {@link randoop.NonreceiverTerm#getTypeArgumentsForString(String)}.
+ * {@link NonreceiverTerm#getTypeArgumentsForString(String)}.
  * </ul>
  * Blank lines and comment lines (lines starting with "#") are ignored, both
  * between records and inside records.

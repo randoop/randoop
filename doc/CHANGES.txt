@@ -1,3 +1,26 @@
+Version 2.1.0, released ??
+
+Randoop now outputs two test suites (one for error-revealing tests and one
+for regression tests) rather than combining all tests into a single suite.
+Use command-line arguments --no-error-revealing-tests and
+--no-regression-tests to disable generation of one or the other of the
+suites; old command-line argument --check-object-contracts has been
+removed.  Use --error-test-filename and --regression-test-filename to set
+the file names; old command-line argument --junit-classname has been
+removed.
+
+New command-line argument --no-npe-contract disables the "No null pointer
+exceptions without null" heuristic contract.
+
+You can control which assertions appear in regression tests with new
+command-line arguments --no-regression-assertions and
+--regression-assertions-about-exceptions; old command-line argument
+--check-regression-behavior has been removed.
+
+Old command-line argument --forbid-null has been removed; use
+--null-ratio=0 instead.
+
+
 Version 2.0.1, released November 30, 2015
 
 Fixed a bug in the variable names for generated array declarations.
