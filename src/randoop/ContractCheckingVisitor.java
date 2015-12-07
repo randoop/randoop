@@ -16,10 +16,10 @@ import randoop.util.PrimitiveTypes;
  * the last index in the sequence.
  * 
  * These checks can be added at any time; however, Randoop usually adds these
- * checks (vian an {@link ExecutionVisitor} as the execution unfolds, based on
+ * checks (via an {@link ExecutionVisitor} as the execution unfolds, based on
  * observing the result of executing the statements in the sequence. For
  * example, a <code>RegressionCaptureVisitor</code> creates <code>NotNull</code>
- * checks as the sequence is executed, for those statments that return non-null
+ * checks as the sequence is executed, for those statements that return non-null
  * values.
  * 
  * If the sequence throws an exception, the visitor does not check any contracts
@@ -58,7 +58,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
   @Override
   public void initialize(ExecutableSequence s) {
     s.initializeChecks();
-    s.initializeResults();
+    s.initializeResultsOfChecks();
   }
 
   public void visitBefore(ExecutableSequence sequence, int i) {
@@ -106,7 +106,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
     return;
   }
 
-  // Randoop's default behavior is to output as failing test cases sequences
+  // Randoop's default behavior is to output, as failing test cases, sequences
   // that lead to a few select number of exceptions, including NPEs or assertion
   // violations; any other exceptions are conservatively assumed to be normal behavior.
   private boolean failureRevealingException(ExceptionalExecution exec) {
@@ -211,7 +211,7 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
   //
   // The indices are returned as a map, from types to the indices of
   // the given type. Binary contracts are only checked for objects
-  // of equal types, so themap is handy.
+  // of equal types, so the map is handy.
   private static MultiMap<Class<?>, Integer> objectIndicesToCheck(ExecutableSequence s, int maxIdx) {
 
     MultiMap<Class<?>, Integer> map = new MultiMap<Class<?>, Integer>();

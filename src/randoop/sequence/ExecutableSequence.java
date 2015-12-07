@@ -176,12 +176,13 @@ public class ExecutableSequence implements Serializable {
    */
   public void addCheck(int i, Check check, boolean passed) {
     sequence.checkIndex(i);
-
+    
     if (check instanceof ExpectedExceptionCheck &&
         hasCheck(i, ExpectedExceptionCheck.class))
       throw new IllegalArgumentException("Sequence already has a check"
           + " of type " + ExpectedExceptionCheck.class.toString());
 
+   
     this.checks.get(i).add(check);
     this.checksResults.get(i).add(passed);
   }
@@ -190,7 +191,7 @@ public class ExecutableSequence implements Serializable {
   public String toString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0 ; i < sequence.size() ; i++) {
-      sequence.printStatement(b, i);
+      sequence.appendCode(b, i);
       if (executionResults.size() > i)
         b.append(executionResults.get(i).toString());
       List<Check> cks = getChecks(i);
@@ -225,7 +226,7 @@ public class ExecutableSequence implements Serializable {
       }
 
       StringBuilder oneStatement = new StringBuilder();
-      sequence.printStatement(oneStatement, i);
+      sequence.appendCode(oneStatement, i);
 
       b.append(oneStatement);
     }
@@ -254,7 +255,7 @@ public class ExecutableSequence implements Serializable {
       }
 
       StringBuilder oneStatement = new StringBuilder();
-      sequence.printStatement(oneStatement, i);
+      sequence.appendCode(oneStatement, i);
 
       // Print exception check first, if present.
       List<Check> exObs = getChecks(i, ExpectedExceptionCheck.class);
@@ -282,7 +283,7 @@ public class ExecutableSequence implements Serializable {
   /** Return the code representation of the i'th statement. */
   public String oneStatementToCodeString(int i) {
     StringBuilder oneStatement = new StringBuilder();
-    sequence.printStatement(oneStatement, i);
+    sequence.appendCode(oneStatement, i);
     return oneStatement.toString();
   }
 
@@ -880,7 +881,7 @@ public class ExecutableSequence implements Serializable {
    * Initializes the array that captures {@link Check} results performed on
    * execution of the sequence. For use by {@link ExecutionVisitor} implementations.
    */
-  public void initializeResults() {
+  public void initializeResultsOfChecks() {
     checksResults.clear();
     for (int i = 0; i < sequence.size(); i++) {
       checksResults.add(new ArrayList<Boolean>(1));

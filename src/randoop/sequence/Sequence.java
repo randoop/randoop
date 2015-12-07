@@ -146,7 +146,7 @@ public final class Sequence implements Serializable, WeightedElement {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
-      printStatement(b, i);
+      appendCode(b, i);
     }
     return b.toString();
   }
@@ -158,10 +158,12 @@ public final class Sequence implements Serializable, WeightedElement {
     return toParseableString();
   }
   
-  // A set of bits, where there is one bit associated with each index.
-  // Active flags are used during generation, to determine what values
-  // in an existing sequence are useful to be used as inputs when
-  // creating a new sequence out of the existing one.
+  /**
+   * A set of bits, where there is one bit associated with each index.
+   * Active flags are used during generation, to determine what values
+   * in an existing sequence are useful to be used as inputs when
+   * creating a new sequence out of the existing one.
+   */
   public BitSet activeFlags;
 
   public boolean hasActiveFlags() {
@@ -201,7 +203,7 @@ public final class Sequence implements Serializable, WeightedElement {
   //
   // IMPLEMENTATION NOTE: Recall that a sequence is a sequence
   // of statements where the inputs to a statement are values created
-  // be earlier statements. Instead of using a Variable to represent such
+  // by earlier statements. Instead of using a Variable to represent such
   // inputs, we use a RelativeNegativeIndex, which is just a wrapper
   // for an integer. The integer represents a negative offset from the
   // statement index in which this RelativeNegativeIndex lives, and
@@ -798,7 +800,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * @param b  the {@link StringBuilder} to which the code is appended.
    * @param index  the position of the statement to print in this {@code Sequence}.
    */
-  public void printStatement(StringBuilder b, int index) {
+  public void appendCode(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
     // Example: { "var2", "(int)3" }
     getStatement(index).appendCode(getVariable(index), getInputs(index), b);

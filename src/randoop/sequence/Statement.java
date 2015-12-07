@@ -109,7 +109,7 @@ public final class Statement implements Serializable {
 
   /**
    * Adds code for the statement to the given {@code StringBuilder}.
-   * @see Sequence#printStatement(StringBuilder, int)
+   * @see Sequence#appendCode(StringBuilder, int)
    * 
    * @param variable  the {@link Variable} to be used if an initialization.
    * @param inputs  the input list for the operation of the statement.

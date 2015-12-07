@@ -196,7 +196,7 @@ public class ForwardGenerator extends AbstractGenerator {
       return;
     }
 
-    if (!seq.isNormalExecution()) {
+    if (! seq.isNormalExecution()) {
       if (Log.isLoggingOn()) {
         Log.logLine("Making all indices inactive (exception thrown, or failure revealed during execution).");
         Log.logLine("Statement with non-normal execution: " + seq.oneStatementToCodeString(seq.getNonNormalExecutionIndex()));
@@ -209,7 +209,7 @@ public class ForwardGenerator extends AbstractGenerator {
     for (int i = 0; i < seq.sequence.size(); i++) {
 
       // If there is no return value, clear its active flag
-      // Cast succeeds because of isNormalExecution clause ealier in this method.
+      // Cast succeeds because of isNormalExecution clause earlier in this method.
       NormalExecution e = (NormalExecution)seq.getResult(i);
       Object runtimeValue = e.getRuntimeValue();
       if (runtimeValue == null) {

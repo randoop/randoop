@@ -8,8 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -50,7 +48,6 @@ import randoop.SeedSequences;
 import randoop.experiments.CodeCoverageTracker;
 import randoop.experiments.CovWitnessHelperVisitor;
 import randoop.operation.ConstructorCall;
-import randoop.operation.MethodCall;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
@@ -76,7 +73,6 @@ import randoop.util.CollectionsExt;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
 import randoop.util.RunCmd;
 import randoop.util.TimeoutExceededException;
@@ -741,23 +737,23 @@ public class GenTests extends GenInputsAbstract {
    * Writes the sequences as JUnit files to the specified directory.
    *
    * @param output_dir string name of output directory.
-   * @param seq a list of sequences to write.
+   * @param seqList a list of sequences to write.
    * @param additionalJUnitClasses other classes to write (may be null).
    * @return list of files written.
    **/
   public static List<File> write_junit_tests (String output_dir,
-                                        List<ExecutableSequence> seq,
+                                        List<ExecutableSequence> seqList,
                                         List<String> additionalJUnitClasses) {
 
     if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.printf("Writing %d junit tests%n", seq.size());
+      System.out.printf("Writing %d junit tests%n", seqList.size());
     }
 
     List<File> files = new ArrayList<File>();
 
-    if (seq.size() > 0) {
+    if (seqList.size() > 0) {
       List<List<ExecutableSequence>> seqPartition =
-          CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (seq), testsperfile);
+          CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (seqList), testsperfile);
 
       JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name,junit_classname);
 

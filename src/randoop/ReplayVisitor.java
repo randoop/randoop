@@ -13,7 +13,7 @@ public class ReplayVisitor implements ExecutionVisitor {
 
   @Override
   public void initialize(ExecutableSequence s) {
-    s.initializeResults();
+    s.initializeResultsOfChecks();
   }
   
   @Override
