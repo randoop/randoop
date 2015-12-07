@@ -2,6 +2,7 @@ package randoop;
 
 import java.io.ObjectStreamException;
 import java.lang.reflect.Modifier;
+import java.util.Objects;
 
 import randoop.sequence.Execution;
 import randoop.util.Reflection;
@@ -31,10 +32,7 @@ public class ExpectedExceptionCheck implements Check {
   
   @Override
   public int hashCode() {
-    int h = 7;
-    h = h * 31 + exceptionClass.hashCode();
-    h = h * 31 + new Integer(statementIdx).hashCode();
-    return h;
+    return Objects.hash(exceptionClass,statementIdx);
   }
 
   public ExpectedExceptionCheck(Throwable exception, int statementIdx) {
