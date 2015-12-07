@@ -3,7 +3,7 @@ package randoop;
 import randoop.sequence.Execution;
 
 /**
- * Checks that no exception is thrown after a given statement
+ * Checks that no exception is thrown by a given statement
  * in a sequence.
  */
 public class NoExceptionCheck implements Check {
@@ -58,7 +58,7 @@ public class NoExceptionCheck implements Check {
 
   @Override
   public String toCodeStringPreStatement() {
-    return "";
+    return "//this statement threw exception considered to be a failure" + Globals.lineSep;
   }
 
   @Override
