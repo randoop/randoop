@@ -19,11 +19,6 @@ import randoop.sequence.Variable;
  * @see InstanceField
  * @see StaticField
  * @see StaticFinalField
-<<<<<<< HEAD
-=======
- *
- * @author bjkeller
->>>>>>> master
  *
  */
 public abstract class PublicField implements Serializable {
@@ -34,7 +29,7 @@ public abstract class PublicField implements Serializable {
 
   /**
    * Create the public field object for the given {@code Field}.
-   * 
+   *
    * @param field  the field.
    */
   public PublicField(Field field) {
@@ -164,7 +159,7 @@ public abstract class PublicField implements Serializable {
   /**
    * Converts this object to a form that can be serialized.
    * @see SerializablePublicField
-   * 
+   *
    * @return serializable form of this object
    * @throws ObjectStreamException if serialization fails.
    */
@@ -183,12 +178,12 @@ public abstract class PublicField implements Serializable {
   /**
    * satisfies checks whether the enclosed {@link Field} object satisfies
    * the given predicate.
-   * 
+   *
    * @param predicate the {@link ReflectionPredicate} to check this.field against.
    * @return true if this.field satisfies predicate.canUse(field).
    */
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(field);
   }
-  
+
 }

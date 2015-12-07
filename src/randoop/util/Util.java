@@ -29,9 +29,10 @@ public final class Util {
   /**
    * If both parameters are null, returns true. If one parameter is null and
    * the other isn't, returns false. Otherwise, returns o1.equals(o2).
-   * 
-   * @param o1
-   * @param o2
+   *
+   * @param o1  first object to test
+   * @param o2  second object to test
+   * @return true if arguments are both null or equal, and false otherwise
    */
   public static boolean equalsWithNull(Object o1, Object o2) {
     if (o1 == null) {
@@ -164,7 +165,7 @@ public final class Util {
 
       boolean isArray = cls.isArray();
 
-      // If primitive array, Class.getName() gives the JML representation.      
+      // If primitive array, Class.getName() gives the JML representation.
       if (isArray && cls.isPrimitive()) {
         b.append(cls.getName());
         continue;

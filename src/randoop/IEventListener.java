@@ -22,7 +22,7 @@ public interface IEventListener {
    * Called by the AbstractGenerator during each generation iteration,
    * immediately before a generation <code>step()</code> is performed.
    * 
-   *  @see randoop.AbstractGenerator
+   *  @see randoop.sequence.AbstractGenerator
    */
   void generationStepPre();
   
@@ -34,7 +34,7 @@ public interface IEventListener {
    *        Can b null, which means the last step was unable to generate a sequence
    *        (e.g. due to a bad random choice). 
    * 
-   *  @see randoop.AbstractGenerator
+   *  @see randoop.sequence.AbstractGenerator
    */
   void generationStepPost(ExecutableSequence s);
   
@@ -50,7 +50,7 @@ public interface IEventListener {
    * Called by AbstractGenerator to determine if generation should stop.
    * True signals to the generator that generation should stop.
    * 
-   * @see randoop.AbstractGenerator
+   * @see randoop.sequence.AbstractGenerator
    */
   boolean stopGeneration();
 

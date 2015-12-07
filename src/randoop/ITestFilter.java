@@ -5,7 +5,7 @@ import randoop.sequence.ExecutableSequence;
 /**
  * Used by Randoop's test generator to determine if a given sequence should be output to the user.
  * 
- * @see randoop.AbstractGenerator
+ * @see randoop.sequence.AbstractGenerator
  */
 public interface ITestFilter {
 

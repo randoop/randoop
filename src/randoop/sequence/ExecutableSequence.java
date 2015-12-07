@@ -30,7 +30,6 @@ import randoop.util.Reflection;
  * <p>
  * An ExecutableSequence augments a sequence with three additional pieces
  * of data:
- * <p>
  * <ul>
  * <li> <b>Execution results.</b> An ExecutableSequence can be executed, and the
  *      results of the execution (meaning the objects created during execution,

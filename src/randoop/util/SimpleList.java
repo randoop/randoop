@@ -27,7 +27,6 @@ import java.util.List;
  * differently.  We store the list of statements in a Sequence in a
  * SimpleList, an abstract class that has three subclasses:
  *
- * <p>
  * <ul>
  * <li> {@link ArrayListSimpleList}: a typical list is stored as an array list.
  * <li> {@link ListOfLists}: a list that only stores pointers to its constituent
@@ -43,7 +42,6 @@ import java.util.List;
  * When extending a Sequence with a new statement, we store the old sequence's
  * statements plus the new statement in a {@code OneMoreElementList}, which takes up
  * only 2 references in memory (and constant creation time).
- * <p>
  */
 public abstract class SimpleList<T> {
 

@@ -19,7 +19,7 @@ default:
 	@echo "tests          run tests."
 	@echo "update-goals   update test goal files."
 	@echo "manual         update the manual's list of options and table of contents."
-	@echo "jdoc           update the javadoc."
+	@echo "javadoc        update the API documentation."
 	@echo "distribution-files  create distribution zip and jar files, in dist/ dir."
 	@echo "                    (also updates manual)."
 
@@ -54,10 +54,10 @@ RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
 # Build and run tests
 all: clean build tests
 
-# Build, run tests, create manual, create distribution.
-all-dist: all manual distribution-files
+# Build, run tests, create documentation, create distribution.
+all-dist: all javadoc manual distribution-files
 
-# Remove Randoop classes.
+# Remove generated .class files.
 clean:
 	rm -rf bin
 
@@ -90,12 +90,12 @@ randoop_agent.jar : bin/randoop/instrument/Premain.class src/randoop/instrument/
 	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/instrument/manifest.txt \
 	  randoop/instrument/Premain.class
 
-jdoc:
+javadoc:
 	\rm -rf doc/javadoc
 	mkdir -p doc/javadoc
 	find src/randoop -name "*.java" \
-		| xargs javadoc -d doc/javadoc -quiet -noqualifier all -notimestamp
-javadoc: jdoc
+		| xargs javadoc -Xdoclint:all,-missing -d doc/javadoc -quiet -noqualifier all -notimestamp
+jdoc: javadoc
 
 ideas:
 	kramdown doc/projectideas/ProjectIdeas.md > doc/projectideas/projectideas.html
