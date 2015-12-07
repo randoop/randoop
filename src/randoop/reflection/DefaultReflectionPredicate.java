@@ -16,7 +16,7 @@ import randoop.util.Reflection;
 /**
  * Returns true for public members, with some exceptions (see
  * doNotUseSpecialCase method).
- * 
+ *
  * If a method has the @CheckRep annotation, returns false
  * (the method will be used as a contract checker, not
  *  as a method under test).
@@ -26,11 +26,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private Pattern omitMethods = null;
   private Set<String> omitFields;
   private VisibilityPredicate visibility;
-  
+
   public DefaultReflectionPredicate() {
     this(null);
   }
-  
+
   /** If omitMethods is null, then no methods are omitted. */
   public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
@@ -40,11 +40,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    this(omitMethods, omitFields, new PublicVisibilityPredicate());
   }
 
-  /** 
+  /**
    * DefaultReflectionFilter creates a filter object that uses default
-   * criteria for inclusion of reflection objects. 
+   * criteria for inclusion of reflection objects.
    * @param omitMethods pattern for methods to omit, if null then no methods omitted.
-   * @param visibility 
+   * @param visibility  the predicate for testing visibility expectations for members 
    * @see OperationExtractor#getOperations(java.util.Collection, ReflectionPredicate)
    */
   public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
@@ -123,7 +123,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     if (m.getAnnotation(CheckRep.class) != null) {
       return false;
     }
-    
+
     String reason = doNotUseSpecialCase(m);
     if (reason != null) {
       if (Log.isLoggingOn()) {
@@ -217,10 +217,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   /**
-   * canUse tests whether the name of a field is included among the 
+   * canUse tests whether the name of a field is included among the
    * omitted method names.
-   * 
-   * @param f field to test 
+   *
+   * @param f field to test
    * @return true if field name does not occur in omitFields pattern, and false if it does.
    */
   @Override
@@ -229,7 +229,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     if (omitFields == null) {
       return true;
     }
-    
+
     String name = f.getDeclaringClass().getName() + "." + f.getName();
     boolean result = visibility.isVisible(f) && !omitFields.contains(name);
     if (Log.isLoggingOn()) {

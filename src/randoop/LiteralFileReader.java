@@ -13,7 +13,7 @@ import randoop.util.RecordProcessor;
  * Reads a file specifying literal values to use during generation.
  * Method parse(String) takes as input the name
  * of a text file. The text file should contain one or more records of the form:
- * 
+ *
  * <pre>
  * START CLASSLITERALS
  * CLASSNAME
@@ -30,20 +30,19 @@ import randoop.util.RecordProcessor;
  * <li>classname is the fully-qualified name of a valid class.
  * More specifically, Class.forName(classname) must return a valid Class object.
  * <li>Each type:value pair describes the type and value of a literal (for
- * example, <tt>int:3</tt>).  For the exact format, see
- * {@link NonreceiverTerm#getTypeArgumentsForString(String)}.
+ * example, <tt>int:3</tt>).  
  * </ul>
  * Blank lines and comment lines (lines starting with "#") are ignored, both
  * between records and inside records.
  * <p>
- * 
+ *
  * An example literals file appears in file
  * randoop/systemtests/resources/literalsfile.txt.<p>
- * 
+ *
  * LIMITATIONS:<p>
- * 
+ *
  * Error messages do not include line numbers pointing to location of the error.</p>
- * 
+ *
  * There is no way to specify literals that are not related to any class in
  * particular, or literals that are related to only specific methods within
  * a class.
@@ -54,15 +53,15 @@ public class LiteralFileReader {
   private static final String CLASSNAME = "CLASSNAME";
   private static final String LITERALS = "LITERALS";
 
-  /** Returns a map from class to list of constants. */      
+  /** Returns a map from class to list of constants. */
   public static MultiMap<Class<?>, NonreceiverTerm> parse(String inFile) {
-    
+
     final MultiMap<Class<?>, NonreceiverTerm> map =
       new MultiMap<Class<?>, NonreceiverTerm>();
 
     RecordProcessor processor = new RecordProcessor() {
       public void processRecord(List<String> lines) {
-        
+
         if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals(CLASSNAME))) {
           throwInvalidRecordError("record does not begin with \"" + CLASSNAME + "\"", lines, 0);
         }
@@ -82,7 +81,7 @@ public class LiteralFileReader {
         if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals(LITERALS))) {
           throwInvalidRecordError("Missing field \"" + LITERALS + "\"", lines, 2);
         }
-        
+
         for (int i = 3 ; i < lines.size() ; i++) {
           try {
             NonreceiverTerm p = NonreceiverTerm.parse(lines.get(i));
@@ -93,20 +92,20 @@ public class LiteralFileReader {
         }
       }
 
-    
+
     };
-    
+
     RecordListReader reader = new RecordListReader(CLASSLITERALS, processor);
     reader.parse(inFile);
-    
+
     return map;
   }
-    
+
   private static void throwInvalidRecordError(Exception e, List<String> lines, int i) {
-    throw new Error(e);        
-    
+    throw new Error(e);
+
   }
-  
+
   private static void throwInvalidRecordError(String string, List<String> lines, int i) {
     StringBuilder b = new StringBuilder();
     b.append("RECORD PROCESSING ERROR: " + string + "\n");
@@ -125,6 +124,6 @@ public class LiteralFileReader {
     }
     b.append("------------------------------\n");
   }
-  
-  
+
+
 }

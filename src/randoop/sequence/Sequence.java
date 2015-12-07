@@ -58,7 +58,7 @@ public final class Sequence implements Serializable, WeightedElement {
   // Should be final but cannot because of serialization.
   // This info is used by some generators.
   private transient/* final */List<Class<?>> lastStatementTypes;
-  
+
   /*
    * Weight is used by heuristic that favors smaller sequences
    * so it makes sense to define weight as the inverse of size.
@@ -157,7 +157,7 @@ public final class Sequence implements Serializable, WeightedElement {
   public String toString() {
     return toParseableString();
   }
-  
+
   // A set of bits, where there is one bit associated with each index.
   // Active flags are used during generation, to determine what values
   // in an existing sequence are useful to be used as inputs when
@@ -396,9 +396,9 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Counts the number of statements in a list that are not initializations with
    * a primitive type. For instance <code>int var7 = 0</code>.
-   * 
+   *
    * @param statements  the list of {@link Statement} objects
-   * @return count of statements other than primitive initializations 
+   * @return count of statements other than primitive initializations
    */
   private static int computeNetSize(SimpleList<Statement> statements) {
     int netSize = 0;
@@ -680,16 +680,16 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * extend adds a new statement to this sequence using the operation of the given statement.
    * Intended as the only place that we reach inside a {@link Statement} for its operation.
-   * 
+   *
    * @param statement is a {@link Statement} object from which the operation is copied.
    * @param inputs is the list of variables for input.
-   * @return sequence constructed from this one plus the operation 
+   * @return sequence constructed from this one plus the operation
    * @see Sequence#extend(Operation, List)
    */
   public Sequence extend(Statement statement, List<Variable> inputs) {
     return extend(statement.getOperation(), inputs);
   }
-  
+
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
   private void checkInputs(Operation operation, List<Variable> inputVariables) {
@@ -759,9 +759,9 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /** Create a new sequence that is the concatenation of the given sequences. */
-  
 
-  
+
+
   public static Sequence concatenate(List<Sequence> sequences) {
     List<SimpleList<Statement>> statements1 = new ArrayList<SimpleList<Statement>>();
     int newHashCode = 0;
@@ -794,7 +794,7 @@ public final class Sequence implements Serializable, WeightedElement {
 
   /**
    * Appends the statement at the given index to the {@code StringBuilder}.
-   * 
+   *
    * @param b  the {@link StringBuilder} to which the code is appended.
    * @param index  the position of the statement to print in this {@code Sequence}.
    */
@@ -808,10 +808,10 @@ public final class Sequence implements Serializable, WeightedElement {
    * Adds the given operation to a new {@code Sequence} with the statements of
    * this object as a prefix, repeating the operation the given number of times.
    * Used during generation.
-   * 
+   *
    * @param operation  the {@link Operation} to repeat.
    * @param times  the number of times to repeat the {@link Operation}.
-   * @return a new {@code Sequence} 
+   * @return a new {@code Sequence}
    */
   public Sequence repeat(Operation operation, int times) {
     Sequence retval = new Sequence(this.statements);
@@ -837,7 +837,7 @@ public final class Sequence implements Serializable, WeightedElement {
 
   /**
    * Creates a {@code MutableSequence} from this sequence.
-   * 
+   *
    * @return a {@link MutableSequence} objects with the same statements as this object.
    */
   public MutableSequence toModifiableSequence() {
@@ -862,7 +862,7 @@ public final class Sequence implements Serializable, WeightedElement {
 
   /**
    * Checks whether the variable is defined in this sequence.
-   * 
+   *
    * @param v  the {@link Variable} to test.
    * @return true if this object defines the variable, and false otherwise.
    */
@@ -877,19 +877,19 @@ public final class Sequence implements Serializable, WeightedElement {
    * <pre>
    *  st.equals(parse(st.toParseableCode()))
    * </pre>
-   * See the {@link #parse(List)} for the 
+   * See the {@link #parse(List)} for the
    * required format of a String representing a Sequence.
-   *  
+   *
    *  @return parseable string description of sequence.
    */
   public String toParseableString() {
     return toParseableString(Globals.lineSep);
   }
-  
+
   /**
    * Like toParseableString, but the client can specify a string that
    * will be used a separator between statements.
-   * 
+   *
    * @param statementSep  the statement separator.
    */
   public String toParseableString(String statementSep) {
@@ -900,7 +900,7 @@ public final class Sequence implements Serializable, WeightedElement {
       b.append(sk.toParseableString(Variable.classToVariableName(sk.getOutputType()) + i, getInputs(i)));
       b.append(statementSep);
     }
-    return b.toString();  
+    return b.toString();
   }
 
   /**
@@ -945,7 +945,7 @@ public final class Sequence implements Serializable, WeightedElement {
     int statementCount = 0;
     try {
       for (String statement : statements) {
-        
+
 
         // Remove surrounding whitespace.
         statement = statement.trim();
@@ -957,7 +957,7 @@ public final class Sequence implements Serializable, WeightedElement {
         // newVar           stKind                inVars
         int equalsInd = statement.indexOf('=');
         int colonInd = statement.lastIndexOf(':');
-        
+
         if (equalsInd == -1) {
             String msg = "A statement must be of the form "
                 + "varname = <statementkind> : varname ... varname"
@@ -973,7 +973,7 @@ public final class Sequence implements Serializable, WeightedElement {
                 + " a \":\" symbol.";
             throw new SequenceParseException(msg, statements, statementCount);
         }
-        
+
         String newVar = statement.substring(0, equalsInd).trim();
         String opStr = statement.substring(equalsInd + 1, colonInd).trim();
         String inVarsStr = statement.substring(colonInd + 1).trim();
@@ -1044,18 +1044,18 @@ public final class Sequence implements Serializable, WeightedElement {
    * Parse a sequence encoded as a strings. Convenience method for {@link #parse(List)},
    * which parses a sequence of strings, each representing a Statement. See
    * that method for more documentation on the string representation of a sequence.
-   *
+   * <p>
    * This method breaks up the given string into statements assuming that each
    * statement is separated by a line separator character.
-   *
+   * <p>
    * The following invariant holds:
-   *
+   * <pre>
    *     st.equals(parse(st.toParseableCode()))
-   *
+   * </pre>
    * When writing/reading sequences out to file: you have two options: serialize
    * the sequences using java's serialization mechanism, or write them out as
    * parseable text. Serialization is faster, and text is human-readable.
-   * @throws SequenceParseException 
+   * @throws SequenceParseException if string is not valid sequence
    */
   public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
@@ -1085,7 +1085,7 @@ public final class Sequence implements Serializable, WeightedElement {
     RecordListReader reader = new RecordListReader("SEQUENCE", processor);
     reader.parse(file);
   }
-  
+
 
   public int lastUseBefore(int idx, Variable var) {
     if (var.sequence != this)

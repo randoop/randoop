@@ -11,9 +11,10 @@ public class RandoopOneClassTargetMaker implements TargetMaker {
   private List<String> targets;
 
   /**
-   * 
+   *
    * @param args first argument is a prefix. Second argument is an experiment name.
-   * @throws IOException
+   * @throws IOException if unable to read target file
+   * @throws IllegalArgumentException if not at least two arguments 
    */
   public RandoopOneClassTargetMaker(String[] args) throws IOException {
     if (args.length < 2)

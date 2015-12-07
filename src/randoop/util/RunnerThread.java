@@ -16,8 +16,8 @@ public class RunnerThread extends Thread {
 
   /**
    * Create a new runner thread.
-   * 
-   * @param threadGroup
+   *
+   * @param threadGroup  the group for this thread
    */
   public RunnerThread(ThreadGroup threadGroup) {
     super(threadGroup, "");

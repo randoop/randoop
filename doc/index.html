@@ -676,7 +676,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  Tests without assertions can be used to exercise the code, but they
  do not enforce any particular behavior, such as values returned. [default false]</li>
       <li id="option:regression-assertions-about-exceptions"><b>--regression-assertions-about-exceptions=</b><i>enum</i>. If a test throws an exception, should it be included in the regression test suite? [default ALL]<ul><li><b>NONE</b> Include no exceptional tests in the regression test suite</li><li><b>CHECKED</b> Include tests that throw checked exceptions in the regression test suite</li><li><b>ALL</b> Include every test in the regression test suite</li></ul></li>
-      <li id="option:output-tests"><b>--output-tests=</b><i>string</i>. For details, see the Javadoc documentation for <code>DefaultTestFilter</code>. [default all]</li>
+      <li id="option:output-tests"><b>--output-tests=</b><i>string</i>. For details, see the Javadoc documentation for <code>randoop.DefaultTestFilter</code>. [default all]</li>
       <li id="option:simplify-failed-tests"><b>--simplify-failed-tests=</b><i>boolean</i>. Simplify (shorten) failed tests while preserving failure behavior [default false]</li>
       <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
       <li id="option:junit-classname"><b>--junit-classname=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>

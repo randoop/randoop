@@ -20,18 +20,20 @@ import randoop.Globals;
  * Inner classes (those ending in $D, where D is a digit) are ignored.
  *
  *  If the -omit:"REGEXP" option is given, then any class names that
- *  match REGEXP will be omitted. 
+ *  match REGEXP will be omitted.
  *
  * Results are output to destinationFile.
  */
 public class ClassListPrinter {
 
   /**
-   * @param destinationFile
-   * @param classDir
-   * @param packageName may be null.
-   * @param filter
-   * @throws IOException
+   * @param destinationFile  the file where class names are written
+   * @param classDir  the directory for the package
+   * @param packageName  the name of the package (may be null)
+   * @param filter  the class filter
+   * @throws IOException if there is an error writing the file
+   * @throws IllegalArgumentException if filter is null, classDir is invalid, or
+   *         packageName doesn't correspond to directory
    */
   public static void findPublicTopLevelClasses(String destinationFile, String classDir,
       String packageName, ClassFilter filter) throws IOException {

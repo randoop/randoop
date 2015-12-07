@@ -18,8 +18,8 @@ import randoop.util.PrimitiveTypes;
 /**
  * Statement represents a statement involving an operation (or term), and the list
  * of inputs for the statement. The inputs are variables, but are represented by indexing
- * into the enclosing sequence. 
- * 
+ * into the enclosing sequence.
+ *
  */
 public final class Statement implements Serializable {
 
@@ -49,17 +49,17 @@ public final class Statement implements Serializable {
 
   /**
    * Creates a statement based on the given operation
-   * 
+   *
    * @param operation  the operation for action of this statement.
    */
   public Statement(Operation operation) {
     this(operation,new ArrayList<RelativeNegativeIndex>());
   }
-  
+
 
   /**
    * True iff this statement is a void method call.
-   * 
+   *
    * @return true if output type is void.
    */
   public boolean isVoidMethodCall() {
@@ -68,7 +68,7 @@ public final class Statement implements Serializable {
 
   /**
    * equals tests whether two Statement objects are equal:
-   * @return true if operation is the same, the number of inputs is the same, 
+   * @return true if operation is the same, the number of inputs is the same,
    *         and inputs are equal.
    */
   @Override
@@ -110,7 +110,7 @@ public final class Statement implements Serializable {
   /**
    * Adds code for the statement to the given {@code StringBuilder}.
    * @see Sequence#printStatement(StringBuilder, int)
-   * 
+   *
    * @param variable  the {@link Variable} to be used if an initialization.
    * @param inputs  the input list for the operation of the statement.
    * @param b  the {@code StringBuilder} to which code text is appended.
@@ -126,7 +126,7 @@ public final class Statement implements Serializable {
     b.append(";" + Globals.lineSep);
   }
 
-  
+
   public String toParseableString(String variableName, List<Variable> inputs) {
     StringBuilder b = new StringBuilder();
     b.append(variableName);
@@ -144,9 +144,9 @@ public final class Statement implements Serializable {
 
   /**
    * toModifiableStatement converts the statement to the mutable form.
-   * 
-   * @param inputs mutable version of variable inputs to statement.
-   * @param mVariable 
+   *
+   * @param inputs  mutable version of variable inputs to statement.
+   * @param mVariable  the mutable variable the statement affects
    * @return instance of mutable statement corresponding to this statement.
    */
   public MutableStatement toModifiableStatement(List<MutableVariable> inputs, MutableVariable mVariable) {
@@ -155,28 +155,28 @@ public final class Statement implements Serializable {
 
   /**
    * isStatic indicates whether the corresponding operation is declared as static.
-   * 
+   *
    * @return result of isStatic on operation corresponding to statement.
    */
   public boolean isStatic() {
     return operation.isStatic();
   }
-  
+
   /**
    * isMethodCall indicates whether a statement corresponds to a method-call-like operation.
    * This could be either a method call, an assignment/initialization involving a method call,
    * or the use of a public field in an assignment on either lhs (as "setter") or rhs (as "getter").
-   * 
+   *
    * @return true if operation is method-call-like, and false, otherwise.
    */
   public boolean isMethodCall() {
     return operation.isMessage();
   }
-  
+
   /**
    * execute performs the operation of the statement for the input variables and returns
    * outcome.
-   * 
+   *
    * @param inputs list of objects to use as inputs to execution.
    * @param out stream for any output.
    * @return object representing outcome of computation.
@@ -188,7 +188,7 @@ public final class Statement implements Serializable {
   /**
    * getDeclaringClass returns the declaring class as defined by the {@link Operation}
    * of the statement.
-   * 
+   *
    * @return result of getDeclaringClass for corresponding statement.
    */
   public Class<?> getDeclaringClass() {
@@ -198,7 +198,7 @@ public final class Statement implements Serializable {
   /**
    * isMethodIn determines whether the {@link MethodCall} in a statement corresponds to
    * an element of the list of reflective {@link Method} objects.
-   * 
+   *
    * @param list containing {@link Method} objects.
    * @return true if {@link MethodCall} corresponds to an object in list, and false, otherwise.
    */
@@ -211,8 +211,8 @@ public final class Statement implements Serializable {
 
   /**
    * callsTheMethod determines whether the {@link MethodCall} in a statement corresponds
-   * to the {@link Method} argument. 
-   * 
+   * to the {@link Method} argument.
+   *
    * @param m instance of {@link Method}.
    * @return true if {@link MethodCall} object of statement corresponds to m, and, false, otherwise.
    */
@@ -225,7 +225,7 @@ public final class Statement implements Serializable {
 
   /**
    * isConstructorCall determines if operation for statement is a call to a constructor.
-   * 
+   *
    * @return true if operation is a constructor call, and false, otherwise.
    */
   public boolean isConstructorCall() {
@@ -234,7 +234,7 @@ public final class Statement implements Serializable {
 
   /**
    * isPrimitiveInitialization determines if operation is a nonreceiver term.
-   * 
+   *
    * @return true if operation is a nonreceiver, and false otherwise.
    */
   public boolean isPrimitiveInitialization() {
@@ -243,17 +243,17 @@ public final class Statement implements Serializable {
 
   /**
    * isNullInialization determines if statement represents an initialization by null value.
-   * 
+   *
    * @return true if statement represents null initialization, and false otherwise.
    */
   public boolean isNullInitialization() {
     return isPrimitiveInitialization() && operation.getValue() == null;
   }
-  
+
   /**
    * getShortForm constructs code expression of the operation for substitution into argument lists
    * as opposed to using variable.
-   * 
+   *
    * @return string containing code to access the value of the operation/term
    */
   //Historical note:
@@ -267,15 +267,15 @@ public final class Statement implements Serializable {
     }
     return null;
   }
-  
+
   /**
-   * getValue returns the "value" for a statement. Is only meaningful if 
-   * statement is an assignment of a constant value.  
+   * getValue returns the "value" for a statement. Is only meaningful if
+   * statement is an assignment of a constant value.
    * Appeals to {@link AbstractOperation} to throw appropriate exception when
    * unable to provide a value.
-   * 
+   *
    * This is a hack to allow randoop.main.GenBranchDir to do mutation.
-   * 
+   *
    * @return value of term in statement (rhs of assignment/initialization) if any
    */
   public Object getValue() {
@@ -284,9 +284,9 @@ public final class Statement implements Serializable {
 
   /**
    * getOperation is meant to be a temporary solution to type confusion in generators.
-   * This should go away. 
+   * This should go away.
    * Only intended to be called by {@link Sequence#extend(Operation, List)}.
-   * 
+   *
    * @return operation object in the statement.
    */
   //TODO can remove once RandomWalkGenerator.extendRandomly and SequenceSimplifyUtils.makeCopy modified
