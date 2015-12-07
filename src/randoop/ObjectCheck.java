@@ -1,6 +1,7 @@
 package randoop;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;
@@ -52,10 +53,7 @@ public class ObjectCheck implements Check {
 
   @Override
   public int hashCode() {
-    int h = 7;
-    h = h * 31 + contract.hashCode();
-    h = h * 31 + Arrays.hashCode(vars);
-    return h;
+    return Objects.hash(contract,vars);
   }
 
   public ObjectCheck(ObjectContract cc, int stmt_no, Variable... vars) {
