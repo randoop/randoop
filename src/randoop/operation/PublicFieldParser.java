@@ -6,45 +6,24 @@ import java.lang.reflect.Modifier;
 import randoop.types.TypeNames;
 
 /**
-<<<<<<< HEAD
- * PublicFieldParser defines a parser to recognize a descriptor of a field in a 
- * string, and return an object representing the sort of field it is in the 
+ * PublicFieldParser defines a parser to recognize a descriptor of a field in a
+ * string, and return an object representing the sort of field it is in the
  * corresponding class.
- * The descriptor is expected to be in the form <tt>TYPE:FIELD-NAME</tt> where the 
- * <tt>FIELD-NAME</tt> is a fully qualified name of the form 
+ * The descriptor is expected to be in the form <tt>TYPE:FIELD-NAME</tt> where the
+ * <tt>FIELD-NAME</tt> is a fully qualified name of the form
  * <i>package</i>.<i>class-name</i>.<i>name</i>.
- * The parser first checks that the descriptor is in the right syntactic form, 
- * then extracts the type and field-name and uses reflection to determine if 
+ * The parser first checks that the descriptor is in the right syntactic form,
+ * then extracts the type and field-name and uses reflection to determine if
  * the field belongs to the class, and whether the types match.
- * 
-=======
- * PublicFieldParser defines a parser to recognize a descriptor of a field in a string,
- * and return an object representing the sort of field it is in the corresponding class.
- * The descriptor is expected to be in the form <type>:<field-name> where the <field-name>
- * is a fully qualified name of the form <package>.<class-name>.<name>.
- * The parser first checks that the descriptor is in the right syntactic form, then extracts
- * the type and field-name and uses reflection to determine if the field belongs to the class,
- * and the types match.
  *
- * @author bjkeller
- *
->>>>>>> master
  */
 public class PublicFieldParser {
 
   /**
-<<<<<<< HEAD
-   * Parses a type-field pair in a string, and returns the relevant object based 
+   * Parses a type-field pair in a string, and returns the relevant object based
    * on properties of the field determined by reflection.
-   * 
-   * @param s  a string in the form of "TYPE:FIELDNAME"
-=======
-   * parse recognizes a type-field pair in a string, and
-   * returns the relevant object based on properties of the field
-   * determined by reflection.
    *
-   * @param s - a string in the form of "<type>:<field-name>"
->>>>>>> master
+   * @param s  a string in the form of "TYPE:FIELDNAME"
    * @return a reference to a PublicField object represented by the pair in the string.
    * @throws OperationParseException if input string is not expected format.
    * @see PublicField
@@ -132,20 +111,11 @@ public class PublicFieldParser {
   }
 
   /**
-<<<<<<< HEAD
    * Create a {@code PublicField} object based on field given.
    * The field may be an instance field, a static field, or a static final field.
-   * 
+   *
    * @param field  the {@link Field} object for which to create a wrapper object.
    * @return an object of a subclass of {@link PublicField}.
-=======
-   * recognize determines what sort of field is given.
-   * Looking for a field to be an instance field,
-   * a static field, or a static final field.
-   *
-   * @param field
-   * @return an object of a subclass of PublicField.
->>>>>>> master
    */
   public static PublicField recognize(Field field) {
     PublicField pf = null;
@@ -168,13 +138,8 @@ public class PublicFieldParser {
   }
 
   /**
-<<<<<<< HEAD
    * Searches the field list of a class for a field that has the given name.
-   * 
-=======
-   * fieldFor searches the field list of a class for a field that has the given name.
    *
->>>>>>> master
    * @param type - class object.
    * @param fieldName - field name for which to search the class.
    * @return field of the class with the given name.
