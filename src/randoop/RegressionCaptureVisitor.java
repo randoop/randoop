@@ -26,7 +26,7 @@ import randoop.util.Reflection;
  * <ul>
  *
  * <li> Should follow a contract-checking visitor, if the latter is also
- * present in a MultiVisitor. If there is a contract-checking violationg
+ * present in a MultiVisitor. If there is a contract-checking violation
  * in the sequence, this visitor adds no checks.
  *
  * <li> We only create checks over variables whose type is primitive or
@@ -50,7 +50,7 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
   
   @Override
   public void initialize(ExecutableSequence s) {
-    s.initializeResults();
+    s.initializeResultsOfChecks();
     s.initializeChecks();
   }
 
@@ -131,14 +131,10 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
   }
 
   public void visitAfter(ExecutableSequence s, int idx) {
-
+    
     // We're only interested in statements at the end.
     if (idx < (s.sequence.size()-1))
       return;
-
-    if (s.hasFailure(idx)) {
-      return;
-    }
 
     if (s.hasNonExecutedStatements()) {
       return;
@@ -151,15 +147,13 @@ public final class RegressionCaptureVisitor implements ExecutionVisitor {
       Statement st = s.sequence.getStatement(i);
       ExecutionOutcome result = s.getResult(i);
 
-      if (result instanceof NormalExecution
-          && GenInputsAbstract.check_regression_behavior) {
+      if (result instanceof NormalExecution) {
 
         NormalExecution e = (NormalExecution)result;
         // If value is like x in "int x = 3" don't capture
         // checks (nothing interesting).
         if (st.isPrimitiveInitialization())
           continue;
-
 
         // If value's type is void (i.e. its statement is a
         // void-return method call), don't capture checks
