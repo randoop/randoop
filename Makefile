@@ -90,8 +90,7 @@ randoop_agent.jar : bin/randoop/instrument/Premain.class src/randoop/instrument/
 	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/instrument/manifest.txt \
 	  randoop/instrument/Premain.class
 
-JAVAVERSION = $(shell java -version 2>&1)
-ifneq (,$(findstring 1.8.,${JAVAVERSION}))
+ifneq (,$(findstring 1.8.,$(shell java -version 2>&1)))
   DOCLINT?=-Xdoclint:all,-missing
 endif
 
