@@ -1,9 +1,19 @@
-package randoop;
+package randoop.test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import randoop.BugInRandoopException;
+import randoop.Check;
+import randoop.ExceptionalExecution;
+import randoop.ExecutionOutcome;
+import randoop.NoExceptionCheck;
+import randoop.NormalExecution;
+import randoop.NotExecuted;
+import randoop.ObjectCheck;
+import randoop.ObjectContract;
+import randoop.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 import randoop.util.MultiMap;
@@ -11,26 +21,21 @@ import randoop.util.PrimitiveTypes;
 
 /**
  * An execution visitor that checks unary and binary object contracts on the
- * values created by the sequence. It does this only after the last statement
- * has been executed. For each contract violation, the visitor adds an Check to
+ * values created by the sequence. It does this only after the whole sequence
+ * has been executed. For each contract violation, the visitor adds a Check to
  * the last index in the sequence.
  * 
- * These checks can be added at any time; however, Randoop usually adds these
- * checks (via an {@link ExecutionVisitor} as the execution unfolds, based on
- * observing the result of executing the statements in the sequence. For
- * example, a <code>RegressionCaptureVisitor</code> creates <code>NotNull</code>
- * checks as the sequence is executed, for those statements that return non-null
- * values.
+ * 
  * 
  * If the sequence throws an exception, the visitor does not check any contracts
  * [[ TODO update]]. If it does not throw an exception, it checks all contracts
  * on each object returned by each statement, except objects that are boxed
  * primitives or Strings.
  */
-public final class ContractCheckingVisitor implements ExecutionVisitor {
+public final class ContractCheckingVisitor implements TestCheckGenerator {
 
   private List<ObjectContract> contracts;
-  private boolean checkAtEndOfExec;
+  private FailureExceptionPredicate exceptionPredicate;
 
   /**
    * Create a new visitor that checks the given contracts after the last
@@ -39,99 +44,86 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
    * @param contracts
    *          Expected to be unary contracts, i.e. for each contract
    *          <code>c</code>, <code>c.getArity() == 1</code>.
+   * @param exceptionChecker 
    *
-   * @param checkAfterLast
-   *          If true, checks contracts only when the last statement
-   *          is visited. If false, checks contracts after each
-   *          statement is visited.
    */
-  public ContractCheckingVisitor(List<ObjectContract> contracts, boolean checkAfterLast) {
+  public ContractCheckingVisitor(List<ObjectContract> contracts, 
+                                 FailureExceptionPredicate exceptionPredicate) {
     this.contracts = new ArrayList<ObjectContract>();
-    this.checkAtEndOfExec = checkAfterLast;
     for (ObjectContract c : contracts) {
       if (c.getArity() > 2)
         throw new IllegalArgumentException("Visitor accepts only unary or binary contracts.");
       this.contracts.add(c);
     }
-  }
-
-  @Override
-  public void initialize(ExecutableSequence s) {
-    s.initializeChecks();
-    s.initializeResultsOfChecks();
-  }
-
-  public void visitBefore(ExecutableSequence sequence, int i) {
-    // no body.
+    this.exceptionPredicate = exceptionPredicate;
   }
 
   /**
-   * If idx is the last index, checks contracts.
+   * {@inheritDoc}
+   * Adds checks to final statement of sequence. Looks for failure exceptions, 
+   * and violations of contracts in {@code contracts}. 
    */
-  public void visitAfter(ExecutableSequence s, int idx) {
-
-    for (int i = 0 ; i <= idx ; i++) {
-      assert !(s.getResult(i) instanceof NotExecuted) : s;
-      if (i < idx)
-        assert !(s.getResult(i) instanceof ExceptionalExecution) : s;
+  @Override
+  public TestChecks visit(ExecutableSequence s) {
+    ErrorRevealingChecks checks = new ErrorRevealingChecks();
+    
+    int finalIndex = s.sequence.size() - 1;
+    ExecutionOutcome finalResult = s.getResult(finalIndex);
+    
+    //If statement not executed, then something flaky
+    if (finalResult instanceof NotExecuted) {
+      throw new Error("Unexecuted final statement in sequence: " + s);
     }
+    
+    if (finalResult instanceof ExceptionalExecution) {
+      //If there is an exception, check whether it is considered a failure
+      ExceptionalExecution exec = (ExceptionalExecution)finalResult;
 
-    if (checkAtEndOfExec && idx < s.sequence.size() - 1) {
-      // Check contracts only after the last statement is executed.
-      return;
-    }
-
-    if (s.getResult(idx) instanceof ExceptionalExecution) {
-      ExceptionalExecution exec = (ExceptionalExecution) s.getResult(idx);
-      if (failureRevealingException(exec)) {
-        NoExceptionCheck obs = new NoExceptionCheck(idx);
-        s.addCheck(idx, obs, false);
+      if (exceptionPredicate.test(exec, s)) {
+        String exceptionName = exec.getException().getClass().getName();
+        NoExceptionCheck obs = new NoExceptionCheck(finalIndex, exceptionName);
+        checks.add(obs);
       }
-      return;
-    }
-
-    MultiMap<Class<?>, Integer> idxmap = objectIndicesToCheck(s, idx);
-
-    for (Class<?> cls : idxmap.keySet()) {
-
-      for (ObjectContract c : contracts) {
-
-        if (c.getArity() == 1) {
-          checkUnary(s, c, idxmap.getValues(cls), idx);
-        } else {
-          checkBinary(s, c, idxmap.getValues(cls), idx);
+      
+      //If exception not considered a failure, don't include checks
+      
+    } else { 
+      //Otherwise, normal execution, check contracts
+      MultiMap<Class<?>, Integer> idxmap = indicesToCheck(s);
+      for (Class<?> cls : idxmap.keySet()) {
+        for (ObjectContract c : contracts) {
+          if (c.getArity() == 1) {
+            checkUnary(s, c, idxmap.getValues(cls), checks);
+          } else {
+            checkBinary(s, c, idxmap.getValues(cls), checks);
+          }
         }
       }
     }
-    return;
+    return checks;
   }
-
-  // Randoop's default behavior is to output, as failing test cases, sequences
-  // that lead to a few select number of exceptions, including NPEs or assertion
-  // violations; any other exceptions are conservatively assumed to be normal behavior.
-  private boolean failureRevealingException(ExceptionalExecution exec) {
-    
-    if (exec.getException().getClass().equals(NullPointerException.class))
-      return true;
-    
-    if (exec.getException().getClass().equals(AssertionError.class))
-      return true;
-    
-    if (exec.getException().getClass().equals(StackOverflowError.class))
-      return true;
-    
-    return false;
-  }
-
-  private void checkBinary(ExecutableSequence s, ObjectContract c, Set<Integer> values, int idx) {
+  
+  /**
+   * Checks a binary contract over the set of values defined in the sequence,
+   * and attaches failing checks at final statement of the sequence.
+   * 
+   * @param s  the executable sequence
+   * @param c  the contract to check
+   * @param values  the set of positions defining values to check
+   * @param checks 
+   * @param idx  the statement where checks are inserted
+   */
+  private void checkBinary(ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
     for (Integer i : values) {
       for (Integer j : values) {
 
         ExecutionOutcome result1 = s.getResult(i);
-        assert result1 instanceof NormalExecution: s;
-
         ExecutionOutcome result2 = s.getResult(j);
-        assert result2 instanceof NormalExecution: s;
+        
+        if (! (result1 instanceof NormalExecution) 
+            && ! (result2 instanceof NormalExecution)) {
+          throw new Error("Abnormal execution in sequence: " + s);
+        }
 
         if (Log.isLoggingOn()) Log.logLine("Checking contract " + c.getClass() + " on " + i + ", " + j);
 
@@ -152,24 +144,42 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
             // returned by the expression, marking it as invalid
             // behavior.
             obs = new ObjectCheck(c, i, s.sequence.getVariable(i), s.sequence.getVariable(j));
-            s.addCheck(idx, obs, false);
+            checks.add(obs);
           }
-        } else {
-          if (Log.isLoggingOn()) Log.logLine("Contract threw exception.");
+        } else if (exprOutcome instanceof ExceptionalExecution){
+          Throwable e = ((ExceptionalExecution)exprOutcome).getException();
+          if (Log.isLoggingOn()) Log.logLine("Contract threw exception: " + e.getMessage());
+          if (e instanceof BugInRandoopException) {
+            throw new BugInRandoopException(e);
+          }
           // Execution of contract resulted in exception. Do not create
           // a contract-violation decoration.
-          assert exprOutcome instanceof ExceptionalExecution;
+          //TODO are there cases where exception in contract check is a failure?
+        } else {  
+          throw new Error("Contract failed to execute during evaluation");
         }
       }
     }
   }
 
-  private void checkUnary(ExecutableSequence s, ObjectContract c, Set<Integer> values, int idx) {
+  /**
+   * Checks a unary contract over the set of values defined in a sequence, and
+   * attaches failing checks to the final statement of the sequence.
+   * 
+   * @param s  the executable sequence where values are defined
+   * @param c  the contract to check
+   * @param values  the set of positions with values to check 
+   * @param checks 
+   * @param idx  the position of the statement where checks are to be attached
+   */
+  private void checkUnary(ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
 
     for (Integer i : values) {
 
       ExecutionOutcome result = s.getResult(i);
-      assert result instanceof NormalExecution: s;
+      if (! (result instanceof NormalExecution)) {
+        throw new Error("Abnormal execution in sequence: " + s);
+      }
 
       ExecutionOutcome exprOutcome = ObjectContractUtils.execute(c,
           ((NormalExecution) result).getRuntimeValue());
@@ -177,21 +187,21 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
       if (exprOutcome instanceof NormalExecution) {
         NormalExecution e = (NormalExecution)exprOutcome;
         if (e.getRuntimeValue().equals(true)) {
-          continue; // Behavior ok.
+          continue; // Behavior ok, move to next value
         }
-      } else {
+      } else if (exprOutcome instanceof ExceptionalExecution){
         // Execution of contract resulted in exception. Do not create
         // a contract-violation decoration.
-        assert exprOutcome instanceof ExceptionalExecution;
-        ExceptionalExecution e = (ExceptionalExecution)exprOutcome;
-        if (e.getException().equals(BugInRandoopException.class)) {
-          throw new BugInRandoopException(e.getException());
+        Throwable e = ((ExceptionalExecution)exprOutcome).getException();
+        if (Log.isLoggingOn()) Log.logLine("Contract threw exception: " + e.getMessage());
+        if (e instanceof BugInRandoopException) {
+          throw new BugInRandoopException(e);
         }
         if (!c.evalExceptionMeansFailure()) {
-          // Exception thrown, but not considered a failure.
-          // Will not record behavior.
-          continue; 
+          continue;  //not violation, move to next value
         }
+      } else {
+        throw new Error("Contract failed to execute during evaluation");
       }
 
       // If we get here, either the contract returned false or resulted
@@ -200,43 +210,41 @@ public final class ContractCheckingVisitor implements ExecutionVisitor {
       // Create an check that records the actual value
       // returned by the expression, marking it as invalid
       // behavior.
-      Check obs = new ObjectCheck(c, i, s.sequence.getVariable(i));
-      s.addCheck(idx, obs, false);
+      checks.add(new ObjectCheck(c, i, s.sequence.getVariable(i)));
     }
   }
 
-  // Returns the indices for the objects to check contracts over.
-  //
-  // If an element is primitive, a String, or null, its index is not returned.
-  //
-  // The indices are returned as a map, from types to the indices of
-  // the given type. Binary contracts are only checked for objects
-  // of equal types, so the map is handy.
-  private static MultiMap<Class<?>, Integer> objectIndicesToCheck(ExecutableSequence s, int maxIdx) {
+  /**
+   * Returns the indices for the objects to check contracts over as a map from
+   * types to the position of the given type.
+   * <p>
+   * If an element is primitive, a String, or null, its index is not returned.
 
-    MultiMap<Class<?>, Integer> map = new MultiMap<Class<?>, Integer>();
-
-    for (int i = 0 ; i <= maxIdx ; i++) {
+   * @param s  the code sequence
+   * @return map indicating statement positions where variables of a type are assigned
+   */
+  private static MultiMap<Class<?>, Integer> indicesToCheck(ExecutableSequence s) {
+    MultiMap<Class<?>, Integer> positionMap = new MultiMap<Class<?>, Integer>();
+    
+    for (int i = 0 ; i < s.sequence.size() ; i++) {
+      
       ExecutionOutcome result = s.getResult(i);
-
-      assert result instanceof NormalExecution;
-
-      Class<?> outputType = s.sequence.getStatement(i).getOutputType();
-
-      if (outputType.equals(void.class))
-        continue;
-      if (outputType.equals(String.class))
-        continue;
-      if (PrimitiveTypes.isPrimitive(outputType))
-        continue;
-
-      Object runtimeValue = ((NormalExecution) result).getRuntimeValue();
-      if (runtimeValue == null)
-        continue;
-
-      map.add(outputType, i);
+      if (result instanceof NormalExecution) {
+        
+        Class<?> outputType = s.sequence.getStatement(i).getOutputType();
+        if (! outputType.equals(void.class)
+            && ! outputType.equals(String.class)
+            && ! PrimitiveTypes.isPrimitive(outputType)
+            && ((NormalExecution) result).getRuntimeValue() != null) {
+          positionMap.add(outputType, i);
+        }
+        
+      } else {
+        throw new Error("Abnormal execution in sequence: " + s);
+      }
+      
     }
-    return map;
+    return positionMap;
   }
 
 }
