@@ -12,9 +12,11 @@ public class NoExceptionCheck implements Check {
   
   // Indicates which statement is expected to return normally. 
   private final int statementIdx;
+  private String exceptionName;
   
-  public NoExceptionCheck(int statementIdx) {
+  public NoExceptionCheck(int statementIdx, String exceptionName) {
     this.statementIdx = statementIdx;
+    this.exceptionName = exceptionName;
   }
 
   @Override
@@ -58,7 +60,7 @@ public class NoExceptionCheck implements Check {
 
   @Override
   public String toCodeStringPreStatement() {
-    return "//this statement threw exception considered to be a failure" + Globals.lineSep;
+    return "//contract failure: this statement threw " + exceptionName + Globals.lineSep;
   }
 
   @Override
