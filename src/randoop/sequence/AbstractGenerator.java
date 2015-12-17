@@ -1,27 +1,25 @@
 package randoop.sequence;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import randoop.ComponentManager;
-import randoop.DefaultTestFilter;
-import randoop.FailureSet;
+import randoop.DummyVisitor;
+import randoop.ExecutionVisitor;
 import randoop.Globals;
 import randoop.IStopper;
-import randoop.ITestFilter;
-import randoop.MultiVisitor;
 import randoop.RandoopListenerManager;
 import randoop.RandoopStat;
-import randoop.experiments.StatsWriter;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
+import randoop.test.TestCheckGenerator;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
 import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
+import randoop.util.predicate.AlwaysFalse;
+import randoop.util.predicate.Predicate;
 
 import plume.Option;
 import plume.OptionGroup;
@@ -69,7 +67,13 @@ public abstract class AbstractGenerator {
    * Sequence limit for generation. If generation reaches the specified sequence
    * limit, the generator stops generating sequences.
    */
-  public final int maxSequences;
+  public final int maxGeneratedSequences;
+  
+  /**
+   * Limit for output. If more than specified number of sequences are in the
+   * output lists, the generator will stop.
+   */
+  public final int maxOutputSequences;
   
   /**
    * The list of statement kinds (methods, constructors, primitive value declarations, etc.)
@@ -81,7 +85,7 @@ public abstract class AbstractGenerator {
   /**
    * Container for execution visitors used during execution of sequences. 
    */
-  public final MultiVisitor executionVisitor;
+  protected ExecutionVisitor executionVisitor;
 
   /**
    * Component manager responsible for storing previously-generated sequences.
@@ -113,41 +117,50 @@ public abstract class AbstractGenerator {
   public static Sequence currSeq = null;
   
   /**
-   * The list of final sequences that are printed out as JUnit tests (i.e. Randoop's output). 
+   * The list of failure sequences to be saved as JUnit tests
    */
-  public List<ExecutableSequence> outSeqs = new ArrayList<ExecutableSequence>();
+  public List<ExecutableSequence> outFailureSeqs = new ArrayList<>();
 
   /**
-   * A list of filters that can be installed to help determine if a sequence
-   * should be added to the final sequence list outSeqs.
+   * The list of regression sequences to be save as JUnit tests
    */
-  public List<ITestFilter> outputTestFilters;
+  public List<ExecutableSequence> outRegressionSeqs = new ArrayList<>();
   
- 
+  /**
+   * A filter to determine whether a sequence should be added to the final 
+   * sequence list outSeqs.
+   */
+  public Predicate<ExecutableSequence> outputTest;
+
+  /**
+   * Visitor to generate checks for a sequence.
+   */
+  protected TestCheckGenerator checkGenerator;
+  
   /**
    * Constructs a generator with the given parameters.
    * 
    * @param operations Statements (e.g. methods and constructors) used to create sequences. Cannot be null.
    * @param timeMillis maximum time to spend in generation. Must be non-negative.
-   * @param maxSequences maximum number of sequences to generate. Must be non-negative.
-   * @param componentManager component manager to use to store sequences during component-based generation.
+   * @param maxGenSequences  the maximum number of sequences to generate. Must be non-negative.
+   * @param maxOutSequences  the maximum number of sequences to output. Must be non-negative.
+   * @param componentManager  the component manager to use to store sequences during component-based generation.
    *        Can be null, in which case the generator's component manager is initialized as <code>new ComponentManager()</code>.
    * @param stopper Optional, additional stopping criterion for the generator. Can be null.
    * @param listenerManager Manager that stores and calls any listeners to use during generation. Can be null.
-   * @param testfilters List of filters to determine which sequences to output. Can be null or empty.
    */
-  public AbstractGenerator(List<Operation> operations, long timeMillis, int maxSequences, ComponentManager componentManager,
-      IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> testfilters) {
+  public AbstractGenerator(List<Operation> operations, long timeMillis, 
+      int maxGenSequences, int maxOutSequences, ComponentManager componentManager,
+      IStopper stopper, RandoopListenerManager listenerManager) {
     assert operations != null;
 
     this.maxTimeMillis = timeMillis;
-
-    this.maxSequences = maxSequences;
-
+    this.maxGeneratedSequences = maxGenSequences;
+    this.maxOutputSequences = maxOutSequences;
     this.operations = operations;
-
-    this.executionVisitor = new MultiVisitor();
-
+    this.executionVisitor = new DummyVisitor();
+    this.outputTest = new AlwaysFalse<>();
+    
     if (componentManager == null) {
       this.componentManager = new ComponentManager();
     } else {
@@ -155,34 +168,74 @@ public abstract class AbstractGenerator {
     }
     
     this.stopper = stopper;
-    
     this.listenerMgr = listenerManager;
-    
-    outputTestFilters = new LinkedList<ITestFilter>();
-    if (testfilters == null || testfilters.isEmpty()) {
-      outputTestFilters.add(new DefaultTestFilter());
-    } else {
-      outputTestFilters.addAll(testfilters);
-    }
   }
 
+  /**
+   * Registers test predicate with the generator object for use while filtering
+   * generated tests.
+   * 
+   * @param outputTest  the predicate to be added to object
+   */
+  public void addTestPredicate(Predicate<ExecutableSequence> outputTest) {
+    if (outputTest == null) {
+      throw new IllegalArgumentException("outputTest must be non-null");
+    }
+    this.outputTest = outputTest;
+  }
+
+  /**
+   * Registers a visitor with this object for use while executing generated
+   * sequences.
+   * 
+   * @param executionVisitor  the visitor
+   */
+  public void addExecutionVisitor(ExecutionVisitor executionVisitor) {
+    if (executionVisitor == null) {
+      throw new IllegalArgumentException("executionVisitor must be non-null");
+    }
+    this.executionVisitor = executionVisitor;
+  }
+  
+  /**
+   * Registers a visitor with this object to generate checks following
+   * execution of generated tests.
+   * 
+   * @param checkGenerator  the check generating visitor 
+   */
+  public void addTestCheckGenerator(TestCheckGenerator checkGenerator) {
+    if (checkGenerator == null) {
+      throw new IllegalArgumentException("checkGenerator must be non-null");
+    }
+    this.checkGenerator = checkGenerator;
+  }
+  
   protected boolean stop() {
     return
     (listenerMgr != null && listenerMgr.stopGeneration())
     || (timer.getTimeElapsedMillis() >= maxTimeMillis)
-    || (numSequences() >= maxSequences)
+    || (numOutputSequences() >= maxOutputSequences)
+    || (numGeneratedSequences() >= maxGeneratedSequences)
     || (stopper != null && stopper.stop());
   }
 
   public abstract ExecutableSequence step();
 
-  public abstract int numSequences();
-
+  public int numOutputSequences() {
+    return outFailureSeqs.size() + outRegressionSeqs.size();
+  }
+  
+  public abstract int numGeneratedSequences();
+  
   /**
-   * Creates and executes new sequences in a loop.
+   * Creates and executes new sequences until stopping criteria is met.
+   * @see AbstractGenerator#stop()
+   * @see AbstractGenerator#step()
    */
   public void explore() {
-
+    if (checkGenerator == null) {
+      throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
+    }
       Log.log(this.operations);
 
       timer.startTiming();
@@ -228,40 +281,26 @@ public abstract class AbstractGenerator {
         
         num_sequences_generated++;
 
-        FailureSet fa = new FailureSet(eSeq);
-        
-        if (fa.getFailures().size() > 0) {
+        if (eSeq.hasFailure()) {
           num_failing_sequences++;
         }
 
-        // Output results to file.
-        if (GenInputsAbstract.expfile != null) {
-          try {
-              StatsWriter.write(GenInputsAbstract.expfile, eSeq, fa);
-          } catch (IOException e) {
-            throw new Error(e);
-          }
-        }
-
-        boolean outputSequence = true;
-        for (ITestFilter f : outputTestFilters) {
-          if (!f.outputSequence(eSeq, fa)) {
-            outputSequence = false;
-            break;
-          }
-        }
-        if (outputSequence) {
-          outSeqs.add(eSeq);
-        }
+        if (outputTest.test(eSeq)) {
+          if (eSeq.hasFailure()) {
+            outFailureSeqs.add(eSeq);
+          } else if (eSeq.hasChecks()) {
+            outRegressionSeqs.add(eSeq);
+          } 
+        } 
      
         if (dump_sequences) {
           System.out.printf ("Sequence after execution:%n%s%n", eSeq.toString());
-          System.out.printf ("allSequences.size() = %d%n", numSequences());
+          System.out.printf ("allSequences.size() = %d%n", numGeneratedSequences());
         }
 
         if (Log.isLoggingOn()) {
           Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
-          Log.logLine("allSequences.size()=" + numSequences());
+          Log.logLine("allSequences.size()=" + numGeneratedSequences());
         }
 
     }
@@ -276,8 +315,8 @@ public abstract class AbstractGenerator {
       System.out.println("Normal method executions:" + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions:" + ReflectionExecutor.excepExecs());
       System.out.println();
-      System.out.println("Average method execution time (normal termination):     " + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
-      System.out.println("Average method execution time (exceptional termination):" + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+      System.out.println("Average method execution time (normal termination):      " + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
+      System.out.println("Average method execution time (exceptional termination): " + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
     }
 
       // Notify listeners that exploration is ending.
@@ -294,5 +333,50 @@ public abstract class AbstractGenerator {
    */
   public Set<Sequence> subsumed_sequences() {
     throw new Error("subsumed_sequences not supported for " + this.getClass());
+  }
+
+  /**
+   * Returns the generated regression test sequences for output.
+   * Filters out subsequences, which can be retrieved using {@link this#subsumed_sequences()}
+   * @return regression test sequences that do not occur in a longer sequence
+   */
+  //TODO replace this with filtering during generation
+  public List<ExecutableSequence> getRegressionSequences() {
+    List<ExecutableSequence> unique_seqs = new ArrayList<>();
+    Set<Sequence> subsumed_seqs = this.subsumed_sequences();
+    for (ExecutableSequence es : outRegressionSeqs) {
+      if (! subsumed_seqs.contains(es.sequence)) {
+        unique_seqs.add(es);
+      }
+    }
+    return unique_seqs;
+  }
+  
+  /**
+   * Returns the generated error-revealing test sequences for output.
+   * 
+   * @return the generated error test sequences
+   */
+  public List<ExecutableSequence> getErrorTestSequences() {
+    return outFailureSeqs;
+  }
+  
+  /**
+   * Returns the total number of test sequences generated to output, including
+   * both regression tests and error-revealing tests.
+   * 
+   * @return the total number of test sequences saved for output
+   */
+  public int outputSequenceCount() {
+    return outRegressionSeqs.size() + outFailureSeqs.size();
+  }
+  
+  /**
+   * Sets the current sequence during exploration
+   * 
+   * @param s  the sequence to be saved as the current sequence
+   */
+  protected void setCurrentSequence(Sequence s) {
+    currSeq = s; 
   }
 }
