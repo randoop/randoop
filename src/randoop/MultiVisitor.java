@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.sequence.ExecutableSequence;
+import randoop.test.TestChecks;
 
 /**
  * An execution visitor that chains a list of visitors in sequence. It can be
@@ -23,7 +24,7 @@ import randoop.sequence.ExecutableSequence;
 public class MultiVisitor implements ExecutionVisitor {
   
   // The list of visitors. 
-  public final List<ExecutionVisitor> visitors =
+  private final List<ExecutionVisitor> visitors =
     new ArrayList<ExecutionVisitor>();
 
   public MultiVisitor() { }
@@ -44,17 +45,16 @@ public class MultiVisitor implements ExecutionVisitor {
     this.visitors.addAll(visitors);
   }
 
-  public void visitAfter(ExecutableSequence sequence, int i) {
+  public void visitAfterStatement(ExecutableSequence sequence, int i) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.visitAfter(sequence, i);
+      visitor.visitAfterStatement(sequence, i);
     }
   }
 
-  public void visitBefore(ExecutableSequence sequence, int i) {
+  public void visitBeforeStatement(ExecutableSequence sequence, int i) {
     for (ExecutionVisitor visitor : visitors) {
-      visitor.visitBefore(sequence, i);
+      visitor.visitBeforeStatement(sequence, i);
     }
   }
-
 
 }

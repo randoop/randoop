@@ -59,7 +59,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
     // Nothing to do for initialization.
   }
 
-  public void visitAfter(ExecutableSequence sequence, int idx) {
+  public void visitAfterStatement(ExecutableSequence sequence, int idx) {
     
     assert sequence.sequence.size() > 0;
     
@@ -153,7 +153,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
     }
   }
 
-  public void visitBefore(ExecutableSequence sequence, int i) {
-    return;
+  public void visitBeforeStatement(ExecutableSequence sequence, int i) {
+    //do nothing
   }
 }
