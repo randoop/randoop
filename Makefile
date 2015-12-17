@@ -90,11 +90,15 @@ randoop_agent.jar : bin/randoop/instrument/Premain.class src/randoop/instrument/
 	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/instrument/manifest.txt \
 	  randoop/instrument/Premain.class
 
+ifneq (,$(findstring 1.8.,$(shell java -version 2>&1)))
+  DOCLINT?=-Xdoclint:all,-missing
+endif
+
 javadoc:
 	\rm -rf doc/javadoc
 	mkdir -p doc/javadoc
 	find src/randoop -name "*.java" \
-		| xargs javadoc -Xdoclint:all,-missing -d doc/javadoc -quiet -noqualifier all -notimestamp
+		| xargs javadoc ${DOCLINT} -d doc/javadoc -quiet -noqualifier all -notimestamp
 jdoc: javadoc
 
 ideas:
