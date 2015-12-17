@@ -34,4 +34,8 @@ public class OrPredicate<T> extends DefaultPredicate<T> {
     return first.test(t) || second.test(t);
   }
 
+  @Override
+  public String toString() {
+    return "OR[" + first + ", " + second.toString() + "]";
+  }
 }

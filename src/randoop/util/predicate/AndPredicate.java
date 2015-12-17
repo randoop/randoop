@@ -34,4 +34,8 @@ public class AndPredicate<T> extends DefaultPredicate<T> {
     return first.test(t) && second.test(t);
   }
 
+  @Override
+  public String toString() {
+    return "AND[" + first + ", " + second + "]";
+  }
 }
