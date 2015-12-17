@@ -91,8 +91,8 @@ public class ObjectCheck implements Check {
   }
 
   /**
-   * For checks involving a primitive-lie value (primitive, String or null)
-   * returns a string representation of the value. Otherwise returns
+   * For checks involving a primitive-like value (primitive, String, or null),
+   * returns a string representation of the value. Otherwise, returns
    * the name of the contract class.
    */
   @Override
