@@ -80,7 +80,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist  results
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-custom-visitor randoop-long-string randoop-visibility randoop-no-output test-enums test-fields
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-long-string randoop-visibility randoop-no-output test-enums test-fields
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -112,6 +112,7 @@ TAGS: $(RANDOOP_FILES)
 # The tests run correctly under Java 1.6. Using an earlier version of
 # Java may result in test failures.
 unit: bin
+	@echo "******running unit tests******"
 	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	   randoop.test.AllRandoopTests
@@ -119,6 +120,7 @@ unit: bin
 # The tests run correctly under Java 1.6. Using an earlier version of
 # Java may result in test failures.
 ds-coverage: bin
+	@echo "******running ds-coverage******"
 	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	   randoop.test.ICSE07ContainersTest
@@ -137,13 +139,11 @@ randoop1: bin
 	mkdir systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
-	   --use-object-cache \
-	   --output-tests=all \
-	   --check-object-contracts=false \
+	   --no-error-revealing-tests \
 	   --inputlimit=500 \
 	   --testclass=java2.util2.TreeSet \
 	   --testclass=java2.util2.Collections \
-	   --junit-classname=TestClass \
+	   --regression-test-filename=TestClass \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
@@ -165,14 +165,13 @@ randoop2: bin
 	mkdir systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  randoop.main.Main gentests \
-	   --output-tests=all \
-	   --remove-subsequences=false \
 	   --inputlimit=100 \
 	   --testclass=java2.util2.TreeSet \
 	   --testclass=java2.util2.ArrayList \
 	   --testclass=java2.util2.LinkedList \
 	   --testclass=java2.util2.Collections \
-	   --junit-classname=Naive \
+	   --regression-test-filename=NaiveRegression \
+	   --error-test-filename=NaiveError \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
@@ -182,11 +181,12 @@ randoop2: bin
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
 	  foo/bar/Naive*.java
-	cp systemtests/randoop-scratch/foo/bar/Naive0.java systemtests/resources/Naive0.java
+	cp systemtests/randoop-scratch/foo/bar/Naive*0.java systemtests/resources/
 
 # Sanity check. Runs Randoop on a large collections of classes from the JDK,
 # with a set of options, and just makes sure that Randoop terminates normally.
 randoop3: bin
+	@echo "***** randoop3 *****"
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
 	cd systemtests/randoop-scratch && java -ea -classpath $(RANDOOP_HOME):../src/java_collections:$(CLASSPATH) \
@@ -197,40 +197,43 @@ randoop3: bin
 	   --small-tests \
 	   --clear=100 \
 	   --classlist=../resources/jdk_classlist.txt \
-	   --junit-classname=JDK_Tests \
+	   --regression-test-filename=JDK_Tests_regression \
+	   --error-test-filename=JDK_Tests_error \
 	   --junit-package-name=jdktests \
 	   --junit-output-dir=../randoop-scratch
 
 randoop-contracts: bin
+	@echo "***** randoop-contracts *****"
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Buggy.java
 	rm -rf systemtests/randoop-contracts-test-scratch
 	mkdir systemtests/randoop-contracts-test-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
-	   --output-tests=fail \
+	   --no-regression-tests \
 	   --timelimit=10 \
 	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
-	   --junit-classname=BuggyTest \
+	   --error-test-filename=BuggyTest \
 	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
 	   --log=systemtests/randoop-contracts-log.txt \
 	   --output-tests-serialized=systemtests/randoop-contracts-test-scratch/sequences_serialized.gzip
 	cd systemtests/randoop-contracts-test-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
 # We expect this to fail, so add a "-" so the target doesn't fail.
-	cd systemtests/randoop-contracts-test-scratch && \
+	-cd systemtests/randoop-contracts-test-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopContractsTest
 
 randoop-checkrep: bin
+	@echo "****** randoop-checkrep *****"
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/CheckRep*.java
 	rm -rf systemtests/randoop-contracts-test-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
-	   --output-tests=fail \
+	   --no-regression-tests \
 	   --timelimit=2 \
 	   --testclass=examples.CheckRep1 \
 	   --testclass=examples.CheckRep2 \
-	   --junit-classname=CheckRepTest \
+	   --error-test-filename=CheckRepTest \
 	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
 	   --log=systemtests/randoop-checkrep-contracts-log.txt
 	cd systemtests/randoop-contracts-test-scratch && \
@@ -243,6 +246,7 @@ randoop-checkrep: bin
 # Reads file systemtests/resources/literalsfile.txt.
 # Creates file randoop/systemtests/randoop-scratch/Literals0.java.
 randoop-literals: bin
+	@echo "***** randoop-literals *****"
 	rm -rf systemtests/randoop-scratch
 	java -ea -classpath $(CLASSPATH) \
 	  randoop.main.Main gentests \
@@ -250,37 +254,21 @@ randoop-literals: bin
 	   --testclass=randoop.literals.A \
 	   --testclass=randoop.literals.A2 \
 	   --testclass=randoop.literals.B \
-	   --junit-classname=Literals \
+	   --regression-test-filename=LiteralsReg \
+	   --error-test-filename=LiteralsErr \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --literals-level=CLASS \
 	   --literals-file=systemtests/resources/literalsfile.txt
-	cp systemtests/randoop-scratch/Literals0.java systemtests/resources/Literals0.java
-
-randoop-custom-visitor: bin
-	rm -rf systemtests/randoop-scratch
-	java -ea -classpath $(CLASSPATH) \
-	  randoop.main.Main gentests \
-	   --inputlimit=100 \
-	   --testclass=randoop.test.A \
-	   --visitor=randoop.test.CustomVisitor \
-	   --junit-classname=CustomVisitorTest \
-	   --junit-output-dir=systemtests/randoop-scratch \
-	   --check-object-contracts=false \
-	   --omit-field-list=systemtests/resources/customvisitoromitfields.txt
-	cd systemtests/randoop-scratch && \
-	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) CustomVisitorTest.java
-	cd systemtests/randoop-scratch && \
-	  java  -cp .:$(CLASSPATH) org.junit.runner.JUnitCore CustomVisitorTest
-	cp systemtests/randoop-scratch/CustomVisitorTest0.java \
-	  systemtests/resources/CustomVisitorTest0.java
+	-cp systemtests/randoop-scratch/Literals*0.java systemtests/resources/
 
 randoop-long-string: bin
+	@echo "***** randoop-long-string ******"
 	rm -rf systemtests/randoop-scratch
 	java -ea -classpath $(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --timelimit=1 \
 	   --testclass=randoop.test.LongString \
-	   --junit-classname=LongString \
+	   --regression-test-filename=LongString \
 	   --junit-output-dir=systemtests/randoop-scratch
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) LongString.java
@@ -293,15 +281,15 @@ randoop-long-string: bin
 # lead to non-compilable tests.
 # Actually, it should create the tests but declare them with a supertype!
 randoop-visibility: bin
+	@echo "***** randoop-visibility *****"
 	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Visibility.java
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
-	   --output-tests=all \
 	   --timelimit=2 \
 	   --testclass=examples.Visibility \
-	   --junit-classname=VisibilityTest \
+	   --regression-test-filename=VisibilityTest \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/log.txt
 	cd systemtests/randoop-scratch && \
@@ -313,14 +301,14 @@ randoop-visibility: bin
 #
 # Test only checks for no output on the happy (no errors) path.
 randoop-no-output: bin
+	@echo "***** randoop-no-output *****"
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
-	   --output-tests=all \
 	   --timelimit=1 \
 	   --testclass=java.util.LinkedList \
-	   --junit-classname=NoOutputTest \
+	   --regression-test-filename=NoOutputTest \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/log.txt \
 	   --noprogressdisplay \
@@ -381,12 +369,11 @@ randoop-df: bin
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/jc-covinst:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --usethreads=false \
-	   --use-object-cache \
-	   --check-object-contracts=false \
+	   --no-error-revealing-tests \
 	   --inputlimit=1000 \
 	   --testclass=java2.util2.ArrayList \
 	   --dont-output-tests \
-	   --forbid-null=false \
+	   --null-ratio=0 \
 	   --coverage-instrumented-classes=systemtests/resources/arraylist.covclasses.txt \
 	   --output-covmap=covmap.gz \
 	   --output-cov-witnesses \
