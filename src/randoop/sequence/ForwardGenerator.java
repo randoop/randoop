@@ -8,18 +8,19 @@ import java.util.Set;
 
 import randoop.BugInRandoopException;
 import randoop.ComponentManager;
+import randoop.DummyVisitor;
 import randoop.EqualsMethodMatcher;
 import randoop.Globals;
 import randoop.HelperSequenceCreator;
 import randoop.IStopper;
-import randoop.ITestFilter;
 import randoop.NormalExecution;
 import randoop.RandoopListenerManager;
-import randoop.RegressionCaptureVisitor;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
+import randoop.test.DummyCheckGenerator;
+import randoop.test.RegressionCaptureVisitor;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -68,11 +69,11 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   public ForwardGenerator(List<Operation> operations,
-      long timeMillis, int maxSequences,
+      long timeMillis, int maxGenSequences, int maxOutSequences,
       ComponentManager componentManager,
-      IStopper stopper, RandoopListenerManager listenerManager, List<ITestFilter> fs) {
+      IStopper stopper, RandoopListenerManager listenerManager) {
 
-    super(operations, timeMillis, maxSequences, componentManager, stopper, listenerManager, fs);
+    super(operations, timeMillis, maxGenSequences, maxOutSequences, componentManager, stopper, listenerManager);
 
     this.allSequences = new LinkedHashSet<Sequence>();
 
@@ -87,19 +88,15 @@ public class ForwardGenerator extends AbstractGenerator {
    * initially contains a set of primitive sequences; this method
    * puts those primitives in this set.
    */
+  //XXX this is goofy - these values are available in other ways
   private void initializeRuntimePrimitivesSeen() {
     for (Sequence s : componentManager.getAllPrimitiveSequences()) {
       ExecutableSequence es = new ExecutableSequence(s);
-      es.execute(null);
+      es.execute(new DummyVisitor(), new DummyCheckGenerator());
       NormalExecution e = (NormalExecution)es.getResult(0);
       Object runtimeValue = e.getRuntimeValue();
       runtimePrimitivesSeen.add(runtimeValue);
     }
-  }
-
-  @Override
-  public int numSequences() {
-    return allSequences.size();
   }
 
   public ExecutableSequence step() {
@@ -123,13 +120,13 @@ public class ForwardGenerator extends AbstractGenerator {
       return null;
     }
 
-    AbstractGenerator.currSeq = eSeq.sequence;
+    setCurrentSequence(eSeq.sequence);
 
     long endTime = System.nanoTime();
     long gentime = endTime - startTime;
     startTime = endTime; // reset start time.
 
-    eSeq.execute(executionVisitor);
+    eSeq.execute(executionVisitor, checkGenerator);
 
     endTime = System.nanoTime();
 
@@ -170,18 +167,10 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   public void processSequence(ExecutableSequence seq) {
 
-    if (GenInputsAbstract.offline) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Making all indices active (offline generation specified; sequences are not executed).");
-      }
-      seq.sequence.setAllActiveFlags();
-      return;
-    }
-
     if (seq.hasNonExecutedStatements()) {
       if (Log.isLoggingOn()) {
         Log.logLine("Making all indices inactive (sequence has non-executed statements, so judging it inadequate for further extension).");
-        Log.logLine("Non-executed statement: " + seq.oneStatementToCodeString(seq.getNonExecutedIndex()));
+        Log.logLine("Non-executed statement: " + seq.statementToCodeString(seq.getNonExecutedIndex()));
       }
       seq.sequence.clearAllActiveFlags();
       return;
@@ -190,7 +179,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (seq.hasFailure()) {
       if (Log.isLoggingOn()) {
         Log.logLine("Making all indices inactive (sequence reveals a failure, so judging it inadequate for further extension)");
-        Log.logLine("Failing statement: " + seq.oneStatementToCodeString(seq.getFailureIndex()));
+        Log.logLine("Failing sequence: " + seq.toCodeString());
       }
       seq.sequence.clearAllActiveFlags();
       return;
@@ -199,7 +188,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (! seq.isNormalExecution()) {
       if (Log.isLoggingOn()) {
         Log.logLine("Making all indices inactive (exception thrown, or failure revealed during execution).");
-        Log.logLine("Statement with non-normal execution: " + seq.oneStatementToCodeString(seq.getNonNormalExecutionIndex()));
+        Log.logLine("Statement with non-normal execution: " + seq.statementToCodeString(seq.getNonNormalExecutionIndex()));
       }
       seq.sequence.clearAllActiveFlags();
       return;
@@ -249,8 +238,6 @@ public class ForwardGenerator extends AbstractGenerator {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(NonreceiverTerm.createSequenceForPrimitive(runtimeValue));
         }
-      } else if (GenInputsAbstract.use_object_cache) {
-        objectCache.setActiveFlags(seq, i);
       } else {
         if (Log.isLoggingOn()) {
           Log.logLine("Making index " + i + " active.");
@@ -305,14 +292,15 @@ public class ForwardGenerator extends AbstractGenerator {
       newSequence = newSequence.repeat(operation, times);
       if (Log.isLoggingOn()) Log.log(">>>" + times + newSequence.toCodeString());
     }
-
+    
     // If parameterless statement, subsequence inputs
     // will all be redundant, so just remove it from list of statements.
+    // XXX does this make sense? especially in presence of side-effects
     if (operation.getInputTypes().size() == 0) {
       operations.remove(operation);
     }
 
-    // If sequence is larger than size limit, try again.
+    // Discard if sequence is larger than size limit
     if (newSequence.size() > GenInputsAbstract.maxsize) {
       if (Log.isLoggingOn()) Log.logLine("Sequence discarded because size " + newSequence.size() + " exceeds maximum allowed size " + GenInputsAbstract.maxsize);
       return null;
@@ -514,30 +502,9 @@ public class ForwardGenerator extends AbstractGenerator {
       
       if (Log.isLoggingOn()) Log.logLine("components: " + l.size());
       
-      // If we were not able to find (or create) any sequences of type inputTypes[i], and we are
-      // allowed the use null values, use null. If we're not allowed, then return with failure.
-      if (l.size() == 0) {
-        if (isReceiver || GenInputsAbstract.forbid_null) {
-          if (Log.isLoggingOn()) Log.logLine("forbid-null option is true. Failed to create new sequence.");
-          return new InputsAndSuccessFlag (false, null, null);
-        } else {
-          if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
-          Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
-          variables.add(totStatements);
-          sequences.add(seq);
-          assert seq.size() == 1;
-          totStatements++;
-          // Null is not an interesting value to add to the set of
-          // possible values to reuse, so we don't update typesToVars or types.
-          continue;
-        }
-      }
-
-      // At this point, we have one or more sequences that create non-null values of type inputTypes[i].
-      // However, the user may have requested that we use null values as inputs with some given frequency.
-      // If this is the case, then use null instead with some probability. 
-      if (!isReceiver&& GenInputsAbstract.null_ratio != 0
+      // The user may have requested that we use null values as inputs with some given frequency.
+      // If this is the case, then use null with some probability. 
+      if (!isReceiver && GenInputsAbstract.null_ratio != 0
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn()) Log.logLine("null-ratio option given. Randomly decided to use null as input.");
         Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
@@ -548,7 +515,13 @@ public class ForwardGenerator extends AbstractGenerator {
         totStatements++;
         continue;
       }
-
+      
+      //If have not generated any candidate sequences, then failed 
+      if (l.size() == 0) {
+        if (Log.isLoggingOn()) Log.logLine("Failed to create new sequence.");
+        return new InputsAndSuccessFlag (false, null, null);
+      }
+      
       // At this point, we have a list of candidate sequences and need to select a
       // randomly-chosen sequence from the list.
       Sequence chosenSeq = null;
@@ -604,10 +577,16 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   /**
-   * Returns the set of sequences that are used as inputs in other sequences
-   * (and can thus be thought of as subsumed by another sequence).  
+   * Returns the set of sequences that are included in other sequences to
+   * generate inputs (and, so, are subsumed by another sequence).  
    */
   public Set<Sequence> subsumed_sequences() {
     return subsumed_sequences;
   }
+
+  @Override
+  public int numGeneratedSequences() {
+    return allSequences.size();
+  }
+  
 }
