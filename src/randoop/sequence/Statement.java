@@ -142,6 +142,10 @@ public final class Statement implements Serializable {
     return b.toString();
   }
 
+  public String toString() {
+    return "Statement(" + operation.toParseableString() + ")";
+  }
+  
   /**
    * toModifiableStatement converts the statement to the mutable form.
    *
