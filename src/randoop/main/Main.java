@@ -7,7 +7,7 @@ import randoop.sequence.AbstractGenerator;
 
 
 /**
- * Main entrypoint for Randoop. Asks the command handlers who can handle the
+ * Main entry point for Randoop. Asks the command handlers who can handle the
  * command given by the user, and passes control to whoever does.
  */
 public class Main {
@@ -30,9 +30,6 @@ public class Main {
     // the user uses the `help' command.
     invisibleHandlers = new ArrayList<CommandHandler>();
     invisibleHandlers.add(new CovUtils());
-    invisibleHandlers.add(new ExecuteSequence());
-    invisibleHandlers.add(new CleanObservations());
-    invisibleHandlers.add(new RmDiffObservations());
   }
 
   // The main method simply calls nonStaticMain.
