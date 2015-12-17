@@ -125,35 +125,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Ignore class names specified by user that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
   
-
-  /**
-   * Use Randoop's default set of object contracts as assertions.
-   * If disabled, these assertions are not created.
-   * 
-   * <p>
-   * The default set of contracts includes:
-   *   equals(Object) is reflexive,
-   *   equals(Object) is symmetric,
-   *   equals(Object) and hashCode() are consistent,
-   *   x.equals(null) returns false,
-   *   any nullary method annotated with {@code @CheckRep} returns true.
-   * </p>
-   */
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup("Creating test oracles")
-  @Option("Use Randoop's object contracts as assertions")
-  public static boolean check_object_contracts = true;
-
-  /**
-   * Capture the current behavior as assertions.
-   * This makes Randoop's tests act as regression tests that ensure that the
-   * code continues to behave as it did when the tests were generated.
-   */
-  @Option("Use current behavior as assertions")
-  public static boolean check_regression_behavior = true;
-
-
-  
   /**
    * Maximum number of seconds to spend generating tests.
    * 
@@ -175,14 +146,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Determines the maximum number of tests to output.
-   * 
-   * This command-line option is generally more appropriate than
-   * --inputlimit, which controls how many test candidates Randoop
-   * generates internally.
    */
   @Option ("Maximum number of tests to ouput; contrast to --inputlimit")
   public static int outputlimit = 100000000;
-
+  
   /**
    * Maximum number of test candidates generated.
    * 
@@ -201,8 +168,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** Do not generate tests with more than this many statements */
   @Option("Do not generate tests with more than <int> statements")
   public static int maxsize = 100;
-  
-
 
   /**
    * Use null with the given frequency as an argument to method calls.
@@ -219,19 +184,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @OptionGroup("Values used in tests")
   @Option("Use null as an input with the given frequency")
   public static double null_ratio = 0;
-  
-  /**
-   * Never use null as input to methods or constructors.
-   * 
-   * This option causes Randoop to abandon the method call rather than providing
-   * null as an input, when no non-null value of the appropriate type is available.
-   * 
-   * To ask Randoop to calls methods with null with greater frequency,
-   * see option --null-ratio.
-   */
-  @Option("Never use null as input to methods or constructors")
-  public static boolean forbid_null = true;
-
 
   /**
    * A file containing literal values to be used as inputs to methods under test.
@@ -341,7 +293,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Whether to include assertions in regression tests.
    * If false, then the regression tests contain no assertions
    * (except that if the test throws an exception, it should continue to
-   * throw an execption of the same type).
+   * throw an exception of the same type).
    * Tests without assertions can be used to exercise the code, but they
    * do not enforce any particular behavior, such as values returned.
    */
@@ -366,36 +318,42 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Which exceptional tests to include in the regression test suite")
   public static ExceptionAssertionsMode regression_assertions_about_exceptions = ExceptionAssertionsMode.ALL;
-
-
-  // TODO make an enum. (But presently Options package requires upper-case
-  // strings for enums, which will require changes to Make targets, plugin, etc.)
-  /** For details, see the Javadoc documentation for {@link randoop.DefaultTestFilter}. */
-  @Option("What kinds of tests to output: pass, fail, or all")
-  public static String output_tests = "all";
   
-  public final static String ALL = "all";
-  public final static String FAIL = "fail";
-  public final static String PASS = "pass";
-
-  @Option("Simplify (shorten) failed tests while preserving failure behavior")
-  public static boolean simplify_failed_tests = false;
-
+  /**
+   * The possible values for exception allocation command-line arguments.
+   */
+  public static enum ExceptionAllocation {
+    /** Occurrence of exception should be considered an error */
+    ERROR,
+    /** Occurrence of exception should be considered invalid */
+    INVALID,
+    /** Occurrence of exception should be considered expected behavior */
+    REGRESSION
+  }
+  
+  /** The type of test to which a checked exception should be assigned. */
+  @Option("Type of test to which a checked exception is assigned")
+  public static ExceptionAllocation checked_exception = ExceptionAllocation.REGRESSION;
+  
+  /** The type of test to which an unchecked exception should be assigned. */
+  @Option("Type of test to which an unchecked exception is assigned")
+  public static ExceptionAllocation unchecked_exception = ExceptionAllocation.REGRESSION;
+  
+  /** The type of test to which a NullPointerException should be assigned */
+  @Option("Type of test to which a NullPointerException should be assigned")
+  public static ExceptionAllocation npe_on_null = ExceptionAllocation.ERROR;
+  
   /** Maximum number of tests to write to each JUnit file */
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
 
-  /** Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests */
-  @Option("Base name of the JUnit file(s) containing tests")
-  public static String junit_classname = "RandoopTest";
-
   /** Base name (no ".java" suffix) of the JUnit file containing error-revealing tests */
   @Option("Base name of the JUnit file(s) containing error-revealing tests")
-  public static String error_revealing_test_name = "ErrorTest";
+  public static String error_test_filename = "ErrorTest";
 
   /** Base name (no ".java" suffix) of the JUnit file containing regression tests */
   @Option("Base name of the JUnit file(s) containing regression tests")
-  public static String regression_test_name = "RegressionTest";
+  public static String regression_test_filename = "RegressionTest";
 
   /** Name of the package for the generated JUnit files */
   @Option("Name of the package for the generated JUnit files")
@@ -407,16 +365,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   
   @Option("Run Randoop but do not create JUnit tests")
   public static boolean dont_output_tests = false;
-  
-  /**
-   * Output sequences even if they do not complete execution.
-   * 
-   *  Randoop's default behavior is to output only tests consisting of
-   *  method call sequences that execute every statement, rather than throwing
-   *  an exception or failing a contract check before the last statement.
-   */
-  @Option("Output sequences even if they do not complete execution")
-  public static boolean output_nonexec = false;
   
   @Option("specifies regex of classes that must be in any regression tests")
   public static Pattern test_classes = null;
@@ -483,55 +431,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Output tests (sequences plus checkers) in serialized form to the given file.")
   public static String output_tests_serialized = null;
 
-
-  /**
-   * Randoop uses the specified port for output, in serialized form (used by Eclipse plugin).
-   * 
-   * If this value is not -1, Randoop relays information about the
-   * program's execution over a connection to the specified port on the
-   * local machine. Information is sent using a serialized
-   * randoop.runtime.Message object. Printing is also suppressed.
-   */
-  ///////////////////////////////////////////////////////////////////
-  @OptionGroup(value="Eliminating redundant tests")
-  @Option("Remove tests that are subsumed in other tests")
-  public static boolean remove_subsequences = true;
-
-  /**
-   * Run each test twice and compare the checks.  If the results differ,
-   * then disable the test.
-   */
-  @Option("Run each test twice and compare the checks")
-  public static boolean compare_checks = false;
-
-  @Option("Create clean checks for a serialized sequence")
-  public static File clean_checks = null;
-
-  @Option("Print any checks that are different in the clean run")
-  public static boolean print_diff_obs = false;
-
-  
-  ///////////////////////////////////////////////////////////////////
-  // These options are useful in the context of Carlos's PhD thesis
-  // experiments and shouldn't be needed by external users.
-  @OptionGroup(value="Pacheco thesis", unpublicized=true)
-  @Unpublicized
-  @Option("Write experiment results file")
-  public static FileWriter expfile = null;
-
-  @Unpublicized
-  @Option("Do not do online illegal")
-  public static boolean offline = false;
-
-  @Unpublicized
-  @Option("Use heuristic that may randomly repeat a method call several times")
-  public static boolean repeat_heuristic = false;
-  
-  @Unpublicized
-  @Option("Use object cache")
-  public static boolean use_object_cache = false;
-  
-
   /**
    * The random seed to use in the generation process.
    *
@@ -547,8 +446,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Notifications")
-  @Option("Uses the specified port for notifications (used by Eclipse plugin).")
-  public static int comm_port = -1;
   
   @Option("Do not display progress update message to console")
   public static boolean noprogressdisplay = false;
@@ -630,25 +527,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Output covered branches to the given text file")
   public static String output_branches = null;
   
-
-
-
+  ///////////////////////////////////////////////////////////////////
+  // This is only here to keep the ICSE07ContainersTest working
+  // TODO Need to decide to keep the heuristic that uses this in ForwardGenerator
+  @OptionGroup(value="Pacheco thesis", unpublicized=true)
+  @Unpublicized
+  @Option("Use heuristic that may randomly repeat a method call several times")
+  public static boolean repeat_heuristic = false;
+  
   /**
    * Check that the options given satisfy any specified constraints, and fail if they do not.
    */
   public void checkOptionsValid() {
-    
-    if (!(output_tests.equals(ALL) || output_tests.equals(PASS) || output_tests.equals(FAIL))) {
-      StringBuilder b = new StringBuilder();
-      b.append("Option output-tests must be one of ");
-      b.append(ALL);
-      b.append(", ");
-      b.append(PASS);
-      b.append(", or ");
-      b.append(FAIL);
-      b.append(".");
-      throw new RuntimeException(b.toString());
-    }
     
     if (alias_ratio < 0 || alias_ratio > 1) {
       throw new RuntimeException("Alias ratio must be between 0 and 1, inclusive.");
