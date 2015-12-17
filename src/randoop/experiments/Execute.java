@@ -12,6 +12,7 @@ import randoop.DummyVisitor;
 import randoop.ExecutionOutcome;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.test.DummyCheckGenerator;
 import randoop.types.TypeNames;
 import randoop.util.Files;
 
@@ -53,7 +54,7 @@ public class Execute {
       Set<CoverageAtom> coveredBranches = new LinkedHashSet<CoverageAtom>();
       Coverage.clearCoverage(covClasses);
       
-      eseq.execute(new DummyVisitor());
+      eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
       
       for (ExecutionOutcome o : eseq.getAllResults()) {
         System.out.println(">" + o);
