@@ -3,11 +3,12 @@ package randoop.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 public class ListOfListsSelectorTest extends TestCase {
 

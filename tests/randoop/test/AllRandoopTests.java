@@ -1,7 +1,6 @@
 package randoop.test;
 
 import randoop.operation.ArrayCreationTests;
-import randoop.tests.CodeFromManual;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -18,7 +17,6 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(ReflectionTests.class);
     suite.addTestSuite(UtilTests.class);
     suite.addTestSuite(ListOfListsSelectorTest.class);
-    suite.addTestSuite(SequenceTests.class);
     suite.addTestSuite(ForwardExplorerTests.class);
     suite.addTestSuite(ForwardExplorerTests2.class);
     suite.addTestSuite(DefaultReflectionPredicateTests.class);
@@ -31,7 +29,6 @@ public class AllRandoopTests extends TestCase {
     suite.addTestSuite(EqualsToNullTests.class);
     suite.addTestSuite(CompareToContractTests.class);
     suite.addTestSuite(SeedSequencesTests.class);
-    suite.addTestSuite(CodeFromManual.class);
 
     return suite;
   }

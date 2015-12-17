@@ -7,16 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import randoop.ContractCheckingVisitor;
+import randoop.DummyVisitor;
 import randoop.EqualsHashcode;
 import randoop.EqualsReflexive;
 import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
-import randoop.ExecutionVisitor;
 import randoop.Globals;
-import randoop.MultiVisitor;
 import randoop.ObjectContract;
-import randoop.RegressionCaptureVisitor;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -74,7 +71,7 @@ public class SequenceTests extends TestCase {
   /**
    * The "default" set of visitors that Randoop uses during execution. 
    */
-  private static final List<ExecutionVisitor> visitors;
+  private static final TestCheckGenerator testGen;
   static {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
     contracts.add(new EqualsReflexive());
@@ -82,9 +79,9 @@ public class SequenceTests extends TestCase {
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
     
-    visitors = new ArrayList<ExecutionVisitor>();
-    visitors.add(new ContractCheckingVisitor(contracts, false));
-    visitors.add(new RegressionCaptureVisitor());
+    testGen = new GenerateBoth(
+        new ContractCheckingVisitor(contracts, new DefaultFailureExceptionPredicate()),
+        new RegressionCaptureVisitor(new ExpectAllExceptions(),true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
@@ -134,7 +131,7 @@ public class SequenceTests extends TestCase {
     checkListsEqual(sequenceLines, Arrays.asList(sequence.toParseableString().split(Globals.lineSep)), testId);
     
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new MultiVisitor(visitors));
+    ds.execute(new DummyVisitor(), testGen);
     checkListsEqual(expectedCode, Arrays.asList(ds.toCodeString().split(Globals.lineSep)), testId);
   }
   

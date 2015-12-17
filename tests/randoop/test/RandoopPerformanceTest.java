@@ -24,7 +24,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
-    ForwardGenerator explorer = new ForwardGenerator(model, Long.MAX_VALUE, 100000, null, null, null, null);
+    ForwardGenerator explorer = new ForwardGenerator(model, Long.MAX_VALUE, 100000, 100000, null, null, null);
     explorer.explore();
   }
 

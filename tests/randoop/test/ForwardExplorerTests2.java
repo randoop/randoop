@@ -32,8 +32,8 @@ public class ForwardExplorerTests2 extends TestCase {
     List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
-      new ForwardGenerator(model, Long.MAX_VALUE, 100, null, null, null, null);
-    GenInputsAbstract.forbid_null = false;
+      new ForwardGenerator(model, Long.MAX_VALUE, 100, 100, null, null, null);
+    GenInputsAbstract.null_ratio = 0.5; //.forbid_null = false;
     exp.explore();
     for (Sequence s : exp.allSequences()) {
       s.toCodeString();

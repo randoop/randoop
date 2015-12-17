@@ -11,16 +11,13 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import randoop.ContractCheckingVisitor;
+import randoop.DummyVisitor;
 import randoop.EqualsHashcode;
 import randoop.EqualsReflexive;
 import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
-import randoop.ExecutionVisitor;
 import randoop.Globals;
-import randoop.MultiVisitor;
 import randoop.ObjectContract;
-import randoop.RegressionCaptureVisitor;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Util;
@@ -78,7 +75,7 @@ public class SequenceTester {
       throw new Error(e);
     }
 
-    new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), true);
+    new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), new DummyFailurePredicate());
   }
 
   public static void test(InputStream stream) throws Exception {
@@ -162,12 +159,12 @@ public class SequenceTester {
 
   private void testRegression(String expected) {
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new RegressionCaptureVisitor());
+    ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(new ExpectAllExceptions(),true));
     checkEqualStatements(expected, ds.toString(), "testing RegressionCaptureVisitor");
   }
   
   
-  private static final List<ExecutionVisitor> visitors;
+  private static final TestCheckGenerator testGen;
   static {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
     contracts.add(new EqualsReflexive());
@@ -175,9 +172,9 @@ public class SequenceTester {
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
     
-    visitors = new ArrayList<ExecutionVisitor>();
-    visitors.add(new ContractCheckingVisitor(contracts, false));
-    visitors.add(new RegressionCaptureVisitor());
+    testGen = new GenerateBoth(
+        new ContractCheckingVisitor(contracts, new DefaultFailureExceptionPredicate()),
+        new RegressionCaptureVisitor(new ExpectAllExceptions(),true));
   }
 
   private void testContracts(String expected) {
@@ -186,7 +183,7 @@ public class SequenceTester {
 
   private void testExecute(String expected) {
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new MultiVisitor(visitors));
+    ds.execute(new DummyVisitor(), testGen);
     checkEqualStatements(expected, ds.toCodeString(), "testing execution");
   }
 
