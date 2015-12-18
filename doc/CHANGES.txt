@@ -20,16 +20,16 @@ command-line arguments --no-regression-assertions and
 Old command-line argument --forbid-null has been removed; use
 --null-ratio=0 instead.
 
-The option simplify-failed-tests has been removed. The command option exec has 
-been removed. The command line argument --inputlimit has been removed. Removed 
---output-nonexec.
+The command-line arguments --simplify-failed-tests, --remove-subsequences, 
+--compare-checks, --clean-checks, --print-diff-obs and --output-nonexec have 
+been removed. The command option exec has been removed.  
 
 The interface for ExecutionVisitor has been changed to visitAfterStatement and
 visitBeforeStatement to clarify that the methods are invoked relative to the
 execution of each statement. Note that an ExecutionVisitor may no longer modify
 the Checks for a Sequence.
 
-Support for the eclipse plugin has been removed. The option --comp-port has been
+Support for the Eclipse plugin has been removed. The option --comp-port has been
 removed.
 
 Version 2.0.1, released November 30, 2015
