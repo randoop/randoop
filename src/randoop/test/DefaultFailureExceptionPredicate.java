@@ -4,7 +4,7 @@ import randoop.ExceptionalExecution;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * Implements test for exceptions considered errors by default.
+ * Implements a test for exceptions that are considered to be errors by default.
  * This include {@code AssertionError} and {@code StackOverflowError}.
  */
 public class DefaultFailureExceptionPredicate implements FailureExceptionPredicate {

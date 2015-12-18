@@ -20,17 +20,15 @@ import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
 
 /**
- * An execution visitor that checks unary and binary object contracts on the
- * values created by the sequence. It does this only after the whole sequence
- * has been executed. For each contract violation, the visitor adds a Check to
- * the last index in the sequence.
- * 
- * 
- * 
- * If the sequence throws an exception, the visitor does not check any contracts
- * [[ TODO update]]. If it does not throw an exception, it checks all contracts
- * on each object returned by each statement, except objects that are boxed
- * primitives or Strings.
+ * An execution visitor that generates checks for error-revealing tests.
+ * If execution of the visited sequence is normal, it will generate checks 
+ * for unary and binary object contracts over the values from the execution.
+ * Contracts will be checked on all values except for boxed primitives or Strings.
+ * If the execution throws an exception considered to be an error, the visitor 
+ * generates a {@code NoExceptionCheck} indicating that the statement threw an 
+ * exception in error. 
+ * For each contract violation, the visitor adds a {@code Check} to
+ * the {@code TestChecks} object that is returned.
  */
 public final class ContractCheckingVisitor implements TestCheckGenerator {
 
@@ -110,8 +108,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * @param s  the executable sequence
    * @param c  the contract to check
    * @param values  the set of positions defining values to check
-   * @param checks 
-   * @param idx  the statement where checks are inserted
+   * @param checks  the {@code TestChecks} to which new checks are added
    */
   private void checkBinary(ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
     for (Integer i : values) {
@@ -169,8 +166,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * @param s  the executable sequence where values are defined
    * @param c  the contract to check
    * @param values  the set of positions with values to check 
-   * @param checks 
-   * @param idx  the position of the statement where checks are to be attached
+   * @param checks  the {@code TestChecks} to which new checks are added
    */
   private void checkUnary(ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
 
