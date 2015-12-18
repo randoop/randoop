@@ -4,21 +4,22 @@ import randoop.sequence.Execution;
 
 /**
  * An {@code ExceptionCheck} that doesn't enforce the expectation of an
- * exception at a particular statement. Allows for execution at the statement 
- * to be either normal or throw an exception.
+ * exception by the statement at the statement index. 
+ * Allows for execution of the statement to be either normal or throw an 
+ * exception.
  */
 public class EmptyExceptionCheck extends ExceptionCheck {
   
   private static final long serialVersionUID = 8159839339961663076L;
   
   /**
-   * Creates an exception check at the given statement.
+   * Creates an exception check for the given statement index.
    * 
    * @param exception  the exception thrown by statement
    * @param statementIndex  the position of statement in sequence
    */
-  public EmptyExceptionCheck(Throwable exception, int statementIndex) {
-    super(exception, statementIndex);
+  public EmptyExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+    super(exception, statementIndex, catchClassName);
   }
 
   /**
@@ -27,7 +28,7 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendCatchBehavior(StringBuilder b, String exceptionClassName) {
-    b.append("  // ignoring fact that caught expected exception " + exceptionClassName);
+    b.append("  // expected exception caught" + exceptionClassName);
   }
 
   /**
@@ -36,13 +37,14 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
-    b.append("  // ignoring fact that expected exception " + exceptionClassName + " not thrown");
+    b.append("  // expected exception " + exceptionClassName + " not thrown");
   }
 
   /**
    * {@inheritDoc}
    * This check passes if execution is either normal or an exception is thrown.
-   * @return true if execution outcome is normal or and exception, false otherwise
+   * 
+   * @return true if execution outcome is normal or an exception, false otherwise
    * @throws IllegalArgumentException if execution indicates statement not executed 
    */
   @Override

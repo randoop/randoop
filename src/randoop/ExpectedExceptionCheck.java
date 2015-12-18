@@ -4,8 +4,8 @@ import randoop.sequence.Execution;
 import randoop.util.Reflection;
 
 /**
- * An {@code ExceptionCheck} that enforces the expectation of an exception being
- * thrown. In particular,
+ * An {@code ExceptionCheck} that enforces the expectation of an exception
+ * or a subclass being thrown. In particular,
  * <ul>
  * <li> fails if exception is not thrown, and
  * <li> succeeds only when expected exception is thrown.
@@ -15,8 +15,16 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
 
   private static final long serialVersionUID = -1172907532417774517L;
 
-  public ExpectedExceptionCheck(Throwable exception, int statementIndex) {
-    super(exception,statementIndex);
+  /**
+   * Creates check that enforces expectation that an exception is thrown by the
+   * statement at the statement index.
+   * 
+   * @param exception  the expected exception
+   * @param statementIndex  the index of the statement in the sequence where exception is thrown
+   * @param catchClassName  the name of exception to be caught
+   */
+  public ExpectedExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+    super(exception,statementIndex,catchClassName);
   }
 
   /**

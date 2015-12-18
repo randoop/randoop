@@ -1,21 +1,16 @@
 package randoop;
 
-import java.io.ObjectStreamException;
-import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 /**
  * An {@code ExceptionCheck} is used to indicate that an exception is expected
- * at a particular statement in a sequence. Depending on command line arguments
+ * at a particular statement in a sequence. Depending on command-line arguments
  * to Randoop, an instance may be either a {@link ExpectedExceptionCheck} or 
  * {@link EmptyExceptionCheck}. Both will catch the exception if it occurs, but
  * differ on whether the expectation of the exception is enforced.
  */
 public abstract class ExceptionCheck implements Check {
   
- /**
-   * 
-   */
   private static final long serialVersionUID = 4806179088639914364L;
 
   protected final Throwable exception;
@@ -23,11 +18,29 @@ public abstract class ExceptionCheck implements Check {
   // Indicates which statement results in the given exception. 
   protected final int statementIndex;
 
-  public ExceptionCheck(Throwable exception, int statementIndex) {
+  private String catchClassName;
+
+  /**
+   * Creates an exception check for the statement at the statement index.
+   * The generated code for this check will include a try-catch block with
+   * behaviors determined by implementing sub-classes. If the exception is
+   * not public, the {@code VisibilityPredicate} is used to find the nearest
+   * public superclass for use in the catch.
+   * 
+   * @param exception  the exception expected at the statement index
+   * @param statementIndex  the position of the statement in a sequence
+   * @param visibility  the criteria for visibility of classes
+   */
+  public ExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     this.exception = exception;
     this.statementIndex = statementIndex;
+    this.catchClassName = catchClassName;
   }
 
+  /**
+   * Determines if two {@code ExceptionCheck} objects are equal.
+   * Assumes that implementing classes are purely behavior.
+   */
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;
@@ -50,72 +63,61 @@ public abstract class ExceptionCheck implements Check {
     return "// throws exception of type " + exception.getClass().getCanonicalName() + Globals.lineSep;
   }
 
-  /** Returns the class of the exception thrown**/
+  /**
+   * {@inheritDoc}
+   * @return the name of the class of the exception thrown
+   */
   @Override
-  public String get_value() {
+  public String getValue() {
     return exception.getClass().getName();
   }
 
   @Override
-  public String get_id() {
+  public String getID() {
     return "Throws exception @" + statementIndex;
   }
 
-  /** return the offset of this statement in the sequence **/
   @Override
-  public int get_stmt_no() {
+  public int getStatementIndex() {
     return statementIndex;
   }
 
   /**
-   * The "try" half of the try-catch wrapper.
+   * {@inheritDoc}
+   * The pre-statement prefix of the try-catch wrapper.
    */
   @Override
-  public String toCodeStringPreStatement() {
+  public final String toCodeStringPreStatement() {
     StringBuilder b = new StringBuilder();
     b.append("// The following exception was thrown during execution." + Globals.lineSep);
-    b.append("// This behavior will recorded for regression testing." + Globals.lineSep);
+    b.append("// This behavior will be recorded for regression testing." + Globals.lineSep);
     b.append("try {" + Globals.lineSep + "  ");
     return b.toString();
   }
-  
-  /** The nearest visible superclass -- usually the argument itself. */
-  // TODO: handle general visibility based on Randoop command-line
-  // arguments, rather than hard-coding isPublic test.
-  public static Class<?> nearestVisibleSuperclass(Class<?> clazz) {
-    while (! Modifier.isPublic(clazz.getModifiers())) {
-      clazz = clazz.getSuperclass();
-    }
-    return clazz;
-  }
 
   /**
-   * Returns the "catch" half of the try-catch wrapper.
-   * Catches the closest public superclass of the exception.
-   * Calls {@link this#appendCatchBehavior(StringBuilder, String)} to determine
-   * what code to include in the catch block.
+   * {@inheritDoc}
+   * Returns the post-statement portion of the try-catch wrapper.
+   * Starts with post-statement try-behavior as determined by a subclass
+   * implementation of {@link this#appendTryBehavior}, and then closes with the 
+   * catch clause with the body determined by the sub-class implementation of 
+   * {@link this#appendCatchBehavior(StringBuilder, String)}.
+   * Catches this exception or the closest public superclass of the exception.
+   * 
+   * @return the post-statement code text for the expected exception
    */
   @Override
-  public String toCodeStringPostStatement() {
+  public final String toCodeStringPostStatement() {
     StringBuilder b = new StringBuilder();
-    String exceptionClassName = getExceptionName();
-    if (exceptionClassName == null) {
-      exceptionClassName = "Exception";
+    if (catchClassName == null) {
+      catchClassName = "Exception";
     }
+    String exceptionClassName = getExceptionName();
     appendTryBehavior(b, exceptionClassName);
-    if (Modifier.isPublic(exception.getClass().getModifiers())) {
-      b.append("} catch (" + exceptionClassName + " e) {" + Globals.lineSep);
-      b.append("  // Expected exception." + Globals.lineSep);
-      b.append("}" + Globals.lineSep);
-    } else {
-      // The exception type is private.  Catch the nearest public supertype.
-      Class<?> publicSuperClass = nearestVisibleSuperclass(exception.getClass());
-      String publicSuperClassName = publicSuperClass.getCanonicalName();
-      b.append("} catch (" + publicSuperClassName + " e) {" + Globals.lineSep);
-      b.append("  // Expected exception." + Globals.lineSep);
-      appendCatchBehavior(b, exceptionClassName);
-      b.append("}" + Globals.lineSep);
-    }      
+    b.append("} catch (" + catchClassName + " e) {" + Globals.lineSep);
+    b.append("  // Expected exception." + Globals.lineSep);
+    appendCatchBehavior(b, exceptionClassName);
+    b.append("}" + Globals.lineSep);
     return b.toString();
   }
   
@@ -128,17 +130,27 @@ public abstract class ExceptionCheck implements Check {
   protected abstract void appendCatchBehavior(StringBuilder b, String exceptionClassName);
 
   /**
-   * Appends code to follow statement throwing expected exception in try block.
+   * Appends code to follow the statement throwing expected exception in try block.
    *   
    * @param b  the string builder to which code text is added
    * @param exceptionClassName  the class name of the expected exception
    */
   protected abstract void appendTryBehavior(StringBuilder b, String exceptionClassName);
   
+  /**
+   * Returns the name of the exception class.
+   * 
+   * @return the canonical name of the exception class
+   */
   public String getExceptionName() {
     return exception.getClass().getCanonicalName();
   }
 
+  /**
+   * Returns the exception.
+   * 
+   * @return the exception in this check
+   */
   public Throwable getException() {
     return exception;
   }
