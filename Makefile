@@ -392,7 +392,7 @@ randoop-df: bin
 	cat frontier[1-9] \
 	  > systemtests/resources/arraylist.dfin.txt
 # Cleanup scratch files
-	rm -f frontier[1-9] test.dftargets.txt
+	rm -f frontier[1-9]* test.dftargets.txt
 
 test-constants: bin
 	java -ea randoop.util.ClassFileConstants bin/randoop/util/ClassFileConstants.class
