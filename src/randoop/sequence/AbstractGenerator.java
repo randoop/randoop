@@ -219,7 +219,7 @@ public abstract class AbstractGenerator {
    * <li>the number of output sequences is equal to the maximum output,
    * <li>the number of generated sequences is equal to the maximum generated sequence count, or
    * <li>if there is a stopper, {@link IStopper#stop()} returns true.
-   * <ul>
+   * </ul>
    * 
    * @return true if any of stopping criteria are met, otherwise false
    */
@@ -359,19 +359,19 @@ public abstract class AbstractGenerator {
    * (and can thus be thought of as subsumed by another sequence). This should
    * only be called for subclasses that support this.
    */
-  public Set<Sequence> subsumed_sequences() {
+  public Set<Sequence> getSubsumedSequences() {
     throw new Error("subsumed_sequences not supported for " + this.getClass());
   }
 
   /**
    * Returns the generated regression test sequences for output.
-   * Filters out subsequences, which can be retrieved using {@link this#subsumed_sequences()}
+   * Filters out subsequences, which can be retrieved using {@link #getSubsumedSequences()}
    * @return regression test sequences that do not occur in a longer sequence
    */
   //TODO replace this with filtering during generation
   public List<ExecutableSequence> getRegressionSequences() {
     List<ExecutableSequence> unique_seqs = new ArrayList<>();
-    Set<Sequence> subsumed_seqs = this.subsumed_sequences();
+    Set<Sequence> subsumed_seqs = this.getSubsumedSequences();
     for (ExecutableSequence es : outRegressionSeqs) {
       if (! subsumed_seqs.contains(es.sequence)) {
         unique_seqs.add(es);

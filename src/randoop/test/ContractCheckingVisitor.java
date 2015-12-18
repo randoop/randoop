@@ -44,7 +44,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * @param contracts
    *          Expected to be unary contracts, i.e. for each contract
    *          <code>c</code>, <code>c.getArity() == 1</code>.
-   * @param exceptionChecker 
+   * @param exceptionPredicate  the predicate to test for exceptions that are errors 
    *
    */
   public ContractCheckingVisitor(List<ObjectContract> contracts, 

@@ -3,7 +3,7 @@ package randoop.util.predicate;
 /**
  * A predicate interface because we are still in Java 7.
  *
- * @param <T>
+ * @param <T>  the type over which predicates operate
  */
 public interface Predicate<T> {
    

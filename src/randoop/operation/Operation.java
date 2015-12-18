@@ -41,7 +41,7 @@ import randoop.sequence.Variable;
  * {@link Operation#execute(Object[], PrintStream)} with concrete values for each
  * of the inputs.
  * @see randoop.sequence.Statement
- * @see randoop.sequence.ExecutableSequence#execute(randoop.ExecutionVisitor)
+ * @see randoop.sequence.ExecutableSequence#execute(randoop.ExecutionVisitor, randoop.test.TestCheckGenerator)
  * <p>
  * To support text-based serialization, an implementing class C should also provide:
  *  <ul>

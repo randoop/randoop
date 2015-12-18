@@ -1,7 +1,6 @@
 package randoop;
 
 import randoop.sequence.ExecutableSequence;
-import randoop.test.TestChecks;
 
 /** A visitor that does nothing and adds no checks. */
 public final class DummyVisitor implements ExecutionVisitor {
@@ -20,5 +19,5 @@ public final class DummyVisitor implements ExecutionVisitor {
   public void visitAfterStatement(ExecutableSequence sequence, int i) {
     // do nothing
   }
-  
+
 }

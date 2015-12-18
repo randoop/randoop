@@ -59,9 +59,10 @@ public interface TestChecks {
   
   /**
    * Returns the consensus checks for two sets of checks.
-   * Refuses to compare passing/failing checks.
+   * Refuses to compare passing with failing checks.
    * 
-   * @return 
+   * @param checks  the {@code TestChecks} to compare with.
+   * @return the checks common to this set of checks and those in {@code checks}
    */
   TestChecks commonChecks(TestChecks checks);
 }

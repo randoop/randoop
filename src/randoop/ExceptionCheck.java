@@ -23,13 +23,13 @@ public abstract class ExceptionCheck implements Check {
   /**
    * Creates an exception check for the statement at the statement index.
    * The generated code for this check will include a try-catch block with
-   * behaviors determined by implementing sub-classes. If the exception is
-   * not public, the {@code VisibilityPredicate} is used to find the nearest
-   * public superclass for use in the catch.
+   * behaviors determined by implementing sub-classes. The catch class name
+   * is the name of a visible exception class that is the class of the given 
+   * exception or a superclass.
    * 
    * @param exception  the exception expected at the statement index
    * @param statementIndex  the position of the statement in a sequence
-   * @param visibility  the criteria for visibility of classes
+   * @param catchClassName  the name of exception to be caught
    */
   public ExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     this.exception = exception;
@@ -99,9 +99,9 @@ public abstract class ExceptionCheck implements Check {
    * {@inheritDoc}
    * Returns the post-statement portion of the try-catch wrapper.
    * Starts with post-statement try-behavior as determined by a subclass
-   * implementation of {@link this#appendTryBehavior}, and then closes with the 
+   * implementation of {@link #appendTryBehavior}, and then closes with the 
    * catch clause with the body determined by the sub-class implementation of 
-   * {@link this#appendCatchBehavior(StringBuilder, String)}.
+   * {@link #appendCatchBehavior(StringBuilder, String)}.
    * Catches this exception or the closest public superclass of the exception.
    * 
    * @return the post-statement code text for the expected exception

@@ -6,7 +6,7 @@ import randoop.ExceptionalExecution;
 /**
  * Interface for objects that generate different types of {@code ExceptionCheck}
  * objects to use when determining test checks from the execution of a sequence.
- * @see randoop.RegressionCaptureVisitor#visit(randoop.sequence.ExecutableSequence)
+ * @see randoop.test.RegressionCaptureVisitor#visit(randoop.sequence.ExecutableSequence)
  */
 public interface RegressionExceptionCheckGenerator {
   
