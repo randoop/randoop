@@ -393,7 +393,7 @@ public class GenTests extends GenInputsAbstract {
     //And, generate regression tests, unless user says not to
     if (! GenInputsAbstract.no_regression_tests) {
       checkTest = checkTest.or(new RegressionTestPredicate());
-      RegressionCaptureVisitor regressionVisitor = createRegressionCapture();
+      RegressionCaptureVisitor regressionVisitor = createRegressionCapture(visibility);
       if (! GenInputsAbstract.no_error_revealing_tests) {
         testGen = new GenerateBoth(contractVisitor, regressionVisitor);
       } else {
@@ -617,21 +617,21 @@ public class GenTests extends GenInputsAbstract {
    * 
    * @return a regression check generator that implements command line options
    */
-  private RegressionCaptureVisitor createRegressionCapture() {
+  private RegressionCaptureVisitor createRegressionCapture(VisibilityPredicate visibility) {
     boolean includeAssertions = true;
-    RegressionExceptionCheckGenerator exceptionExpectation = new ExpectAllExceptions();
+    RegressionExceptionCheckGenerator exceptionExpectation = new ExpectAllExceptions(visibility);
     switch (GenInputsAbstract.regression_assertions_about_exceptions) {
       case NONE:
-        exceptionExpectation = new NoExceptionExpectation();
+        exceptionExpectation = new NoExceptionExpectation(visibility);
         break;
       case CHECKED:
-        exceptionExpectation = new ExpectCheckedExceptions();
+        exceptionExpectation = new ExpectCheckedExceptions(visibility);
         break;
       default:
         //default set above  
     }
     if (GenInputsAbstract.no_regression_assertions) {
-      exceptionExpectation = new NoExceptionExpectation();
+      exceptionExpectation = new NoExceptionExpectation(visibility);
       includeAssertions = false;
     } 
     return new RegressionCaptureVisitor(exceptionExpectation,
