@@ -68,7 +68,7 @@ public interface Check extends Serializable {
    * Returns a short string that can be used to uniquely identify
    * this check.
    */
-  String get_value();
+  String getValue();
   
   /**
    * Returns a unique string identifier for the check.  Two checks are
@@ -79,10 +79,10 @@ public interface Check extends Serializable {
    * have different checks (because the existence of some checks
    * depends on the value of variables)
    */
-  String get_id();
+  String getID();
 
   /** Returns the offset in the sequence of this check **/
-  int get_stmt_no();
+  int getStatementIndex();
 
   /**
    * Evaluates this check on the given execution of a sequence.

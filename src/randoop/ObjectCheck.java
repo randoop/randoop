@@ -94,7 +94,7 @@ public class ObjectCheck implements Check {
    * the name of the contract class.
    */
   @Override
-  public String get_value() {
+  public String getValue() {
     if (contract instanceof IsNotNull) {
       return "!null";
     } else if (contract instanceof IsNull) {
@@ -121,12 +121,12 @@ public class ObjectCheck implements Check {
   }
 
   @Override
-  public int get_stmt_no() {
+  public int getStatementIndex() {
     return (stmt_no);
   }
 
   @Override
-  public String get_id() {
+  public String getID() {
     return contract.get_observer_str() + " " + Arrays.toString(vars);
   }
 }
