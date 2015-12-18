@@ -16,6 +16,8 @@ import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.Operation;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
@@ -150,7 +152,8 @@ public class ForwardExplorerTests extends TestCase {
       exceptionChecker = new NPEContractPredicate(exceptionChecker);
     }
     ContractCheckingVisitor contractChecker = new ContractCheckingVisitor(contracts,exceptionChecker);
-    RegressionCaptureVisitor regressionCapture = new RegressionCaptureVisitor(new ExpectAllExceptions(),true);
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    RegressionCaptureVisitor regressionCapture = new RegressionCaptureVisitor(new ExpectAllExceptions(visibility),true);
     return new GenerateBoth(contractChecker,regressionCapture);
   }
   

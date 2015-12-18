@@ -18,6 +18,8 @@ import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
 import randoop.Globals;
 import randoop.ObjectContract;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.util.Util;
@@ -159,7 +161,8 @@ public class SequenceTester {
 
   private void testRegression(String expected) {
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(new ExpectAllExceptions(),true));
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(new ExpectAllExceptions(visibility ),true));
     checkEqualStatements(expected, ds.toString(), "testing RegressionCaptureVisitor");
   }
   
@@ -171,10 +174,10 @@ public class SequenceTester {
     contracts.add(new EqualsToNullRetFalse());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
-    
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
     testGen = new GenerateBoth(
         new ContractCheckingVisitor(contracts, new DefaultFailureExceptionPredicate()),
-        new RegressionCaptureVisitor(new ExpectAllExceptions(),true));
+        new RegressionCaptureVisitor(new ExpectAllExceptions(visibility),true));
   }
 
   private void testContracts(String expected) {

@@ -186,12 +186,15 @@ EXPECTED_CODE
 int i0 = (-1);
 java.util.ArrayList arrayList1 = new java.util.ArrayList();
 // The following exception was thrown during execution.
-// This behavior will recorded for regression testing.
+// This behavior will be recorded for regression testing.
 try {
 java.lang.Object obj2 = arrayList1.get((int)i0);
 org.junit.Assert.fail("Expected exception of type java.lang.ArrayIndexOutOfBoundsException");
 } catch (java.lang.ArrayIndexOutOfBoundsException e) {
 // Expected exception.
+  if (! e.getClass().getCanonicalName().equals("java.lang.ArrayIndexOutOfBoundsException")) {
+    org.junit.Assert.fail("Expected exception of type java.lang.ArrayIndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+  }
 }
 
 END TEST

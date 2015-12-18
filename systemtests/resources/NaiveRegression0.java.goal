@@ -19,12 +19,15 @@ public class NaiveRegression0 {
     java2.util2.Enumeration enumeration1 = java2.util2.Collections.enumeration((java2.util2.Collection)arrayList0);
     java2.util2.ArrayList arrayList2 = java2.util2.Collections.list(enumeration1);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj3 = java2.util2.Collections.max((java2.util2.Collection)arrayList2);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java2.util2.NoSuchElementException")) {
+        org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -57,12 +60,15 @@ public class NaiveRegression0 {
     int i12 = arrayList6.lastIndexOf((java.lang.Object)enumeration11);
     boolean b13 = linkedList5.contains((java.lang.Object)arrayList6);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj14 = linkedList5.getFirst();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java2.util2.NoSuchElementException")) {
+        org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -102,12 +108,15 @@ public class NaiveRegression0 {
     java2.util2.List list1 = java2.util2.Collections.singletonList((java.lang.Object)char0);
     char char2 = '#';
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.fill(list1, (java.lang.Object)char2);
       org.junit.Assert.fail("Expected exception of type java.lang.UnsupportedOperationException");
     } catch (java.lang.UnsupportedOperationException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.UnsupportedOperationException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.UnsupportedOperationException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -129,12 +138,15 @@ public class NaiveRegression0 {
     java.lang.Object[] obj_array4 = arrayList1.toArray(obj_array3);
     int i5 = 0;
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj6 = arrayList1.remove((int)i5);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IndexOutOfBoundsException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -154,12 +166,15 @@ public class NaiveRegression0 {
 
     int i0 = (-1);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(i0);
       org.junit.Assert.fail("Expected exception of type java.lang.IllegalArgumentException");
     } catch (java.lang.IllegalArgumentException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IllegalArgumentException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IllegalArgumentException, got " + e.getClass().getCanonicalName());
+      }
     }
 
   }
@@ -189,12 +204,15 @@ public class NaiveRegression0 {
     java2.util2.Iterator iterator16 = linkedList14.iterator();
     boolean b17 = linkedList5.addAll((int)i8, (java2.util2.Collection)linkedList14);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj18 = linkedList5.getLast();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java2.util2.NoSuchElementException")) {
+        org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -428,12 +446,15 @@ public class NaiveRegression0 {
     java2.util2.Iterator iterator40 = linkedList38.iterator();
     boolean b41 = linkedList29.addAll((int)i32, (java2.util2.Collection)linkedList38);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj42 = arrayList1.set((int)i23, (java.lang.Object)b41);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IndexOutOfBoundsException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -611,12 +632,15 @@ public class NaiveRegression0 {
     boolean b19 = true;
     int i20 = arrayList17.indexOf((java.lang.Object)b19);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       int i21 = java2.util2.Collections.binarySearch((java2.util2.List)linkedList5, (java.lang.Object)arrayList17);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
     } catch (java.lang.ClassCastException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.ClassCastException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -668,12 +692,15 @@ public class NaiveRegression0 {
     java.lang.Object[] obj_array4 = arrayList1.toArray(obj_array3);
     java2.util2.LinkedList linkedList5 = new java2.util2.LinkedList((java2.util2.Collection)arrayList1);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj6 = linkedList5.removeLast();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java2.util2.NoSuchElementException")) {
+        org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -774,12 +801,15 @@ public class NaiveRegression0 {
     java.lang.Object[] obj_array15 = arrayList12.toArray(obj_array14);
     java2.util2.LinkedList linkedList16 = new java2.util2.LinkedList((java2.util2.Collection)arrayList12);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       linkedList8.add((int)i10, (java.lang.Object)arrayList12);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IndexOutOfBoundsException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -878,12 +908,15 @@ public class NaiveRegression0 {
     linkedList5.addFirst((java.lang.Object)arrayList21);
     java2.util2.Set set24 = java2.util2.Collections.singleton((java.lang.Object)linkedList5);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj25 = java2.util2.Collections.min((java2.util2.Collection)linkedList5);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
     } catch (java.lang.ClassCastException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.ClassCastException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -1002,12 +1035,15 @@ public class NaiveRegression0 {
     int i13 = linkedList12.size();
     java.lang.Object obj14 = linkedList12.clone();
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       linkedList5.add((int)i6, obj14);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IndexOutOfBoundsException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -1269,12 +1305,15 @@ public class NaiveRegression0 {
     int i16 = arrayList6.indexOf((java.lang.Object)arrayList15);
     int i17 = 100;
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj18 = arrayList6.remove((int)i17);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IndexOutOfBoundsException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -1770,12 +1809,15 @@ public class NaiveRegression0 {
     int i29 = java2.util2.Collections.binarySearch((java2.util2.List)arrayList25, (java.lang.Object)char28);
     java2.util2.Comparator comparator30 = java2.util2.Collections.reverseOrder();
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       int i31 = java2.util2.Collections.binarySearch((java2.util2.List)linkedList5, (java.lang.Object)char28, comparator30);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
     } catch (java.lang.ClassCastException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.ClassCastException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -1852,12 +1894,15 @@ public class NaiveRegression0 {
     java2.util2.Iterator iterator2 = arrayList0.iterator();
     int i3 = 0;
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj4 = arrayList0.remove((int)i3);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IndexOutOfBoundsException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -1881,12 +1926,15 @@ public class NaiveRegression0 {
     int i3 = arrayList0.indexOf((java.lang.Object)b2);
     int i4 = 1;
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj5 = arrayList0.get((int)i4);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IndexOutOfBoundsException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -2122,12 +2170,15 @@ public class NaiveRegression0 {
     java2.util2.Collection collection8 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)linkedList5);
     int i9 = 10;
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj10 = linkedList5.remove((int)i9);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
     } catch (java.lang.IndexOutOfBoundsException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java.lang.IndexOutOfBoundsException")) {
+        org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
@@ -2161,12 +2212,15 @@ public class NaiveRegression0 {
     java2.util2.TreeSet treeSet4 = new java2.util2.TreeSet((java2.util2.Collection)arrayList0);
     java2.util2.List list5 = java2.util2.Collections.singletonList((java.lang.Object)treeSet4);
     // The following exception was thrown during execution.
-    // This behavior will recorded for regression testing.
+    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj6 = treeSet4.first();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
     } catch (java2.util2.NoSuchElementException e) {
       // Expected exception.
+      if (! e.getClass().getCanonicalName().equals("java2.util2.NoSuchElementException")) {
+        org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException, got " + e.getClass().getCanonicalName());
+      }
     }
     
     
