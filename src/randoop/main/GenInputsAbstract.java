@@ -174,9 +174,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 
    * For example, a null ratio of 0.05 directs Randoop to use
    * <code>null</code> as an input 5 percent of the time when a
-   * non-<code>null</code> value of the appropriate type is available.  If
-   * no non-<code>null</code> value is available, Randoop will try
-   * <code>null</code> regardless of the value of this parameter.
+   * non-<code>null</code> value of the appropriate type is available.  
    * 
    * Randoop never uses <code>null</code> for receiver values.
    */
@@ -322,26 +320,39 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * The possible values for exception allocation command-line arguments.
    */
-  public static enum ExceptionAllocation {
+  public static enum BehaviorType {
     /** Occurrence of exception should be considered an error */
     ERROR,
     /** Occurrence of exception should be considered invalid */
     INVALID,
     /** Occurrence of exception should be considered expected behavior */
-    REGRESSION
+    EXPECTED
   }
   
-  /** The type of test to which a checked exception should be assigned. */
-  @Option("Type of test to which a checked exception is assigned")
-  public static ExceptionAllocation checked_exception = ExceptionAllocation.REGRESSION;
+  /**
+   * Indicates whether a checked exception should be considered as error,
+   * expected, or invalid behavior. Determines how the exception is handled
+   * in generating tests. 
+   */
+  @Option("Type of behavior assigned to a checked exception")
+  public static BehaviorType checked_exception = BehaviorType.EXPECTED;
   
-  /** The type of test to which an unchecked exception should be assigned. */
-  @Option("Type of test to which an unchecked exception is assigned")
-  public static ExceptionAllocation unchecked_exception = ExceptionAllocation.REGRESSION;
+  /** 
+   * Indicates whether an unchecked exception should be considered as error,
+   * expected, or invalid behavior. Determines how the exception is handled
+   * in generating tests. 
+   */
+  @Option("Type of behavior assigned to an unchecked exception")
+  public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
   
-  /** The type of test to which a NullPointerException should be assigned */
-  @Option("Type of test to which a NullPointerException should be assigned")
-  public static ExceptionAllocation npe_on_null = ExceptionAllocation.ERROR;
+  /** 
+   * Indicates whether a NullPointerException that occurs in a test sequence
+   * where a null is given as an input should be considered as error,
+   * expected, or invalid behavior. Determines how the exception is handled
+   * in generating tests. 
+   */
+  @Option("Type of behavior assigned to a NullPointerException on null inputs")
+  public static BehaviorType npe_on_null_input = BehaviorType.ERROR;
   
   /** Maximum number of tests to write to each JUnit file */
   @Option("Maximum number of tests to write to each JUnit file")
@@ -366,7 +377,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Run Randoop but do not create JUnit tests")
   public static boolean dont_output_tests = false;
   
-  @Option("specifies regex of classes that must be in any regression tests")
+  /**
+   * Indicate which classes that any generated test must include. Tests that
+   * do not have classes matching the regular expression are not written to 
+   * the test suites. 
+   */
+  @Option("Regular expression for class names that must occur in generated tests")
   public static Pattern test_classes = null;
   
   /**

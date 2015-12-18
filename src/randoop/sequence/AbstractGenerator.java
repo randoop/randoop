@@ -70,7 +70,7 @@ public abstract class AbstractGenerator {
   public final int maxGeneratedSequences;
   
   /**
-   * Limit for output. If more than specified number of sequences are in the
+   * Limit for output. Once the specified number of sequences are in the
    * output lists, the generator will stop.
    */
   public final int maxOutputSequences;
@@ -119,7 +119,7 @@ public abstract class AbstractGenerator {
   /**
    * The list of failure sequences to be saved as JUnit tests
    */
-  public List<ExecutableSequence> outFailureSeqs = new ArrayList<>();
+  public List<ExecutableSequence> outErrorSeqs = new ArrayList<>();
 
   /**
    * The list of regression sequences to be save as JUnit tests
@@ -142,7 +142,7 @@ public abstract class AbstractGenerator {
    * 
    * @param operations Statements (e.g. methods and constructors) used to create sequences. Cannot be null.
    * @param timeMillis maximum time to spend in generation. Must be non-negative.
-   * @param maxGenSequences  the maximum number of sequences to generate. Must be non-negative.
+   * @param maxGeneratedSequences  the maximum number of sequences to generate. Must be non-negative.
    * @param maxOutSequences  the maximum number of sequences to output. Must be non-negative.
    * @param componentManager  the component manager to use to store sequences during component-based generation.
    *        Can be null, in which case the generator's component manager is initialized as <code>new ComponentManager()</code>.
@@ -150,17 +150,17 @@ public abstract class AbstractGenerator {
    * @param listenerManager Manager that stores and calls any listeners to use during generation. Can be null.
    */
   public AbstractGenerator(List<Operation> operations, long timeMillis, 
-      int maxGenSequences, int maxOutSequences, ComponentManager componentManager,
+      int maxGeneratedSequences, int maxOutSequences, ComponentManager componentManager,
       IStopper stopper, RandoopListenerManager listenerManager) {
     assert operations != null;
 
     this.maxTimeMillis = timeMillis;
-    this.maxGeneratedSequences = maxGenSequences;
+    this.maxGeneratedSequences = maxGeneratedSequences;
     this.maxOutputSequences = maxOutSequences;
     this.operations = operations;
     this.executionVisitor = new DummyVisitor();
     this.outputTest = new AlwaysFalse<>();
-    
+
     if (componentManager == null) {
       this.componentManager = new ComponentManager();
     } else {
@@ -172,8 +172,8 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Registers test predicate with the generator object for use while filtering
-   * generated tests.
+   * Registers test predicate with this generator for use while filtering
+   * generated tests for output.
    * 
    * @param outputTest  the predicate to be added to object
    */
@@ -185,8 +185,8 @@ public abstract class AbstractGenerator {
   }
 
   /**
-   * Registers a visitor with this object for use while executing generated
-   * sequences.
+   * Registers a visitor with this object for use while executing each generated
+   * sequence.
    * 
    * @param executionVisitor  the visitor
    */
@@ -199,7 +199,7 @@ public abstract class AbstractGenerator {
   
   /**
    * Registers a visitor with this object to generate checks following
-   * execution of generated tests.
+   * execution of each generated test sequence.
    * 
    * @param checkGenerator  the check generating visitor 
    */
@@ -210,6 +210,19 @@ public abstract class AbstractGenerator {
     this.checkGenerator = checkGenerator;
   }
   
+  /**
+   * Tests stopping criteria and determines whether generation should stop.
+   * Criteria are checked in this order:
+   * <ul>
+   * <li>if there is a listener manager, {@link RandoopListenerManager#stopGeneration()} returns true,
+   * <li>the elapsed generation time is greater than or equal to the max time in milliseconds,
+   * <li>the number of output sequences is equal to the maximum output,
+   * <li>the number of generated sequences is equal to the maximum generated sequence count, or
+   * <li>if there is a stopper, {@link IStopper#stop()} returns true.
+   * <ul>
+   * 
+   * @return true if any of stopping criteria are met, otherwise false
+   */
   protected boolean stop() {
     return
     (listenerMgr != null && listenerMgr.stopGeneration())
@@ -219,12 +232,27 @@ public abstract class AbstractGenerator {
     || (stopper != null && stopper.stop());
   }
 
+  /**
+   * Generate an individual test sequence
+   * 
+   * @return a test sequence, may be null
+   */
   public abstract ExecutableSequence step();
 
+  /**
+   * Returns the count of generated sequence currently for output.
+   * 
+   * @return the sum of the number of error and regression test sequences for output
+   */
   public int numOutputSequences() {
-    return outFailureSeqs.size() + outRegressionSeqs.size();
+    return outErrorSeqs.size() + outRegressionSeqs.size();
   }
   
+  /**
+   * Returns the count of sequences generated so far by the generator.
+   * 
+   * @return the number of sequences generated
+   */
   public abstract int numGeneratedSequences();
   
   /**
@@ -287,7 +315,7 @@ public abstract class AbstractGenerator {
 
         if (outputTest.test(eSeq)) {
           if (eSeq.hasFailure()) {
-            outFailureSeqs.add(eSeq);
+            outErrorSeqs.add(eSeq);
           } else if (eSeq.hasChecks()) {
             outRegressionSeqs.add(eSeq);
           } 
@@ -358,7 +386,7 @@ public abstract class AbstractGenerator {
    * @return the generated error test sequences
    */
   public List<ExecutableSequence> getErrorTestSequences() {
-    return outFailureSeqs;
+    return outErrorSeqs;
   }
   
   /**
@@ -368,7 +396,7 @@ public abstract class AbstractGenerator {
    * @return the total number of test sequences saved for output
    */
   public int outputSequenceCount() {
-    return outRegressionSeqs.size() + outFailureSeqs.size();
+    return outRegressionSeqs.size() + outErrorSeqs.size();
   }
   
   /**

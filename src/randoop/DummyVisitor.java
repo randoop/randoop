@@ -14,15 +14,11 @@ public final class DummyVisitor implements ExecutionVisitor {
   @Override
   public void visitBeforeStatement(ExecutableSequence sequence, int i) {
     // do nothing
-    
   }
 
   @Override
   public void visitAfterStatement(ExecutableSequence sequence, int i) {
     // do nothing
-    
   }
   
-
-
 }

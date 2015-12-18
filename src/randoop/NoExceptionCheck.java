@@ -3,8 +3,10 @@ package randoop;
 import randoop.sequence.Execution;
 
 /**
- * Checks that no exception is thrown by a given statement
- * in a sequence.
+ * Checks that an exception is not thrown by a given statement in a sequence. 
+ * This is meant for an error-revealing check where, in fact, an exception
+ * was observed at the statement, and this check is meant to represent that
+ * the throws is actually an expected failure.
  */
 public class NoExceptionCheck implements Check {
   
@@ -34,17 +36,17 @@ public class NoExceptionCheck implements Check {
   }
 
   @Override
-  public String get_value() {
+  public String getValue() {
     return "no_exception";
   }
 
   @Override
-  public int get_stmt_no() {
+  public int getStatementIndex() {
     return statementIdx;
   }
 
   @Override
-  public String get_id() {
+  public String getID() {
     return "NoExceptionCheck @" + statementIdx;
   }
 
@@ -60,7 +62,7 @@ public class NoExceptionCheck implements Check {
 
   @Override
   public String toCodeStringPreStatement() {
-    return "//contract failure: this statement threw " + exceptionName + Globals.lineSep;
+    return "// contract failure: this statement threw " + exceptionName + Globals.lineSep;
   }
 
   @Override
