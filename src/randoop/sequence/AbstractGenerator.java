@@ -316,7 +316,7 @@ public abstract class AbstractGenerator {
         if (outputTest.test(eSeq)) {
           if (eSeq.hasFailure()) {
             outErrorSeqs.add(eSeq);
-          } else if (eSeq.hasChecks()) {
+          } else {
             outRegressionSeqs.add(eSeq);
           } 
         } 
