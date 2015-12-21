@@ -7,7 +7,7 @@ import randoop.sequence.ExecutableSequence;
  * Implements a test for exceptions that are considered to be errors by default.
  * This include {@code AssertionError} and {@code StackOverflowError}.
  */
-public class DefaultFailureExceptionPredicate implements FailureExceptionPredicate {
+public class DefaultFailureExceptionPredicate extends DefaultExceptionPredicate {
 
   /**
    * {@inheritDoc}
