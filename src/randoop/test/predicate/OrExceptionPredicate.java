@@ -1,4 +1,4 @@
-package randoop.test;
+package randoop.test.predicate;
 
 import randoop.ExceptionalExecution;
 import randoop.sequence.ExecutableSequence;

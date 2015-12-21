@@ -1,4 +1,4 @@
-package randoop.test;
+package randoop.test.predicate;
 
 /**
  * Implements default behaviors of the {@code ExceptionPredicate} interface.
