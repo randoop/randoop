@@ -4,6 +4,10 @@ import randoop.sequence.ExecutableSequence;
 
 /**
  * Generates a set of test checks from a test sequence that has been executed.
+ * 
+ * Note: a generator does not determine which sequences become output. 
+ * Instead a generator produces the {@link TestChecks} objects that, for valid
+ * behaviors, represent assertions in error or regression tests. 
  */
 public interface TestCheckGenerator {
   

@@ -29,7 +29,13 @@ public interface TestChecks {
   public Map<Check, Boolean> get();
   
   /**
-   * Indicates whether this object has checks
+   * Indicates whether this set of checks corresponds to valid behaviors.
+   * @return
+   */
+  public boolean hasInvalidBehavior();
+  
+  /**
+   * Indicates whether this object has checks.
    * 
    * @return true if this object has checks, false otherwise
    */

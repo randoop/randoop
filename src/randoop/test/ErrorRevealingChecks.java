@@ -112,4 +112,15 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
     }
     return common;
   }
+
+  /**
+   * {@inheritDoc}
+   * Returns false because error checks are not considered invalid.
+   * 
+   * @return false, always.
+   */
+  @Override
+  public boolean hasInvalidBehavior() {
+    return false;
+  }
 }

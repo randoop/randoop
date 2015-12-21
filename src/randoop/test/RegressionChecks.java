@@ -27,7 +27,11 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   @Override
   public int count() {
-    return checks.size();
+    int result = checks.size();
+    if (exceptionCheck != null) {
+      result++;
+    }
+    return result;
   }
 
   /**
@@ -60,6 +64,9 @@ public class RegressionChecks implements TestChecks, Serializable {
     Map<Check,Boolean> mp = new LinkedHashMap<Check,Boolean>();
     for (Check ck : checks) {
       mp.put(ck, true);
+    }
+    if (exceptionCheck != null) {
+      mp.put(exceptionCheck, true);
     }
     return mp;
   }
@@ -126,5 +133,16 @@ public class RegressionChecks implements TestChecks, Serializable {
       common.add(exceptionCheck);
     }
     return common;
+  }
+
+  /**
+   * {@inheritDoc}
+   * Returns false because regression checks are not invalid.
+   * 
+   * @return false, always
+   */
+  @Override
+  public boolean hasInvalidBehavior() {
+    return false;
   }
 }

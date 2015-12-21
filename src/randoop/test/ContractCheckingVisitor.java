@@ -15,6 +15,7 @@ import randoop.ObjectCheck;
 import randoop.ObjectContract;
 import randoop.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
+import randoop.test.predicate.ExceptionPredicate;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.PrimitiveTypes;
@@ -33,7 +34,7 @@ import randoop.util.PrimitiveTypes;
 public final class ContractCheckingVisitor implements TestCheckGenerator {
 
   private List<ObjectContract> contracts;
-  private FailureExceptionPredicate exceptionPredicate;
+  private ExceptionPredicate exceptionPredicate;
 
   /**
    * Create a new visitor that checks the given contracts after the last
@@ -46,7 +47,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    *
    */
   public ContractCheckingVisitor(List<ObjectContract> contracts, 
-                                 FailureExceptionPredicate exceptionPredicate) {
+                                 ExceptionPredicate exceptionPredicate) {
     this.contracts = new ArrayList<ObjectContract>();
     for (ObjectContract c : contracts) {
       if (c.getArity() > 2)

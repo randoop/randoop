@@ -45,10 +45,10 @@ import randoop.util.Reflection;
  */
 public final class RegressionCaptureVisitor implements TestCheckGenerator {
 
-  private RegressionExceptionCheckGenerator exceptionExpectation;
+  private ExpectedExceptionCheckGen exceptionExpectation;
   private boolean includeAssertions;
 
-  public RegressionCaptureVisitor(RegressionExceptionCheckGenerator exceptionExpectation,
+  public RegressionCaptureVisitor(ExpectedExceptionCheckGen exceptionExpectation,
       boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.includeAssertions = includeAssertions;
@@ -287,7 +287,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
         
         // Otherwise, add the check determined by exceptionExpectation 
         ExceptionalExecution e = (ExceptionalExecution)result;
-        checks.add(exceptionExpectation.getExceptionCheck(e, i));
+        checks.add(exceptionExpectation.getExceptionCheck(e, s, i));
         
       } else { //statement not executed
         throw new Error("Unexecuted statement in sequence");
