@@ -9,16 +9,15 @@ removed.  Use --error-test-filename and --regression-test-filename to set
 the file names; old command-line argument --junit-classname has been
 removed.
 
-New command-line argument --no-npe-contract disables the "No null pointer
-exceptions without null" heuristic contract.
-
 You can control which assertions appear in regression tests with new
 command-line arguments --no-regression-assertions and
 --regression-assertions-about-exceptions; old command-line argument
 --check-regression-behavior has been removed.
 
-Old command-line argument --forbid-null has been removed; use
---null-ratio=0 instead.
+You can now indicate whether you want to view exceptions as expected, error or 
+invalid behavior. The new command-line arguments --checked-exception, 
+--unchecked-exception, --npe-on-null-input, --oom-exception all take values
+of EXPECTED, ERROR, or INVALID.
 
 The command-line arguments --simplify-failed-tests, --remove-subsequences, 
 --compare-checks, --clean-checks, --print-diff-obs and --output-nonexec have 
