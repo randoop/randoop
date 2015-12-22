@@ -27,7 +27,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
         example, options);
   }
 
-
   /**
    * The fully-qualified name of a class to test.
    * These classes are tested in addition to any specified using <tt>--classlist</tt>.
@@ -174,7 +173,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * 
    * For example, a null ratio of 0.05 directs Randoop to use
    * <code>null</code> as an input 5 percent of the time when a
-   * non-<code>null</code> value of the appropriate type is available.  
+   * non-<code>null</code> value of the appropriate type is available.
+   * 
+   * Unless {@link #forbid_null} is true, a null value will still be used if no
+   * other value can be passed as an argument with no respect to this parameter.
    * 
    * Randoop never uses <code>null</code> for receiver values.
    */
@@ -183,6 +185,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Use null as an input with the given frequency")
   public static double null_ratio = 0;
 
+  /**
+   * Suppress use of null when no other argument value can be generated.
+   * 
+   * If true, Randoop will fail input generation rather than use null as an 
+   * input.
+   * 
+   * Does not affect the behavior based on {@link #null_ratio}.
+   */
+  @Option("Never use null as input to methods or constructors")
+  public static boolean forbid_null = true;
+  
   /**
    * A file containing literal values to be used as inputs to methods under test.
    * 
@@ -276,13 +289,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether to output error-revealing tests")
   public static boolean no_error_revealing_tests = false;
 
-  /**
-   * Whether to enforce the "No null pointer exceptions without <tt>null</tt>"
-   * contract.
-   */
-  @Option("Whether to enforce the contract about null pointer exceptions")
-  public static boolean no_npe_contract = false;
-
   /** Whether to output regression tests. */
   @Option("Whether to output regression tests")
   public static boolean no_regression_tests = false;
@@ -298,25 +304,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether to include assertions in regression tests")
   public static boolean no_regression_assertions = false;
 
-  /**
-   * The possible values of the regression_assertions_about_exceptions command-line argument.
-   * @see #regression_assertions_about_exceptions
-   */
-  public static enum ExceptionAssertionsMode {
-    /** Include no exceptional tests in the regression test suite */
-    NONE,
-    /** Include tests that throw checked exceptions in the regression test suite */
-    CHECKED,
-    /** Include every test in the regression test suite */
-    ALL;
-  }
-
-  /**
-   * If a test throws an exception, should it be included in the regression test suite?
-   */
-  @Option("Which exceptional tests to include in the regression test suite")
-  public static ExceptionAssertionsMode regression_assertions_about_exceptions = ExceptionAssertionsMode.ALL;
-  
   /**
    * The possible values for exception allocation command-line arguments.
    */
@@ -352,7 +339,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * in generating tests. 
    */
   @Option("Type of behavior assigned to a NullPointerException on null inputs")
-  public static BehaviorType npe_on_null_input = BehaviorType.ERROR;
+  public static BehaviorType npe_on_null_input = BehaviorType.INVALID;
+  
+  /**
+   * Indicates whether an OutOfMemoryException should be consider as an error,
+   * expected, or invalid behavior. Determines how the exception is handled in 
+   * generating tests.
+   */
+  @Option("Type of behavior assigned to an OutOfMemoryException")
+  public static BehaviorType oom_exception = BehaviorType.INVALID;
   
   /** Maximum number of tests to write to each JUnit file */
   @Option("Maximum number of tests to write to each JUnit file")
