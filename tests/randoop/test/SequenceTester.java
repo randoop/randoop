@@ -22,6 +22,9 @@ import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.test.predicate.AlwaysTrueExceptionPredicate;
+import randoop.test.predicate.DefaultFailureExceptionPredicate;
+import randoop.test.predicate.ExceptionPredicate;
 import randoop.util.Util;
 
 import junit.framework.Assert;
@@ -162,7 +165,10 @@ public class SequenceTester {
   private void testRegression(String expected) {
     ExecutableSequence ds = new ExecutableSequence(sequence);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(new ExpectAllExceptions(visibility ),true));
+    ExceptionPredicate isExpected = new AlwaysTrueExceptionPredicate();
+    ExpectedExceptionCheckGen expectation; 
+    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(expectation,true));
     checkEqualStatements(expected, ds.toString(), "testing RegressionCaptureVisitor");
   }
   
@@ -175,9 +181,12 @@ public class SequenceTester {
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    testGen = new GenerateBoth(
+    ExceptionPredicate isExpected = new AlwaysTrueExceptionPredicate();
+    ExpectedExceptionCheckGen expectation; 
+    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    testGen = new ExtendGenerator(
         new ContractCheckingVisitor(contracts, new DefaultFailureExceptionPredicate()),
-        new RegressionCaptureVisitor(new ExpectAllExceptions(visibility),true));
+        new RegressionCaptureVisitor(expectation, true));
   }
 
   private void testContracts(String expected) {

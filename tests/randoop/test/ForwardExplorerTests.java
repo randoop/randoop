@@ -2,9 +2,7 @@ package randoop.test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import randoop.ComponentManager;
 import randoop.EqualsHashcode;
@@ -14,6 +12,7 @@ import randoop.EqualsToNullRetFalse;
 import randoop.ObjectContract;
 import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;
+import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.operation.Operation;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
@@ -27,6 +26,10 @@ import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
+import randoop.test.predicate.AlwaysTrueExceptionPredicate;
+import randoop.test.predicate.DefaultFailureExceptionPredicate;
+import randoop.test.predicate.ExceptionPredicate;
+import randoop.test.predicate.NPEContractPredicate;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
 
@@ -147,14 +150,17 @@ public class ForwardExplorerTests extends TestCase {
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsToNullRetFalse());
     
-    FailureExceptionPredicate exceptionChecker = new DefaultFailureExceptionPredicate();
-    if (! GenInputsAbstract.no_npe_contract) {
-      exceptionChecker = new NPEContractPredicate(exceptionChecker);
+    ExceptionPredicate exceptionChecker = new DefaultFailureExceptionPredicate();
+    if (GenInputsAbstract.npe_on_null_input == BehaviorType.ERROR) {
+      exceptionChecker = exceptionChecker.or(new NPEContractPredicate());
     }
     ContractCheckingVisitor contractChecker = new ContractCheckingVisitor(contracts,exceptionChecker);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    RegressionCaptureVisitor regressionCapture = new RegressionCaptureVisitor(new ExpectAllExceptions(visibility),true);
-    return new GenerateBoth(contractChecker,regressionCapture);
+    ExceptionPredicate isExpected = new AlwaysTrueExceptionPredicate();
+    ExpectedExceptionCheckGen expectation; 
+    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    RegressionCaptureVisitor regressionCapture = new RegressionCaptureVisitor(expectation, true);
+    return new ExtendGenerator(contractChecker,regressionCapture);
   }
   
   private static Predicate<ExecutableSequence> createOutputTest() {

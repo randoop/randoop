@@ -20,6 +20,9 @@ import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
+import randoop.test.predicate.AlwaysTrueExceptionPredicate;
+import randoop.test.predicate.DefaultFailureExceptionPredicate;
+import randoop.test.predicate.ExceptionPredicate;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Util;
@@ -82,9 +85,12 @@ public class SequenceTests extends TestCase {
     contracts.add(new EqualsSymmetric());
     
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    testGen = new GenerateBoth(
+    ExceptionPredicate isExpected = new AlwaysTrueExceptionPredicate();
+    ExpectedExceptionCheckGen expectation; 
+    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    testGen = new ExtendGenerator(
         new ContractCheckingVisitor(contracts, new DefaultFailureExceptionPredicate()),
-        new RegressionCaptureVisitor(new ExpectAllExceptions(visibility),true));
+        new RegressionCaptureVisitor(expectation,true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
