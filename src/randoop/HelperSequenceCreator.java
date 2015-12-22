@@ -38,7 +38,7 @@ public class HelperSequenceCreator {
     } else {
       SimpleList<Sequence> candidates = components.getSequencesForType(cls.getComponentType(), false);
       if (candidates.isEmpty()) {
-        if (GenInputsAbstract.null_ratio == 0) {
+        if (GenInputsAbstract.forbid_null) {
           // No sequences that produce appropriate component values found, and null forbidden.
           // Return the empty array.
           ArrayCreation decl = new ArrayCreation(cls.getComponentType(), 0);

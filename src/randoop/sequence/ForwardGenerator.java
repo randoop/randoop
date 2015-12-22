@@ -500,10 +500,31 @@ public class ForwardGenerator extends AbstractGenerator {
       assert l != null;
 
       if (Log.isLoggingOn()) Log.logLine("components: " + l.size());
-      
-      // The user may have requested that we use null values as inputs with some given frequency.
-      // If this is the case, then use null with some probability. 
-      if (!isReceiver && GenInputsAbstract.null_ratio != 0
+
+      // If we were not able to find (or create) any sequences of type inputTypes[i], and we are
+      // allowed the use null values, use null. If we're not allowed, then return with failure.
+      if (l.size() == 0) {
+        if (isReceiver || GenInputsAbstract.forbid_null) {
+          if (Log.isLoggingOn()) Log.logLine("forbid-null option is true. Failed to create new sequence.");
+          return new InputsAndSuccessFlag (false, null, null);
+        } else {
+          if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
+          Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
+          Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
+          variables.add(totStatements);
+          sequences.add(seq);
+          assert seq.size() == 1;
+          totStatements++;
+          // Null is not an interesting value to add to the set of
+          // possible values to reuse, so we don't update typesToVars or types.
+          continue;
+        }
+      }
+
+      // At this point, we have one or more sequences that create non-null values of type inputTypes[i].
+      // However, the user may have requested that we use null values as inputs with some given frequency.
+      // If this is the case, then use null instead with some probability.
+      if (! isReceiver && GenInputsAbstract.null_ratio != 0
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn()) Log.logLine("null-ratio option given. Randomly decided to use null as input.");
         Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
@@ -513,12 +534,6 @@ public class ForwardGenerator extends AbstractGenerator {
         assert seq.size() == 1;
         totStatements++;
         continue;
-      }
-
-      //If have not generated any candidate sequences, then failed 
-      if (l.size() == 0) {
-        if (Log.isLoggingOn()) Log.logLine("Failed to create new sequence.");
-        return new InputsAndSuccessFlag (false, null, null);
       }
 
       // At this point, we have a list of candidate sequences and need to select a
