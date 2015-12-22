@@ -22,6 +22,14 @@ import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import plume.EntryReader;
+import plume.Option;
+import plume.OptionGroup;
+import plume.Options;
+import plume.Options.ArgException;
+import plume.SimpleLog;
+import plume.Unpublicized;
+
 import randoop.BugInRandoopException;
 import randoop.CheckRep;
 import randoop.CheckRepContract;
@@ -55,22 +63,23 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
 import randoop.test.ContractCheckingVisitor;
-import randoop.test.DefaultFailureExceptionPredicate;
-import randoop.test.DummyCheckGenerator;
 import randoop.test.ErrorTestPredicate;
 import randoop.test.ExcludeTestPredicate;
-import randoop.test.ExpectAllExceptions;
-import randoop.test.ExpectCheckedExceptions;
-import randoop.test.FailureExceptionPredicate;
-import randoop.test.GenerateBoth;
-import randoop.test.GenerateRegressionOnly;
+import randoop.test.ExpectedExceptionCheckGen;
+import randoop.test.ExtendGenerator;
 import randoop.test.IncludeTestPredicate;
-import randoop.test.NPEContractPredicate;
-import randoop.test.NoExceptionExpectation;
 import randoop.test.RegressionCaptureVisitor;
-import randoop.test.RegressionExceptionCheckGenerator;
 import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
+import randoop.test.ValidityCheckingVisitor;
+import randoop.test.predicate.AlwaysFalseExceptionPredicate;
+import randoop.test.predicate.AlwaysTrueExceptionPredicate;
+import randoop.test.predicate.CheckedExceptionPredicate;
+import randoop.test.predicate.DefaultFailureExceptionPredicate;
+import randoop.test.predicate.ExceptionPredicate;
+import randoop.test.predicate.NPEContractPredicate;
+import randoop.test.predicate.OOMExceptionPredicate;
+import randoop.test.predicate.UncheckedExceptionPredicate;
 import randoop.util.ClassFileConstants;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -82,13 +91,6 @@ import randoop.util.predicate.Predicate;
 
 import cov.Branch;
 import cov.Coverage;
-import plume.EntryReader;
-import plume.Option;
-import plume.OptionGroup;
-import plume.Options;
-import plume.Options.ArgException;
-import plume.SimpleLog;
-import plume.Unpublicized;
 
 public class GenTests extends GenInputsAbstract {
 
@@ -362,51 +364,10 @@ public class GenTests extends GenInputsAbstract {
 
 
     ////// setup for check generation 
-    //Always need contract checker regardless of whether output error tests
-    ContractCheckingVisitor contractVisitor = createContractChecker(classes);
-    
-    //By default don't generate any tests
-    TestCheckGenerator testGen = new DummyCheckGenerator();
+    TestCheckGenerator testGen = createTestCheckGenerator(visibility, classes);
     
     //Define test predicate to decide which test sequences will be output
-    Predicate<ExecutableSequence> baseTest;
-    //base case: exclude sequences with just "new Object()", keep everything else
-    //to exclude something else, add sequence to excludeSet
-    Sequence newObj = new Sequence().extend(objectConstructor);
-    Set<Sequence> excludeSet = new LinkedHashSet<>();
-    excludeSet.add(newObj);
-    baseTest = new ExcludeTestPredicate(excludeSet);
-    if (GenInputsAbstract.test_classes != null) { //keep only tests with test classes
-      baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.test_classes));
-    }
-      
-    //Use arguments to determine which kinds of tests to output
-    //Default is neither (e.g., no tests output)
-    Predicate<ExecutableSequence> checkTest = new AlwaysFalse<>();
-    
-    //But, generate error-revealing tests if user says so
-    if (! GenInputsAbstract.no_error_revealing_tests) {
-      checkTest = new ErrorTestPredicate();
-      testGen = contractVisitor;
-    }
-
-    //And, generate regression tests, unless user says not to
-    if (! GenInputsAbstract.no_regression_tests) {
-      checkTest = checkTest.or(new RegressionTestPredicate());
-      RegressionCaptureVisitor regressionVisitor = createRegressionCapture(visibility);
-      if (! GenInputsAbstract.no_error_revealing_tests) {
-        testGen = new GenerateBoth(contractVisitor, regressionVisitor);
-      } else {
-        testGen = new GenerateRegressionOnly(contractVisitor, regressionVisitor);
-      }
-    }
-    
-    Predicate<ExecutableSequence> outputTest;
-    if (GenInputsAbstract.dont_output_tests) {
-      outputTest = new AlwaysFalse<>();      
-    } else {
-      outputTest = baseTest.and(checkTest);
-    }
+    Predicate<ExecutableSequence> outputTest = createTestOutputPredicate(objectConstructor);
     
     //list of visitors for collecting information from test sequences
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
@@ -506,6 +467,47 @@ public class GenTests extends GenInputsAbstract {
     }
     
     return true;
+  }
+
+  /**
+   * Builds the test predicate that determines whether a particular sequence will
+   * be included in the output based on command-line arguments.
+   * 
+   * @param objectConstructor  the constructor for the Object class
+   * @return the predicate 
+   */
+  private Predicate<ExecutableSequence> createTestOutputPredicate(ConstructorCall objectConstructor) {
+    Predicate<ExecutableSequence> outputTest;
+    if (GenInputsAbstract.dont_output_tests) {
+      outputTest = new AlwaysFalse<>();      
+    } else {
+      Predicate<ExecutableSequence> baseTest;
+      //base case: exclude sequences with just "new Object()", keep everything else
+      //to exclude something else, add sequence to excludeSet
+      Sequence newObj = new Sequence().extend(objectConstructor);
+      Set<Sequence> excludeSet = new LinkedHashSet<>();
+      excludeSet.add(newObj);
+      baseTest = new ExcludeTestPredicate(excludeSet);
+      if (GenInputsAbstract.test_classes != null) { //keep only tests with test classes
+        baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.test_classes));
+      }
+
+      //Use arguments to determine which kinds of tests to output
+      //Default is neither (e.g., no tests output)
+      Predicate<ExecutableSequence> checkTest = new AlwaysFalse<>();
+
+      //But, generate error-revealing tests if user says so
+      if (! GenInputsAbstract.no_error_revealing_tests) {
+        checkTest = new ErrorTestPredicate();
+      }
+
+      //And, generate regression tests, unless user says not to
+      if (! GenInputsAbstract.no_regression_tests) {
+        checkTest = checkTest.or(new RegressionTestPredicate());
+      }
+      outputTest = baseTest.and(checkTest);
+    }
+    return outputTest;
   }
 
   /**
@@ -612,41 +614,12 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Creates the {@code TestCheckGenerator} to generate regression test checks
-   * based on command-line arguments.
-   * 
-   * @return a regression check generator that implements command line options
-   */
-  private RegressionCaptureVisitor createRegressionCapture(VisibilityPredicate visibility) {
-    boolean includeAssertions = true;
-    RegressionExceptionCheckGenerator exceptionExpectation = new ExpectAllExceptions(visibility);
-    switch (GenInputsAbstract.regression_assertions_about_exceptions) {
-      case NONE:
-        exceptionExpectation = new NoExceptionExpectation(visibility);
-        break;
-      case CHECKED:
-        exceptionExpectation = new ExpectCheckedExceptions(visibility);
-        break;
-      default:
-        //default set above  
-    }
-    if (GenInputsAbstract.no_regression_assertions) {
-      exceptionExpectation = new NoExceptionExpectation(visibility);
-      includeAssertions = false;
-    } 
-    return new RegressionCaptureVisitor(exceptionExpectation,
-                                        includeAssertions);
-  }
-
-  /**
-   * Creates a {@code ContractCheckingVisitor} using contracts from annotated classes,
-   * and a small set of default contracts. Also, determines policy for handling
-   * {@code NullPointerException} being thrown.
+   * Returns the list of contracts to be used in contract checking.
    * 
    * @param classes  the list of annotated classes for retrieving contracts
-   * @return a contract check generator that imp
+   * @return the list of {@code ObjectContract} objects for contract checking
    */
-  private ContractCheckingVisitor createContractChecker(List<Class<?>> classes) {
+  private List<ObjectContract> getContracts(List<Class<?>> classes) {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
 
     // Add any @CheckRep-annotated methods and create visitors for them.
@@ -659,14 +632,101 @@ public class GenTests extends GenInputsAbstract {
     contracts.add(new EqualsSymmetric());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsToNullRetFalse());
-    
-    FailureExceptionPredicate exceptionChecker = new DefaultFailureExceptionPredicate();
-    if (! GenInputsAbstract.no_npe_contract) {
-      exceptionChecker = new NPEContractPredicate(exceptionChecker);
-    }
-    return new ContractCheckingVisitor(contracts,exceptionChecker);
+    return contracts;
   }
 
+  /**
+   * Constructs an {@code ExceptionPredicate} that checks whether each kind of
+   * exception is assigned the given type of behavior in the command-line 
+   * arguments. Simplifies predicates based on possible combinations:
+   * <ul>
+   * <li> only add predicate for specific unchecked exceptions if unchecked 
+   *      exceptions are assigned different behavior.
+   * <li> if both checked and unchecked exceptions are assigned the behavior,
+   *      use a predicate that is always true.
+   * </ul>  
+   * 
+   * @param behavior  the behavior type to build predicate
+   * @param base  the base predicate
+   * @return a predicate to check all exceptions assigned this behavior
+   */
+  private ExceptionPredicate createPredicateFor(BehaviorType behavior, ExceptionPredicate base) {
+    ExceptionPredicate predicate = base;
+    
+    //NPE is a subclass of RuntimeException, so check before Unchecked
+    if (GenInputsAbstract.npe_on_null_input == behavior
+        && GenInputsAbstract.unchecked_exception != GenInputsAbstract.npe_on_null_input) {
+      predicate = predicate.or(new NPEContractPredicate());
+    }
+    
+    //OOM is a subclass of Error, so check before Unchecked
+    if (GenInputsAbstract.oom_exception == behavior
+        && GenInputsAbstract.unchecked_exception != GenInputsAbstract.oom_exception) {
+      predicate = predicate.or(new OOMExceptionPredicate());
+    }
+    
+    if (GenInputsAbstract.unchecked_exception == behavior) {
+      if (GenInputsAbstract.unchecked_exception == GenInputsAbstract.checked_exception) {
+        predicate = new AlwaysTrueExceptionPredicate();
+      } else {
+        predicate = predicate.or(new UncheckedExceptionPredicate());
+      }
+    } else if (GenInputsAbstract.checked_exception == behavior) {
+      predicate = predicate.or(new CheckedExceptionPredicate());
+    }
+    
+    return predicate;
+  }
+  
+  /**
+   * Creates the test check generator for this run based on the command-line
+   * arguments. 
+   * The goal of the generator is to produce all appropriate checks for each
+   * sequence it is applied to. Validity and contract checks are always needed
+   * to determine which sequences have invalid or error behaviors, even if only
+   * regression tests are desired. So, this generator will always be built.
+   * If in addition regression tests are to be generated, then the regression 
+   * checks generator is added.
+   * 
+   * @param visibility  the visibility predicate
+   * @param classes  the classes for obtaining contract checks
+   * @return the {@code TestCheckGenerator} that reflects command line arguments.
+   */
+  private TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, List<Class<?>> classes) {
+    
+    //start with checking for invalid exceptions
+    ExceptionPredicate isInvalid = new AlwaysFalseExceptionPredicate();
+    isInvalid = createPredicateFor(BehaviorType.INVALID, isInvalid);
+    TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid);
+    
+    //extend with contract checker 
+    List<ObjectContract> contracts = getContracts(classes);
+    ExceptionPredicate isError = new DefaultFailureExceptionPredicate();
+    isError = createPredicateFor(BehaviorType.ERROR, isError);
+    ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts,isError);
+    testGen = new ExtendGenerator(testGen, contractVisitor);
+    
+    //and, generate regression tests, unless user says not to
+    if (! GenInputsAbstract.no_regression_tests) {
+      ExceptionPredicate isExpected = new AlwaysFalseExceptionPredicate();
+      boolean includeAssertions = true;
+      if (GenInputsAbstract.no_regression_assertions) {
+        includeAssertions = false;
+      } else {
+        isExpected = createPredicateFor(BehaviorType.EXPECTED, isExpected);
+      }
+      ExpectedExceptionCheckGen expectation; 
+      expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+     
+      RegressionCaptureVisitor regressionVisitor; 
+      regressionVisitor = new RegressionCaptureVisitor(expectation, includeAssertions);
+
+      testGen = new ExtendGenerator(testGen, regressionVisitor);
+    }
+    return testGen;
+  }
+  
+  
   /**
    * Adds literals to the component manager, by parsing any literals
    * files specified by the user.
