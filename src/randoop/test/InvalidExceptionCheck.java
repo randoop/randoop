@@ -5,8 +5,7 @@ import randoop.sequence.Execution;
 
 /**
  * An {@code InvalidExceptionCheck} represents the occurrence of an exception
- * tagged as an invalid behavior during {@code Check} generation. Sequences with
- * invalid checks are not intended to be printed.
+ * tagged as an invalid behavior during {@code Check} generation.
  */
 public class InvalidExceptionCheck implements Check {
 
@@ -45,9 +44,14 @@ public class InvalidExceptionCheck implements Check {
     return statementIndex;
   }
 
+  /**
+   * {@inheritDoc}
+   * An invalid check cannot be evaluated, so this throws an exception.
+   * @throws InvalidArgumentException whenever called
+   */
   @Override
   public boolean evaluate(Execution execution) {
-    return false;
+    throw new IllegalArgumentException("Cannot evaluate an invalid check");
   }
 
 }
