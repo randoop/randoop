@@ -592,4 +592,13 @@ public class ExecutableSequence implements Serializable {
     return checks != null && checks.hasChecks();
   }
 
+  /**
+   * Indicate whether there are any invalid checks.
+   * 
+   * @return true if the test checks have been set and are for invalid behavior, false otherwise
+   */
+  public boolean hasInvalidBehavior() {
+    return checks != null && checks.hasInvalidBehavior();
+  }
+
 }
