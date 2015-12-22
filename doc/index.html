@@ -558,24 +558,6 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
     </ul>
   </li>
-  <li id="optiongroup:Creating-test-oracles">Creating test oracles
-    <ul>
-      <li id="option:check-object-contracts"><b>--check-object-contracts=</b><i>boolean</i>. Use Randoop's default set of object contracts as assertions.
- If disabled, these assertions are not created.
- 
- <p>
- The default set of contracts includes:
-   equals(Object) is reflexive,
-   equals(Object) is symmetric,
-   equals(Object) and hashCode() are consistent,
-   x.equals(null) returns false,
-   any nullary method annotated with @CheckRep returns true.
- </p> [default true]</li>
-      <li id="option:check-regression-behavior"><b>--check-regression-behavior=</b><i>boolean</i>. Capture the current behavior as assertions.
- This makes Randoop's tests act as regression tests that ensure that the
- code continues to behave as it did when the tests were generated. [default true]</li>
-    </ul>
-  </li>
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
     <ul>
       <li id="option:timelimit"><b>--timelimit=</b><i>int</i>. Maximum number of seconds to spend generating tests.
@@ -590,11 +572,7 @@ Randoop about your application, and that is how we recommend using Randoop.
 
  Note that if you use this option, Randoop is nondeterministic: it
  may generate different test suites on different runs. [default 100]</li>
-      <li id="option:outputlimit"><b>--outputlimit=</b><i>int</i>. Determines the maximum number of tests to output.
- 
- This command-line option is generally more appropriate than
- --inputlimit, which controls how many test candidates Randoop
- generates internally. [default 100000000]</li>
+      <li id="option:outputlimit"><b>--outputlimit=</b><i>int</i>. Determines the maximum number of tests to output. [default 100000000]</li>
       <li id="option:inputlimit"><b>--inputlimit=</b><i>int</i>. Maximum number of test candidates generated.
  
  Test generation stops when
@@ -614,18 +592,18 @@ Randoop about your application, and that is how we recommend using Randoop.
  
  For example, a null ratio of 0.05 directs Randoop to use
  <code>null</code> as an input 5 percent of the time when a
- non-<code>null</code> value of the appropriate type is available.  If
- no non-<code>null</code> value is available, Randoop will try
- <code>null</code> regardless of the value of this parameter.
+ non-<code>null</code> value of the appropriate type is available.
+ 
+ Unless <code>#forbid_null</code> is true, a null value will still be used if no
+ other value can be passed as an argument with no respect to this parameter.
  
  Randoop never uses <code>null</code> for receiver values. [default 0.0]</li>
-      <li id="option:forbid-null"><b>--forbid-null=</b><i>boolean</i>. Never use null as input to methods or constructors.
+      <li id="option:forbid-null"><b>--forbid-null=</b><i>boolean</i>. Suppress use of null when no other argument value can be generated.
  
- This option causes Randoop to abandon the method call rather than providing
- null as an input, when no non-null value of the appropriate type is available.
+ If true, Randoop will fail input generation rather than use null as an 
+ input.
  
- To ask Randoop to calls methods with null with greater frequency,
- see option --null-ratio. [default true]</li>
+ Does not affect the behavior based on <code>#null_ratio</code>. [default true]</li>
       <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
  
  Literals in these files are used in addition to all other constants in the pool.
@@ -666,31 +644,35 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
     <ul>
       <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>. Whether to output error-revealing tests. [default false]</li>
-      <li id="option:no-npe-contract"><b>--no-npe-contract=</b><i>boolean</i>. Whether to enforce the "No null pointer exceptions without <tt>null</tt>"
- contract. [default false]</li>
       <li id="option:no-regression-tests"><b>--no-regression-tests=</b><i>boolean</i>. Whether to output regression tests. [default false]</li>
       <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>. Whether to include assertions in regression tests.
  If false, then the regression tests contain no assertions
  (except that if the test throws an exception, it should continue to
- throw an execption of the same type).
+ throw an exception of the same type).
  Tests without assertions can be used to exercise the code, but they
  do not enforce any particular behavior, such as values returned. [default false]</li>
-      <li id="option:regression-assertions-about-exceptions"><b>--regression-assertions-about-exceptions=</b><i>enum</i>. If a test throws an exception, should it be included in the regression test suite? [default ALL]<ul><li><b>NONE</b> Include no exceptional tests in the regression test suite</li><li><b>CHECKED</b> Include tests that throw checked exceptions in the regression test suite</li><li><b>ALL</b> Include every test in the regression test suite</li></ul></li>
-      <li id="option:output-tests"><b>--output-tests=</b><i>string</i>. For details, see the Javadoc documentation for <code>randoop.DefaultTestFilter</code>. [default all]</li>
-      <li id="option:simplify-failed-tests"><b>--simplify-failed-tests=</b><i>boolean</i>. Simplify (shorten) failed tests while preserving failure behavior [default false]</li>
+      <li id="option:checked-exception"><b>--checked-exception=</b><i>enum</i>. Indicates whether a checked exception should be considered as error,
+ expected, or invalid behavior. Determines how the exception is handled
+ in generating tests. [default EXPECTED]<ul><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
+      <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>. Indicates whether an unchecked exception should be considered as error,
+ expected, or invalid behavior. Determines how the exception is handled
+ in generating tests. [default EXPECTED]<ul><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
+      <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>. Indicates whether a NullPointerException that occurs in a test sequence
+ where a null is given as an input should be considered as error,
+ expected, or invalid behavior. Determines how the exception is handled
+ in generating tests. [default INVALID]<ul><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
+      <li id="option:oom-exception"><b>--oom-exception=</b><i>enum</i>. Indicates whether an OutOfMemoryException should be consider as an error,
+ expected, or invalid behavior. Determines how the exception is handled in 
+ generating tests. [default INVALID]<ul><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
       <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
-      <li id="option:junit-classname"><b>--junit-classname=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing Randoop-generated tests [default RandoopTest]</li>
-      <li id="option:error-revealing-test-name"><b>--error-revealing-test-name=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default ErrorTest]</li>
-      <li id="option:regression-test-name"><b>--regression-test-name=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing regression tests [default RegressionTest]</li>
+      <li id="option:error-test-filename"><b>--error-test-filename=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default ErrorTest]</li>
+      <li id="option:regression-test-filename"><b>--regression-test-filename=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing regression tests [default RegressionTest]</li>
       <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files [default ]</li>
       <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written</li>
       <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>. Run Randoop but do not create JUnit tests [default false]</li>
-      <li id="option:output-nonexec"><b>--output-nonexec=</b><i>boolean</i>. Output sequences even if they do not complete execution.
- 
-  Randoop's default behavior is to output only tests consisting of
-  method call sequences that execute every statement, rather than throwing
-  an exception or failing a contract check before the last statement. [default false]</li>
-      <li id="option:test-classes"><b>--test-classes=</b><i>regex</i>. specifies regex of classes that must be in any regression tests</li>
+      <li id="option:test-classes"><b>--test-classes=</b><i>regex</i>. Indicate which classes that any generated test must include. Tests that
+ do not have classes matching the regular expression are not written to 
+ the test suites.</li>
       <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>. Whether to use JUnit's standard reflective mechanisms for invoking
  tests.  JUnit's reflective invocations can interfere with code
  instrumentation, such as by the DynComp tool.  If that is a problem,
@@ -722,20 +704,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  Suggestion: use a .gz suffix in file name.</li>
     </ul>
   </li>
-  <li id="optiongroup:Eliminating-redundant-tests">Eliminating redundant tests
-    <ul>
-      <li id="option:remove-subsequences"><b>--remove-subsequences=</b><i>boolean</i>. Randoop uses the specified port for output, in serialized form (used by Eclipse plugin).
- 
- If this value is not -1, Randoop relays information about the
- program's execution over a connection to the specified port on the
- local machine. Information is sent using a serialized
- randoop.runtime.Message object. Printing is also suppressed. [default true]</li>
-      <li id="option:compare-checks"><b>--compare-checks=</b><i>boolean</i>. Run each test twice and compare the checks.  If the results differ,
- then disable the test. [default false]</li>
-      <li id="option:clean-checks"><b>--clean-checks=</b><i>filename</i>. Create clean checks for a serialized sequence</li>
-      <li id="option:print-diff-obs"><b>--print-diff-obs=</b><i>boolean</i>. Print any checks that are different in the clean run [default false]</li>
-    </ul>
-  </li>
   <li id="optiongroup:Controlling-randomness">Controlling randomness
     <ul>
       <li id="option:randomseed"><b>--randomseed=</b><i>int</i>. The random seed to use in the generation process.
@@ -747,7 +715,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   </li>
   <li id="optiongroup:Notifications">Notifications
     <ul>
-      <li id="option:comm-port"><b>--comm-port=</b><i>int</i>. Uses the specified port for notifications (used by Eclipse plugin). [default -1]</li>
       <li id="option:noprogressdisplay"><b>--noprogressdisplay=</b><i>boolean</i>. Do not display progress update message to console [default false]</li>
       <li id="option:progressinterval"><b>--progressinterval=</b><i>long</i>. Display progress message every &lt;int&gt; milliseconds [default 5000]</li>
     </ul>
