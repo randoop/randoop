@@ -16,11 +16,6 @@ public class RegressionTestPredicate extends DefaultPredicate<ExecutableSequence
 
     TestChecks testChecks = s.getChecks();
     
-    //don't want regression test with no assertions
-    if (!testChecks.hasChecks()) {
-      return false;
-    }
-    
     //if have exception
     ExceptionCheck ec = testChecks.getExceptionCheck();
     if (ec != null) {
