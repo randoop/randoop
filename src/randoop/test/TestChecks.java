@@ -22,7 +22,7 @@ public interface TestChecks {
   public int count();
 
   /**
-   * Get all checks and whether they are passing for this object.
+   * Get all non-exception checks and whether they are passing for this object.
    * 
    * @return all checks with passing status
    */

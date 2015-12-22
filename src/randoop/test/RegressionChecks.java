@@ -57,16 +57,13 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * @return map of checks in this object, all of which are passing
+   * @return map of non-exception checks in this object, all of which are passing
    */
   @Override
   public Map<Check, Boolean> get() {
     Map<Check,Boolean> mp = new LinkedHashMap<Check,Boolean>();
     for (Check ck : checks) {
       mp.put(ck, true);
-    }
-    if (exceptionCheck != null) {
-      mp.put(exceptionCheck, true);
     }
     return mp;
   }
