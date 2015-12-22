@@ -47,7 +47,7 @@ public class InvalidExceptionCheck implements Check {
   /**
    * {@inheritDoc}
    * An invalid check cannot be evaluated, so this throws an exception.
-   * @throws InvalidArgumentException whenever called
+   * @throws IllegalArgumentException whenever called
    */
   @Override
   public boolean evaluate(Execution execution) {

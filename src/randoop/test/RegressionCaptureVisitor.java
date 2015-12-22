@@ -137,7 +137,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
    * If visitor is set to include assertions, then assertions are generated for
    * both normal execution and exceptions. A try-catch block is always generated
    * for exceptions, but whether assertions are included is determined by the
-   * {@link RegressionExceptionCheckGenerator} given when creating this visitor.
+   * {@link ExpectedExceptionCheckGen} given when creating this visitor.
    * 
    * @throws Error if any statement is not executed, or exception occurs before 
    * last statement  

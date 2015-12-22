@@ -30,7 +30,8 @@ public interface TestChecks {
   
   /**
    * Indicates whether this set of checks corresponds to valid behaviors.
-   * @return
+   * 
+   * @return true when has checks for invalid behavior, false otherwise
    */
   public boolean hasInvalidBehavior();
   

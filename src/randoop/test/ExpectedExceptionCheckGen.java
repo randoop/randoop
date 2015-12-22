@@ -35,7 +35,8 @@ public class ExpectedExceptionCheckGen {
    * Constructs an {@code ExceptionCheck} for the given exception and statement
    * based on criteria of this generator.
    * 
-   * @param e  the exception outcome of executing the statement in a sequence
+   * @param exec  the exception outcome of executing the statement in a sequence
+   * @param s  the sequence where exception occurred
    * @param statementIndex  the position of the statement in the sequence
    * @return an {@code ExpectedExceptionCheck} object for exception and statement
    * if exception is checked, and an {@code EmptyExceptionCheck} otherwise
