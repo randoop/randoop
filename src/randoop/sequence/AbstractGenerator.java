@@ -314,11 +314,13 @@ public abstract class AbstractGenerator {
         }
 
         if (outputTest.test(eSeq)) {
-          if (eSeq.hasFailure()) {
-            outErrorSeqs.add(eSeq);
-          } else {
-            outRegressionSeqs.add(eSeq);
-          } 
+          if (! eSeq.hasInvalidBehavior()) {
+            if (eSeq.hasFailure()) {
+              outErrorSeqs.add(eSeq);
+            } else {
+              outRegressionSeqs.add(eSeq);
+            } 
+          }
         } 
      
         if (dump_sequences) {
