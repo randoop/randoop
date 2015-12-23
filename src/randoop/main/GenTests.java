@@ -187,6 +187,7 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
+    // TODO include package in visibility, maybe not do "not private"
     VisibilityPredicate visibility;
     if (GenInputsAbstract.public_only) {
       visibility = new PublicVisibilityPredicate();
