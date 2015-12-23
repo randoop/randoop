@@ -9,15 +9,25 @@ removed.  Use --error-test-filename and --regression-test-filename to set
 the file names; old command-line argument --junit-classname has been
 removed.
 
-You can control which assertions appear in regression tests with new
-command-line arguments --no-regression-assertions and
---regression-assertions-about-exceptions; old command-line argument
---check-regression-behavior has been removed.
-
 You can now indicate whether you want to view exceptions as expected, error or 
 invalid behavior. The new command-line arguments --checked-exception, 
 --unchecked-exception, --npe-on-null-input, --oom-exception all take values
-of EXPECTED, ERROR, or INVALID.
+of EXPECTED, ERROR, or INVALID. Expected behaviors are checked in regression
+tests, error behaviors in error-revealing tests, and any tests with invalid 
+behaviors are thrown out. (Fixes #69 and #72)
+
+You can also control whether assertions appear in regression tests with the new
+command-line argument --no-regression-assertions; old command-line argument
+--check-regression-behavior has been removed.
+
+The command line --test-classes has been changed to --include-only-classes to
+distance meaning from --testclass argument. (Addresses #66)
+
+Fixes a bug in which certain inherited public methods were being excluded from 
+testing. The case occurs when the method definition is in a package private 
+class and a public class inherits the method, prompting the compiler to 
+generate a bridge method to allow access. (Thanks to Alberto Goffi for raising
+the issue and providing a concise exemplar.)  
 
 The command-line arguments --simplify-failed-tests, --remove-subsequences, 
 --compare-checks, --clean-checks, --print-diff-obs and --output-nonexec have 
