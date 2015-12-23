@@ -378,7 +378,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the test suites. 
    */
   @Option("Regular expression for class names that must occur in generated tests")
-  public static Pattern test_classes = null;
+  public static Pattern include_only_classes = null;
   
   /**
    * Whether to use JUnit's standard reflective mechanisms for invoking
