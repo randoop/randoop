@@ -1,45 +1,51 @@
 Version 2.1.0, released ??
 
-Randoop now outputs two test suites (one for error-revealing tests and one
-for regression tests) rather than combining all tests into a single suite.
-Use command-line arguments --no-error-revealing-tests and
---no-regression-tests to disable generation of one or the other of the
-suites; old command-line argument --check-object-contracts has been
-removed.  Use --error-test-filename and --regression-test-filename to set
-the file names; old command-line argument --junit-classname has been
-removed.
+Randoop now splits generated tests into three categories: error-revealing, 
+regression, and invalid. Error-revealing and regression are now output as 
+separate test suites rather than combining all tests into a single suite.
+(Invalid tests are discarded.) Also, new command-line options allow the 
+classification of exceptions to control how tests are categorized.  
 
-You can now indicate whether you want to view exceptions as expected, error or 
-invalid behavior. The new command-line arguments --checked-exception, 
---unchecked-exception, --npe-on-null-input, --oom-exception all take values
-of EXPECTED, ERROR, or INVALID. Expected behaviors are checked in regression
-tests, error behaviors in error-revealing tests, and any tests with invalid 
-behaviors are thrown out. (Fixes #69 and #72)
+Both error-revealing and regression tests are output by default. Each category
+is output only if a test of that category is generated. Use the command-line 
+arguments --no-error-revealing-tests and --no-regression-tests to disable 
+generation of one or the other of the suites. Use --error-test-filename and 
+--regression-test-filename to set the file names. These command-line 
+arguments replace the arguments --check-object-contracts, 
+--check-regression-behavior and --junit-classname that have been removed.
 
-You can also control whether assertions appear in regression tests with the new
-command-line argument --no-regression-assertions; old command-line argument
---check-regression-behavior has been removed.
+Tests where exceptions are thrown are categorized in by how exceptions are 
+classified as types of behavior. A test with an exception that is an EXPECTED 
+behavior is a regression test, one with an exception that is ERROR behavior is 
+an error-revealing test, and one with an exception that is INVALID behavior is 
+invalid. Customize the classification of exceptions by setting the behavior type
+for exceptions using the command-line arguments --checked-exception, 
+--unchecked-exception, --npe-on-null-input, and --oom-exception.  
+(Issues #20, #69 and #72)
+
+Additional changes:
+
+You can control whether assertions appear in regression tests with the new
+command-line argument --no-regression-assertions. 
 
 The command line --test-classes has been changed to --include-only-classes to
 distance meaning from --testclass argument. (Addresses #66)
 
-Fixes a bug in which certain inherited public methods were being excluded from 
-testing. The case occurs when the method definition is in a package private 
-class and a public class inherits the method, prompting the compiler to 
-generate a bridge method to allow access. (Thanks to Alberto Goffi for raising
-the issue and providing a concise exemplar.)  
-
 The command-line arguments --simplify-failed-tests, --remove-subsequences, 
 --compare-checks, --clean-checks, --print-diff-obs and --output-nonexec have 
 been removed. The command option exec has been removed.  
+
+Support for the Eclipse plugin has been removed. The option --comp-port has been
+removed.
 
 The interface for ExecutionVisitor has been changed to visitAfterStatement and
 visitBeforeStatement to clarify that the methods are invoked relative to the
 execution of each statement. Note that an ExecutionVisitor may no longer modify
 the Checks for a Sequence.
 
-Support for the Eclipse plugin has been removed. The option --comp-port has been
-removed.
+This release fixes a bug in which a public method inherited from a package 
+private class was being excluded from testing. (Thanks to Alberto Goffi for 
+raising the issue and providing a concise example.) 
 
 Version 2.0.1, released November 30, 2015
 
