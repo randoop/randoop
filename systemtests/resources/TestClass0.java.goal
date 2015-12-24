@@ -21,7 +21,6 @@ public class TestClass0 {
     java2.util2.List list7 = java2.util2.Collections.unmodifiableList(list5);
     java2.util2.Collections.copy(list2, list5);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj9 = java2.util2.Collections.min((java2.util2.Collection)list5);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -60,7 +59,6 @@ public class TestClass0 {
     java2.util2.List list13 = java2.util2.Collections.nCopies(0, (java.lang.Object)(-1.0d));
     java2.util2.Set set14 = java2.util2.Collections.singleton((java.lang.Object)0);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet15 = treeSet5.subSet((java.lang.Object)set9, (java.lang.Object)set14);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -118,7 +116,6 @@ public class TestClass0 {
     java2.util2.Set set4 = java2.util2.Collections.unmodifiableSet(set3);
     java2.util2.TreeSet treeSet5 = new java2.util2.TreeSet((java2.util2.Collection)set3);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b7 = treeSet5.add((java.lang.Object)(short)(-1));
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -168,7 +165,6 @@ public class TestClass0 {
     java2.util2.TreeSet treeSet14 = new java2.util2.TreeSet((java2.util2.Collection)set12);
     java2.util2.SortedSet sortedSet16 = treeSet14.tailSet((java.lang.Object)(short)0);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b17 = treeSet5.add((java.lang.Object)sortedSet16);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -239,7 +235,6 @@ public class TestClass0 {
     java2.util2.List list7 = java2.util2.Collections.unmodifiableList(list5);
     java2.util2.Collections.copy(list2, list5);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list2, 10, 1);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -271,7 +266,6 @@ public class TestClass0 {
     java2.util2.List list2 = java2.util2.Collections.nCopies(0, (java.lang.Object)(-1.0d));
     java2.util2.Collections.reverse(list2);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj4 = java2.util2.Collections.max((java2.util2.Collection)list2);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -297,7 +291,6 @@ public class TestClass0 {
     java2.util2.List list2 = java2.util2.Collections.nCopies(0, (java.lang.Object)(-1.0d));
     java2.util2.List list3 = java2.util2.Collections.unmodifiableList(list2);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list2, 100, 1);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -327,7 +320,6 @@ public class TestClass0 {
     java2.util2.Collections.reverse(list2);
     java2.util2.List list4 = java2.util2.Collections.unmodifiableList(list2);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj5 = java2.util2.Collections.min((java2.util2.Collection)list2);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -382,7 +374,6 @@ public class TestClass0 {
     java2.util2.List list6 = java2.util2.Collections.nCopies(0, (java.lang.Object)(-1.0d));
     java2.util2.Collections.fill(list2, (java.lang.Object)(-1.0d));
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list2, 100, (-1));
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -420,7 +411,6 @@ public class TestClass0 {
     java2.util2.Collections.reverse(list13);
     java2.util2.List list15 = java2.util2.Collections.unmodifiableList(list13);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet16 = treeSet5.headSet((java.lang.Object)list13);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -478,7 +468,6 @@ public class TestClass0 {
 
     java2.util2.List list1 = java2.util2.Collections.singletonList((java.lang.Object)1);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.sort(list1);
       org.junit.Assert.fail("Expected exception of type java.lang.UnsupportedOperationException");
@@ -512,7 +501,6 @@ public class TestClass0 {
     java2.util2.TreeSet treeSet12 = new java2.util2.TreeSet((java2.util2.Collection)set10);
     java2.util2.SortedSet sortedSet14 = treeSet12.tailSet((java.lang.Object)(short)0);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet15 = treeSet5.headSet((java.lang.Object)sortedSet14);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -594,7 +582,6 @@ public class TestClass0 {
     java.lang.Object obj26 = treeSet14.first();
     java2.util2.SortedSet sortedSet28 = treeSet14.tailSet((java.lang.Object)"");
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b29 = treeSet5.contains((java.lang.Object)"");
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -691,7 +678,6 @@ public class TestClass0 {
     java2.util2.SortedSet sortedSet19 = treeSet5.tailSet((java.lang.Object)"");
     java2.util2.List list20 = java2.util2.Collections.nCopies(1, (java.lang.Object)treeSet5);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj21 = java2.util2.Collections.min((java2.util2.Collection)list20);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -757,7 +743,6 @@ public class TestClass0 {
     java2.util2.SortedSet sortedSet7 = treeSet5.tailSet((java.lang.Object)(short)0);
     java2.util2.Collection collection8 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)sortedSet7);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.TreeSet treeSet9 = new java2.util2.TreeSet(sortedSet7);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -818,7 +803,6 @@ public class TestClass0 {
     java2.util2.TreeSet treeSet23 = new java2.util2.TreeSet((java2.util2.Collection)set22);
     java.lang.Object[] obj_array24 = treeSet23.toArray();
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b25 = treeSet4.contains((java.lang.Object)obj_array24);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -912,7 +896,6 @@ public class TestClass0 {
     boolean b26 = treeSet15.addAll((java2.util2.Collection)list19);
     java2.util2.Comparator comparator27 = treeSet15.comparator();
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b28 = treeSet5.contains((java.lang.Object)comparator27);
       org.junit.Assert.fail("Expected exception of type java.lang.NullPointerException");
@@ -1177,7 +1160,6 @@ public class TestClass0 {
     java2.util2.List list6 = java2.util2.Collections.nCopies(0, (java.lang.Object)(-1.0d));
     java2.util2.Collections.fill(list2, (java.lang.Object)(-1.0d));
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj8 = java2.util2.Collections.min((java2.util2.Collection)list2);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -1217,7 +1199,6 @@ public class TestClass0 {
     boolean b20 = java2.util2.Collections.replaceAll(list8, (java.lang.Object)list13, (java.lang.Object)list16);
     boolean b21 = treeSet5.retainAll((java2.util2.Collection)list8);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list8, 1, 10);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -1330,7 +1311,6 @@ public class TestClass0 {
     java.lang.Object[] obj_array20 = treeSet19.toArray();
     java.lang.Object[] obj_array21 = treeSet11.toArray(obj_array20);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b22 = treeSet5.remove((java.lang.Object)treeSet11);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -1418,7 +1398,6 @@ public class TestClass0 {
     java2.util2.Set set4 = java2.util2.Collections.unmodifiableSet(set3);
     java2.util2.TreeSet treeSet5 = new java2.util2.TreeSet((java2.util2.Collection)set3);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b7 = treeSet5.contains((java.lang.Object)"[]");
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -1648,7 +1627,6 @@ public class TestClass0 {
     java2.util2.Comparator comparator32 = treeSet20.comparator();
     boolean b33 = treeSet5.removeAll((java2.util2.Collection)treeSet20);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj34 = treeSet5.first();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -1768,7 +1746,6 @@ public class TestClass0 {
     java2.util2.Comparator comparator42 = java2.util2.Collections.reverseOrder();
     java2.util2.Collections.sort(list37, comparator42);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj44 = java2.util2.Collections.max((java2.util2.Collection)list12, comparator42);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -1859,7 +1836,6 @@ public class TestClass0 {
     int i29 = java2.util2.Collections.binarySearch(list26, (java.lang.Object)(short)100);
     boolean b30 = java2.util2.Collections.replaceAll(list18, (java.lang.Object)list23, (java.lang.Object)list26);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet31 = treeSet5.tailSet((java.lang.Object)list26);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -2429,7 +2405,6 @@ public class TestClass0 {
     java2.util2.Collections.sort(list40, comparator45);
     java2.util2.Collections.sort(list15, comparator45);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj48 = java2.util2.Collections.min((java2.util2.Collection)list2, comparator45);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -2539,7 +2514,6 @@ public class TestClass0 {
     java.lang.String str49 = treeSet48.toString();
     java.lang.Object obj50 = treeSet48.clone();
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet51 = treeSet20.subSet((java.lang.Object)list41, obj50);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -2670,7 +2644,6 @@ public class TestClass0 {
     java2.util2.List list7 = java2.util2.Collections.unmodifiableList(list5);
     int i8 = java2.util2.Collections.indexOfSubList(list2, list7);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list7, 100, (-1));
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -2770,7 +2743,6 @@ public class TestClass0 {
     java2.util2.Comparator comparator39 = java2.util2.Collections.reverseOrder();
     java2.util2.Collections.sort(list34, comparator39);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj41 = java2.util2.Collections.min((java2.util2.Collection)list7, comparator39);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -2888,7 +2860,6 @@ public class TestClass0 {
     java2.util2.Collections.sort(list69, comparator74);
     int i76 = java2.util2.Collections.binarySearch(list2, (java.lang.Object)b44, comparator74);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj77 = java2.util2.Collections.max((java2.util2.Collection)list2);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -3041,7 +3012,6 @@ public class TestClass0 {
     java.lang.Object obj16 = treeSet4.clone();
     java2.util2.List list17 = java2.util2.Collections.singletonList(obj16);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.sort(list17);
       org.junit.Assert.fail("Expected exception of type java.lang.UnsupportedOperationException");
@@ -3104,7 +3074,6 @@ public class TestClass0 {
     java2.util2.Collection collection8 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)list7);
     java2.util2.Collections.copy(list2, list7);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list2, 1, 10);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -3167,7 +3136,6 @@ public class TestClass0 {
     java2.util2.List list44 = java2.util2.Collections.unmodifiableList(list42);
     java2.util2.Collections.rotate(list42, 1);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet47 = treeSet5.tailSet((java.lang.Object)list42);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -3674,7 +3642,6 @@ public class TestClass0 {
     java2.util2.Collections.sort(list63, comparator68);
     java2.util2.Collections.sort(list38, comparator68);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       int i71 = java2.util2.Collections.binarySearch(list12, (java.lang.Object)collection28, comparator68);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -3934,7 +3901,6 @@ public class TestClass0 {
     int i20 = java2.util2.Collections.lastIndexOfSubList(list4, list19);
     java2.util2.SortedSet sortedSet21 = treeSet0.headSet((java.lang.Object)i20);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj22 = treeSet0.first();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -4036,7 +4002,6 @@ public class TestClass0 {
     java2.util2.Collection collection46 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)list45);
     java2.util2.Collections.copy(list40, list45);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet48 = treeSet5.tailSet((java.lang.Object)list40);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -4567,7 +4532,6 @@ public class TestClass0 {
     int i75 = java2.util2.Collections.lastIndexOfSubList(list59, list74);
     int i76 = java2.util2.Collections.lastIndexOfSubList(list49, list59);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b77 = treeSet4.contains((java.lang.Object)list59);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -4914,7 +4878,6 @@ public class TestClass0 {
     java2.util2.List list21 = java2.util2.Collections.unmodifiableList(list20);
     java2.util2.List list22 = java2.util2.Collections.unmodifiableList(list20);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet23 = treeSet4.headSet((java.lang.Object)list22);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -5178,7 +5141,6 @@ public class TestClass0 {
     java2.util2.List list12 = java2.util2.Collections.unmodifiableList(list7);
     java2.util2.List list13 = java2.util2.Collections.unmodifiableList(list7);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list7, 0, 100);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -5807,7 +5769,6 @@ public class TestClass0 {
     boolean b34 = treeSet6.removeAll((java2.util2.Collection)treeSet21);
     java2.util2.List list35 = java2.util2.Collections.nCopies(1, (java.lang.Object)b34);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.sort(list35);
       org.junit.Assert.fail("Expected exception of type java.lang.UnsupportedOperationException");
@@ -6056,7 +6017,6 @@ public class TestClass0 {
     int i94 = java2.util2.Collections.binarySearch(list27, (java.lang.Object)set49, comparator91);
     java2.util2.TreeSet treeSet95 = new java2.util2.TreeSet(comparator91);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj96 = java2.util2.Collections.min((java2.util2.Collection)list10, comparator91);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -6350,7 +6310,6 @@ public class TestClass0 {
     java2.util2.Collections.shuffle(list73);
     boolean b76 = treeSet49.removeAll((java2.util2.Collection)list73);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet77 = treeSet5.subSet((java.lang.Object)treeSet40, (java.lang.Object)b76);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -6622,7 +6581,6 @@ public class TestClass0 {
     int i46 = java2.util2.Collections.binarySearch(list43, (java.lang.Object)(short)100);
     boolean b47 = java2.util2.Collections.replaceAll(list35, (java.lang.Object)list40, (java.lang.Object)list43);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b48 = treeSet5.add((java.lang.Object)list35);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -6808,7 +6766,6 @@ public class TestClass0 {
     java2.util2.Collections.copy(list31, list46);
     java2.util2.Collections.reverse(list31);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list31, (-1), 1);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -6948,7 +6905,6 @@ public class TestClass0 {
     java2.util2.TreeSet treeSet18 = new java2.util2.TreeSet((java2.util2.SortedSet)treeSet4);
     treeSet18.clear();
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj20 = treeSet18.first();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -7026,7 +6982,6 @@ public class TestClass0 {
     java.lang.Object obj16 = treeSet4.first();
     treeSet4.clear();
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj18 = treeSet4.first();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -7447,7 +7402,6 @@ public class TestClass0 {
     java2.util2.List list3 = java2.util2.Collections.unmodifiableList(list2);
     java2.util2.List list4 = java2.util2.Collections.unmodifiableList(list2);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list2, 0, 10);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -7738,7 +7692,6 @@ public class TestClass0 {
     boolean b33 = java2.util2.Collections.replaceAll(list21, (java.lang.Object)list26, (java.lang.Object)list29);
     java2.util2.Collections.copy((java2.util2.List)arrayList18, list21);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap((java2.util2.List)arrayList18, 0, 1);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -8831,7 +8784,6 @@ public class TestClass0 {
     java2.util2.List list17 = java2.util2.Collections.singletonList((java.lang.Object)collection16);
     int i18 = java2.util2.Collections.lastIndexOfSubList(list2, list17);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list2, (-1), 0);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -9082,7 +9034,6 @@ public class TestClass0 {
     boolean b31 = java2.util2.Collections.replaceAll(list19, (java.lang.Object)list24, (java.lang.Object)list27);
     java2.util2.Collections.reverse(list27);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet33 = treeSet4.headSet((java.lang.Object)list27);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -9291,7 +9242,6 @@ public class TestClass0 {
     java2.util2.Collections.copy(list58, list61);
     boolean b65 = treeSet54.addAll((java2.util2.Collection)list58);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet66 = treeSet5.subSet((java.lang.Object)set48, (java.lang.Object)b65);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -10136,7 +10086,6 @@ public class TestClass0 {
     java2.util2.List list12 = java2.util2.Collections.nCopies(0, (java.lang.Object)1);
     int i14 = java2.util2.Collections.binarySearch(list12, (java.lang.Object)"");
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b15 = treeSet5.remove((java.lang.Object)list12);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -10311,7 +10260,6 @@ public class TestClass0 {
     int i96 = java2.util2.Collections.binarySearch(list22, (java.lang.Object)b64, comparator94);
     java2.util2.Collections.sort(list17, comparator94);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj98 = java2.util2.Collections.max((java2.util2.Collection)list10, comparator94);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -10493,7 +10441,6 @@ public class TestClass0 {
     java2.util2.TreeSet treeSet18 = new java2.util2.TreeSet((java2.util2.SortedSet)treeSet4);
     treeSet18.clear();
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj20 = treeSet18.last();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -10951,7 +10898,6 @@ public class TestClass0 {
     java2.util2.Collection collection82 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)list69);
     java2.util2.Collections.shuffle(list69);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b84 = treeSet5.add((java.lang.Object)list69);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -11180,7 +11126,6 @@ public class TestClass0 {
     boolean b31 = treeSet20.addAll((java2.util2.Collection)list24);
     java2.util2.Enumeration enumeration32 = java2.util2.Collections.enumeration((java2.util2.Collection)treeSet20);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet33 = treeSet5.headSet((java.lang.Object)treeSet20);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -12227,7 +12172,6 @@ public class TestClass0 {
     int i20 = java2.util2.Collections.lastIndexOfSubList(list4, list19);
     java2.util2.SortedSet sortedSet21 = treeSet0.headSet((java.lang.Object)i20);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj22 = java2.util2.Collections.max((java2.util2.Collection)treeSet0);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -12338,7 +12282,6 @@ public class TestClass0 {
     java2.util2.Collections.fill(list8, (java.lang.Object)list19);
     java2.util2.List list21 = java2.util2.Collections.synchronizedList(list8);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list21, 1, 0);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -12468,7 +12411,6 @@ public class TestClass0 {
     java2.util2.Map map44 = java2.util2.Collections.singletonMap((java.lang.Object)0L, (java.lang.Object)list42);
     int i45 = java2.util2.Collections.lastIndexOfSubList(list31, list42);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet46 = treeSet5.tailSet((java.lang.Object)list31);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -12605,7 +12547,6 @@ public class TestClass0 {
     java2.util2.Set set60 = java2.util2.Collections.singleton((java.lang.Object)0);
     java2.util2.TreeSet treeSet61 = new java2.util2.TreeSet((java2.util2.Collection)set60);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet62 = treeSet21.tailSet((java.lang.Object)treeSet61);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -13334,7 +13275,6 @@ public class TestClass0 {
     java2.util2.Map map72 = java2.util2.Collections.singletonMap((java.lang.Object)0L, (java.lang.Object)list70);
     boolean b73 = treeSet35.containsAll((java2.util2.Collection)list70);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.SortedSet sortedSet74 = treeSet5.subSet((java.lang.Object)collection29, (java.lang.Object)b73);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -13808,7 +13748,6 @@ public class TestClass0 {
     boolean b20 = java2.util2.Collections.replaceAll(list8, (java.lang.Object)list13, (java.lang.Object)list16);
     boolean b21 = treeSet5.retainAll((java2.util2.Collection)list8);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj22 = treeSet5.first();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -13873,7 +13812,6 @@ public class TestClass0 {
     java2.util2.TreeSet treeSet0 = new java2.util2.TreeSet();
     java.lang.String str1 = treeSet0.toString();
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj2 = java2.util2.Collections.max((java2.util2.Collection)treeSet0);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -14014,7 +13952,6 @@ public class TestClass0 {
     java2.util2.Collection collection5 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)list4);
     java2.util2.TreeSet treeSet6 = new java2.util2.TreeSet(collection5);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj7 = java2.util2.Collections.max(collection5);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -14357,7 +14294,6 @@ public class TestClass0 {
     java2.util2.Map map39 = java2.util2.Collections.singletonMap((java.lang.Object)treeSet26, (java.lang.Object)0.0f);
     java2.util2.Map map40 = java2.util2.Collections.synchronizedMap(map39);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b41 = treeSet4.add((java.lang.Object)map40);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -15313,7 +15249,6 @@ public class TestClass0 {
     java2.util2.List list10 = java2.util2.Collections.nCopies(100, (java.lang.Object)list8);
     java2.util2.List list11 = java2.util2.Collections.singletonList((java.lang.Object)list10);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.rotate(list10, 1);
       org.junit.Assert.fail("Expected exception of type java.lang.UnsupportedOperationException");
@@ -15790,7 +15725,6 @@ public class TestClass0 {
     boolean b88 = treeSet41.addAll((java2.util2.Collection)treeSet58);
     java2.util2.Collections.fill(list31, (java.lang.Object)b88);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list31, 100, 1);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -16032,7 +15966,6 @@ public class TestClass0 {
     java2.util2.Collections.fill(list8, (java.lang.Object)list19);
     java2.util2.Collection collection21 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)list8);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list8, 1, 0);
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -16765,7 +16698,6 @@ public class TestClass0 {
     java2.util2.Collection collection8 = java2.util2.Collections.synchronizedCollection((java2.util2.Collection)list7);
     java2.util2.Collections.copy(list2, list7);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.swap(list7, 0, (-1));
       org.junit.Assert.fail("Expected exception of type java.lang.IndexOutOfBoundsException");
@@ -17047,7 +16979,6 @@ public class TestClass0 {
     java2.util2.SortedSet sortedSet34 = java2.util2.Collections.unmodifiableSortedSet((java2.util2.SortedSet)treeSet4);
     java2.util2.List list35 = java2.util2.Collections.singletonList((java.lang.Object)sortedSet34);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.sort(list35);
       org.junit.Assert.fail("Expected exception of type java.lang.UnsupportedOperationException");
@@ -17438,7 +17369,6 @@ public class TestClass0 {
     java2.util2.Comparator comparator24 = java2.util2.Collections.reverseOrder();
     java2.util2.Collections.sort(list21, comparator24);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj26 = java2.util2.Collections.min((java2.util2.Collection)sortedSet18, comparator24);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -17905,7 +17835,6 @@ public class TestClass0 {
     int i45 = java2.util2.Collections.lastIndexOfSubList(list8, list29);
     java2.util2.Collections.shuffle(list8);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj47 = java2.util2.Collections.min((java2.util2.Collection)list8);
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -18609,7 +18538,6 @@ public class TestClass0 {
     java.lang.String str32 = treeSet17.toString();
     java2.util2.SortedSet sortedSet33 = java2.util2.Collections.synchronizedSortedSet((java2.util2.SortedSet)treeSet17);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       int i34 = java2.util2.Collections.binarySearch(list12, (java.lang.Object)treeSet17);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -19033,7 +18961,6 @@ public class TestClass0 {
     java2.util2.List list55 = java2.util2.Collections.singletonList(obj54);
     boolean b56 = treeSet21.retainAll((java2.util2.Collection)list55);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java.lang.Object obj57 = treeSet21.first();
       org.junit.Assert.fail("Expected exception of type java2.util2.NoSuchElementException");
@@ -21317,7 +21244,6 @@ public class TestClass0 {
     java2.util2.List list3 = java2.util2.Collections.singletonList(obj2);
     java2.util2.List list4 = java2.util2.Collections.singletonList(obj2);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Collections.sort(list4);
       org.junit.Assert.fail("Expected exception of type java.lang.UnsupportedOperationException");
@@ -22182,7 +22108,6 @@ public class TestClass0 {
     java2.util2.Map map51 = java2.util2.Collections.synchronizedMap(map45);
     java2.util2.Map map52 = java2.util2.Collections.unmodifiableMap(map51);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b53 = treeSet4.remove((java.lang.Object)map52);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -22320,7 +22245,6 @@ public class TestClass0 {
     java2.util2.SortedSet sortedSet25 = treeSet23.tailSet((java.lang.Object)(short)0);
     java.lang.Object obj26 = java2.util2.Collections.max((java2.util2.Collection)treeSet23);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b27 = treeSet4.contains((java.lang.Object)treeSet23);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -23426,7 +23350,6 @@ public class TestClass0 {
     java2.util2.TreeSet treeSet6 = new java2.util2.TreeSet((java2.util2.Collection)set3);
     java2.util2.Comparator comparator7 = treeSet6.comparator();
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       boolean b9 = treeSet6.remove((java.lang.Object)(-1.0f));
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
@@ -24610,7 +24533,6 @@ public class TestClass0 {
     java2.util2.Collection collection8 = java2.util2.Collections.unmodifiableCollection((java2.util2.Collection)sortedSet7);
     java2.util2.Set set9 = java2.util2.Collections.singleton((java.lang.Object)collection8);
     // The following exception was thrown during execution.
-    // This behavior will be recorded for regression testing.
     try {
       java2.util2.Enumeration enumeration10 = java2.util2.Collections.enumeration(collection8);
       org.junit.Assert.fail("Expected exception of type java.lang.ClassCastException");
