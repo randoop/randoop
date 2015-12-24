@@ -124,12 +124,85 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Ignore class names specified by user that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
   
+  /** Whether to output error-revealing tests. */
+  @OptionGroup("Test classification")
+  @Option("Whether to output error-revealing tests")
+  public static boolean no_error_revealing_tests = false;
+
+  /** Whether to output regression tests. */
+  @Option("Whether to output regression tests")
+  public static boolean no_regression_tests = false;
+
+  /**
+   * Whether to include assertions in regression tests.
+   * If false, then the regression tests contain no assertions
+   * (except that if the test throws an exception, it should continue to
+   * throw an exception of the same type).
+   * Tests without assertions can be used to exercise the code, but they
+   * do not enforce any particular behavior, such as values returned.
+   */
+  @Option("Whether to include assertions in regression tests")
+  public static boolean no_regression_assertions = false;
+
+  /**
+   * The possible values for exception behavior types.
+   */
+  public static enum BehaviorType {
+    /** Occurrence of exception should be considered an error */
+    ERROR,
+    /** Occurrence of exception should be considered invalid */
+    INVALID,
+    /** Occurrence of exception should be considered expected behavior */
+    EXPECTED
+  }
+  
+  /**
+   * If a test throws a checked exception, should it be included in the 
+   * error-revealing test suite (value: ERROR), regression test suite 
+   * (value: EXPECTED), or should it be discarded (value: INVALID)? 
+   */
+  @Option("Whether checked exception is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType checked_exception = BehaviorType.EXPECTED;
+  
+  /**
+   * If a test throws a unchecked exception, should the test be included in the 
+   * error-revealing test suite (value: ERROR), regression test suite 
+   * (value: EXPECTED), or should it be discarded (value: INVALID)? 
+   * <p>
+   * The arguments --npe-on-null-input and --oom-exception handle special cases of 
+   * unchecked exceptions.
+   */
+  @Option("Whether unchecked exception is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
+  
+  /** 
+   * If a test where a <code>null</code> value is given as an input throws a 
+   * <code>NullPointerException</code>, should the test be be included in the 
+   * error-revealing test suite (value: ERROR), regression test suite 
+   * (value: EXPECTED), or should it be discarded (value: INVALID)?
+   * <p>
+   * Tests with other occurrences of <code>NullPointerException</code> are
+   * handled by the argument --unchecked-exception.
+   */
+  @Option("Whether NullPointerException on null inputs is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType npe_on_null_input = BehaviorType.INVALID;
+  
+  /**
+   * If a test throws an <code>OutOfMemoryError</code> exception, should it be 
+   * included in the error-revealing test suite (value: ERROR), regression test 
+   * suite (value: EXPECTED), or should it be discarded (value: INVALID)?
+   */
+  @Option("Whether OutOfMemoryException is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType oom_exception = BehaviorType.INVALID;
+  
+  
   /**
    * Maximum number of seconds to spend generating tests.
    * 
-   * Test generation stops when
-   * either the time limit (--timelimit=int) OR the input limit
-   * (--inputlimit=int) is reached.
+   * Test generation stops when either the time limit (--timelimit) is reached, 
+   * OR the number of generated sequences reaches the input limit (--inputlimit), 
+   * OR the number of error-revealing and regression tests reaches the output 
+   * limit (--outputlimit).
    *
    * The default value is appropriate for generating tests for a single
    * class in the context of a larger program, but is too small to be effective
@@ -144,19 +217,34 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int timelimit = 100;
 
   /**
-   * Determines the maximum number of tests to output.
+   * The maximum number of regression and error-revealing tests to output.
+   * 
+   * Test generation stops when either the time limit (--timelimit) is reached, 
+   * OR the number of generated sequences reaches the input limit (--inputlimit), 
+   * OR the number of error-revealing and regression tests reaches the output 
+   * limit (--outputlimit).
+   * 
+   * This option affects how many tests will occur in the output, as opposed to
+   * --inputlimit, which affects the number of test method candidates that are 
+   * generated internally. This option is a better choice for controlling the 
+   * tests you get, because the number of candidates generated will always be 
+   * larger since redundant and invalid tests are filtered. 
+   * 
+   * However, the actual number of tests in the output is still likely to be 
+   * smaller than this limit due to the current implementation.
    */
   @Option ("Maximum number of tests to ouput; contrast to --inputlimit")
   public static int outputlimit = 100000000;
   
   /**
-   * Maximum number of test candidates generated.
+   * Maximum number of test method candidates generated.
    * 
-   * Test generation stops when
-   * either the time limit (--timelimit=int) OR the input limit
-   * (--inputlimit=int) is reached.  The number of tests output
-   * may be smaller than then number of test candidates generated,
-   * because redundant and illegal tests may be discarded.
+   * Test generation stops when either the time limit (--timelimit) is reached, 
+   * OR the number of generated sequences reaches the input limit (--inputlimit), 
+   * OR the number of error-revealing and regression tests reaches the output 
+   * limit (--outputlimit).  
+   * The number of tests output will be smaller than then number of test 
+   * candidates generated, because redundant and illegal tests may be discarded.
    * 
    * The --outputlimit command-line option is usually more appropriate than
    * --inputlimit.
@@ -175,8 +263,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <code>null</code> as an input 5 percent of the time when a
    * non-<code>null</code> value of the appropriate type is available.
    * 
-   * Unless {@link #forbid_null} is true, a null value will still be used if no
-   * other value can be passed as an argument with no respect to this parameter.
+   * Unless --forbid_null is true, a <code>null</code> value will still be used 
+   * if no other value can be passed as an argument even if --null-ratio=0.
    * 
    * Randoop never uses <code>null</code> for receiver values.
    */
@@ -186,12 +274,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static double null_ratio = 0;
 
   /**
-   * Suppress use of null when no other argument value can be generated.
+   * Do not use <code>null</code> as input to methods or constructors when no 
+   * other argument value can be generated.
    * 
-   * If true, Randoop will fail input generation rather than use null as an 
-   * input.
+   * If true, Randoop will not generate a test when unable to find a non-null
+   * value of appropriate type as an input. This could result in certain class
+   * members being untested.
    * 
-   * Does not affect the behavior based on {@link #null_ratio}.
+   * Does not affect the behavior based on --null_ratio, which independently 
+   * determines the frequency that <code>null</code> is used as an input.
    */
   @Option("Never use null as input to methods or constructors")
   public static boolean forbid_null = true;
@@ -199,9 +290,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * A file containing literal values to be used as inputs to methods under test.
    * 
-   * Literals in these files are used in addition to all other constants in the pool.
-   * For the format of this file, see documentation in class {@link randoop.LiteralFileReader}.
-   * The special value "CLASSES" (with no quotes) means to read literals from all classes under test.
+   * Literals in these files are used in addition to all other constants in the 
+   * pool. For the format of this file, see documentation in class 
+   * {@link randoop.LiteralFileReader}. The special value "CLASSES" (with no 
+   * quotes) means to read literals from all classes under test.
    */
   @Option("A file containing literal values to be used as inputs to methods under test")
   public static List<String> literals_file = new ArrayList<String>(); 
@@ -283,71 +375,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static int clear = 100000000;
 
   
-  /** Whether to output error-revealing tests. */
+  
   ///////////////////////////////////////////////////////////////////
   @OptionGroup ("Outputting the JUnit tests")
-  @Option("Whether to output error-revealing tests")
-  public static boolean no_error_revealing_tests = false;
-
-  /** Whether to output regression tests. */
-  @Option("Whether to output regression tests")
-  public static boolean no_regression_tests = false;
-
-  /**
-   * Whether to include assertions in regression tests.
-   * If false, then the regression tests contain no assertions
-   * (except that if the test throws an exception, it should continue to
-   * throw an exception of the same type).
-   * Tests without assertions can be used to exercise the code, but they
-   * do not enforce any particular behavior, such as values returned.
-   */
-  @Option("Whether to include assertions in regression tests")
-  public static boolean no_regression_assertions = false;
-
-  /**
-   * The possible values for exception allocation command-line arguments.
-   */
-  public static enum BehaviorType {
-    /** Occurrence of exception should be considered an error */
-    ERROR,
-    /** Occurrence of exception should be considered invalid */
-    INVALID,
-    /** Occurrence of exception should be considered expected behavior */
-    EXPECTED
-  }
-  
-  /**
-   * Indicates whether a checked exception should be considered as error,
-   * expected, or invalid behavior. Determines how the exception is handled
-   * in generating tests. 
-   */
-  @Option("Type of behavior assigned to a checked exception")
-  public static BehaviorType checked_exception = BehaviorType.EXPECTED;
-  
-  /** 
-   * Indicates whether an unchecked exception should be considered as error,
-   * expected, or invalid behavior. Determines how the exception is handled
-   * in generating tests. 
-   */
-  @Option("Type of behavior assigned to an unchecked exception")
-  public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
-  
-  /** 
-   * Indicates whether a NullPointerException that occurs in a test sequence
-   * where a null is given as an input should be considered as error,
-   * expected, or invalid behavior. Determines how the exception is handled
-   * in generating tests. 
-   */
-  @Option("Type of behavior assigned to a NullPointerException on null inputs")
-  public static BehaviorType npe_on_null_input = BehaviorType.INVALID;
-  
-  /**
-   * Indicates whether an OutOfMemoryException should be consider as an error,
-   * expected, or invalid behavior. Determines how the exception is handled in 
-   * generating tests.
-   */
-  @Option("Type of behavior assigned to an OutOfMemoryException")
-  public static BehaviorType oom_exception = BehaviorType.INVALID;
   
   /** Maximum number of tests to write to each JUnit file */
   @Option("Maximum number of tests to write to each JUnit file")

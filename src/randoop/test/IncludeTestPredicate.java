@@ -8,6 +8,10 @@ import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Variable;
 import randoop.util.predicate.DefaultPredicate;
 
+/**
+ * A test predicate that checks for the occurrence of variables that match the
+ * given regular expression.
+ */
 public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
   
   private Pattern testClasses;
@@ -16,6 +20,10 @@ public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
     this.testClasses = testClasses;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if the sequence has a variable that matches the regular expression, false otherwise
+   */
   @Override
   public boolean test(ExecutableSequence s) {
     List<Variable> vars = s.sequence.getAllVariables();
@@ -27,7 +35,7 @@ public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
       }
       return testClasses.matcher(v.getType().getName()).matches();
     }
-    return true;
+    return false;
   }
 
 }

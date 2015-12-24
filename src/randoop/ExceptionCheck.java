@@ -6,8 +6,15 @@ import java.util.Objects;
  * An {@code ExceptionCheck} is used to indicate that an exception is expected
  * at a particular statement in a sequence. Depending on command-line arguments
  * to Randoop, an instance may be either a {@link ExpectedExceptionCheck} or 
- * {@link EmptyExceptionCheck}. Both will catch the exception if it occurs, but
- * differ on whether the expectation of the exception is enforced.
+ * {@link EmptyExceptionCheck}.
+ * When test code is generated in 
+ * {@link randoop.sequence.ExecutableSequence#toCodeString()}, 
+ * the methods {@link #toCodeStringPreStatement()} and
+ * {@link #toCodeStringPostStatement()} wrap the statement in a try-catch 
+ * block for the exception, while the implementing classes define
+ * {@link #appendTryBehavior(StringBuilder, String)} and
+ * {@link #appendCatchBehavior(StringBuilder, String)} which handle differences
+ * in whether assertions are generated to enforce the expectation of the exception.
  */
 public abstract class ExceptionCheck implements Check {
   
@@ -23,9 +30,7 @@ public abstract class ExceptionCheck implements Check {
   /**
    * Creates an exception check for the statement at the statement index.
    * The generated code for this check will include a try-catch block with
-   * behaviors determined by implementing sub-classes. The catch class name
-   * is the name of a visible exception class that is the class of the given 
-   * exception or a superclass.
+   * behaviors determined by implementing sub-classes. 
    * 
    * @param exception  the exception expected at the statement index
    * @param statementIndex  the position of the statement in a sequence
@@ -39,13 +44,13 @@ public abstract class ExceptionCheck implements Check {
 
   /**
    * Determines if two {@code ExceptionCheck} objects are equal.
-   * Assumes that implementing classes are purely behavior.
+   * Assumes that implementing classes have no state.
    */
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;
     if (o == this) return true;
-    if (this.getClass() != o.getClass()) { //match implementing class
+    if (this.getClass() != o.getClass()) { // match implementing class
       return false;
     }
     ExceptionCheck other = (ExceptionCheck)o;
@@ -90,7 +95,6 @@ public abstract class ExceptionCheck implements Check {
   public final String toCodeStringPreStatement() {
     StringBuilder b = new StringBuilder();
     b.append("// The following exception was thrown during execution." + Globals.lineSep);
-    b.append("// This behavior will be recorded for regression testing." + Globals.lineSep);
     b.append("try {" + Globals.lineSep + "  ");
     return b.toString();
   }

@@ -26,10 +26,17 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
   
   private Set<Check> checks;
 
+  /**
+   * Create an empty set of error checks.
+   */
   public ErrorRevealingChecks() {
     this.checks = new LinkedHashSet<>();
   }
 
+  /**
+   * {@inheritDoc}
+   * @return count of error revealing checks
+   */
   @Override
   public int count() {
     return checks.size();
@@ -50,6 +57,10 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
     return result;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return true if not empty
+   */
   @Override
   public boolean hasChecks() {
     return ! checks.isEmpty();
@@ -57,7 +68,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * @return true if there are any checks 
+   * @return true if there are any error revealing checks (not empty) 
    */
   @Override
   public boolean hasFailure() {
@@ -73,6 +84,10 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
     return null;
   }
 
+  /**
+   * {@inheritDoc}
+   * @throws Error if {@code check} is an exception check
+   */
   @Override
   public void add(Check check) {
 

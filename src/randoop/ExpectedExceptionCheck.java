@@ -5,7 +5,7 @@ import randoop.util.Reflection;
 
 /**
  * An {@code ExceptionCheck} that enforces the expectation of an exception
- * or a subclass being thrown. In particular,
+ * being thrown. In particular,
  * <ul>
  * <li> fails if exception is not thrown, and
  * <li> succeeds only when expected exception is thrown.

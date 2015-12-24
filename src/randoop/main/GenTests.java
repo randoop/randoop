@@ -348,8 +348,6 @@ public class GenTests extends GenInputsAbstract {
     CodeCoverageTracker covTracker = new CodeCoverageTracker(covClasses);
     listenerMgr.addListener(covTracker);
     
-    
-
     /////////////////////////////////////////
     // Create the generator for this session.
     AbstractGenerator explorer;
@@ -363,17 +361,16 @@ public class GenTests extends GenInputsAbstract {
         listenerMgr);
     /////////////////////////////////////////
 
-
     ////// setup for check generation 
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, classes);
     
-    //Define test predicate to decide which test sequences will be output
-    Predicate<ExecutableSequence> outputTest = createTestOutputPredicate(objectConstructor);
+    // Define test predicate to decide which test sequences will be output
+    Predicate<ExecutableSequence> isOutputTest = createTestOutputPredicate(objectConstructor);
     
-    //list of visitors for collecting information from test sequences
+    // list of visitors for collecting information from test sequences
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
 
-    //setup coverage visitor if user says so
+    // setup coverage visitor if user says so
     if (GenInputsAbstract.output_cov_witnesses) {
       ExecutionVisitor covVisitor = new CovWitnessHelperVisitor(covTracker);
       visitors.add(covVisitor);
@@ -386,9 +383,7 @@ public class GenTests extends GenInputsAbstract {
           Class<ExecutionVisitor> cls =
             (Class<ExecutionVisitor>)Class.forName(visitorClsName);
           ExecutionVisitor vis = cls.newInstance();
-          if (vis != null) {
-            visitors.add(vis);
-          }
+          visitors.add(vis);
         } catch (Exception e) {
           System.out.println("Error while loading visitor class " + visitorClsName);
           System.out.println("Exception message: " + e.getMessage());
@@ -407,7 +402,7 @@ public class GenTests extends GenInputsAbstract {
       visitor = new MultiVisitor(visitors);
     }
     
-    explorer.addTestPredicate(outputTest);
+    explorer.addTestPredicate(isOutputTest);
     explorer.addTestCheckGenerator(testGen);
     explorer.addExecutionVisitor(visitor);
 
@@ -415,10 +410,10 @@ public class GenTests extends GenInputsAbstract {
       System.out.printf ("Explorer = %s\n", explorer);
     }
     
-    //Generate tests
+    // Generate tests
     explorer.explore();
 
-   //once tests generated, 
+   // once tests generated, 
 
     if (GenInputsAbstract.output_branches != null) {
       outputCoverageBranches(covTracker);
@@ -443,12 +438,12 @@ public class GenTests extends GenInputsAbstract {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
       if (errorSequences.size() > 0) {
         if (! GenInputsAbstract.noprogressdisplay) {
-          System.out.format("%nError-revealing test output:%n");
+          System.out.printf("%nError-revealing test output:%n");
         }
         outputTests(errorSequences, GenInputsAbstract.error_test_filename);
       } else {
         if (! GenInputsAbstract.noprogressdisplay) {
-          System.out.format("%nNo error-revealing tests to output%n");
+          System.out.printf("%nNo error-revealing tests to output%n");
         }
       }
     }
@@ -457,12 +452,12 @@ public class GenTests extends GenInputsAbstract {
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
       if (regressionSequences.size() > 0) {
         if (! GenInputsAbstract.noprogressdisplay) {
-          System.out.format("%nRegression test output:%n");
+          System.out.printf("%nRegression test output:%n");
         }
         outputTests(regressionSequences, GenInputsAbstract.regression_test_filename);
       } else {
         if (! GenInputsAbstract.noprogressdisplay) {
-          System.out.format("No regression tests to output%n");
+          System.out.printf("No regression tests to output%n");
         }
       }
     }
@@ -478,13 +473,13 @@ public class GenTests extends GenInputsAbstract {
    * @return the predicate 
    */
   private Predicate<ExecutableSequence> createTestOutputPredicate(ConstructorCall objectConstructor) {
-    Predicate<ExecutableSequence> outputTest;
+    Predicate<ExecutableSequence> isOutputTest;
     if (GenInputsAbstract.dont_output_tests) {
-      outputTest = new AlwaysFalse<>();      
+      isOutputTest = new AlwaysFalse<>();      
     } else {
       Predicate<ExecutableSequence> baseTest;
-      //base case: exclude sequences with just "new Object()", keep everything else
-      //to exclude something else, add sequence to excludeSet
+      // base case: exclude sequences with just "new Object()", keep everything else
+      // to exclude something else, add sequence to excludeSet
       Sequence newObj = new Sequence().extend(objectConstructor);
       Set<Sequence> excludeSet = new LinkedHashSet<>();
       excludeSet.add(newObj);
@@ -493,22 +488,22 @@ public class GenTests extends GenInputsAbstract {
         baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_only_classes));
       }
 
-      //Use arguments to determine which kinds of tests to output
-      //Default is neither (e.g., no tests output)
+      // Use arguments to determine which kinds of tests to output
+      // Default is neither (e.g., no tests output)
       Predicate<ExecutableSequence> checkTest = new AlwaysFalse<>();
 
-      //But, generate error-revealing tests if user says so
+      // But, generate error-revealing tests if user says so
       if (! GenInputsAbstract.no_error_revealing_tests) {
         checkTest = new ErrorTestPredicate();
       }
 
-      //And, generate regression tests, unless user says not to
+      // And, generate regression tests, unless user says not to
       if (! GenInputsAbstract.no_regression_tests) {
         checkTest = checkTest.or(new RegressionTestPredicate());
       }
-      outputTest = baseTest.and(checkTest);
+      isOutputTest = baseTest.and(checkTest);
     }
-    return outputTest;
+    return isOutputTest;
   }
 
   /**
@@ -654,13 +649,13 @@ public class GenTests extends GenInputsAbstract {
   private ExceptionPredicate createPredicateFor(BehaviorType behavior, ExceptionPredicate base) {
     ExceptionPredicate predicate = base;
     
-    //NPE is a subclass of RuntimeException, so check before Unchecked
+    // NPE is a subclass of RuntimeException, so check before Unchecked
     if (GenInputsAbstract.npe_on_null_input == behavior
         && GenInputsAbstract.unchecked_exception != GenInputsAbstract.npe_on_null_input) {
       predicate = predicate.or(new NPEContractPredicate());
     }
     
-    //OOM is a subclass of Error, so check before Unchecked
+    // OOM is a subclass of Error, so check before Unchecked
     if (GenInputsAbstract.oom_exception == behavior
         && GenInputsAbstract.unchecked_exception != GenInputsAbstract.oom_exception) {
       predicate = predicate.or(new OOMExceptionPredicate());
@@ -695,19 +690,19 @@ public class GenTests extends GenInputsAbstract {
    */
   private TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, List<Class<?>> classes) {
     
-    //start with checking for invalid exceptions
+    // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new AlwaysFalseExceptionPredicate();
     isInvalid = createPredicateFor(BehaviorType.INVALID, isInvalid);
     TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid);
     
-    //extend with contract checker 
+    // extend with contract checker 
     List<ObjectContract> contracts = getContracts(classes);
     ExceptionPredicate isError = new DefaultFailureExceptionPredicate();
     isError = createPredicateFor(BehaviorType.ERROR, isError);
     ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts,isError);
     testGen = new ExtendGenerator(testGen, contractVisitor);
     
-    //and, generate regression tests, unless user says not to
+    // and, generate regression tests, unless user says not to
     if (! GenInputsAbstract.no_regression_tests) {
       ExceptionPredicate isExpected = new AlwaysFalseExceptionPredicate();
       boolean includeAssertions = true;
