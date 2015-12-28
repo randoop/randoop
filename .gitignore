@@ -22,7 +22,7 @@ systemtests/jc-covinst
 systemtests/jc.classlist.txt
 systemtests/jc.covinstclasslist.txt
 systemtests/log.txt
-systemtests/resources/Naive0.java
+systemtests/resources/NaiveRegression0.java
 systemtests/resources/TestClass0.java
 systemtests/resources/arraylist.branches_covered.txt
 systemtests/resources/arraylist.dfin.txt
