@@ -10,5 +10,15 @@ public abstract class DefaultExceptionPredicate implements ExceptionPredicate {
   public ExceptionPredicate or(ExceptionPredicate p) {
     return new OrExceptionPredicate(this,p);
   }
+  
+  @Override
+  public ExceptionPredicate and(ExceptionPredicate p) {
+    return new AndExceptionPredicate(this,p);
+  }
 
+  @Override
+  public ExceptionPredicate not() {
+    return new NotExceptionPredicate(this);
+  }
+  
 }

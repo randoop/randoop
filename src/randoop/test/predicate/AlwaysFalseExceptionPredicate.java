@@ -26,4 +26,22 @@ public class AlwaysFalseExceptionPredicate implements ExceptionPredicate {
     return p;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return this predicate since the and-also always returns false
+   */
+  @Override
+  public ExceptionPredicate and(ExceptionPredicate p) {
+    return this;
+  }
+
+  /**
+   * {@inheritDoc}
+   * @return a predicate that always returns true
+   */
+  @Override
+  public ExceptionPredicate not() {
+    return new AlwaysTrueExceptionPredicate();
+  }
+
 }

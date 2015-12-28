@@ -28,5 +28,22 @@ public interface ExceptionPredicate {
    * returns true, and is false if neither return true
    */
   ExceptionPredicate or(ExceptionPredicate p);
+  
+  /**
+   * Creates a new predicate that performs an and-also operator on this and the
+   * give predicate.
+   * 
+   * @param p  the predicate to check if this predicate returns true
+   * @return  a predicate that returns true if this and the second predicate
+   * return true, and is false otherwise
+   */
+  ExceptionPredicate and(ExceptionPredicate p);
 
+  /**
+   * Creates a new predicate that returns the negation of the given predicate.
+   * 
+   * @param p  the predicate to negate
+   * @return a predicate that returns the negation of {@code p}
+   */
+  ExceptionPredicate not();
 }
