@@ -95,7 +95,7 @@ public class ExecutableSequence implements Serializable {
   /**
    * Contains the runtime objects created and exceptions thrown (if any)
    * during execution of this sequence.
-   * Invariant: Invariant: sequence.size() == executionResults.size().
+   * Invariant: sequence.size() == executionResults.size().
    * Transient because it can contain arbitrary objects that may not be
    * serializable.
    */
@@ -299,7 +299,7 @@ public class ExecutableSequence implements Serializable {
     for (int i = 0 ; i < sequence.size() ; i++) {
       executionResults.theList.add(NotExecuted.create());
     }
-    
+
     for (int i = 0 ; i < this.sequence.size() ; i++) {
 
       // Find and collect the input values to i-th statement.
