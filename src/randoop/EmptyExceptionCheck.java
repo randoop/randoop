@@ -28,7 +28,7 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendCatchBehavior(StringBuilder b, String exceptionClassName) {
-    b.append("  // expected exception caught" + exceptionClassName);
+    b.append("  // expected exception caught" + exceptionClassName + Globals.lineSep);
   }
 
   /**
@@ -37,7 +37,7 @@ public class EmptyExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
-    b.append("  // expected exception " + exceptionClassName + " not thrown");
+    b.append("  // expected exception " + exceptionClassName + " not thrown" + Globals.lineSep);
   }
 
   /**

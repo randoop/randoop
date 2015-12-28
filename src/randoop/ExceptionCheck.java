@@ -94,7 +94,7 @@ public abstract class ExceptionCheck implements Check {
   @Override
   public final String toCodeStringPreStatement() {
     StringBuilder b = new StringBuilder();
-    b.append("// The following exception was thrown during execution." + Globals.lineSep);
+    b.append("// The following exception was thrown during execution in test generation" + Globals.lineSep);
     b.append("try {" + Globals.lineSep + "  ");
     return b.toString();
   }

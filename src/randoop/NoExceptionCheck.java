@@ -65,7 +65,7 @@ public class NoExceptionCheck implements Check {
 
   @Override
   public String toCodeStringPreStatement() {
-    return "// this statement threw exception in error: " + exceptionName + Globals.lineSep;
+    return "// during test generation this statement threw an exception of type " + exceptionName + " in error" + Globals.lineSep;
   }
 
   /**
