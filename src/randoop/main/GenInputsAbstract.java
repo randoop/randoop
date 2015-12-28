@@ -146,12 +146,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The possible values for exception behavior types.
+   * The order INVALID, ERROR, EXPECTED should be maintained.
    */
   public static enum BehaviorType {
-    /** Occurrence of exception should be considered an error */
-    ERROR,
     /** Occurrence of exception should be considered invalid */
     INVALID,
+    /** Occurrence of exception should be considered an error */
+    ERROR,
     /** Occurrence of exception should be considered expected behavior */
     EXPECTED
   }
@@ -235,7 +236,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option ("Maximum number of tests to ouput; contrast to --inputlimit")
   public static int outputlimit = 100000000;
-  
+
   /**
    * Maximum number of test method candidates generated.
    * 
