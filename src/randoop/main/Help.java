@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import randoop.Globals;
-import randoop.util.Util;
-
 import plume.Option;
 import plume.Options;
 import plume.Options.ArgException;
+
+import randoop.Globals;
+import randoop.util.Util;
 
 public class Help extends CommandHandler {
 
