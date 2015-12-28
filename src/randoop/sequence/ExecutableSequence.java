@@ -417,14 +417,18 @@ public class ExecutableSequence implements Serializable {
     return executionResults.get(index);
   }
 
-  
+  /**
+   * Return the set of test checks for the most recent execution.
+   * 
+   * @return the {@code TestChecks} generated from the most recent execution
+   */
   public TestChecks getChecks() {
     return checks;
   }
-  
 
   /**
-   *
+   * Return the results of each statement for the most recent execution.
+   * 
    * @return all the execution outcomes for this sequence.
    */
   public ExecutionOutcome[] getAllResults() {
@@ -452,7 +456,7 @@ public class ExecutableSequence implements Serializable {
   /**
    * This method is typically used by ExecutionVisitors.
    *
-   * True if execution of the i-th statement terminated normally.
+   * @return true if execution of the i-th statement terminated normally
    */
   public boolean isNormalExecution(int i) {
     sequence.checkIndex(i);
