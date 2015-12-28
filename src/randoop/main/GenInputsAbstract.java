@@ -405,8 +405,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   
   /**
    * Indicate which classes that any test written to output must use. 
-   * Only tests that use members of classes whose names match the regular 
-   * expression are written to the test suites. 
+   * Written test suites will only include tests that have at least one 
+   * use of a member of a class whose name matches the regular expression. 
    */
   @Option("Regular expression for names of classes that any test written to output must use")
   public static Pattern include_only_classes = null;
