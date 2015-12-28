@@ -40,10 +40,9 @@ public interface ExceptionPredicate {
   ExceptionPredicate and(ExceptionPredicate p);
 
   /**
-   * Creates a new predicate that returns the negation of the given predicate.
+   * Creates a new predicate that returns the negation of this predicate.
    * 
-   * @param p  the predicate to negate
-   * @return a predicate that returns the negation of {@code p}
+   * @return a predicate that returns the negation of this predicate
    */
   ExceptionPredicate not();
 }
