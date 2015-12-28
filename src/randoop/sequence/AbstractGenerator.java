@@ -117,18 +117,20 @@ public abstract class AbstractGenerator {
   public static Sequence currSeq = null;
   
   /**
-   * The list of failure sequences to be saved as JUnit tests
+   * The list of error test sequences to be output as JUnit tests. 
+   * May include subsequences of other sequences in the list.
    */
   public List<ExecutableSequence> outErrorSeqs = new ArrayList<>();
 
   /**
-   * The list of regression sequences to be save as JUnit tests
+   * The list of regression sequences to be output as JUnit tests
+   * May include subsequences of other sequences in the list.
    */
   public List<ExecutableSequence> outRegressionSeqs = new ArrayList<>();
   
   /**
-   * A filter to determine whether a sequence should be added to the final 
-   * sequence list outSeqs.
+   * A filter to determine whether a sequence should be added to the output 
+   * sequence lists
    */
   public Predicate<ExecutableSequence> outputTest;
 
@@ -264,77 +266,77 @@ public abstract class AbstractGenerator {
     if (checkGenerator == null) {
       throw new Error("Generator not properly initialized - must have a TestCheckGenerator");
     }
-      Log.log(this.operations);
+    Log.log(this.operations);
 
-      timer.startTiming();
+    timer.startTiming();
 
-      if (!GenInputsAbstract.noprogressdisplay) {
-          progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE, 200);
-          progressDisplay.start();
+    if (!GenInputsAbstract.noprogressdisplay) {
+      progressDisplay = new ProgressDisplay(this, listenerMgr, ProgressDisplay.Mode.MULTILINE, 200);
+      progressDisplay.start();
+    }
+
+    if (Log.isLoggingOn()) {
+      Log.logLine("Initial sequences (seeds):");
+      for (Sequence s : componentManager.getAllGeneratedSequences()) {
+        Log.logLine(s.toString());          
       }
-      
-      if (Log.isLoggingOn()) {
-        Log.logLine("Initial sequences (seeds):");
-        for (Sequence s : componentManager.getAllGeneratedSequences()) {
-          Log.logLine(s.toString());          
-        }
-      }
-      
-      // Notify listeners that exploration is starting.
+    }
+
+    // Notify listeners that exploration is starting.
+    if (listenerMgr != null) {
+      listenerMgr.explorationStart();
+    }
+
+    while (!stop()) {
+
+      // Notify listeners we are about to perform a generation step.
       if (listenerMgr != null) {
-        listenerMgr.explorationStart();
+        listenerMgr.generationStepPre();
       }
-      
-      while (!stop()) {
 
-        // Notify listeners we are about to perform a generation step.
-        if (listenerMgr != null) {
-          listenerMgr.generationStepPre();
-        }
-        
-        num_steps++;
+      num_steps++;
 
-        ExecutableSequence eSeq = step();
-        if (dump_sequences) {
-          System.out.printf ("seq before run: %s%n", eSeq);
-        }
-       
-        // Notify listeners we just completed generation step.
-        if (listenerMgr != null) {
-          listenerMgr.generationStepPost(eSeq);
-        }
+      ExecutableSequence eSeq = step();
+      if (dump_sequences) {
+        System.out.printf ("seq before run: %s%n", eSeq);
+      }
 
-        if (eSeq == null)
-          continue;
-        
-        num_sequences_generated++;
+      // Notify listeners we just completed generation step.
+      if (listenerMgr != null) {
+        listenerMgr.generationStepPost(eSeq);
+      }
 
-        if (eSeq.hasFailure()) {
-          num_failing_sequences++;
-        }
+      if (eSeq == null)
+        continue;
 
-        if (outputTest.test(eSeq)) {
-          if (! eSeq.hasInvalidBehavior()) {
-            if (eSeq.hasFailure()) {
-              outErrorSeqs.add(eSeq);
-            } else {
-              outRegressionSeqs.add(eSeq);
-            } 
-          }
-        } 
-     
-        if (dump_sequences) {
-          System.out.printf ("Sequence after execution:%n%s%n", eSeq.toString());
-          System.out.printf ("allSequences.size() = %d%n", numGeneratedSequences());
-        }
+      num_sequences_generated++;
 
-        if (Log.isLoggingOn()) {
-          Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
-          Log.logLine("allSequences.size()=" + numGeneratedSequences());
+      if (eSeq.hasFailure()) {
+        num_failing_sequences++;
+      }
+
+      if (outputTest.test(eSeq)) {
+        if (! eSeq.hasInvalidBehavior()) {
+          if (eSeq.hasFailure()) {
+            outErrorSeqs.add(eSeq);
+          } else {
+            outRegressionSeqs.add(eSeq);
+          } 
         }
+      } 
+
+      if (dump_sequences) {
+        System.out.printf ("Sequence after execution:%n%s%n", eSeq.toString());
+        System.out.printf ("allSequences.size() = %d%n", numGeneratedSequences());
+      }
+
+      if (Log.isLoggingOn()) {
+        Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
+        Log.logLine("allSequences.size()=" + numGeneratedSequences());
+      }
 
     }
-      
+
     if (!GenInputsAbstract.noprogressdisplay && progressDisplay != null) {
       progressDisplay.display();
       progressDisplay.shouldStop = true;
@@ -349,11 +351,11 @@ public abstract class AbstractGenerator {
       System.out.println("Average method execution time (exceptional termination): " + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
     }
 
-      // Notify listeners that exploration is ending.
-      if (listenerMgr != null) {
-        listenerMgr.explorationEnd();
-      }
+    // Notify listeners that exploration is ending.
+    if (listenerMgr != null) {
+      listenerMgr.explorationEnd();
     }
+  }
 
   
   /**
@@ -404,7 +406,7 @@ public abstract class AbstractGenerator {
   /**
    * Sets the current sequence during exploration
    * 
-   * @param s  the sequence to be saved as the current sequence
+   * @param s  the current sequence
    */
   protected void setCurrentSequence(Sequence s) {
     currSeq = s; 
