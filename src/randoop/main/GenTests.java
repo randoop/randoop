@@ -305,9 +305,9 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> components = new LinkedHashSet<Sequence>();
     if (!componentfile_ser.isEmpty()) {
       for (String onefile : componentfile_ser) {
-        try {
-          FileInputStream fileos = new FileInputStream(onefile);
-          ObjectInputStream objectos = new ObjectInputStream(new GZIPInputStream(fileos));
+        try (ObjectInputStream objectos = 
+            new ObjectInputStream(
+                new GZIPInputStream(new FileInputStream(onefile)))) {
           Set<Sequence> seqset = (Set<Sequence>)objectos.readObject();
           if (!GenInputsAbstract.noprogressdisplay) {
             System.out.println("Adding " + seqset.size() + " component sequences from file " + onefile);
