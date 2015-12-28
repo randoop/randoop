@@ -118,8 +118,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         ExecutionOutcome result1 = s.getResult(i);
         ExecutionOutcome result2 = s.getResult(j);
         
-        if (! (result1 instanceof NormalExecution) 
-            && ! (result2 instanceof NormalExecution)) {
+        if (! ((result1 instanceof NormalExecution) 
+            &&  (result2 instanceof NormalExecution))) {
           throw new Error("Abnormal execution in sequence: " + s);
         }
 
