@@ -3,6 +3,7 @@ package randoop.main;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -420,7 +421,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     if (GenInputsAbstract.output_covmap != null) {
-      outputCoverageMap(covTracker);
+      outputObject(covTracker.branchesToCoveringSeqs, output_covmap);
     }
 
     if (GenInputsAbstract.output_components != null) {
@@ -428,7 +429,11 @@ public class GenTests extends GenInputsAbstract {
       assert explorer instanceof ForwardGenerator;
       ForwardGenerator gen = (ForwardGenerator)explorer;
 
-      outputComponentSequences(gen);
+      // Output component sequences.
+      System.out.print("Serializing component sequences...");
+      Set<Sequence> componentset = gen.componentManager.getAllGeneratedSequences();
+      System.out.println(" (" + componentset.size() + " components) ");
+      outputObject(componentset, GenInputsAbstract.output_components);
     }
 
     if (GenInputsAbstract.dont_output_tests)
@@ -507,85 +512,47 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Outputs JUnit tests for the sequence list, and if user indicates, also,
-   * writes serialized tests.
+   * Outputs JUnit tests for the sequence list. And, if the user indicates by
+   * command-line argument {@link GenInputsAbstract#output_tests_serialized} 
+   * also writes serialized tests.
    * 
    * @param sequences  the sequences to output
    * @param junitPrefix  the filename prefix for test output
    */
   private void outputTests(List<ExecutableSequence> sequences, String junitPrefix) {
-    if (output_tests_serialized != null) {
-      outputSerializedTests(sequences, junitPrefix);
+    if (GenInputsAbstract.output_tests_serialized != null) {
+      System.out.println("Serializing tests...");
+      //using prefix as a suffix here because of path info in output_tests_serialized
+      outputObject(sequences, output_tests_serialized + junitPrefix);
     }
 
     writeJUnitTests (junit_output_dir, sequences, null, junitPrefix);
   }
   
   /**
-   * Outputs serialized version of test sequences using given string as a
-   * suffix for the file name.
+   * Manages output for serialized objects. 
    * 
-   * @param sequences  the list of test sequences to serialize
-   * @param suffix  the string to use as a suffix
-   * @throws Error if an exception is thrown while writing to the file
+   * @param obj  the object to serialize
+   * @param filename  the file name for serialization
    */
-  private void outputSerializedTests(List<ExecutableSequence> sequences, 
-      String suffix) throws Error {
-    System.out.println("Serializing tests...");
-    try {
-
-      FileOutputStream fileos = new FileOutputStream(output_tests_serialized + suffix);
-      ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-      objectos.writeObject(sequences);
-      objectos.close();
-      fileos.close();
-
-    } catch (Exception e) {
+  private void outputObject(Object obj, String filename) {
+    try (ObjectOutputStream os = new ObjectOutputStream(
+        new GZIPOutputStream(new FileOutputStream(filename)))) {
+      os.writeObject(obj);
+    } catch (FileNotFoundException e) {
+      throw new Error("Unable to serialize object: " + e);
+    } catch (IOException e) {
       throw new Error(e);
-    }
+    } 
   }
-
+  
   /**
-   * Serializes component sequences used by the generator.
-   *  
-   * @param gen  the sequence generator
-   * @throws Error if an exception is thrown while writing to the file
-   */
-  private void outputComponentSequences(ForwardGenerator gen) throws Error {
-    // Output component sequences.
-    System.out.print("Serializing component sequences...");
-    try {
-      FileOutputStream fileos = new FileOutputStream(output_components);
-      ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-      Set<Sequence> componentset = gen.componentManager.getAllGeneratedSequences();
-      System.out.println(" (" + componentset.size() + " components) ");
-      objectos.writeObject(componentset);
-      objectos.close();
-      fileos.close();
-    } catch (Exception e) {
-      throw new Error(e);
-    }
-  }
-
-  /**
-   * Serializes the coverage map.
+   * Outputs coverage branches to the file {@link GenInputsAbstract#output_branches}.
+   * Branches are sorted by their string representation.
    * 
-   * @param covTracker  the coverage tracker with branches to serialize
-   * @throws Error if an exception is thrown while writing to the file
+   * @param covTracker  the coverage tracker with branches
+   * @throws Error  if an {@link IOException} is thrown during output
    */
-  private void outputCoverageMap(CodeCoverageTracker covTracker) throws Error {
-    try {
-      FileOutputStream fileos = new FileOutputStream(output_covmap);
-      ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-      objectos.writeObject(covTracker.branchesToCoveringSeqs);
-      objectos.close();
-      fileos.close();
-    } catch (Exception e) {
-      throw new Error(e);
-    }
-  }
-
-
   private void outputCoverageBranches(CodeCoverageTracker covTracker) throws Error {
     Comparator<Branch> branchComparator = new Comparator<Branch>() {
       public int compare(Branch o1, Branch o2) {
@@ -595,15 +562,12 @@ public class GenTests extends GenInputsAbstract {
     Set<Branch> branches = new TreeSet<Branch>(branchComparator);
     branches.addAll(covTracker.branchesCovered);
     // Create a file with branches, sorted by their string representation.
-    BufferedWriter writer = null;
-    try {
-      writer = new BufferedWriter(new FileWriter(output_branches));
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(output_branches))){
       // Touch all covered branches (they may have been reset during generation).
       for (Branch b : branches) {
         writer.append(b.toString());
         writer.newLine();
       }
-      writer.close();
     } catch (IOException e) {
       throw new Error(e);
     }
@@ -632,16 +596,33 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Constructs an {@code ExceptionPredicate} that checks whether each kind of
-   * exception is assigned the given type of behavior in the command-line 
-   * arguments. Simplifies predicates based on possible combinations:
+   * Constructs an {@code ExceptionPredicate} for a particular {@code BehaviorType}
+   * that will indicate whether an exception is assigned to that type of behavior 
+   * by the command-line arguments. 
+   * These predicates are used in the {@link TestCheckGenerator} classes to 
+   * decide whether an {@link ExecutableSequence} should be classified with
+   * the given behavior. 
+   * <p>
+   * See {@link this#createTestCheckGenerator(VisibilityPredicate, List)}
+   * Because the each kind of exception is assigned a single behavior type in the 
+   * command-line arguments, predicates for checked and unchecked exceptions 
+   * constructed from the same command-line arguments will not conflict. 
+   * However, specific unchecked exceptions with their own command-line argument 
+   * may be assigned to different behaviors that are tested later by the test
+   * check generator. (This order corresponds to the default order of constants
+   * in enum {@link BehaviorType}). If a more specific exception is assigned
+   * a behavior tested later than the one given here, the constructed predicate 
+   * is prefixed by a not-predicate that tests that the exception is not an 
+   * instance of the more specific class.
+   * <p>
+   * As optimizations, simplifies predicates based on possible combinations:
    * <ul>
    * <li> only add predicate for specific unchecked exceptions if unchecked 
    *      exceptions are assigned different behavior.
    * <li> if both checked and unchecked exceptions are assigned the behavior,
    *      use a predicate that is always true.
    * </ul>  
-   * 
+   *
    * @param behavior  the behavior type to build predicate
    * @param base  the base predicate
    * @return a predicate to check all exceptions assigned this behavior
@@ -653,7 +634,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.npe_on_null_input == behavior
         && GenInputsAbstract.unchecked_exception != GenInputsAbstract.npe_on_null_input) {
       predicate = predicate.or(new NPEContractPredicate());
-    }
+    } 
     
     // OOM is a subclass of Error, so check before Unchecked
     if (GenInputsAbstract.oom_exception == behavior
@@ -667,10 +648,18 @@ public class GenTests extends GenInputsAbstract {
       } else {
         predicate = predicate.or(new UncheckedExceptionPredicate());
       }
+      //if more specific exceptions belong to behaviors tested later
+      //prefix with not-predicate 
+      if (behavior.compareTo(GenInputsAbstract.npe_on_null_input) < 0) {
+        predicate = (new NPEContractPredicate().not()).and(predicate);
+      }
+      if (behavior.compareTo(GenInputsAbstract.oom_exception) < 0) {
+        predicate = (new OOMExceptionPredicate().not()).and(predicate);
+      }
     } else if (GenInputsAbstract.checked_exception == behavior) {
       predicate = predicate.or(new CheckedExceptionPredicate());
     }
-    
+
     return predicate;
   }
   
