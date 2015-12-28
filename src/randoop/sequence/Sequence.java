@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
@@ -1111,6 +1112,23 @@ public final class Sequence implements Serializable, WeightedElement {
    */
   public boolean isPrimitive() {
     return (size() == 1 && getStatement(0).isPrimitiveInitialization());
+  }
+
+  /**
+   * Test whether any statement of this sequence has an operation whose 
+   * declaring class matches the given regular expression.
+   *  
+   * @param classNames  the regular expression to test class names
+   * @return true if any statement has operation with matching declaring class, false otherwise
+   */
+  public boolean hasUseOfMatchingClass(Pattern classNames) {
+    for (int i = 0; i < statements.size(); i++) {
+      String classname = statements.get(i).getDeclaringClass().getName();
+      if (classNames.matcher(classname).matches()) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }

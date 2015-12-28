@@ -404,11 +404,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean dont_output_tests = false;
   
   /**
-   * Indicate which classes that any generated test must include. Tests that
-   * do not have classes matching the regular expression are not written to 
-   * the test suites. 
+   * Indicate which classes that any test written to output must use. 
+   * Only tests that use members of classes whose names match the regular 
+   * expression are written to the test suites. 
    */
-  @Option("Regular expression for class names that must occur in generated tests")
+  @Option("Regular expression for names of classes that any test written to output must use")
   public static Pattern include_only_classes = null;
   
   /**
