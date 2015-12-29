@@ -4,44 +4,14 @@ import randoop.ExceptionalExecution;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * An exception predicate that always returns false.
+ * An {@code ExceptionPredicate} that always returns false.
+ * Used to indicate that no exceptions belong to a behavior type.
  */
 public class AlwaysFalseExceptionPredicate implements ExceptionPredicate {
 
-  /**
-   * {@inheritDoc}
-   * @return false, always
-   */
   @Override
   public boolean test(ExceptionalExecution exec, ExecutableSequence s) {
     return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return the second predicate
-   */
-  @Override
-  public ExceptionPredicate or(ExceptionPredicate p) {
-    return p;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return this predicate since the and-also always returns false
-   */
-  @Override
-  public ExceptionPredicate and(ExceptionPredicate p) {
-    return this;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return a predicate that always returns true
-   */
-  @Override
-  public ExceptionPredicate not() {
-    return new AlwaysTrueExceptionPredicate();
   }
 
 }

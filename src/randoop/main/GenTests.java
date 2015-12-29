@@ -74,13 +74,8 @@ import randoop.test.RegressionTestPredicate;
 import randoop.test.TestCheckGenerator;
 import randoop.test.ValidityCheckingVisitor;
 import randoop.test.predicate.AlwaysFalseExceptionPredicate;
-import randoop.test.predicate.AlwaysTrueExceptionPredicate;
-import randoop.test.predicate.CheckedExceptionPredicate;
-import randoop.test.predicate.DefaultFailureExceptionPredicate;
+import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.test.predicate.NPEContractPredicate;
-import randoop.test.predicate.OOMExceptionPredicate;
-import randoop.test.predicate.UncheckedExceptionPredicate;
 import randoop.util.ClassFileConstants;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -596,74 +591,6 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Constructs an {@code ExceptionPredicate} for a particular {@code BehaviorType}
-   * that will indicate whether an exception is assigned to that type of behavior 
-   * by the command-line arguments. 
-   * These predicates are used in the {@link TestCheckGenerator} classes to 
-   * decide whether an {@link ExecutableSequence} should be classified with
-   * the given behavior. 
-   * <p>
-   * See {@link this#createTestCheckGenerator(VisibilityPredicate, List)}
-   * Because the each kind of exception is assigned a single behavior type in the 
-   * command-line arguments, predicates for checked and unchecked exceptions 
-   * constructed from the same command-line arguments will not conflict. 
-   * However, specific unchecked exceptions with their own command-line argument 
-   * may be assigned to different behaviors that are tested later by the test
-   * check generator. (This order corresponds to the default order of constants
-   * in enum {@link BehaviorType}). If a more specific exception is assigned
-   * a behavior tested later than the one given here, the constructed predicate 
-   * is prefixed by a not-predicate that tests that the exception is not an 
-   * instance of the more specific class.
-   * <p>
-   * As optimizations, simplifies predicates based on possible combinations:
-   * <ul>
-   * <li> only add predicate for specific unchecked exceptions if unchecked 
-   *      exceptions are assigned different behavior.
-   * <li> if both checked and unchecked exceptions are assigned the behavior,
-   *      use a predicate that is always true.
-   * </ul>  
-   *
-   * @param behavior  the behavior type to build predicate
-   * @param base  the base predicate
-   * @return a predicate to check all exceptions assigned this behavior
-   */
-  private ExceptionPredicate createPredicateFor(BehaviorType behavior, ExceptionPredicate base) {
-    ExceptionPredicate predicate = base;
-    
-    // NPE is a subclass of RuntimeException, so check before Unchecked
-    if (GenInputsAbstract.npe_on_null_input == behavior
-        && GenInputsAbstract.unchecked_exception != GenInputsAbstract.npe_on_null_input) {
-      predicate = predicate.or(new NPEContractPredicate());
-    } 
-    
-    // OOM is a subclass of Error, so check before Unchecked
-    if (GenInputsAbstract.oom_exception == behavior
-        && GenInputsAbstract.unchecked_exception != GenInputsAbstract.oom_exception) {
-      predicate = predicate.or(new OOMExceptionPredicate());
-    }
-    
-    if (GenInputsAbstract.unchecked_exception == behavior) {
-      if (GenInputsAbstract.unchecked_exception == GenInputsAbstract.checked_exception) {
-        predicate = new AlwaysTrueExceptionPredicate();
-      } else {
-        predicate = predicate.or(new UncheckedExceptionPredicate());
-      }
-      //if more specific exceptions belong to behaviors tested later
-      //prefix with not-predicate 
-      if (behavior.compareTo(GenInputsAbstract.npe_on_null_input) < 0) {
-        predicate = (new NPEContractPredicate().not()).and(predicate);
-      }
-      if (behavior.compareTo(GenInputsAbstract.oom_exception) < 0) {
-        predicate = (new OOMExceptionPredicate().not()).and(predicate);
-      }
-    } else if (GenInputsAbstract.checked_exception == behavior) {
-      predicate = predicate.or(new CheckedExceptionPredicate());
-    }
-
-    return predicate;
-  }
-  
-  /**
    * Creates the test check generator for this run based on the command-line
    * arguments. 
    * The goal of the generator is to produce all appropriate checks for each
@@ -680,14 +607,12 @@ public class GenTests extends GenInputsAbstract {
   private TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, List<Class<?>> classes) {
     
     // start with checking for invalid exceptions
-    ExceptionPredicate isInvalid = new AlwaysFalseExceptionPredicate();
-    isInvalid = createPredicateFor(BehaviorType.INVALID, isInvalid);
+    ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
     TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid);
     
     // extend with contract checker 
     List<ObjectContract> contracts = getContracts(classes);
-    ExceptionPredicate isError = new DefaultFailureExceptionPredicate();
-    isError = createPredicateFor(BehaviorType.ERROR, isError);
+    ExceptionPredicate isError = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
     ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts,isError);
     testGen = new ExtendGenerator(testGen, contractVisitor);
     
@@ -698,7 +623,7 @@ public class GenTests extends GenInputsAbstract {
       if (GenInputsAbstract.no_regression_assertions) {
         includeAssertions = false;
       } else {
-        isExpected = createPredicateFor(BehaviorType.EXPECTED, isExpected);
+        isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
       }
       ExpectedExceptionCheckGen expectation; 
       expectation = new ExpectedExceptionCheckGen(visibility, isExpected);

@@ -148,6 +148,7 @@ randoop1: bin
 	   --testclass=java2.util2.TreeSet \
 	   --testclass=java2.util2.Collections \
 	   --regression-test-filename=TestClass \
+	   --npe-on-null-input=EXPECTED \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \

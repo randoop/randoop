@@ -18,12 +18,12 @@ import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
 import randoop.Globals;
 import randoop.ObjectContract;
+import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
-import randoop.test.predicate.AlwaysTrueExceptionPredicate;
-import randoop.test.predicate.DefaultFailureExceptionPredicate;
+import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
 import randoop.util.Util;
 
@@ -165,7 +165,7 @@ public class SequenceTester {
   private void testRegression(String expected) {
     ExecutableSequence ds = new ExecutableSequence(sequence);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ExceptionPredicate isExpected = new AlwaysTrueExceptionPredicate();
+    ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
     ExpectedExceptionCheckGen expectation; 
     expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
     ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(expectation,true));
@@ -181,11 +181,11 @@ public class SequenceTester {
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ExceptionPredicate isExpected = new AlwaysTrueExceptionPredicate();
+    ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
     ExpectedExceptionCheckGen expectation; 
     expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
     testGen = new ExtendGenerator(
-        new ContractCheckingVisitor(contracts, new DefaultFailureExceptionPredicate()),
+        new ContractCheckingVisitor(contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
         new RegressionCaptureVisitor(expectation, true));
   }
 

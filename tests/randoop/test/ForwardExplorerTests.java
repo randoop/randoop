@@ -26,10 +26,8 @@ import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
-import randoop.test.predicate.AlwaysTrueExceptionPredicate;
-import randoop.test.predicate.DefaultFailureExceptionPredicate;
+import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.test.predicate.NPEContractPredicate;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.Predicate;
 
@@ -150,13 +148,11 @@ public class ForwardExplorerTests extends TestCase {
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsToNullRetFalse());
     
-    ExceptionPredicate exceptionChecker = new DefaultFailureExceptionPredicate();
-    if (GenInputsAbstract.npe_on_null_input == BehaviorType.ERROR) {
-      exceptionChecker = exceptionChecker.or(new NPEContractPredicate());
-    }
+    ExceptionPredicate exceptionChecker = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
+    
     ContractCheckingVisitor contractChecker = new ContractCheckingVisitor(contracts,exceptionChecker);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ExceptionPredicate isExpected = new AlwaysTrueExceptionPredicate();
+    ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
     ExpectedExceptionCheckGen expectation; 
     expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
     RegressionCaptureVisitor regressionCapture = new RegressionCaptureVisitor(expectation, true);

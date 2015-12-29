@@ -4,45 +4,21 @@ import randoop.ExceptionalExecution;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * An exception predicate is used to determine whether an exception in
- * a given sequence meets an implementing criteria.
+ * An {@code ExceptionPredicate} is a test on an exception primarily used to
+ * check whether the exception is classified as expected.
+ * Used in {@link TestCheckGenerator} implementations to decide whether an
+ * exception matches criteria of that check generator.
  */
 public interface ExceptionPredicate {
-  
+
   /**
-   * Test predicate on the {@code ExceptionalExecution} for the given 
-   * {@code ExecutableSequence}.
+   * Check whether the {@code ExceptionalExecution} of the {@code ExecutableSequence}
+   * satisfies the criterion of the predicate.
    * 
-   * @param exec  the exceptional execution
-   * @param s  the sequence in which exception occurred
+   * @param exec  the exceptional execution wrapping an exception
+   * @param s  the sequence where exception was thrown
    * @return true if exception satisfies the predicate, and false otherwise
    */
   boolean test(ExceptionalExecution exec, ExecutableSequence s);
-
-  /**
-   * Creates a new predicate that performs an or-else operator on this and the
-   * given predicate.
-   * 
-   * @param p  the predicate to check if this predicate returns false
-   * @return a predicate that returns true if this or the second predicate 
-   * returns true, and is false if neither return true
-   */
-  ExceptionPredicate or(ExceptionPredicate p);
-  
-  /**
-   * Creates a new predicate that performs an and-also operator on this and the
-   * give predicate.
-   * 
-   * @param p  the predicate to check if this predicate returns true
-   * @return  a predicate that returns true if this and the second predicate
-   * return true, and is false otherwise
-   */
-  ExceptionPredicate and(ExceptionPredicate p);
-
-  /**
-   * Creates a new predicate that returns the negation of this predicate.
-   * 
-   * @return a predicate that returns the negation of this predicate
-   */
-  ExceptionPredicate not();
+    
 }
