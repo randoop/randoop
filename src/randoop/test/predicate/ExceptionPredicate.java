@@ -6,7 +6,7 @@ import randoop.sequence.ExecutableSequence;
 /**
  * An {@code ExceptionPredicate} is a test on an exception primarily used to
  * check whether the exception is classified as expected.
- * Used in {@link TestCheckGenerator} implementations to decide whether an
+ * Used in {@link randoop.test.TestCheckGenerator} implementations to decide whether an
  * exception matches criteria of that check generator.
  */
 public interface ExceptionPredicate {
