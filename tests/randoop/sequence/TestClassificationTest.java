@@ -50,6 +50,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allInvalidTest() {
+    GenInputsAbstract.include_only_classes = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.INVALID;
     GenInputsAbstract.unchecked_exception = BehaviorType.INVALID;
@@ -63,6 +64,8 @@ public class TestClassificationTest {
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
+    
+    assertTrue("should have some regression tests", rTests.size() > 0);
     
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
@@ -88,6 +91,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allErrorTest() {
+    GenInputsAbstract.include_only_classes = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.ERROR;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
@@ -102,6 +106,8 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
+    assertTrue("should have some regression tests", rTests.size() > 0);
+    
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
@@ -114,6 +120,8 @@ public class TestClassificationTest {
       }
     }
 
+    assertTrue("should have some error tests", eTests.size() > 0);
+    
     for (ExecutableSequence s : eTests) {
       TestChecks cks = s.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
@@ -139,6 +147,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allExpectedTest() {
+    GenInputsAbstract.include_only_classes = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -153,6 +162,8 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
+    assertTrue("should have some regression tests", rTests.size() > 0);
+    
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
@@ -160,6 +171,7 @@ public class TestClassificationTest {
 
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
+        assertTrue("if there is an exception check, should be checks", cks.hasChecks());
         assertTrue("should be expected exception, was" + eck.getClass().getName(), eck instanceof ExpectedExceptionCheck);
       }
     }
@@ -177,6 +189,7 @@ public class TestClassificationTest {
    */
   @Test
   public void defaultsTest() {
+    GenInputsAbstract.include_only_classes = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -191,6 +204,8 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
+    assertTrue("should have some regression tests", rTests.size() > 0);
+    
     int expectedExceptionCount = 0;
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
@@ -199,37 +214,26 @@ public class TestClassificationTest {
 
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
+        assertTrue("if there is an exception check, should be checks", cks.hasChecks());
         assertTrue("should be expected exception, was" + eck.getClass().getName(), eck instanceof ExpectedExceptionCheck);
         expectedExceptionCount++;
       }
     }
     assertTrue("should have non-zero expected exception count", expectedExceptionCount > 0);
 
-    for (ExecutableSequence s : eTests) {
-      TestChecks cks = s.getChecks();
-      assertTrue("if sequence here should have checks", cks.hasChecks());
-      assertTrue("these are error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
-
-      int errorExceptionCount = 0;
-      for (Check ck : cks.get().keySet()) {
-        if (ck instanceof NoExceptionCheck) {
-          errorExceptionCount++;
-        }
-      }
-      assertTrue("exception count should be zero, have " + errorExceptionCount, errorExceptionCount == 0);
-    }
-
+    assertTrue("should have no error tests", eTests.size() == 0);
+    
   }
 
   /**
    * Tests default behaviors with regression assertions turned off.
    * Means that because class throws NPE without input, should see NPE as 
    * empty exception when there are no null inputs. 
-   * Otherwise, should not see NPE
+   * Otherwise, should not see NPE, or any other checks.
    */
   @Test
   public void defaultsWithNoRegressionAssertions() {
+    GenInputsAbstract.include_only_classes = null;
     GenInputsAbstract.no_regression_assertions = true;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -244,6 +248,8 @@ public class TestClassificationTest {
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
+    assertTrue("should have some regression tests", rTests.size() > 0);
+    
     int emptyExceptionCount = 0;
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
@@ -252,26 +258,16 @@ public class TestClassificationTest {
 
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
+        assertTrue("if there is an exception check, should be checks", cks.hasChecks());
         assertTrue("should be expected exception, was" + eck.getClass().getName(), eck instanceof EmptyExceptionCheck);
         emptyExceptionCount++;
+      } else {
+        assertFalse("if there is no exception check, should be no checks", cks.hasChecks());
       }
     }
     assertTrue("should have non-zero expected exception count", emptyExceptionCount > 0);
 
-    for (ExecutableSequence s : eTests) {
-      TestChecks cks = s.getChecks();
-      assertTrue("if sequence here should have checks", cks.hasChecks());
-      assertTrue("these are error checks", cks.hasErrorBehavior());
-      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
-
-      int errorExceptionCount = 0;
-      for (Check ck : cks.get().keySet()) {
-        if (ck instanceof NoExceptionCheck) {
-          errorExceptionCount++;
-        }
-      }
-      assertTrue("exception count should be zero, have " + errorExceptionCount, errorExceptionCount == 0);
-    }
+    assertTrue("should have no error tests", eTests.size() == 0);
 
   }
   
