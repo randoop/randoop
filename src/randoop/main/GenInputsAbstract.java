@@ -196,11 +196,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * error-revealing test suite (value: ERROR), regression test suite 
    * (value: EXPECTED), or should it be discarded (value: INVALID)?
    * <p>
-   * Tests with other occurrences of <code>NullPointerException</code> are
-   * handled by the argument --unchecked-exception.
+   * Alternatively see <code>--npe-on-non-null-input</code>
    */
   @Option("Whether NullPointerException on null inputs is an ERROR, EXPECTED or INVALID")
-  public static BehaviorType npe_on_null_input = BehaviorType.INVALID;
+  public static BehaviorType npe_on_null_input = BehaviorType.EXPECTED;
+  
+  /**
+   * If a test where no <code>null</code> values are given as an input throws a
+   * <code>NullPointerExceptoin</code>, should the test be included in the 
+   * error-revealing test suite (value: ERROR), regression test suite 
+   * (value: EXPECTED), or should it be discarded (value: INVALID)?
+   * <p>
+   * Alternatively, see <code>--npe-on-null-input</code>
+   */
+  @Option("Whether NullPointerException on non-null inputs is an ERROR, EXPECTED or INVALID")
+  public static BehaviorType npe_on_non_null_input = BehaviorType.ERROR;
   
   /**
    * If a test throws an <code>OutOfMemoryError</code> exception, should it be 

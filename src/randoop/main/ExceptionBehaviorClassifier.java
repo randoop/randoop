@@ -26,9 +26,12 @@ public class ExceptionBehaviorClassifier {
     if (t instanceof RuntimeException || t instanceof Error) { 
       // check for specific unchecked exceptions
       
-      // NPE on no-null input
-      if (t instanceof NullPointerException && s.hasNullInput()) {
-        return GenInputsAbstract.npe_on_null_input;
+      if (t instanceof NullPointerException) {
+        if (s.hasNullInput()) {
+          return GenInputsAbstract.npe_on_null_input;
+        } else { // formerly known as the NPE on non-null input contract
+          return GenInputsAbstract.npe_on_non_null_input;
+        }
       }
       
       if (t instanceof OutOfMemoryError) {

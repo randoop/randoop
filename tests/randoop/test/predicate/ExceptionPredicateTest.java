@@ -36,7 +36,8 @@ public class ExceptionPredicateTest {
   public static void setupBeforeClass() {
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
-    GenInputsAbstract.npe_on_null_input = BehaviorType.INVALID;
+    GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
   }
   
@@ -65,9 +66,9 @@ public class ExceptionPredicateTest {
     ExceptionalExecution exec = new ExceptionalExecution(new NullPointerException(), 0);
     ExecutableSequence s = new ExecutableSequence(new Sequence());
   
-    assertFalse("non-null input NPE is not error", isError.test(exec, s));
+    assertTrue("non-null input NPE is error", isError.test(exec, s));
     assertFalse("non-null input NPE is not invalid", isInvalid.test(exec, s));
-    assertTrue("non-null input NPE is expected", isExpected.test(exec, s));
+    assertFalse("non-null input NPE is expected", isExpected.test(exec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
   }
 
@@ -89,8 +90,8 @@ public class ExceptionPredicateTest {
     s.execute(new DummyVisitor(), new DummyCheckGenerator());
     
     assertFalse("null input NPE is not error", isError.test(exec, s));
-    assertTrue("null input NPE is invalid", isInvalid.test(exec, s));
-    assertFalse("null input NPE is not expected", isExpected.test(exec, s));
+    assertFalse("null input NPE is not invalid", isInvalid.test(exec, s));
+    assertTrue("null input NPE is expected", isExpected.test(exec, s));
     assertFalse("no exception satisfies this predicate", alwaysFalse.test(exec, s));
   }
 

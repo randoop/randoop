@@ -47,6 +47,7 @@ public class TestFilteringTest {
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -76,6 +77,7 @@ public class TestFilteringTest {
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
@@ -105,6 +107,7 @@ public class TestFilteringTest {
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -134,6 +137,7 @@ public class TestFilteringTest {
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
@@ -164,6 +168,7 @@ public class TestFilteringTest {
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
@@ -193,6 +198,7 @@ public class TestFilteringTest {
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;

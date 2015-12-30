@@ -21,7 +21,8 @@ are INVALID) is an error-revealing test, and one with no INVALID or ERROR behavi
 and an exception that is an EXPECTED behavior is a regression test. 
 Customize the classification of exceptions by setting the behavior type for 
 exceptions using the command-line arguments --checked-exception, 
---unchecked-exception, --npe-on-null-input, and --oom-exception.  
+--unchecked-exception, --npe-on-null-input, --npe-on-non-null-input,
+and --oom-exception.  
 (Issues #20, #69 and #72)
 
 Additional changes:

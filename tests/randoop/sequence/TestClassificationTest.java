@@ -55,6 +55,7 @@ public class TestClassificationTest {
     GenInputsAbstract.checked_exception = BehaviorType.INVALID;
     GenInputsAbstract.unchecked_exception = BehaviorType.INVALID;
     GenInputsAbstract.npe_on_null_input = BehaviorType.INVALID;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.INVALID;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -96,6 +97,7 @@ public class TestClassificationTest {
     GenInputsAbstract.checked_exception = BehaviorType.ERROR;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
     GenInputsAbstract.npe_on_null_input = BehaviorType.ERROR;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.ERROR;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -152,6 +154,7 @@ public class TestClassificationTest {
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.EXPECTED;
     GenInputsAbstract.oom_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -193,7 +196,8 @@ public class TestClassificationTest {
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
-    GenInputsAbstract.npe_on_null_input = BehaviorType.INVALID;
+    GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -206,7 +210,6 @@ public class TestClassificationTest {
 
     assertTrue("should have some regression tests", rTests.size() > 0);
     
-    int expectedExceptionCount = 0;
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
@@ -216,13 +219,26 @@ public class TestClassificationTest {
       if (eck != null) {
         assertTrue("if there is an exception check, should be checks", cks.hasChecks());
         assertTrue("should be expected exception, was" + eck.getClass().getName(), eck instanceof ExpectedExceptionCheck);
-        expectedExceptionCount++;
       }
     }
-    assertTrue("should have non-zero expected exception count", expectedExceptionCount > 0);
 
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue("should have error tests", eTests.size() > 0);
     
+    for (ExecutableSequence s : eTests) {
+      TestChecks cks = s.getChecks();
+      assertTrue("if sequence here should have checks", cks.hasChecks());
+      assertTrue("these are error checks", cks.hasErrorBehavior());
+      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+
+      int exceptionCount = 0;
+      for (Check ck : cks.get().keySet()) {
+        if (ck instanceof NoExceptionCheck) {
+          exceptionCount++;
+        }
+      }
+      assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
+
+    }
   }
 
   /**
@@ -237,7 +253,8 @@ public class TestClassificationTest {
     GenInputsAbstract.no_regression_assertions = true;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
-    GenInputsAbstract.npe_on_null_input = BehaviorType.INVALID;
+    GenInputsAbstract.npe_on_null_input = BehaviorType.EXPECTED;
+    GenInputsAbstract.npe_on_non_null_input = BehaviorType.ERROR;
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
@@ -250,7 +267,6 @@ public class TestClassificationTest {
 
     assertTrue("should have some regression tests", rTests.size() > 0);
     
-    int emptyExceptionCount = 0;
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
@@ -260,15 +276,28 @@ public class TestClassificationTest {
       if (eck != null) {
         assertTrue("if there is an exception check, should be checks", cks.hasChecks());
         assertTrue("should be expected exception, was" + eck.getClass().getName(), eck instanceof EmptyExceptionCheck);
-        emptyExceptionCount++;
       } else {
         assertFalse("if there is no exception check, should be no checks", cks.hasChecks());
       }
     }
-    assertTrue("should have non-zero expected exception count", emptyExceptionCount > 0);
 
-    assertTrue("should have no error tests", eTests.size() == 0);
+    assertTrue("should have error tests", eTests.size() > 0);
 
+    for (ExecutableSequence s : eTests) {
+      TestChecks cks = s.getChecks();
+      assertTrue("if sequence here should have checks", cks.hasChecks());
+      assertTrue("these are error checks", cks.hasErrorBehavior());
+      assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
+
+      int exceptionCount = 0;
+      for (Check ck : cks.get().keySet()) {
+        if (ck instanceof NoExceptionCheck) {
+          exceptionCount++;
+        }
+      }
+      assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
+
+    }
   }
   
   private ForwardGenerator buildGenerator(Class<?> c) {

@@ -222,9 +222,9 @@ Other generated tests, classified as invalid, are discarded.
 This section of the manual gives an
 <a href="#example_collections">example</a> of how to run Randoop, then
 describes
+<a href="#classifying_tests">test classification</a>,
 <a href="#error_revealing_tests">error-revealing tests</a> and
 <a href="#regression_tests">regression tests</a>,
-<a href="#exception_behavior">exception behavior types</a> and test classification, 
 and finally lists Randoop's <a href="#command-line-options">command-line options</a>. </p>
 
 
@@ -299,6 +299,7 @@ Randoop only invokes a method or constructor <i>M</i> if <b>all</b> of the follo
   </li>
   <li> <i>M</i> does not match the pattern given
        via <a href="#option:omitmethods"><code>--omitmethods</code></a>.
+       </li>
   <li> <i>M</i> is public, and its return type and parameter types are public.
   </li>
 </ol>
@@ -326,7 +327,7 @@ specifying classes or methods.
 </ul>
 
 <p><b><i>WARNING: If you ask Randoop to test code that modifies your file
-system (such as <a  herf="http://docs.oracle.com/javase/8/docs/api/java/io/File.html#delete--">File.delete()</a>),
+system (such as <a  href="http://docs.oracle.com/javase/8/docs/api/java/io/File.html#delete--">File.delete()</a>),
 then Randoop will generate tests that modify your file system!
 Be careful when choosing
 classes and methods to test.</i></b>
@@ -361,6 +362,8 @@ command-line argument.
 <li>A <tt>NullPointerException</tt> when <tt>null</tt> is given as an input in a test. 
 Option: <a href="#option:npe-on-null-input"><tt>--npe-on-null-input</tt></a>
 </li>
+<li>A <tt>NullPointerException</tt> when only non-<tt>null</tt> input is given in a test.
+Option: <a href="#option:npe-on-non-null-input"><tt>--npe-on-non-null-input</tt></a></li>
 <li>An <tt>OutOfMemoryError</tt>. Option:
 <a href="#option:oom-exception"><tt>--oom-exception</tt></a></li>
 </ul>
@@ -374,7 +377,8 @@ defined above, but additional ERROR behaviors are described in the
 
 <h3 id="error_revealing_tests">Error-revealing Tests</h3>
 
-<p>When Randoop includes a error-revealing test in file <tt>ErrorTest.java</tt>,
+<p>
+When Randoop includes a error-revealing test in file <tt>ErrorTest.java</tt>,
 the test shows that the code
 violates its specification or contract &mdash; some property that it is supposed to preserve.  For example, the test shown in
 the <a href="#Introduction">Introduction</a>
@@ -385,7 +389,7 @@ return <tt>true</tt>.
 The test reveals an error in the <tt>TreeSet</tt> constructor, which does
 not properly check its arguments (and possibly a second error in the
 <tt>TreeSet.equals</tt> method, which should always check if its argument
-is the same object as itself and return <tt>true</tt> in such a case). </p>
+is the same object as itself and return <tt>true</tt> in such a case). 
 </p>
 
 <p>
@@ -411,8 +415,8 @@ You may wish to minimize the test case to ease debugging.
 <li><i>checkRep methods:</i> Any nullary method annotated with <tt>@CheckRep</tt> does not throw an exception; if its return type is <tt>boolean</tt>, it returns <tt>true</tt>. </li>
 <li><i>Methods that do not throw exceptions:</i> Invocations of Object
   methods (<tt>clone</tt>, <tt>equals</tt>, <tt>hashCode</tt>,
-  <tt>toString</tt>) do not throw exceptions
-<li>Any exception thrown when the exception is classified as an error.
+  <tt>toString</tt>) do not throw exceptions</li>
+<li>Any exception thrown when the exception is classified as an error.</li>
 </ul>
 
 <p>
@@ -423,8 +427,11 @@ that are important to you.
 
 <p>
 A thrown exception is <em>not</em> considered a contract violation unless it is
-tagged as error behavior.  This is because a method may have a precondition that
-is unknown to Randoop.  For example, a binary search implementation might
+tagged as error behavior. This is because a method may have a precondition that 
+is unknown to Randoop. This is why the defaults have 
+<tt>--npe-on-non-null-input=ERROR</tt>
+and <tt>--npe-on-null-input=EXPECTED</tt>.
+In another example, a binary search implementation might
 require that its input is sorted, and so Randoop should not mark the method
 as buggy just because it throws an exception when Randoop passes it an
 ill-formed unsorted array.  Randoop has no way of knowing each method's
@@ -620,8 +627,13 @@ Randoop about your application, and that is how we recommend using Randoop.
  error-revealing test suite (value: ERROR), regression test suite 
  (value: EXPECTED), or should it be discarded (value: INVALID)?
  <p>
- Tests with other occurrences of <code>NullPointerException</code> are
- handled by the argument --unchecked-exception. [default INVALID]<ul><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
+ Alternatively see <code>--npe-on-non-null-input</code> [default EXPECTED]<ul><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
+      <li id="option:npe-on-non-null-input"><b>--npe-on-non-null-input=</b><i>enum</i>. If a test where no <code>null</code> values are given as an input throws a
+ <code>NullPointerExceptoin</code>, should the test be included in the 
+ error-revealing test suite (value: ERROR), regression test suite 
+ (value: EXPECTED), or should it be discarded (value: INVALID)?
+ <p>
+ Alternatively, see <code>--npe-on-null-input</code> [default ERROR]<ul><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
       <li id="option:oom-exception"><b>--oom-exception=</b><i>enum</i>. If a test throws an <code>OutOfMemoryError</code> exception, should it be 
  included in the error-revealing test suite (value: ERROR), regression test 
  suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default INVALID]<ul><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
@@ -783,7 +795,6 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Controlling-randomness">Controlling randomness
     <ul>
       <li id="option:randomseed"><b>--randomseed=</b><i>int</i>. The random seed to use in the generation process.
-
  Note that Randoop is deterministic:  running it twice will produce the
  same test suite.  If you want to produced multiple different test
  suites, run Randoop multiple times with a different random seed. [default 0]</li>
