@@ -9,13 +9,15 @@ public final class DummyVisitor implements ExecutionVisitor {
   public void initialize(ExecutableSequence executableSequence) {
     // do nothing.
   }
-  
-  public void visitBefore(ExecutableSequence sequence, int i) {
-    // do nothing.
+
+  @Override
+  public void visitBeforeStatement(ExecutableSequence sequence, int i) {
+    // do nothing
   }
 
-  public void visitAfter(ExecutableSequence sequence, int i) {
-    // do nothing.
+  @Override
+  public void visitAfterStatement(ExecutableSequence sequence, int i) {
+    // do nothing
   }
 
 }

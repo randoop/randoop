@@ -22,7 +22,7 @@ systemtests/jc-covinst
 systemtests/jc.classlist.txt
 systemtests/jc.covinstclasslist.txt
 systemtests/log.txt
-systemtests/resources/Naive0.java
+systemtests/resources/NaiveRegression0.java
 systemtests/resources/TestClass0.java
 systemtests/resources/arraylist.branches_covered.txt
 systemtests/resources/arraylist.dfin.txt
@@ -38,7 +38,7 @@ systemtests/resources/df1.txt.output
 systemtests/resources/df2-output.txt
 systemtests/resources/df3-output.txt
 systemtests/sources.txt
-systemtests/resources/Literals0.java
+systemtests/resources/LiteralsReg0.java
 systemtests/resources/CustomVisitorTest0.java
 systemtests/resources/LongString0.java
 systemtests/resources/JDK_Tests?.java

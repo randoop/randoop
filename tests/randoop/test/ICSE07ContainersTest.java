@@ -39,6 +39,9 @@ import junit.framework.TestCase;
  * the paper; it only checks that the achievable coverage number can be in
  * fact achieved by Randoop.
  * 
+ * IMPORTANT: this test DOES NOT work if GenInputsAbstract.repeat_heuristic is
+ * disabled. If the heuristic in {@link randoop.sequence.ForwardGenerator ForwardGenerator} 
+ * is not used, the branch count targets are not met.
  */
 public class ICSE07ContainersTest extends TestCase {
 
@@ -51,10 +54,13 @@ public class ICSE07ContainersTest extends TestCase {
     
     List<Operation> statements = 
       OperationExtractor.getOperations(classList, new DefaultReflectionPredicate(pattern,excludeNames));
+    System.out.println("Number of operations: " + statements.size());
     assertTrue("model should not be empty", !statements.isEmpty());
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
+    assertEquals("Number of seed sequences should be same as default seeds",SeedSequences.defaultSeeds().size(),componentMgr.numGeneratedSequences());
     ForwardGenerator explorer = new ForwardGenerator(statements,
-        120000 /* two minutes */, Integer.MAX_VALUE, componentMgr, stopper, null, null);
+        120000 /* two minutes */, Integer.MAX_VALUE, Integer.MAX_VALUE, componentMgr, stopper, null);
+    explorer.addTestCheckGenerator(new DummyCheckGenerator());
     explorer.setObjectCache(new ObjectCache(new EverythingIsDifferentMatcher()));
     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
     GenInputsAbstract.repeat_heuristic = true;

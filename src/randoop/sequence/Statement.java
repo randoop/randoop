@@ -109,8 +109,8 @@ public final class Statement implements Serializable {
 
   /**
    * Adds code for the statement to the given {@code StringBuilder}.
-   * @see Sequence#printStatement(StringBuilder, int)
-   *
+   * @see Sequence#appendCode(StringBuilder, int)
+   * 
    * @param variable  the {@link Variable} to be used if an initialization.
    * @param inputs  the input list for the operation of the statement.
    * @param b  the {@code StringBuilder} to which code text is appended.
@@ -142,6 +142,10 @@ public final class Statement implements Serializable {
     return b.toString();
   }
 
+  public String toString() {
+    return "Statement(" + operation.toParseableString() + ")";
+  }
+  
   /**
    * toModifiableStatement converts the statement to the mutable form.
    *

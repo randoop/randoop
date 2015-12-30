@@ -18,7 +18,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
    */
   @Override
   public boolean isVisible(Class<?> c) {
-    return isVisible(c.getModifiers());
+    return isVisible(c.getModifiers() & Modifier.classModifiers());
   }
 
   /**
@@ -27,7 +27,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
    */
   @Override
   public boolean isVisible(Method m) {
-    return isVisible(m.getModifiers());
+    return isVisible(m.getModifiers() & Modifier.methodModifiers());
   }
 
   /**
@@ -36,7 +36,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
    */
   @Override
   public boolean isVisible(Constructor<?> c) {
-    return isVisible(c.getModifiers());
+    return isVisible(c.getModifiers() & Modifier.constructorModifiers());
   }
 
   /**
@@ -45,7 +45,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
    */
   @Override
   public boolean isVisible(Field f) {
-    return isVisible(f.getModifiers());
+    return isVisible(f.getModifiers() & Modifier.fieldModifiers());
   }
   
   /*

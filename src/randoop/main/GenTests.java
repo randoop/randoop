@@ -3,13 +3,12 @@ package randoop.main;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -18,39 +17,39 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import plume.EntryReader;
+import plume.Option;
+import plume.OptionGroup;
+import plume.Options;
+import plume.Options.ArgException;
+import plume.SimpleLog;
+import plume.Unpublicized;
+
 import randoop.BugInRandoopException;
-import randoop.Check;
 import randoop.CheckRep;
 import randoop.CheckRepContract;
 import randoop.ComponentManager;
-import randoop.ContractCheckingVisitor;
-import randoop.DefaultTestFilter;
+import randoop.DummyVisitor;
 import randoop.EqualsHashcode;
 import randoop.EqualsReflexive;
 import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
 import randoop.ExecutionVisitor;
-import randoop.ExpectedExceptionCheck;
-import randoop.Globals;
-import randoop.ITestFilter;
 import randoop.JunitFileWriter;
 import randoop.LiteralFileReader;
+import randoop.MultiVisitor;
 import randoop.ObjectContract;
 import randoop.RandoopListenerManager;
-import randoop.RegressionCaptureVisitor;
-import randoop.ReplayVisitor;
 import randoop.SeedSequences;
 import randoop.experiments.CodeCoverageTracker;
 import randoop.experiments.CovWitnessHelperVisitor;
 import randoop.operation.ConstructorCall;
-import randoop.operation.MethodCall;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
@@ -60,36 +59,34 @@ import randoop.reflection.NotPrivateVisibilityPredicate;
 import randoop.reflection.OperationExtractor;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
-import randoop.runtime.ClosingStream;
-import randoop.runtime.CreatedJUnitFile;
-import randoop.runtime.IMessage;
-import randoop.runtime.MessageSender;
-import randoop.runtime.PluginBridge;
 import randoop.sequence.AbstractGenerator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ForwardGenerator;
-import randoop.sequence.GreedySequenceSimplifier;
 import randoop.sequence.Sequence;
-import randoop.sequence.Variable;
+import randoop.test.ContractCheckingVisitor;
+import randoop.test.ErrorTestPredicate;
+import randoop.test.ExcludeTestPredicate;
+import randoop.test.ExpectedExceptionCheckGen;
+import randoop.test.ExtendGenerator;
+import randoop.test.IncludeTestPredicate;
+import randoop.test.RegressionCaptureVisitor;
+import randoop.test.RegressionTestPredicate;
+import randoop.test.TestCheckGenerator;
+import randoop.test.ValidityCheckingVisitor;
+import randoop.test.predicate.AlwaysFalseExceptionPredicate;
+import randoop.test.predicate.ExceptionBehaviorPredicate;
+import randoop.test.predicate.ExceptionPredicate;
 import randoop.util.ClassFileConstants;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.Reflection;
 import randoop.util.ReflectionExecutor;
-import randoop.util.RunCmd;
-import randoop.util.TimeoutExceededException;
+import randoop.util.predicate.AlwaysFalse;
+import randoop.util.predicate.Predicate;
 
 import cov.Branch;
 import cov.Coverage;
-import plume.EntryReader;
-import plume.Option;
-import plume.OptionGroup;
-import plume.Options;
-import plume.Options.ArgException;
-import plume.SimpleLog;
-import plume.Unpublicized;
 
 public class GenTests extends GenInputsAbstract {
 
@@ -148,10 +145,6 @@ public class GenTests extends GenInputsAbstract {
   @Override
   public boolean handle(String[] args) throws RandoopTextuiException {
 
-//     RandoopSecurityManager randoopSecurityManager = new RandoopSecurityManager(
-//       RandoopSecurityManager.Status.OFF);
-//     System.setSecurityManager(randoopSecurityManager);
-
     try {
       String[] nonargs = options.parse(args);
       if (nonargs.length > 0)
@@ -190,14 +183,15 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
+    List<Class<?>> allClasses = findClassesFromArgs(options);
+    
+    // TODO include package in visibility, maybe not do "not private"
     VisibilityPredicate visibility;
     if (GenInputsAbstract.public_only) {
       visibility = new PublicVisibilityPredicate();
     } else {
       visibility = new NotPrivateVisibilityPredicate();
     }
-
-    List<Class<?>> allClasses = findClassesFromArgs(options);
 
     // Remove private (non-.isVisible) classes and abstract classes
     // and interfaces.
@@ -258,8 +252,12 @@ public class GenTests extends GenInputsAbstract {
         omitFields.add(cls.getName() + "." + cov.Constants.TRUE_BRANCHES);
       }
     }
-
-    DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields,visibility);
+    
+    CodeCoverageTracker covTracker = new CodeCoverageTracker(covClasses);
+    RandoopListenerManager listenerMgr = new RandoopListenerManager();
+    listenerMgr.addListener(covTracker);
+    
+    DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, reflectionPredicate);
 
     // Always add Object constructor (it's often useful).
@@ -306,9 +304,9 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> components = new LinkedHashSet<Sequence>();
     if (!componentfile_ser.isEmpty()) {
       for (String onefile : componentfile_ser) {
-        try {
-          FileInputStream fileos = new FileInputStream(onefile);
-          ObjectInputStream objectos = new ObjectInputStream(new GZIPInputStream(fileos));
+        try (ObjectInputStream objectos = 
+            new ObjectInputStream(
+                new GZIPInputStream(new FileInputStream(onefile)))) {
           Set<Sequence> seqset = (Set<Sequence>)objectos.readObject();
           if (!GenInputsAbstract.noprogressdisplay) {
             System.out.println("Adding " + seqset.size() + " component sequences from file " + onefile);
@@ -344,72 +342,34 @@ public class GenTests extends GenInputsAbstract {
     }
 
     addClassLiterals(componentMgr, allClasses);
-
-    RandoopListenerManager listenerMgr = new RandoopListenerManager();
-
-    AbstractGenerator explorer = null;
-
-    LinkedList<ITestFilter> outputTestFilters = new LinkedList<ITestFilter>();
-    outputTestFilters.add(new DefaultTestFilter());
-
+    
     /////////////////////////////////////////
     // Create the generator for this session.
-    explorer = new ForwardGenerator(model, timelimit * 1000, inputlimit, componentMgr, null, listenerMgr, outputTestFilters);
+    AbstractGenerator explorer;
+    explorer = new ForwardGenerator(
+        model, 
+        timelimit * 1000, 
+        inputlimit, 
+        outputlimit, 
+        componentMgr, 
+        null, 
+        listenerMgr);
     /////////////////////////////////////////
 
-    if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.printf ("Explorer = %s\n", explorer);
-    }
-
-    // Set up plugin bridge.
-    PluginBridge pluginBridge = null;
-    if (comm_port > 0) {
-      MessageSender msgSender = null;
-      try {
-        msgSender = new MessageSender(comm_port);
-      } catch (IOException e) {
-        System.out.println("Could not connect to port " + comm_port + " on local host");
-        System.exit(1);
-      }
-      pluginBridge = new PluginBridge(explorer, msgSender);
-      explorer.listenerMgr.addListener(pluginBridge);
-      explorer.outputTestFilters.add(pluginBridge);
-    }
-
-
-    // Determine what visitors to install.
-    // NOTE that order matters! Regression capture visitor
-    // should come after contract-violating visitor.
-
-    CodeCoverageTracker covTracker = new CodeCoverageTracker(covClasses);
-    listenerMgr.addListener(covTracker);
-
-    if (GenInputsAbstract.output_cov_witnesses) {
-      ExecutionVisitor covVisitor = new CovWitnessHelperVisitor(covTracker);
-      explorer.executionVisitor.visitors.add(covVisitor);
-    }
-
+    ////// setup for check generation 
+    TestCheckGenerator testGen = createTestCheckGenerator(visibility, classes);
+    
+    // Define test predicate to decide which test sequences will be output
+    Predicate<ExecutableSequence> isOutputTest = createTestOutputPredicate(objectConstructor);
+    
+    // list of visitors for collecting information from test sequences
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
 
-    if (check_object_contracts) {
-      List<ObjectContract> contracts = new ArrayList<ObjectContract>();
-
-      // Add any @CheckRep-annotated methods and create visitors for them.
-      List<ObjectContract> checkRepContracts = getContractsFromAnnotations(classes.toArray(new Class<?>[0]));
-      contracts.addAll(checkRepContracts);
-
-      // Now add all of Randoop's default contracts.
-      // If you add to this list, also update the Javadoc for check_object_contracts.
-      contracts.add(new EqualsReflexive());
-      contracts.add(new EqualsSymmetric());
-      contracts.add(new EqualsHashcode());
-      contracts.add(new EqualsToNullRetFalse());
-      ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts,
-          GenInputsAbstract.offline ? false : true);
-      visitors.add(contractVisitor);
+    // setup coverage visitor if user says so
+    if (GenInputsAbstract.output_cov_witnesses) {
+      ExecutionVisitor covVisitor = new CovWitnessHelperVisitor(covTracker);
+      visitors.add(covVisitor);
     }
-
-    visitors.add(new RegressionCaptureVisitor());
 
     // Install any user-specified visitors.
     if (!GenInputsAbstract.visitor.isEmpty()) {
@@ -429,264 +389,253 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
+    
+    ExecutionVisitor visitor;
+    if (visitors.isEmpty()) {
+      visitor = new DummyVisitor();
+    } else {
+      visitor = new MultiVisitor(visitors);
+    }
+    
+    explorer.addTestPredicate(isOutputTest);
+    explorer.addTestCheckGenerator(testGen);
+    explorer.addExecutionVisitor(visitor);
 
-    explorer.executionVisitor.visitors.addAll(visitors);
-
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.printf ("Explorer = %s\n", explorer);
+    }
+    
+    // Generate tests
     explorer.explore();
 
-    // dump_seqs ("after explore", explorer.outSeqs);
+   // once tests generated, 
 
-    if (output_branches != null) {
-      Comparator<Branch> branchComparator = new Comparator<Branch>() {
-        public int compare(Branch o1, Branch o2) {
-          return o1.toString().compareTo(o2.toString());
-        }
-      };
-      Set<Branch> branches = new TreeSet<Branch>(branchComparator);
-      branches.addAll(covTracker.branchesCovered);
-      // Create a file with branches, sorted by their string representation.
-      BufferedWriter writer = null;
-      try {
-        writer = new BufferedWriter(new FileWriter(output_branches));
-        // Touch all covered branches (they may have been reset during generation).
-        for (Branch b : branches) {
-          writer.append(b.toString());
-          writer.newLine();
-        }
-        writer.close();
-      } catch (IOException e) {
-        throw new Error(e);
-      }
+    if (GenInputsAbstract.output_branches != null) {
+      outputCoverageBranches(covTracker);
     }
 
-    if (output_covmap != null) {
-      try {
-        FileOutputStream fileos = new FileOutputStream(output_covmap);
-        ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-        objectos.writeObject(covTracker.branchesToCoveringSeqs);
-        objectos.close();
-        fileos.close();
-      } catch (Exception e) {
-        throw new Error(e);
-      }
+    if (GenInputsAbstract.output_covmap != null) {
+      outputObject(covTracker.branchesToCoveringSeqs, output_covmap);
     }
 
-
-    if (output_components != null) {
+    if (GenInputsAbstract.output_components != null) {
 
       assert explorer instanceof ForwardGenerator;
       ForwardGenerator gen = (ForwardGenerator)explorer;
 
       // Output component sequences.
       System.out.print("Serializing component sequences...");
-      try {
-        FileOutputStream fileos = new FileOutputStream(output_components);
-        ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-        Set<Sequence> componentset = gen.componentManager.getAllGeneratedSequences();
-        System.out.println(" (" + componentset.size() + " components) ");
-        objectos.writeObject(componentset);
-        objectos.close();
-        fileos.close();
-      } catch (Exception e) {
-        throw new Error(e);
-      }
+      Set<Sequence> componentset = gen.componentManager.getAllGeneratedSequences();
+      System.out.println(" (" + componentset.size() + " components) ");
+      outputObject(componentset, GenInputsAbstract.output_components);
     }
 
-    if (dont_output_tests)
+    if (GenInputsAbstract.dont_output_tests)
       return true;
-
-    // Create JUnit files containing faults.
-    if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.println();
-      System.out.print("Creating Junit tests (" + explorer.outSeqs.size() + " tests)...");
-    }
-    List<ExecutableSequence> sequences = new ArrayList<ExecutableSequence>();
-    for (ExecutableSequence p : explorer.outSeqs) {
-      sequences.add(p);
-    }
-
-    if (output_tests_serialized != null) {
-      // Output executable sequences.
-      System.out.println("Serializing tests...");
-      try {
-
-        FileOutputStream fileos = new FileOutputStream(output_tests_serialized);
-        ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-        objectos.writeObject(sequences);
-        objectos.close();
-        fileos.close();
-
-        FileInputStream fileis = new FileInputStream(output_tests_serialized);
-        ObjectInputStream objectis = new ObjectInputStream(new GZIPInputStream(fileis));
-        List<ExecutableSequence> seqsfromfile = (List<ExecutableSequence>) objectis.readObject();
-        assert seqsfromfile.size() == sequences.size();
-        for (int i = 0 ; i < seqsfromfile.size() ; i++) {
-          assert seqsfromfile.get(i).equals(sequences.get(i)) : seqsfromfile.get(i) + "@@@" + sequences.get(i);
-          ExecutableSequence eseq = seqsfromfile.get(i);
-          ReplayVisitor visitor = new ReplayVisitor();
-          eseq.execute(visitor);
-          assert eseq.getChecksResults().equals(sequences.get(i).getChecksResults()) :
-            sequences.get(i).getChecksResults() + "\n"
-            + seqsfromfile.get(i) + "\n"
-            + eseq.getChecksResults() + "\n" + sequences.get(i);
-
+  
+    if (! GenInputsAbstract.no_error_revealing_tests) {
+      List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
+      if (errorSequences.size() > 0) {
+        if (! GenInputsAbstract.noprogressdisplay) {
+          System.out.printf("%nError-revealing test output:%n");
         }
-        fileis.close();
-      } catch (Exception e) {
-        throw new Error(e);
-      }
-    }
-
-    // Remove any sequences that throw randoop.util.TimeoutExceededException.
-    // It would be nicer for Randoop to output a test suite that detects
-    // long-running tests and generates a TimeoutExceededException, as
-    // documented in Issue 11:
-    // https://github.com/randoop/randoop/issues/11 .
-    {
-      List<ExecutableSequence> non_timeout_seqs = new ArrayList<ExecutableSequence>();
-      for (ExecutableSequence es : sequences) {
-        boolean keep = true;
-        for (int i = 0 ; i < es.sequence.size() ; i++) {
-          List<Check> exObs = es.getChecks(i, ExpectedExceptionCheck.class);
-          if (!exObs.isEmpty()) {
-            assert exObs.size() == 1 : toString();
-            ExpectedExceptionCheck eec = (ExpectedExceptionCheck) exObs.get(0);
-            // Some TimeoutExceededException exceptions seem to be slipping through. -MDE
-            // System.out.println("ExpectedExceptionCheck: " + eec.get_value());
-            if (eec.get_value().equals("randoop.util.TimeoutExceededException")) {
-              keep = false;
-              break;
-            }
-          }
-        }
-        if (keep)
-          non_timeout_seqs.add (es);
-        // This test suggests a shorter way to implement this method.
-        assert keep == !es.throwsException(TimeoutExceededException.class);
-      }
-      sequences = non_timeout_seqs;
-    }
-
-    // If specified, remove any sequences that don't include the target class
-    // System.out.printf ("test_classes regex = %s%n",
-    //                   GenInputsAbstract.test_classes);
-    if (GenInputsAbstract.test_classes != null) {
-      List<ExecutableSequence> tc_seqs = new ArrayList<ExecutableSequence>();
-      for (ExecutableSequence es : sequences) {
-        boolean keep = false;
-        for (Variable v : es.sequence.getAllVariables()) {
-          if (GenInputsAbstract.test_classes.matcher (v.getType().getName())
-              .matches()) {
-            keep = true;
-            break;
-          }
-        }
-        if (keep)
-          tc_seqs.add (es);
-      }
-      sequences = tc_seqs;
-      System.out.printf ("%n%d sequences include %s%n", sequences.size(),
-                         GenInputsAbstract.test_classes);
-    }
-
-    // If specified remove any sequences that are used as inputs in other
-    // tests.  These sequences are redundant.
-    //
-    // While we're at it, remove the useless sequence "new Object()".
-    Sequence newObj = new Sequence().extend(objectConstructor);
-    if (GenInputsAbstract.remove_subsequences) {
-      List<ExecutableSequence> unique_seqs
-        = new ArrayList<ExecutableSequence>();
-      Set<Sequence> subsumed_seqs = explorer.subsumed_sequences();
-      for (ExecutableSequence es : sequences) {
-        if (!subsumed_seqs.contains(es.sequence) && !es.sequence.equals(newObj)) {
-          unique_seqs.add(es);
+        outputTests(errorSequences, GenInputsAbstract.error_test_filename);
+      } else {
+        if (! GenInputsAbstract.noprogressdisplay) {
+          System.out.printf("%nNo error-revealing tests to output%n");
         }
       }
-      if (!GenInputsAbstract.noprogressdisplay) {
-        System.out.printf("%d subsumed tests removed%n", sequences.size() - unique_seqs.size());
-      }
-      sequences = unique_seqs;
     }
-
-    // Generate checks from the exact sequences to be run in the
-    // tests.  These checks may differ from the original checks
-    // because of changes to the global state.
-    File tmpfile = null;
-    if (GenInputsAbstract.compare_checks) {
-      try {
-        tmpfile = File.createTempFile ("seqs", "gz");
-      } catch (Exception e) {
-        throw new Error ("can't create temp file", e);
-      }
-      write_junit_tests ("./before_clean", sequences, null);
-
-      write_sequences (sequences, tmpfile.getPath());
-      generate_clean_checks (tmpfile.getPath());
-    }
-
-    // Run the tests a second time, looking for any different checks
-    // This removes any checks whose values are not deterministic
-    // (such as values dependent on the current date/time)
-    if (GenInputsAbstract.compare_checks) {
-      write_junit_tests ("./before_cmp", sequences, null);
-
-      remove_diff_checks (tmpfile.getPath());
-      sequences = read_sequences (tmpfile.getPath());
-    }
-
-    // Write out junit tests
-    if (GenInputsAbstract.outputlimit < sequences.size()) {
-      List<ExecutableSequence> seqs = new ArrayList<ExecutableSequence>();
-      for (int ii = 0; ii < GenInputsAbstract.outputlimit; ii++)
-        seqs.add (sequences.get (ii));
-      sequences = seqs;
-    }
-
-    if (GenInputsAbstract.simplify_failed_tests) {
-        List<ExecutableSequence> failedSequences = new LinkedList<ExecutableSequence>();
-        for (ExecutableSequence sequence : sequences) {
-                if (sequence.hasFailure() && !sequence.hasNonExecutedStatements()) {
-                        failedSequences.add(sequence);
-                }
+    
+    if (! GenInputsAbstract.no_regression_tests) {
+      List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
+      if (regressionSequences.size() > 0) {
+        if (! GenInputsAbstract.noprogressdisplay) {
+          System.out.printf("%nRegression test output:%n");
         }
-        //simplify each failed statement, and replace the original sequences with the
-        //simplified one
-        System.out.println("Start to simplify: " + failedSequences.size() + " sequences.");
-        for (ExecutableSequence failedSequence : failedSequences) {
-            GreedySequenceSimplifier simplifier = new GreedySequenceSimplifier(failedSequence.sequence, explorer.executionVisitor);
-            ExecutableSequence simplified_sequence = simplifier.simplfy_sequence();
-            System.out.println("Simplified a failed sequence, original length: " + failedSequence.sequence.size()
-                        + ", length after simplification: " + simplified_sequence.sequence.size());
-            int index = sequences.indexOf(failedSequence);
-            assert index != -1 : "The index should not be -1";
-            //replace the failed sequence with the simplified one
-            sequences.remove(index);
-            sequences.add(index, simplified_sequence);
+        outputTests(regressionSequences, GenInputsAbstract.regression_test_filename);
+      } else {
+        if (! GenInputsAbstract.noprogressdisplay) {
+          System.out.printf("No regression tests to output%n");
         }
-    }
-
-    List<File> genfiles = write_junit_tests (junit_output_dir, sequences,
-        pluginBridge == null ? null : pluginBridge.additionalJunitClasses);
-
-    if (pluginBridge != null) {
-      for (File f : genfiles) {
-        // TODO: This is unsafe. I'm just assuming that the list file written is the driver file
-        boolean isDriver = genfiles.lastIndexOf(f) == genfiles.size() - 1;
-        pluginBridge.msgSender.send(new CreatedJUnitFile(f, isDriver));
       }
     }
-
-
-
-    if (pluginBridge != null) {
-      IMessage msg = new ClosingStream();
-      pluginBridge.msgSender.send(msg);
-    }
-
+    
     return true;
   }
 
+  /**
+   * Builds the test predicate that determines whether a particular sequence will
+   * be included in the output based on command-line arguments.
+   * 
+   * @param objectConstructor  the constructor for the Object class
+   * @return the predicate 
+   */
+  public Predicate<ExecutableSequence> createTestOutputPredicate(ConstructorCall objectConstructor) {
+    Predicate<ExecutableSequence> isOutputTest;
+    if (GenInputsAbstract.dont_output_tests) {
+      isOutputTest = new AlwaysFalse<>();      
+    } else {
+      Predicate<ExecutableSequence> baseTest;
+      // base case: exclude sequences with just "new Object()", keep everything else
+      // to exclude something else, add sequence to excludeSet
+      Sequence newObj = new Sequence().extend(objectConstructor);
+      Set<Sequence> excludeSet = new LinkedHashSet<>();
+      excludeSet.add(newObj);
+      baseTest = new ExcludeTestPredicate(excludeSet);
+      if (GenInputsAbstract.include_only_classes != null) { //keep only tests with test classes
+        baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_only_classes));
+      }
+
+      // Use arguments to determine which kinds of tests to output
+      // Default is neither (e.g., no tests output)
+      Predicate<ExecutableSequence> checkTest = new AlwaysFalse<>();
+
+      // But, generate error-revealing tests if user says so
+      if (! GenInputsAbstract.no_error_revealing_tests) {
+        checkTest = new ErrorTestPredicate();
+      }
+
+      // And, generate regression tests, unless user says not to
+      if (! GenInputsAbstract.no_regression_tests) {
+        checkTest = checkTest.or(new RegressionTestPredicate());
+      }
+      isOutputTest = baseTest.and(checkTest);
+    }
+    return isOutputTest;
+  }
+
+  /**
+   * Outputs JUnit tests for the sequence list. And, if the user indicates by
+   * command-line argument {@link GenInputsAbstract#output_tests_serialized} 
+   * also writes serialized tests.
+   * 
+   * @param sequences  the sequences to output
+   * @param junitPrefix  the filename prefix for test output
+   */
+  private void outputTests(List<ExecutableSequence> sequences, String junitPrefix) {
+    if (GenInputsAbstract.output_tests_serialized != null) {
+      System.out.println("Serializing tests...");
+      //using prefix as a suffix here because of path info in output_tests_serialized
+      outputObject(sequences, output_tests_serialized + junitPrefix);
+    }
+
+    writeJUnitTests (junit_output_dir, sequences, null, junitPrefix);
+  }
+  
+  /**
+   * Manages output for serialized objects. 
+   * 
+   * @param obj  the object to serialize
+   * @param filename  the file name for serialization
+   */
+  private void outputObject(Object obj, String filename) {
+    try (ObjectOutputStream os = new ObjectOutputStream(
+        new GZIPOutputStream(new FileOutputStream(filename)))) {
+      os.writeObject(obj);
+    } catch (FileNotFoundException e) {
+      throw new Error("Unable to serialize object: " + e);
+    } catch (IOException e) {
+      throw new Error(e);
+    } 
+  }
+  
+  /**
+   * Outputs coverage branches to the file {@link GenInputsAbstract#output_branches}.
+   * Branches are sorted by their string representation.
+   * 
+   * @param covTracker  the coverage tracker with branches
+   * @throws Error  if an {@link IOException} is thrown during output
+   */
+  private void outputCoverageBranches(CodeCoverageTracker covTracker) throws Error {
+    Comparator<Branch> branchComparator = new Comparator<Branch>() {
+      public int compare(Branch o1, Branch o2) {
+        return o1.toString().compareTo(o2.toString());
+      }
+    };
+    Set<Branch> branches = new TreeSet<Branch>(branchComparator);
+    branches.addAll(covTracker.branchesCovered);
+    // Create a file with branches, sorted by their string representation.
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(output_branches))){
+      // Touch all covered branches (they may have been reset during generation).
+      for (Branch b : branches) {
+        writer.append(b.toString());
+        writer.newLine();
+      }
+    } catch (IOException e) {
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * Returns the list of contracts to be used in contract checking.
+   * 
+   * @param classes  the list of annotated classes for retrieving contracts
+   * @return the list of {@code ObjectContract} objects for contract checking
+   */
+  private List<ObjectContract> getContracts(List<Class<?>> classes) {
+    List<ObjectContract> contracts = new ArrayList<ObjectContract>();
+
+    // Add any @CheckRep-annotated methods
+    List<ObjectContract> checkRepContracts = getContractsFromAnnotations(classes);
+    contracts.addAll(checkRepContracts);
+
+    // Now add all of Randoop's default contracts.
+    // Note: if you add to this list, also update the Javadoc for check_object_contracts.
+    contracts.add(new EqualsReflexive());
+    contracts.add(new EqualsSymmetric());
+    contracts.add(new EqualsHashcode());
+    contracts.add(new EqualsToNullRetFalse());
+    return contracts;
+  }
+
+  /**
+   * Creates the test check generator for this run based on the command-line
+   * arguments. 
+   * The goal of the generator is to produce all appropriate checks for each
+   * sequence it is applied to. Validity and contract checks are always needed
+   * to determine which sequences have invalid or error behaviors, even if only
+   * regression tests are desired. So, this generator will always be built.
+   * If in addition regression tests are to be generated, then the regression 
+   * checks generator is added.
+   * 
+   * @param visibility  the visibility predicate
+   * @param classes  the classes for obtaining contract checks
+   * @return the {@code TestCheckGenerator} that reflects command line arguments.
+   */
+  public TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, List<Class<?>> classes) {
+    
+    // start with checking for invalid exceptions
+    ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
+    TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid);
+    
+    // extend with contract checker 
+    List<ObjectContract> contracts = getContracts(classes);
+    ExceptionPredicate isError = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
+    ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts,isError);
+    testGen = new ExtendGenerator(testGen, contractVisitor);
+    
+    // and, generate regression tests, unless user says not to
+    if (! GenInputsAbstract.no_regression_tests) {
+      ExceptionPredicate isExpected = new AlwaysFalseExceptionPredicate();
+      boolean includeAssertions = true;
+      if (GenInputsAbstract.no_regression_assertions) {
+        includeAssertions = false;
+      } else {
+        isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
+      }
+      ExpectedExceptionCheckGen expectation; 
+      expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+     
+      RegressionCaptureVisitor regressionVisitor; 
+      regressionVisitor = new RegressionCaptureVisitor(expectation, includeAssertions);
+
+      testGen = new ExtendGenerator(testGen, regressionVisitor);
+    }
+    return testGen;
+  }
+  
+  
   /**
    * Adds literals to the component manager, by parsing any literals
    * files specified by the user.
@@ -741,25 +690,26 @@ public class GenTests extends GenInputsAbstract {
    * Writes the sequences as JUnit files to the specified directory.
    *
    * @param output_dir string name of output directory.
-   * @param seq a list of sequences to write.
+   * @param seqList a list of sequences to write.
    * @param additionalJUnitClasses other classes to write (may be null).
    * @return list of files written.
    **/
-  public static List<File> write_junit_tests (String output_dir,
-                                        List<ExecutableSequence> seq,
-                                        List<String> additionalJUnitClasses) {
+  public static List<File> writeJUnitTests (String output_dir,
+                                        List<ExecutableSequence> seqList,
+                                        List<String> additionalJUnitClasses,
+                                        String junitClassname) {
 
     if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.printf("Writing %d junit tests%n", seq.size());
+      System.out.printf("Writing %d junit tests%n", seqList.size());
     }
 
     List<File> files = new ArrayList<File>();
 
-    if (seq.size() > 0) {
+    if (seqList.size() > 0) {
       List<List<ExecutableSequence>> seqPartition =
-          CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (seq), testsperfile);
+          CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<ExecutableSequence> (seqList), testsperfile);
 
-      JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name,junit_classname);
+      JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
 
       files.addAll(jfw.writeJUnitTestFiles(seqPartition));
 
@@ -873,121 +823,7 @@ public class GenTests extends GenInputsAbstract {
     }
     System.out.printf ("Finished saving sequences%n");
   }
-
-  /**
-   * Run Randoop again and generate checks for the sequence.
-   * This ensures that the checks match the state that will be
-   * in the final tests (because the global state used to create the
-   * checks will match that of the final tests)
-   * @param outfile filename for output file.
-   */
-  public void generate_clean_checks (String outfile) {
-
-    List<String> cmd = new ArrayList<String>();
-    cmd.add ("java");
-    cmd.add ("-ea");
-
-    // Add a javaagent option if specified
-    if (GenInputsAbstract.agent != null) {
-      String [] args = GenInputsAbstract.agent.split(" ");
-      for (String s : args) {
-        cmd.add (s);
-      }
-    }
-
-    // Define any properties
-    for (String prop : GenInputsAbstract.system_props) {
-      cmd.add (String.format ("-D%s", prop));
-    }
-
-    //Add Java classpath
-    cmd.add("-cp");
-    cmd.add(Globals.getClassPath());
-
-    cmd.add ("randoop.main.Main");
-    cmd.add ("cleanobs");
-
-    // Add applicable arguments from this call
-    if (GenInputsAbstract.observers != null) {
-      cmd.add ("--observers=" + GenInputsAbstract.observers.toString());
-    }
-    cmd.add (String.format("--usethreads=%b", ReflectionExecutor.usethreads));
-    if (GenInputsAbstract.init_routine != null)
-      cmd.add ("--init_routine=" + GenInputsAbstract.init_routine);
-    if (GenInputsAbstract.print_diff_obs)
-      cmd.add ("--print_diff_obs");
-    cmd.add (String.format("--capture_output=%b",
-                           GenInputsAbstract.capture_output));
-
-    cmd.add (outfile);      List<ObjectContract> contracts = new ArrayList<ObjectContract>();
-
-    cmd.add (outfile);
-    String[] cmd_array = new String[cmd.size()];
-    System.out.printf ("Executing command %s%n", cmd);
-    RunCmd.run_cmd (cmd.toArray (cmd_array));
-    System.out.printf ("Completed command%n");
-  }
-
-  /**
-   * Runs Randoop again and generates new checks for the list of
-   * sequences stored in seq_file.  Any checks that do not match
-   * are presumed to be non-deteministic and are removed.  The resulting
-   * sequence is written back into seq_file.
-   *
-   * This is run in a new JVM so that the initial global state for the
-   * second run matches the initial global state for the first run.
-   * @param seq_file a file of serialized {@link ExecutableSequence} objects.
-   */
-  public void remove_diff_checks (String seq_file) {
-
-    List<String> cmd = new ArrayList<String>();
-    cmd.add ("java");
-    cmd.add ("-ea");
-
-    // Add a javaagent option if specified
-    if (GenInputsAbstract.agent != null) {
-      String [] args = GenInputsAbstract.agent.split(" ");
-      for (String s : args) {
-        cmd.add (s);
-      }
-    }
-
-    // Define any properties
-    for (String prop : GenInputsAbstract.system_props) {
-      cmd.add (String.format ("-D%s", prop));
-    }
-
-    //Add Java classpath
-    cmd.add("-cp");
-    cmd.add(Globals.getClassPath());
-
-    // Add memory size
-    cmd.add (String.format ("-Xmx%dM", GenInputsAbstract.mem_megabytes));
-
-    cmd.add ("randoop.main.Main");
-    cmd.add ("rm-diff-obs");
-
-    // Add applicable arguments from this call
-    if (GenInputsAbstract.observers != null) {
-      cmd.add ("--observers=" + GenInputsAbstract.observers.toString());
-    }
-    cmd.add (String.format("--usethreads=%b", ReflectionExecutor.usethreads));
-    if (GenInputsAbstract.init_routine != null)
-      cmd.add ("--init_routine=" + GenInputsAbstract.init_routine);
-    if (GenInputsAbstract.print_diff_obs)
-      cmd.add ("--print_diff_obs");
-    cmd.add (String.format("--capture_output=%b",
-                           GenInputsAbstract.capture_output));
-
-    cmd.add (seq_file);
-    cmd.add (seq_file);
-    String[] cmd_array = new String[cmd.size()];
-    progress.log ("Removing non-deterministic checks: executing "
-                  + " command %s%n", cmd);
-    RunCmd.run_cmd (cmd.toArray (cmd_array));
-    progress.log ("Completed removal of non-deterministic checks");
-  }
-
+  
   /** Print out usage error and stack trace and then exit **/
   static void usage (Throwable t, String format, Object... args) {
 
@@ -1004,7 +840,7 @@ public class GenTests extends GenInputsAbstract {
     usage (null, format, args);
   }
 
-  public static List<ObjectContract> getContractsFromAnnotations(Class<?>... classes) {
+  public static List<ObjectContract> getContractsFromAnnotations(List<Class<?>> classes) {
 
     List<ObjectContract> contractsFound = new ArrayList<ObjectContract>();
 

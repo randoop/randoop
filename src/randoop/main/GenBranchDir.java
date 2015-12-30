@@ -34,6 +34,7 @@ import randoop.sequence.SequenceCollection;
 import randoop.sequence.SequenceParseException;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.test.DummyCheckGenerator;
 import randoop.types.TypeNames;
 import randoop.util.Files;
 import randoop.util.RecordListReader;
@@ -428,7 +429,7 @@ public class GenBranchDir {
     // Verify that sequence covers frontier branch.
     ExecutableSequence eseq = new ExecutableSequence(r.sequence);
     Coverage.clearCoverage(covClasses);
-    eseq.execute(new DummyVisitor());
+    eseq.execute(new DummyVisitor(),new DummyCheckGenerator());
     if (!Coverage.getCoveredAtoms(covClasses).contains(r.frontierBranch)) {
       nonRepro++;
       out.println("WARNING: Sequence doesn't cover frontier branch (WILL NOT add to successes or failures).");
@@ -1024,7 +1025,7 @@ public class GenBranchDir {
     ExecutableSequence eseq = new ExecutableSequence(s);
     Set<Branch> coveredBranches = new LinkedHashSet<Branch>();
     Coverage.clearCoverage(covClasses);
-    eseq.execute(new DummyVisitor());
+    eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
     for (CoverageAtom ca : Coverage.getCoveredAtoms(covClasses)) {
       assert ca instanceof Branch;
       coveredBranches.add((Branch)ca);

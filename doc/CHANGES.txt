@@ -1,25 +1,53 @@
-Version 2.1.0, released ??
+Version 2.1.0, released December 30, 2015
 
-Randoop now outputs two test suites (one for error-revealing tests and one
-for regression tests) rather than combining all tests into a single suite.
-Use command-line arguments --no-error-revealing-tests and
---no-regression-tests to disable generation of one or the other of the
-suites; old command-line argument --check-object-contracts has been
-removed.  Use --error-test-filename and --regression-test-filename to set
-the file names; old command-line argument --junit-classname has been
+Randoop now splits generated tests into three categories: error-revealing, 
+regression, and invalid. Error-revealing and regression are now output as 
+separate test suites rather than combining all tests into a single suite.
+(Invalid tests are discarded.) Also, new command-line options allow the 
+classification of exceptions to control how tests are categorized.  
+
+Both error-revealing and regression tests are output by default. Each category
+is output only if a test of that category is generated. Use the command-line 
+arguments --no-error-revealing-tests and --no-regression-tests to disable 
+generation of one or the other of the suites. Use --error-test-filename and 
+--regression-test-filename to set the file names. These command-line 
+arguments replace the arguments --check-object-contracts, 
+--check-regression-behavior and --junit-classname that have been removed.
+
+Tests where exceptions are thrown are classified by how exceptions are 
+assigned types of behavior. A test with with an exception that is INVALID 
+behavior is invalid, one with an exception that is ERROR behavior (and none that
+are INVALID) is an error-revealing test, and one with no INVALID or ERROR behaviors
+and an exception that is an EXPECTED behavior is a regression test. 
+Customize the classification of exceptions by setting the behavior type for 
+exceptions using the command-line arguments --checked-exception, 
+--unchecked-exception, --npe-on-null-input, --npe-on-non-null-input,
+and --oom-exception.  
+(Issues #20, #69 and #72)
+
+Additional changes:
+
+You can control whether assertions appear in regression tests with the new
+command-line argument --no-regression-assertions. 
+
+The command line --test-classes has been changed to --include-only-classes to
+distance meaning from --testclass argument. (Addresses #66)
+
+The command-line arguments --simplify-failed-tests, --remove-subsequences, 
+--compare-checks, --clean-checks, --print-diff-obs and --output-nonexec have 
+been removed. The command option exec has been removed.  
+
+Support for the Eclipse plugin has been removed. The option --comp-port has been
 removed.
 
-New command-line argument --no-npe-contract disables the "No null pointer
-exceptions without null" heuristic contract.
+The interface for ExecutionVisitor has been changed to visitAfterStatement and
+visitBeforeStatement to clarify that the methods are invoked relative to the
+execution of each statement. Note that an ExecutionVisitor may no longer modify
+the Checks for a Sequence.
 
-You can control which assertions appear in regression tests with new
-command-line arguments --no-regression-assertions and
---regression-assertions-about-exceptions; old command-line argument
---check-regression-behavior has been removed.
-
-Old command-line argument --forbid-null has been removed; use
---null-ratio=0 instead.
-
+This release fixes a bug in which a public method inherited from a package 
+private class was being excluded from testing. (Thanks to Alberto Goffi for 
+raising the issue and providing a concise example.) 
 
 Version 2.0.1, released November 30, 2015
 

@@ -5,10 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import randoop.ComponentManager;
+import randoop.EqualsHashcode;
+import randoop.EqualsReflexive;
+import randoop.EqualsSymmetric;
+import randoop.EqualsToNullRetFalse;
+import randoop.ObjectContract;
 import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;
+import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.operation.Operation;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.VisibilityPredicate;
+import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
 import randoop.test.bh.BH;
@@ -17,8 +26,10 @@ import randoop.test.bh.Cell;
 import randoop.test.bh.MathVector;
 import randoop.test.bh.Node;
 import randoop.test.bh.Tree;
-import randoop.util.Reflection;
+import randoop.test.predicate.ExceptionBehaviorPredicate;
+import randoop.test.predicate.ExceptionPredicate;
 import randoop.util.ReflectionExecutor;
+import randoop.util.predicate.Predicate;
 
 import junit.framework.TestCase;
 
@@ -32,7 +43,9 @@ public class ForwardExplorerTests extends TestCase {
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     ForwardGenerator explorer = new ForwardGenerator(model,
-      Long.MAX_VALUE, 5000, mgr, null, null, null);
+      Long.MAX_VALUE, 5000, 5000, mgr, null, null);
+    explorer.addTestCheckGenerator(createChecker());
+    explorer.addTestPredicate(createOutputTest());
     explorer.explore();
     GenInputsAbstract.dontexecute = false;
     assertTrue(explorer.allSequences.size() != 0);
@@ -57,7 +70,9 @@ public class ForwardExplorerTests extends TestCase {
     List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
-      new ForwardGenerator(model, Long.MAX_VALUE, 200, mgr, null, null, null);
+      new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
+    exp.addTestCheckGenerator(createChecker());
+    exp.addTestPredicate(createOutputTest());
     exp.explore();
     ReflectionExecutor.timeout = oldTimeout;
     for (Sequence s : exp.allSequences()) {
@@ -101,8 +116,10 @@ public class ForwardExplorerTests extends TestCase {
     List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
-      new ForwardGenerator(model, Long.MAX_VALUE, 200, mgr, null, null, null);
-    GenInputsAbstract.forbid_null = false;
+      new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
+    GenInputsAbstract.null_ratio = 0.05; //used to be forbid_null = false
+    exp.addTestCheckGenerator(createChecker());
+    exp.addTestPredicate(createOutputTest());
     exp.explore();
     for (Sequence s : exp.allSequences()) {
       String str = s.toCodeString();
@@ -119,5 +136,30 @@ public class ForwardExplorerTests extends TestCase {
     assertTrue(mathvector);
     assertTrue(node);
     assertTrue(tree);
+  }
+  
+  private static TestCheckGenerator createChecker() {
+    List<ObjectContract> contracts = new ArrayList<ObjectContract>();
+
+    // Now add all of Randoop's default contracts.
+    // Note: if you add to this list, also update the Javadoc for check_object_contracts.
+    contracts.add(new EqualsReflexive());
+    contracts.add(new EqualsSymmetric());
+    contracts.add(new EqualsHashcode());
+    contracts.add(new EqualsToNullRetFalse());
+    
+    ExceptionPredicate exceptionChecker = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
+    
+    ContractCheckingVisitor contractChecker = new ContractCheckingVisitor(contracts,exceptionChecker);
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
+    ExpectedExceptionCheckGen expectation; 
+    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    RegressionCaptureVisitor regressionCapture = new RegressionCaptureVisitor(expectation, true);
+    return new ExtendGenerator(contractChecker,regressionCapture);
+  }
+  
+  private static Predicate<ExecutableSequence> createOutputTest() {
+    return new ErrorTestPredicate().or(new RegressionTestPredicate());
   }
 }

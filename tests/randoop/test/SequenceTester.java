@@ -11,18 +11,21 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import randoop.ContractCheckingVisitor;
+import randoop.DummyVisitor;
 import randoop.EqualsHashcode;
 import randoop.EqualsReflexive;
 import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
-import randoop.ExecutionVisitor;
 import randoop.Globals;
-import randoop.MultiVisitor;
 import randoop.ObjectContract;
-import randoop.RegressionCaptureVisitor;
+import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.test.predicate.AlwaysFalseExceptionPredicate;
+import randoop.test.predicate.ExceptionBehaviorPredicate;
+import randoop.test.predicate.ExceptionPredicate;
 import randoop.util.Util;
 
 import junit.framework.Assert;
@@ -78,7 +81,7 @@ public class SequenceTester {
       throw new Error(e);
     }
 
-    new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), true);
+    new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), new AlwaysFalseExceptionPredicate());
   }
 
   public static void test(InputStream stream) throws Exception {
@@ -162,22 +165,29 @@ public class SequenceTester {
 
   private void testRegression(String expected) {
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new RegressionCaptureVisitor());
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
+    ExpectedExceptionCheckGen expectation; 
+    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(expectation,true));
     checkEqualStatements(expected, ds.toString(), "testing RegressionCaptureVisitor");
   }
   
   
-  private static final List<ExecutionVisitor> visitors;
+  private static final TestCheckGenerator testGen;
   static {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
     contracts.add(new EqualsReflexive());
     contracts.add(new EqualsToNullRetFalse());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
-    
-    visitors = new ArrayList<ExecutionVisitor>();
-    visitors.add(new ContractCheckingVisitor(contracts, false));
-    visitors.add(new RegressionCaptureVisitor());
+    VisibilityPredicate visibility = new PublicVisibilityPredicate();
+    ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
+    ExpectedExceptionCheckGen expectation; 
+    expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
+    testGen = new ExtendGenerator(
+        new ContractCheckingVisitor(contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
+        new RegressionCaptureVisitor(expectation, true));
   }
 
   private void testContracts(String expected) {
@@ -186,7 +196,7 @@ public class SequenceTester {
 
   private void testExecute(String expected) {
     ExecutableSequence ds = new ExecutableSequence(sequence);
-    ds.execute(new MultiVisitor(visitors));
+    ds.execute(new DummyVisitor(), testGen);
     checkEqualStatements(expected, ds.toCodeString(), "testing execution");
   }
 

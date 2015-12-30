@@ -20,7 +20,7 @@ public interface ExecutionVisitor {
    * @param sequence  the code sequence to be visited
    * @param i  the position of statement to visit
    */
-  void visitBefore(ExecutableSequence sequence, int i);
+  void visitBeforeStatement(ExecutableSequence sequence, int i);
 
   /**
    * Invoked by ExecutableSequence.execute after the i-th statement executes.
@@ -30,7 +30,7 @@ public interface ExecutionVisitor {
    * @param sequence  the code sequence to be visited
    * @param i  the position of statement to visit
    */
-  void visitAfter(ExecutableSequence sequence, int i);
+  void visitAfterStatement(ExecutableSequence sequence, int i);
 
   /**
    * Called before execution of a sequence, to allow the visitor to
