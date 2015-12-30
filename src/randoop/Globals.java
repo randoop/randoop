@@ -9,7 +9,7 @@ import java.io.PrintStream;
  */
 public class Globals {
 
-  public static final String RANDOOP_VERSION = "2.0.1";
+  public static final String RANDOOP_VERSION = "2.1.0";
 
   public static final String lineSep = System.getProperty("line.separator");
 
