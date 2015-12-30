@@ -229,10 +229,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * --inputlimit, which affects the number of test method candidates that are 
    * generated internally. This option is a better choice for controlling the 
    * tests you get, because the number of candidates generated will always be 
-   * larger since redundant and invalid tests are filtered. 
+   * larger than the number output since redundant and invalid tests are filtered. 
    * 
-   * However, the actual number of tests in the output is still likely to be 
-   * smaller than this limit due to the current implementation.
+   * However, the current implementation means that the actual number of tests 
+   * in the output can still be substantially smaller than this limit.
    */
   @Option ("Maximum number of tests to ouput; contrast to --inputlimit")
   public static int outputlimit = 100000000;
@@ -400,7 +400,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
   
-  @Option("Run Randoop but do not create JUnit tests")
+  /** Run test generation without output. May be desirable to run with a visitor without generating the tests. */
+  @Option("Run Randoop but do not output JUnit tests")
   public static boolean dont_output_tests = false;
   
   /**
