@@ -471,7 +471,7 @@ public class GenTests extends GenInputsAbstract {
    * @param objectConstructor  the constructor for the Object class
    * @return the predicate 
    */
-  private Predicate<ExecutableSequence> createTestOutputPredicate(ConstructorCall objectConstructor) {
+  public Predicate<ExecutableSequence> createTestOutputPredicate(ConstructorCall objectConstructor) {
     Predicate<ExecutableSequence> isOutputTest;
     if (GenInputsAbstract.dont_output_tests) {
       isOutputTest = new AlwaysFalse<>();      
