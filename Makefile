@@ -80,7 +80,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist  results
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-enums test-fields
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-reflection test-generation
 
 # build pre-agent instrumentation jar
 AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
@@ -409,13 +409,10 @@ test-constants: bin
 # 	   --outputfile=systemtests/resources/arraylist.dfout.txt \
 # 	   systemtests/resources/arraylist.dfin.txt.goal
 
-# runs JUnit4 tests on enum tests
-test-enums: bin
+# runs JUnit4 tests on reflection
+test-reflection: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumConstantTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumReflectionTest
-
-# run JUnit4 tests on fields
-test-fields: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.InstanceFieldTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.StaticFieldTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.StaticFinalFieldTest
@@ -423,7 +420,14 @@ test-fields: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldGetterTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldSetterTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldReflectionTest
-
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.reflection.PackageVisibilityTest
+	
+# run JUnit4 test generation tests
+test-generation: bin
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestFilteringTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestClassificationTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.test.predicate.ExceptionPredicateTest
+	
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
 	rm -rf systemtests/df-scratch
