@@ -1,4 +1,4 @@
-Version 2.1.0, released ??
+Version 2.1.0, released December 30, 2015
 
 Randoop now splits generated tests into three categories: error-revealing, 
 regression, and invalid. Error-revealing and regression are now output as 
@@ -14,12 +14,13 @@ generation of one or the other of the suites. Use --error-test-filename and
 arguments replace the arguments --check-object-contracts, 
 --check-regression-behavior and --junit-classname that have been removed.
 
-Tests where exceptions are thrown are categorized in by how exceptions are 
-classified as types of behavior. A test with an exception that is an EXPECTED 
-behavior is a regression test, one with an exception that is ERROR behavior is 
-an error-revealing test, and one with an exception that is INVALID behavior is 
-invalid. Customize the classification of exceptions by setting the behavior type
-for exceptions using the command-line arguments --checked-exception, 
+Tests where exceptions are thrown are classified by how exceptions are 
+assigned types of behavior. A test with with an exception that is INVALID 
+behavior is invalid, one with an exception that is ERROR behavior (and none that
+are INVALID) is an error-revealing test, and one with no INVALID or ERROR behaviors
+and an exception that is an EXPECTED behavior is a regression test. 
+Customize the classification of exceptions by setting the behavior type for 
+exceptions using the command-line arguments --checked-exception, 
 --unchecked-exception, --npe-on-null-input, and --oom-exception.  
 (Issues #20, #69 and #72)
 
