@@ -183,6 +183,8 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
 
+    List<Class<?>> allClasses = findClassesFromArgs(options);
+    
     // TODO include package in visibility, maybe not do "not private"
     VisibilityPredicate visibility;
     if (GenInputsAbstract.public_only) {
@@ -190,8 +192,6 @@ public class GenTests extends GenInputsAbstract {
     } else {
       visibility = new NotPrivateVisibilityPredicate();
     }
-
-    List<Class<?>> allClasses = findClassesFromArgs(options);
 
     // Remove private (non-.isVisible) classes and abstract classes
     // and interfaces.
@@ -252,7 +252,11 @@ public class GenTests extends GenInputsAbstract {
         omitFields.add(cls.getName() + "." + cov.Constants.TRUE_BRANCHES);
       }
     }
-
+    
+    CodeCoverageTracker covTracker = new CodeCoverageTracker(covClasses);
+    RandoopListenerManager listenerMgr = new RandoopListenerManager();
+    listenerMgr.addListener(covTracker);
+    
     DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, reflectionPredicate);
 
@@ -338,11 +342,6 @@ public class GenTests extends GenInputsAbstract {
     }
 
     addClassLiterals(componentMgr, allClasses);
-
-    RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    
-    CodeCoverageTracker covTracker = new CodeCoverageTracker(covClasses);
-    listenerMgr.addListener(covTracker);
     
     /////////////////////////////////////////
     // Create the generator for this session.
@@ -577,7 +576,7 @@ public class GenTests extends GenInputsAbstract {
   private List<ObjectContract> getContracts(List<Class<?>> classes) {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
 
-    // Add any @CheckRep-annotated methods and create visitors for them.
+    // Add any @CheckRep-annotated methods
     List<ObjectContract> checkRepContracts = getContractsFromAnnotations(classes);
     contracts.addAll(checkRepContracts);
 
@@ -604,7 +603,7 @@ public class GenTests extends GenInputsAbstract {
    * @param classes  the classes for obtaining contract checks
    * @return the {@code TestCheckGenerator} that reflects command line arguments.
    */
-  private TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, List<Class<?>> classes) {
+  public TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, List<Class<?>> classes) {
     
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
