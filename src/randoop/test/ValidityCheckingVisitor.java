@@ -23,6 +23,14 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
     this.isInvalid = isInvalid;
   }
 
+  /**
+   * {@inheritDoc}
+   * Checks validity of a test sequence and creates a {@code InvalidChecks}
+   * object containing checks for any invalid exceptions encountered.
+   * 
+   * @return a possibly empty {@link InvalidChecks} object for sequence
+   * @throws Error if any exception encountered before last statement of sequence
+   */
   @Override
   public TestChecks visit(ExecutableSequence s) {
     InvalidChecks checks = new InvalidChecks();
@@ -37,7 +45,7 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
         ExceptionalExecution exec = (ExceptionalExecution)result;
         if (isInvalid.test(exec, s)) {
           Throwable e = exec.getException();
-          checks.add(new InvalidExceptionCheck(e,i));
+          checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));
         }
       }
     }
