@@ -124,12 +124,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Ignore class names specified by user that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
   
-  /** Whether to output error-revealing tests. */
+  /** 
+   * Whether to output error-revealing tests.
+   * <p>
+   * Will completely disable output when used with 
+   * <code>--no-regression-tests</code>.
+   * Be aware that restricting output can result in long runs if the default
+   * values of <code>--inputlimit</code> and <code>--timelimit</code> are used.
+   */
   @OptionGroup("Test classification")
   @Option("Whether to output error-revealing tests")
   public static boolean no_error_revealing_tests = false;
 
-  /** Whether to output regression tests. */
+  /** 
+   * Whether to output regression tests.
+   * <p>
+   * Will completely disable output when used with 
+   * <code>--no-error-revealing-tests</code>.
+   * Be aware that restricting output can result in long runs if the default
+   * values of <code>--inputlimit</code> and <code>--timelimit</code> are used. 
+   */
   @Option("Whether to output regression tests")
   public static boolean no_regression_tests = false;
 
@@ -219,36 +233,43 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The maximum number of regression and error-revealing tests to output.
-   * 
    * Test generation stops when either the time limit (--timelimit) is reached, 
    * OR the number of generated sequences reaches the input limit (--inputlimit), 
    * OR the number of error-revealing and regression tests reaches the output 
    * limit (--outputlimit).
-   * 
+   * <p>
    * This option affects how many tests will occur in the output, as opposed to
    * --inputlimit, which affects the number of test method candidates that are 
    * generated internally. This option is a better choice for controlling the 
    * tests you get, because the number of candidates generated will always be 
    * larger than the number output since redundant and invalid tests are filtered. 
-   * 
    * However, the current implementation means that the actual number of tests 
    * in the output can still be substantially smaller than this limit.
+   * <p>
+   * This limit will have no effect if there is no output, which occurs when
+   * using either <code>--dont-output-tests</code> or 
+   * <code>--no-error-revealing-tests</code> together with 
+   * <code>--no-regression-tests</code>. 
+   * In this case, the option <code>--inputlimit</code> should be used.
    */
   @Option ("Maximum number of tests to ouput; contrast to --inputlimit")
   public static int outputlimit = 100000000;
 
   /**
    * Maximum number of test method candidates generated.
-   * 
    * Test generation stops when either the time limit (--timelimit) is reached, 
    * OR the number of generated sequences reaches the input limit (--inputlimit), 
    * OR the number of error-revealing and regression tests reaches the output 
    * limit (--outputlimit).  
    * The number of tests output will be smaller than then number of test 
    * candidates generated, because redundant and illegal tests may be discarded.
-   * 
-   * The --outputlimit command-line option is usually more appropriate than
-   * --inputlimit.
+   * <p>
+   * This limit should be used when no tests are output, which occurs when
+   * using either <code>--dont-output-tests</code> or 
+   * <code>--no-error-revealing-tests</code> together with 
+   * <code>--no-regression-tests</code>.
+   * Otherwise the <code>--outputlimit</code> command-line option is usually 
+   * more appropriate. 
    */
   @Option("Maximum number of tests generated")
   public static int inputlimit = 100000000;
@@ -277,20 +298,20 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Do not use <code>null</code> as input to methods or constructors when no 
    * other argument value can be generated.
-   * 
+   * <p>
    * If true, Randoop will not generate a test when unable to find a non-null
    * value of appropriate type as an input. This could result in certain class
    * members being untested.
-   * 
+   * <p>
    * Does not affect the behavior based on --null_ratio, which independently 
    * determines the frequency that <code>null</code> is used as an input.
    */
   @Option("Never use null as input to methods or constructors")
   public static boolean forbid_null = true;
-  
+
   /**
    * A file containing literal values to be used as inputs to methods under test.
-   * 
+   * <p>
    * Literals in these files are used in addition to all other constants in the 
    * pool. For the format of this file, see documentation in class 
    * {@link randoop.LiteralFileReader}. The special value "CLASSES" (with no 
@@ -298,7 +319,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("A file containing literal values to be used as inputs to methods under test")
   public static List<String> literals_file = new ArrayList<String>(); 
-
 
   /**
    * How to use literal values that are specified via the
@@ -334,18 +354,16 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Maximum length of Strings in generated tests")
   public static int string_maxlen = 10000;
- 
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Varying the nature of generated tests")
   @Option("Specifies initialization routine (class.method)")
   public static String init_routine = null;
-  
+
   /**
    * Try to reuse values from a sequence with the given frequency.
-   * 
    * If an alias ratio is given, it should be between 0 and 1.
-   * 
+   * <p>
    * A ratio of 0 results in tests where each value created within a test input is typically used at most once
    * as an argument in a method call. A ratio of 1 tries to maximize the number of times
    * values are used as inputs to parameters within a test. 
@@ -355,7 +373,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Favor shorter sequences when assembling new sequences out of old ones.
-   *
+   * <p>
    * Randoop generates new tests by combining old previously-generated tests.
    * If this option is given, tests with fewer calls are given greater weight during
    * its random selection. This has the overall effect of producing smaller JUnit tests.
@@ -365,7 +383,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Clear the component set each time it contains the given number of inputs.
-   *
    * <p>
    * Randoop stores previously-generated tests in a "component" set, and uses them to
    * generate new tests. Setting this variable to a small number can sometimes result
@@ -375,11 +392,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Clear the component set when it gets this big")
   public static int clear = 100000000;
 
-  
-  
   ///////////////////////////////////////////////////////////////////
   @OptionGroup ("Outputting the JUnit tests")
-  
+
   /** Maximum number of tests to write to each JUnit file */
   @Option("Maximum number of tests to write to each JUnit file")
   public static int testsperfile = 500;
@@ -399,11 +414,18 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /** Name of the directory to which JUnit files should be written */
   @Option("Name of the directory to which JUnit files should be written")
   public static String junit_output_dir = null;
-  
-  /** Run test generation without output. May be desirable to run with a visitor without generating the tests. */
+
+  /** 
+   * Run test generation without output. 
+   * May be desirable when running with a visitor. 
+   * <p>
+   * NOTE: Because there is no output, the value of <code>--outputlimit</code> 
+   * will never be met, so be sure to set <code>--inputlimit</code> or
+   * <code>--timelimit</code> to a reasonable value when using this option.
+   */
   @Option("Run Randoop but do not output JUnit tests")
   public static boolean dont_output_tests = false;
-  
+
   /**
    * Indicate which classes that any test written to output must use. 
    * Written test suites will only include tests that have at least one 
@@ -411,7 +433,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Regular expression for names of classes that any test written to output must use")
   public static Pattern include_only_classes = null;
-  
+
   /**
    * Whether to use JUnit's standard reflective mechanisms for invoking
    * tests.  JUnit's reflective invocations can interfere with code
@@ -423,14 +445,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("If true, use JUnit's reflective invocation; if false, use direct method calls")
   public static boolean junit_reflection_allowed = true;
 
-
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Runtime environment")
   // We do this rather than using java -D so that we can easily pass these
   // to other JVMs
   @Option("-D Specify system properties to be set (similar to java -Dx=y)")
   public static List<String> system_props = new ArrayList<String>();
-  
+
   /**
    * Specify an extra command for recursive JVM calls that Randoop spawns.
    * The argument to the --agent option is the entire extra JVM command.  A
@@ -446,8 +467,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Capture all output to stdout and stderr")
   public static boolean capture_output = false;
 
-
-
   ///////////////////////////////////////////////////////////////////
   // I don't see how to create the serialized files, only write to them.
   // Maybe the writing code has bit-rotted?
@@ -460,7 +479,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Output components (serialized, GZIPPED) to the given file.
-   * 
    * Suggestion: use a .gz suffix in file name.
    */
   @Option("Output components (serialized, GZIPPED) to the given file.")
@@ -468,7 +486,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Output tests (sequences plus checkers) in serialized form to the given file.
-   * 
    * Suggestion: use a .gz suffix in file name.
    */
   @Option("Output tests (sequences plus checkers) in serialized form to the given file.")
@@ -476,7 +493,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The random seed to use in the generation process.
-   *
    * Note that Randoop is deterministic:  running it twice will produce the
    * same test suite.  If you want to produced multiple different test
    * suites, run Randoop multiple times with a different random seed.
@@ -486,16 +502,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("The random seed to use in the generation process")
   public static int randomseed = (int) Randomness.SEED;
 
-  
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Notifications")
-  
+
   @Option("Do not display progress update message to console")
   public static boolean noprogressdisplay = false;
 
   @Option("Display progress message every <int> milliseconds")
   public static long progressinterval = 5000;
-
 
   /**
    * Install the given runtime visitor. See class randoop.ExecutionVisitor.
@@ -504,7 +518,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @OptionGroup(value="Advanced extension points")
   @Option("Install the given runtime visitor")
   public static List<String> visitor = new ArrayList<String>();
-
   
   ///////////////////////////////////////////////////////////////////
   @OptionGroup(value="Logging and troubleshooting Randoop")
@@ -517,10 +530,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("<filename> Name of a file to which to log lots of information")
   public static FileWriter log = null;
-  
+
   ///////////////////////////////////////////////////////////////////
   // Options used when testing Randoop.
-  
+
   /**
    * Create sequences but never execute them. Used to test performance of
    * Randoop's sequence generation code.
@@ -529,8 +542,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Create sequences but never execute them")
   public static boolean dontexecute = false;
 
-
-   
   /**
    * Whether to use the long format for outputting JUnit tests.
    * The long format emits exactly one line per statement, including
@@ -561,7 +572,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Whenever an object is called for, use an integer")
   public static boolean always_use_ints_as_objects = false;
-  
+
   @Unpublicized
   @Option("The name of a file containing the list of coverage-instrumented classes")
   public static String coverage_instrumented_classes = null;
@@ -569,7 +580,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Output covered branches to the given text file")
   public static String output_branches = null;
-  
+
   ///////////////////////////////////////////////////////////////////
   // This is only here to keep the ICSE07ContainersTest working
   // TODO Need to decide to keep the heuristic that uses this in ForwardGenerator
@@ -577,12 +588,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Unpublicized
   @Option("Use heuristic that may randomly repeat a method call several times")
   public static boolean repeat_heuristic = false;
-  
+
   /**
    * Check that the options given satisfy any specified constraints, and fail if they do not.
    */
   public void checkOptionsValid() {
-    
+ 
     if (alias_ratio < 0 || alias_ratio > 1) {
       throw new RuntimeException("Alias ratio must be between 0 and 1, inclusive.");
     }
@@ -609,7 +620,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
         System.exit(1);
       }
     }
-    
+
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     if (silently_ignore_bad_class_names) {
       errorHandler = new WarnOnBadClassName();
