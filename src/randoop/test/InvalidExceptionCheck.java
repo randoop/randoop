@@ -1,34 +1,34 @@
 package randoop.test;
 
-import randoop.Check;
+import randoop.ExceptionCheck;
 import randoop.sequence.Execution;
 
 /**
  * An {@code InvalidExceptionCheck} represents the occurrence of an exception
  * tagged as an invalid behavior during {@code Check} generation.
  */
-public class InvalidExceptionCheck implements Check {
+public class InvalidExceptionCheck extends ExceptionCheck {
 
   private static final long serialVersionUID = -4919647365672571645L;
-  private int statementIndex;
-  private Throwable exception;
 
-  public InvalidExceptionCheck(Throwable exception, int statementIndex) {
-    this.exception = exception;
-    this.statementIndex = statementIndex;
+  public InvalidExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
+    super(exception, statementIndex, catchClassName);
+  }
+
+
+  @Override
+  protected void appendCatchBehavior(StringBuilder b, String exceptionClassName) {
+    String prefix = "statement threw an invalid exception ";
+    String suffix = " during test generation";
+    b.append("// " + prefix  + exception.getClass().getName() + suffix);
+    
   }
 
   @Override
-  public String toCodeStringPreStatement() {
-    return "// statement throws an invalid exception " + exception.getClass().getName();
+  protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
+    // do nothing
   }
-
-  @Override
-  public String toCodeStringPostStatement() {
-    // 
-    return "";
-  }
-
+  
   @Override
   public String getValue() {
     return "invalid exception " + exception.getClass().getName();
