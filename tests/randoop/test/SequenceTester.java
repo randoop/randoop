@@ -23,6 +23,7 @@ import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
+import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
 import randoop.util.Util;
@@ -80,7 +81,7 @@ public class SequenceTester {
       throw new Error(e);
     }
 
-    new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), new DummyFailurePredicate());
+    new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), new AlwaysFalseExceptionPredicate());
   }
 
   public static void test(InputStream stream) throws Exception {
