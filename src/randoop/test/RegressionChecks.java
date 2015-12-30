@@ -82,7 +82,7 @@ public class RegressionChecks implements TestChecks, Serializable {
    * @return false, since all regression checks are passing
    */
   @Override
-  public boolean hasFailure() {
+  public boolean hasErrorBehavior() {
     return false;
   }
 

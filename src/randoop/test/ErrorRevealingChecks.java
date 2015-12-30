@@ -71,7 +71,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
    * @return true if there are any error revealing checks (not empty) 
    */
   @Override
-  public boolean hasFailure() {
+  public boolean hasErrorBehavior() {
     return hasChecks();
   }
 

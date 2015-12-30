@@ -48,7 +48,7 @@ public interface TestChecks {
    * 
    * @return true if this object has failing checks, false otherwise
    */
-  public boolean hasFailure();
+  public boolean hasErrorBehavior();
 
   /**
    * Return the exception check in this object if there is one.

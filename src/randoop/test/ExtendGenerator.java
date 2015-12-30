@@ -37,7 +37,7 @@ public class ExtendGenerator implements TestCheckGenerator {
   @Override
   public TestChecks visit(ExecutableSequence s) {
     TestChecks checks = firstGenerator.visit(s);
-    if (checks.hasInvalidBehavior() || checks.hasFailure()) {
+    if (checks.hasInvalidBehavior() || checks.hasErrorBehavior()) {
       return checks;
     } else {
       return secondGenerator.visit(s);

@@ -37,7 +37,7 @@ public class InvalidChecks implements TestChecks {
   }
 
   @Override
-  public boolean hasFailure() {
+  public boolean hasErrorBehavior() {
     return false;
   }
 

@@ -584,7 +584,7 @@ public class ExecutableSequence implements Serializable {
    * @return true if checks are all failing, or false if all passing
    */
   public boolean hasFailure() {
-    return checks != null && checks.hasFailure();
+    return checks != null && checks.hasErrorBehavior();
   }
 
   /**
