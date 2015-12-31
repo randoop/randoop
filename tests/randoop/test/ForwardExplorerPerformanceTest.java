@@ -42,7 +42,7 @@ public class ForwardExplorerPerformanceTest extends TestCase {
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
     List<Operation> model =
-      OperationExtractor.getOperations(ClassReader.getClassesForStream(classStream, resourcename),null);
+      OperationExtractor.getOperations(ClassReader.getClassesForStream(classStream, resourcename),null, false);
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;

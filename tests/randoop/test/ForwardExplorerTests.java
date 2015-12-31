@@ -38,7 +38,7 @@ public class ForwardExplorerTests extends TestCase {
   public static void test1() {
 
     List<Operation> model =
-      OperationExtractor.getOperations(Arrays.<Class<?>>asList(Long.class), null);
+      OperationExtractor.getOperations(Arrays.<Class<?>>asList(Long.class), null, false);
     assertTrue("model not empty", model.size() != 0);
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
@@ -67,7 +67,7 @@ public class ForwardExplorerTests extends TestCase {
     int oldTimeout = ReflectionExecutor.timeout;
     ReflectionExecutor.timeout = 200;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    List<Operation> model = OperationExtractor.getOperations(classes, null);
+    List<Operation> model = OperationExtractor.getOperations(classes, null, false);
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
@@ -113,7 +113,7 @@ public class ForwardExplorerTests extends TestCase {
     System.out.println(classes);
 
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    List<Operation> model = OperationExtractor.getOperations(classes, null);
+    List<Operation> model = OperationExtractor.getOperations(classes, null, false);
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);

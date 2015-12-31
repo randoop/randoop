@@ -29,7 +29,7 @@ public class ForwardExplorerTests2 extends TestCase {
     System.out.println(classes);
 
     //SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
-    List<Operation> model = OperationExtractor.getOperations(classes, null);
+    List<Operation> model = OperationExtractor.getOperations(classes, null, false);
     assertTrue("model should not be empty", model.size() != 0);
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 100, 100, null, null, null);

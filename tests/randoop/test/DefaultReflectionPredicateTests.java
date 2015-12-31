@@ -16,7 +16,7 @@ public class DefaultReflectionPredicateTests extends TestCase{
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    filter = new DefaultReflectionPredicate(null);
+    filter = new DefaultReflectionPredicate();
   }
 
   public void testObjectMethods1() throws Exception {

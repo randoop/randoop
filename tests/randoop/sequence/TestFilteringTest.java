@@ -220,7 +220,7 @@ public class TestFilteringTest {
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ReflectionPredicate predicate = new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
-    List<Operation> model = OperationExtractor.getOperations(classes, predicate);
+    List<Operation> model = OperationExtractor.getOperations(classes, predicate, false);
     Collection<Sequence> components = new LinkedHashSet<Sequence>();
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
     ComponentManager componentMgr = new ComponentManager(components );

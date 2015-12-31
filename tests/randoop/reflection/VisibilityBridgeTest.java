@@ -15,7 +15,12 @@ import randoop.operation.MethodCall;
 import randoop.operation.Operation;
 import randoop.reflection.visibilitytest.PackageSubclass;
 
-public class PackageVisibilityTest {
+/**
+ * A test to ensure that reflective collection of methods includes the 
+ * visibility bridge, which is a bridge method that fakes the "inheritance" of
+ * a public method from a package private class.
+ */
+public class VisibilityBridgeTest {
   
   //can't compare method of superclass directly to method of subclass
   //so need to convert to abstraction to allow list search
@@ -54,8 +59,8 @@ public class PackageVisibilityTest {
   }
   
   /**
-   * This test is simply to ensure that reflective collection of methods does
-   * include the visibility bridge, which looks like an "inherited" public 
+   * This test is simply to ensure that reflective collection of methods
+   * includes the visibility bridge, which looks like an "inherited" public 
    * method of package private class.
    */
   @Test
@@ -77,7 +82,7 @@ public class PackageVisibilityTest {
       fail("test failed because unable to find base class");
     }
     
-    List<Operation> actualOps = OperationExtractor.getOperations(classes, null);
+    List<Operation> actualOps = OperationExtractor.getOperations(classes, null, false);
     assertEquals("expect operations count to be inherited methods plus constructor", include.size() + 1, actualOps.size());
     
     List<FormalMethod> actual = new ArrayList<>();

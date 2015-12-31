@@ -22,7 +22,7 @@ public class StatementCollectionWeightedTest extends TestCase {
     classes.add(java.util.ArrayList.class);
 
     List<Operation> statements = 
-      OperationExtractor.getOperations(classes, null);
+      OperationExtractor.getOperations(classes, null, false);
     assertFalse("model should not be empty", statements.isEmpty());
     StringBuilder weightedMethods = new StringBuilder();
     weightedMethods.append("java.util.ArrayList.add(java.lang.Object)" + Util.newLine);
