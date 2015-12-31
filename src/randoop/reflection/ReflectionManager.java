@@ -11,9 +11,12 @@ import java.util.TreeSet;
 import randoop.util.Log;
 
 /**
- * ReflectionManager reflectively visits a {@link Class} instance to apply a set of 
- * {@link ClassVisitor} objects to the class members. Uses a {@link ReflectionPredicate} 
- * and heuristics to determine which classes and class members to visit.
+ * ReflectionManager reflectively visits a {@link Class} instance to apply a set 
+ * of {@link ClassVisitor} objects to the class members. 
+ * Uses a {@link ReflectionPredicate} and heuristics to determine which classes 
+ * and class members to visit.
+ * May be restricted to visit only public members of a class, but, otherwise,
+ * accessibility rules of the reflection predicate are used.
  * 
  * For a non-enum class visits:
  * <ul>
@@ -35,6 +38,7 @@ public class ReflectionManager {
 
   private ReflectionPredicate predicate;
   private ArrayList<ClassVisitor> visitors;
+  private boolean publicMembersOnly;
 
   /**
    * Creates a manager object that uses the given predicate to determine which 
@@ -43,10 +47,13 @@ public class ReflectionManager {
    * 
    * @param predicate is used to determine whether class and its members should 
    *        be visited.
+   * @param publicMembersOnly  the flag to indicate whether only public members
+   * of a class should be visited.
    */
-  public ReflectionManager(ReflectionPredicate predicate) {
+  public ReflectionManager(ReflectionPredicate predicate, boolean publicMembersOnly) {
     this.predicate = predicate;
     this.visitors = new ArrayList<>();
+    this.publicMembersOnly = publicMembersOnly;
   }
 
   /**
@@ -77,14 +84,7 @@ public class ReflectionManager {
         applyEnum(c);
       } else {
 
-        for (Method m : c.getMethods()) {
-          if (Log.isLoggingOn()) {
-            Log.logLine(String.format("Considering method %s", m));
-          }
-          if (predicate.test(m)) {
-            visitMethod(m);
-          }
-        }
+        applyMethods(c);
 
         for (Constructor<?> co : c.getDeclaredConstructors()) {
           if (predicate.test(co)) {
@@ -98,7 +98,7 @@ public class ReflectionManager {
           }
         }
 
-        applyField(c);
+        applyFields(c);
 
       }
       
@@ -107,8 +107,28 @@ public class ReflectionManager {
     
   }
 
-
-
+  /**
+   * Applies the visitors to the methods of the class. 
+   * Will visit all methods unless visiting only public members.
+   * 
+   * @param c  the class whose methods should be visited
+   */
+  private void applyMethods(Class<?> c) {
+    Set<Method> methods = new HashSet<>();
+    for (Method m : c.getMethods()) {
+      if (predicate.test(m)) {
+        visitMethod(m);
+      }
+    }
+    if (! publicMembersOnly) {
+      for (Method m : c.getDeclaredMethods()) {
+        if ((! methods.contains(m)) && predicate.test(m)) {
+          visitMethod(m);
+        }
+      }
+    }
+  }
+  
   /**
    * Applies the visitors to the constants and methods of the given enum. 
    * A method is included if it satisfies the predicate, and either is declared
@@ -159,7 +179,7 @@ public class ReflectionManager {
    * 
    * @param c
    */
-  private void applyField(Class<?> c) {
+  private void applyFields(Class<?> c) {
     //The set of fields declared in class c is needed to ensure we don't collect
     //inherited fields that are hidden by local declaration
     Set<String> declaredNames = new TreeSet<>(); //get names of fields declared
@@ -182,6 +202,9 @@ public class ReflectionManager {
    * @param f  the field to be visited.
    */
   private void visitField(Field f) {
+    if (Log.isLoggingOn()) {
+      Log.logLine(String.format("Considering field %s", f));
+    }
     for (ClassVisitor v : visitors) {
       v.visit(f);
     }
@@ -193,6 +216,9 @@ public class ReflectionManager {
    * @param co  the constructor to be visited.
    */
   private void visitConstructor(Constructor<?> co) {
+    if (Log.isLoggingOn()) {
+      Log.logLine(String.format("Considering constructor %s", co));
+    }
     for (ClassVisitor v : visitors) {
       v.visit(co);
     }
@@ -204,6 +230,9 @@ public class ReflectionManager {
    * @param m  the method to be visited.
    */
   private void visitMethod(Method m) {
+    if (Log.isLoggingOn()) {
+      Log.logLine(String.format("Considering method %s", m));
+    }
     for (ClassVisitor v : visitors) {
       v.visit(m);
     }
@@ -215,6 +244,9 @@ public class ReflectionManager {
    * @param e  the enum value to be visited.
    */
   private void visitEnum(Enum<?> e) {
+    if (Log.isLoggingOn()) {
+      Log.logLine(String.format("Considering enum %s", e));
+    }
     for (ClassVisitor v : visitors) {
       v.visit(e);
     }
@@ -243,5 +275,5 @@ public class ReflectionManager {
       v.visitBefore(c);
     }
   }
-  
+
 }

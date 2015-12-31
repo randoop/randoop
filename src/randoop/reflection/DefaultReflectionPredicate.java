@@ -27,12 +27,16 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private VisibilityPredicate visibility;
 
   public DefaultReflectionPredicate() {
-    this(null);
+    this(null, new HashSet<String>());
   }
 
   /** If omitMethods is null, then no methods are omitted. */
   public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
+  }
+  
+  public DefaultReflectionPredicate(VisibilityPredicate visibility) {
+    this(null, new HashSet<String>(), visibility);
   }
 
   public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
@@ -115,14 +119,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    if (!visibility.isVisible(m)) {
+    if (! visibility.isVisible(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: randoop.util.Reflection.isVisible(int modifiers) returned false ");
       }
       return false;
     }
-    if (!visibility.isVisible(m.getReturnType())) {
+    if (! visibility.isVisible(m.getReturnType())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: randoop.util.Reflection.isVisible(Class<?> cls) returned false for method's return type");

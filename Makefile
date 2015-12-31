@@ -420,7 +420,8 @@ test-reflection: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldGetterTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldSetterTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldReflectionTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.reflection.PackageVisibilityTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.reflection.VisibilityBridgeTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.reflection.VisibilityTest
 	
 # run JUnit4 test generation tests
 test-generation: bin
