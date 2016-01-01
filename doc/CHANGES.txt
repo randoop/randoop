@@ -1,3 +1,10 @@
+Version 2.1.?, released ???
+
+Randoop is now package access aware in determining which class members to include
+in a test.  If --junit-package-name is set to the package of a class under test,
+the tests will include non-private members of the class. Restrict tests to only
+public members by setting --only-test-public-members.
+
 Version 2.1.0, released December 30, 2015
 
 Randoop now splits generated tests into three categories: error-revealing, 
