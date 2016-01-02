@@ -107,7 +107,7 @@ public interface Operation extends Comparable<Operation> {
    * declaring class.
    * 
    * @return true if operation corresponds to static method or field of a class, 
-   *         and false, otherwise.
+   *         and false otherwise.
    */
   boolean isStatic();
 
@@ -140,7 +140,7 @@ public interface Operation extends Comparable<Operation> {
    * Predicate to indicate whether this object represents a value of a
    * non-receiving type (includes numbers, strings, and null).
    * 
-   * @return true if object is a non-receiving value, and false, otherwise.
+   * @return true if object is a non-receiving value, and false otherwise.
    */
   boolean isNonreceivingValue();
 

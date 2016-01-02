@@ -412,7 +412,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * callsMethod determines whether the method that this object calls is 
    * method given in the parameter.
    * @param m method to test against.
-   * @return true, if m corresponds to the method in this object, false, otherwise.
+   * @return true, if m corresponds to the method in this object, false otherwise.
    */
   public boolean callsMethod(Method m) {
     return method.equals(m);

@@ -171,7 +171,7 @@ public final class Statement implements Serializable {
    * This could be either a method call, an assignment/initialization involving a method call,
    * or the use of a public field in an assignment on either lhs (as "setter") or rhs (as "getter").
    *
-   * @return true if operation is method-call-like, and false, otherwise.
+   * @return true if operation is method-call-like, and false otherwise.
    */
   public boolean isMethodCall() {
     return operation.isMessage();
@@ -204,7 +204,7 @@ public final class Statement implements Serializable {
    * an element of the list of reflective {@link Method} objects.
    *
    * @param list containing {@link Method} objects.
-   * @return true if {@link MethodCall} corresponds to an object in list, and false, otherwise.
+   * @return true if {@link MethodCall} corresponds to an object in list, and false otherwise.
    */
   public boolean isMethodIn(List<Method> list) {
     if (operation instanceof MethodCall) {
@@ -218,7 +218,7 @@ public final class Statement implements Serializable {
    * to the {@link Method} argument.
    *
    * @param m instance of {@link Method}.
-   * @return true if {@link MethodCall} object of statement corresponds to m, and, false, otherwise.
+   * @return true if {@link MethodCall} object of statement corresponds to m, and false otherwise.
    */
   public boolean callsTheMethod(Method m) {
     if (operation instanceof MethodCall) {
@@ -230,7 +230,7 @@ public final class Statement implements Serializable {
   /**
    * isConstructorCall determines if operation for statement is a call to a constructor.
    *
-   * @return true if operation is a constructor call, and false, otherwise.
+   * @return true if operation is a constructor call, and false otherwise.
    */
   public boolean isConstructorCall() {
     return operation.isConstructorCall();
