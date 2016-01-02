@@ -113,11 +113,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Restrict tests to only include public members of classes.
    * Ordinarily, the setting of <tt>--junit-package-name</tt> and package 
-   * accessibility is used to determine which members of the test will be used.
+   * accessibility is used to determine which members will be used in tests.
    * Using this option restricts the tests to only use public members even if
    * the class is a member of the same package as the generated tests.
    */
-  @Option("Specify whether to use only public members in tests")
+  @Option("Only use public members in tests")
   public static boolean only_test_public_members = false;
 
   @Option("Ignore class names specified by user that cannot be found")

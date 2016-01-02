@@ -47,7 +47,7 @@ public class ReflectionManager {
    * 
    * @param predicate is used to determine whether class and its members should 
    *        be visited.
-   * @param publicMembersOnly  the flag to indicate whether only public members
+   * @param publicMembersOnly  whether only public members
    * of a class should be visited.
    */
   public ReflectionManager(ReflectionPredicate predicate, boolean publicMembersOnly) {
