@@ -15,7 +15,7 @@ import randoop.util.Log;
 /**
  * Returns true for public members, with some exceptions (see
  * doNotUseSpecialCase method).
- *
+ * <p>
  * If a method has the @CheckRep annotation, returns false
  * (the method will be used as a contract checker, not
  *  as a method under test).
