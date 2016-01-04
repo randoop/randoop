@@ -7,30 +7,34 @@ import java.lang.reflect.Modifier;
 
 /**
  * A predicate that tests for visibility of a class, method, constructor, or
- * field relative to a particular local package.
- * For classes, tests if the class is either public or package private in
- * the local package.
- * Otherwise, implements a test for Java package accessibility rules, and
- * returns true for a member that is visible from the context of the local 
- * package (either publicly accessible, or if in the same package then not private).
+ * field relative to a particular package.
+ * A top-level class is accessible from the package if it is public, or if it is
+ * package-private in the given package.
+ * Otherwise, an element is accessible from the package if it is either
+ * public, or if in the same package then not private.
+ * <p>
+ *
+ * This class does not implement Java's full accessibility rules; those for
+ * subclasses and default-visibility are not relevant to this predicate.
  */
 public class PackageVisibilityPredicate implements VisibilityPredicate {
 
-  private Package localPackage;
+  /** The package from which to test visibility of elements. */
+  private Package thePackage;
 
   /**
    * Create a predicate that tests visibility. Class members must either be
-   * public, or in the given package {@code localPackage} and not private.
+   * public, or accessible relative to the given package {@code thePackage}.
    * 
-   * @param localPackage  the package to use for package access test.
+   * @param thePackage  the package to use for package accessibility test
    */
-  public PackageVisibilityPredicate(Package localPackage) {
-    this.localPackage = localPackage;
+  public PackageVisibilityPredicate(Package thePackage) {
+    this.thePackage = thePackage;
   }
   
   /**
    * {@inheritDoc}
-   * @return true if class is public or package private in {@code localPackage}, false otherwise
+   * @return true if class is public or package private in {@code thePackage}, false otherwise
    */
   @Override
   public boolean isVisible(Class<?> c) {
@@ -41,7 +45,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
   /**
    * {@inheritDoc}
    * @return true if method is public or a member of a class in 
-   * {@code localPackage} and not private, false otherwise
+   * {@code thePackage} and not private, false otherwise
    */
   @Override
   public boolean isVisible(Method m) {
@@ -52,7 +56,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
   /**
    * {@inheritDoc}
    * @return true if constructor is public or member of a class in 
-   * {@code localPackage} and not private, false otherwise
+   * {@code thePackage} and not private, false otherwise
    */
   @Override
   public boolean isVisible(Constructor<?> c) {
@@ -63,7 +67,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
   /**
    * {@inheritDoc}
    * @return true if field is public or member of a class in 
-   * {@code localPackage} and not private, false otherwise
+   * {@code thePackage} and not private, false otherwise
    */
   @Override
   public boolean isVisible(Field f) {
@@ -72,18 +76,16 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
   }
 
   /**
-   * Test visibility criteria on modifier bit string and package: either 
-   * public bit of modifier is set, or packages are equal and the private bit
-   * of modifier is not.
+   * Test accessibility as indicated by the modifier bit string and/or package.
    * 
-   * @param mods  the modifiers to test
+   * @param mods  the modifier bit string
    * @param otherPackage  the package to test for relative accessibility
-   * @return true if public set in modifiers or if packages are the same and 
-   * private is not set in modifiers, false otherwise
+   * @return true if public set in modifiers or if otherPackage is the same
+   * as thePackage and private is not set in modifiers, false otherwise
    */
   private boolean isVisible(int mods, Package otherPackage) {
     return Modifier.isPublic(mods)
-        || (localPackage.equals(otherPackage) 
+        || (thePackage.equals(otherPackage) 
             && ! Modifier.isPrivate(mods));
   }
 

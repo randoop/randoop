@@ -53,7 +53,7 @@ public class OperationExtractor implements ClassVisitor {
    * Returns a filtered list of {@code Operation} objects.
    * 
    * @param classListing  the collection of class objects from which to extract
-   * @param predicate  determines whether to include class members in results
+   * @param predicate  whether to include class members in results
    * @return list of {@code Operation} objects satisfying the predicate
    */
   public static List<Operation> getOperations(Collection<Class<?>> classListing, 
