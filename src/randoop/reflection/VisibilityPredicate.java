@@ -7,8 +7,6 @@ import java.lang.reflect.Method;
 /**
  * Interface for predicates that check whether a class or class member is considered
  * visible.
- * @see randoop.main.GenInputsAbstract#public_only
- *
  */
 public interface VisibilityPredicate {
   

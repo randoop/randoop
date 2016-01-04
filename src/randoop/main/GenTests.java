@@ -55,8 +55,8 @@ import randoop.operation.Operation;
 import randoop.operation.OperationParseException;
 import randoop.operation.OperationParser;
 import randoop.reflection.DefaultReflectionPredicate;
-import randoop.reflection.NotPrivateVisibilityPredicate;
 import randoop.reflection.OperationExtractor;
+import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.sequence.AbstractGenerator;
@@ -185,12 +185,12 @@ public class GenTests extends GenInputsAbstract {
 
     List<Class<?>> allClasses = findClassesFromArgs(options);
     
-    // TODO include package in visibility, maybe not do "not private"
     VisibilityPredicate visibility;
-    if (GenInputsAbstract.public_only) {
+    Package junitPackage = Package.getPackage(GenInputsAbstract.junit_package_name);
+    if (junitPackage == null || GenInputsAbstract.only_test_public_members) {
       visibility = new PublicVisibilityPredicate();
     } else {
-      visibility = new NotPrivateVisibilityPredicate();
+      visibility = new PackageVisibilityPredicate(junitPackage);
     }
 
     // Remove private (non-.isVisible) classes and abstract classes
@@ -258,7 +258,8 @@ public class GenTests extends GenInputsAbstract {
     listenerMgr.addListener(covTracker);
     
     DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
-    List<Operation> model = OperationExtractor.getOperations(classes, reflectionPredicate);
+    List<Operation> model = OperationExtractor.getOperations(classes, 
+        reflectionPredicate);
 
     // Always add Object constructor (it's often useful).
     ConstructorCall objectConstructor = null;

@@ -52,11 +52,12 @@ public class OperationExtractor implements ClassVisitor {
    * Collects the members of a collection of classes.
    * Returns a filtered list of {@code Operation} objects.
    * 
-   * @param classListing  the collection of class objects from which to extract.
-   * @param predicate  determines whether to include class members in results.
-   * @return list of {@code Operation} objects satisfying the predicate.
+   * @param classListing  the collection of class objects from which to extract
+   * @param predicate  whether to include class members in results
+   * @return list of {@code Operation} objects satisfying the predicate
    */
-  public static List<Operation> getOperations(Collection<Class<?>> classListing, ReflectionPredicate predicate) {
+  public static List<Operation> getOperations(Collection<Class<?>> classListing, 
+      ReflectionPredicate predicate) {
     if (predicate == null) predicate = new DefaultReflectionPredicate();
     ReflectionManager mgr = new ReflectionManager(predicate);
     OperationExtractor op = new OperationExtractor();

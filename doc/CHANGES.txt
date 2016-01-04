@@ -1,3 +1,11 @@
+Version 2.1.?, released ???
+
+Randoop is now package-access-aware in determining which class members to
+include in a test.  If --junit-package-name is set to the package of a
+class under test, the tests will include non-private members of the
+class. Restrict tests to only public members by setting
+--only-test-public-members.
+
 Version 2.1.0, released December 30, 2015
 
 Randoop now splits generated tests into three categories: error-revealing, 
@@ -14,11 +22,11 @@ generation of one or the other of the suites. Use --error-test-filename and
 arguments replace the arguments --check-object-contracts, 
 --check-regression-behavior and --junit-classname that have been removed.
 
-Tests where exceptions are thrown are classified by how exceptions are 
-assigned types of behavior. A test with with an exception that is INVALID 
-behavior is invalid, one with an exception that is ERROR behavior (and none that
-are INVALID) is an error-revealing test, and one with no INVALID or ERROR behaviors
-and an exception that is an EXPECTED behavior is a regression test. 
+Tests where exceptions are thrown are classified by how exceptions are
+assigned types of behavior. A test with with an exception that is INVALID
+behavior is invalid, one with an exception that is ERROR behavior (and none
+that are INVALID) is an error-revealing test, and one with no INVALID or ERROR
+behaviors and an exception that is an EXPECTED behavior is a regression test.
 Customize the classification of exceptions by setting the behavior type for 
 exceptions using the command-line arguments --checked-exception, 
 --unchecked-exception, --npe-on-null-input, --npe-on-non-null-input,

@@ -548,13 +548,17 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Code-under-test">Code under test
     <ul>
       <li id="option:testclass"><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class to test.
- These classes are tested in addition to any specified using <tt>--classlist</tt>.</li>
+ This class is tested in addition to any specified using 
+ <tt>--classlist</tt>, and must be accessible from the package of the tests 
+ (set with <tt>--junit-package-name</tt>).</li>
       <li id="option:classlist"><b>--classlist=</b><i>string</i>. The name of a file that lists classes to test.
  
  In the file, each class under test is specified by its
  fully-qualified name on a separate line.
  See an <a href="https://raw.githubusercontent.com/randoop/randoop/master/doc/class_list_example.txt">example</a>.
- These classes are tested in addition to any specified using <tt>--testclass</tt>.</li>
+ These classes are tested in addition to any specified using <tt>--testclass</tt>.
+ All classes must be accessible from the package of the tests 
+ (set with <tt>--junit-package-name</tt>).</li>
       <li id="option:methodlist"><b>--methodlist=</b><i>string</i>. The name of a file that lists methods to test.
  
  In the file, each each method under test is specified on a separate
@@ -590,6 +594,11 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:omit-field-list"><b>--omit-field-list=</b><i>string</i>. The name of a file that contains fully-qualified
  field names to be excluded from test generation. Otherwise, Randoop
  includes all public fields of a visible class.</li>
+      <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>. Restrict tests to only include public members of classes.
+ Ordinarily, the setting of <tt>--junit-package-name</tt> and package 
+ accessibility is used to determine which members of the test will be used.
+ Using this option restricts the tests to only use public members even if
+ the class is a member of the same package as the generated tests. [default false]</li>
       <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
     </ul>
   </li>
@@ -752,7 +761,11 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
       <li id="option:error-test-filename"><b>--error-test-filename=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default ErrorTest]</li>
       <li id="option:regression-test-filename"><b>--regression-test-filename=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing regression tests [default RegressionTest]</li>
-      <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files [default ]</li>
+      <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files.
+ When the package is the same as the package of a class under test, then
+ package visibility rules are used to determine whether to include the class
+ or class members in a test. Tests can be restricted to public members only
+ by using the option <tt>--only-test-public-members</tt>. [default ]</li>
       <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written</li>
       <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>. Run test generation without output. 
  May be desirable when running with a visitor. 

@@ -15,7 +15,7 @@ import randoop.util.Log;
 /**
  * Returns true for public members, with some exceptions (see
  * doNotUseSpecialCase method).
- *
+ * <p>
  * If a method has the @CheckRep annotation, returns false
  * (the method will be used as a contract checker, not
  *  as a method under test).
@@ -27,12 +27,16 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private VisibilityPredicate visibility;
 
   public DefaultReflectionPredicate() {
-    this(null);
+    this(null, new HashSet<String>());
   }
 
   /** If omitMethods is null, then no methods are omitted. */
   public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
+  }
+  
+  public DefaultReflectionPredicate(VisibilityPredicate visibility) {
+    this(null, new HashSet<String>(), visibility);
   }
 
   public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
@@ -46,7 +50,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * @param visibility  the predicate for testing visibility expectations for members 
    * @see OperationExtractor#getOperations(java.util.Collection, ReflectionPredicate)
    */
-  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
+  public DefaultReflectionPredicate(Pattern omitMethods, 
+      Set<String> omitFields, 
+      VisibilityPredicate visibility) {
     super();
     this.omitMethods = omitMethods;
     this.omitFields = omitFields;
@@ -115,17 +121,17 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    if (!visibility.isVisible(m)) {
+    if (! visibility.isVisible(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: randoop.util.Reflection.isVisible(int modifiers) returned false ");
+        Log.logLine("  reason: the method is not visible from test classes");
       }
       return false;
     }
-    if (!visibility.isVisible(m.getReturnType())) {
+    if (! visibility.isVisible(m.getReturnType())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: randoop.util.Reflection.isVisible(Class<?> cls) returned false for method's return type");
+        Log.logLine("  reason: the method's return type is not visible from test classes");
       }
       return false;
     }

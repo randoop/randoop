@@ -29,7 +29,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The fully-qualified name of a class to test.
-   * These classes are tested in addition to any specified using <tt>--classlist</tt>.
+   * This class is tested in addition to any specified using 
+   * <tt>--classlist</tt>, and must be accessible from the package of the tests 
+   * (set with <tt>--junit-package-name</tt>). 
    */
   ///////////////////////////////////////////////////////////////////
   @OptionGroup ("Code under test")
@@ -43,6 +45,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * fully-qualified name on a separate line.
    * See an <a href="https://raw.githubusercontent.com/randoop/randoop/master/doc/class_list_example.txt">example</a>.
    * These classes are tested in addition to any specified using <tt>--testclass</tt>.
+   * All classes must be accessible from the package of the tests 
+   * (set with <tt>--junit-package-name</tt>).
    */
   @Option("The name of a file that lists classes under test")
   public static String classlist = null;
@@ -107,19 +111,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static String omit_field_list = null;
   
   /**
-   * If the command line argument public_only is true, only public
-   * classes/methods are considered visible.  If public_only is false
-   * then any class/method that is not private is considered visible.
-   * 
-   * <p>
-   * FIXME: This option outputs tests that do not compile. Until a fix
-   *        is done (which probably involves reflective invocation),
-   *        keep the option @Unpublicized. The option should
-   *        probably be an enum with PUBLIC, PACKAGE, PUBLIC elements.
+   * Restrict tests to only include public members of classes.
+   * Ordinarily, the setting of <tt>--junit-package-name</tt> and package 
+   * accessibility is used to determine which members will be used in tests.
+   * Using this option restricts the tests to only use public members even if
+   * the class is a member of the same package as the generated tests.
    */
-  @Unpublicized  
-  @Option("Specify whether to use only public members in tests")
-  public static boolean public_only = true;
+  @Option("Only use public members in tests")
+  public static boolean only_test_public_members = false;
 
   @Option("Ignore class names specified by user that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
@@ -417,7 +416,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Base name of the JUnit file(s) containing regression tests")
   public static String regression_test_filename = "RegressionTest";
 
-  /** Name of the package for the generated JUnit files */
+  /** 
+   * Name of the package for the generated JUnit files.
+   * When the package is the same as the package of a class under test, then
+   * package visibility rules are used to determine whether to include the class
+   * or class members in a test. Tests can be restricted to public members only
+   * by using the option <tt>--only-test-public-members</tt>.
+   */
   @Option("Name of the package for the generated JUnit files")
   public static String junit_package_name = "";
 
