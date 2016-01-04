@@ -8,14 +8,15 @@ import java.lang.reflect.Modifier;
 /**
  * A predicate that tests for visibility of a class, method, constructor, or
  * field relative to a particular package.
- * A top-level class is accessible from the package if it is public, or if it is
- * package-private in the given package.
+ * A top-level class is accessible from the package if it is public, 
+ * or if it is package-private in the given package.
  * Otherwise, an element is accessible from the package if it is either
- * public, or if in the same package then not private.
+ * public, or, if in the same package, then not private.
  * <p>
- *
- * This class does not implement Java's full accessibility rules; those for
- * subclasses and default-visibility are not relevant to this predicate.
+ * The predicate is used to determine what can be accessed from a Randoop 
+ * generated JUnit test in the given package. So, this class does not implement 
+ * Java's full accessibility rules; those for subclasses and default-visibility 
+ * are not relevant to this predicate.
  */
 public class PackageVisibilityPredicate implements VisibilityPredicate {
 
