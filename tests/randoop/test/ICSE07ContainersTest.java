@@ -53,7 +53,7 @@ public class ICSE07ContainersTest extends TestCase {
     System.out.println("ICSE 2006 container: " + name);
     
     List<Operation> statements = 
-      OperationExtractor.getOperations(classList, new DefaultReflectionPredicate(pattern,excludeNames), false);
+      OperationExtractor.getOperations(classList, new DefaultReflectionPredicate(pattern,excludeNames));
     System.out.println("Number of operations: " + statements.size());
     assertTrue("model should not be empty", !statements.isEmpty());
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());

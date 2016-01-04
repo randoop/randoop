@@ -82,7 +82,7 @@ public class VisibilityBridgeTest {
       fail("test failed because unable to find base class");
     }
     
-    List<Operation> actualOps = OperationExtractor.getOperations(classes, null, false);
+    List<Operation> actualOps = OperationExtractor.getOperations(classes, null);
     assertEquals("expect operations count to be inherited methods plus constructor", include.size() + 1, actualOps.size());
     
     List<FormalMethod> actual = new ArrayList<>();

@@ -187,10 +187,10 @@ public class GenTests extends GenInputsAbstract {
     
     VisibilityPredicate visibility;
     Package junitPackage = Package.getPackage(GenInputsAbstract.junit_package_name);
-    if (junitPackage != null) {
-      visibility = new PackageVisibilityPredicate(junitPackage);
-    } else {
+    if (junitPackage == null || GenInputsAbstract.only_test_public_members) {
       visibility = new PublicVisibilityPredicate();
+    } else {
+      visibility = new PackageVisibilityPredicate(junitPackage);
     }
 
     // Remove private (non-.isVisible) classes and abstract classes
@@ -259,8 +259,7 @@ public class GenTests extends GenInputsAbstract {
     
     DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, 
-        reflectionPredicate, 
-        GenInputsAbstract.only_test_public_members);
+        reflectionPredicate);
 
     // Always add Object constructor (it's often useful).
     ConstructorCall objectConstructor = null;

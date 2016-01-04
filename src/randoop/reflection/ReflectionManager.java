@@ -15,22 +15,22 @@ import randoop.util.Log;
  * of {@link ClassVisitor} objects to the class members. 
  * Uses a {@link ReflectionPredicate} and heuristics to determine which classes 
  * and class members to visit.
- * May be restricted to visit only public members of a class, but, otherwise,
- * accessibility rules of the reflection predicate are used.
- * 
- * For a non-enum class visits:
+ * <p>
+ * For a non-enum class, visits:
  * <ul>
  * <li> all methods satisfying predicate.
  * <li> all constructors satisfying predicate.
- * <li> all fields that satisfy predicate and are not hidden. (A hidden field is a member of 
- *   superclass with field of same name in current class. These are accessible via reflection.).
+ * <li> all fields that satisfy predicate and are not hidden. (A hidden field is
+ *      a member of superclass with field of same name in current class. These 
+ *      are accessible via reflection.).
  * <li> inner enums satisfying predicate.
  * </ul>
- * 
- * For an enum visits:
+ * <p>
+ * For an enum, visits:
  * <ul>
  * <li> all enum constants.
- * <li> methods of the enum satisfying predicate other than <code>values</code> and <code>valueOf</code>.
+ * <li> methods of the enum satisfying predicate other than <code>values</code> 
+ *      and <code>valueOf</code>.
  * <li> methods defined for enum constants that satisfy predicate.
  * </ul>
  */
@@ -38,22 +38,18 @@ public class ReflectionManager {
 
   private ReflectionPredicate predicate;
   private ArrayList<ClassVisitor> visitors;
-  private boolean publicMembersOnly;
 
   /**
    * Creates a manager object that uses the given predicate to determine which 
    * classes, methods and constructors should be visited. 
    * The list of visitors is initially empty.
    * 
-   * @param predicate is used to determine whether class and its members should 
-   *        be visited.
-   * @param publicMembersOnly  the flag to indicate whether only public members
-   * of a class should be visited.
+   * @param predicate  the predicate to indicate whether classes and class
+   *        members should be visited.
    */
-  public ReflectionManager(ReflectionPredicate predicate, boolean publicMembersOnly) {
+  public ReflectionManager(ReflectionPredicate predicate) {
     this.predicate = predicate;
     this.visitors = new ArrayList<>();
-    this.publicMembersOnly = publicMembersOnly;
   }
 
   /**
@@ -108,23 +104,23 @@ public class ReflectionManager {
   }
 
   /**
-   * Applies the visitors to the methods of the class. 
-   * Will visit all methods unless visiting only public members.
+   * Applies the visitors to each method of the class at most once. 
+   * Visits all methods satisfying the reflection predicate.
    * 
    * @param c  the class whose methods should be visited
    */
   private void applyMethods(Class<?> c) {
     Set<Method> methods = new HashSet<>();
-    for (Method m : c.getMethods()) {
-      if (predicate.test(m)) {
+    for (Method m : c.getMethods()) { // for all public methods
+      methods.add(m); // remember to avoid duplicates
+      if (predicate.test(m)) { // if satisfies predicate then visit
         visitMethod(m);
       }
     }
-    if (! publicMembersOnly) {
-      for (Method m : c.getDeclaredMethods()) {
-        if ((! methods.contains(m)) && predicate.test(m)) {
-          visitMethod(m);
-        }
+    for (Method m : c.getDeclaredMethods()) { // for all methods declared by c
+      // if not duplicate and satisfies predicate
+      if ((! methods.contains(m)) && predicate.test(m)) {
+        visitMethod(m);
       }
     }
   }
@@ -137,8 +133,8 @@ public class ReflectionManager {
    * class attached to a constant. Ordinarily, the type of the constant is the 
    * enum, but when there is an anonymous class for constant e, e.getClass() 
    * returns the anonymous class. This is used to check for method overrides 
-   * (could include Object methods) within the constant.
-   * 
+   * (that could include Object methods) within the constant.
+   * <p>
    * Heuristically exclude methods <code>values</code> and <code>valueOf</code>
    * since their definition is implicit, and we aren't testing Java enum 
    * implementation.
@@ -182,15 +178,16 @@ public class ReflectionManager {
   private void applyFields(Class<?> c) {
     //The set of fields declared in class c is needed to ensure we don't collect
     //inherited fields that are hidden by local declaration
-    Set<String> declaredNames = new TreeSet<>(); //get names of fields declared
-    for (Field f : c.getDeclaredFields()) {
+    Set<String> declaredNames = new TreeSet<>(); 
+    for (Field f : c.getDeclaredFields()) { // for fields declared by c
       declaredNames.add(f.getName());
+      if (predicate.test(f)) {
+        visitField(f);
+      }
     }
-    for (Field f : c.getFields()) { //for all public fields
-      //keep a field that satisfies filter, and is not inherited and hidden by local declaration
-      if (predicate.test(f) && 
-          (!declaredNames.contains(f.getName()) || 
-              c.equals(f.getDeclaringClass()))) {
+    for (Field f : c.getFields()) { // for all public fields of c
+      // keep a field that satisfies filter, and is not inherited and hidden by local declaration
+      if (predicate.test(f) && (! declaredNames.contains(f.getName()))) {
         visitField(f);
       }
     }

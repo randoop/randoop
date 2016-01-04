@@ -54,12 +54,12 @@ public class OperationExtractor implements ClassVisitor {
    * 
    * @param classListing  the collection of class objects from which to extract
    * @param predicate  determines whether to include class members in results
-   * @param publicMembersOnly  the flag to indicate whether should only visit public members of classes
    * @return list of {@code Operation} objects satisfying the predicate
    */
-  public static List<Operation> getOperations(Collection<Class<?>> classListing, ReflectionPredicate predicate, boolean publicMembersOnly) {
+  public static List<Operation> getOperations(Collection<Class<?>> classListing, 
+      ReflectionPredicate predicate) {
     if (predicate == null) predicate = new DefaultReflectionPredicate();
-    ReflectionManager mgr = new ReflectionManager(predicate, publicMembersOnly);
+    ReflectionManager mgr = new ReflectionManager(predicate);
     OperationExtractor op = new OperationExtractor();
     mgr.add(op);
     for (Class<?> c : classListing) {
