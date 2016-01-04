@@ -11,8 +11,8 @@ import java.lang.reflect.Modifier;
  * For classes, tests if the class is either public or package private in
  * the local package.
  * Otherwise, implements a test for Java package accessibility rules, and
- * returns true for a member that is accessible from the context of the local 
- * package (either public, or if in the same package the not private).
+ * returns true for a member that is visible from the context of the local 
+ * package (either publicly accessible, or if in the same package then not private).
  */
 public class PackageVisibilityPredicate implements VisibilityPredicate {
 
@@ -20,9 +20,9 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * Create a predicate that tests visibility. Class members must either be
-   * public, or accessible relative to the given package {@code localPackage}.
+   * public, or in the given package {@code localPackage} and not private.
    * 
-   * @param localPackage  the package to use for package accessibility test.
+   * @param localPackage  the package to use for package access test.
    */
   public PackageVisibilityPredicate(Package localPackage) {
     this.localPackage = localPackage;
@@ -72,7 +72,9 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
   }
 
   /**
-   * Test accessibility criteria on modifier bit string and package.
+   * Test visibility criteria on modifier bit string and package: either 
+   * public bit of modifier is set, or packages are equal and the private bit
+   * of modifier is not.
    * 
    * @param mods  the modifiers to test
    * @param otherPackage  the package to test for relative accessibility

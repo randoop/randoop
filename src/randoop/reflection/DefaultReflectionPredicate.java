@@ -48,9 +48,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * criteria for inclusion of reflection objects.
    * @param omitMethods pattern for methods to omit, if null then no methods omitted.
    * @param visibility  the predicate for testing visibility expectations for members 
-   * @see OperationExtractor#getOperations(java.util.Collection, ReflectionPredicate, boolean)
+   * @see OperationExtractor#getOperations(java.util.Collection, ReflectionPredicate)
    */
-  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
+  public DefaultReflectionPredicate(Pattern omitMethods, 
+      Set<String> omitFields, 
+      VisibilityPredicate visibility) {
     super();
     this.omitMethods = omitMethods;
     this.omitFields = omitFields;
@@ -122,14 +124,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     if (! visibility.isVisible(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: randoop.util.Reflection.isVisible(int modifiers) returned false ");
+        Log.logLine("  reason: the method is not visible from test classes");
       }
       return false;
     }
     if (! visibility.isVisible(m.getReturnType())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: randoop.util.Reflection.isVisible(Class<?> cls) returned false for method's return type");
+        Log.logLine("  reason: the method's return type is not visible from test classes");
       }
       return false;
     }
