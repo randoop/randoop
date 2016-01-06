@@ -3,7 +3,7 @@ package randoop;
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
 
-import randoop.util.PrimitiveTypes;
+import randoop.types.PrimitiveTypes;
 import randoop.util.Util;
 
 /**

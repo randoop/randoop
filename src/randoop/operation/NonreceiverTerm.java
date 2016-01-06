@@ -6,17 +6,17 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
+import plume.UtilMDE;
+
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
+import randoop.types.PrimitiveTypes;
 import randoop.types.TypeNames;
-import randoop.util.PrimitiveTypes;
 import randoop.util.StringEscapeUtils;
 import randoop.util.Util;
-
-import plume.UtilMDE;
 
 /**
  * Represents a value that either cannot (primitive or null values), or we don't 
@@ -70,7 +70,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
     if (t.isPrimitive()) {
       if (o == null)
         throw new IllegalArgumentException("primitive-like values cannot be null.");
-      if (!PrimitiveTypes.boxedType(t).equals(o.getClass()))
+      if (!PrimitiveTypes.toBoxedType(t).equals(o.getClass()))
         throw new IllegalArgumentException("o.getClass()=" + o.getClass() + ",t=" + t);
       if (! PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
         throw new IllegalArgumentException("o is not a primitive-like value.");

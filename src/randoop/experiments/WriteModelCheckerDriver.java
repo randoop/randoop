@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.operation.Operation;
-import randoop.util.PrimitiveTypes;
+import randoop.types.PrimitiveTypes;
 
 /**
  * Given a file with a list of classes, creates a driver

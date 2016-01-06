@@ -12,8 +12,8 @@ import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
+import randoop.types.PrimitiveTypes;
 import randoop.util.ListOfLists;
-import randoop.util.PrimitiveTypes;
 import randoop.util.SimpleList;
 
 /**

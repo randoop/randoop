@@ -20,10 +20,10 @@ import randoop.main.GenInputsAbstract;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.PrimitiveTypes;
 import randoop.types.TypeNames;
 import randoop.util.Files;
 import randoop.util.Log;
-import randoop.util.PrimitiveTypes;
 import randoop.util.Reflection;
 
 /**

@@ -13,7 +13,7 @@ import randoop.operation.MethodCall;
 import randoop.operation.Operation;
 import randoop.operation.OperationParser;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
-import randoop.util.PrimitiveTypes;
+import randoop.types.PrimitiveTypes;
 
 /**
  * Statement represents a statement involving an operation (or term), and the list

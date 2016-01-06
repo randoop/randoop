@@ -12,7 +12,7 @@ import java.util.Set;
 
 import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
-import randoop.util.PrimitiveTypes;
+import randoop.types.PrimitiveTypes;
 import randoop.util.Reflection;
 
 /**
@@ -68,7 +68,7 @@ public final class SeedSequences {
 
   private static boolean isOk(Class<?> c, Object seed) {
     if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(c)) {
-      c = PrimitiveTypes.getUnboxType(c);
+      c = PrimitiveTypes.toUnboxedType(c);
     }
     return Reflection.canBePassedAsArgument(seed, c);
   }

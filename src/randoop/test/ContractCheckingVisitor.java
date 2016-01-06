@@ -16,9 +16,9 @@ import randoop.ObjectContract;
 import randoop.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.types.PrimitiveTypes;
 import randoop.util.Log;
 import randoop.util.MultiMap;
-import randoop.util.PrimitiveTypes;
 
 /**
  * An execution visitor that generates checks for error-revealing tests.

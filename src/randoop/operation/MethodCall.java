@@ -21,9 +21,9 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.PrimitiveTypes;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
-import randoop.util.PrimitiveTypes;
 import randoop.util.ReflectionExecutor;
 
 /**
