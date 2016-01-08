@@ -1,11 +1,14 @@
-package randoop.util;
+package randoop.types;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import randoop.main.GenInputsAbstract;
+import randoop.util.StringEscapeUtils;
 
 public final class PrimitiveTypes {
   private PrimitiveTypes() {
@@ -53,7 +56,7 @@ public final class PrimitiveTypes {
     primitiveAndStringToBoxed.put(String.class, String.class); // TODO remove this hack!
   }
 
-  protected static final Map<String, Class<?>> typeNameToPrimitiveOrString= new LinkedHashMap<String, Class<?>>();
+  private static final Map<String, Class<?>> typeNameToPrimitiveOrString= new LinkedHashMap<String, Class<?>>();
   static {
     typeNameToPrimitiveOrString.put("void", void.class);
     typeNameToPrimitiveOrString.put("int",     int.class);
@@ -65,6 +68,22 @@ public final class PrimitiveTypes {
     typeNameToPrimitiveOrString.put("short",   short.class);
     typeNameToPrimitiveOrString.put("byte",    byte.class);
     typeNameToPrimitiveOrString.put(String.class.getName(), String.class);
+  }
+  
+  private static final Map<Class<?>, Set<Class<?>>> wideningTable = new HashMap<>();
+  static {
+    Set<Class<?>> s = new HashSet<>();
+    s.add(double.class);
+    wideningTable.put(float.class, new HashSet<Class<?>>(s));
+    s.add(float.class);
+    wideningTable.put(long.class, new HashSet<Class<?>>(s));
+    s.add(long.class);
+    wideningTable.put(int.class, new HashSet<Class<?>>(s));
+    s.add(int.class);
+    wideningTable.put(char.class, new HashSet<Class<?>>(s));
+    wideningTable.put(short.class, new HashSet<Class<?>>(s));
+    s.add(short.class);
+    wideningTable.put(byte.class, new HashSet<Class<?>>(s));
   }
 
   public static boolean isPrimitiveOrStringTypeName(String typeName) {
@@ -90,8 +109,8 @@ public final class PrimitiveTypes {
     return Collections.unmodifiableSet(boxedToPrimitiveAndString.keySet());
   }
 
-  public static Class<?> boxedType(Class<?> c1) {
-    return primitiveAndStringToBoxed.get(c1);
+  public static Class<?> toBoxedType(Class<?> cls) {
+    return primitiveAndStringToBoxed.get(cls);
   }
 
   public static boolean isBoxedPrimitiveTypeOrString(Class<?> c) {
@@ -235,7 +254,7 @@ public final class PrimitiveTypes {
     }
   }
 
-  public static Class<?> getUnboxType(Class<?> c) {
+  public static Class<?> toUnboxedType(Class<?> c) {
     return boxedToPrimitiveAndString.get(c);
   }
 
@@ -326,6 +345,42 @@ public final class PrimitiveTypes {
 
   public static Class<?> getClassForName(String typeName) {
     return typeNameToPrimitiveOrString.get(typeName);
+  }
+
+  /**
+   * Tests assignability from source to target type via identity conversion 
+   * and widening primitive conversion.
+   * 
+   * @param target  the target type for assignment
+   * @param source  the source type for assignment
+   * @return true if the source type can be assigned to the target type, false otherwise
+   */
+  public static boolean isAssignable(Class<?> target, Class<?> source) {
+    if (target == null || source == null) {
+      throw new IllegalArgumentException("types must be non null");
+    }
+    if (! target.isPrimitive() || ! source.isPrimitive()) {
+      throw new IllegalArgumentException("types must be primitive");
+    }
+    
+    if (source.equals(target)) { // check identity widening
+      return true;
+    }
+    Set<Class<?>> targets = wideningTable.get(source);
+    if (targets == null) {
+      return false;
+    } 
+    return targets.contains(target);
+  }
+
+  /**
+   * Return boxed type for a primitive type
+   * 
+   * @param cls  the {@code Class} object for the primitive type
+   * @return the {@code Class} object for boxed primitive type
+   */
+  public static Class<?> getBoxedType(Class<?> cls) {
+    return primitiveAndStringToBoxed.get(cls);
   }
 
 }
