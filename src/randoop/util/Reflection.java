@@ -14,6 +14,8 @@ import java.util.Set;
 
 import plume.Pair;
 
+import randoop.types.PrimitiveTypes;
+
 /** Utility methods that operate on reflection objects (classes, methods, etc.). */
 public final class Reflection {
 
@@ -186,9 +188,9 @@ public final class Reflection {
     }
 
     if (c1.isPrimitive())
-      c1 = PrimitiveTypes.boxedType(c1);
+      c1 = PrimitiveTypes.toBoxedType(c1);
     if (c2.isPrimitive())
-      c2 = PrimitiveTypes.boxedType(c2);
+      c2 = PrimitiveTypes.toBoxedType(c2);
 
     boolean ret = false;
 
