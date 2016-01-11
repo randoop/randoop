@@ -405,24 +405,59 @@ You may wish to minimize the test case to ease debugging.
 
 <h4 id="kinds_of_errors">What kinds of errors does Randoop check for?</h4>  <!-- omit from toc -->
 
-<p>Currently, Randoop checks for a small set of contracts: </p>
+<p>Currently, Randoop checks for the following contracts: </p>
 
 <ul>
-<li><i>Equals to null:</i> <tt>o.equals(null)</tt> should return <tt>false</tt> </li>
-<li><i>Reflexivity of equality:</i> <tt>o.equals(o)</tt> should return <tt>true</tt> </li>
-<li><i>Symmetry of equality:</i> <tt>o1.equals(o2)</tt> implies <tt>o2.equals(o1)</tt> </li>
-<li><i>Equals and hashcode are consistent:</i> If <tt>o1.equals(o2)==true</tt>, then <tt>o1.hashCode() == o2.hashCode()</tt> </li>
-<li><i>checkRep methods:</i> Any nullary method annotated with <tt>@CheckRep</tt> does not throw an exception; if its return type is <tt>boolean</tt>, it returns <tt>true</tt>. </li>
-<li><i>Methods that do not throw exceptions:</i> Invocations of Object
-  methods (<tt>clone</tt>, <tt>equals</tt>, <tt>hashCode</tt>,
-  <tt>toString</tt>) do not throw exceptions</li>
-<li>Any exception thrown when the exception is classified as an error.</li>
+  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#equals-java.lang.Object-">Object.equals()</a>:
+    <ul>
+      <li><i>Reflexivity:</i> <tt>o.equals(o)</tt> == <tt>true</tt> </li>
+      <li><i>Symmetry:</i> <tt>o1.equals(o2)</tt> == <tt>o2.equals(o1)</tt> </li>
+	<li><i>Transitivity:</i> <tt>o1.equals(o2)</tt> && <tt>o2.equals(o3)</tt> &rArr; <tt>o1.equals(o3)</tt> </li>
+      <li><i>Equals to null:</i> <tt>o.equals(null)</tt> == <tt>false</tt> </li>
+      <li>it does not throw an exception</li>
+    </ul>
+  </li>
+  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#hashCode--">Object.hashCode()</a>:
+    <ul>
+      <li><i>Equals and hashcode are consistent:</i> If <tt>o1.equals(o2)==true</tt>, then <tt>o1.hashCode() == o2.hashCode()</tt> </li>
+      <li>it does not throw an exception</li>
+    </ul>
+  </li>
+  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#clone--">Object.clone()</a>:
+    <ul>
+      <li>it does not throw an exception</li>
+    </ul>
+  </li>
+  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html#toString--">Object.toString()</a>:
+    <ul>
+      <li>it does not throw an exception</li>
+    </ul>
+  </li>
+  <li>Contracts over <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html">Comparable.compareTo()</a> and <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html#compare-T-T-">Comparator.compare()</a>:
+    <ul>
+      <li><i>Reflexivity:</i> <tt>o.compareTo(o)</tt> == 0  (implied by anti-symmetry)</li>
+      <li><i>Anti-symmetry:</i> <tt>sgn(o1.compareTo(o2))</tt> == <tt>-sgn(o2.compareTo(o1))</tt> </li>
+	<li><i>Transitivity:</i> <tt>o1.compareTo(o2)>0</tt> && <tt>o2.compareTo(o3)>0</tt> &rArr; <tt>o1.compareTo(o3)>0</tt> </li>
+      <li><i>Substitutability of equals:</i> <tt>x.compareTo(y)==0</tt> &rArr; <tt>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</tt>
+      <li><i>Consistency with <tt>equals()</tt>:</i> <tt>(x.compareTo(y)==0) == x.equals(y)</tt> (this contract can be disabled)</li>
+      <li>it does not throw an exception</li>
+    </ul>
+  </li>
+  <li>Contracts over <tt>checkRep()</tt> (that is, any nullary method annotated with <a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><tt>@CheckRep</tt></a>):
+    <ul>
+      <li>if its return type is <tt>boolean</tt>, it returns <tt>true</tt></li>
+      <li>it does not throw an exception</li>
+    </ul>
+  </li>
+  <li>Any exception thrown when the exception is <a href="#classifying-tests">classified</a> as an error.</li>
 </ul>
 
 <p>
 Violation of any of these contracts is highly likely to indicate an error.
-You can add additional contracts to Randoop if you discover ones
-that are important to you.
+</p>
+
+<p>
+You can add additional contracts to Randoop.
 </p>
 
 <p>
@@ -959,7 +994,8 @@ You can tell Randoop that some methods in your classes under test are
 rep invariant methods, and Randoop will call these methods on objects
 of the appropriate type, outputting violations of the rep invariant as
 failing unit tests. To tell Randoop that a method in a class under
-test is a rep invariant method, add the <code>@CheckRep</code>
+test is a rep invariant method, add the
+<a href="https://randoop.github.io/randoop/api/randoop/CheckRep.html"><code>@CheckRep</code></a>
 annotation to the method declaration (don't forget to <code>import
 randoop.*</code>).
 </p>
