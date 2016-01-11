@@ -177,6 +177,11 @@ Features
 Documentation enhanced
 
 
+Version 1.3.2, released August 22, 2010
+
+(No changelog entry available.)
+
+
 Version 1.3.1
 
 Added @TestValue annotation, allowing users to specify additional

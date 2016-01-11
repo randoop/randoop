@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html" />
-<link rel="stylesheet" href="main.css" type="text/css" />
-<link rel="icon" type="image/png" href="randoop-logo.png" />
+<link rel="stylesheet" href="stylesheets/main.css" type="text/css" />
+<link rel="icon" type="image/png" href="https://randoop.github.io/randoop/images/randoop-logo.png" />
 <title>Randoop Developer's Manual</title>
 </head>
 <body>
 
-<img src="randoop-logo.png" alt="Randoop logo" style="float:right" />
+<img src="https://randoop.github.io/randoop/images/randoop-logo.png" alt="Randoop logo" style="float:right" />
 
 <h1>Randoop Developer's Manual</h1> <!-- omit from toc -->
 
@@ -65,7 +65,7 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 <hr />
 
 <h1 id="tasks">Compiling, testing, releasing, etc.</h1>
- 
+
 
 <h2 id="compiling">Compiling Randoop</h2>
 
@@ -207,13 +207,13 @@ correctly after an element is added.
 </pre>
 
 <p>
-The test input consists of lines 3-4, which creates a list and calls the 
+The test input consists of lines 3-4, which creates a list and calls the
 <code>add</code> method, exercising the code of the list class under
 test. The test check is in line 5.
 </p>
 
 <p>
-In Randoop, test inputs are represented using 
+In Randoop, test inputs are represented using
 <a href="javadoc/randoop/Sequence.html">Sequences</a>, which describe
 a sequence of <a href="javadoc/randoop/Statement.html">Statement</a>s
 (like the statements in lines 3-4 above)
@@ -285,7 +285,7 @@ The three elements of a statement map to the following classes in Randoop:
 
 <ul>
 
-<li> 
+<li>
 <p>A <a href="javadoc/randoop/StatementKind.html">StatementKind</a>
 represents the kind of operation that the statement
 performs.
@@ -313,7 +313,7 @@ instances of classes that implement <a href="javadoc/randoop/PublicField.html">P
 </li>
 
 <li>
-<a href="javadoc/randoop/EnumConstant.html">EnumConstant</a> 
+<a href="javadoc/randoop/EnumConstant.html">EnumConstant</a>
 represents an enum constant value.
 </li>
 
@@ -359,7 +359,7 @@ bottom. Recall the example sequence:
 </pre>
 
 <p>
-Below is code that creates this sequence via extension. 
+Below is code that creates this sequence via extension.
 </p>
 
 <pre class="code">
@@ -371,7 +371,7 @@ Below is code that creates this sequence via extension.
   StatementKind size = RMethod.getRMethod(LinkedList.class.getMethod("size"));
   StatementKind newTS = RConstructor.getRConstructor(TreeSet.class.getConstructor(Collection.class));
   StatementKind syncS = RMethod.getRMethod(Collections.class.getMethod("synchronizedSet", Set.class));
-  
+
   // Now, create the sequence by repeated extension.
   Sequence s = new Sequence();
   s = s.extend(newLL);
@@ -423,12 +423,12 @@ A third way to create a sequence is by parsing it from a String. For
 example, given a string <code>parseable</code> with the following contents:
 </p>
 <pre class="code">
-var0 =  cons : java.util.LinkedList.&lt;init&gt;() : 
-var1 =  cons : java.lang.Object.&lt;init&gt;() : 
-var2 =  method : java.util.LinkedList.addFirst(java.lang.Object) : var0 var1 
-var3 =  method : java.util.LinkedList.size() : var0 
-var4 =  cons : java.util.TreeSet.&lt;init&gt;(java.util.Collection) : var0 
-var5 =  method : java.util.Collections.synchronizedSet(java.util.Set) : var4 
+var0 =  cons : java.util.LinkedList.&lt;init&gt;() :
+var1 =  cons : java.lang.Object.&lt;init&gt;() :
+var2 =  method : java.util.LinkedList.addFirst(java.lang.Object) : var0 var1
+var3 =  method : java.util.LinkedList.size() : var0
+var4 =  cons : java.util.TreeSet.&lt;init&gt;(java.util.Collection) : var0
+var5 =  method : java.util.Collections.synchronizedSet(java.util.Set) : var4
 </pre>
 <p>
 The following call creates a sequence corresponding to our
@@ -484,7 +484,7 @@ out
 <code>1</code>, i.e. the return value of the call to
 method <code>LinkedList.size()</code>.
 </p>
-<pre class="code">  
+<pre class="code">
   ExecutableSequence es = new ExecutableSequence(s);
   es.execute(null);
 
@@ -594,11 +594,11 @@ For example, consider the following unit test:
  3.  public void testAdd() {
  4.     LinkedList l = new LinkedList();            // Create a list.
  5.     assertTrue(l.equals(l));                    // List should be equal to itself.
- 6.     Object o = new Object(); 
+ 6.     Object o = new Object();
  7.     boolean b = l.add(o);                       // Add an element to it.
  8.     org.junit.Assert.assertTrue(l.size() == 1); // List should have size 1.
  9.     org.junit.Assert.assertTrue(l.equals(l));   // List should still be equal to itself.
-10.     int i = 10;                              
+10.     int i = 10;
 11.     try {
 12.       Object o2 = l.remove(i);                  // Removing from invalid index
 13.       org.junit.Assert.fail();                  // should throw exception.
