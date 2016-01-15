@@ -1,5 +1,7 @@
 package randoop.types;
 
+import java.util.List;
+
 class A<T> implements Comparable<T>{
   @Override
   public int compareTo(T o) {
@@ -24,3 +26,12 @@ class H<T> extends G<T> implements Comparable<T> {
 
 class I {}
 class J<T> extends I {}
+
+// these are for arrays
+
+class ArrayHarvest<T> {
+  public T[] genericArrayArg1() { return null; }
+  public List<T>[] genericArrayArg2() { return null; }
+  public int[] concreteArrayArg1() { return null; }
+  public List<Integer>[] concreteArrayArg2(){ return null; }
+}

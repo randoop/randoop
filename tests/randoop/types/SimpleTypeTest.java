@@ -22,7 +22,7 @@ public class SimpleTypeTest {
    */
   @Test
   public void testPrimitive() {
-    ConcreteType intType = new SimpleType(int.class);
+    ConcreteType intType = new ConcreteSimpleType(int.class);
     assertEquals("name of int is int", "int", intType.getName());
     assertEquals("runtime class of int type is int.class", int.class, intType.getRuntimeClass());
     assertTrue("int type has runtime class of int.class", intType.hasRuntimeClass(int.class));
@@ -37,14 +37,14 @@ public class SimpleTypeTest {
    */
   @Test
   public void testPrimitiveWidening() {
-    ConcreteType booleanType = new SimpleType(boolean.class);
-    ConcreteType byteType = new SimpleType(byte.class);
-    ConcreteType charType = new SimpleType(char.class);
-    ConcreteType doubleType = new SimpleType(double.class);
-    ConcreteType floatType = new SimpleType(float.class);    
-    ConcreteType intType = new SimpleType(int.class);
-    ConcreteType longType = new SimpleType(long.class);
-    ConcreteType shortType = new SimpleType(short.class);
+    ConcreteType booleanType = new ConcreteSimpleType(boolean.class);
+    ConcreteType byteType = new ConcreteSimpleType(byte.class);
+    ConcreteType charType = new ConcreteSimpleType(char.class);
+    ConcreteType doubleType = new ConcreteSimpleType(double.class);
+    ConcreteType floatType = new ConcreteSimpleType(float.class);    
+    ConcreteType intType = new ConcreteSimpleType(int.class);
+    ConcreteType longType = new ConcreteSimpleType(long.class);
+    ConcreteType shortType = new ConcreteSimpleType(short.class);
     
     // boolean to itself
     assertTrue("boolean is assignable from boolean",  booleanType.isAssignableFrom(booleanType));
@@ -142,9 +142,9 @@ public class SimpleTypeTest {
    */
   @Test
   public void testNames() {
-    ConcreteType t = new SimpleType(String.class);
+    ConcreteType t = new ConcreteSimpleType(String.class);
     assertEquals("name should match", "java.lang.String", t.getName());
-    t = new SimpleType(randoop.types.test.Subclass.class);
+    t = new ConcreteSimpleType(randoop.types.test.Subclass.class);
     assertEquals("name should match", "randoop.types.test.Subclass", t.getName());
   }
   
@@ -155,16 +155,16 @@ public class SimpleTypeTest {
    */
   @Test
   public void testVoidDoesNotConvert() {
-    ConcreteType voidType = new SimpleType(void.class);
-    ConcreteType objectType = new SimpleType(Object.class);
-    ConcreteType booleanType = new SimpleType(boolean.class);
-    ConcreteType byteType = new SimpleType(byte.class);
-    ConcreteType charType = new SimpleType(char.class);
-    ConcreteType doubleType = new SimpleType(double.class);
-    ConcreteType floatType = new SimpleType(float.class);    
-    ConcreteType intType = new SimpleType(int.class);
-    ConcreteType longType = new SimpleType(long.class);
-    ConcreteType shortType = new SimpleType(short.class);
+    ConcreteType voidType = new ConcreteSimpleType(void.class);
+    ConcreteType objectType = new ConcreteSimpleType(Object.class);
+    ConcreteType booleanType = new ConcreteSimpleType(boolean.class);
+    ConcreteType byteType = new ConcreteSimpleType(byte.class);
+    ConcreteType charType = new ConcreteSimpleType(char.class);
+    ConcreteType doubleType = new ConcreteSimpleType(double.class);
+    ConcreteType floatType = new ConcreteSimpleType(float.class);    
+    ConcreteType intType = new ConcreteSimpleType(int.class);
+    ConcreteType longType = new ConcreteSimpleType(long.class);
+    ConcreteType shortType = new ConcreteSimpleType(short.class);
     
     assertFalse("void is not assignable from void", voidType.isAssignableFrom(voidType));
     assertFalse("void is not assignable from Object", voidType.isAssignableFrom(objectType));
@@ -193,16 +193,16 @@ public class SimpleTypeTest {
    */
   @Test
   public void testConversionsToObject() {
-    ConcreteType objectType = new SimpleType(Object.class);
-    ConcreteType booleanType = new SimpleType(boolean.class);
-    ConcreteType byteType = new SimpleType(byte.class);
-    ConcreteType charType = new SimpleType(char.class);
-    ConcreteType doubleType = new SimpleType(double.class);
-    ConcreteType floatType = new SimpleType(float.class);    
-    ConcreteType intType = new SimpleType(int.class);
-    ConcreteType longType = new SimpleType(long.class);
-    ConcreteType shortType = new SimpleType(short.class);
-    ConcreteType subclassType = new SimpleType(randoop.types.test.Subclass.class);
+    ConcreteType objectType = new ConcreteSimpleType(Object.class);
+    ConcreteType booleanType = new ConcreteSimpleType(boolean.class);
+    ConcreteType byteType = new ConcreteSimpleType(byte.class);
+    ConcreteType charType = new ConcreteSimpleType(char.class);
+    ConcreteType doubleType = new ConcreteSimpleType(double.class);
+    ConcreteType floatType = new ConcreteSimpleType(float.class);    
+    ConcreteType intType = new ConcreteSimpleType(int.class);
+    ConcreteType longType = new ConcreteSimpleType(long.class);
+    ConcreteType shortType = new ConcreteSimpleType(short.class);
+    ConcreteType subclassType = new ConcreteSimpleType(randoop.types.test.Subclass.class);
     ConcreteType intArrayType = ConcreteType.forArrayOf(intType);
     ConcreteType intArrayListType = ConcreteType.forClass(ArrayList.class, ConcreteType.forClass(Integer.class));
     
@@ -226,43 +226,43 @@ public class SimpleTypeTest {
    */
   @Test
   public void testBoxingUnboxingConversions() {
-    ConcreteType booleanType = new SimpleType(boolean.class);
-    ConcreteType boxedBooleanType = new SimpleType(Boolean.class);
+    ConcreteType booleanType = new ConcreteSimpleType(boolean.class);
+    ConcreteType boxedBooleanType = new ConcreteSimpleType(Boolean.class);
     assertTrue("boolean assignable from boxed", booleanType.isAssignableFrom(boxedBooleanType));
     assertTrue("boxed boolean assignable from unboxed", boxedBooleanType.isAssignableFrom(booleanType));
     
-    ConcreteType byteType = new SimpleType(byte.class);
-    ConcreteType boxedByteType = new SimpleType(Byte.class);
+    ConcreteType byteType = new ConcreteSimpleType(byte.class);
+    ConcreteType boxedByteType = new ConcreteSimpleType(Byte.class);
     assertTrue("byte assignable from boxed", byteType.isAssignableFrom(boxedByteType));
     assertTrue("boxed byte assignable from unboxed", boxedByteType.isAssignableFrom(byteType));
 
-    ConcreteType charType = new SimpleType(char.class);
-    ConcreteType boxedCharType = new SimpleType(Character.class);
+    ConcreteType charType = new ConcreteSimpleType(char.class);
+    ConcreteType boxedCharType = new ConcreteSimpleType(Character.class);
     assertTrue("char assignable from boxed", charType.isAssignableFrom(boxedCharType));
     assertTrue("boxed char assignable from unboxed", boxedCharType.isAssignableFrom(charType));
 
-    ConcreteType doubleType = new SimpleType(double.class);
-    ConcreteType boxedDoubleType = new SimpleType(Double.class);
+    ConcreteType doubleType = new ConcreteSimpleType(double.class);
+    ConcreteType boxedDoubleType = new ConcreteSimpleType(Double.class);
     assertTrue("double assignable from boxed", doubleType.isAssignableFrom(boxedDoubleType));
     assertTrue("boxed double assignable from unboxed", boxedDoubleType.isAssignableFrom(doubleType));
 
-    ConcreteType floatType = new SimpleType(float.class);
-    ConcreteType boxedfloatType = new SimpleType(Float.class);
+    ConcreteType floatType = new ConcreteSimpleType(float.class);
+    ConcreteType boxedfloatType = new ConcreteSimpleType(Float.class);
     assertTrue("float assignable from boxed", floatType.isAssignableFrom(boxedfloatType));
     assertTrue("boxed float assignable from unboxed", boxedfloatType.isAssignableFrom(floatType));
 
-    ConcreteType intType = new SimpleType(int.class);
-    ConcreteType boxedIntType = new SimpleType(Integer.class);
+    ConcreteType intType = new ConcreteSimpleType(int.class);
+    ConcreteType boxedIntType = new ConcreteSimpleType(Integer.class);
     assertTrue("int assignable from boxed", intType.isAssignableFrom(boxedIntType));
     assertTrue("boxed int assignable from unboxed", boxedIntType.isAssignableFrom(intType));
 
-    ConcreteType longType = new SimpleType(long.class);
-    ConcreteType boxedLongType = new SimpleType(Long.class);
+    ConcreteType longType = new ConcreteSimpleType(long.class);
+    ConcreteType boxedLongType = new ConcreteSimpleType(Long.class);
     assertTrue("long assignable from boxed", longType.isAssignableFrom(boxedLongType));
     assertTrue("boxed long assignable from unboxed", boxedLongType.isAssignableFrom(longType));
 
-    ConcreteType shortType = new SimpleType(short.class);
-    ConcreteType boxedShortType = new SimpleType(Short.class);
+    ConcreteType shortType = new ConcreteSimpleType(short.class);
+    ConcreteType boxedShortType = new ConcreteSimpleType(Short.class);
     assertTrue("short assignable from boxed", shortType.isAssignableFrom(boxedShortType));
     assertTrue("boxed short assignable from unboxed", boxedShortType.isAssignableFrom(shortType));
     assertFalse("boxed int not assignable from short", boxedIntType.isAssignableFrom(shortType));
@@ -271,14 +271,14 @@ public class SimpleTypeTest {
   
   @Test
   public void testRawtypeAssignability() {
-    ConcreteType rawALType = new SimpleType(ArrayList.class);
-    ConcreteType parameterizedALType = ConcreteType.forClass(ArrayList.class, new SimpleType(String.class));
+    ConcreteType rawALType = new ConcreteSimpleType(ArrayList.class);
+    ConcreteType parameterizedALType = ConcreteType.forClass(ArrayList.class, new ConcreteSimpleType(String.class));
     assertTrue("ArrayList<String> assignable to ArrayList", rawALType.isAssignableFrom(parameterizedALType));
     
-    ConcreteType rawCollType = new SimpleType(Collection.class);
+    ConcreteType rawCollType = new ConcreteSimpleType(Collection.class);
     assertTrue("ArrayList<String> assignable to Collection", rawCollType.isAssignableFrom(parameterizedALType));
     
-    ConcreteType rawSetType = new SimpleType(Set.class);
+    ConcreteType rawSetType = new ConcreteSimpleType(Set.class);
     assertFalse("ArrayList<String> is not assignable to Set", rawSetType.isAssignableFrom(parameterizedALType));
   }
   
@@ -287,7 +287,7 @@ public class SimpleTypeTest {
     // class I {}
     // class J<T> extends I {}
     ConcreteType iType = ConcreteType.forClass(I.class);
-    ConcreteType strJType = ConcreteType.forClass(J.class, new SimpleType(String.class));
+    ConcreteType strJType = ConcreteType.forClass(J.class, new ConcreteSimpleType(String.class));
     assertTrue("J<String> is assignable to I", iType.isAssignableFrom(strJType));
   }
 }
