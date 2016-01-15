@@ -1,0 +1,233 @@
+package randoop.types;
+
+import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Common superclass representing types in Randoop.
+ * Intended as glue for dealing with generating objects from 
+ * {@code java.lang.reflect.Type} objects, especially instances of
+ * {@code java.lang.reflect.ParameterizedType} that can either represent
+ * generic classes or a parameterized type.
+ * <p>
+ * This class is package private because it should not be necessary to use the
+ * class directly within Randoop.
+ * The intent is that Randoop will only use the subclasses {@link ConcreteType}
+ * and {@link GenericType}.
+ * Instances of {@code GenericType} are only be used during harvesting of
+ * classes under test using reflection, then these are instantiated to instances
+ * of {@link ConcreteType} that are then used to generate the tests.
+ * 
+ * @see randoop.types.ConcreteType
+ * @see randoop.types.GenericType
+ */
+abstract class Type {
+
+  /**
+   * Returns the runtime {@code Class} object for this type.
+   * For use when reflection is needed.
+   * 
+   * @return the {@link Class} that is the runtime representation of the type
+   */
+  public Class<?> getRuntimeClass() {
+    return null;
+  }
+  
+  /**
+   * Indicates whether the given {@code Class} object corresponds to the runtime
+   * class of this type.
+   * 
+   * @param c  the class to check
+   * @return true if {@code c} is the raw type of this type, false otherwise
+   */
+  public boolean hasRuntimeClass(Class<?> c) {
+    return this.getRuntimeClass().equals(c);
+  }
+  
+  /**
+   * Returns the fully qualified name of the type, including type arguments if
+   * this is a parameterized type.
+   * 
+   * @return the fully qualified type name for this type
+   */
+  public String getName() {
+    return null;
+  }
+  
+  /**
+   * Indicate whether this type is generic.
+   * If not, then type is concrete.
+   * 
+   * @return true if this type is generic, false otherwise
+   */
+  public boolean isGeneric() {
+    return false;
+  }
+
+  /**
+   * Indicate whether this is the {@code Object} type.
+   * 
+   * @return true if this is the {@code Object} type, false otherwise
+   */
+  public boolean isObject() {
+    return this.getRuntimeClass().equals(Object.class);
+  }
+
+  /**
+   * Test whether this type is a subtype of the given type according to
+   * transitive closure of definition of <i>direct supertype</i> relation in 
+   * section 4.10.2 of JLS for JavaSE 8.
+   * <i>Only</i> checks reference types.
+   * @see ConcreteType#isAssignableFrom(ConcreteType)
+   * @see ParameterizedType#isSubtypeOf(ConcreteType)
+   * 
+   * @param type  the possible supertype
+   * @return true if this type is a subtype of the given type, false otherwise
+   */
+  public boolean isSubtypeOf(ConcreteType type) {
+    if (type == null) {
+      throw new IllegalArgumentException("type may not be null");
+    }
+    
+    // Object is *the* supertype
+    if (type.isObject()) {
+      return true;
+    }
+    
+    // minimally, underlying Class should be assignable 
+    Class<?> otherRuntimeType = type.getRuntimeClass();
+    Class<?> thisRuntimeType = this.getRuntimeClass();
+    if (! otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
+      return false;
+    }
+
+    // if other type is an interface, check interfaces first
+    if (otherRuntimeType.isInterface()) {
+      java.lang.reflect.Type[] interfaces = thisRuntimeType.getGenericInterfaces();
+      for (java.lang.reflect.Type t : interfaces) {
+        if (type.equals(randoop.types.Type.forType(t))) {
+          return true;  // found the type
+        }
+      }
+    } 
+    
+    // otherwise, get superclass
+    java.lang.reflect.Type superclass = thisRuntimeType.getGenericSuperclass();
+    if (superclass != null) {
+      Type superType = Type.forType(superclass);
+      if (type.equals(superType)) { // found the type
+        return true;
+      }
+
+      // no match yet, so check for transitive chain
+      return superType.isSubtypeOf(type);
+    }
+    
+    return false;
+  }
+  
+  /**
+   * Returns a type constructed from an object hiding behind a 
+   * {@code java.lang.reflect.Type} reference.  
+   * If the object is a {@code Class} instance then returns the
+   * corresponding {@code ConcreteType}. If the type is actually a 
+   * {@code java.lang.reflect.ParameterizedType}, then the type arguments are
+   * inspected to decide whether to return a {@code ParameterizedType} or a
+   * {@code GenericClassType}. 
+   * If the type is a {@code java.lang.reflect.GenericArrayType}, then the
+   * corresponding {@code GenericArrayType} is returned.
+   * <p>
+   * Note that when the type corresponds to a generic class type, this method 
+   * returns the type variables from the 
+   * {@link java.lang.reflect.ParameterizedType#getActualTypeArguments() getActualTypeArguments()} 
+   * method to maintain the guarantees needed for 
+   * {@link ParameterizedType#isSubtypeOf(ConcreteType)}.
+   * 
+   * @param type  the type to interpret
+   * @return a {@code randoop.types.Type} object corresponding to the given type
+   * @throws IllegalArgumentException if the rawtype is not a Class instance
+   */
+  public static Type forType(java.lang.reflect.Type type) {
+    
+    if (type instanceof java.lang.reflect.GenericArrayType) {
+      return new GenericArrayType((java.lang.reflect.GenericArrayType)type);
+    }
+    
+    if (type instanceof java.lang.reflect.ParameterizedType) {
+      java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType)type;
+      java.lang.reflect.Type rawType = t.getRawType();
+      if (! (rawType instanceof Class<?>)) {
+        String msg = "Expecting rawtype " + rawType.toString() 
+                   + " to be a Class object";
+        throw new IllegalArgumentException(msg);
+      }
+      
+      // Collect whatever is lurking in the "actual type arguments"
+      // Could be *actual* "actual type arguments, or type variables
+      ConcreteType[] typeArguments = new ConcreteType[t.getActualTypeArguments().length];
+      List<TypeVariable<?>> typeParameters = new ArrayList<>(); //see below
+      List<TypeBound> typeBounds = new ArrayList<>();
+      java.lang.reflect.Type[] actualArguments = t.getActualTypeArguments();
+      for (int i = 0; i < actualArguments.length; i++) {
+        if (actualArguments[i] instanceof TypeVariable) {
+          TypeVariable<?> v = (TypeVariable<?>)actualArguments[i];
+          typeParameters.add(v);
+          typeBounds.add(TypeBound.fromTypes(v.getBounds()));
+        } else if (actualArguments[i] instanceof Class) {
+          typeArguments[i] = ConcreteType.forClass((Class<?>)actualArguments[i]);
+        } else {
+          String msg = "Expecting either type or type variable, got " 
+                     + actualArguments[i].toString();
+          throw new IllegalArgumentException(msg);
+        }
+      }
+      
+      // Now decide whether object is generic or parameterized type
+      if (typeParameters.size() == actualArguments.length) { // is generic
+        // When building generic class type, need to use the TypeVariables 
+        // obtained through the java.lang.reflect.ParameterizedType as above.
+        // Otherwise, the variables mapped by the substitutions used in checking
+        // subtyping will not be the correct objects, and the subtype test will 
+        // fail.
+        return new GenericClassType((Class<?>)rawType, typeParameters, typeBounds);
+      } else if (typeParameters.isEmpty()) { // is parameterized type
+        // When building parameterized type, first create generic class from the
+        // rawtype, and then instantiate with the arguments collected from the
+        // java.lang.reflect.ParameterizedType interface.
+        GenericClassType genericClass = (GenericClassType)GenericType.forClass((Class<?>)rawType);
+        return genericClass.instantiate(typeArguments);
+      } else {
+        String msg = "Expecting either all types or all type variables";
+        throw new IllegalArgumentException(msg);
+      }
+    }
+    
+    if (type instanceof Class<?>) {
+      return ConcreteType.forClass((Class<?>)type);
+    }
+    
+    String msg = "Unrecognized type " + type.toString() 
+               + ". Must be parameterized type, generic type, or non-generic";
+    throw new IllegalArgumentException(msg);
+  }
+  
+  /**
+   * Returns a {@code Type} object for the given type name.
+   * Uses reflection to find the correspond type.
+   * 
+   * @param typeName  the name of a type
+   * @return the type object for the type with the name, null if none is found
+   * @throws ClassNotFoundException if name is not a recognized type
+   */
+  public static Type forName(String typeName) throws ClassNotFoundException {
+    Class<?> c = PrimitiveTypes.getClassForName(typeName);
+    if (c == null) {
+      c = Class.forName(typeName);
+    }
+    if (c.getTypeParameters().length > 0) {
+      return GenericType.forClass(c);
+    }
+    return ConcreteType.forClass(c);
+  }
+}
