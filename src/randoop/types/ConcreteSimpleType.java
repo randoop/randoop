@@ -56,6 +56,10 @@ public class ConcreteSimpleType extends ConcreteType {
     return runtimeType.getCanonicalName();
   }
 
+  /**
+   * {@inheritDoc}
+   * @return the {@code Class} object for this concrete simple type
+   */
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeType;

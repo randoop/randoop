@@ -12,6 +12,7 @@ import java.util.List;
  * 
  * @see randoop.types.GenericClassType
  * @see randoop.types.GenericArrayType
+ * @see randoop.types.GenericSimpleType
  */
 public abstract class GenericType extends GeneralType {
 
@@ -35,6 +36,18 @@ public abstract class GenericType extends GeneralType {
     return null;
   }
 
+  /**
+   * Returns a concrete type for this generic type created by instantiating
+   * the type parameters with a list of concrete type arguments.
+   * 
+   * @param substitution  the type substitution
+   * @return a {@code ConcreteType} constructed by substituting for type 
+   * parameters in this generic type
+   */
+  public ConcreteType instantiate(Substitution substitution) {
+    return null;
+  }
+  
   /**
    * Builds a generic type from the object reference by the given {@code Type} 
    * reference.
@@ -78,6 +91,11 @@ public abstract class GenericType extends GeneralType {
     return new GenericClassType(c);
   }
 
+  /**
+   * Returns the list of type parameter bounds for this type.
+   * 
+   * @return the list of type parameter bounds for this type
+   */
   public List<TypeBound> getBounds() {
     return null;
   }

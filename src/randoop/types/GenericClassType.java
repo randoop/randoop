@@ -110,7 +110,16 @@ public class GenericClassType extends GenericType {
   public String toString() {
     return this.getName();
   }
-  
+
+  /**
+   * {@inheritDoc}
+   * @return true since this is an array
+   */
+  @Override
+  public boolean isArray() {
+    return true;
+  }
+
   /**
    * {@inheritDoc}
    * @return the fully qualified name of this type with type parameters
@@ -154,9 +163,10 @@ public class GenericClassType extends GenericType {
    * @return a {@link ParameterizedType} instantiating this generic class by the
    * given substitution
    */
+  @Override
   public ConcreteType instantiate(Substitution substitution) {
     if (substitution == null) {
-      throw new IllegalArgumentException("substitution cannot be null");
+      throw new IllegalArgumentException("substitution must be non-null");
     }
     
     for (int i = 0; i < bounds.size(); i++) {
@@ -167,16 +177,29 @@ public class GenericClassType extends GenericType {
     return new ParameterizedType(this, substitution);
   }
 
+  /**
+   * {@inheritDoc}
+   * @return the type parameter bounds for this generic class
+   */
   @Override
   public List<TypeBound> getBounds() {
     return this.bounds;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return the rawtype of this generic class
+   */
   @Override
   public Class<?> getRuntimeClass() {
     return rawType;
   }
 
+  /**
+   * Returns the list of type parameters of this generic class
+   * 
+   * @return the list of type parameters of this generic class
+   */
   public List<TypeVariable<?>> getTypeParameters() {
     return parameters;
   }

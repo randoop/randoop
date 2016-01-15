@@ -57,6 +57,15 @@ abstract class GeneralType {
   }
   
   /**
+   * Indicates whether this object represents an array type.
+   * 
+   * @return true if this object represents an array type, false otherwise
+   */
+  public boolean isArray() {
+    return false;
+  }
+  
+  /**
    * Indicate whether this type is generic.
    * If not, then type is concrete.
    * 

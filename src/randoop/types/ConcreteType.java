@@ -10,15 +10,6 @@ import java.lang.reflect.Type;
  * @see randoop.types.ParameterizedType
  */
 public abstract class ConcreteType extends GeneralType {
-  
-  /**
-   * Indicates whether this object represents an array type.
-   * 
-   * @return true if this object represents an array type, false otherwise
-   */
-  public boolean isArray() {
-    return false;
-  }
 
   /**
    * Indicates whether a {@code ConcreteType} can be assigned to this type.
