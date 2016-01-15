@@ -1,6 +1,7 @@
 package randoop.types;
 
 import java.lang.reflect.Array;
+import java.util.Objects;
 
 public class GenericArrayType extends GenericType {
 
@@ -9,35 +10,6 @@ public class GenericArrayType extends GenericType {
   
   /** The runtime type of this array type */
   private Class<?> runtimeType;
-
-  /**
-   * 
-   * @param t
-   */
-  public GenericArrayType(java.lang.reflect.GenericArrayType t) {
-    this(convertType(t));  
-  }
-  
-  /**
-   * Converts the element type of the given 
-   * {@code java.lang.reflect.GenericArrayType}
-   * to a {@code GenericType} object.
-   *  
-   * @param t  the array type to convert
-   * @return the converted element type of generic array type 
-   */
-  private static GenericType convertType(java.lang.reflect.GenericArrayType t) {
-    if (t == null) {
-      throw new IllegalArgumentException("type must be non-null");
-    }
-    GeneralType elementType = GeneralType.forType(t.getGenericComponentType());
-    if (! elementType.isGeneric()) {
-      String msg = "expecting generic element type (found: " 
-                 + elementType.getName() + ")";
-      throw new IllegalArgumentException(msg);
-    }
-    return (GenericType)elementType;
-  }
 
   /**
    * Create a generic array type for the given element type.
@@ -53,8 +25,46 @@ public class GenericArrayType extends GenericType {
     this.runtimeType = Array.newInstance(elementType.getRuntimeClass(), 0).getClass();
   }
   
+  /**
+   * {@inheritDoc}
+   * @return the {@code Class} object for the array
+   */
   @Override
   public Class<?> getRuntimeClass() {
     return runtimeType;
+  }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (! (obj instanceof GenericArrayType)) {
+      return false;
+    }
+    GenericArrayType t = (GenericArrayType)obj;
+    return elementType.equals(t.elementType);
+  }
+  
+  @Override
+  public int hashCode() {
+    return Objects.hash(elementType);
+  }
+  
+  /**
+   * {@inheritDoc}
+   * @return a {@code ConcreteArrayType} created by instantiating the type
+   * parameters of this generic array type with the type arguments
+   */
+  @Override
+  public ConcreteType instantiate(ConcreteType... typeArguments) {
+    return new ConcreteArrayType(elementType.instantiate(typeArguments));
+  }
+  
+  /**
+   * {@inheritDoc}
+   * @return a {@code ConcreteArrayType} created by instantiating the type
+   * parameters of this generic array type using the substitution
+   */
+  @Override
+  public ConcreteType instantiate(Substitution substitution) {
+    return new ConcreteArrayType(elementType.instantiate(substitution));
   }
 }
