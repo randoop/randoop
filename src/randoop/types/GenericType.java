@@ -13,7 +13,7 @@ import java.util.List;
  * @see randoop.types.GenericClassType
  * @see randoop.types.GenericArrayType
  */
-public abstract class GenericType extends randoop.types.Type {
+public abstract class GenericType extends GeneralType {
 
   /**
    * {@inheritDoc}
@@ -39,7 +39,7 @@ public abstract class GenericType extends randoop.types.Type {
    * Builds a generic type from the object reference by the given {@code Type} 
    * reference.
    * The type must either represent a generic array, or a generic class.
-   * @see randoop.types.Type#forType(Type)
+   * @see randoop.types.GeneralType#forType(Type)
    * 
    * @param t  the object from which the generic type is to be built 
    * @return a {@code GenericType} object constructed from the given type
@@ -47,7 +47,7 @@ public abstract class GenericType extends randoop.types.Type {
    * class
    */
   public static GenericType forType(Type type) {
-    randoop.types.Type t = randoop.types.Type.forType(type);
+    GeneralType t = GeneralType.forType(type);
     if (t.isGeneric()) {
       return (GenericType)t;
     }

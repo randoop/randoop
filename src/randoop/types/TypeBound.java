@@ -100,4 +100,12 @@ public abstract class TypeBound {
    throw new IllegalArgumentException("unsupported type bound " + type.toString());
 
   }
+
+  /**
+   * 
+   * @return
+   */
+  public Class<?> getRuntimeClass() {
+    return null;
+  }
 }

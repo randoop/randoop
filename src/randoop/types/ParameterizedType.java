@@ -16,7 +16,7 @@ import plume.UtilMDE;
  * generic class.
  * Conversion to this type from this and other {@link java.lang.reflect.Type}
  * interfaces is handled by 
- * {@link randoop.types.Type#forType(java.lang.reflect.Type)}.
+ * {@link randoop.types.GeneralType#forType(java.lang.reflect.Type)}.
  */
 public class ParameterizedType extends ConcreteType {
   

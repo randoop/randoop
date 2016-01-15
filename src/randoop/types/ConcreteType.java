@@ -5,11 +5,11 @@ import java.lang.reflect.Type;
 /**
  * {@code ConcreteType} represents a concrete type, a primitive type, 
  * a non-generic class, an enum, or a parameterized type.
- * @see randoop.types.SimpleType
- * @see randoop.types.ArrayType
+ * @see randoop.types.ConcreteSimpleType
+ * @see randoop.types.ConcreteArrayType
  * @see randoop.types.ParameterizedType
  */
-public abstract class ConcreteType extends randoop.types.Type {
+public abstract class ConcreteType extends GeneralType {
   
   /**
    * Indicates whether this object represents an array type.
@@ -133,17 +133,17 @@ public abstract class ConcreteType extends randoop.types.Type {
         String msg = "There should be no type arguments for a primitive type";
         throw new IllegalArgumentException(msg);
       }
-      return new SimpleType(typeClass);
+      return new ConcreteSimpleType(typeClass);
     }
     if (typeClass.isEnum()) {
       if (arguments.length > 0) {
         String msg = "There should be no type arguments for an enum type";
         throw new IllegalArgumentException(msg);
       }
-      return new SimpleType(typeClass);
+      return new ConcreteSimpleType(typeClass);
     }
     if (typeClass.isArray()) {
-      return new ArrayType(typeClass);
+      return new ConcreteArrayType(typeClass);
     }
     
     if (typeClass.getTypeParameters().length > 0) { // is generic
@@ -155,20 +155,20 @@ public abstract class ConcreteType extends randoop.types.Type {
       // if no arguments, fall through to return as rawtype
     }
     
-    return new SimpleType(typeClass);
+    return new ConcreteSimpleType(typeClass);
   }
   
   /**
    * Returns a {@code ConcreteType} object for a {@code ConcreteType} object 
    * representing a concrete type.
-   * @see randoop.types.Type#forType(Type)
+   * @see randoop.types.GeneralType#forType(Type)
    * 
    * @param type  the type to convert
    * @return a {@code ConcreteType} object corresponding to the concrete type
    * @throws IllegalArgumentException if the type is not concrete
    */
   public static ConcreteType forType(Type type) {
-    randoop.types.Type t = randoop.types.Type.forType(type);
+    GeneralType t = GeneralType.forType(type);
     if (! t.isGeneric()) {
       return (ConcreteType)t;
     }
@@ -183,7 +183,7 @@ public abstract class ConcreteType extends randoop.types.Type {
    * @return a type object representing the array type with the given element type
    */
   public static ConcreteType forArrayOf(ConcreteType elementType) {
-    return new ArrayType(elementType);
+    return new ConcreteArrayType(elementType);
   }
 
 }

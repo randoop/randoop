@@ -6,7 +6,7 @@ package randoop.types;
  * It is a wrapper for a {@link Class} object, which is a runtime representation
  * of a type. 
  */
-public class SimpleType extends ConcreteType {
+public class ConcreteSimpleType extends ConcreteType {
   
   /** The runtime type of this simple type. */
   private Class<?> runtimeType;
@@ -16,7 +16,7 @@ public class SimpleType extends ConcreteType {
    * 
    * @param runtimeType  the runtime class for the type
    */
-  public SimpleType(Class<?> runtimeType) {
+  public ConcreteSimpleType(Class<?> runtimeType) {
     this.runtimeType = runtimeType;
   }
 
@@ -26,10 +26,10 @@ public class SimpleType extends ConcreteType {
    */
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof SimpleType)) {
+    if (! (obj instanceof ConcreteSimpleType)) {
       return false;
     }
-    SimpleType t = (SimpleType)obj;
+    ConcreteSimpleType t = (ConcreteSimpleType)obj;
     return this.runtimeType.equals(t.runtimeType);
   }
   
@@ -120,8 +120,8 @@ public class SimpleType extends ConcreteType {
     }
     
     // other cases must be SimpleType to SimpleType
-    if (sourceType instanceof SimpleType) {
-      return isAssignableFrom((SimpleType)sourceType);
+    if (sourceType instanceof ConcreteSimpleType) {
+      return isAssignableFrom((ConcreteSimpleType)sourceType);
     }
 
     return false;
@@ -135,7 +135,7 @@ public class SimpleType extends ConcreteType {
    * @param sourceType  the source type
    * @return true if 
    */
-  private boolean isAssignableFrom(SimpleType sourceType) {
+  private boolean isAssignableFrom(ConcreteSimpleType sourceType) {
     // test for identity and reference widening conversions
     if (this.runtimeType.isAssignableFrom(sourceType.runtimeType)) { 
       return true;

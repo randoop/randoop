@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Represents an array type where the element type is a concrete type.
  */
-public class ArrayType extends ConcreteType {
+public class ConcreteArrayType extends ConcreteType {
 
   /** The (concrete) element type of this array type. */
   private ConcreteType elementType;
@@ -19,7 +19,7 @@ public class ArrayType extends ConcreteType {
    * 
    * @param elementType  the element type for the array
    */
-  public ArrayType(ConcreteType elementType) {
+  public ConcreteArrayType(ConcreteType elementType) {
     if (elementType == null) {
       throw new IllegalArgumentException("Element type should be non-null");
     }
@@ -33,7 +33,7 @@ public class ArrayType extends ConcreteType {
    * 
    * @param runtimeType  the runtime 
    */
-  ArrayType(Class<?> runtimeType) {
+  ConcreteArrayType(Class<?> runtimeType) {
     if (runtimeType == null) {
       throw new IllegalArgumentException("runtime class may not be null");
     }
@@ -46,10 +46,10 @@ public class ArrayType extends ConcreteType {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof ArrayType)) {
+    if (! (obj instanceof ConcreteArrayType)) {
       return false;
     }
-    ArrayType t = (ArrayType)obj;
+    ConcreteArrayType t = (ConcreteArrayType)obj;
     return this.elementType.equals(t.elementType);
   }
   
@@ -78,7 +78,7 @@ public class ArrayType extends ConcreteType {
       return false;
     }
     // if both element types are parameterized, then must be identical
-    ArrayType t = (ArrayType)sourceType;
+    ConcreteArrayType t = (ConcreteArrayType)sourceType;
     if (this.elementType.isParameterized()
         && t.elementType.isParameterized()) {
       return this.elementType.equals(t.elementType);

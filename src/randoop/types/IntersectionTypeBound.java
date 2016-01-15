@@ -68,4 +68,20 @@ public class IntersectionTypeBound extends TypeBound {
     return true;
   }
 
+  /**
+   * {@inheritDoc}
+   * It is not possible to create a {@code Class} object for an intersection
+   * type, so this returns the runtime class of the first bound or {@code Object}.
+   */
+  @Override
+  public Class<?> getRuntimeClass() {
+    Class<?> c = Object.class;
+    if (! boundList.isEmpty()) {
+      TypeBound b = boundList.get(0);
+      if (b instanceof ConcreteTypeBound) {
+        c = b.getRuntimeClass();
+      }
+    }
+    return c;
+  }
 }

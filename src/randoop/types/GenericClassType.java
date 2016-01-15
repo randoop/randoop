@@ -36,7 +36,7 @@ public class GenericClassType extends GenericType {
    * the subtype relation.
    * @see ParameterizedType#isSubtypeOf(ConcreteType)
    * @see #getMatchingSupertype(GenericClassType)
-   * @see randoop.types.Type#forType(Type)
+   * @see randoop.types.GeneralType#forType(Type)
    * 
    * @param rawType  the raw type for the generic class
    * @throws IllegalArgumentException if the class is not generic
@@ -61,7 +61,7 @@ public class GenericClassType extends GenericType {
    * and parameter type bounds.
    * <p>
    * This constructor is intended to mainly be used by 
-   * {@link randoop.types.Type#forType(Type)} where the full set of arguments is
+   * {@link randoop.types.GeneralType#forType(Type)} where the full set of arguments is
    * collected before creating the type object.
    * 
    * @param rawType  the rawtype for the generic class
@@ -219,7 +219,7 @@ public class GenericClassType extends GenericType {
     // otherwise, check superclass
     Type superclass = this.rawType.getGenericSuperclass();
     if (superclass != null) {
-      randoop.types.Type superType = randoop.types.Type.forType(superclass);
+      GeneralType superType = GeneralType.forType(superclass);
       if (type.equals(superType)) {  // found the type
         return (GenericClassType)superType;
       }

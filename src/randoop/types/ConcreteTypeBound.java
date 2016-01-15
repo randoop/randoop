@@ -49,4 +49,8 @@ public class ConcreteTypeBound extends TypeBound {
     return boundType.isAssignableFrom(argType);
   }
 
+  @Override
+  public Class<?> getRuntimeClass() {
+    return boundType.getRuntimeClass();
+  }
 }

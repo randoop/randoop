@@ -109,4 +109,14 @@ public class GenericTypeBound extends TypeBound {
     }
     return new ConcreteTypeBound(ConcreteType.forClass(rawType, concreteArgs));
   }
+  
+  /**
+   * {@inheritDoc}
+   * As a hack to return something usable, returns {@code Object}, but needs to
+   * be bound based on parameter.
+   */
+  @Override
+  public Class<?> getRuntimeClass() {
+    return Object.class;
+  }
 }
