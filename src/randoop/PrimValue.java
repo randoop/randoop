@@ -103,6 +103,11 @@ public final class PrimValue implements ObjectContract {
     // to improve readability.
     if (value.equals(Double.NaN) || value.equals(Float.NaN)) {
       b.append("org.junit.Assert.assertEquals(");
+      if (value.equals(Double.NaN)) {
+        b.append("(double)");
+      } else {
+        b.append("(float)");
+      }
       b.append("x0");
       b.append(", ");
       b.append(PrimitiveTypes.toCodeString(value));
