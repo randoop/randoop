@@ -3,7 +3,7 @@ package randoop;
 import randoop.util.PrimitiveTypes;
 
 /**
- * An check recording the value of a primitive value obtained
+ * A check recording the value of a primitive value obtained
  * during execution, (e.g. <code>var3 == 1</code> where <code>var3</code>
  * is an integer-valued variable in a Randoop test). 
  *
