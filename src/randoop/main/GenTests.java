@@ -608,7 +608,7 @@ public class GenTests extends GenInputsAbstract {
     
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
-    TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid);
+    TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid, ! GenInputsAbstract.ignore_flaky_tests);
     
     // extend with contract checker 
     List<ObjectContract> contracts = getContracts(classes);

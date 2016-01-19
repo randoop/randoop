@@ -3,7 +3,9 @@ package randoop.main;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.Globals;
 import randoop.sequence.AbstractGenerator;
+import randoop.sequence.SequenceExceptionError;
 
 
 /**
@@ -87,9 +89,25 @@ public class Main {
       System.out.println("`help " + handler.fcommand + "' as arguments.");
       System.exit(1);
 
+    } catch (SequenceExceptionError e) {
+      
+      System.out.println();
+      String msg;
+      msg = "ERROR: " + Globals.lineSep
+          + "A test sequence threw an exception when used as input to a longer" + Globals.lineSep
+          + "sequence after having normal behavior during previous execution(s)." + Globals.lineSep
+          + "Please see the \"Randoop stopped because of a flaky test\"" + Globals.lineSep
+          + "troubleshooting section of the user manual." + Globals.lineSep;
+      System.out.println(msg);
+      System.out.println("Exception: " + Globals.lineSep + "  " + e.getError());
+      System.out.println("Statement: " + Globals.lineSep + "  " + e.getStatement());
+      System.out.println("Full sequence:" + Globals.lineSep + e.getSequence());
+      System.exit(1);
+      
     } catch (Throwable e) {
-
-      System.out.println("Throwable thrown while handling command:" + e);
+      
+      System.out.println();
+      System.out.println("Throwable thrown while handling command: " + e);
       e.printStackTrace();
       System.err.flush();
       success = false;
@@ -97,8 +115,9 @@ public class Main {
     } finally {
 
       if (!success) {
+        System.out.println();
         System.out.println("Randoop failed.");
-        System.out.println("Last sequence under execution:" + AbstractGenerator.currSeq);
+        System.out.println("Last sequence under execution: " + AbstractGenerator.currSeq);
         System.exit(1);
       }
     }

@@ -219,6 +219,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Whether OutOfMemoryException is an ERROR, EXPECTED or INVALID")
   public static BehaviorType oom_exception = BehaviorType.INVALID;
   
+  /**
+   * Ignore the situation where a code sequence that previously executed
+   * normally throws an exception when executed as part of a longer test
+   * sequence. If true, the sequence will be classified as invalid.
+   * If false, Randoop will halt with information about the sequence to aid with
+   * identifying the issue.
+   */
+  @Option("Whether to ignore non-determinism in test execution")
+  public static boolean ignore_flaky_tests = false;
   
   /**
    * Maximum number of seconds to spend generating tests.
