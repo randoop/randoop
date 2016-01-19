@@ -94,8 +94,9 @@ public class Main {
       System.out.println();
       String msg;
       msg = "ERROR: " + Globals.lineSep
-          + "A test sequence threw an exception when used as input to a longer" + Globals.lineSep
-          + "sequence after having normal behavior during previous execution(s)." + Globals.lineSep
+          + "Randoop stopped because of a flaky test" + Globals.lineSep
+          + "This is probably because you ran Randoop on methods that are" + Globals.lineSep
+          + "nondeterministic or depend on global state." + Globals.lineSep
           + "Please see the \"Randoop stopped because of a flaky test\"" + Globals.lineSep
           + "troubleshooting section of the user manual." + Globals.lineSep;
       System.out.println(msg);
