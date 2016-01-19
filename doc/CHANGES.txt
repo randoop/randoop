@@ -1,10 +1,20 @@
-Version 2.1.?, released ???
+Version 2.1.1, released January 20, 2016
+
+Randoop handles "flaky" tests differently. These are tests with subsequences
+that throw exceptions when executing the test, though, they had run normally
+when run separately. Flaky tests with OutOfMemoryError are classified as
+invalid. Sequences with other flaky occurrences of an exception will result in
+Randoop stopping and printing error information, unless the --ignore-flaky-tests
+flag is set.
 
 Randoop is now package-access-aware in determining which class members to
 include in a test.  If --junit-package-name is set to the package of a
 class under test, the tests will include non-private members of the
 class. Restrict tests to only public members by setting
 --only-test-public-members.
+
+Fixes a bug where Number objects would be tested for equality with double or
+float without a cast. 
 
 Version 2.1.0, released December 30, 2015
 
