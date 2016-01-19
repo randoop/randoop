@@ -6,7 +6,7 @@ import java.util.List;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 
-/** 
+/**
  * Represents a type variable used by itself as a type.
  * Could occur as a return type, a method/constructor parameter type, a field
  * type, or the type of an array.
@@ -21,7 +21,7 @@ public class GenericSimpleType extends GenericType {
 
   /**
    * Create a {@code GenericSimpleType} for the given type parameter.
-   * 
+   *
    * @param parameter  the type parameter
    */
   public GenericSimpleType(TypeVariable<?> parameter) {
@@ -44,7 +44,7 @@ public class GenericSimpleType extends GenericType {
     GenericSimpleType t = (GenericSimpleType)obj;
     return parameter.equals(t.parameter);
   }
-  
+
   /**
    * {@inheritDoc}
    * @return runtime class of the bound of this type
@@ -62,7 +62,7 @@ public class GenericSimpleType extends GenericType {
   public String getName() {
     return parameter.getName();
   }
-  
+
   /**
    * {@inheritDoc}
    * @return the singleton list with type parameter bound for this type
@@ -97,13 +97,15 @@ public class GenericSimpleType extends GenericType {
     }
     return typeArguments[0];
   }
-  
+
   /**
    * Instantiates this generic type with the substitution.
-   * 
+   *
    * @param substitution  the type substitution
    * @return the {@code ConcreteType} for the type parameter
-   * @throws IllegalArgumentException 
+   * @throws IllegalArgumentException if the substitution is null, or a type
+   * parameter is not mapped by the substitution, or the type argument does not
+   * match the parameter bound.
    */
   @Override
   public ConcreteType instantiate(Substitution substitution) {

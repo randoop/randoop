@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Represents a type bound on a type variable occurring as a type parameter in
  * a class, interface, method or constructor. (See JLS section 4.4)
- * In Java, a type bound is either a type variable, a class type, an interface 
+ * In Java, a type bound is either a type variable, a class type, an interface
  * type, or an intersection type of class and interface bounds.
  * This class represents a bound as concretely as possible based on the values
  * returned by {@link java.lang.reflect.TypeVariable#getBounds()}.
@@ -19,7 +19,7 @@ public abstract class TypeBound {
 
   /**
    * Determines if this is an upper bound for the concrete argument type.
-   * 
+   *
    * @param argType  the concrete argument type
    * @return true if this bound is satisfied by the concrete type when the
    *         substitution is used on the bound, false otherwise
@@ -31,7 +31,7 @@ public abstract class TypeBound {
   /**
    * Creates a {@code TypeBound} object from the given array of bounds.
    * If there is more than one type, the returned bound is an intersection type.
-   * 
+   *
    * @param bounds  the types representing a type parameter bound
    * @return the type bound constructed from the given {@code Type} objects
    */
@@ -39,7 +39,7 @@ public abstract class TypeBound {
     if (bounds == null) {
       throw new IllegalArgumentException("bounds must be non null");
     }
-    
+
     if (bounds.length == 1) {
       return TypeBound.fromType(bounds[0]);
     } else {
@@ -52,11 +52,11 @@ public abstract class TypeBound {
   }
 
   /**
-   * Creates a {@code TypeBound} object from a single 
+   * Creates a {@code TypeBound} object from a single
    * {@code java.lang.reflect.Type}.
    * Tests for types that are represented by {@code Class} objects, or
    * {@code java.lang.reflect.ParameterizedType} objects.
-   *  
+   *
    * @param type  the type for type bound
    * @return a type bound that ensures the given type is satisfied as an upper
    *         bound
@@ -69,9 +69,9 @@ public abstract class TypeBound {
       Class<?> c = (Class<?>)type;
       return new ConcreteTypeBound(ConcreteType.forClass(c));
     }
-   
+
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      
+
       java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType)type;
       Type rawType = pt.getRawType();
       if (! (rawType instanceof Class<?>)) {
@@ -94,16 +94,20 @@ public abstract class TypeBound {
         }
       }
       return new ConcreteTypeBound(ConcreteType.forClass(runtimeType, conTypes));
-      
+
     }
-    
+
    throw new IllegalArgumentException("unsupported type bound " + type.toString());
 
   }
 
   /**
-   * 
-   * @return
+   * Returns the runtime class for this type bound.
+   * Depending on implementing class, this may be {@code Object} or something
+   * closer to the bound.
+   * The returned value should not be used to test satisfiability of the bound.
+   
+   * @return the runtime class for this type bound.
    */
   public Class<?> getRuntimeClass() {
     return null;
