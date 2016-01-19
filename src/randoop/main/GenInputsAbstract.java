@@ -311,7 +311,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Values used in tests")
   @Option("Use null as an input with the given frequency")
-  public static double null_ratio = 0;
+  public static double null_ratio = 0.05;
 
   /**
    * Do not use <code>null</code> as input to methods or constructors when no 
@@ -325,7 +325,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * determines the frequency that <code>null</code> is used as an input.
    */
   @Option("Never use null as input to methods or constructors")
-  public static boolean forbid_null = true;
+  public static boolean forbid_null = false;
 
   /**
    * A file containing literal values to be used as inputs to methods under test.
