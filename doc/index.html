@@ -1301,18 +1301,27 @@ option.
 </p>
 
 <p>
-If you are unable to determine which method affected global state, then
-you can resort to the command-line argument <code>--ignore-flaky-tests</code>
-to discard the flaky tests.
-In this case, you can help us improve Randoop by submitting an issue via the
+If you find a flaky test that does not result from a method that side-effects
+global state, then please help us improve Randoop by submitting an issue via the
 <a href="https://github.com/randoop/randoop/issues" rel="nofollow">issue
 tracker</a> to let us know what you encountered.
 (Randoop already avoids setting public static fields, and discards any test 
 with a flaky occurrence of an <code>OutOfMemoryError</code> as
 invalid.
 Additional information can help us find other heuristics that avoid generating
-flaky tests.)
- </p>
+flaky tests, or improve this documentation.)
+</p>
+
+<p>
+If you are unable to determine which method caused the flaky tests and
+exclude it using the
+<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
+option, then you can resort to the command-line argument
+<a href="#option:ignore-flaky-tests"><code>--ignore-flaky-tests</code></a>
+to discard the flaky tests.
+This is a last resort because it is better to avoid generating flaky tests
+rather than discarding them after generating them.
+</p>
 
 
 <!-- <h2 id="faq">FAQ: Frequently Asked Questions (and common problems)</h2> -->
