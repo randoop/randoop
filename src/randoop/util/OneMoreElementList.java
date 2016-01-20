@@ -29,6 +29,15 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
       return lastElement;
     throw new IndexOutOfBoundsException("No such element:" + index);
   }
+  
+  @Override
+  public SimpleList<T> getSublist(int index) {
+    if (index < list.size()) {
+      return list;
+    } else {
+      return this;
+    }
+  }
 
   @Override
   public List<T> toJDKList() {

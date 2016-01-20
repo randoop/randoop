@@ -84,6 +84,17 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
   }
 
   @Override
+  public SimpleList<T> getSublist(int index) {
+    if (index < 0 || index > this.totalelements - 1)
+      throw new IllegalArgumentException("index must be between 0 and size()-1");
+    int i = 0;
+    while (i < accumulatedSize.length && index < accumulatedSize[i]) {
+      i++;
+    }
+    return lists.get(i);
+  }
+  
+  @Override
   public List<T> toJDKList() {
     List<T> result= new ArrayList<T>();
     for (SimpleList<T> l : lists) {

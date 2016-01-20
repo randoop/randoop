@@ -31,6 +31,11 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
   public T get(int index) {
     return theList.get(index);
   }
+  
+  @Override
+  public SimpleList<T> getSublist(int index) {
+    return this;
+  }
 
   public boolean add(T element) {
     return theList.add(element);
