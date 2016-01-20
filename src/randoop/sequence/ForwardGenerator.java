@@ -147,7 +147,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
   }
 
-  public Set<Sequence> allSequences() {
+  @Override
+  public Set<Sequence> getAllSequences() {
     return Collections.unmodifiableSet(this.allSequences);
   }
 
