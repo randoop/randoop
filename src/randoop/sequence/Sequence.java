@@ -1133,4 +1133,14 @@ public final class Sequence implements Serializable, WeightedElement {
     return false;
   }
 
+  /**
+   * Using compositional structure of this sequence, return the subsequence of 
+   * this sequence that contains the statement at the given index.
+   *  
+   * @param index  the statement position in this sequence
+   * @return the sequence containing the index position
+   */
+  public Sequence getSubsequence(int index) {
+    return new Sequence(statements.getSublist(index));
+  }
 }
