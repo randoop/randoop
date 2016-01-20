@@ -1,11 +1,12 @@
 Version 2.1.1, released January 20, 2016
 
-Randoop halts and prints error information if it encounters a flaky test
-in which an exception is thrown elsewhere than at the last statement.  This
-is usually due to nondeterminism or to side effects on global state.  The
-best solution is to not run Randoop on methods that are nondeterministic or
-that side-effect global state.  Alternately, you can use the
---ignore-flaky-tests to make Randoop discard flaky tests and proceed.
+Randoop now prints nicer error information when it halts after encountering a 
+flaky test (a test in which an exception is thrown elsewhere than at the last 
+statement).  This flaky behavior is usually due to nondeterminism or to side 
+effects on global state.  So, the best solution is to not run Randoop on
+methods that are nondeterministic or that side-effect global state.  
+Alternately, you can use the --ignore-flaky-tests option to make Randoop discard
+flaky tests and proceed.
 
 Randoop is now package-access-aware in determining which class members to
 include in a test.  If --junit-package-name is set to the package of a
