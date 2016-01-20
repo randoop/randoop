@@ -314,16 +314,28 @@ a "method under test".
 <p>Additional notes:</p>
 <ul>
 <li>
-<p>The methods under test should include any methods that a test may need to call in order to set up state.</p>
+  The methods under test should include any methods that a test may need
+  to call in order to set up state or create argument values.
 </li>
 
 <li>
-<p>
-Randoop does not currently support generics. Use raw types when
-specifying classes or methods.
-</p>
+  Use raw type names such as <code>List</code>, not parameterized types such
+  as <code>List&lt;String&gt;</code>, when specifying classes or methods.
 </li>
 
+<li>
+  Do not include methods that side-effect global state.
+  (Methods that side-effect the state of their argument or receiver are fine.)
+  The reason is that such methods create dependent tests that cannot be run
+  in isolation or reordered.
+  For example, if test A side-effects global state and test B reads global
+  state, then whether test B fails depends on whether test A is run before
+  test B.
+  If you wish to test different settings of the global variable, run
+  Randoop multiple times specifying different
+  <a href="#option:init-routine"><tt>--init-routine</tt></a> arguments that
+  set the global variable to different values.
+</li>
 
 </ul>
 
@@ -1359,9 +1371,9 @@ rather than discarding them after generating them.
  -->
 <!--  LocalWords:  subsequences online unpub javac TypeN postcondition jarpath
  -->
-<!--  LocalWords:  test1 o1 t1 s1 var0 arrayList0 Type0 Type1 Type2 o2
+<!--  LocalWords:  test1 o1 t1 s1 var0 arrayList0 Type0 Type1 Type2 o2 oom
  -->
-<!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest
+<!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest o3 sgn
  -->
-<!--  LocalWords:  npe
+<!--  LocalWords:  npe a' c' subtests
  -->
