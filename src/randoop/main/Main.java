@@ -3,9 +3,7 @@ package randoop.main;
 import java.util.ArrayList;
 import java.util.List;
 
-import randoop.Globals;
 import randoop.sequence.AbstractGenerator;
-import randoop.sequence.SequenceExceptionError;
 
 
 /**
@@ -89,18 +87,6 @@ public class Main {
       System.out.println("`help " + handler.fcommand + "' as arguments.");
       System.exit(1);
 
-    } catch (SequenceExceptionError e) {
-      
-      System.out.printf("ERROR:%n"
-          + "Randoop stopped because of a flaky test.%n"
-          + "This is probably because you ran Randoop on methods that side-effect global%n"
-          + "state.  Please see the \"Randoop stopped because of a flaky test\"%n"
-          + "section of the user manual.%n");
-      System.out.printf("Exception:%n  %s%n", e.getError());
-      System.out.printf("Statement:%n  %s%n", e.getStatement());
-      System.out.printf("Full sequence:%n%s%n", e.getSequence());
-      System.exit(1);
-      
     } catch (Throwable e) {
       
       System.out.println();

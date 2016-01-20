@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +64,7 @@ import randoop.sequence.AbstractGenerator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
+import randoop.sequence.SequenceExceptionError;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ErrorTestPredicate;
 import randoop.test.ExcludeTestPredicate;
@@ -407,8 +409,46 @@ public class GenTests extends GenInputsAbstract {
     }
     
     // Generate tests
-    explorer.explore();
+    try {
+      explorer.explore();
+    } catch (SequenceExceptionError e) {
 
+      System.out.printf("%nERROR: Randoop stopped because of a flaky test.%n"
+          + "This is probably because you ran Randoop on methods that side-effect global%n"
+          + "state.  Please see the \"Randoop stopped because of a flaky test\"%n"
+          + "section of the user manual.%n");
+      System.out.printf("Exception:%n  %s%n", e.getError());
+      System.out.printf("Statement:%n  %s%n", e.getStatement());
+      System.out.printf("Full sequence:%n%s%n", e.getSequence());
+
+      Set<String> callSet = new TreeSet<>();
+      Sequence subsequence = e.getSubsequence();
+      Iterator<Sequence> s_i = explorer.getAllSequences().iterator();
+      if (s_i.hasNext()) {
+        Sequence s = s_i.next();
+        while (! subsequence.equals(s) && s_i.hasNext()) {
+          s = s_i.next();
+        }
+        while (s_i.hasNext()) {
+          for (int i = 0; i < s.statements.size(); i++) {
+            callSet.add(s.statements.get(i).getOperation().toString());
+          }
+        }
+      }
+
+      if (! callSet.isEmpty()) {
+        System.out.println("Operations performed:");
+        for (String opName : callSet) {
+          System.out.println(opName);
+        }
+      } else {
+        System.out.printf("Exception does not occur in input subsequence%n"
+                        + "May be due to a resource accumulation in global state%n"
+                        + "Please submit an issue%n");
+      }
+
+      System.exit(1);
+    }
    // once tests generated, 
 
     if (GenInputsAbstract.output_branches != null) {
