@@ -91,18 +91,15 @@ public class Main {
 
     } catch (SequenceExceptionError e) {
       
-      System.out.println();
-      String msg;
-      msg = "ERROR: " + Globals.lineSep
-          + "Randoop stopped because of a flaky test" + Globals.lineSep
-          + "This is probably because you ran Randoop on methods that are" + Globals.lineSep
-          + "nondeterministic or depend on global state." + Globals.lineSep
-          + "Please see the \"Randoop stopped because of a flaky test\"" + Globals.lineSep
-          + "troubleshooting section of the user manual." + Globals.lineSep;
-      System.out.println(msg);
-      System.out.println("Exception: " + Globals.lineSep + "  " + e.getError());
-      System.out.println("Statement: " + Globals.lineSep + "  " + e.getStatement());
-      System.out.println("Full sequence:" + Globals.lineSep + e.getSequence());
+      System.out.printf("ERROR:%n" 
+          + "Randoop stopped because of a flaky test.%n"
+          + "This is probably because you ran Randoop on methods that are%n"
+          + "nondeterministic or depend on global state.%n"
+          + "Please see the \"Randoop stopped because of a flaky test\"%n"
+          + "troubleshooting section of the user manual.%n");
+      System.out.printf("Exception:%n  %s%n", e.getError());
+      System.out.printf("Statement:%n  %s%n", e.getStatement());
+      System.out.printf("Full sequence:%n%s%n", e.getSequence());
       System.exit(1);
       
     } catch (Throwable e) {
