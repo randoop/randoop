@@ -1,9 +1,15 @@
 package randoop.sequence;
 
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Exception representing occurrence of a "flaky" test sequence where an
  * exception was thrown by a statement other than the last of the sequence.
- * 
+ * Occurs when a statement in an input sequence, that previously terminated
+ * normally, throws an exception.
+ * Includes information needed to report the error.
  */
 public class SequenceExceptionError extends Error {
 
@@ -14,24 +20,24 @@ public class SequenceExceptionError extends Error {
   private Throwable e;
   
   /** The test sequence */
-  private ExecutableSequence sequence;
+  private ExecutableSequence testSequence;
   
   /** The position of the statement that threw the exception */
   private int position;
-  
+
   /**
    * Create an exception for the exception thrown by the statement at the given
    * position in the test sequence.
    * 
-   * @param sequence  the test sequence
+   * @param testSequence  the test sequence
    * @param position  the position of the statement that threw the exception
    * @param exception  the exception
    */
-  public SequenceExceptionError(ExecutableSequence sequence, 
+  public SequenceExceptionError(ExecutableSequence testSequence, 
                                 int position, 
                                 Throwable exception) {
     super("Exception thrown before end of sequence", exception);
-    this.sequence = sequence;
+    this.testSequence = testSequence;
     this.position = position;
     this.e = exception;
   }
@@ -51,7 +57,7 @@ public class SequenceExceptionError extends Error {
    * @return the string representation of the statement
    */
   public String getStatement() {
-    return sequence.statementToCodeString(position);
+    return testSequence.statementToCodeString(position);
   }
   
   /**
@@ -60,6 +66,16 @@ public class SequenceExceptionError extends Error {
    * @return the full test sequence as a string
    */
   public String getSequence() {
-    return sequence.toCodeString();
+    return testSequence.toCodeString();
   }
+
+  /**
+   * Returns the input sequence containing the statement that threw the exception.
+   * 
+   * @return the input sequence from which exception was thrown
+   */
+  public Sequence getSubsequence() {
+    return testSequence.sequence.getSubsequence(position);
+  }
+
 }
