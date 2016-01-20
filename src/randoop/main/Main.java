@@ -94,14 +94,13 @@ public class Main {
       System.out.println();
       String msg;
       msg = "ERROR: " + Globals.lineSep
-          + "Randoop stopped because of a flaky test" + Globals.lineSep
-          + "This is probably because you ran Randoop on methods that are" + Globals.lineSep
-          + "nondeterministic or depend on global state." + Globals.lineSep
-          + "Please see the \"Randoop stopped because of a flaky test\"" + Globals.lineSep
-          + "troubleshooting section of the user manual." + Globals.lineSep;
+          + "Randoop stopped because of a flaky test." + Globals.lineSep
+          + "This is probably because you ran Randoop on methods that side-effect global" + Globals.lineSep
+          + "state.  Please see the \"Randoop stopped because of a flaky test\"" + Globals.lineSep
+          + "section of the user manual." + Globals.lineSep;
       System.out.println(msg);
-      System.out.println("Exception: " + Globals.lineSep + "  " + e.getError());
-      System.out.println("Statement: " + Globals.lineSep + "  " + e.getStatement());
+      System.out.println("Exception:" + Globals.lineSep + "  " + e.getError());
+      System.out.println("Statement:" + Globals.lineSep + "  " + e.getStatement());
       System.out.println("Full sequence:" + Globals.lineSep + e.getSequence());
       System.exit(1);
       
