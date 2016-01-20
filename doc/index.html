@@ -751,7 +751,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  Unless --forbid_null is true, a <code>null</code> value will still be used 
  if no other value can be passed as an argument even if --null-ratio=0.
  
- Randoop never uses <code>null</code> for receiver values. [default 0.05]</li>
+ Randoop never uses <code>null</code> for receiver values. [default 0.0]</li>
       <li id="option:forbid-null"><b>--forbid-null=</b><i>boolean</i>. Do not use <code>null</code> as input to methods or constructors when no 
  other argument value can be generated.
  <p>
@@ -760,7 +760,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  members being untested.
  <p>
  Does not affect the behavior based on --null_ratio, which independently 
- determines the frequency that <code>null</code> is used as an input. [default false]</li>
+ determines the frequency that <code>null</code> is used as an input. [default true]</li>
       <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
  <p>
  Literals in these files are used in addition to all other constants in the 
