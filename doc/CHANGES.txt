@@ -1,10 +1,21 @@
-Version 2.1.?, released ???
+Version 2.1.1, released January 20, 2016
+
+Randoop halts and prints error information if it encounters a flaky test
+in which an exception is thrown elsewhere than at the last statement.  This
+is usually due to nondeterminism or to side effects on global state.  The
+best solution is to not run Randoop on methods that are nondeterministic or
+that side-effect global state.  Alternately, you can use the
+--ignore-flaky-tests to make Randoop discard flaky tests and proceed.
 
 Randoop is now package-access-aware in determining which class members to
 include in a test.  If --junit-package-name is set to the package of a
 class under test, the tests will include non-private members of the
 class. Restrict tests to only public members by setting
 --only-test-public-members.
+
+Fixed issue #78:  Number objects were tested for equality with Double.Nan
+or Float.Nan without a cast.
+
 
 Version 2.1.0, released December 30, 2015
 

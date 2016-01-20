@@ -225,6 +225,10 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * sequence. If true, the sequence will be classified as invalid.
    * If false, Randoop will halt with information about the sequence to aid with
    * identifying the issue.
+   * <p>
+   * Use of this option is a last resort.  Flaky tests are usually due to
+   * calling Randoop on side-effecting methods, and a better solution is
+   * not to call Randoop on such methods.
    */
   @Option("Whether to ignore non-determinism in test execution")
   public static boolean ignore_flaky_tests = false;

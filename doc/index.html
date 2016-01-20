@@ -14,7 +14,7 @@
 <h1>Randoop Manual</h1> <!-- omit from toc -->
 
 <p>
-This is the manual for Randoop version 2.1.0, released December 30, 2015.
+This is the manual for Randoop version 2.1.1, released January 20, 2016.
 The Randoop homepage is
 <a href="http://randoop.github.io/randoop/">http://randoop.github.io/randoop/</a>.
 </p>
@@ -52,6 +52,7 @@ The Randoop homepage is
               <li><a href="#no-tests-created">Randoop does not create tests</a></li>
               <li><a href="#nontermination">Randoop does not terminate</a></li>
               <li><a href="#nontermination">Randoop produces different output on different runs</a></li>
+              <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
             </ul></li>
         </ul></li>
     </ul>
@@ -313,16 +314,28 @@ a "method under test".
 <p>Additional notes:</p>
 <ul>
 <li>
-<p>The methods under test should include any methods that a test may need to call in order to set up state.</p>
+  The methods under test should include any methods that a test may need
+  to call in order to set up state or create argument values.
 </li>
 
 <li>
-<p>
-Randoop does not currently support generics. Use raw types when
-specifying classes or methods.
-</p>
+  Use raw type names such as <code>List</code>, not parameterized types such
+  as <code>List&lt;String&gt;</code>, when specifying classes or methods.
 </li>
 
+<li>
+  Do not include methods that side-effect global state.
+  (Methods that side-effect the state of their argument or receiver are fine.)
+  The reason is that such methods create dependent tests that cannot be run
+  in isolation or reordered.
+  For example, if test A side-effects global state and test B reads global
+  state, then whether test B fails depends on whether test A is run before
+  test B.
+  If you wish to test different settings of the global variable, run
+  Randoop multiple times specifying different
+  <a href="#option:init-routine"><tt>--init-routine</tt></a> arguments that
+  set the global variable to different values.
+</li>
 
 </ul>
 
@@ -681,6 +694,15 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:oom-exception"><b>--oom-exception=</b><i>enum</i>. If a test throws an <code>OutOfMemoryError</code> exception, should it be
  included in the error-revealing test suite (value: ERROR), regression test
  suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default INVALID]<ul><li><b>INVALID</b> Occurrence of exception should be considered invalid</li><li><b>ERROR</b> Occurrence of exception should be considered an error</li><li><b>EXPECTED</b> Occurrence of exception should be considered expected behavior</li></ul></li>
+      <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>. Ignore the situation where a code sequence that previously executed
+ normally throws an exception when executed as part of a longer test
+ sequence. If true, the sequence will be classified as invalid.
+ If false, Randoop will halt with information about the sequence to aid with
+ identifying the issue.
+ <p>
+ Use of this option is a last resort.  Flaky tests are usually due to
+ calling Randoop on side-effecting methods, and a better solution is
+ not to call Randoop on such methods. [default false]</li>
     </ul>
   </li>
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
@@ -1267,6 +1289,55 @@ sequential Java program are:
   </li>
 </ul>
 
+<h4 id="flaky-tests">Randoop stopped because of a flaky test</h4>
+
+<p>
+Randoop extends previously-generated tests by adding new method calls to them.
+If, in the new longer test, one of the embedded subtests throws an exception,
+then we say the test is <i>flaky</i>.
+</p>
+
+<p>
+Flaky tests are usually due to Randoop calling a method that has global
+side effects.  Such methods are not appropriate for randomly-generated
+tests, and so you should not call Randoop on such methods.  If Randoop
+encounters a flaky test, Randoop halts so that you can correct your
+invocation of Randoop, excluding the side-effecting method from
+consideration.  You can do so by passing the
+<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
+option.
+</p>
+
+<p>
+To help you determine which method to omit, Randoop prints a list of method calls and field manipulations since the
+previous execution of the subsequence where the exception occurred.
+You should determine which of these methods affected global state, and then exclude it by using the 
+<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
+option.
+</p>
+
+<p>
+If you find a flaky test that does not result from a method that side-effects
+global state, then please help us improve Randoop by submitting an issue via the
+<a href="https://github.com/randoop/randoop/issues" rel="nofollow">issue
+tracker</a> to let us know what you encountered.
+(Randoop already avoids setting public static fields, and discards any test 
+with a flaky occurrence of an <code>OutOfMemoryError</code> as
+invalid.
+Additional information can help us find other heuristics that avoid generating
+flaky tests, or improve this documentation.)
+</p>
+
+<p>
+If you are unable to determine which method caused the flaky tests and
+exclude it using the
+<a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
+option, then you can resort to the command-line argument
+<a href="#option:ignore-flaky-tests"><code>--ignore-flaky-tests</code></a>
+to discard the flaky tests.
+This is a last resort because it is better to avoid generating flaky tests
+rather than discarding them after generating them.
+</p>
 
 
 <!-- <h2 id="faq">FAQ: Frequently Asked Questions (and common problems)</h2> -->
@@ -1304,9 +1375,9 @@ sequential Java program are:
  -->
 <!--  LocalWords:  subsequences online unpub javac TypeN postcondition jarpath
  -->
-<!--  LocalWords:  test1 o1 t1 s1 var0 arrayList0 Type0 Type1 Type2 o2
+<!--  LocalWords:  test1 o1 t1 s1 var0 arrayList0 Type0 Type1 Type2 o2 oom
  -->
-<!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest
+<!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest o3 sgn
  -->
-<!--  LocalWords:  npe
+<!--  LocalWords:  npe a' c' subtests
  -->

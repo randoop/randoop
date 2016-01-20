@@ -10,27 +10,31 @@ import randoop.test.predicate.ExceptionPredicate;
  * A {@code ValidityCheckingVisitor} checks for occurrences of exceptions that
  * have been tagged as invalid behaviors as represented by a 
  * {@code ExceptionPredicate}.
- * Also, either ignores or reports "flaky" test sequences --- an input 
+ * Also, either ignores or reports flaky test sequences --- an input 
  * sequence that throws an exception in a longer test sequence, despite having
  * run normally by itself.
- * Ignored flaky sequences are classified as invalid.
+ * Ignores flaky sequences are classified as invalid.
  * Flaky occurrences of {@code OutOfMemoryError} are always treated as invalid.
  */
 public class ValidityCheckingVisitor implements TestCheckGenerator {
 
+  /** The predicate to determine whether a test sequence is valid */
   private ExceptionPredicate isInvalid;
-  private boolean reportFlaky;
+  
+  /** The flag to determine whether to report flaky tests by throwing an exception */
+  private boolean throwExceptionOnFlakyTest;
 
   /**
    * Creates an object that looks for invalid exceptions.
    * 
    * @param isInvalid  the predicate to test for invalid exceptions
-   * @param reportFlaky  a flag indicating whether to report flaky tests by
-   *                     throwing an exception
+   * @param throwExceptionOnFlakyTest  a flag indicating whether to report flaky 
+   *                                   tests by throwing an exception
    */
-  public ValidityCheckingVisitor(ExceptionPredicate isInvalid, boolean reportFlaky) {
+  public ValidityCheckingVisitor(ExceptionPredicate isInvalid, 
+                                 boolean throwExceptionOnFlakyTest) {
     this.isInvalid = isInvalid;
-    this.reportFlaky = reportFlaky;
+    this.throwExceptionOnFlakyTest = throwExceptionOnFlakyTest;
   }
 
   /**
@@ -56,7 +60,7 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
         Throwable e = exec.getException();
         
         if (i != finalIndex) {
-          if (reportFlaky && ! (e instanceof OutOfMemoryError)) {
+          if (throwExceptionOnFlakyTest && ! (e instanceof OutOfMemoryError)) {
             throw new SequenceExceptionError(s, i, e);            
           }
           checks.add(new InvalidExceptionCheck(e, i, e.getClass().getName()));

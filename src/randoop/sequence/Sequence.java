@@ -760,11 +760,13 @@ public final class Sequence implements Serializable, WeightedElement {
       }
     }
   }
-
-  /** Create a new sequence that is the concatenation of the given sequences. */
-
-
-
+  
+  /**
+   * Create a new sequence that is the concatenation of the given sequences.
+   * 
+   * @param sequences  the list of sequences to concatenate
+   * @return the concatenation of the sequences in the list
+   */
   public static Sequence concatenate(List<Sequence> sequences) {
     List<SimpleList<Statement>> statements1 = new ArrayList<SimpleList<Statement>>();
     int newHashCode = 0;
