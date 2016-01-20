@@ -10,7 +10,7 @@ import randoop.test.predicate.ExceptionPredicate;
  * A {@code ValidityCheckingVisitor} checks for occurrences of exceptions that
  * have been tagged as invalid behaviors as represented by a 
  * {@code ExceptionPredicate}.
- * Also, either ignores or reports "flaky" test sequences -- an input 
+ * Also, either ignores or reports flaky test sequences --- an input 
  * sequence that throws an exception in a longer test sequence, despite having
  * run normally by itself.
  * Ignores flaky sequences are classified as invalid.
