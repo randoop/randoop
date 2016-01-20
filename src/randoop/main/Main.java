@@ -96,9 +96,9 @@ public class Main {
           + "This is probably because you ran Randoop on methods that side-effect global%n"
           + "state.  Please see the \"Randoop stopped because of a flaky test\"%n"
           + "section of the user manual.%n");
-      System.out.println("Exception:%n  %s%n", e.getError());
-      System.out.println("Statement:%n  %s%n", e.getStatement());
-      System.out.println("Full sequence:%n%s%n", e.getSequence());
+      System.out.printf("Exception:%n  %s%n", e.getError());
+      System.out.printf("Statement:%n  %s%n", e.getStatement());
+      System.out.printf("Full sequence:%n%s%n", e.getSequence());
       System.exit(1);
       
     } catch (Throwable e) {
