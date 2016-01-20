@@ -35,7 +35,7 @@ public class ForwardExplorerTests2 extends TestCase {
       new ForwardGenerator(model, Long.MAX_VALUE, 100, 100, null, null, null);
     GenInputsAbstract.null_ratio = 0.5; //.forbid_null = false;
     exp.explore();
-    for (Sequence s : exp.allSequences()) {
+    for (Sequence s : exp.getAllSequences()) {
       s.toCodeString();
     }
   }

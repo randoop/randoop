@@ -75,7 +75,7 @@ public class ForwardExplorerTests extends TestCase {
     exp.addTestPredicate(createOutputTest());
     exp.explore();
     ReflectionExecutor.timeout = oldTimeout;
-    for (Sequence s : exp.allSequences()) {
+    for (Sequence s : exp.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("bisort")) bisort = true;
       if (str.contains("bimerge")) bimerge = true;
@@ -121,7 +121,7 @@ public class ForwardExplorerTests extends TestCase {
     exp.addTestCheckGenerator(createChecker());
     exp.addTestPredicate(createOutputTest());
     exp.explore();
-    for (Sequence s : exp.allSequences()) {
+    for (Sequence s : exp.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("BH")) bh = true;
       if (str.contains("Body")) body = true;
