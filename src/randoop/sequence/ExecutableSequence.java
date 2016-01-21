@@ -203,11 +203,12 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-   * Output this sequence as code. In addition to printing out the statements,
-   * this method prints the checks.
+   * Return this sequence as code.
+   * Similar to {@link Sequence#toCodeString()} except includes the
+   * checks. 
    *
    * If for a given statement there is a check of type
-   * StatementThrowsException, that check's pre-statement code is printed
+   * {@link randoop.ExceptionCheck}, that check's pre-statement code is printed
    * immediately before the statement, and its post-statement code is printed
    * immediately after the statement.
    */
