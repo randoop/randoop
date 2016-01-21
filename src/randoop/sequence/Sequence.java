@@ -143,10 +143,21 @@ public final class Sequence implements Serializable, WeightedElement {
     return inputsAsVariables;
   }
 
-  /** A Java source code representation of this sequence. */
+  /** 
+   * Returns the Java source code representation of this sequence.
+   * Similar to {@link ExecutableSequence#toCodeString()} except 
+   * does not include checks.
+   *  
+   * @return a string containing Java code for this sequence
+   */
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
+      // don't dump primitive initializations, if using literals
+      if (!GenInputsAbstract.long_format
+          && getStatement(i).getShortForm() != null) {
+        continue;
+      }
       appendCode(b, i);
     }
     return b.toString();
