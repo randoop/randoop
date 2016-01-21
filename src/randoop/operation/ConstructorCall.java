@@ -101,7 +101,14 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    */
   @Override
   public String toString() {
-    return toParseableString();
+    StringBuilder b = new StringBuilder();
+    b.append(constructor.getName());
+    b.append("(");
+    for (Class<?> t : constructor.getParameterTypes()) {
+      b.append(t.getName());
+    }
+    b.append(")");
+    return b.toString();
   }
 
   /**
