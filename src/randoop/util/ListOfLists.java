@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.BugInRandoopException;
+
 /**
  * Given a list of lists, defines methods that can access all the elements as if
  * they were part of a single list, without actually merging the lists.
@@ -79,19 +81,22 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
         return this.lists.get(i).get(index - previousListSize);
       previousListSize = this.accumulatedSize[i];
     }
-    throw new RuntimeException(
-        "This point shouldn't be reached (bug in randoop)");
+    throw new BugInRandoopException(
+        "Indexing error in ListOfLists");
   }
 
   @Override
   public SimpleList<T> getSublist(int index) {
     if (index < 0 || index > this.totalelements - 1)
       throw new IllegalArgumentException("index must be between 0 and size()-1");
-    int i = 0;
-    while (i < accumulatedSize.length && index < accumulatedSize[i]) {
-      i++;
+    int previousListSize = 0;
+    for (int i = 0; i < this.accumulatedSize.length; i++) {
+      if (index < this.accumulatedSize[i]) {
+        return lists.get(i).getSublist(index - previousListSize);
+      }
+      previousListSize = accumulatedSize[i];
     }
-    return lists.get(i);
+    throw new BugInRandoopException("indexing error in ListOfLists");
   }
   
   @Override

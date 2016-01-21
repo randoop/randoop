@@ -27,16 +27,18 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
       return list.get(index);
     if (index == list.size())
       return lastElement;
-    throw new IndexOutOfBoundsException("No such element:" + index);
+    throw new IndexOutOfBoundsException("No such element: " + index);
   }
   
   @Override
   public SimpleList<T> getSublist(int index) {
-    if (index < list.size()) {
-      return list;
-    } else {
+    if (index == list.size()) { // is lastElement
       return this;
     }
+    if (index < list.size()) {
+      return list.getSublist(index);
+    } 
+    throw new IndexOutOfBoundsException("No such index: " + index);
   }
 
   @Override
