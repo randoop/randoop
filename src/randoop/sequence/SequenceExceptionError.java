@@ -1,9 +1,5 @@
 package randoop.sequence;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 /**
  * Exception representing occurrence of a "flaky" test sequence where an
  * exception was thrown by a statement other than the last of the sequence.
