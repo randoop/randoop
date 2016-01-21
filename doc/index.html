@@ -1309,9 +1309,12 @@ option.
 </p>
 
 <p>
-To help you determine which method to omit, Randoop prints a list of method calls and field manipulations since the
-previous execution of the subsequence where the exception occurred.
-You should determine which of these methods affected global state, and then exclude it by using the 
+To help you determine which method to omit, when logging is turned on
+(using the <a href="#option:log"><code>--log</code></a> option) Randoop
+logs the list of method calls and field manipulations since the
+first execution of the subsequence where the exception occurred.
+You should determine which of these methods affected global state, and then
+exclude it by using the
 <a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
 option.
 </p>
@@ -1321,9 +1324,8 @@ If you find a flaky test that does not result from a method that side-effects
 global state, then please help us improve Randoop by submitting an issue via the
 <a href="https://github.com/randoop/randoop/issues" rel="nofollow">issue
 tracker</a> to let us know what you encountered.
-(Randoop already avoids setting public static fields, and discards any test 
-with a flaky occurrence of an <code>OutOfMemoryError</code> as
-invalid.
+(Randoop already discards any test with a flaky occurrence of an
+<code>OutOfMemoryError</code> as invalid.
 Additional information can help us find other heuristics that avoid generating
 flaky tests, or improve this documentation.)
 </p>
