@@ -323,7 +323,7 @@ public class ForwardGenerator extends AbstractGenerator {
     randoopConsistencyTest2(newSequence);
 
     if (Log.isLoggingOn()) {
-      Log.logLine("Successfully created new unique sequence:" + newSequence.toString());
+      Log.logLine(String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
     }
     //System.out.println("###" + statement.toStringVerbose() + "###" + statement.getClass());
 
