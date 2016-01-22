@@ -92,6 +92,7 @@ public final class ReflectionExecutor {
    * Otherwise, returns the exception thrown.
    * @param code
    * @param out stream to print message to or null if message is to be ignored.
+   * @return null or the exception thrown
    */
   @SuppressWarnings("deprecation")
   private static Throwable executeReflectionCodeThreaded(ReflectionCode code, PrintStream out) {
