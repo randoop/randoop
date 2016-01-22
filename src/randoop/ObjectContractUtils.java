@@ -46,6 +46,7 @@ public class ObjectContractUtils {
     timer.startTiming();
     Throwable t = ReflectionExecutor.executeReflectionCode(refl, System.out);
     timer.stopTiming();
+
     if (refl.getExceptionThrown() != null) {
       return new ExceptionalExecution(refl.getExceptionThrown(), timer
           .getTimeElapsedMillis());
