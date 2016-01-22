@@ -34,6 +34,7 @@ public abstract class PublicField implements Serializable {
    */
   public PublicField(Field field) {
     this.field = field;
+    this.field.setAccessible(true);
   }
 
   /**
