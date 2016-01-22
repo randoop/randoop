@@ -9,7 +9,9 @@ public class ExceptionalExecution extends ExecutionOutcome {
   private final long executionTime;
 
   public ExceptionalExecution(Throwable exception, long executionTime) {
-    if (exception == null) throw new IllegalArgumentException();
+    if (exception == null) {
+      throw new IllegalArgumentException("exception must be non-null");
+    }
     this.exception = exception;
     this.executionTime = executionTime;
   }
