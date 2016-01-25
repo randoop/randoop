@@ -60,6 +60,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   public boolean test(Class<?> c) {
+    if (c.isAnonymousClass()) {
+      return false;
+    }
     return visibility.isVisible (c);
   }
 
@@ -297,6 +300,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
 
     // synthetic constructors are OK
+    // unless they have anonymous parameters
+    if (c.isSynthetic()) {
+      for (Class<?> p : c.getParameterTypes()) {
+        if (p.isAnonymousClass()) {
+          return false;
+        }
+      }
+    }
 
     if (Modifier.isAbstract(c.getDeclaringClass().getModifiers()))
       return false;
