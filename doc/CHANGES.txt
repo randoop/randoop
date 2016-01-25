@@ -1,3 +1,11 @@
+Version 2.1.2, released ???
+
+Fixed issues related to filtering of classes and members so that Randoop ignores:
+- public methods/constructors with package private parameter types, and
+- synthetic constructor with anonymous parameter (generated for
+  private constructor of outer class used by inner class).
+Thanks to Rene Just and Gordon Fraser.
+
 Version 2.1.1, released January 22, 2016
 
 Randoop now prints nicer error information when it halts after encountering a
