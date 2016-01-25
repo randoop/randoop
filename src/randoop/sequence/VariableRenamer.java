@@ -111,10 +111,14 @@ public class VariableRenamer {
     } else {
       //for other object types
       String name = clz.getSimpleName();
-      if (Character.isUpperCase(name.charAt(0))) {
-        return name.substring(0, 1).toLowerCase() + name.substring(1);
+      if (name.length() > 0) {
+         if (Character.isUpperCase(name.charAt(0))) {
+           return name.substring(0, 1).toLowerCase() + name.substring(1);
+         } else {
+           return name + "_instance";
+         }
       } else {
-        return name + "_instance";
+        return "anonymous";
       }
     }
   }
