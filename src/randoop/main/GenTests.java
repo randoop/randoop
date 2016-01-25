@@ -216,6 +216,11 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
+    if (classes.isEmpty()) {
+      System.out.println("No classes to test");
+      System.exit(1);
+    }
+
     Set<String> omitFields = new HashSet<>();
 
     if (omit_field_list != null) {
@@ -344,7 +349,7 @@ public class GenTests extends GenInputsAbstract {
       componentMgr = new ComponentManager(components);
     }
 
-    addClassLiterals(componentMgr, allClasses);
+    addClassLiterals(componentMgr, classes);
     
     /////////////////////////////////////////
     // Create the generator for this session.
@@ -711,7 +716,7 @@ public class GenTests extends GenInputsAbstract {
    * Adds literals to the component manager, by parsing any literals
    * files specified by the user.
    */
-  private void addClassLiterals(ComponentManager compMgr, List<Class<?>> allClasses) {
+  private void addClassLiterals(ComponentManager compMgr, List<Class<?>> classes) {
 
     // Parameter check.
     boolean validMode = GenInputsAbstract.literals_level != ClassLiteralsMode.NONE;
@@ -725,8 +730,8 @@ public class GenTests extends GenInputsAbstract {
       MultiMap<Class<?>, NonreceiverTerm> literalmap;
       if (filename.equals("CLASSES")) {
         Collection<ClassFileConstants.ConstantSet> css
-          = new ArrayList<ClassFileConstants.ConstantSet>(allClasses.size());
-        for (Class<?> clazz : allClasses) {
+          = new ArrayList<ClassFileConstants.ConstantSet>(classes.size());
+        for (Class<?> clazz : classes) {
           css.add(ClassFileConstants.getConstants(clazz.getName()));
         }
         literalmap = ClassFileConstants.toMap(css);
