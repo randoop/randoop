@@ -163,12 +163,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * The order INVALID, ERROR, EXPECTED should be maintained.
    */
   public static enum BehaviorType {
-    /** Occurrence of exception should be considered invalid */
-    INVALID,
-    /** Occurrence of exception should be considered an error */
+    /** Occurrence of exception reveals an error */
     ERROR,
-    /** Occurrence of exception should be considered expected behavior */
-    EXPECTED
+    /** Occurrence of exception is expected behavior */
+    EXPECTED,
+    /** Occurrence of exception indicates an invalid test */
+    INVALID
   }
 
   /**
