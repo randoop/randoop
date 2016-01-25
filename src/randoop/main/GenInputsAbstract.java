@@ -70,7 +70,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
    * method : Type0.method_name(Type1, Type2, ..., TypeN)
    * </pre>
-   * Each <code>Type<i>i</i></code> must be <b>fully-qualified</b> (include package names).
+   * Each <code>Type<i>i</i></code> must be fully-qualified
+   * (include package names).
    *
    * <p>
    * See an <a href="https://raw.githubusercontent.com/randoop/randoop/master/doc/method_list_example.txt">example</a>.
@@ -183,8 +184,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * error-revealing test suite (value: ERROR), regression test suite
    * (value: EXPECTED), or should it be discarded (value: INVALID)?
    * <p>
-   * The arguments --npe-on-null-input and --oom-exception handle special cases of
-   * unchecked exceptions.
+   * The arguments <tt>--npe-on-null-input</tt>,
+   * <tt>--npe-on-non-null-input</tt>, and <tt>--oom-exception</tt> handle
+   * special cases of unchecked exceptions.
    */
   @Option("Whether unchecked exception is an ERROR, EXPECTED or INVALID")
   public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
@@ -219,12 +221,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Ignore the situation where a code sequence that previously executed
    * normally throws an exception when executed as part of a longer test
    * sequence. If true, the sequence will be classified as invalid.
-   * If false, Randoop will halt with information about the sequence to aid with
-   * identifying the issue.
+   * If false, Randoop will halt with information about the sequence to
+   * aid in identifying the issue.
    * <p>
    * Use of this option is a last resort.  Flaky tests are usually due to
-   * calling Randoop on side-effecting methods, and a better solution is
-   * not to call Randoop on such methods.
+   * calling Randoop on side-effecting or nondeterministic methods, and a
+   * better solution is not to call Randoop on such methods.
    */
   @Option("Whether to ignore non-determinism in test execution")
   public static boolean ignore_flaky_tests = false;
