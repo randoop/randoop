@@ -194,8 +194,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <code>NullPointerException</code>, should the test be be included in the
    * error-revealing test suite (value: ERROR), regression test suite
    * (value: EXPECTED), or should it be discarded (value: INVALID)?
-   * <p>
-   * Alternatively see <code>--npe-on-non-null-input</code>
    */
   @Option("Whether NullPointerException on null inputs is an ERROR, EXPECTED or INVALID")
   public static BehaviorType npe_on_null_input = BehaviorType.EXPECTED;
@@ -205,8 +203,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <code>NullPointerExceptoin</code>, should the test be included in the
    * error-revealing test suite (value: ERROR), regression test suite
    * (value: EXPECTED), or should it be discarded (value: INVALID)?
-   * <p>
-   * Alternatively, see <code>--npe-on-null-input</code>
    */
   @Option("Whether NullPointerException on non-null inputs is an ERROR, EXPECTED or INVALID")
   public static BehaviorType npe_on_non_null_input = BehaviorType.ERROR;
