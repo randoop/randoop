@@ -179,7 +179,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static BehaviorType checked_exception = BehaviorType.EXPECTED;
 
   /**
-   * If a test throws a unchecked exception, should the test be included in the
+   * If a test throws an unchecked exception, should the test be included in the
    * error-revealing test suite (value: ERROR), regression test suite
    * (value: EXPECTED), or should it be discarded (value: INVALID)?
    * <p>
