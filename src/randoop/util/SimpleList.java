@@ -45,10 +45,35 @@ import java.util.List;
  */
 public abstract class SimpleList<T> {
 
+  /**
+   * Return the number of elements in this list.
+   * 
+   * @return the number of elements in this list
+   */
   public abstract int size();
 
+  /**
+   * Return the element at the given position of this list.
+   * 
+   * @param index  the position for the element
+   * @return the element at the index
+   */
   public abstract T get(int index);
+  
+  /**
+   * Return the shortest sublist of this list that contains the index based on
+   * the compositional structure of this list.
+   * 
+   * @param index  the index into this list
+   * @return the sublist containing this list.
+   */
+  public abstract SimpleList<T> getSublist(int index);
 
+  /**
+   * Test if this list is empty.
+   * 
+   * @return true if this list is empty, false otherwise
+   */
   public final boolean isEmpty() {
     return size() == 0;
   }

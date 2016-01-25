@@ -3,7 +3,7 @@ package randoop;
 import randoop.types.PrimitiveTypes;
 
 /**
- * An check recording the value of a primitive value obtained
+ * A check recording the value of a primitive value obtained
  * during execution, (e.g. <code>var3 == 1</code> where <code>var3</code>
  * is an integer-valued variable in a Randoop test). 
  *
@@ -103,6 +103,11 @@ public final class PrimValue implements ObjectContract {
     // to improve readability.
     if (value.equals(Double.NaN) || value.equals(Float.NaN)) {
       b.append("org.junit.Assert.assertEquals(");
+      if (value.equals(Double.NaN)) {
+        b.append("(double)");
+      } else {
+        b.append("(float)");
+      }
       b.append("x0");
       b.append(", ");
       b.append(PrimitiveTypes.toCodeString(value));

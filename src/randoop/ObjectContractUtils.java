@@ -18,6 +18,10 @@ public class ObjectContractUtils {
    */
   public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
     ReflectionCode refl = new ReflectionCode() {
+      // Before runReflectionCodeRaw is executed, both of these fields are
+      // null.  After runReflectionCodeRaw is executed, exactly one of
+      // these fields is null (unless runReflectionCodeRaw itself threw an
+      // exception, in which case both fields remain null).
       private Object result;
       private Throwable exception;
 
@@ -46,9 +50,13 @@ public class ObjectContractUtils {
     timer.startTiming();
     Throwable t = ReflectionExecutor.executeReflectionCode(refl, System.out);
     timer.stopTiming();
-    if (t != null || refl.getExceptionThrown() != null) {
+
+    if (refl.getExceptionThrown() != null) {
       return new ExceptionalExecution(refl.getExceptionThrown(), timer
           .getTimeElapsedMillis());
+    }
+    if (t != null) {
+      return new ExceptionalExecution(t, timer.getTimeElapsedMillis());
     }
     return new NormalExecution(refl.getReturnVariable(), timer
         .getTimeElapsedMillis());

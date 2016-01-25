@@ -143,10 +143,21 @@ public final class Sequence implements Serializable, WeightedElement {
     return inputsAsVariables;
   }
 
-  /** A Java source code representation of this sequence. */
+  /** 
+   * Returns the Java source code representation of this sequence.
+   * Similar to {@link ExecutableSequence#toCodeString()} except 
+   * does not include checks.
+   *  
+   * @return a string containing Java code for this sequence
+   */
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
+      // don't dump primitive initializations, if using literals
+      if (!GenInputsAbstract.long_format
+          && getStatement(i).getShortForm() != null) {
+        continue;
+      }
       appendCode(b, i);
     }
     return b.toString();
@@ -760,11 +771,13 @@ public final class Sequence implements Serializable, WeightedElement {
       }
     }
   }
-
-  /** Create a new sequence that is the concatenation of the given sequences. */
-
-
-
+  
+  /**
+   * Create a new sequence that is the concatenation of the given sequences.
+   * 
+   * @param sequences  the list of sequences to concatenate
+   * @return the concatenation of the sequences in the list
+   */
   public static Sequence concatenate(List<Sequence> sequences) {
     List<SimpleList<Statement>> statements1 = new ArrayList<SimpleList<Statement>>();
     int newHashCode = 0;
@@ -1131,4 +1144,14 @@ public final class Sequence implements Serializable, WeightedElement {
     return false;
   }
 
+  /**
+   * Using compositional structure of this sequence, return the subsequence of 
+   * this sequence that contains the statement at the given index.
+   *  
+   * @param index  the statement position in this sequence
+   * @return the sequence containing the index position
+   */
+  public Sequence getSubsequence(int index) {
+    return new Sequence(statements.getSublist(index));
+  }
 }

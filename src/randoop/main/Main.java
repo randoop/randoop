@@ -88,8 +88,9 @@ public class Main {
       System.exit(1);
 
     } catch (Throwable e) {
-
-      System.out.println("Throwable thrown while handling command:" + e);
+      
+      System.out.println();
+      System.out.println("Throwable thrown while handling command: " + e);
       e.printStackTrace();
       System.err.flush();
       success = false;
@@ -97,8 +98,9 @@ public class Main {
     } finally {
 
       if (!success) {
+        System.out.println();
         System.out.println("Randoop failed.");
-        System.out.println("Last sequence under execution:" + AbstractGenerator.currSeq);
+        System.out.println("Last sequence under execution: " + AbstractGenerator.currSeq);
         System.exit(1);
       }
     }

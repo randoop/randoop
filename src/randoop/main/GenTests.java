@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +64,7 @@ import randoop.sequence.AbstractGenerator;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.ForwardGenerator;
 import randoop.sequence.Sequence;
+import randoop.sequence.SequenceExceptionError;
 import randoop.test.ContractCheckingVisitor;
 import randoop.test.ErrorTestPredicate;
 import randoop.test.ExcludeTestPredicate;
@@ -214,6 +216,11 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
+    if (classes.isEmpty()) {
+      System.out.println("No classes to test");
+      System.exit(1);
+    }
+
     Set<String> omitFields = new HashSet<>();
 
     if (omit_field_list != null) {
@@ -342,7 +349,7 @@ public class GenTests extends GenInputsAbstract {
       componentMgr = new ComponentManager(components);
     }
 
-    addClassLiterals(componentMgr, allClasses);
+    addClassLiterals(componentMgr, classes);
     
     /////////////////////////////////////////
     // Create the generator for this session.
@@ -407,8 +414,14 @@ public class GenTests extends GenInputsAbstract {
     }
     
     // Generate tests
-    explorer.explore();
+    try {
+      explorer.explore();
+    } catch (SequenceExceptionError e) {
 
+      handleFlakySequenceException(explorer, e);
+
+      System.exit(1);
+    }
    // once tests generated, 
 
     if (GenInputsAbstract.output_branches != null) {
@@ -463,6 +476,68 @@ public class GenTests extends GenInputsAbstract {
     }
     
     return true;
+  }
+
+  /**
+   * Handles the occurrence of a {@code SequenceExceptionError} that indicates a
+   * flaky test has been found.
+   * Prints information to help user identify source of flakiness, including
+   * exception, statement that threw the exception, the full sequence where 
+   * exception was thrown, and the input subsequence.
+   * 
+   * @param explorer  the test generator
+   * @param e  the sequence exception
+   */
+  private void handleFlakySequenceException(AbstractGenerator explorer, SequenceExceptionError e) {
+    
+    String msg = String.format("%n%nERROR: Randoop stopped because of a flaky test.%n%n"
+        + "This can happen when Randoop is run on methods that side-effect global "
+        + "state.%n"
+        + "See the \"Randoop stopped because of a flaky test\" "
+        + "section of the user manual.%n"
+        + "For more details, rerun with logging turned on with --log=FILENAME.%n");
+    System.out.printf(msg);
+    
+    Sequence subsequence = e.getSubsequence();
+    
+    if (Log.isLoggingOn()) {
+      Log.log(msg);
+      Log.log(String.format("%nException:%n  %s%n", e.getError()));
+      Log.log(String.format("Statement:%n  %s%n", e.getStatement()));
+      Log.log(String.format("Full sequence:%n%s%n", e.getSequence()));
+      Log.log(String.format("Input subsequence:%n%s%n", subsequence.toCodeString()));
+
+      Set<String> callSet = new TreeSet<>();
+
+      Iterator<Sequence> s_i = explorer.getAllSequences().iterator();
+      if (s_i.hasNext()) {
+        Sequence s = s_i.next();
+        while (! subsequence.equals(s) && s_i.hasNext()) {
+          s = s_i.next();
+        }
+        while (s_i.hasNext()) {
+          s = s_i.next();
+          for (int i = 0; i < s.statements.size(); i++) {
+            Operation operation = s.statements.get(i).getOperation();
+            if (! operation.isNonreceivingValue()) {
+              callSet.add(operation.toString());
+            }
+          }
+        }
+      }
+
+      if (! callSet.isEmpty()) {
+        Log.logLine("Operations performed since subsequence first executed:");
+        for (String opName : callSet) {
+          Log.logLine(opName);
+        }
+      } else {
+        System.out.printf("Unable to find a previous occurrence of subsequence%n"
+            + "%s%n"
+            + "where exception was thrown%n"
+            + "Please submit an issue%n", subsequence);
+      }
+    }
   }
 
   /**
@@ -608,7 +683,7 @@ public class GenTests extends GenInputsAbstract {
     
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
-    TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid);
+    TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid, ! GenInputsAbstract.ignore_flaky_tests);
     
     // extend with contract checker 
     List<ObjectContract> contracts = getContracts(classes);
@@ -641,7 +716,7 @@ public class GenTests extends GenInputsAbstract {
    * Adds literals to the component manager, by parsing any literals
    * files specified by the user.
    */
-  private void addClassLiterals(ComponentManager compMgr, List<Class<?>> allClasses) {
+  private void addClassLiterals(ComponentManager compMgr, List<Class<?>> classes) {
 
     // Parameter check.
     boolean validMode = GenInputsAbstract.literals_level != ClassLiteralsMode.NONE;
@@ -655,8 +730,8 @@ public class GenTests extends GenInputsAbstract {
       MultiMap<Class<?>, NonreceiverTerm> literalmap;
       if (filename.equals("CLASSES")) {
         Collection<ClassFileConstants.ConstantSet> css
-          = new ArrayList<ClassFileConstants.ConstantSet>(allClasses.size());
-        for (Class<?> clazz : allClasses) {
+          = new ArrayList<ClassFileConstants.ConstantSet>(classes.size());
+        for (Class<?> clazz : classes) {
           css.add(ClassFileConstants.getConstants(clazz.getName()));
         }
         literalmap = ClassFileConstants.toMap(css);

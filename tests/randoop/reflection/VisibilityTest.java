@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import randoop.ExecutionOutcome;
+import randoop.NormalExecution;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGetter;
@@ -401,6 +404,68 @@ public class VisibilityTest {
     }
   }
 
+  @Test
+  public void checkFieldAccessibility() {
+    List<Class<?>> classes = new ArrayList<>();
+    Class<?> c = null;
+    try {
+      c = Class.forName("randoop.reflection.visibilitytest.PackagePrivateClass");
+      classes.add(c);
+    } catch (ClassNotFoundException e) {
+      fail("can't access class-under-test: PackagePrivateClass");
+    }
+
+    Constructor<?> con = null;
+    try {
+      con = c.getConstructor(int.class);
+    } catch (NoSuchMethodException e) {
+      fail("can't find constructor " + e);
+    } catch (SecurityException e) {
+      fail("can't access constructor " + e);
+    }
+
+    Object o = null;
+    try {
+      o = con.newInstance(10);
+    } catch (InstantiationException e) {
+     fail("constructor failed");
+    } catch (IllegalAccessException e) {
+      fail("cannot access constructor");
+    } catch (IllegalArgumentException e) {
+      fail("bad argument to constructor");
+    } catch (InvocationTargetException e) {
+      fail("constructor threw exception");
+    }
+
+    for (Field f : c.getDeclaredFields()) {
+      int mods = f.getModifiers() & Modifier.fieldModifiers();
+      if (isPackageVisible(mods)) {
+        Collection<Operation> ops = getOperations(f);
+        for (Operation op : ops) {
+          ExecutionOutcome result;
+          if (op.getInputTypes().size() == 2) {
+            Object[] input = new Object[]{ o, 10 };
+            try {
+              result = op.execute(input, null);
+              assertTrue("result should be normal execution", (result instanceof NormalExecution));
+            } catch (Throwable t) {
+              fail("should not throw exception: " + t);
+            }
+
+          } else {
+            Object[] input = new Object[]{ o };
+            try {
+              result = op.execute(input, null);
+              assertTrue("result should be normal execution", (result instanceof NormalExecution));
+            } catch (Throwable t) {
+              fail("should not throw exception: " + t);
+            }
+          }
+        }
+      }
+    }
+  }
+
   private boolean isPubliclyVisible(int mods) {
     return Modifier.isPublic(mods);
   }
@@ -409,7 +474,7 @@ public class VisibilityTest {
     return Modifier.isPublic(mods) || ! Modifier.isPrivate(mods);
   }
   
-  private Collection<?> getOperations(Field f) {
+  private Collection<Operation> getOperations(Field f) {
     List<Operation> statements = new ArrayList<>();
     int mods = f.getModifiers();
     if (Modifier.isStatic(mods)) {

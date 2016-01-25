@@ -9,6 +9,7 @@ jdk:
   - oraclejdk7
   - openjdk7
 
-notifications:
-  email:
-    - randoop-developers@googlegroups.com
+## Use Travis defaults for notifications (send to committer and author).
+# notifications:
+#   email:
+#     - randoop-developers@googlegroups.com

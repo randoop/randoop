@@ -20,7 +20,6 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.Object obj3 = arrayList0.clone();
-# short s4 = (short)100;
 # java.lang.Object[] obj_array5 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array6 = arrayList0.toArray(obj_array5);
 
@@ -41,7 +40,6 @@ END RECORD
 
 # Code representation:
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
-# byte byte1 = (byte)1;
 # java.lang.Object[] obj_array2 = new java.lang.Object[] { (byte)1 };
 # java.lang.Object[] obj_array3 = arrayList0.toArray(obj_array2);
 
@@ -66,7 +64,6 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# byte byte3 = (byte)0;
 # boolean b4 = arrayList0.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList((java2.util2.Collection)arrayList0);
 
@@ -112,26 +109,20 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# int i3 = 10;
 # arrayList0.ensureCapacity(10);
 # java.lang.Object obj5 = arrayList0.clone();
-# int i6 = 10;
 # java2.util2.ArrayList arrayList7 = new java2.util2.ArrayList(10);
-# int i8 = 100;
 # arrayList7.ensureCapacity(100);
 # boolean b10 = arrayList0.addAll((java2.util2.Collection)arrayList7);
-# float f11 = 100.0f;
 # boolean b12 = arrayList0.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList13 = new java2.util2.ArrayList();
 # arrayList13.clear();
 # java.lang.String str15 = arrayList13.toString();
-# byte byte16 = (byte)0;
 # boolean b17 = arrayList13.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
 # boolean b20 = arrayList18.isEmpty();
 # java.lang.Object obj21 = arrayList18.clone();
-# short s22 = (short)100;
 # java.lang.Object[] obj_array23 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array24 = arrayList18.toArray(obj_array23);
 # boolean b25 = arrayList13.remove((java.lang.Object)obj_array23);
@@ -190,7 +181,6 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
@@ -210,7 +200,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -362,7 +351,6 @@ END RECORD
 # arrayList8.clear();
 # boolean b10 = arrayList8.isEmpty();
 # java.lang.Object obj11 = arrayList8.clone();
-# short s12 = (short)100;
 # java.lang.Object[] obj_array13 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array14 = arrayList8.toArray(obj_array13);
 # boolean b15 = arrayList5.retainAll((java2.util2.Collection)arrayList8);
@@ -443,31 +431,24 @@ END RECORD
 # boolean b10 = arrayList0.removeAll((java2.util2.Collection)arrayList7);
 # java2.util2.ListIterator listIterator11 = arrayList0.listIterator();
 # java2.util2.ArrayList arrayList12 = new java2.util2.ArrayList((java2.util2.Collection)arrayList0);
-# boolean b13 = true;
 # boolean b14 = arrayList12.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
 # java.lang.String str17 = arrayList15.toString();
-# int i18 = 10;
 # arrayList15.ensureCapacity(10);
 # java.lang.Object obj20 = arrayList15.clone();
-# int i21 = 10;
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList(10);
-# int i23 = 100;
 # arrayList22.ensureCapacity(100);
 # boolean b25 = arrayList15.addAll((java2.util2.Collection)arrayList22);
-# float f26 = 100.0f;
 # boolean b27 = arrayList15.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # java.lang.String str30 = arrayList28.toString();
-# byte byte31 = (byte)0;
 # boolean b32 = arrayList28.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # boolean b35 = arrayList33.isEmpty();
 # java.lang.Object obj36 = arrayList33.clone();
-# short s37 = (short)100;
 # java.lang.Object[] obj_array38 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array39 = arrayList33.toArray(obj_array38);
 # boolean b40 = arrayList28.remove((java.lang.Object)obj_array38);
@@ -515,7 +496,6 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
@@ -596,10 +576,8 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 # java2.util2.ArrayList arrayList7 = new java2.util2.ArrayList();
-# byte byte8 = (byte)1;
 # java.lang.Object[] obj_array9 = new java.lang.Object[] { (byte)1 };
 # java.lang.Object[] obj_array10 = arrayList7.toArray(obj_array9);
 # boolean b11 = arrayList2.removeAll((java2.util2.Collection)arrayList7);
@@ -608,7 +586,6 @@ END RECORD
 # java2.util2.ArrayList arrayList14 = new java2.util2.ArrayList();
 # arrayList14.clear();
 # boolean b16 = arrayList12.remove((java.lang.Object)arrayList14);
-# double d17 = 1.0d;
 # boolean b18 = arrayList14.remove((java.lang.Object)1.0d);
 # arrayList14.clear();
 # java2.util2.ArrayList arrayList20 = new java2.util2.ArrayList();
@@ -616,7 +593,6 @@ END RECORD
 # arrayList21.clear();
 # boolean b23 = arrayList21.isEmpty();
 # java.lang.Object obj24 = arrayList21.clone();
-# short s25 = (short)100;
 # java.lang.Object[] obj_array26 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array27 = arrayList21.toArray(obj_array26);
 # java.lang.String str28 = arrayList21.toString();
@@ -628,7 +604,6 @@ END RECORD
 # arrayList33.clear();
 # boolean b35 = arrayList33.isEmpty();
 # java.lang.Object obj36 = arrayList33.clone();
-# short s37 = (short)100;
 # java.lang.Object[] obj_array38 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array39 = arrayList33.toArray(obj_array38);
 # java2.util2.Iterator iterator40 = arrayList33.iterator();
@@ -638,13 +613,11 @@ END RECORD
 # java2.util2.ArrayList arrayList44 = new java2.util2.ArrayList();
 # arrayList44.clear();
 # java.lang.String str46 = arrayList44.toString();
-# byte byte47 = (byte)0;
 # boolean b48 = arrayList44.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList49 = new java2.util2.ArrayList();
 # arrayList49.clear();
 # boolean b51 = arrayList49.isEmpty();
 # java.lang.Object obj52 = arrayList49.clone();
-# short s53 = (short)100;
 # java.lang.Object[] obj_array54 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array55 = arrayList49.toArray(obj_array54);
 # boolean b56 = arrayList44.remove((java.lang.Object)obj_array54);
@@ -699,7 +672,6 @@ END RECORD
 # arrayList8.clear();
 # boolean b10 = arrayList8.isEmpty();
 # java.lang.Object obj11 = arrayList8.clone();
-# short s12 = (short)100;
 # java.lang.Object[] obj_array13 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array14 = arrayList8.toArray(obj_array13);
 # boolean b15 = arrayList5.retainAll((java2.util2.Collection)arrayList8);
@@ -821,7 +793,6 @@ END RECORD
 # arrayList8.clear();
 # boolean b10 = arrayList8.isEmpty();
 # java.lang.Object obj11 = arrayList8.clone();
-# short s12 = (short)100;
 # java.lang.Object[] obj_array13 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array14 = arrayList8.toArray(obj_array13);
 # boolean b15 = arrayList5.retainAll((java2.util2.Collection)arrayList8);
@@ -839,10 +810,8 @@ END RECORD
 # java2.util2.ArrayList arrayList27 = new java2.util2.ArrayList();
 # arrayList27.clear();
 # boolean b29 = arrayList25.remove((java.lang.Object)arrayList27);
-# double d30 = 1.0d;
 # boolean b31 = arrayList27.remove((java.lang.Object)1.0d);
 # java2.util2.ArrayList arrayList32 = new java2.util2.ArrayList();
-# byte byte33 = (byte)1;
 # java.lang.Object[] obj_array34 = new java.lang.Object[] { (byte)1 };
 # java.lang.Object[] obj_array35 = arrayList32.toArray(obj_array34);
 # boolean b36 = arrayList27.removeAll((java2.util2.Collection)arrayList32);
@@ -851,7 +820,6 @@ END RECORD
 # java2.util2.ArrayList arrayList39 = new java2.util2.ArrayList();
 # arrayList39.clear();
 # boolean b41 = arrayList37.remove((java.lang.Object)arrayList39);
-# double d42 = 1.0d;
 # boolean b43 = arrayList39.remove((java.lang.Object)1.0d);
 # arrayList39.clear();
 # java2.util2.ArrayList arrayList45 = new java2.util2.ArrayList();
@@ -859,7 +827,6 @@ END RECORD
 # arrayList46.clear();
 # boolean b48 = arrayList46.isEmpty();
 # java.lang.Object obj49 = arrayList46.clone();
-# short s50 = (short)100;
 # java.lang.Object[] obj_array51 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array52 = arrayList46.toArray(obj_array51);
 # java.lang.String str53 = arrayList46.toString();
@@ -871,7 +838,6 @@ END RECORD
 # arrayList58.clear();
 # boolean b60 = arrayList58.isEmpty();
 # java.lang.Object obj61 = arrayList58.clone();
-# short s62 = (short)100;
 # java.lang.Object[] obj_array63 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array64 = arrayList58.toArray(obj_array63);
 # java2.util2.Iterator iterator65 = arrayList58.iterator();
@@ -881,13 +847,11 @@ END RECORD
 # java2.util2.ArrayList arrayList69 = new java2.util2.ArrayList();
 # arrayList69.clear();
 # java.lang.String str71 = arrayList69.toString();
-# byte byte72 = (byte)0;
 # boolean b73 = arrayList69.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList74 = new java2.util2.ArrayList();
 # arrayList74.clear();
 # boolean b76 = arrayList74.isEmpty();
 # java.lang.Object obj77 = arrayList74.clone();
-# short s78 = (short)100;
 # java.lang.Object[] obj_array79 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array80 = arrayList74.toArray(obj_array79);
 # boolean b81 = arrayList69.remove((java.lang.Object)obj_array79);
@@ -1013,7 +977,6 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
@@ -1033,7 +996,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -1044,7 +1006,6 @@ END RECORD
 # arrayList34.clear();
 # boolean b36 = arrayList34.isEmpty();
 # java.lang.Object obj37 = arrayList34.clone();
-# short s38 = (short)100;
 # java.lang.Object[] obj_array39 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array40 = arrayList34.toArray(obj_array39);
 # boolean b41 = arrayList34.isEmpty();
@@ -1052,7 +1013,6 @@ END RECORD
 # arrayList42.clear();
 # boolean b44 = arrayList42.isEmpty();
 # java.lang.Object obj45 = arrayList42.clone();
-# short s46 = (short)100;
 # java.lang.Object[] obj_array47 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array48 = arrayList42.toArray(obj_array47);
 # java.lang.String str49 = arrayList42.toString();
@@ -1061,7 +1021,6 @@ END RECORD
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList();
 # arrayList52.clear();
 # boolean b54 = arrayList50.remove((java.lang.Object)arrayList52);
-# double d55 = 1.0d;
 # boolean b56 = arrayList52.remove((java.lang.Object)1.0d);
 # arrayList52.clear();
 # java2.util2.ArrayList arrayList58 = new java2.util2.ArrayList();
@@ -1069,7 +1028,6 @@ END RECORD
 # arrayList59.clear();
 # boolean b61 = arrayList59.isEmpty();
 # java.lang.Object obj62 = arrayList59.clone();
-# short s63 = (short)100;
 # java.lang.Object[] obj_array64 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array65 = arrayList59.toArray(obj_array64);
 # java.lang.String str66 = arrayList59.toString();
@@ -1081,26 +1039,20 @@ END RECORD
 # java2.util2.ArrayList arrayList72 = new java2.util2.ArrayList();
 # arrayList72.clear();
 # java.lang.String str74 = arrayList72.toString();
-# int i75 = 10;
 # arrayList72.ensureCapacity(10);
 # java.lang.Object obj77 = arrayList72.clone();
-# int i78 = 10;
 # java2.util2.ArrayList arrayList79 = new java2.util2.ArrayList(10);
-# int i80 = 100;
 # arrayList79.ensureCapacity(100);
 # boolean b82 = arrayList72.addAll((java2.util2.Collection)arrayList79);
-# float f83 = 100.0f;
 # boolean b84 = arrayList72.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList85 = new java2.util2.ArrayList();
 # arrayList85.clear();
 # java.lang.String str87 = arrayList85.toString();
-# byte byte88 = (byte)0;
 # boolean b89 = arrayList85.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList90 = new java2.util2.ArrayList();
 # arrayList90.clear();
 # boolean b92 = arrayList90.isEmpty();
 # java.lang.Object obj93 = arrayList90.clone();
-# short s94 = (short)100;
 # java.lang.Object[] obj_array95 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array96 = arrayList90.toArray(obj_array95);
 # boolean b97 = arrayList85.remove((java.lang.Object)obj_array95);
@@ -1222,12 +1174,9 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# int i3 = 10;
 # arrayList0.ensureCapacity(10);
 # java.lang.Object obj5 = arrayList0.clone();
-# int i6 = 10;
 # java2.util2.ArrayList arrayList7 = new java2.util2.ArrayList(10);
-# int i8 = 100;
 # arrayList7.ensureCapacity(100);
 # boolean b10 = arrayList0.addAll((java2.util2.Collection)arrayList7);
 # java2.util2.ArrayList arrayList11 = new java2.util2.ArrayList();
@@ -1235,7 +1184,6 @@ END RECORD
 # java2.util2.ArrayList arrayList13 = new java2.util2.ArrayList();
 # arrayList13.clear();
 # boolean b15 = arrayList11.remove((java.lang.Object)arrayList13);
-# double d16 = 1.0d;
 # boolean b17 = arrayList13.remove((java.lang.Object)1.0d);
 # arrayList13.clear();
 # arrayList13.trimToSize();
@@ -1251,7 +1199,6 @@ END RECORD
 # arrayList28.clear();
 # boolean b30 = arrayList28.isEmpty();
 # java.lang.Object obj31 = arrayList28.clone();
-# short s32 = (short)100;
 # java.lang.Object[] obj_array33 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array34 = arrayList28.toArray(obj_array33);
 # boolean b35 = arrayList25.retainAll((java2.util2.Collection)arrayList28);
@@ -1271,7 +1218,6 @@ END RECORD
 # java2.util2.ArrayList arrayList49 = new java2.util2.ArrayList();
 # arrayList49.clear();
 # java.lang.String str51 = arrayList49.toString();
-# int i52 = 10;
 # arrayList49.ensureCapacity(10);
 # java.lang.Object obj54 = arrayList49.clone();
 # boolean b55 = arrayList40.addAll((java2.util2.Collection)arrayList49);
@@ -1282,7 +1228,6 @@ END RECORD
 # arrayList59.clear();
 # boolean b61 = arrayList59.isEmpty();
 # java.lang.Object obj62 = arrayList59.clone();
-# short s63 = (short)100;
 # java.lang.Object[] obj_array64 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array65 = arrayList59.toArray(obj_array64);
 # boolean b66 = arrayList59.isEmpty();
@@ -1290,7 +1235,6 @@ END RECORD
 # arrayList67.clear();
 # boolean b69 = arrayList67.isEmpty();
 # java.lang.Object obj70 = arrayList67.clone();
-# short s71 = (short)100;
 # java.lang.Object[] obj_array72 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array73 = arrayList67.toArray(obj_array72);
 # java.lang.String str74 = arrayList67.toString();
@@ -1299,7 +1243,6 @@ END RECORD
 # java2.util2.ArrayList arrayList77 = new java2.util2.ArrayList();
 # arrayList77.clear();
 # boolean b79 = arrayList75.remove((java.lang.Object)arrayList77);
-# double d80 = 1.0d;
 # boolean b81 = arrayList77.remove((java.lang.Object)1.0d);
 # arrayList77.clear();
 # java2.util2.ArrayList arrayList83 = new java2.util2.ArrayList();
@@ -1307,7 +1250,6 @@ END RECORD
 # arrayList84.clear();
 # boolean b86 = arrayList84.isEmpty();
 # java.lang.Object obj87 = arrayList84.clone();
-# short s88 = (short)100;
 # java.lang.Object[] obj_array89 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array90 = arrayList84.toArray(obj_array89);
 # java.lang.String str91 = arrayList84.toString();
@@ -1403,31 +1345,24 @@ END RECORD
 # boolean b10 = arrayList0.removeAll((java2.util2.Collection)arrayList7);
 # java2.util2.ListIterator listIterator11 = arrayList0.listIterator();
 # java2.util2.ArrayList arrayList12 = new java2.util2.ArrayList((java2.util2.Collection)arrayList0);
-# boolean b13 = true;
 # boolean b14 = arrayList12.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
 # java.lang.String str17 = arrayList15.toString();
-# int i18 = 10;
 # arrayList15.ensureCapacity(10);
 # java.lang.Object obj20 = arrayList15.clone();
-# int i21 = 10;
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList(10);
-# int i23 = 100;
 # arrayList22.ensureCapacity(100);
 # boolean b25 = arrayList15.addAll((java2.util2.Collection)arrayList22);
-# float f26 = 100.0f;
 # boolean b27 = arrayList15.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # java.lang.String str30 = arrayList28.toString();
-# byte byte31 = (byte)0;
 # boolean b32 = arrayList28.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # boolean b35 = arrayList33.isEmpty();
 # java.lang.Object obj36 = arrayList33.clone();
-# short s37 = (short)100;
 # java.lang.Object[] obj_array38 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array39 = arrayList33.toArray(obj_array38);
 # boolean b40 = arrayList28.remove((java.lang.Object)obj_array38);
@@ -1437,12 +1372,10 @@ END RECORD
 # arrayList43.clear();
 # boolean b45 = arrayList43.isEmpty();
 # java.lang.String str46 = arrayList43.toString();
-# int i47 = 0;
 # java2.util2.ArrayList arrayList48 = new java2.util2.ArrayList();
 # arrayList48.clear();
 # boolean b50 = arrayList48.isEmpty();
 # java.lang.Object obj51 = arrayList48.clone();
-# short s52 = (short)100;
 # java.lang.Object[] obj_array53 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array54 = arrayList48.toArray(obj_array53);
 # arrayList43.add(0, (java.lang.Object)arrayList48);
@@ -1508,9 +1441,7 @@ END RECORD
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
 # int i3 = arrayList0.size();
-# int i4 = 10;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList(10);
-# int i6 = 100;
 # arrayList5.ensureCapacity(100);
 # boolean b8 = arrayList0.containsAll((java2.util2.Collection)arrayList5);
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
@@ -1531,7 +1462,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -1540,7 +1470,6 @@ END RECORD
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # boolean b35 = arrayList31.remove((java.lang.Object)arrayList33);
-# double d36 = 1.0d;
 # boolean b37 = arrayList33.remove((java.lang.Object)1.0d);
 # arrayList33.clear();
 # int i39 = arrayList15.indexOf((java.lang.Object)arrayList33);
@@ -1595,7 +1524,6 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 
 
@@ -1626,13 +1554,11 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# byte byte3 = (byte)0;
 # boolean b4 = arrayList0.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # boolean b12 = arrayList0.remove((java.lang.Object)obj_array10);
@@ -1679,11 +1605,9 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
-# float f16 = 1.0f;
 # boolean b17 = arrayList9.remove((java.lang.Object)1.0f);
 
 
@@ -1722,7 +1646,6 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# int i3 = 10;
 # arrayList0.ensureCapacity(10);
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
@@ -1773,11 +1696,9 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
-# long long11 = 0L;
 # boolean b12 = arrayList0.remove((java.lang.Object)0L);
 
 
@@ -1834,7 +1755,6 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
@@ -1854,13 +1774,11 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
 # boolean b31 = arrayList11.removeAll((java2.util2.Collection)arrayList15);
 # boolean b32 = arrayList3.retainAll((java2.util2.Collection)arrayList15);
-# double d33 = 0.0d;
 # boolean b34 = arrayList3.remove((java.lang.Object)0.0d);
 
 
@@ -1913,7 +1831,6 @@ END RECORD
 # java2.util2.ArrayList arrayList4 = new java2.util2.ArrayList();
 # arrayList4.clear();
 # boolean b6 = arrayList0.addAll((java2.util2.Collection)arrayList4);
-# double d7 = 100.0d;
 # boolean b8 = arrayList0.contains((java.lang.Object)100.0d);
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
@@ -1927,12 +1844,9 @@ END RECORD
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
 # java.lang.String str20 = arrayList18.toString();
-# int i21 = 10;
 # arrayList18.ensureCapacity(10);
 # java.lang.Object obj23 = arrayList18.clone();
-# int i24 = 10;
 # java2.util2.ArrayList arrayList25 = new java2.util2.ArrayList(10);
-# int i26 = 100;
 # arrayList25.ensureCapacity(100);
 # boolean b28 = arrayList18.addAll((java2.util2.Collection)arrayList25);
 # boolean b29 = arrayList9.addAll((java2.util2.Collection)arrayList25);
@@ -1991,26 +1905,20 @@ END RECORD
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # java.lang.String str7 = arrayList5.toString();
-# int i8 = 10;
 # arrayList5.ensureCapacity(10);
 # java.lang.Object obj10 = arrayList5.clone();
-# int i11 = 10;
 # java2.util2.ArrayList arrayList12 = new java2.util2.ArrayList(10);
-# int i13 = 100;
 # arrayList12.ensureCapacity(100);
 # boolean b15 = arrayList5.addAll((java2.util2.Collection)arrayList12);
-# float f16 = 100.0f;
 # boolean b17 = arrayList5.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
 # java.lang.String str20 = arrayList18.toString();
-# byte byte21 = (byte)0;
 # boolean b22 = arrayList18.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList23 = new java2.util2.ArrayList();
 # arrayList23.clear();
 # boolean b25 = arrayList23.isEmpty();
 # java.lang.Object obj26 = arrayList23.clone();
-# short s27 = (short)100;
 # java.lang.Object[] obj_array28 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array29 = arrayList23.toArray(obj_array28);
 # boolean b30 = arrayList18.remove((java.lang.Object)obj_array28);
@@ -2088,38 +1996,30 @@ END RECORD
 # java2.util2.ArrayList arrayList10 = new java2.util2.ArrayList();
 # arrayList10.clear();
 # java.lang.String str12 = arrayList10.toString();
-# byte byte13 = (byte)0;
 # boolean b14 = arrayList10.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
 # java.lang.String str17 = arrayList15.toString();
-# int i18 = 10;
 # arrayList15.ensureCapacity(10);
 # java.lang.Object obj20 = arrayList15.clone();
-# int i21 = 10;
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList(10);
-# int i23 = 100;
 # arrayList22.ensureCapacity(100);
 # boolean b25 = arrayList15.addAll((java2.util2.Collection)arrayList22);
-# float f26 = 100.0f;
 # boolean b27 = arrayList15.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # java.lang.String str30 = arrayList28.toString();
-# byte byte31 = (byte)0;
 # boolean b32 = arrayList28.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # boolean b35 = arrayList33.isEmpty();
 # java.lang.Object obj36 = arrayList33.clone();
-# short s37 = (short)100;
 # java.lang.Object[] obj_array38 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array39 = arrayList33.toArray(obj_array38);
 # boolean b40 = arrayList28.remove((java.lang.Object)obj_array38);
 # java.lang.Object[] obj_array41 = arrayList15.toArray(obj_array38);
 # boolean b42 = arrayList10.containsAll((java2.util2.Collection)arrayList15);
 # boolean b43 = arrayList0.addAll((java2.util2.Collection)arrayList15);
-# long long44 = 1L;
 # boolean b45 = arrayList15.remove((java.lang.Object)1L);
 
 
@@ -2197,32 +2097,25 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.Object obj3 = arrayList0.clone();
-# short s4 = (short)100;
 # java.lang.Object[] obj_array5 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array6 = arrayList0.toArray(obj_array5);
 # java2.util2.ArrayList arrayList7 = new java2.util2.ArrayList();
 # arrayList7.clear();
 # java.lang.String str9 = arrayList7.toString();
-# int i10 = 10;
 # arrayList7.ensureCapacity(10);
 # java.lang.Object obj12 = arrayList7.clone();
-# int i13 = 10;
 # java2.util2.ArrayList arrayList14 = new java2.util2.ArrayList(10);
-# int i15 = 100;
 # arrayList14.ensureCapacity(100);
 # boolean b17 = arrayList7.addAll((java2.util2.Collection)arrayList14);
-# float f18 = 100.0f;
 # boolean b19 = arrayList7.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList20 = new java2.util2.ArrayList();
 # arrayList20.clear();
 # java.lang.String str22 = arrayList20.toString();
-# byte byte23 = (byte)0;
 # boolean b24 = arrayList20.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList25 = new java2.util2.ArrayList();
 # arrayList25.clear();
 # boolean b27 = arrayList25.isEmpty();
 # java.lang.Object obj28 = arrayList25.clone();
-# short s29 = (short)100;
 # java.lang.Object[] obj_array30 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array31 = arrayList25.toArray(obj_array30);
 # boolean b32 = arrayList20.remove((java.lang.Object)obj_array30);
@@ -2244,7 +2137,6 @@ END RECORD
 # java2.util2.ArrayList arrayList48 = new java2.util2.ArrayList();
 # arrayList48.clear();
 # java.lang.String str50 = arrayList48.toString();
-# int i51 = 10;
 # arrayList48.ensureCapacity(10);
 # java.lang.Object obj53 = arrayList48.clone();
 # boolean b54 = arrayList39.addAll((java2.util2.Collection)arrayList48);
@@ -2342,31 +2234,24 @@ END RECORD
 # boolean b10 = arrayList0.removeAll((java2.util2.Collection)arrayList7);
 # java2.util2.ListIterator listIterator11 = arrayList0.listIterator();
 # java2.util2.ArrayList arrayList12 = new java2.util2.ArrayList((java2.util2.Collection)arrayList0);
-# boolean b13 = true;
 # boolean b14 = arrayList12.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
 # java.lang.String str17 = arrayList15.toString();
-# int i18 = 10;
 # arrayList15.ensureCapacity(10);
 # java.lang.Object obj20 = arrayList15.clone();
-# int i21 = 10;
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList(10);
-# int i23 = 100;
 # arrayList22.ensureCapacity(100);
 # boolean b25 = arrayList15.addAll((java2.util2.Collection)arrayList22);
-# float f26 = 100.0f;
 # boolean b27 = arrayList15.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # java.lang.String str30 = arrayList28.toString();
-# byte byte31 = (byte)0;
 # boolean b32 = arrayList28.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # boolean b35 = arrayList33.isEmpty();
 # java.lang.Object obj36 = arrayList33.clone();
-# short s37 = (short)100;
 # java.lang.Object[] obj_array38 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array39 = arrayList33.toArray(obj_array38);
 # boolean b40 = arrayList28.remove((java.lang.Object)obj_array38);
@@ -2376,12 +2261,10 @@ END RECORD
 # arrayList43.clear();
 # boolean b45 = arrayList43.isEmpty();
 # java.lang.String str46 = arrayList43.toString();
-# int i47 = 0;
 # java2.util2.ArrayList arrayList48 = new java2.util2.ArrayList();
 # arrayList48.clear();
 # boolean b50 = arrayList48.isEmpty();
 # java.lang.Object obj51 = arrayList48.clone();
-# short s52 = (short)100;
 # java.lang.Object[] obj_array53 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array54 = arrayList48.toArray(obj_array53);
 # arrayList43.add(0, (java.lang.Object)arrayList48);
@@ -2468,7 +2351,6 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 # arrayList2.clear();
 # arrayList2.trimToSize();
@@ -2480,7 +2362,6 @@ END RECORD
 # arrayList13.clear();
 # boolean b15 = arrayList13.isEmpty();
 # java.lang.Object obj16 = arrayList13.clone();
-# short s17 = (short)100;
 # java.lang.Object[] obj_array18 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array19 = arrayList13.toArray(obj_array18);
 # boolean b20 = arrayList9.contains((java.lang.Object)arrayList13);
@@ -2501,7 +2382,6 @@ END RECORD
 # arrayList34.clear();
 # boolean b36 = arrayList34.isEmpty();
 # java.lang.Object obj37 = arrayList34.clone();
-# short s38 = (short)100;
 # java.lang.Object[] obj_array39 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array40 = arrayList34.toArray(obj_array39);
 # java.lang.String str41 = arrayList34.toString();
@@ -2626,40 +2506,31 @@ b92 =  method : java2.util2.AbstractCollection.remove(java.lang.Object) : arrayL
 END RECORD
 
 # Code representation:
-# int i0 = 10;
 # java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(10);
-# int i2 = 100;
 # arrayList1.ensureCapacity(100);
 # java2.util2.ArrayList arrayList4 = new java2.util2.ArrayList();
 # arrayList4.clear();
 # boolean b6 = arrayList4.isEmpty();
 # java.lang.Object obj7 = arrayList4.clone();
-# short s8 = (short)100;
 # java.lang.Object[] obj_array9 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array10 = arrayList4.toArray(obj_array9);
 # java2.util2.ArrayList arrayList11 = new java2.util2.ArrayList();
 # arrayList11.clear();
 # java.lang.String str13 = arrayList11.toString();
-# int i14 = 10;
 # arrayList11.ensureCapacity(10);
 # java.lang.Object obj16 = arrayList11.clone();
-# int i17 = 10;
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList(10);
-# int i19 = 100;
 # arrayList18.ensureCapacity(100);
 # boolean b21 = arrayList11.addAll((java2.util2.Collection)arrayList18);
-# float f22 = 100.0f;
 # boolean b23 = arrayList11.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# byte byte27 = (byte)0;
 # boolean b28 = arrayList24.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList29 = new java2.util2.ArrayList();
 # arrayList29.clear();
 # boolean b31 = arrayList29.isEmpty();
 # java.lang.Object obj32 = arrayList29.clone();
-# short s33 = (short)100;
 # java.lang.Object[] obj_array34 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array35 = arrayList29.toArray(obj_array34);
 # boolean b36 = arrayList24.remove((java.lang.Object)obj_array34);
@@ -2674,14 +2545,12 @@ END RECORD
 # arrayList44.clear();
 # boolean b46 = arrayList44.isEmpty();
 # java.lang.Object obj47 = arrayList44.clone();
-# short s48 = (short)100;
 # java.lang.Object[] obj_array49 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array50 = arrayList44.toArray(obj_array49);
 # boolean b51 = arrayList41.retainAll((java2.util2.Collection)arrayList44);
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList();
 # arrayList52.clear();
 # java.lang.String str54 = arrayList52.toString();
-# int i55 = 10;
 # arrayList52.ensureCapacity(10);
 # java.lang.Object obj57 = arrayList52.clone();
 # int i58 = arrayList41.indexOf(obj57);
@@ -2690,10 +2559,8 @@ END RECORD
 # java2.util2.ArrayList arrayList61 = new java2.util2.ArrayList();
 # arrayList61.clear();
 # boolean b63 = arrayList59.remove((java.lang.Object)arrayList61);
-# double d64 = 1.0d;
 # boolean b65 = arrayList61.remove((java.lang.Object)1.0d);
 # java2.util2.ArrayList arrayList66 = new java2.util2.ArrayList();
-# byte byte67 = (byte)1;
 # java.lang.Object[] obj_array68 = new java.lang.Object[] { (byte)1 };
 # java.lang.Object[] obj_array69 = arrayList66.toArray(obj_array68);
 # boolean b70 = arrayList61.removeAll((java2.util2.Collection)arrayList66);
@@ -2702,7 +2569,6 @@ END RECORD
 # java2.util2.ArrayList arrayList73 = new java2.util2.ArrayList();
 # arrayList73.clear();
 # boolean b75 = arrayList71.remove((java.lang.Object)arrayList73);
-# double d76 = 1.0d;
 # boolean b77 = arrayList73.remove((java.lang.Object)1.0d);
 # arrayList73.clear();
 # java2.util2.ArrayList arrayList79 = new java2.util2.ArrayList();
@@ -2710,7 +2576,6 @@ END RECORD
 # arrayList80.clear();
 # boolean b82 = arrayList80.isEmpty();
 # java.lang.Object obj83 = arrayList80.clone();
-# short s84 = (short)100;
 # java.lang.Object[] obj_array85 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array86 = arrayList80.toArray(obj_array85);
 # java.lang.String str87 = arrayList80.toString();
@@ -2826,40 +2691,31 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # int i3 = arrayList0.size();
-# int i4 = 10;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList(10);
-# int i6 = 100;
 # arrayList5.ensureCapacity(100);
 # java2.util2.ArrayList arrayList8 = new java2.util2.ArrayList();
 # arrayList8.clear();
 # boolean b10 = arrayList8.isEmpty();
 # java.lang.Object obj11 = arrayList8.clone();
-# short s12 = (short)100;
 # java.lang.Object[] obj_array13 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array14 = arrayList8.toArray(obj_array13);
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
 # java.lang.String str17 = arrayList15.toString();
-# int i18 = 10;
 # arrayList15.ensureCapacity(10);
 # java.lang.Object obj20 = arrayList15.clone();
-# int i21 = 10;
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList(10);
-# int i23 = 100;
 # arrayList22.ensureCapacity(100);
 # boolean b25 = arrayList15.addAll((java2.util2.Collection)arrayList22);
-# float f26 = 100.0f;
 # boolean b27 = arrayList15.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # java.lang.String str30 = arrayList28.toString();
-# byte byte31 = (byte)0;
 # boolean b32 = arrayList28.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # boolean b35 = arrayList33.isEmpty();
 # java.lang.Object obj36 = arrayList33.clone();
-# short s37 = (short)100;
 # java.lang.Object[] obj_array38 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array39 = arrayList33.toArray(obj_array38);
 # boolean b40 = arrayList28.remove((java.lang.Object)obj_array38);
@@ -2870,12 +2726,9 @@ END RECORD
 # java2.util2.ArrayList arrayList45 = new java2.util2.ArrayList();
 # arrayList45.clear();
 # java.lang.String str47 = arrayList45.toString();
-# int i48 = 10;
 # arrayList45.ensureCapacity(10);
 # java.lang.Object obj50 = arrayList45.clone();
-# int i51 = 10;
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList(10);
-# int i53 = 100;
 # arrayList52.ensureCapacity(100);
 # boolean b55 = arrayList45.addAll((java2.util2.Collection)arrayList52);
 # java2.util2.ArrayList arrayList56 = new java2.util2.ArrayList();
@@ -2883,7 +2736,6 @@ END RECORD
 # java2.util2.ArrayList arrayList58 = new java2.util2.ArrayList();
 # arrayList58.clear();
 # boolean b60 = arrayList56.remove((java.lang.Object)arrayList58);
-# double d61 = 1.0d;
 # boolean b62 = arrayList58.remove((java.lang.Object)1.0d);
 # arrayList58.clear();
 # arrayList58.trimToSize();
@@ -2904,7 +2756,6 @@ END RECORD
 # java2.util2.ArrayList arrayList79 = new java2.util2.ArrayList();
 # arrayList79.clear();
 # java.lang.String str81 = arrayList79.toString();
-# int i82 = 10;
 # arrayList79.ensureCapacity(10);
 # java.lang.Object obj84 = arrayList79.clone();
 # boolean b85 = arrayList70.addAll((java2.util2.Collection)arrayList79);
@@ -2991,7 +2842,6 @@ END RECORD
 # java2.util2.ArrayList arrayList13 = new java2.util2.ArrayList();
 # arrayList13.clear();
 # java.lang.String str15 = arrayList13.toString();
-# int i16 = 10;
 # arrayList13.ensureCapacity(10);
 # java.lang.Object obj18 = arrayList13.clone();
 # boolean b19 = arrayList4.addAll((java2.util2.Collection)arrayList13);
@@ -2999,26 +2849,20 @@ END RECORD
 # java2.util2.ArrayList arrayList21 = new java2.util2.ArrayList();
 # arrayList21.clear();
 # java.lang.String str23 = arrayList21.toString();
-# int i24 = 10;
 # arrayList21.ensureCapacity(10);
 # java.lang.Object obj26 = arrayList21.clone();
-# int i27 = 10;
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList(10);
-# int i29 = 100;
 # arrayList28.ensureCapacity(100);
 # boolean b31 = arrayList21.addAll((java2.util2.Collection)arrayList28);
-# float f32 = 100.0f;
 # boolean b33 = arrayList21.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList34 = new java2.util2.ArrayList();
 # arrayList34.clear();
 # java.lang.String str36 = arrayList34.toString();
-# byte byte37 = (byte)0;
 # boolean b38 = arrayList34.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList39 = new java2.util2.ArrayList();
 # arrayList39.clear();
 # boolean b41 = arrayList39.isEmpty();
 # java.lang.Object obj42 = arrayList39.clone();
-# short s43 = (short)100;
 # java.lang.Object[] obj_array44 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array45 = arrayList39.toArray(obj_array44);
 # boolean b46 = arrayList34.remove((java.lang.Object)obj_array44);
@@ -3085,25 +2929,20 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
-# int i16 = 10;
 # java2.util2.ArrayList arrayList17 = new java2.util2.ArrayList(10);
-# int i18 = 100;
 # arrayList17.ensureCapacity(100);
 # boolean b20 = arrayList0.addAll((java2.util2.Collection)arrayList17);
 # java2.util2.ArrayList arrayList21 = new java2.util2.ArrayList();
 # arrayList21.clear();
 # boolean b23 = arrayList21.isEmpty();
 # java.lang.String str24 = arrayList21.toString();
-# int i25 = 0;
 # java2.util2.ArrayList arrayList26 = new java2.util2.ArrayList();
 # arrayList26.clear();
 # boolean b28 = arrayList26.isEmpty();
 # java.lang.Object obj29 = arrayList26.clone();
-# short s30 = (short)100;
 # java.lang.Object[] obj_array31 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array32 = arrayList26.toArray(obj_array31);
 # arrayList21.add(0, (java.lang.Object)arrayList26);
@@ -3182,40 +3021,31 @@ END RECORD
 # java2.util2.ArrayList arrayList10 = new java2.util2.ArrayList();
 # arrayList10.clear();
 # java.lang.String str12 = arrayList10.toString();
-# byte byte13 = (byte)0;
 # boolean b14 = arrayList10.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
 # java.lang.String str17 = arrayList15.toString();
-# int i18 = 10;
 # arrayList15.ensureCapacity(10);
 # java.lang.Object obj20 = arrayList15.clone();
-# int i21 = 10;
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList(10);
-# int i23 = 100;
 # arrayList22.ensureCapacity(100);
 # boolean b25 = arrayList15.addAll((java2.util2.Collection)arrayList22);
-# float f26 = 100.0f;
 # boolean b27 = arrayList15.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # java.lang.String str30 = arrayList28.toString();
-# byte byte31 = (byte)0;
 # boolean b32 = arrayList28.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # boolean b35 = arrayList33.isEmpty();
 # java.lang.Object obj36 = arrayList33.clone();
-# short s37 = (short)100;
 # java.lang.Object[] obj_array38 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array39 = arrayList33.toArray(obj_array38);
 # boolean b40 = arrayList28.remove((java.lang.Object)obj_array38);
 # java.lang.Object[] obj_array41 = arrayList15.toArray(obj_array38);
 # boolean b42 = arrayList10.containsAll((java2.util2.Collection)arrayList15);
 # boolean b43 = arrayList0.addAll((java2.util2.Collection)arrayList15);
-# long long44 = 1L;
 # boolean b45 = arrayList15.remove((java.lang.Object)1L);
-# float f46 = 1.0f;
 # boolean b47 = arrayList15.remove((java.lang.Object)1.0f);
 
 
@@ -3276,7 +3106,6 @@ END RECORD
 # arrayList1.clear();
 # boolean b3 = arrayList1.isEmpty();
 # java.lang.Object obj4 = arrayList1.clone();
-# short s5 = (short)100;
 # java.lang.Object[] obj_array6 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array7 = arrayList1.toArray(obj_array6);
 # java2.util2.Iterator iterator8 = arrayList1.iterator();
@@ -3285,12 +3114,9 @@ END RECORD
 # arrayList10.clear();
 # java.lang.String str12 = arrayList10.toString();
 # int i13 = arrayList10.size();
-# int i14 = 10;
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList(10);
-# int i16 = 100;
 # arrayList15.ensureCapacity(100);
 # boolean b18 = arrayList10.containsAll((java2.util2.Collection)arrayList15);
-# float f19 = (-1.0f);
 # int i20 = arrayList15.lastIndexOf((java.lang.Object)(-1.0f));
 # boolean b21 = arrayList0.contains((java.lang.Object)arrayList15);
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList();
@@ -3300,14 +3126,12 @@ END RECORD
 # arrayList25.clear();
 # boolean b27 = arrayList25.isEmpty();
 # java.lang.Object obj28 = arrayList25.clone();
-# short s29 = (short)100;
 # java.lang.Object[] obj_array30 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array31 = arrayList25.toArray(obj_array30);
 # boolean b32 = arrayList22.retainAll((java2.util2.Collection)arrayList25);
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # java.lang.String str35 = arrayList33.toString();
-# int i36 = 10;
 # arrayList33.ensureCapacity(10);
 # java.lang.Object obj38 = arrayList33.clone();
 # int i39 = arrayList22.indexOf(obj38);
@@ -3421,7 +3245,6 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
@@ -3441,7 +3264,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -3470,7 +3292,6 @@ END RECORD
 # arrayList52.clear();
 # boolean b54 = arrayList52.isEmpty();
 # java.lang.Object obj55 = arrayList52.clone();
-# short s56 = (short)100;
 # java.lang.Object[] obj_array57 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array58 = arrayList52.toArray(obj_array57);
 # boolean b59 = arrayList49.retainAll((java2.util2.Collection)arrayList52);
@@ -3495,7 +3316,6 @@ END RECORD
 # arrayList77.clear();
 # boolean b79 = arrayList77.isEmpty();
 # java.lang.Object obj80 = arrayList77.clone();
-# short s81 = (short)100;
 # java.lang.Object[] obj_array82 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array83 = arrayList77.toArray(obj_array82);
 # boolean b84 = arrayList74.retainAll((java2.util2.Collection)arrayList77);
@@ -3611,7 +3431,6 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.Object obj3 = arrayList0.clone();
-# short s4 = (short)100;
 # java.lang.Object[] obj_array5 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array6 = arrayList0.toArray(obj_array5);
 # boolean b7 = arrayList0.isEmpty();
@@ -3619,7 +3438,6 @@ END RECORD
 # arrayList8.clear();
 # boolean b10 = arrayList8.isEmpty();
 # java.lang.Object obj11 = arrayList8.clone();
-# short s12 = (short)100;
 # java.lang.Object[] obj_array13 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array14 = arrayList8.toArray(obj_array13);
 # java.lang.String str15 = arrayList8.toString();
@@ -3628,7 +3446,6 @@ END RECORD
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
 # boolean b20 = arrayList16.remove((java.lang.Object)arrayList18);
-# double d21 = 1.0d;
 # boolean b22 = arrayList18.remove((java.lang.Object)1.0d);
 # arrayList18.clear();
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
@@ -3636,7 +3453,6 @@ END RECORD
 # arrayList25.clear();
 # boolean b27 = arrayList25.isEmpty();
 # java.lang.Object obj28 = arrayList25.clone();
-# short s29 = (short)100;
 # java.lang.Object[] obj_array30 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array31 = arrayList25.toArray(obj_array30);
 # java.lang.String str32 = arrayList25.toString();
@@ -3657,7 +3473,6 @@ END RECORD
 # arrayList46.clear();
 # boolean b48 = arrayList46.isEmpty();
 # java.lang.Object obj49 = arrayList46.clone();
-# short s50 = (short)100;
 # java.lang.Object[] obj_array51 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array52 = arrayList46.toArray(obj_array51);
 # boolean b53 = arrayList43.retainAll((java2.util2.Collection)arrayList46);
@@ -3668,7 +3483,6 @@ END RECORD
 # java.lang.String str58 = arrayList55.toString();
 # java2.util2.ListIterator listIterator59 = arrayList55.listIterator();
 # boolean b60 = arrayList38.containsAll((java2.util2.Collection)arrayList55);
-# int i61 = (-1);
 # arrayList55.ensureCapacity((-1));
 # boolean b63 = arrayList18.containsAll((java2.util2.Collection)arrayList55);
 # java2.util2.ArrayList arrayList64 = new java2.util2.ArrayList();
@@ -3691,7 +3505,6 @@ END RECORD
 # arrayList80.clear();
 # boolean b82 = arrayList80.isEmpty();
 # java.lang.Object obj83 = arrayList80.clone();
-# short s84 = (short)100;
 # java.lang.Object[] obj_array85 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array86 = arrayList80.toArray(obj_array85);
 # java.lang.String str87 = arrayList80.toString();
@@ -3844,11 +3657,9 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
-# float f16 = 1.0f;
 # boolean b17 = arrayList9.remove((java.lang.Object)1.0f);
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
@@ -3859,38 +3670,30 @@ END RECORD
 # arrayList23.clear();
 # boolean b25 = arrayList23.isEmpty();
 # java.lang.Object obj26 = arrayList23.clone();
-# short s27 = (short)100;
 # java.lang.Object[] obj_array28 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array29 = arrayList23.toArray(obj_array28);
 # java2.util2.ArrayList arrayList30 = new java2.util2.ArrayList();
 # arrayList30.clear();
 # java.lang.String str32 = arrayList30.toString();
-# int i33 = 10;
 # arrayList30.ensureCapacity(10);
 # java.lang.Object obj35 = arrayList30.clone();
-# int i36 = 10;
 # java2.util2.ArrayList arrayList37 = new java2.util2.ArrayList(10);
-# int i38 = 100;
 # arrayList37.ensureCapacity(100);
 # boolean b40 = arrayList30.addAll((java2.util2.Collection)arrayList37);
-# float f41 = 100.0f;
 # boolean b42 = arrayList30.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList43 = new java2.util2.ArrayList();
 # arrayList43.clear();
 # java.lang.String str45 = arrayList43.toString();
-# byte byte46 = (byte)0;
 # boolean b47 = arrayList43.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList48 = new java2.util2.ArrayList();
 # arrayList48.clear();
 # boolean b50 = arrayList48.isEmpty();
 # java.lang.Object obj51 = arrayList48.clone();
-# short s52 = (short)100;
 # java.lang.Object[] obj_array53 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array54 = arrayList48.toArray(obj_array53);
 # boolean b55 = arrayList43.remove((java.lang.Object)obj_array53);
 # java.lang.Object[] obj_array56 = arrayList30.toArray(obj_array53);
 # int i57 = arrayList23.indexOf((java.lang.Object)arrayList30);
-# int i58 = 0;
 # java2.util2.ListIterator listIterator59 = arrayList30.listIterator(0);
 # int i60 = arrayList20.indexOf((java.lang.Object)0);
 # boolean b61 = arrayList9.remove((java.lang.Object)arrayList20);
@@ -4003,7 +3806,6 @@ END RECORD
 # java2.util2.ArrayList arrayList13 = new java2.util2.ArrayList();
 # arrayList13.clear();
 # java.lang.String str15 = arrayList13.toString();
-# int i16 = 10;
 # arrayList13.ensureCapacity(10);
 # java.lang.Object obj18 = arrayList13.clone();
 # boolean b19 = arrayList4.addAll((java2.util2.Collection)arrayList13);
@@ -4022,7 +3824,6 @@ END RECORD
 # arrayList31.clear();
 # boolean b33 = arrayList31.isEmpty();
 # java.lang.Object obj34 = arrayList31.clone();
-# short s35 = (short)100;
 # java.lang.Object[] obj_array36 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array37 = arrayList31.toArray(obj_array36);
 # boolean b38 = arrayList28.retainAll((java2.util2.Collection)arrayList31);
@@ -4055,7 +3856,6 @@ END RECORD
 # boolean b65 = arrayList61.remove((java.lang.Object)arrayList63);
 # boolean b66 = arrayList55.containsAll((java2.util2.Collection)arrayList63);
 # java2.util2.ArrayList arrayList67 = new java2.util2.ArrayList((java2.util2.Collection)arrayList63);
-# boolean b68 = true;
 # int i69 = arrayList63.indexOf((java.lang.Object)true);
 # boolean b70 = arrayList40.retainAll((java2.util2.Collection)arrayList63);
 # java2.util2.ArrayList arrayList71 = new java2.util2.ArrayList();
@@ -4122,42 +3922,32 @@ b41 =  method : java2.util2.AbstractCollection.remove(java.lang.Object) : arrayL
 END RECORD
 
 # Code representation:
-# int i0 = 10;
 # java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(10);
-# int i2 = 100;
 # arrayList1.ensureCapacity(100);
-# int i4 = (-1);
 # arrayList1.ensureCapacity((-1));
 # java2.util2.ArrayList arrayList6 = new java2.util2.ArrayList();
 # arrayList6.clear();
 # boolean b8 = arrayList6.isEmpty();
 # java.lang.Object obj9 = arrayList6.clone();
-# short s10 = (short)100;
 # java.lang.Object[] obj_array11 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array12 = arrayList6.toArray(obj_array11);
 # java2.util2.ArrayList arrayList13 = new java2.util2.ArrayList();
 # arrayList13.clear();
 # java.lang.String str15 = arrayList13.toString();
-# int i16 = 10;
 # arrayList13.ensureCapacity(10);
 # java.lang.Object obj18 = arrayList13.clone();
-# int i19 = 10;
 # java2.util2.ArrayList arrayList20 = new java2.util2.ArrayList(10);
-# int i21 = 100;
 # arrayList20.ensureCapacity(100);
 # boolean b23 = arrayList13.addAll((java2.util2.Collection)arrayList20);
-# float f24 = 100.0f;
 # boolean b25 = arrayList13.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList26 = new java2.util2.ArrayList();
 # arrayList26.clear();
 # java.lang.String str28 = arrayList26.toString();
-# byte byte29 = (byte)0;
 # boolean b30 = arrayList26.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList31 = new java2.util2.ArrayList();
 # arrayList31.clear();
 # boolean b33 = arrayList31.isEmpty();
 # java.lang.Object obj34 = arrayList31.clone();
-# short s35 = (short)100;
 # java.lang.Object[] obj_array36 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array37 = arrayList31.toArray(obj_array36);
 # boolean b38 = arrayList26.remove((java.lang.Object)obj_array36);
@@ -4222,23 +4012,19 @@ b44 =  method : java2.util2.AbstractCollection.remove(java.lang.Object) : arrayL
 END RECORD
 
 # Code representation:
-# int i0 = 10;
 # java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(10);
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # java2.util2.ArrayList arrayList3 = new java2.util2.ArrayList();
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # java2.util2.Iterator iterator10 = arrayList3.iterator();
 # boolean b11 = arrayList2.addAll((java2.util2.Collection)arrayList3);
 # arrayList3.clear();
-# double d13 = (-1.0d);
 # boolean b14 = arrayList3.contains((java.lang.Object)(-1.0d));
 # boolean b15 = arrayList1.add((java.lang.Object)(-1.0d));
-# int i16 = 0;
 # java2.util2.ListIterator listIterator17 = arrayList1.listIterator(0);
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
@@ -4250,17 +4036,14 @@ END RECORD
 # arrayList24.clear();
 # boolean b26 = arrayList18.removeAll((java2.util2.Collection)arrayList24);
 # int i27 = arrayList1.lastIndexOf((java.lang.Object)arrayList18);
-# int i28 = 100;
 # java2.util2.ArrayList arrayList29 = new java2.util2.ArrayList(100);
 # java2.util2.ArrayList arrayList30 = new java2.util2.ArrayList();
 # arrayList30.clear();
 # java2.util2.ArrayList arrayList32 = new java2.util2.ArrayList();
 # arrayList32.clear();
 # boolean b34 = arrayList30.remove((java.lang.Object)arrayList32);
-# double d35 = 1.0d;
 # boolean b36 = arrayList32.remove((java.lang.Object)1.0d);
 # java2.util2.ArrayList arrayList37 = new java2.util2.ArrayList();
-# byte byte38 = (byte)1;
 # java.lang.Object[] obj_array39 = new java.lang.Object[] { (byte)1 };
 # java.lang.Object[] obj_array40 = arrayList37.toArray(obj_array39);
 # boolean b41 = arrayList32.removeAll((java2.util2.Collection)arrayList37);
@@ -4385,9 +4168,7 @@ END RECORD
 # boolean b6 = arrayList0.addAll((java2.util2.Collection)arrayList4);
 # java.lang.String str7 = arrayList4.toString();
 # java2.util2.ArrayList arrayList8 = new java2.util2.ArrayList((java2.util2.Collection)arrayList4);
-# int i9 = 10;
 # java2.util2.ArrayList arrayList10 = new java2.util2.ArrayList(10);
-# int i11 = 100;
 # arrayList10.ensureCapacity(100);
 # java2.util2.ArrayList arrayList13 = new java2.util2.ArrayList();
 # arrayList13.clear();
@@ -4401,12 +4182,9 @@ END RECORD
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList();
 # arrayList22.clear();
 # java.lang.String str24 = arrayList22.toString();
-# int i25 = 10;
 # arrayList22.ensureCapacity(10);
 # java.lang.Object obj27 = arrayList22.clone();
-# int i28 = 10;
 # java2.util2.ArrayList arrayList29 = new java2.util2.ArrayList(10);
-# int i30 = 100;
 # arrayList29.ensureCapacity(100);
 # boolean b32 = arrayList22.addAll((java2.util2.Collection)arrayList29);
 # boolean b33 = arrayList13.addAll((java2.util2.Collection)arrayList29);
@@ -4430,7 +4208,6 @@ END RECORD
 # java2.util2.ArrayList arrayList51 = new java2.util2.ArrayList();
 # arrayList51.clear();
 # java.lang.String str53 = arrayList51.toString();
-# int i54 = 10;
 # arrayList51.ensureCapacity(10);
 # java.lang.Object obj56 = arrayList51.clone();
 # boolean b57 = arrayList42.addAll((java2.util2.Collection)arrayList51);
@@ -4439,7 +4216,6 @@ END RECORD
 # java2.util2.ArrayList arrayList60 = new java2.util2.ArrayList();
 # arrayList60.clear();
 # boolean b62 = arrayList58.remove((java.lang.Object)arrayList60);
-# double d63 = 1.0d;
 # boolean b64 = arrayList60.remove((java.lang.Object)1.0d);
 # arrayList60.clear();
 # int i66 = arrayList42.indexOf((java.lang.Object)arrayList60);
@@ -4456,7 +4232,6 @@ END RECORD
 # arrayList76.clear();
 # boolean b78 = arrayList76.isEmpty();
 # java.lang.Object obj79 = arrayList76.clone();
-# short s80 = (short)100;
 # java.lang.Object[] obj_array81 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array82 = arrayList76.toArray(obj_array81);
 # boolean b83 = arrayList73.retainAll((java2.util2.Collection)arrayList76);
@@ -4467,7 +4242,6 @@ END RECORD
 # java.lang.String str88 = arrayList85.toString();
 # java2.util2.ListIterator listIterator89 = arrayList85.listIterator();
 # boolean b90 = arrayList68.containsAll((java2.util2.Collection)arrayList85);
-# int i91 = (-1);
 # arrayList85.ensureCapacity((-1));
 # int i93 = arrayList42.indexOf((java.lang.Object)arrayList85);
 # boolean b94 = arrayList10.contains((java.lang.Object)i93);
@@ -4508,17 +4282,14 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.String str3 = arrayList0.toString();
-# int i4 = 0;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # arrayList0.add(0, (java.lang.Object)arrayList5);
 # java2.util2.Iterator iterator13 = arrayList5.iterator();
-# int i14 = 10;
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList(10);
 # int i16 = arrayList15.size();
 # java2.util2.ListIterator listIterator17 = arrayList15.listIterator();
@@ -4574,7 +4345,6 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 # arrayList2.clear();
 # arrayList2.trimToSize();
@@ -4586,7 +4356,6 @@ END RECORD
 # arrayList13.clear();
 # boolean b15 = arrayList13.isEmpty();
 # java.lang.Object obj16 = arrayList13.clone();
-# short s17 = (short)100;
 # java.lang.Object[] obj_array18 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array19 = arrayList13.toArray(obj_array18);
 # boolean b20 = arrayList9.contains((java.lang.Object)arrayList13);
@@ -4598,7 +4367,6 @@ END RECORD
 # java2.util2.ArrayList arrayList26 = new java2.util2.ArrayList();
 # int i27 = arrayList21.indexOf((java.lang.Object)arrayList26);
 # int i28 = arrayList26.size();
-# int i29 = 100;
 # arrayList26.ensureCapacity(100);
 # java2.util2.ListIterator listIterator31 = arrayList26.listIterator();
 # boolean b32 = arrayList9.remove((java.lang.Object)arrayList26);
@@ -4718,7 +4486,6 @@ END RECORD
 # arrayList8.clear();
 # boolean b10 = arrayList8.isEmpty();
 # java.lang.Object obj11 = arrayList8.clone();
-# short s12 = (short)100;
 # java.lang.Object[] obj_array13 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array14 = arrayList8.toArray(obj_array13);
 # boolean b15 = arrayList5.retainAll((java2.util2.Collection)arrayList8);
@@ -4743,31 +4510,24 @@ END RECORD
 # boolean b34 = arrayList24.removeAll((java2.util2.Collection)arrayList31);
 # java2.util2.ListIterator listIterator35 = arrayList24.listIterator();
 # java2.util2.ArrayList arrayList36 = new java2.util2.ArrayList((java2.util2.Collection)arrayList24);
-# boolean b37 = true;
 # boolean b38 = arrayList36.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList39 = new java2.util2.ArrayList();
 # arrayList39.clear();
 # java.lang.String str41 = arrayList39.toString();
-# int i42 = 10;
 # arrayList39.ensureCapacity(10);
 # java.lang.Object obj44 = arrayList39.clone();
-# int i45 = 10;
 # java2.util2.ArrayList arrayList46 = new java2.util2.ArrayList(10);
-# int i47 = 100;
 # arrayList46.ensureCapacity(100);
 # boolean b49 = arrayList39.addAll((java2.util2.Collection)arrayList46);
-# float f50 = 100.0f;
 # boolean b51 = arrayList39.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList();
 # arrayList52.clear();
 # java.lang.String str54 = arrayList52.toString();
-# byte byte55 = (byte)0;
 # boolean b56 = arrayList52.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList57 = new java2.util2.ArrayList();
 # arrayList57.clear();
 # boolean b59 = arrayList57.isEmpty();
 # java.lang.Object obj60 = arrayList57.clone();
-# short s61 = (short)100;
 # java.lang.Object[] obj_array62 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array63 = arrayList57.toArray(obj_array62);
 # boolean b64 = arrayList52.remove((java.lang.Object)obj_array62);
@@ -4779,7 +4539,6 @@ END RECORD
 # arrayList69.clear();
 # boolean b71 = arrayList69.isEmpty();
 # java.lang.Object obj72 = arrayList69.clone();
-# short s73 = (short)100;
 # java.lang.Object[] obj_array74 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array75 = arrayList69.toArray(obj_array74);
 # java2.util2.Iterator iterator76 = arrayList69.iterator();
@@ -4788,12 +4547,9 @@ END RECORD
 # arrayList78.clear();
 # java.lang.String str80 = arrayList78.toString();
 # int i81 = arrayList78.size();
-# int i82 = 10;
 # java2.util2.ArrayList arrayList83 = new java2.util2.ArrayList(10);
-# int i84 = 100;
 # arrayList83.ensureCapacity(100);
 # boolean b86 = arrayList78.containsAll((java2.util2.Collection)arrayList83);
-# float f87 = (-1.0f);
 # int i88 = arrayList83.lastIndexOf((java.lang.Object)(-1.0f));
 # boolean b89 = arrayList68.contains((java.lang.Object)arrayList83);
 # boolean b90 = arrayList0.remove((java.lang.Object)b89);
@@ -4863,40 +4619,31 @@ b52 =  method : java2.util2.AbstractCollection.remove(java.lang.Object) : arrayL
 END RECORD
 
 # Code representation:
-# int i0 = 10;
 # java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(10);
-# int i2 = 100;
 # arrayList1.ensureCapacity(100);
 # java2.util2.ArrayList arrayList4 = new java2.util2.ArrayList();
 # arrayList4.clear();
 # boolean b6 = arrayList4.isEmpty();
 # java.lang.Object obj7 = arrayList4.clone();
-# short s8 = (short)100;
 # java.lang.Object[] obj_array9 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array10 = arrayList4.toArray(obj_array9);
 # java2.util2.ArrayList arrayList11 = new java2.util2.ArrayList();
 # arrayList11.clear();
 # java.lang.String str13 = arrayList11.toString();
-# int i14 = 10;
 # arrayList11.ensureCapacity(10);
 # java.lang.Object obj16 = arrayList11.clone();
-# int i17 = 10;
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList(10);
-# int i19 = 100;
 # arrayList18.ensureCapacity(100);
 # boolean b21 = arrayList11.addAll((java2.util2.Collection)arrayList18);
-# float f22 = 100.0f;
 # boolean b23 = arrayList11.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# byte byte27 = (byte)0;
 # boolean b28 = arrayList24.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList29 = new java2.util2.ArrayList();
 # arrayList29.clear();
 # boolean b31 = arrayList29.isEmpty();
 # java.lang.Object obj32 = arrayList29.clone();
-# short s33 = (short)100;
 # java.lang.Object[] obj_array34 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array35 = arrayList29.toArray(obj_array34);
 # boolean b36 = arrayList24.remove((java.lang.Object)obj_array34);
@@ -4908,12 +4655,10 @@ END RECORD
 # java2.util2.ArrayList arrayList42 = new java2.util2.ArrayList();
 # arrayList42.clear();
 # boolean b44 = arrayList40.remove((java.lang.Object)arrayList42);
-# double d45 = 1.0d;
 # boolean b46 = arrayList42.remove((java.lang.Object)1.0d);
 # arrayList42.clear();
 # arrayList42.trimToSize();
 # int i49 = arrayList42.size();
-# int i50 = (-1);
 # arrayList42.ensureCapacity((-1));
 # boolean b52 = arrayList1.remove((java.lang.Object)(-1));
 
@@ -4976,7 +4721,6 @@ END RECORD
 # arrayList1.clear();
 # boolean b3 = arrayList1.isEmpty();
 # java.lang.Object obj4 = arrayList1.clone();
-# short s5 = (short)100;
 # java.lang.Object[] obj_array6 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array7 = arrayList1.toArray(obj_array6);
 # java2.util2.Iterator iterator8 = arrayList1.iterator();
@@ -4984,7 +4728,6 @@ END RECORD
 # arrayList1.clear();
 # int i11 = arrayList1.size();
 # java2.util2.ArrayList arrayList12 = new java2.util2.ArrayList();
-# byte byte13 = (byte)1;
 # java.lang.Object[] obj_array14 = new java.lang.Object[] { (byte)1 };
 # java.lang.Object[] obj_array15 = arrayList12.toArray(obj_array14);
 # int i16 = arrayList1.lastIndexOf((java.lang.Object)obj_array15);
@@ -5004,7 +4747,6 @@ END RECORD
 # java2.util2.ArrayList arrayList30 = new java2.util2.ArrayList();
 # arrayList30.clear();
 # java.lang.String str32 = arrayList30.toString();
-# int i33 = 10;
 # arrayList30.ensureCapacity(10);
 # java.lang.Object obj35 = arrayList30.clone();
 # boolean b36 = arrayList21.addAll((java2.util2.Collection)arrayList30);
@@ -5042,13 +4784,11 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# byte byte3 = (byte)0;
 # boolean b4 = arrayList0.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # boolean b12 = arrayList0.remove((java.lang.Object)obj_array10);
@@ -5161,7 +4901,6 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
@@ -5181,7 +4920,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -5210,7 +4948,6 @@ END RECORD
 # arrayList52.clear();
 # boolean b54 = arrayList52.isEmpty();
 # java.lang.Object obj55 = arrayList52.clone();
-# short s56 = (short)100;
 # java.lang.Object[] obj_array57 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array58 = arrayList52.toArray(obj_array57);
 # boolean b59 = arrayList49.retainAll((java2.util2.Collection)arrayList52);
@@ -5235,7 +4972,6 @@ END RECORD
 # arrayList77.clear();
 # boolean b79 = arrayList77.isEmpty();
 # java.lang.Object obj80 = arrayList77.clone();
-# short s81 = (short)100;
 # java.lang.Object[] obj_array82 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array83 = arrayList77.toArray(obj_array82);
 # boolean b84 = arrayList74.retainAll((java2.util2.Collection)arrayList77);
@@ -5359,7 +5095,6 @@ END RECORD
 # arrayList8.clear();
 # boolean b10 = arrayList8.isEmpty();
 # java.lang.Object obj11 = arrayList8.clone();
-# short s12 = (short)100;
 # java.lang.Object[] obj_array13 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array14 = arrayList8.toArray(obj_array13);
 # boolean b15 = arrayList5.retainAll((java2.util2.Collection)arrayList8);
@@ -5384,31 +5119,24 @@ END RECORD
 # boolean b34 = arrayList24.removeAll((java2.util2.Collection)arrayList31);
 # java2.util2.ListIterator listIterator35 = arrayList24.listIterator();
 # java2.util2.ArrayList arrayList36 = new java2.util2.ArrayList((java2.util2.Collection)arrayList24);
-# boolean b37 = true;
 # boolean b38 = arrayList36.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList39 = new java2.util2.ArrayList();
 # arrayList39.clear();
 # java.lang.String str41 = arrayList39.toString();
-# int i42 = 10;
 # arrayList39.ensureCapacity(10);
 # java.lang.Object obj44 = arrayList39.clone();
-# int i45 = 10;
 # java2.util2.ArrayList arrayList46 = new java2.util2.ArrayList(10);
-# int i47 = 100;
 # arrayList46.ensureCapacity(100);
 # boolean b49 = arrayList39.addAll((java2.util2.Collection)arrayList46);
-# float f50 = 100.0f;
 # boolean b51 = arrayList39.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList();
 # arrayList52.clear();
 # java.lang.String str54 = arrayList52.toString();
-# byte byte55 = (byte)0;
 # boolean b56 = arrayList52.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList57 = new java2.util2.ArrayList();
 # arrayList57.clear();
 # boolean b59 = arrayList57.isEmpty();
 # java.lang.Object obj60 = arrayList57.clone();
-# short s61 = (short)100;
 # java.lang.Object[] obj_array62 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array63 = arrayList57.toArray(obj_array62);
 # boolean b64 = arrayList52.remove((java.lang.Object)obj_array62);
@@ -5420,7 +5148,6 @@ END RECORD
 # arrayList69.clear();
 # boolean b71 = arrayList69.isEmpty();
 # java.lang.Object obj72 = arrayList69.clone();
-# short s73 = (short)100;
 # java.lang.Object[] obj_array74 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array75 = arrayList69.toArray(obj_array74);
 # java2.util2.Iterator iterator76 = arrayList69.iterator();
@@ -5429,12 +5156,9 @@ END RECORD
 # arrayList78.clear();
 # java.lang.String str80 = arrayList78.toString();
 # int i81 = arrayList78.size();
-# int i82 = 10;
 # java2.util2.ArrayList arrayList83 = new java2.util2.ArrayList(10);
-# int i84 = 100;
 # arrayList83.ensureCapacity(100);
 # boolean b86 = arrayList78.containsAll((java2.util2.Collection)arrayList83);
-# float f87 = (-1.0f);
 # int i88 = arrayList83.lastIndexOf((java.lang.Object)(-1.0f));
 # boolean b89 = arrayList68.contains((java.lang.Object)arrayList83);
 # boolean b90 = arrayList0.remove((java.lang.Object)b89);
@@ -5487,12 +5211,10 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.String str3 = arrayList0.toString();
-# int i4 = 0;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # arrayList0.add(0, (java.lang.Object)arrayList5);
@@ -5503,17 +5225,14 @@ END RECORD
 # arrayList16.clear();
 # boolean b18 = arrayList16.isEmpty();
 # java.lang.Object obj19 = arrayList16.clone();
-# short s20 = (short)100;
 # java.lang.Object[] obj_array21 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array22 = arrayList16.toArray(obj_array21);
 # boolean b23 = arrayList13.retainAll((java2.util2.Collection)arrayList16);
 # boolean b24 = arrayList0.retainAll((java2.util2.Collection)arrayList16);
-# int i25 = 10;
 # java2.util2.ArrayList arrayList26 = new java2.util2.ArrayList(10);
 # int i27 = arrayList26.size();
 # boolean b28 = arrayList0.add((java.lang.Object)arrayList26);
 # java2.util2.ListIterator listIterator29 = arrayList0.listIterator();
-# long long30 = 0L;
 # boolean b31 = arrayList0.remove((java.lang.Object)0L);
 
 
@@ -5619,12 +5338,10 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.String str3 = arrayList0.toString();
-# int i4 = 0;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # arrayList0.add(0, (java.lang.Object)arrayList5);
@@ -5635,14 +5352,11 @@ END RECORD
 # arrayList16.clear();
 # boolean b18 = arrayList16.isEmpty();
 # java.lang.Object obj19 = arrayList16.clone();
-# short s20 = (short)100;
 # java.lang.Object[] obj_array21 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array22 = arrayList16.toArray(obj_array21);
 # boolean b23 = arrayList13.retainAll((java2.util2.Collection)arrayList16);
 # boolean b24 = arrayList0.retainAll((java2.util2.Collection)arrayList16);
-# int i25 = 1;
 # arrayList0.ensureCapacity(1);
-# int i27 = 0;
 # java2.util2.ListIterator listIterator28 = arrayList0.listIterator(0);
 # java.lang.Object[] obj_array29 = arrayList0.toArray();
 # java2.util2.ArrayList arrayList30 = new java2.util2.ArrayList();
@@ -5658,12 +5372,9 @@ END RECORD
 # java2.util2.ArrayList arrayList40 = new java2.util2.ArrayList();
 # arrayList40.clear();
 # java.lang.String str42 = arrayList40.toString();
-# int i43 = 10;
 # arrayList40.ensureCapacity(10);
 # java.lang.Object obj45 = arrayList40.clone();
-# int i46 = 10;
 # java2.util2.ArrayList arrayList47 = new java2.util2.ArrayList(10);
-# int i48 = 100;
 # arrayList47.ensureCapacity(100);
 # boolean b50 = arrayList40.addAll((java2.util2.Collection)arrayList47);
 # java2.util2.ArrayList arrayList51 = new java2.util2.ArrayList();
@@ -5671,7 +5382,6 @@ END RECORD
 # java2.util2.ArrayList arrayList53 = new java2.util2.ArrayList();
 # arrayList53.clear();
 # boolean b55 = arrayList51.remove((java.lang.Object)arrayList53);
-# double d56 = 1.0d;
 # boolean b57 = arrayList53.remove((java.lang.Object)1.0d);
 # arrayList53.clear();
 # arrayList53.trimToSize();
@@ -5692,13 +5402,10 @@ END RECORD
 # java2.util2.ArrayList arrayList74 = new java2.util2.ArrayList();
 # arrayList74.clear();
 # java.lang.String str76 = arrayList74.toString();
-# int i77 = 10;
 # arrayList74.ensureCapacity(10);
 # java.lang.Object obj79 = arrayList74.clone();
 # boolean b80 = arrayList65.addAll((java2.util2.Collection)arrayList74);
 # java2.util2.ArrayList arrayList81 = new java2.util2.ArrayList((java2.util2.Collection)arrayList65);
-# int i82 = 0;
-# long long83 = 1L;
 # arrayList81.add(0, (java.lang.Object)1L);
 # int i85 = arrayList60.lastIndexOf((java.lang.Object)arrayList81);
 # boolean b86 = arrayList0.remove((java.lang.Object)arrayList81);
@@ -5731,15 +5438,11 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# int i3 = 10;
 # arrayList0.ensureCapacity(10);
 # java.lang.Object obj5 = arrayList0.clone();
-# int i6 = 10;
 # java2.util2.ArrayList arrayList7 = new java2.util2.ArrayList(10);
-# int i8 = 100;
 # arrayList7.ensureCapacity(100);
 # boolean b10 = arrayList0.addAll((java2.util2.Collection)arrayList7);
-# float f11 = 100.0f;
 # boolean b12 = arrayList0.contains((java.lang.Object)100.0f);
 
 
@@ -5779,14 +5482,12 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
 # java2.util2.ArrayList arrayList11 = new java2.util2.ArrayList();
 # arrayList11.clear();
 # java.lang.String str13 = arrayList11.toString();
-# int i14 = 10;
 # arrayList11.ensureCapacity(10);
 # java.lang.Object obj16 = arrayList11.clone();
 # int i17 = arrayList0.indexOf(obj16);
@@ -5829,7 +5530,6 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 # arrayList2.clear();
 # arrayList2.trimToSize();
@@ -5841,7 +5541,6 @@ END RECORD
 # arrayList13.clear();
 # boolean b15 = arrayList13.isEmpty();
 # java.lang.Object obj16 = arrayList13.clone();
-# short s17 = (short)100;
 # java.lang.Object[] obj_array18 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array19 = arrayList13.toArray(obj_array18);
 # boolean b20 = arrayList9.contains((java.lang.Object)arrayList13);
@@ -5891,7 +5590,6 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.Object obj3 = arrayList0.clone();
-# short s4 = (short)100;
 # java.lang.Object[] obj_array5 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array6 = arrayList0.toArray(obj_array5);
 # java2.util2.ArrayList arrayList7 = new java2.util2.ArrayList();
@@ -5910,7 +5608,6 @@ END RECORD
 # java2.util2.ArrayList arrayList20 = new java2.util2.ArrayList();
 # arrayList20.clear();
 # java.lang.String str22 = arrayList20.toString();
-# int i23 = 10;
 # arrayList20.ensureCapacity(10);
 # java.lang.Object obj25 = arrayList20.clone();
 # boolean b26 = arrayList11.addAll((java2.util2.Collection)arrayList20);
@@ -5966,7 +5663,6 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
@@ -5975,7 +5671,6 @@ END RECORD
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
 # boolean b20 = arrayList16.remove((java.lang.Object)arrayList18);
-# double d21 = 1.0d;
 # boolean b22 = arrayList18.remove((java.lang.Object)1.0d);
 # arrayList18.clear();
 # int i24 = arrayList0.indexOf((java.lang.Object)arrayList18);
@@ -6006,7 +5701,6 @@ END RECORD
 # boolean b3 = arrayList0.isEmpty();
 # boolean b4 = arrayList0.isEmpty();
 # boolean b5 = arrayList0.isEmpty();
-# short s6 = (short)10;
 # int i7 = arrayList0.indexOf((java.lang.Object)(short)10);
 
 
@@ -6077,12 +5771,10 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.String str3 = arrayList0.toString();
-# int i4 = 0;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # arrayList0.add(0, (java.lang.Object)arrayList5);
@@ -6093,7 +5785,6 @@ END RECORD
 # arrayList16.clear();
 # boolean b18 = arrayList16.isEmpty();
 # java.lang.Object obj19 = arrayList16.clone();
-# short s20 = (short)100;
 # java.lang.Object[] obj_array21 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array22 = arrayList16.toArray(obj_array21);
 # boolean b23 = arrayList13.retainAll((java2.util2.Collection)arrayList16);
@@ -6126,12 +5817,9 @@ END RECORD
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
 # int i3 = arrayList0.size();
-# int i4 = 10;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList(10);
-# int i6 = 100;
 # arrayList5.ensureCapacity(100);
 # boolean b8 = arrayList0.containsAll((java2.util2.Collection)arrayList5);
-# float f9 = (-1.0f);
 # int i10 = arrayList5.lastIndexOf((java.lang.Object)(-1.0f));
 
 
@@ -6247,12 +5935,9 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# int i3 = 10;
 # arrayList0.ensureCapacity(10);
 # java.lang.Object obj5 = arrayList0.clone();
-# int i6 = 10;
 # java2.util2.ArrayList arrayList7 = new java2.util2.ArrayList(10);
-# int i8 = 100;
 # arrayList7.ensureCapacity(100);
 # boolean b10 = arrayList0.addAll((java2.util2.Collection)arrayList7);
 # java2.util2.ArrayList arrayList11 = new java2.util2.ArrayList();
@@ -6260,7 +5945,6 @@ END RECORD
 # java2.util2.ArrayList arrayList13 = new java2.util2.ArrayList();
 # arrayList13.clear();
 # boolean b15 = arrayList11.remove((java.lang.Object)arrayList13);
-# double d16 = 1.0d;
 # boolean b17 = arrayList13.remove((java.lang.Object)1.0d);
 # arrayList13.clear();
 # arrayList13.trimToSize();
@@ -6269,7 +5953,6 @@ END RECORD
 # boolean b22 = arrayList20.isEmpty();
 # boolean b23 = arrayList13.add((java.lang.Object)arrayList20);
 # boolean b24 = arrayList0.addAll((java2.util2.Collection)arrayList20);
-# short s25 = (short)10;
 # int i26 = arrayList20.lastIndexOf((java.lang.Object)(short)10);
 
 
@@ -6334,7 +6017,6 @@ END RECORD
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
 # java.lang.String str17 = arrayList15.toString();
-# int i18 = 10;
 # arrayList15.ensureCapacity(10);
 # java.lang.Object obj20 = arrayList15.clone();
 # boolean b21 = arrayList6.addAll((java2.util2.Collection)arrayList15);
@@ -6343,7 +6025,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # boolean b26 = arrayList22.remove((java.lang.Object)arrayList24);
-# double d27 = 1.0d;
 # boolean b28 = arrayList24.remove((java.lang.Object)1.0d);
 # arrayList24.clear();
 # int i30 = arrayList6.indexOf((java.lang.Object)arrayList24);
@@ -6390,12 +6071,10 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.String str3 = arrayList0.toString();
-# int i4 = 0;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # arrayList0.add(0, (java.lang.Object)arrayList5);
@@ -6406,7 +6085,6 @@ END RECORD
 # arrayList16.clear();
 # boolean b18 = arrayList16.isEmpty();
 # java.lang.Object obj19 = arrayList16.clone();
-# short s20 = (short)100;
 # java.lang.Object[] obj_array21 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array22 = arrayList16.toArray(obj_array21);
 # boolean b23 = arrayList13.retainAll((java2.util2.Collection)arrayList16);
@@ -6462,13 +6140,11 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# byte byte3 = (byte)0;
 # boolean b4 = arrayList0.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # boolean b12 = arrayList0.remove((java.lang.Object)obj_array10);
@@ -6484,13 +6160,10 @@ END RECORD
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList();
 # arrayList22.clear();
 # java.lang.String str24 = arrayList22.toString();
-# int i25 = 10;
 # arrayList22.ensureCapacity(10);
 # java.lang.Object obj27 = arrayList22.clone();
 # boolean b28 = arrayList13.addAll((java2.util2.Collection)arrayList22);
-# int i29 = 10;
 # java2.util2.ArrayList arrayList30 = new java2.util2.ArrayList(10);
-# int i31 = 100;
 # arrayList30.ensureCapacity(100);
 # boolean b33 = arrayList13.addAll((java2.util2.Collection)arrayList30);
 # boolean b34 = arrayList0.retainAll((java2.util2.Collection)arrayList30);
@@ -6575,7 +6248,6 @@ END RECORD
 # boolean b10 = arrayList0.removeAll((java2.util2.Collection)arrayList7);
 # java2.util2.ListIterator listIterator11 = arrayList0.listIterator();
 # java2.util2.ArrayList arrayList12 = new java2.util2.ArrayList((java2.util2.Collection)arrayList0);
-# boolean b13 = true;
 # boolean b14 = arrayList12.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
@@ -6589,7 +6261,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -6610,7 +6281,6 @@ END RECORD
 # arrayList44.clear();
 # boolean b46 = arrayList44.isEmpty();
 # java.lang.Object obj47 = arrayList44.clone();
-# short s48 = (short)100;
 # java.lang.Object[] obj_array49 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array50 = arrayList44.toArray(obj_array49);
 # java.lang.String str51 = arrayList44.toString();
@@ -6718,13 +6388,10 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
-# float f16 = 1.0f;
 # boolean b17 = arrayList9.remove((java.lang.Object)1.0f);
-# int i18 = 0;
 # java2.util2.ArrayList arrayList19 = new java2.util2.ArrayList();
 # arrayList19.clear();
 # boolean b21 = arrayList19.isEmpty();
@@ -6737,13 +6404,10 @@ END RECORD
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # java.lang.String str30 = arrayList28.toString();
-# int i31 = 10;
 # arrayList28.ensureCapacity(10);
 # java.lang.Object obj33 = arrayList28.clone();
 # boolean b34 = arrayList19.addAll((java2.util2.Collection)arrayList28);
-# int i35 = 10;
 # java2.util2.ArrayList arrayList36 = new java2.util2.ArrayList(10);
-# int i37 = 100;
 # arrayList36.ensureCapacity(100);
 # boolean b39 = arrayList19.addAll((java2.util2.Collection)arrayList36);
 # java2.util2.ArrayList arrayList40 = new java2.util2.ArrayList();
@@ -6768,18 +6432,13 @@ END RECORD
 # java2.util2.ArrayList arrayList59 = new java2.util2.ArrayList();
 # arrayList59.clear();
 # java.lang.String str61 = arrayList59.toString();
-# int i62 = 10;
 # arrayList59.ensureCapacity(10);
 # java.lang.Object obj64 = arrayList59.clone();
-# int i65 = 10;
 # java2.util2.ArrayList arrayList66 = new java2.util2.ArrayList(10);
-# int i67 = 100;
 # arrayList66.ensureCapacity(100);
 # boolean b69 = arrayList59.addAll((java2.util2.Collection)arrayList66);
 # boolean b70 = arrayList50.addAll((java2.util2.Collection)arrayList66);
 # java.lang.String str71 = arrayList66.toString();
-# int i72 = 0;
-# int i73 = 0;
 # java2.util2.List list74 = arrayList66.subList(0, 0);
 # boolean b75 = arrayList9.retainAll((java2.util2.Collection)arrayList66);
 
@@ -6901,7 +6560,6 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
@@ -6921,7 +6579,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -6932,7 +6589,6 @@ END RECORD
 # arrayList34.clear();
 # boolean b36 = arrayList34.isEmpty();
 # java.lang.Object obj37 = arrayList34.clone();
-# short s38 = (short)100;
 # java.lang.Object[] obj_array39 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array40 = arrayList34.toArray(obj_array39);
 # boolean b41 = arrayList34.isEmpty();
@@ -6940,7 +6596,6 @@ END RECORD
 # arrayList42.clear();
 # boolean b44 = arrayList42.isEmpty();
 # java.lang.Object obj45 = arrayList42.clone();
-# short s46 = (short)100;
 # java.lang.Object[] obj_array47 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array48 = arrayList42.toArray(obj_array47);
 # java.lang.String str49 = arrayList42.toString();
@@ -6949,7 +6604,6 @@ END RECORD
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList();
 # arrayList52.clear();
 # boolean b54 = arrayList50.remove((java.lang.Object)arrayList52);
-# double d55 = 1.0d;
 # boolean b56 = arrayList52.remove((java.lang.Object)1.0d);
 # arrayList52.clear();
 # java2.util2.ArrayList arrayList58 = new java2.util2.ArrayList();
@@ -6957,7 +6611,6 @@ END RECORD
 # arrayList59.clear();
 # boolean b61 = arrayList59.isEmpty();
 # java.lang.Object obj62 = arrayList59.clone();
-# short s63 = (short)100;
 # java.lang.Object[] obj_array64 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array65 = arrayList59.toArray(obj_array64);
 # java.lang.String str66 = arrayList59.toString();
@@ -6978,7 +6631,6 @@ END RECORD
 # arrayList80.clear();
 # boolean b82 = arrayList80.isEmpty();
 # java.lang.Object obj83 = arrayList80.clone();
-# short s84 = (short)100;
 # java.lang.Object[] obj_array85 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array86 = arrayList80.toArray(obj_array85);
 # boolean b87 = arrayList77.retainAll((java2.util2.Collection)arrayList80);
@@ -7035,12 +6687,10 @@ END RECORD
 # arrayList0.clear();
 # boolean b2 = arrayList0.isEmpty();
 # java.lang.String str3 = arrayList0.toString();
-# int i4 = 0;
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # arrayList0.add(0, (java.lang.Object)arrayList5);
@@ -7051,7 +6701,6 @@ END RECORD
 # arrayList16.clear();
 # boolean b18 = arrayList16.isEmpty();
 # java.lang.Object obj19 = arrayList16.clone();
-# short s20 = (short)100;
 # java.lang.Object[] obj_array21 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array22 = arrayList16.toArray(obj_array21);
 # boolean b23 = arrayList13.retainAll((java2.util2.Collection)arrayList16);
@@ -7107,13 +6756,11 @@ END RECORD
 # java2.util2.ArrayList arrayList0 = new java2.util2.ArrayList();
 # arrayList0.clear();
 # java.lang.String str2 = arrayList0.toString();
-# byte byte3 = (byte)0;
 # boolean b4 = arrayList0.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList5 = new java2.util2.ArrayList();
 # arrayList5.clear();
 # boolean b7 = arrayList5.isEmpty();
 # java.lang.Object obj8 = arrayList5.clone();
-# short s9 = (short)100;
 # java.lang.Object[] obj_array10 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array11 = arrayList5.toArray(obj_array10);
 # boolean b12 = arrayList0.remove((java.lang.Object)obj_array10);
@@ -7129,13 +6776,10 @@ END RECORD
 # java2.util2.ArrayList arrayList22 = new java2.util2.ArrayList();
 # arrayList22.clear();
 # java.lang.String str24 = arrayList22.toString();
-# int i25 = 10;
 # arrayList22.ensureCapacity(10);
 # java.lang.Object obj27 = arrayList22.clone();
 # boolean b28 = arrayList13.addAll((java2.util2.Collection)arrayList22);
-# int i29 = 10;
 # java2.util2.ArrayList arrayList30 = new java2.util2.ArrayList(10);
-# int i31 = 100;
 # arrayList30.ensureCapacity(100);
 # boolean b33 = arrayList13.addAll((java2.util2.Collection)arrayList30);
 # boolean b34 = arrayList0.retainAll((java2.util2.Collection)arrayList30);
@@ -7220,7 +6864,6 @@ END RECORD
 # boolean b10 = arrayList0.removeAll((java2.util2.Collection)arrayList7);
 # java2.util2.ListIterator listIterator11 = arrayList0.listIterator();
 # java2.util2.ArrayList arrayList12 = new java2.util2.ArrayList((java2.util2.Collection)arrayList0);
-# boolean b13 = true;
 # boolean b14 = arrayList12.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # arrayList15.clear();
@@ -7234,7 +6877,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -7255,7 +6897,6 @@ END RECORD
 # arrayList44.clear();
 # boolean b46 = arrayList44.isEmpty();
 # java.lang.Object obj47 = arrayList44.clone();
-# short s48 = (short)100;
 # java.lang.Object[] obj_array49 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array50 = arrayList44.toArray(obj_array49);
 # java.lang.String str51 = arrayList44.toString();
@@ -7363,13 +7004,10 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
-# float f16 = 1.0f;
 # boolean b17 = arrayList9.remove((java.lang.Object)1.0f);
-# int i18 = 0;
 # java2.util2.ArrayList arrayList19 = new java2.util2.ArrayList();
 # arrayList19.clear();
 # boolean b21 = arrayList19.isEmpty();
@@ -7382,13 +7020,10 @@ END RECORD
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # java.lang.String str30 = arrayList28.toString();
-# int i31 = 10;
 # arrayList28.ensureCapacity(10);
 # java.lang.Object obj33 = arrayList28.clone();
 # boolean b34 = arrayList19.addAll((java2.util2.Collection)arrayList28);
-# int i35 = 10;
 # java2.util2.ArrayList arrayList36 = new java2.util2.ArrayList(10);
-# int i37 = 100;
 # arrayList36.ensureCapacity(100);
 # boolean b39 = arrayList19.addAll((java2.util2.Collection)arrayList36);
 # java2.util2.ArrayList arrayList40 = new java2.util2.ArrayList();
@@ -7413,18 +7048,13 @@ END RECORD
 # java2.util2.ArrayList arrayList59 = new java2.util2.ArrayList();
 # arrayList59.clear();
 # java.lang.String str61 = arrayList59.toString();
-# int i62 = 10;
 # arrayList59.ensureCapacity(10);
 # java.lang.Object obj64 = arrayList59.clone();
-# int i65 = 10;
 # java2.util2.ArrayList arrayList66 = new java2.util2.ArrayList(10);
-# int i67 = 100;
 # arrayList66.ensureCapacity(100);
 # boolean b69 = arrayList59.addAll((java2.util2.Collection)arrayList66);
 # boolean b70 = arrayList50.addAll((java2.util2.Collection)arrayList66);
 # java.lang.String str71 = arrayList66.toString();
-# int i72 = 0;
-# int i73 = 0;
 # java2.util2.List list74 = arrayList66.subList(0, 0);
 # boolean b75 = arrayList9.retainAll((java2.util2.Collection)arrayList66);
 
@@ -7546,7 +7176,6 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
@@ -7566,7 +7195,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -7577,7 +7205,6 @@ END RECORD
 # arrayList34.clear();
 # boolean b36 = arrayList34.isEmpty();
 # java.lang.Object obj37 = arrayList34.clone();
-# short s38 = (short)100;
 # java.lang.Object[] obj_array39 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array40 = arrayList34.toArray(obj_array39);
 # boolean b41 = arrayList34.isEmpty();
@@ -7585,7 +7212,6 @@ END RECORD
 # arrayList42.clear();
 # boolean b44 = arrayList42.isEmpty();
 # java.lang.Object obj45 = arrayList42.clone();
-# short s46 = (short)100;
 # java.lang.Object[] obj_array47 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array48 = arrayList42.toArray(obj_array47);
 # java.lang.String str49 = arrayList42.toString();
@@ -7594,7 +7220,6 @@ END RECORD
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList();
 # arrayList52.clear();
 # boolean b54 = arrayList50.remove((java.lang.Object)arrayList52);
-# double d55 = 1.0d;
 # boolean b56 = arrayList52.remove((java.lang.Object)1.0d);
 # arrayList52.clear();
 # java2.util2.ArrayList arrayList58 = new java2.util2.ArrayList();
@@ -7602,7 +7227,6 @@ END RECORD
 # arrayList59.clear();
 # boolean b61 = arrayList59.isEmpty();
 # java.lang.Object obj62 = arrayList59.clone();
-# short s63 = (short)100;
 # java.lang.Object[] obj_array64 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array65 = arrayList59.toArray(obj_array64);
 # java.lang.String str66 = arrayList59.toString();
@@ -7623,7 +7247,6 @@ END RECORD
 # arrayList80.clear();
 # boolean b82 = arrayList80.isEmpty();
 # java.lang.Object obj83 = arrayList80.clone();
-# short s84 = (short)100;
 # java.lang.Object[] obj_array85 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array86 = arrayList80.toArray(obj_array85);
 # boolean b87 = arrayList77.retainAll((java2.util2.Collection)arrayList80);
@@ -7730,7 +7353,6 @@ END RECORD
 # arrayList3.clear();
 # boolean b5 = arrayList3.isEmpty();
 # java.lang.Object obj6 = arrayList3.clone();
-# short s7 = (short)100;
 # java.lang.Object[] obj_array8 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array9 = arrayList3.toArray(obj_array8);
 # boolean b10 = arrayList0.retainAll((java2.util2.Collection)arrayList3);
@@ -7750,7 +7372,6 @@ END RECORD
 # java2.util2.ArrayList arrayList24 = new java2.util2.ArrayList();
 # arrayList24.clear();
 # java.lang.String str26 = arrayList24.toString();
-# int i27 = 10;
 # arrayList24.ensureCapacity(10);
 # java.lang.Object obj29 = arrayList24.clone();
 # boolean b30 = arrayList15.addAll((java2.util2.Collection)arrayList24);
@@ -7761,7 +7382,6 @@ END RECORD
 # arrayList34.clear();
 # boolean b36 = arrayList34.isEmpty();
 # java.lang.Object obj37 = arrayList34.clone();
-# short s38 = (short)100;
 # java.lang.Object[] obj_array39 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array40 = arrayList34.toArray(obj_array39);
 # boolean b41 = arrayList34.isEmpty();
@@ -7769,7 +7389,6 @@ END RECORD
 # arrayList42.clear();
 # boolean b44 = arrayList42.isEmpty();
 # java.lang.Object obj45 = arrayList42.clone();
-# short s46 = (short)100;
 # java.lang.Object[] obj_array47 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array48 = arrayList42.toArray(obj_array47);
 # java.lang.String str49 = arrayList42.toString();
@@ -7778,7 +7397,6 @@ END RECORD
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList();
 # arrayList52.clear();
 # boolean b54 = arrayList50.remove((java.lang.Object)arrayList52);
-# double d55 = 1.0d;
 # boolean b56 = arrayList52.remove((java.lang.Object)1.0d);
 # arrayList52.clear();
 # java2.util2.ArrayList arrayList58 = new java2.util2.ArrayList();
@@ -7786,7 +7404,6 @@ END RECORD
 # arrayList59.clear();
 # boolean b61 = arrayList59.isEmpty();
 # java.lang.Object obj62 = arrayList59.clone();
-# short s63 = (short)100;
 # java.lang.Object[] obj_array64 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array65 = arrayList59.toArray(obj_array64);
 # java.lang.String str66 = arrayList59.toString();
@@ -7868,7 +7485,6 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 # arrayList2.clear();
 # arrayList2.trimToSize();
@@ -7880,7 +7496,6 @@ END RECORD
 # arrayList13.clear();
 # boolean b15 = arrayList13.isEmpty();
 # java.lang.Object obj16 = arrayList13.clone();
-# short s17 = (short)100;
 # java.lang.Object[] obj_array18 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array19 = arrayList13.toArray(obj_array18);
 # boolean b20 = arrayList9.contains((java.lang.Object)arrayList13);
@@ -7898,7 +7513,6 @@ END RECORD
 # boolean b32 = arrayList22.removeAll((java2.util2.Collection)arrayList29);
 # java2.util2.ListIterator listIterator33 = arrayList22.listIterator();
 # java2.util2.ArrayList arrayList34 = new java2.util2.ArrayList((java2.util2.Collection)arrayList22);
-# boolean b35 = true;
 # boolean b36 = arrayList34.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList37 = new java2.util2.ArrayList();
 # arrayList37.clear();
@@ -7912,7 +7526,6 @@ END RECORD
 # java2.util2.ArrayList arrayList46 = new java2.util2.ArrayList();
 # arrayList46.clear();
 # java.lang.String str48 = arrayList46.toString();
-# int i49 = 10;
 # arrayList46.ensureCapacity(10);
 # java.lang.Object obj51 = arrayList46.clone();
 # boolean b52 = arrayList37.addAll((java2.util2.Collection)arrayList46);
@@ -7999,7 +7612,6 @@ END RECORD
 # arrayList1.clear();
 # boolean b3 = arrayList1.isEmpty();
 # java.lang.Object obj4 = arrayList1.clone();
-# short s5 = (short)100;
 # java.lang.Object[] obj_array6 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array7 = arrayList1.toArray(obj_array6);
 # java.lang.String str8 = arrayList1.toString();
@@ -8018,13 +7630,10 @@ END RECORD
 # java2.util2.ArrayList arrayList21 = new java2.util2.ArrayList();
 # arrayList21.clear();
 # java.lang.String str23 = arrayList21.toString();
-# int i24 = 10;
 # arrayList21.ensureCapacity(10);
 # java.lang.Object obj26 = arrayList21.clone();
 # boolean b27 = arrayList12.addAll((java2.util2.Collection)arrayList21);
-# float f28 = 1.0f;
 # boolean b29 = arrayList21.remove((java.lang.Object)1.0f);
-# int i30 = 0;
 # java2.util2.ArrayList arrayList31 = new java2.util2.ArrayList();
 # arrayList31.clear();
 # boolean b33 = arrayList31.isEmpty();
@@ -8037,13 +7646,10 @@ END RECORD
 # java2.util2.ArrayList arrayList40 = new java2.util2.ArrayList();
 # arrayList40.clear();
 # java.lang.String str42 = arrayList40.toString();
-# int i43 = 10;
 # arrayList40.ensureCapacity(10);
 # java.lang.Object obj45 = arrayList40.clone();
 # boolean b46 = arrayList31.addAll((java2.util2.Collection)arrayList40);
-# int i47 = 10;
 # java2.util2.ArrayList arrayList48 = new java2.util2.ArrayList(10);
-# int i49 = 100;
 # arrayList48.ensureCapacity(100);
 # boolean b51 = arrayList31.addAll((java2.util2.Collection)arrayList48);
 # java2.util2.ArrayList arrayList52 = new java2.util2.ArrayList();
@@ -8170,7 +7776,6 @@ b99 =  method : java2.util2.AbstractCollection.containsAll(java2.util2.Collectio
 END RECORD
 
 # Code representation:
-# int i0 = 10;
 # java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(10);
 # int i2 = arrayList1.size();
 # java2.util2.ListIterator listIterator3 = arrayList1.listIterator();
@@ -8208,21 +7813,15 @@ END RECORD
 # java2.util2.ArrayList arrayList35 = new java2.util2.ArrayList();
 # arrayList35.clear();
 # java.lang.String str37 = arrayList35.toString();
-# int i38 = 10;
 # arrayList35.ensureCapacity(10);
 # java.lang.Object obj40 = arrayList35.clone();
-# int i41 = 10;
 # java2.util2.ArrayList arrayList42 = new java2.util2.ArrayList(10);
-# int i43 = 100;
 # arrayList42.ensureCapacity(100);
 # boolean b45 = arrayList35.addAll((java2.util2.Collection)arrayList42);
 # boolean b46 = arrayList26.addAll((java2.util2.Collection)arrayList42);
 # java.lang.String str47 = arrayList42.toString();
-# int i48 = 0;
-# int i49 = 0;
 # java2.util2.List list50 = arrayList42.subList(0, 0);
 # boolean b51 = arrayList21.removeAll((java2.util2.Collection)arrayList42);
-# int i52 = 1;
 # java2.util2.ArrayList arrayList53 = new java2.util2.ArrayList(1);
 # arrayList53.trimToSize();
 # java2.util2.ArrayList arrayList55 = new java2.util2.ArrayList();
@@ -8240,7 +7839,6 @@ END RECORD
 # arrayList66.clear();
 # boolean b68 = arrayList66.isEmpty();
 # java.lang.Object obj69 = arrayList66.clone();
-# short s70 = (short)100;
 # java.lang.Object[] obj_array71 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array72 = arrayList66.toArray(obj_array71);
 # boolean b73 = arrayList63.retainAll((java2.util2.Collection)arrayList66);
@@ -8260,7 +7858,6 @@ END RECORD
 # java2.util2.ArrayList arrayList87 = new java2.util2.ArrayList();
 # arrayList87.clear();
 # java.lang.String str89 = arrayList87.toString();
-# int i90 = 10;
 # arrayList87.ensureCapacity(10);
 # java.lang.Object obj92 = arrayList87.clone();
 # boolean b93 = arrayList78.addAll((java2.util2.Collection)arrayList87);
@@ -8362,12 +7959,10 @@ END RECORD
 # boolean b17 = arrayList13.remove((java.lang.Object)arrayList15);
 # boolean b18 = arrayList8.removeAll((java2.util2.Collection)arrayList15);
 # int i19 = arrayList4.lastIndexOf((java.lang.Object)arrayList15);
-# int i20 = 0;
 # java2.util2.ArrayList arrayList21 = new java2.util2.ArrayList();
 # arrayList21.clear();
 # boolean b23 = arrayList21.isEmpty();
 # java.lang.Object obj24 = arrayList21.clone();
-# short s25 = (short)100;
 # java.lang.Object[] obj_array26 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array27 = arrayList21.toArray(obj_array26);
 # boolean b28 = arrayList21.isEmpty();
@@ -8375,7 +7970,6 @@ END RECORD
 # arrayList29.clear();
 # boolean b31 = arrayList29.isEmpty();
 # java.lang.Object obj32 = arrayList29.clone();
-# short s33 = (short)100;
 # java.lang.Object[] obj_array34 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array35 = arrayList29.toArray(obj_array34);
 # java.lang.String str36 = arrayList29.toString();
@@ -8384,7 +7978,6 @@ END RECORD
 # java2.util2.ArrayList arrayList39 = new java2.util2.ArrayList();
 # arrayList39.clear();
 # boolean b41 = arrayList37.remove((java.lang.Object)arrayList39);
-# double d42 = 1.0d;
 # boolean b43 = arrayList39.remove((java.lang.Object)1.0d);
 # arrayList39.clear();
 # java2.util2.ArrayList arrayList45 = new java2.util2.ArrayList();
@@ -8392,7 +7985,6 @@ END RECORD
 # arrayList46.clear();
 # boolean b48 = arrayList46.isEmpty();
 # java.lang.Object obj49 = arrayList46.clone();
-# short s50 = (short)100;
 # java.lang.Object[] obj_array51 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array52 = arrayList46.toArray(obj_array51);
 # java.lang.String str53 = arrayList46.toString();
@@ -8458,7 +8050,6 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
@@ -8467,14 +8058,10 @@ END RECORD
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
 # boolean b20 = arrayList16.remove((java.lang.Object)arrayList18);
-# double d21 = 1.0d;
 # boolean b22 = arrayList18.remove((java.lang.Object)1.0d);
 # arrayList18.clear();
 # int i24 = arrayList0.indexOf((java.lang.Object)arrayList18);
-# int i25 = 0;
 # arrayList18.ensureCapacity(0);
-# int i27 = 0;
-# int i28 = 10;
 # java2.util2.ArrayList arrayList29 = new java2.util2.ArrayList(10);
 # java2.util2.Iterator iterator30 = arrayList29.iterator();
 # boolean b31 = arrayList18.addAll(0, (java2.util2.Collection)arrayList29);
@@ -8561,10 +8148,8 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 # java2.util2.ArrayList arrayList7 = new java2.util2.ArrayList();
-# byte byte8 = (byte)1;
 # java.lang.Object[] obj_array9 = new java.lang.Object[] { (byte)1 };
 # java.lang.Object[] obj_array10 = arrayList7.toArray(obj_array9);
 # boolean b11 = arrayList2.removeAll((java2.util2.Collection)arrayList7);
@@ -8579,41 +8164,31 @@ END RECORD
 # boolean b20 = arrayList12.removeAll((java2.util2.Collection)arrayList18);
 # int i21 = arrayList12.size();
 # int i22 = arrayList2.lastIndexOf((java.lang.Object)arrayList12);
-# int i23 = 0;
-# int i24 = 10;
 # java2.util2.ArrayList arrayList25 = new java2.util2.ArrayList(10);
-# int i26 = 100;
 # arrayList25.ensureCapacity(100);
 # java2.util2.ArrayList arrayList28 = new java2.util2.ArrayList();
 # arrayList28.clear();
 # boolean b30 = arrayList28.isEmpty();
 # java.lang.Object obj31 = arrayList28.clone();
-# short s32 = (short)100;
 # java.lang.Object[] obj_array33 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array34 = arrayList28.toArray(obj_array33);
 # java2.util2.ArrayList arrayList35 = new java2.util2.ArrayList();
 # arrayList35.clear();
 # java.lang.String str37 = arrayList35.toString();
-# int i38 = 10;
 # arrayList35.ensureCapacity(10);
 # java.lang.Object obj40 = arrayList35.clone();
-# int i41 = 10;
 # java2.util2.ArrayList arrayList42 = new java2.util2.ArrayList(10);
-# int i43 = 100;
 # arrayList42.ensureCapacity(100);
 # boolean b45 = arrayList35.addAll((java2.util2.Collection)arrayList42);
-# float f46 = 100.0f;
 # boolean b47 = arrayList35.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList48 = new java2.util2.ArrayList();
 # arrayList48.clear();
 # java.lang.String str50 = arrayList48.toString();
-# byte byte51 = (byte)0;
 # boolean b52 = arrayList48.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList53 = new java2.util2.ArrayList();
 # arrayList53.clear();
 # boolean b55 = arrayList53.isEmpty();
 # java.lang.Object obj56 = arrayList53.clone();
-# short s57 = (short)100;
 # java.lang.Object[] obj_array58 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array59 = arrayList53.toArray(obj_array58);
 # boolean b60 = arrayList48.remove((java.lang.Object)obj_array58);
@@ -8667,7 +8242,6 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 # arrayList2.clear();
 # arrayList2.trimToSize();
@@ -8676,13 +8250,11 @@ END RECORD
 # boolean b11 = arrayList9.isEmpty();
 # boolean b12 = arrayList2.add((java.lang.Object)arrayList9);
 # java.lang.String str13 = arrayList2.toString();
-# int i14 = 1;
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # java2.util2.ArrayList arrayList16 = new java2.util2.ArrayList();
 # arrayList16.clear();
 # boolean b18 = arrayList16.isEmpty();
 # java.lang.Object obj19 = arrayList16.clone();
-# short s20 = (short)100;
 # java.lang.Object[] obj_array21 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array22 = arrayList16.toArray(obj_array21);
 # java2.util2.Iterator iterator23 = arrayList16.iterator();
@@ -8808,7 +8380,6 @@ END RECORD
 # java2.util2.ArrayList arrayList11 = new java2.util2.ArrayList();
 # arrayList11.clear();
 # boolean b13 = arrayList9.remove((java.lang.Object)arrayList11);
-# double d14 = 1.0d;
 # boolean b15 = arrayList11.remove((java.lang.Object)1.0d);
 # arrayList11.clear();
 # java2.util2.ArrayList arrayList17 = new java2.util2.ArrayList();
@@ -8816,7 +8387,6 @@ END RECORD
 # arrayList18.clear();
 # boolean b20 = arrayList18.isEmpty();
 # java.lang.Object obj21 = arrayList18.clone();
-# short s22 = (short)100;
 # java.lang.Object[] obj_array23 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array24 = arrayList18.toArray(obj_array23);
 # java.lang.String str25 = arrayList18.toString();
@@ -8840,7 +8410,6 @@ END RECORD
 # boolean b43 = arrayList29.addAll((java2.util2.Collection)arrayList38);
 # boolean b44 = arrayList29.isEmpty();
 # boolean b45 = arrayList6.equals((java.lang.Object)arrayList29);
-# int i46 = 0;
 # java2.util2.ArrayList arrayList47 = new java2.util2.ArrayList();
 # arrayList47.clear();
 # java2.util2.ArrayList arrayList49 = new java2.util2.ArrayList();
@@ -8850,38 +8419,30 @@ END RECORD
 # arrayList52.clear();
 # boolean b54 = arrayList52.isEmpty();
 # java.lang.Object obj55 = arrayList52.clone();
-# short s56 = (short)100;
 # java.lang.Object[] obj_array57 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array58 = arrayList52.toArray(obj_array57);
 # java2.util2.ArrayList arrayList59 = new java2.util2.ArrayList();
 # arrayList59.clear();
 # java.lang.String str61 = arrayList59.toString();
-# int i62 = 10;
 # arrayList59.ensureCapacity(10);
 # java.lang.Object obj64 = arrayList59.clone();
-# int i65 = 10;
 # java2.util2.ArrayList arrayList66 = new java2.util2.ArrayList(10);
-# int i67 = 100;
 # arrayList66.ensureCapacity(100);
 # boolean b69 = arrayList59.addAll((java2.util2.Collection)arrayList66);
-# float f70 = 100.0f;
 # boolean b71 = arrayList59.contains((java.lang.Object)100.0f);
 # java2.util2.ArrayList arrayList72 = new java2.util2.ArrayList();
 # arrayList72.clear();
 # java.lang.String str74 = arrayList72.toString();
-# byte byte75 = (byte)0;
 # boolean b76 = arrayList72.add((java.lang.Object)(byte)0);
 # java2.util2.ArrayList arrayList77 = new java2.util2.ArrayList();
 # arrayList77.clear();
 # boolean b79 = arrayList77.isEmpty();
 # java.lang.Object obj80 = arrayList77.clone();
-# short s81 = (short)100;
 # java.lang.Object[] obj_array82 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array83 = arrayList77.toArray(obj_array82);
 # boolean b84 = arrayList72.remove((java.lang.Object)obj_array82);
 # java.lang.Object[] obj_array85 = arrayList59.toArray(obj_array82);
 # int i86 = arrayList52.indexOf((java.lang.Object)arrayList59);
-# int i87 = 0;
 # java2.util2.ListIterator listIterator88 = arrayList59.listIterator(0);
 # int i89 = arrayList49.indexOf((java.lang.Object)0);
 # boolean b90 = arrayList6.addAll(0, (java2.util2.Collection)arrayList49);
@@ -8999,7 +8560,6 @@ END RECORD
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
 # boolean b4 = arrayList0.remove((java.lang.Object)arrayList2);
-# double d5 = 1.0d;
 # boolean b6 = arrayList2.remove((java.lang.Object)1.0d);
 # arrayList2.clear();
 # arrayList2.trimToSize();
@@ -9016,11 +8576,9 @@ END RECORD
 # boolean b19 = arrayList17.isEmpty();
 # java.lang.String str20 = arrayList17.toString();
 # java.lang.String str21 = arrayList17.toString();
-# int i22 = 0;
 # boolean b23 = arrayList17.contains((java.lang.Object)0);
 # java.lang.Object obj24 = arrayList17.clone();
 # boolean b25 = arrayList11.add((java.lang.Object)arrayList17);
-# int i26 = 1;
 # java2.util2.ArrayList arrayList27 = new java2.util2.ArrayList();
 # arrayList27.clear();
 # boolean b29 = arrayList27.isEmpty();
@@ -9033,12 +8591,9 @@ END RECORD
 # java2.util2.ArrayList arrayList36 = new java2.util2.ArrayList();
 # arrayList36.clear();
 # java.lang.String str38 = arrayList36.toString();
-# int i39 = 10;
 # arrayList36.ensureCapacity(10);
 # java.lang.Object obj41 = arrayList36.clone();
-# int i42 = 10;
 # java2.util2.ArrayList arrayList43 = new java2.util2.ArrayList(10);
-# int i44 = 100;
 # arrayList43.ensureCapacity(100);
 # boolean b46 = arrayList36.addAll((java2.util2.Collection)arrayList43);
 # boolean b47 = arrayList27.addAll((java2.util2.Collection)arrayList43);
@@ -9047,9 +8602,7 @@ END RECORD
 # arrayList49.clear();
 # java.lang.String str51 = arrayList49.toString();
 # int i52 = arrayList49.size();
-# int i53 = 10;
 # java2.util2.ArrayList arrayList54 = new java2.util2.ArrayList(10);
-# int i55 = 100;
 # arrayList54.ensureCapacity(100);
 # boolean b57 = arrayList49.containsAll((java2.util2.Collection)arrayList54);
 # java2.util2.ArrayList arrayList58 = new java2.util2.ArrayList();
@@ -9070,7 +8623,6 @@ END RECORD
 # java2.util2.ArrayList arrayList73 = new java2.util2.ArrayList();
 # arrayList73.clear();
 # java.lang.String str75 = arrayList73.toString();
-# int i76 = 10;
 # arrayList73.ensureCapacity(10);
 # java.lang.Object obj78 = arrayList73.clone();
 # boolean b79 = arrayList64.addAll((java2.util2.Collection)arrayList73);
@@ -9079,14 +8631,12 @@ END RECORD
 # java2.util2.ArrayList arrayList82 = new java2.util2.ArrayList();
 # arrayList82.clear();
 # boolean b84 = arrayList80.remove((java.lang.Object)arrayList82);
-# double d85 = 1.0d;
 # boolean b86 = arrayList82.remove((java.lang.Object)1.0d);
 # arrayList82.clear();
 # int i88 = arrayList64.indexOf((java.lang.Object)arrayList82);
 # int i89 = arrayList58.lastIndexOf((java.lang.Object)arrayList64);
 # boolean b90 = arrayList49.retainAll((java2.util2.Collection)arrayList58);
 # java2.util2.ArrayList arrayList91 = new java2.util2.ArrayList((java2.util2.Collection)arrayList58);
-# int i92 = 0;
 # java2.util2.ListIterator listIterator93 = arrayList91.listIterator(0);
 # boolean b94 = arrayList43.retainAll((java2.util2.Collection)arrayList91);
 # boolean b95 = arrayList11.addAll(1, (java2.util2.Collection)arrayList91);
@@ -9134,7 +8684,6 @@ b30 =  method : java2.util2.ArrayList.addAll(int,java2.util2.Collection) : array
 END RECORD
 
 # Code representation:
-# int i0 = 10;
 # java2.util2.ArrayList arrayList1 = new java2.util2.ArrayList(10);
 # java2.util2.ArrayList arrayList2 = new java2.util2.ArrayList();
 # arrayList2.clear();
@@ -9148,18 +8697,15 @@ END RECORD
 # int i11 = arrayList8.size();
 # boolean b12 = arrayList1.contains((java.lang.Object)arrayList8);
 # java2.util2.ListIterator listIterator13 = arrayList1.listIterator();
-# int i14 = 0;
 # java2.util2.ArrayList arrayList15 = new java2.util2.ArrayList();
 # java2.util2.ArrayList arrayList16 = new java2.util2.ArrayList();
 # arrayList16.clear();
 # boolean b18 = arrayList16.isEmpty();
 # java.lang.String str19 = arrayList16.toString();
-# int i20 = 0;
 # java2.util2.ArrayList arrayList21 = new java2.util2.ArrayList();
 # arrayList21.clear();
 # boolean b23 = arrayList21.isEmpty();
 # java.lang.Object obj24 = arrayList21.clone();
-# short s25 = (short)100;
 # java.lang.Object[] obj_array26 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array27 = arrayList21.toArray(obj_array26);
 # arrayList16.add(0, (java.lang.Object)arrayList21);
@@ -9244,7 +8790,6 @@ END RECORD
 # java2.util2.ArrayList arrayList9 = new java2.util2.ArrayList();
 # arrayList9.clear();
 # java.lang.String str11 = arrayList9.toString();
-# int i12 = 10;
 # arrayList9.ensureCapacity(10);
 # java.lang.Object obj14 = arrayList9.clone();
 # boolean b15 = arrayList0.addAll((java2.util2.Collection)arrayList9);
@@ -9253,24 +8798,18 @@ END RECORD
 # java2.util2.ArrayList arrayList18 = new java2.util2.ArrayList();
 # arrayList18.clear();
 # boolean b20 = arrayList16.remove((java.lang.Object)arrayList18);
-# double d21 = 1.0d;
 # boolean b22 = arrayList18.remove((java.lang.Object)1.0d);
 # arrayList18.clear();
 # int i24 = arrayList0.indexOf((java.lang.Object)arrayList18);
-# int i25 = 0;
 # arrayList18.ensureCapacity(0);
-# int i27 = 0;
-# int i28 = 10;
 # java2.util2.ArrayList arrayList29 = new java2.util2.ArrayList(10);
 # java2.util2.Iterator iterator30 = arrayList29.iterator();
 # boolean b31 = arrayList18.addAll(0, (java2.util2.Collection)arrayList29);
-# int i32 = 0;
 # java2.util2.ArrayList arrayList33 = new java2.util2.ArrayList();
 # arrayList33.clear();
 # java2.util2.ArrayList arrayList35 = new java2.util2.ArrayList();
 # arrayList35.clear();
 # boolean b37 = arrayList33.remove((java.lang.Object)arrayList35);
-# double d38 = 1.0d;
 # boolean b39 = arrayList35.remove((java.lang.Object)1.0d);
 # arrayList35.clear();
 # java2.util2.ArrayList arrayList41 = new java2.util2.ArrayList();
@@ -9278,7 +8817,6 @@ END RECORD
 # arrayList42.clear();
 # boolean b44 = arrayList42.isEmpty();
 # java.lang.Object obj45 = arrayList42.clone();
-# short s46 = (short)100;
 # java.lang.Object[] obj_array47 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array48 = arrayList42.toArray(obj_array47);
 # java.lang.String str49 = arrayList42.toString();
@@ -9414,12 +8952,10 @@ END RECORD
 # boolean b17 = arrayList13.remove((java.lang.Object)arrayList15);
 # boolean b18 = arrayList8.removeAll((java2.util2.Collection)arrayList15);
 # int i19 = arrayList4.lastIndexOf((java.lang.Object)arrayList15);
-# int i20 = 0;
 # java2.util2.ArrayList arrayList21 = new java2.util2.ArrayList();
 # arrayList21.clear();
 # boolean b23 = arrayList21.isEmpty();
 # java.lang.Object obj24 = arrayList21.clone();
-# short s25 = (short)100;
 # java.lang.Object[] obj_array26 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array27 = arrayList21.toArray(obj_array26);
 # boolean b28 = arrayList21.isEmpty();
@@ -9427,7 +8963,6 @@ END RECORD
 # arrayList29.clear();
 # boolean b31 = arrayList29.isEmpty();
 # java.lang.Object obj32 = arrayList29.clone();
-# short s33 = (short)100;
 # java.lang.Object[] obj_array34 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array35 = arrayList29.toArray(obj_array34);
 # java.lang.String str36 = arrayList29.toString();
@@ -9436,7 +8971,6 @@ END RECORD
 # java2.util2.ArrayList arrayList39 = new java2.util2.ArrayList();
 # arrayList39.clear();
 # boolean b41 = arrayList37.remove((java.lang.Object)arrayList39);
-# double d42 = 1.0d;
 # boolean b43 = arrayList39.remove((java.lang.Object)1.0d);
 # arrayList39.clear();
 # java2.util2.ArrayList arrayList45 = new java2.util2.ArrayList();
@@ -9444,7 +8978,6 @@ END RECORD
 # arrayList46.clear();
 # boolean b48 = arrayList46.isEmpty();
 # java.lang.Object obj49 = arrayList46.clone();
-# short s50 = (short)100;
 # java.lang.Object[] obj_array51 = new java.lang.Object[] { (short)100 };
 # java.lang.Object[] obj_array52 = arrayList46.toArray(obj_array51);
 # java.lang.String str53 = arrayList46.toString();
@@ -9453,7 +8986,6 @@ END RECORD
 # boolean b56 = arrayList29.addAll((java2.util2.Collection)arrayList39);
 # boolean b57 = arrayList21.add((java.lang.Object)arrayList39);
 # boolean b58 = arrayList15.addAll(0, (java2.util2.Collection)arrayList21);
-# int i59 = 1;
 # java2.util2.ArrayList arrayList60 = new java2.util2.ArrayList();
 # arrayList60.clear();
 # java2.util2.ArrayList arrayList62 = new java2.util2.ArrayList();
@@ -9467,7 +8999,6 @@ END RECORD
 # boolean b70 = arrayList60.removeAll((java2.util2.Collection)arrayList67);
 # java2.util2.ListIterator listIterator71 = arrayList60.listIterator();
 # java2.util2.ArrayList arrayList72 = new java2.util2.ArrayList((java2.util2.Collection)arrayList60);
-# boolean b73 = true;
 # boolean b74 = arrayList72.equals((java.lang.Object)true);
 # java2.util2.ArrayList arrayList75 = new java2.util2.ArrayList();
 # arrayList75.clear();
@@ -9481,12 +9012,10 @@ END RECORD
 # java2.util2.ArrayList arrayList84 = new java2.util2.ArrayList();
 # arrayList84.clear();
 # java.lang.String str86 = arrayList84.toString();
-# int i87 = 10;
 # arrayList84.ensureCapacity(10);
 # java.lang.Object obj89 = arrayList84.clone();
 # boolean b90 = arrayList75.addAll((java2.util2.Collection)arrayList84);
 # boolean b91 = arrayList72.add((java.lang.Object)arrayList84);
-# int i92 = 0;
 # java.lang.Object obj93 = arrayList72.get(0);
 # boolean b94 = arrayList21.addAll(1, (java2.util2.Collection)arrayList72);
 

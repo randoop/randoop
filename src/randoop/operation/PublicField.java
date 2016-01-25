@@ -34,6 +34,7 @@ public abstract class PublicField implements Serializable {
    */
   public PublicField(Field field) {
     this.field = field;
+    this.field.setAccessible(true);
   }
 
   /**
@@ -133,7 +134,8 @@ public abstract class PublicField implements Serializable {
     } catch (IllegalArgumentException e) {
       throw new BugInRandoopException("Field access to object of wrong type: " + e.getMessage());
     } catch (IllegalAccessException e) {
-      throw new BugInRandoopException("Access control violation for field: " + e.getMessage());
+      throw new BugInRandoopException("Access control violation for field: " 
+                                      + field.getName() + "; " + e.getMessage());
     }
     return ret;
   }

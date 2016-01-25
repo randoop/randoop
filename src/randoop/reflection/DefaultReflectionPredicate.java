@@ -60,6 +60,9 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   public boolean test(Class<?> c) {
+    if (c.isAnonymousClass()) {
+      return false;
+    }
     return visibility.isVisible (c);
   }
 
@@ -76,6 +79,30 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * </ul> 
    */
   public boolean test(Method m) {
+
+    if (! visibility.isVisible(m)) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: the method is not visible from test classes");
+      }
+      return false;
+    }
+    if (! visibility.isVisible(m.getReturnType())) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + m.toString());
+        Log.logLine("  reason: the method's return type is not visible from test classes");
+      }
+      return false;
+    }
+    for (Class<?> p : m.getParameterTypes()) {
+      if (! visibility.isVisible(p)) {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Will not use: " + m.toString());
+          Log.logLine("  reason: the method has a parameter that is not visible from test classes");
+        }
+        return false;
+      }
+    }
 
     // If it's a main entry method, don't use it (we're doing unit
     // testing, not running programs).
@@ -117,21 +144,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: it's a synthetic method");
-      }
-      return false;
-    }
-
-    if (! visibility.isVisible(m)) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: the method is not visible from test classes");
-      }
-      return false;
-    }
-    if (! visibility.isVisible(m.getReturnType())) {
-      if (Log.isLoggingOn()) {
-        Log.logLine("Will not use: " + m.toString());
-        Log.logLine("  reason: the method's return type is not visible from test classes");
       }
       return false;
     }
@@ -263,6 +275,23 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
   public boolean test(Constructor<?> c) {
 
+    if (! visibility.isVisible(c)) {
+      if (Log.isLoggingOn()) {
+        Log.logLine("Will not use: " + c.toString());
+        Log.logLine("  reason: the constructor is not visible from test classes");
+      }
+      return false;
+    }
+    for (Class<?> p : c.getParameterTypes()) {
+      if (! visibility.isVisible(p)) {
+        if (Log.isLoggingOn()) {
+          Log.logLine("Will not use: " + c.toString());
+          Log.logLine("  reason: the constructor has a parameter that is not visible from test classes");
+        }
+        return false;
+      }
+    }
+
     if (matchesOmitMethodPattern(c.toString())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + c.toString());
@@ -271,11 +300,19 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
 
     // synthetic constructors are OK
+    // unless they have anonymous parameters
+    if (c.isSynthetic()) {
+      for (Class<?> p : c.getParameterTypes()) {
+        if (p.isAnonymousClass()) {
+          return false;
+        }
+      }
+    }
 
     if (Modifier.isAbstract(c.getDeclaringClass().getModifiers()))
       return false;
 
-    return visibility.isVisible(c);
+    return true;
   }
 
   private boolean matchesOmitMethodPattern(String name) {

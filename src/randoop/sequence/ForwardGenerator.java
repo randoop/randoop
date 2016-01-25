@@ -147,7 +147,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
   }
 
-  public Set<Sequence> allSequences() {
+  @Override
+  public Set<Sequence> getAllSequences() {
     return Collections.unmodifiableSet(this.allSequences);
   }
 
@@ -322,7 +323,7 @@ public class ForwardGenerator extends AbstractGenerator {
     randoopConsistencyTest2(newSequence);
 
     if (Log.isLoggingOn()) {
-      Log.logLine("Successfully created new unique sequence:" + newSequence.toString());
+      Log.logLine(String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
     }
     //System.out.println("###" + statement.toStringVerbose() + "###" + statement.getClass());
 
