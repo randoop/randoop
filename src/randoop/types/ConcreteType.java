@@ -15,11 +15,11 @@ public abstract class ConcreteType extends GeneralType {
   /**
    * Indicates whether a value of a {@code ConcreteType} can be assigned to a
    * variable of this type:
-   * <pre>
+   * <code>
    * Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
-   * </pre>
+   * </code>
    * In other words, this is a legal assignment. 
-   * Based on the definition of <i>assignment context</> in
+   * Based on the definition of <i>assignment context</i> in
    * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">
    * section 5.2 of the JDK 8 Java Language Specification</a>
    * a value of one type is assignable to a variable of another type if the
