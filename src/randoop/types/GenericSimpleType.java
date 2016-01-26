@@ -3,8 +3,7 @@ package randoop.types;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Represents a type variable used by itself as a type.
@@ -43,6 +42,11 @@ public class GenericSimpleType extends GenericType {
     }
     GenericSimpleType t = (GenericSimpleType)obj;
     return parameter.equals(t.parameter);
+  }
+  
+  @Override
+  public int hashCode() {
+    return Objects.hash(parameter);
   }
 
   /**
