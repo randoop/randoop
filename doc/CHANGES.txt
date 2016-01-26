@@ -1,4 +1,4 @@
-Version 2.1.2, released ???
+Version 2.1.2, released January 26, 2016
 
 Fixed issues related to filtering of classes and members so that Randoop ignores:
 - public methods/constructors with package private parameter types, and
