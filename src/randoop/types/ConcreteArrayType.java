@@ -69,8 +69,8 @@ public class ConcreteArrayType extends ConcreteType {
   
   /**
    * {@inheritDoc}
-   * An array is assignable from array of same element type, or by array of raw
-   * type if element type is parameterized.
+   * An array is assignable from an array of same element type, or by an array 
+   * of raw type if element type is parameterized.
    */
   @Override
   public boolean isAssignableFrom(ConcreteType sourceType) {

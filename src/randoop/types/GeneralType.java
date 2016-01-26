@@ -47,10 +47,10 @@ abstract class GeneralType {
   }
   
   /**
-   * Returns the fully qualified name of the type, including type arguments if
+   * Returns the fully-qualified name of the type, including type arguments if
    * this is a parameterized type.
    * 
-   * @return the fully qualified type name for this type
+   * @return the fully-qualified type name for this type
    */
   public String getName() {
     return null;
@@ -86,8 +86,9 @@ abstract class GeneralType {
 
   /**
    * Test whether this type is a subtype of the given type according to
-   * transitive closure of definition of <i>direct supertype</i> relation in 
-   * section 4.10.2 of JLS for JavaSE 8.
+   * transitive closure of definition of the <i>direct supertype</i> relation in 
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-4.html#jls-4.10.2">
+   * section 4.10.2 of JLS for JavaSE 8</a>.
    * <i>Only</i> checks reference types.
    * @see ConcreteType#isAssignableFrom(ConcreteType)
    * @see ParameterizedType#isSubtypeOf(ConcreteType)
@@ -182,6 +183,14 @@ abstract class GeneralType {
     throw new IllegalArgumentException(msg);
   }
 
+  /**
+   * Performs the conversion of {@code java.lang.reflectGenericArrayType} to
+   * a {@code GenericArrayType} or a {@code ConcreteArrayType} depending on 
+   * whether the component type is generic or concrete.
+   * 
+   * @param type  the {@link java.lang.reflectGenericArrayType} reference
+   * @return the {@code GeneralType} for the array type
+   */
   private static GeneralType forGenericArrayType(java.lang.reflect.GenericArrayType type) {
     GeneralType elementType = GeneralType.forType(type.getGenericComponentType());
     if (elementType.isGeneric()) {
@@ -191,6 +200,16 @@ abstract class GeneralType {
     }
   }
 
+  /**
+   * Performs the conversion of {@code java.lang.reflect.ParameterizedType} to
+   * either {@code GenericClassType} or {@code ParameterizedType} depending on
+   * type arguments of the referenced object.
+   * 
+   * @param t  the reflective type object
+   * @return an object of type {@code GenericClassType} if arguments are type
+   *         variables, or of type {@code ParameterizedType} if the arguments 
+   *         are concrete
+   */
   private static GeneralType forParameterizedType(java.lang.reflect.ParameterizedType t) {
     Type rawType = t.getRawType();
     if (! (rawType instanceof Class<?>)) {
@@ -200,7 +219,7 @@ abstract class GeneralType {
     }
     
     // Collect whatever is lurking in the "actual type arguments"
-    // Could be *actual* "actual type arguments, or type variables
+    // Could be *actual* "actual type arguments", or type variables
     ConcreteType[] typeArguments = new ConcreteType[t.getActualTypeArguments().length];
     List<TypeVariable<?>> typeParameters = new ArrayList<>(); //see below
     List<TypeBound> typeBounds = new ArrayList<>();
@@ -240,7 +259,7 @@ abstract class GeneralType {
   }
   
   /**
-   * Returns a {@code Type} object for the given type name.
+   * Returns a {@code GeneralType} object for the given type name.
    * Uses reflection to find the correspond type.
    * 
    * @param typeName  the name of a type

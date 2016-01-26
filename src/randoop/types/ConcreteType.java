@@ -3,8 +3,9 @@ package randoop.types;
 import java.lang.reflect.Type;
 
 /**
- * {@code ConcreteType} represents a concrete type, a primitive type, 
- * a non-generic class, an enum, or a parameterized type.
+ * {@code ConcreteType} represents any type that does not have a type variable:
+ * a primitive type, a non-generic class, an enum, a parameterized type, or a 
+ * rawtype.
  * @see randoop.types.ConcreteSimpleType
  * @see randoop.types.ConcreteArrayType
  * @see randoop.types.ParameterizedType
@@ -12,11 +13,17 @@ import java.lang.reflect.Type;
 public abstract class ConcreteType extends GeneralType {
 
   /**
-   * Indicates whether a {@code ConcreteType} can be assigned to this type.
-   * <p>
-   * Based on the definition of assignment conversion from
-   * section 5.2 of JDK 7 Java Language Specification a type is assignable
-   * to another if it can be converted to the second by
+   * Indicates whether a value of a {@code ConcreteType} can be assigned to a
+   * variable of this type:
+   * <pre>
+   * Variable<sub>this</sub> = Expression<sub>sourcetype</sub>.
+   * </pre>
+   * In other words, this is a legal assignment. 
+   * Based on the definition of <i>assignment context</> in
+   * <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-5.html#jls-5.2">
+   * section 5.2 of the JDK 8 Java Language Specification</a>
+   * a value of one type is assignable to a variable of another type if the
+   * first type can be converted to the second by
    * <ul>
    * <li> an identity conversion,
    * <li> a widening primitive conversion,
@@ -27,7 +34,8 @@ public abstract class ConcreteType extends GeneralType {
    * And, if after all those conversions, the type is a raw type, an
    * unchecked conversion may occur. 
    *<p>
-   * The method {@link Class#isAssignableFrom(Class)} checks identity and
+   * When implementing this method, be aware that the method 
+   * {@link Class#isAssignableFrom(Class)} checks identity and
    * reference conversions, and does a comparison of raw types for parameterized
    * types. The method {@link PrimitiveTypes#isAssignable(Class, Class)} checks
    * identity and primitive widening for primitive types.
@@ -59,7 +67,8 @@ public abstract class ConcreteType extends GeneralType {
 
   /**
    * Indicate whether this type is a parameterized type.
-   * (A parameterized type is a generic class with concrete type arguments.)
+   * (A parameterized type is a generic class that has been instantiated with 
+   * concrete type arguments such as <code>List&lt;String&gt;</code>.)
    * 
    * @return true if this type is a parameterized type, false otherwise
    */
@@ -98,26 +107,19 @@ public abstract class ConcreteType extends GeneralType {
   
   /**
    * Returns a {@code ConcreteType} object for the given class object.
-   * Returned type may represent a primitive type, an enum, a non-generic class,
-   * an array, a parameterized type, or the rawtype of a generic class.
    * <p>
    * For a primitive, enum, or non-generic class, the arguments should be empty.
-   * If the type class is a generic class, then a parameterized type is created
-   * as long as the number of actual type arguments agrees with the number of
-   * type parameters.
-   * If a generic class is given without arguments, then the type is treated
-   * as a rawtype. 
+   * If {@code typeClass} is a generic class, then a {@link ParameterizedType} 
+   * is created as long as the number of actual type arguments agrees with the 
+   * number of type parameters.
+   * Otherwise, if {@code typeClass} is a generic class given without arguments, 
+   * then the type is a rawtype, and a {@link ConcreteSimpleType} is created. 
    *
    * @param typeClass  the {@code Class} object
-   * @param arguments  the actual type arguments for parameterized type
+   * @param arguments  the actual type arguments to create a parameterized type
    * @return a {@code Type} object wrapping the {@code Class} object.
-   * @throws IllegalArgumentException if passed null, or type arguments do not
-   * match type parameters.
    */
   public static ConcreteType forClass(Class<?> typeClass, ConcreteType... arguments) {
-    if (typeClass == null) {
-      throw new IllegalArgumentException("Must have Class object to create type");
-    }
     
     if (typeClass.isPrimitive()) {
       if (arguments.length > 0) {
@@ -145,18 +147,21 @@ public abstract class ConcreteType extends GeneralType {
       }
       // if no arguments, fall through to return as rawtype
     }
-    
+    assert arguments.length == 0;
     return new ConcreteSimpleType(typeClass);
   }
   
   /**
-   * Returns a {@code ConcreteType} object for a {@code ConcreteType} object 
-   * representing a concrete type.
+   * Returns a {@code ConcreteType} object for an object with type
+   * {@code java.lang.reflect.Type} that represents a concrete type.
+   * <p>
+   * (The interface {@link java.lang.reflect.Type} is the type returned by 
+   * reflection methods that provide type parameter information for generic or
+   * parameterized types.)
    * @see randoop.types.GeneralType#forType(Type)
    * 
    * @param type  the type to convert
    * @return a {@code ConcreteType} object corresponding to the concrete type
-   * @throws IllegalArgumentException if the type is not concrete
    */
   public static ConcreteType forType(Type type) {
     GeneralType t = GeneralType.forType(type);

@@ -1,23 +1,23 @@
 package randoop.types;
 
 /**
- * {@code SimpleType} represents an atomic concrete type: a primitive type,
- * a class, an enum, or the rawtype for a generic class. 
+ * {@code ConcreteSimpleType} represents an atomic concrete type: a primitive type,
+ * a non-generic class, an enum, or the rawtype for a generic class. 
  * It is a wrapper for a {@link Class} object, which is a runtime representation
  * of a type. 
  */
 public class ConcreteSimpleType extends ConcreteType {
   
   /** The runtime type of this simple type. */
-  private Class<?> runtimeType;
+  private Class<?> runtimeClass;
   
   /**
-   * Create a {@code Type} object for the runtime class
+   * Create a {@code ConcreteSimpleType} object for the runtime class
    * 
    * @param runtimeType  the runtime class for the type
    */
   public ConcreteSimpleType(Class<?> runtimeType) {
-    this.runtimeType = runtimeType;
+    this.runtimeClass = runtimeType;
   }
 
   /**
@@ -30,12 +30,12 @@ public class ConcreteSimpleType extends ConcreteType {
       return false;
     }
     ConcreteSimpleType t = (ConcreteSimpleType)obj;
-    return this.runtimeType.equals(t.runtimeType);
+    return this.runtimeClass.equals(t.runtimeClass);
   }
   
   @Override
   public int hashCode() {
-    return runtimeType.hashCode();
+    return runtimeClass.hashCode();
   }
 
   /**
@@ -49,11 +49,11 @@ public class ConcreteSimpleType extends ConcreteType {
   
   /**
    * {@inheritDoc}
-   * @return the fully qualified name of this type
+   * @return the fully-qualified name of this type
    */
   @Override
   public String getName() {
-    return runtimeType.getCanonicalName();
+    return runtimeClass.getCanonicalName();
   }
 
   /**
@@ -62,17 +62,17 @@ public class ConcreteSimpleType extends ConcreteType {
    */
   @Override
   public Class<?> getRuntimeClass() {
-    return runtimeType;
+    return runtimeClass;
   }
 
   @Override
   public boolean isEnum() {
-    return runtimeType.isEnum();
+    return runtimeClass.isEnum();
   }
   
   @Override 
   public boolean isPrimitive() {
-    return runtimeType.isPrimitive();
+    return runtimeClass.isPrimitive();
   }
   
   /**
@@ -81,31 +81,25 @@ public class ConcreteSimpleType extends ConcreteType {
    */
   @Override
   public boolean isRawtype() {
-    return runtimeType.getTypeParameters().length > 0;
+    return runtimeClass.getTypeParameters().length > 0;
   }
   
   @Override
   public boolean isVoid() {
-    return runtimeType.equals(void.class);
+    return runtimeClass.equals(void.class);
   }
   
   /**
    * {@inheritDoc}
-   * Tests for assignability to a {@code SimpleType}.
-   * Checks for identity, widening reference, widening primitive,
-   * boxing, and unboxing conversions.
+   * Tests for assignability to this {@code ConcreteSimpleType}.
    * Does not consider void assignable from/to any type.
    * 
    * @param sourceType  the source type 
    * @return true if the source type can be assigned to this type by an 
-   * assignment conversion, false otherwise
-   * @throws IllegalArgumentException if source type is null
+   *         assignment conversion, false otherwise
    */
   @Override
   public boolean isAssignableFrom(ConcreteType sourceType) {
-    if (sourceType == null) {
-      throw new IllegalArgumentException("Source type may not be null");
-    }
     
     // cannot assign to/from void
     if (this.isVoid() || sourceType.isVoid()) {
@@ -120,10 +114,10 @@ public class ConcreteSimpleType extends ConcreteType {
     // both rawtype and non-generic superclass eat
     // parameterized types by reference widening
     if (sourceType.isParameterized()) {
-      return this.runtimeType.isAssignableFrom(sourceType.getRuntimeClass());
+      return this.runtimeClass.isAssignableFrom(sourceType.getRuntimeClass());
     }
     
-    // other cases must be SimpleType to SimpleType
+    // to be assignable, other cases must be ConcreteSimpleType to ConcreteSimpleType
     if (sourceType instanceof ConcreteSimpleType) {
       return isAssignableFrom((ConcreteSimpleType)sourceType);
     }
@@ -132,33 +126,35 @@ public class ConcreteSimpleType extends ConcreteType {
   }
 
   /**
-   * Tests for assignability to a {@code SimpleType} from a {@code SimpleType}.
+   * Tests for assignability to a {@code ConcreteSimpleType} from a 
+   * {@code ConcreteSimpleType}.
    * Checks for identity, widening reference, widening primitive, boxing, and
    * unboxing conversions.
    * 
    * @param sourceType  the source type
-   * @return true if 
+   * @return true if a value of {@code sourceType} can be assigned to a variable
+   *         of this type
    */
   private boolean isAssignableFrom(ConcreteSimpleType sourceType) {
     // test for identity and reference widening conversions
-    if (this.runtimeType.isAssignableFrom(sourceType.runtimeType)) { 
+    if (this.runtimeClass.isAssignableFrom(sourceType.runtimeClass)) { 
       return true;
     }
     
     // test for primitive widening or unboxing conversion
     if (this.isPrimitive()) {
       if (sourceType.isPrimitive()) { // primitive widening conversion 
-        return PrimitiveTypes.isAssignable(this.runtimeType, sourceType.runtimeType);
+        return PrimitiveTypes.isAssignable(this.runtimeClass, sourceType.runtimeClass);
       } else { // unbox then widen conversion
-        Class<?> tUnboxed = PrimitiveTypes.toUnboxedType(sourceType.runtimeType);
-        return tUnboxed != null && PrimitiveTypes.isAssignable(this.runtimeType, tUnboxed);
+        Class<?> tUnboxed = PrimitiveTypes.toUnboxedType(sourceType.runtimeClass);
+        return tUnboxed != null && PrimitiveTypes.isAssignable(this.runtimeClass, tUnboxed);
       }
     } 
     
     // test for boxing conversion
     if (sourceType.isPrimitive()) {
-      Class<?> tBoxed = PrimitiveTypes.getBoxedType(sourceType.runtimeType);
-      return tBoxed != null && this.runtimeType.isAssignableFrom(tBoxed);
+      Class<?> tBoxed = PrimitiveTypes.getBoxedType(sourceType.runtimeClass);
+      return tBoxed != null && this.runtimeClass.isAssignableFrom(tBoxed);
     }
     
     return false;
