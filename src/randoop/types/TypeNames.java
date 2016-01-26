@@ -1,7 +1,5 @@
 package randoop.types;
 
-import randoop.util.PrimitiveTypes;
-
 import plume.UtilMDE;
 
 /**
