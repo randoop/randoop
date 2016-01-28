@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -6,13 +6,15 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import randoop.operation.OperationParseException;
+
 public class PublicFieldParserTest {
 
   @Test
   public void parseConstraintInstance() {
     String fieldPair = "int:randoop.operation.ClassWithFields.oneField";
     try {
-      PublicField pf = (new PublicFieldParser()).parse(fieldPair);
+      AccessibleField pf = (new FieldParser()).parse(fieldPair);
       assertEquals("parse(\"t:v\").toParseableString() should equal \"t:v\"", fieldPair, pf.toParseableString());
       assertEquals("toString acts like toParseableString", pf.toParseableString(), pf.toString());
       assertTrue("object is an instance field", pf instanceof InstanceField);
@@ -25,7 +27,7 @@ public class PublicFieldParserTest {
   public void parseConstraintStatic() {
     String fieldPair = "int:randoop.operation.ClassWithFields.fourField";
     try {
-      PublicField pf = (new PublicFieldParser()).parse(fieldPair);
+      AccessibleField pf = (new FieldParser()).parse(fieldPair);
       assertEquals("parse(\"t:v\").toParseableString() should equal \"t:v\"", fieldPair, pf.toParseableString());
       assertEquals("toString acts like toParseableString", pf.toParseableString(), pf.toString());
       assertTrue("object is a static field", pf instanceof StaticField);
@@ -38,7 +40,7 @@ public class PublicFieldParserTest {
   public void parseConstraintStaticFinal() {
     String fieldPair = "int:randoop.operation.ClassWithFields.FIVEFIELD";
     try {
-      PublicField pf = (new PublicFieldParser()).parse(fieldPair);
+      AccessibleField pf = (new FieldParser()).parse(fieldPair);
       assertEquals("parse(\"t:v\").toParseableString() should equal \"t:v\"", fieldPair, pf.toParseableString());
       assertEquals("toString acts like toParseableString", pf.toParseableString(), pf.toString());
       assertTrue("object is a static final field", pf instanceof StaticFinalField);
@@ -62,10 +64,10 @@ public class PublicFieldParserTest {
     String nonField = "int:randoop.operation.ClassWithFields.oneMethod";
     String wrongType = "double:randoop.operation.ClassWithFields.oneField";
     
-    PublicFieldParser parser = new PublicFieldParser();
+    FieldParser parser = new FieldParser();
     
     try {
-      PublicField pf = parser.parse(missingColon);
+      AccessibleField pf = parser.parse(missingColon);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = "A field description must be of the form \"" +
@@ -77,7 +79,7 @@ public class PublicFieldParserTest {
     String errorPrefix2 = " for a field description of the form <type>:<field-name>.";
     
     try {
-      PublicField pf = parser.parse(missingType);
+      AccessibleField pf = parser.parse(missingType);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingType + errorPrefix2 + " No type given.";
@@ -85,7 +87,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(missingValue);
+      AccessibleField pf = parser.parse(missingValue);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + missingValue + errorPrefix2 + " No field name given.";
@@ -93,7 +95,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(spaceInType);
+      AccessibleField pf = parser.parse(spaceInType);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + spaceInType + errorPrefix2 + " The type has unexpected whitespace characters.";
@@ -101,7 +103,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(spaceInValue);
+      AccessibleField pf = parser.parse(spaceInValue);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + spaceInValue + errorPrefix2 + " The field name has unexpected whitespace characters.";
@@ -109,7 +111,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(badType);
+      AccessibleField pf = parser.parse(badType);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + badType + errorPrefix2 + " The type given \"NATR\" was not recognized.";
@@ -117,7 +119,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(badValueNoField);
+      AccessibleField pf = parser.parse(badValueNoField);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + badValueNoField + errorPrefix2 + " The field name given \"twoField\" is not a field of the class \"randoop.operation.ClassWithFields\".";
@@ -125,7 +127,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(badValueNoClass);
+      AccessibleField pf = parser.parse(badValueNoClass);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + badValueNoClass + errorPrefix2 + " No class name given in field name \"oneField\".";
@@ -133,7 +135,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(badValueBadClass);
+      AccessibleField pf = parser.parse(badValueBadClass);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + badValueBadClass + errorPrefix2 + " The class name \"NATC\" of the field name \"NATC.oneField\" was not recognized as a class.";
@@ -141,7 +143,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(nonField);
+      AccessibleField pf = parser.parse(nonField);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + nonField + errorPrefix2 + " The field name given \"oneMethod\"" +
@@ -150,7 +152,7 @@ public class PublicFieldParserTest {
     }
     
     try {
-      PublicField pf = parser.parse(wrongType);
+      AccessibleField pf = parser.parse(wrongType);
       fail("Expected StatementKindParseException to be thrown");
     } catch (OperationParseException e) {
       String msg = errorPrefix1 + wrongType + errorPrefix2 + " The type of the field \"randoop.operation.ClassWithFields.oneField\" is int, but given as double.";
