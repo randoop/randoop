@@ -39,6 +39,7 @@ public abstract class AbstractOperation implements Operation {
    * Compares two {@link Operation} objects.
    * Uses order on result of {@link Operation#toParseableString()}.
    * 
+   * @param op  the {@link Operation} to compare with this operation
    * @return value &lt; 0 if this parseable string is less than for op,
    *         0 if the strings are equal, and 
    *         &gt; 0 if string for this object greater than for op.
