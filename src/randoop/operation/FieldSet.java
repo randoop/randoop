@@ -8,23 +8,27 @@ import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.field.AccessibleField;
+import randoop.field.FinalInstanceField;
+import randoop.field.FieldParser;
+import randoop.field.StaticFinalField;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 
 /**
- * FieldSetter is an adapter for a {@link PublicField} as a {@link Operation}
+ * FieldSetter is an adapter for a {@link AccessibleField} as a {@link Operation}
  * that acts like a setter for the field. 
- * @see PublicField
+ * @see AccessibleField
  */
-public class FieldSetter extends AbstractOperation implements Operation, Serializable{
+public class FieldSet extends AbstractOperation implements Operation, Serializable{
 
   private static final long serialVersionUID = -5905429635469194115L;
   
   public static String ID = "setter";
   
-  private PublicField field;
+  private AccessibleField field;
 
   /**
    * Creates a setter {@link Operation} object for a field of a class.
@@ -32,7 +36,7 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
    * @param field  the field object to be set by setter statements.
    * @throws IllegalArgumentException if field is static final.
    */
-  public FieldSetter(PublicField field) {
+  public FieldSet(AccessibleField field) {
     if (field instanceof StaticFinalField) {
       throw new IllegalArgumentException("Field may not be static final for FieldSetter");
     }
@@ -64,7 +68,7 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
    * Sets the value of the field given the inputs. Should the action 
    * raise an exception, those are captured and returned as an {@link ExecutionOutcome}.
    * Exceptions should only be {@link NullPointerException}, which happens when input 
-   * is null but field is an instance field. {@link PublicField#getValue(Object)} suppresses 
+   * is null but field is an instance field. {@link AccessibleField#getValue(Object)} suppresses 
    * exceptions that occur because the field is not valid or accessible 
    * (specifically {@link IllegalArgumentException} and {@link IllegalAccessException}).
    * 
@@ -135,7 +139,7 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
 
   /**
    * Returns the string descriptor for field that can be parsed by
-   * {@link PublicFieldParser}.
+   * {@link FieldParser}.
    * 
    * @return the parseable string descriptor for this setter.
    */
@@ -151,8 +155,8 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
   
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof FieldSetter) {
-      FieldSetter s = (FieldSetter)obj;
+    if (obj instanceof FieldSet) {
+      FieldSet s = (FieldSet)obj;
       return field.equals(s.field);
     }
     return false;
@@ -168,9 +172,9 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
    * @param descr  string containing descriptor of field setter.
    * @return {@code FieldSetter} object corresponding to setter descriptor.
    * @throws OperationParseException if descr does not have expected form.
-   * @see PublicFieldParser#parse(String)
+   * @see FieldParser#parse(String)
    */
-  public static FieldSetter parse(String descr) throws OperationParseException {
+  public static FieldSet parse(String descr) throws OperationParseException {
     int parPos = descr.indexOf('(');
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
     if (parPos < 0) {
@@ -188,8 +192,8 @@ public class FieldSetter extends AbstractOperation implements Operation, Seriali
       throw new OperationParseException(msg);
     }
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
-    PublicField pf = (new PublicFieldParser()).parse(fieldDescriptor);
-    return new FieldSetter(pf);
+    AccessibleField pf = (new FieldParser()).parse(fieldDescriptor);
+    return new FieldSet(pf);
   }
 
   @Override
