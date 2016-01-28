@@ -67,7 +67,7 @@ public abstract class TypeBound {
 
     if (type instanceof Class<?>) {
       Class<?> c = (Class<?>)type;
-      return new ConcreteTypeBound(ConcreteType.forClass(c));
+      return new ConcreteTypeBound(ConcreteType.forClass(c, new ConcreteType[0]));
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
@@ -88,7 +88,7 @@ public abstract class TypeBound {
 
       for (int i = 0; i < arguments.length; i++) {
         if (arguments[i] instanceof Class<?>) { // concrete
-          conTypes[i] = ConcreteType.forClass((Class<?>)arguments[i]);
+          conTypes[i] = ConcreteType.forClass((Class<?>)arguments[i], new ConcreteType[0]);
         } else { // generic -- just bail to generic bound constructor
           return new GenericTypeBound(runtimeType, arguments);
         }

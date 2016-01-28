@@ -102,7 +102,7 @@ public abstract class ConcreteType extends GeneralType {
    * @return true if the type of {@code e} is assignable to this type, false otherwise
    */
   public <T> boolean isInstance(T e) {
-    return this.isAssignableFrom(ConcreteType.forClass(e.getClass()));
+    return this.isAssignableFrom(ConcreteType.forClass(e.getClass(), new ConcreteType[0]));
   }
   
   /**

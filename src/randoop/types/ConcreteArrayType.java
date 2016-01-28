@@ -40,7 +40,7 @@ public class ConcreteArrayType extends ConcreteType {
     if (! runtimeType.isArray()) {
       throw new IllegalArgumentException("Class must be array");
     }
-    this.elementType = ConcreteType.forClass(runtimeType.getComponentType());
+    this.elementType = ConcreteType.forClass(runtimeType.getComponentType(), new ConcreteType[0]);
     this.runtimeType = runtimeType;
   }
 

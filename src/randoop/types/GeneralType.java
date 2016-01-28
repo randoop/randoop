@@ -23,7 +23,7 @@ import java.util.List;
  * @see randoop.types.ConcreteType
  * @see randoop.types.GenericType
  */
-abstract class GeneralType {
+public abstract class GeneralType {
 
   /**
    * Returns the runtime {@code Class} object for this type.
@@ -212,11 +212,7 @@ abstract class GeneralType {
    */
   private static GeneralType forParameterizedType(java.lang.reflect.ParameterizedType t) {
     Type rawType = t.getRawType();
-    if (! (rawType instanceof Class<?>)) {
-      String msg = "Expecting rawtype " + rawType.toString() 
-                 + " to be a Class object";
-      throw new IllegalArgumentException(msg);
-    }
+    assert ! (rawType instanceof Class<?>);
     
     // Collect whatever is lurking in the "actual type arguments"
     // Could be *actual* "actual type arguments", or type variables
@@ -230,7 +226,7 @@ abstract class GeneralType {
         typeParameters.add(v);
         typeBounds.add(TypeBound.fromTypes(v.getBounds()));
       } else if (actualArguments[i] instanceof Class) {
-        typeArguments[i] = ConcreteType.forClass((Class<?>)actualArguments[i]);
+        typeArguments[i] = ConcreteType.forClass((Class<?>)actualArguments[i], new ConcreteType[0]);
       } else {
         String msg = "Expecting either type or type variable, got " 
                    + actualArguments[i].toString();
@@ -276,4 +272,31 @@ abstract class GeneralType {
     }
     return ConcreteType.forClass(c);
   }
+
+  /**
+   * Returns a {@code GeneralType} object for the given class object.
+   * <p>
+   * A {@link Class} object is a runtime representation of a type, and could
+   * represent either a concrete or generic type.
+   * In Randoop, only expect to see {@link Class} objects for classes under 
+   * test, which means this method does not handle array, primitive or 
+   * parameterized types.
+   * 
+   * @param typeClass  the type to be converted to a {@code GeneralType}
+   * @return a {@link GenericClassType} if {@code typeClass} has type 
+   *         parameters, and a {@link ConcreteSimpleType} otherwise
+   */
+  public static GeneralType forClass(Class<?> typeClass) {
+    assert ! (typeClass.isArray() || typeClass.isPrimitive()); 
+    
+    if (typeClass.getTypeParameters().length > 0) { // if is generic
+      assert ! typeClass.isEnum();
+      return new GenericClassType(typeClass);
+    }
+
+    return new ConcreteSimpleType(typeClass);
+  }
+
+ // public abstract Set<GeneralType> add(Operation op);
+
 }
