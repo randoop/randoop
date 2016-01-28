@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -8,10 +8,10 @@ import randoop.sequence.Variable;
 
 /**
  * StaticFinalField represents a public static final field of a class.
- * @see PublicField
+ * @see AccessibleField
  *
  */
-public class StaticFinalField extends PublicField {
+public class StaticFinalField extends AccessibleField {
 
   private static final long serialVersionUID = 5759286052853148769L;
 
