@@ -56,7 +56,7 @@ public class ReflectionManager {
    * Registers a {@link ClassVisitor} for use by the 
    * {@link ReflectionManager#apply(Class)} method.
    * 
-   * @param visitor a {@link ClassVisitor} object.
+   * @param visitor  the {@link ClassVisitor} object to add
    */
   public void add(ClassVisitor visitor) {
     visitors.add(visitor);
@@ -66,7 +66,7 @@ public class ReflectionManager {
    * Applies the registered {@link ClassVisitor} objects of this object to the
    * given class.
    *  
-   * @param c a {@link Class} object to be visited.
+   * @param c  the {@link Class} object to be visited.
    */
   public void apply(Class<?> c) {
     
@@ -139,7 +139,7 @@ public class ReflectionManager {
    * since their definition is implicit, and we aren't testing Java enum 
    * implementation.
    *
-   * @param c enum class object from which constants and methods are extracted
+   * @param c the enum class object from which constants and methods are extracted
    */
   private void applyEnum(Class<?> c) {
     Set<String> overrideMethods = new HashSet<String>();
@@ -173,7 +173,7 @@ public class ReflectionManager {
    * Only excludes fields hidden by inheritance that are otherwise still 
    * accessible via reflection.
    * 
-   * @param c
+   * @param c  the class whose fields are to be visited
    */
   private void applyFields(Class<?> c) {
     //The set of fields declared in class c is needed to ensure we don't collect
