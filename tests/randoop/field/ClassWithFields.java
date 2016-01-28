@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 /**
  * ClassWithFields is a class used for tests of handling of 

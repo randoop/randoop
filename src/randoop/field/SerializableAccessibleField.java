@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -7,17 +7,17 @@ import java.lang.reflect.Field;
 import randoop.types.TypeNames;
 
 /**
- * Serializable representation of {@link PublicField} allowing tests to 
+ * Serializable representation of {@link AccessibleField} allowing tests to 
  * be serialized. 
  * 
- * @see PublicField#writeReplace
+ * @see AccessibleField#writeReplace
  */
-public class SerializablePublicField implements Serializable {
+public class SerializableAccessibleField implements Serializable {
 
   private static final long serialVersionUID = 9109946164794213814L;
   private final String fieldRep;
   
-  public SerializablePublicField(Field field) {
+  public SerializableAccessibleField(Field field) {
     this.fieldRep = field.getDeclaringClass().getName() + "." + field.getName();
   }
   
@@ -26,9 +26,9 @@ public class SerializablePublicField implements Serializable {
     String className = fieldRep.substring(0,pos);
     String fieldName = fieldRep.substring(pos + 1);
     Class<?> c = TypeNames.getTypeForName(className);
-    Field field = PublicFieldParser.fieldForName(c, fieldName);
+    Field field = FieldParser.fieldForName(c, fieldName);
     if (field != null) {
-      return PublicFieldParser.recognize(field);
+      return FieldParser.recognize(field);
     }
     return null;
   }

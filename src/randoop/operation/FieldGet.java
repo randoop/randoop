@@ -8,30 +8,32 @@ import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.field.AccessibleField;
+import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from
- * a {@link PublicField} and behaves like a getter for the field.
+ * a {@link AccessibleField} and behaves like a getter for the field.
  * 
- * @see PublicField
+ * @see AccessibleField
  *
  */
-public class FieldGetter extends AbstractOperation implements Operation,Serializable {
+public class FieldGet extends AbstractOperation implements Operation,Serializable {
 
   private static final long serialVersionUID = 3966201727170073093L;
   
   public static String ID = "getter";
   
-  private PublicField field;
+  private AccessibleField field;
 
   /**
    * FieldGetter sets the public field for the getter statement.
    * 
-   * @param field the {@link PublicField} object from which to get values.
+   * @param field the {@link AccessibleField} object from which to get values.
    */
-  public FieldGetter(PublicField field) {
+  public FieldGet(AccessibleField field) {
     this.field = field;
   }
 
@@ -56,7 +58,7 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   /**
    * Performs computation of getting value of field or capturing thrown exceptions.
    * Exceptions should only be NullPointerException, which happens when input is null but 
-   * field is an instance field. {@link PublicField#getValue(Object)} suppresses exceptions
+   * field is an instance field. {@link AccessibleField#getValue(Object)} suppresses exceptions
    * that occur because field is not valid or accessible.
    * 
    * @param statementInput  the inputs for statement.
@@ -112,8 +114,8 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
   
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof FieldGetter) {
-      FieldGetter s = (FieldGetter)obj;
+    if (obj instanceof FieldGet) {
+      FieldGet s = (FieldGet)obj;
       return field.equals(s.field);
     }
     return false;
@@ -126,14 +128,14 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
    * Parses a getter for a field from a string.
    * A getter description has the form "&lt;get&gt;( field-descriptor )"
    * where &lt;get&gt;" is literal ("&lt;" and "&gt;" included), and field-descriptor
-   * is as recognized by {@link PublicFieldParser#parse(String)}.
-   * @see PublicFieldParser#parse(String)
+   * is as recognized by {@link FieldParser#parse(String)}.
+   * @see FieldParser#parse(String)
    * 
    * @param descr  the string containing descriptor of getter for a field.
    * @return the getter object for the descriptor.
    * @throws OperationParseException if any error in descriptor string
    */
-  public static FieldGetter parse(String descr) throws OperationParseException {
+  public static FieldGet parse(String descr) throws OperationParseException {
     int parPos = descr.indexOf('(');
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
     if (parPos < 0) {
@@ -151,8 +153,8 @@ public class FieldGetter extends AbstractOperation implements Operation,Serializ
       throw new OperationParseException(msg);
     }
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
-    PublicField pf = (new PublicFieldParser()).parse(fieldDescriptor);
-    return new FieldGetter(pf);
+    AccessibleField pf = (new FieldParser()).parse(fieldDescriptor);
+    return new FieldGet(pf);
   }
 
   @Override

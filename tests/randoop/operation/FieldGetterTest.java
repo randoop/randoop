@@ -13,6 +13,9 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
+import randoop.field.InstanceField;
+import randoop.field.StaticField;
+import randoop.field.StaticFinalField;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -31,7 +34,7 @@ public class FieldGetterTest {
     try {
       
       StaticField sf = new StaticField(c.getField("fourField"));
-      FieldGetter rhs = new FieldGetter(sf);
+      FieldGet rhs = new FieldGet(sf);
 
       //types
       assertTrue("Should be no input types", rhs.getInputTypes().isEmpty());
@@ -67,7 +70,7 @@ public class FieldGetterTest {
     try {
       
       InstanceField f = new InstanceField(c.getField("oneField"));
-      FieldGetter rhs = new FieldGetter(f);
+      FieldGet rhs = new FieldGet(f);
 
       //types
       List<Class<?>> inputTypes = new ArrayList<>();
@@ -134,7 +137,7 @@ public class FieldGetterTest {
     try {
       
       StaticFinalField f = new StaticFinalField(c.getField("FIVEFIELD"));
-      FieldGetter rhs = new FieldGetter(f);
+      FieldGet rhs = new FieldGet(f);
 
       //types
       assertTrue("Should be no input types", rhs.getInputTypes().isEmpty());
@@ -169,7 +172,7 @@ public class FieldGetterTest {
   public void parseable() {
     String getterDescr = "<get>(int:randoop.operation.ClassWithFields.oneField)";
     try {
-      FieldGetter getter = FieldGetter.parse(getterDescr);
+      FieldGet getter = FieldGet.parse(getterDescr);
       assertEquals("parse should return object that converts to string", getterDescr, getter.toParseableString());
     } catch (OperationParseException e) {
      fail("Parse error: " + e.getMessage());

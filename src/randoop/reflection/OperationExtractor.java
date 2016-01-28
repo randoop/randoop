@@ -10,16 +10,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import randoop.field.FinalInstanceField;
+import randoop.field.InstanceField;
+import randoop.field.StaticField;
+import randoop.field.StaticFinalField;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
-import randoop.operation.FieldGetter;
-import randoop.operation.FieldSetter;
-import randoop.operation.FinalInstanceField;
-import randoop.operation.InstanceField;
+import randoop.operation.FieldGet;
+import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
-import randoop.operation.StaticField;
-import randoop.operation.StaticFinalField;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link Operation}
@@ -101,20 +101,20 @@ public class OperationExtractor implements ClassVisitor {
     if (Modifier.isStatic(mods)) {
       if (Modifier.isFinal(mods)) {
         StaticFinalField s = new StaticFinalField(field);
-        operations.add(new FieldGetter(s));
+        operations.add(new FieldGet(s));
       } else {
         StaticField s = new StaticField(field);
-        operations.add(new FieldGetter(s));
-        operations.add(new FieldSetter(s));
+        operations.add(new FieldGet(s));
+        operations.add(new FieldSet(s));
       }
     } else {
       if (Modifier.isFinal(mods)) {
         FinalInstanceField i = new FinalInstanceField(field);
-        operations.add(new FieldGetter(i));
+        operations.add(new FieldGet(i));
       } else {
         InstanceField i = new InstanceField(field);
-        operations.add(new FieldGetter(i));
-        operations.add(new FieldSetter(i));
+        operations.add(new FieldGet(i));
+        operations.add(new FieldSet(i));
       }
     }
   }

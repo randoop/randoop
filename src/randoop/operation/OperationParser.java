@@ -56,8 +56,8 @@ public class OperationParser {
         ConstructorCall.ID,
         ArrayCreation.ID, 
         EnumConstant.ID, 
-        FieldGetter.ID, 
-        FieldSetter.ID
+        FieldGet.ID, 
+        FieldSet.ID
         ));
 
     // Call appropriate parsing method.
@@ -71,10 +71,10 @@ public class OperationParser {
       return ArrayCreation.parse(descr);
     } else if (id.equals(EnumConstant.ID)) {
       return EnumConstant.parse(descr);
-    } else if (id.equals(FieldGetter.ID)) {
-      return FieldGetter.parse(descr);
-    } else if (id.equals(FieldSetter.ID)) {
-      return FieldSetter.parse(descr);
+    } else if (id.equals(FieldGet.ID)) {
+      return FieldGet.parse(descr);
+    } else if (id.equals(FieldSet.ID)) {
+      return FieldSet.parse(descr);
     } else {
       String msg = "A statement description must be of the form "
         + "<id> <description>"
@@ -104,10 +104,10 @@ public class OperationParser {
       return ArrayCreation.ID;
     if (op instanceof EnumConstant)
       return EnumConstant.ID;
-    if (op instanceof FieldGetter)
-      return FieldGetter.ID;
-    if (op instanceof FieldSetter)
-      return FieldSetter.ID;
+    if (op instanceof FieldGet)
+      return FieldGet.ID;
+    if (op instanceof FieldSet)
+      return FieldSet.ID;
     throw new Error();
   }
 

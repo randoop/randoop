@@ -17,16 +17,16 @@ import org.junit.Test;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.field.FinalInstanceField;
+import randoop.field.InstanceField;
+import randoop.field.StaticField;
+import randoop.field.StaticFinalField;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
-import randoop.operation.FieldGetter;
-import randoop.operation.FieldSetter;
-import randoop.operation.FinalInstanceField;
-import randoop.operation.InstanceField;
+import randoop.operation.FieldGet;
+import randoop.operation.FieldSet;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
-import randoop.operation.StaticField;
-import randoop.operation.StaticFinalField;
 import randoop.reflection.visibilitytest.PublicClass;
 
 public class VisibilityTest {
@@ -479,17 +479,17 @@ public class VisibilityTest {
     int mods = f.getModifiers();
     if (Modifier.isStatic(mods)) {
       if (Modifier.isFinal(mods)) {
-        statements.add(new FieldGetter(new StaticFinalField(f)));
+        statements.add(new FieldGet(new StaticFinalField(f)));
       } else {
-        statements.add(new FieldGetter(new StaticField(f)));
-        statements.add(new FieldSetter(new StaticField(f)));
+        statements.add(new FieldGet(new StaticField(f)));
+        statements.add(new FieldSet(new StaticField(f)));
       }
     } else {
       if (Modifier.isFinal(mods)) {
-        statements.add(new FieldGetter(new FinalInstanceField(f)));
+        statements.add(new FieldGet(new FinalInstanceField(f)));
       } else {
-        statements.add(new FieldGetter(new InstanceField(f)));
-        statements.add(new FieldSetter(new InstanceField(f)));
+        statements.add(new FieldGet(new InstanceField(f)));
+        statements.add(new FieldSet(new InstanceField(f)));
       }
     }
     return statements;

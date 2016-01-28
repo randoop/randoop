@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import randoop.sequence.Variable;
  * by the object.
  *
  */
-public class InstanceField extends PublicField {
+public class InstanceField extends AccessibleField {
 
   private static final long serialVersionUID = -1879588478257403865L;
 
