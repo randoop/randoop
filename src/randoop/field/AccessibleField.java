@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -13,7 +13,7 @@ import randoop.sequence.Variable;
  * PublicField is an abstract class representing a public field of a class object,
  * which can be an instance field, a static field, or a static final field.
  * Each is implemented as a separate class.
- * Meant to be adapted by either {@link FieldSetter} or {@link FieldGetter} for use as
+ * Meant to be adapted by either {@link FieldSet} or {@link FieldGet} for use as
  * a {@link Operation}.
  *
  * @see InstanceField
@@ -21,7 +21,7 @@ import randoop.sequence.Variable;
  * @see StaticFinalField
  *
  */
-public abstract class PublicField implements Serializable {
+public abstract class AccessibleField implements Serializable {
 
   private static final long serialVersionUID = -8083487154339374578L;
 
@@ -32,7 +32,7 @@ public abstract class PublicField implements Serializable {
    *
    * @param field  the field.
    */
-  public PublicField(Field field) {
+  public AccessibleField(Field field) {
     this.field = field;
     this.field.setAccessible(true);
   }
@@ -89,7 +89,7 @@ public abstract class PublicField implements Serializable {
 
   /**
    * Returns a string descriptor of a field that can be parsed by
-   * {@link PublicFieldParser#parse(String)}.
+   * {@link FieldParser#parse(String)}.
    *
    * @return String for type-field pair describing field.
    */
@@ -98,7 +98,7 @@ public abstract class PublicField implements Serializable {
   }
 
   /**
-   * Uses {@link PublicField#toParseableString()} to create string representation.
+   * Uses {@link AccessibleField#toParseableString()} to create string representation.
    */
   @Override
   public String toString() {
@@ -107,8 +107,8 @@ public abstract class PublicField implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof PublicField) {
-      PublicField f = (PublicField)obj;
+    if (obj instanceof AccessibleField) {
+      AccessibleField f = (AccessibleField)obj;
       return this.field.equals(f.field);
     }
     return false;
@@ -160,13 +160,13 @@ public abstract class PublicField implements Serializable {
 
   /**
    * Converts this object to a form that can be serialized.
-   * @see SerializablePublicField
+   * @see SerializableAccessibleField
    *
    * @return serializable form of this object
    * @throws ObjectStreamException if serialization fails.
    */
   protected Object writeReplace() throws ObjectStreamException {
-    return new SerializablePublicField(field);
+    return new SerializableAccessibleField(field);
   }
 
   /**

@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -7,27 +7,25 @@ import java.util.List;
 import randoop.sequence.Variable;
 
 /**
- * PublicStaticField represents a public static field of a class. 
- * @see PublicField
+ * StaticFinalField represents a public static final field of a class.
+ * @see AccessibleField
  *
  */
-public class StaticField extends PublicField {
+public class StaticFinalField extends AccessibleField {
 
-  private static final long serialVersionUID = 240655978039880972L;
+  private static final long serialVersionUID = 5759286052853148769L;
 
-  public StaticField(Field field) {
+  public StaticFinalField(Field field) {
     super(field);
   }
 
   /**
-   * getSetTypes returns a list containing just the field type,
-   * which is the only type needed to set the field.
+   * getSetTypes returns the list of types needed to set the field, 
+   * which is empty for a static final (or constant) field.
    */
   @Override
   public List<Class<?>> getSetTypes() {
-    List<Class<?>> types = new ArrayList<>();
-    types.add(getType());
-    return types; 
+    return new ArrayList<>();
   }
 
   /**
@@ -45,16 +43,15 @@ public class StaticField extends PublicField {
    */
   @Override
   public List<Class<?>> getAccessTypes() {
-   return new ArrayList<>();
+    return new ArrayList<>();
   }
-  
+ 
   /**
-   * isStatic is a predicate to determine if the field is declared as static.
-   * @return true since object is a {@link StaticField}.
+   * isStatic is a predicate to indicate whether field is declared as static.
+   * @return true, as object is {@link StaticFinalField}.
    */
   @Override
   public boolean isStatic() {
     return true;
   }
-
 }

@@ -1,8 +1,9 @@
-package randoop.operation;
+package randoop.field;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import randoop.operation.OperationParseException;
 import randoop.types.TypeNames;
 
 /**
@@ -17,7 +18,7 @@ import randoop.types.TypeNames;
  * the field belongs to the class, and whether the types match.
  *
  */
-public class PublicFieldParser {
+public class FieldParser {
 
   /**
    * Parses a type-field pair in a string, and returns the relevant object based
@@ -26,9 +27,9 @@ public class PublicFieldParser {
    * @param s  a string in the form of "TYPE:FIELDNAME"
    * @return a reference to a PublicField object represented by the pair in the string.
    * @throws OperationParseException if input string is not expected format.
-   * @see PublicField
+   * @see AccessibleField
    */
-  public PublicField parse(String s) throws OperationParseException {
+  public AccessibleField parse(String s) throws OperationParseException {
     if (s == null) {
       throw new IllegalArgumentException("s cannot be null");
     }
@@ -115,10 +116,10 @@ public class PublicFieldParser {
    * The field may be an instance field, a static field, or a static final field.
    *
    * @param field  the {@link Field} object for which to create a wrapper object.
-   * @return an object of a subclass of {@link PublicField}.
+   * @return an object of a subclass of {@link AccessibleField}.
    */
-  public static PublicField recognize(Field field) {
-    PublicField pf = null;
+  public static AccessibleField recognize(Field field) {
+    AccessibleField pf = null;
     int mods = field.getModifiers();
     if (Modifier.isStatic(mods)) {
       if (Modifier.isFinal(mods)) {

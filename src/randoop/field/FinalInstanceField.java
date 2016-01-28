@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import randoop.sequence.Variable;
  * FinalInstanceField implements getter methods for final
  * instance fields of a class.
  */
-public class FinalInstanceField extends PublicField {
+public class FinalInstanceField extends AccessibleField {
 
   private static final long serialVersionUID = 6214863094040724681L;
 

@@ -13,6 +13,10 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
+import randoop.field.FinalInstanceField;
+import randoop.field.InstanceField;
+import randoop.field.StaticField;
+import randoop.field.StaticFinalField;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -31,7 +35,7 @@ public class FieldSetterTest {
     Class<?> c = ClassWithFields.class;
     try {
       StaticField f = new StaticField(c.getField("fourField"));
-      FieldSetter rhs = new FieldSetter(f);
+      FieldSet rhs = new FieldSet(f);
       
       //types
       assertEquals("Should be one input type", 1, rhs.getInputTypes().size());
@@ -70,7 +74,7 @@ public class FieldSetterTest {
     Class<?> c = ClassWithFields.class;
     try {
       InstanceField f = new InstanceField(c.getField("oneField"));
-      FieldSetter rhs = new FieldSetter(f);
+      FieldSet rhs = new FieldSet(f);
       
       //types
       assertEquals("Should be two input types", 2, rhs.getInputTypes().size());
@@ -129,7 +133,7 @@ public class FieldSetterTest {
       FinalInstanceField f = new FinalInstanceField(c.getField("tenField"));
       try {
         @SuppressWarnings("unused")
-        FieldSetter rhs = new FieldSetter(f);
+        FieldSet rhs = new FieldSet(f);
         fail("IllegalArgumentException expected when final instance field given to FieldSetter constructor");
       } catch (IllegalArgumentException e) {
         assertEquals("Argument Exception", "Field may not be final for FieldSetter", e.getMessage());
@@ -148,7 +152,7 @@ public class FieldSetterTest {
       StaticFinalField f = new StaticFinalField(c.getField("FIVEFIELD"));
       try {
         @SuppressWarnings("unused")
-        FieldSetter rhs = new FieldSetter(f);
+        FieldSet rhs = new FieldSet(f);
         fail("IllegalArgumentException expected when static final field given to FieldSetter constructor");
       } catch (IllegalArgumentException e) {
         assertEquals("Argument exception","Field may not be static final for FieldSetter",e.getMessage());
@@ -164,7 +168,7 @@ public class FieldSetterTest {
   public void parseable() {
     String setterDesc = "<set>(int:randoop.operation.ClassWithFields.oneField)";
     try {
-      FieldSetter setter = FieldSetter.parse(setterDesc);
+      FieldSet setter = FieldSet.parse(setterDesc);
       assertEquals("parse should return object that converts to string", setterDesc, setter.toParseableString());
     } catch (OperationParseException e) {
      fail("Parse error: " + e.getMessage());

@@ -413,10 +413,10 @@ test-constants: bin
 test-reflection: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumConstantTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumReflectionTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.InstanceFieldTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.StaticFieldTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.StaticFinalFieldTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.PublicFieldParserTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.field.InstanceFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.field.StaticFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.field.StaticFinalFieldTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.field.PublicFieldParserTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldGetterTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldSetterTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldReflectionTest
