@@ -16,6 +16,7 @@ import randoop.NormalExecution;
 import randoop.field.InstanceField;
 import randoop.field.StaticField;
 import randoop.field.StaticFinalField;
+import randoop.field.ClassWithFields;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -32,7 +33,7 @@ public class FieldGetterTest {
   public void testStaticField() {
     Class<?> c = ClassWithFields.class;
     try {
-      
+
       StaticField sf = new StaticField(c.getField("fourField"));
       FieldGet rhs = new FieldGet(sf);
 
@@ -41,7 +42,7 @@ public class FieldGetterTest {
       assertEquals("Output type should match type of field", sf.getType(), rhs.getOutputType());
 
       //code generation
-      String expected = "int i0 = randoop.operation.ClassWithFields.fourField;" + Globals.lineSep;
+      String expected = "int i0 = randoop.field.ClassWithFields.fourField;" + Globals.lineSep;
       Statement st = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
@@ -52,10 +53,10 @@ public class FieldGetterTest {
       //execution - should be 4 (haven't changed value yet)
       NormalExecution expectedExec = new NormalExecution(4, 0);
       NormalExecution actualExec = (NormalExecution)rhs.execute(new Object[0], null);
-      assertTrue("Execution should simply return value", 
-          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) && 
+      assertTrue("Execution should simply return value",
+          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) &&
           expectedExec.getExecutionTime() == actualExec.getExecutionTime());
-      
+
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
@@ -68,7 +69,7 @@ public class FieldGetterTest {
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
     try {
-      
+
       InstanceField f = new InstanceField(c.getField("oneField"));
       FieldGet rhs = new FieldGet(f);
 
@@ -84,10 +85,10 @@ public class FieldGetterTest {
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
       ConstructorCall cons = new ConstructorCall(
-          ConstructorSignatures.getConstructorForSignatureString("randoop.operation.ClassWithFields.ClassWithFields()"));
+          ConstructorSignatures.getConstructorForSignatureString("randoop.field.ClassWithFields.ClassWithFields()"));
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
-      vars.add(new Variable(seqInit, 0)); 
+      vars.add(new Variable(seqInit, 0));
       // bind getter "call" to initialization
       Statement st_rhs = new Statement(rhs);
       Sequence seq = seqInit.extend(rhs, vars);
@@ -104,18 +105,18 @@ public class FieldGetterTest {
       //execution
       //null object
       ExecutionOutcome nullOutcome = rhs.execute(new Object[0], null);
-      assertTrue("Expect null pointer exception", nullOutcome instanceof ExceptionalExecution && 
+      assertTrue("Expect null pointer exception", nullOutcome instanceof ExceptionalExecution &&
           ((ExceptionalExecution)nullOutcome).getException() instanceof NullPointerException);
-      
+
       //actual object
-      NormalExecution expectedExec = new NormalExecution(1, 0); 
+      NormalExecution expectedExec = new NormalExecution(1, 0);
       Object[] inputs = new Object[1];
       inputs[0] = c.newInstance();
       NormalExecution actualExec = (NormalExecution)rhs.execute(inputs, null);
-      assertTrue("Execution should simply return value", 
-          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) && 
+      assertTrue("Execution should simply return value",
+          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) &&
           expectedExec.getExecutionTime() == actualExec.getExecutionTime());
-      
+
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
@@ -135,7 +136,7 @@ public class FieldGetterTest {
   public void testStaticFinalField() {
     Class<?> c = ClassWithFields.class;
     try {
-      
+
       StaticFinalField f = new StaticFinalField(c.getField("FIVEFIELD"));
       FieldGet rhs = new FieldGet(f);
 
@@ -144,7 +145,7 @@ public class FieldGetterTest {
       assertEquals("Output type should match type of field", f.getType(), rhs.getOutputType());
 
       //code generation
-      String expected = "int i0 = randoop.operation.ClassWithFields.FIVEFIELD;" + Globals.lineSep;
+      String expected = "int i0 = randoop.field.ClassWithFields.FIVEFIELD;" + Globals.lineSep;
       Statement st_rhs = new Statement(rhs);
       Sequence seq = new Sequence().extend(rhs, new ArrayList<Variable>());
       Variable var = new Variable(seq, 0);
@@ -157,9 +158,9 @@ public class FieldGetterTest {
       NormalExecution expectedExec = new NormalExecution(5, 0);
       NormalExecution actualExec = (NormalExecution)rhs.execute(new Object[0], null);
       assertTrue("Execution should simply return value",
-          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) && 
+          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) &&
           expectedExec.getExecutionTime() == actualExec.getExecutionTime());
-      
+
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
@@ -170,14 +171,14 @@ public class FieldGetterTest {
 
   @Test
   public void parseable() {
-    String getterDescr = "<get>(int:randoop.operation.ClassWithFields.oneField)";
+    String getterDescr = "<get>(int:randoop.field.ClassWithFields.oneField)";
     try {
       FieldGet getter = FieldGet.parse(getterDescr);
       assertEquals("parse should return object that converts to string", getterDescr, getter.toParseableString());
     } catch (OperationParseException e) {
      fail("Parse error: " + e.getMessage());
     }
-    
+
   }
 
 }

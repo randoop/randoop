@@ -1,4 +1,4 @@
-package randoop.operation;
+package randoop.field;
 
 /**
  * SubclassWithFields is used for testing reflection over
