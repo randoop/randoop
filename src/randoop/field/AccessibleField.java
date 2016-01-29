@@ -13,8 +13,9 @@ import randoop.sequence.Variable;
  * PublicField is an abstract class representing a public field of a class object,
  * which can be an instance field, a static field, or a static final field.
  * Each is implemented as a separate class.
- * Meant to be adapted by either {@link FieldSet} or {@link FieldGet} for use as
- * a {@link Operation}.
+ * Meant to be adapted by either {@link randoop.operation.FieldSet FieldSet} or
+ * {@link randoop.operation.FieldGet FieldGet} for use as a 
+ * {@link randoop.operation.Operation Operation}.
  *
  * @see InstanceField
  * @see StaticField
@@ -134,7 +135,7 @@ public abstract class AccessibleField implements Serializable {
     } catch (IllegalArgumentException e) {
       throw new BugInRandoopException("Field access to object of wrong type: " + e.getMessage());
     } catch (IllegalAccessException e) {
-      throw new BugInRandoopException("Access control violation for field: " 
+      throw new BugInRandoopException("Access control violation for field: "
                                       + field.getName() + "; " + e.getMessage());
     }
     return ret;
