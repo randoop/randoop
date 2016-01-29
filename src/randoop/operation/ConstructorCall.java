@@ -31,7 +31,7 @@ import randoop.util.Util;
  * <i>c</i> : [<i>t1,...,tn</i>] &rarr; <i>c</i>, 
  * where the output type <i>c</i> is also the name of the class. 
  */
-public final class ConstructorCall extends AbstractOperation implements Operation, Serializable {
+public final class ConstructorCall extends ConcreteOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429; 
 
@@ -46,8 +46,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
   // getter method.
-  private List<Class<?>> inputTypesCached;
-  private Class<?> outputType;
   private int hashCodeCached = 0;
   private boolean hashCodeComputed = false;
 
@@ -151,7 +149,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(getInputTypes().get(i)))
-        b.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+        b.append("(" + getInputTypes().get(i).getName() + ")");
       
       String param = inputVars.get(i).getName();
       
@@ -235,27 +233,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   * @return list of parameter types for constructor.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    if (inputTypesCached == null) {
-      inputTypesCached = new ArrayList<Class<?>>(Arrays.asList(constructor.getParameterTypes()));
-    }
-    return inputTypesCached;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return type of the object created (i.e., class for constructor).
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return outputType;
-  }
-
-  /**
-   * {@inheritDoc}
    * Generates a string representation of the constructor signature.
    *
    * Examples:
@@ -291,7 +268,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * @return class object representing declaring class for the constructor.
    */
   @Override
-  public Class<?> getDeclaringClass() {
+  public GeneralType getDeclaringType() {
     return constructor.getDeclaringClass();
   }
 

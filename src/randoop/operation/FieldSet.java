@@ -9,20 +9,23 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
-import randoop.field.FinalInstanceField;
 import randoop.field.FieldParser;
+import randoop.field.FinalInstanceField;
 import randoop.field.StaticFinalField;
 import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
 
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a {@link Operation}
  * that acts like a setter for the field. 
  * @see AccessibleField
  */
-public class FieldSet extends AbstractOperation implements Operation, Serializable{
+public class FieldSet extends ConcreteOperation implements Operation, Serializable{
 
   private static final long serialVersionUID = -5905429635469194115L;
   
@@ -36,7 +39,8 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    * @param field  the field object to be set by setter statements.
    * @throws IllegalArgumentException if field is static final.
    */
-  public FieldSet(AccessibleField field) {
+  public FieldSet(AccessibleField field, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    super(inputTypes, outputType);
     if (field instanceof StaticFinalField) {
       throw new IllegalArgumentException("Field may not be static final for FieldSetter");
     }
@@ -44,24 +48,6 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
       throw new IllegalArgumentException("Field may not be final for FieldSetter");
     }
     this.field = field;
-  }
-
-  /** 
-   * Returns the input types for a field treated as a setter.
-   * @return list consisting of types of values needed to set the field.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    return field.getSetTypes();
-  }
-
-  /**
-   * Returns object for void type since since represents
-   * setter for field.
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return void.class;
   }
 
   /**
@@ -197,7 +183,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   }
 
   @Override
-  public Class<?> getDeclaringClass() {
+  public GeneralType getDeclaringType() {
     return field.getDeclaringClass();
   }
   

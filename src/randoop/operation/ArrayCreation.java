@@ -32,7 +32,7 @@ import randoop.types.TypeNames;
  * <p>
  * ArrayCreation objects are immutable.
  */
-public final class ArrayCreation extends AbstractOperation implements Operation, Serializable {
+public final class ArrayCreation extends ConcreteOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = 20100429;
 

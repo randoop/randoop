@@ -12,6 +12,9 @@ import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from
@@ -20,7 +23,7 @@ import randoop.sequence.Variable;
  * @see AccessibleField
  *
  */
-public class FieldGet extends AbstractOperation implements Operation,Serializable {
+public class FieldGet extends ConcreteOperation implements Operation,Serializable {
 
   private static final long serialVersionUID = 3966201727170073093L;
   
@@ -33,26 +36,9 @@ public class FieldGet extends AbstractOperation implements Operation,Serializabl
    * 
    * @param field the {@link AccessibleField} object from which to get values.
    */
-  public FieldGet(AccessibleField field) {
+  public FieldGet(AccessibleField field, ConcreteType outputType) {
+    super(new ConcreteTypeTuple(), outputType);
     this.field = field;
-  }
-
-  /**
-   * Returns the types required to access the field.
-   * 
-   * @return singleton list if field is instance field, empty if static
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    return field.getAccessTypes();
-  }
-
-  /**
-   * getOutputType returns the type of the field
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return field.getType();
   }
 
   /**
@@ -172,7 +158,7 @@ public class FieldGet extends AbstractOperation implements Operation,Serializabl
   }
   
   @Override
-  public Class<?> getDeclaringClass() {
+  public GeneralType getDeclaringType() {
     return field.getDeclaringClass();
   }
   

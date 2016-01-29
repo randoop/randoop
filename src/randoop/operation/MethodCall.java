@@ -21,6 +21,9 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.type.ConcreteTypeTuple;
+import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
@@ -44,7 +47,7 @@ import randoop.util.ReflectionExecutor;
  * <p>
  * (Class previously called RMethod.)
  */
-public final class MethodCall extends AbstractOperation implements Operation, Serializable {
+public final class MethodCall extends ConcreteOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = -7616184807726929835L;
 
@@ -59,8 +62,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   // Cached values (for improved performance). Their values
   // are computed upon the first invocation of the respective
   // getter method.
-  private List<Class<?>> inputTypesCached;
-  private Class<?> outputTypeCached;
+
   private boolean hashCodeComputed = false;
   private int hashCodeCached = 0;
   private boolean isVoidComputed = false;
@@ -91,7 +93,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * 
    * @param method  the reflective method object.
    */
-  public MethodCall(Method method) {
+  public MethodCall(Method method, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    super(inputTypes, outputType);
     if (method == null)
       throw new IllegalArgumentException("method should not be null.");
 
@@ -100,16 +103,6 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
     // methods to be used can be made accessible.
     // XXX this should not be here but I get infinite loop when comment out
     this.method.setAccessible(true);
-  }
-
-  /**
-   * Creates {@code MethodCall} object for the given reflective method.
-   * 
-   * @param  method the {@link Method} object
-   * @return constructed {@link MethodCall}
-   */
-  public static MethodCall createMethodCall(Method method) {
-    return new MethodCall(method);
   }
 
   /**
@@ -143,13 +136,13 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
         sb.append(", ");
 
       // CASTING.
-      if (PrimitiveTypes.isPrimitive(getInputTypes().get(i)) && GenInputsAbstract.long_format) {
+      if (getInputTypes().get(i).isPrimitive() && GenInputsAbstract.long_format) {
         // Cast if input type is a primitive, because Randoop uses
         // boxed primitives.  (Is that necessary with autoboxing?)
         sb.append("(" + getInputTypes().get(i).getName() + ")");
       } else if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+        sb.append("(" + getInputTypes().get(i).getName() + ")");
       }
 
       String param = inputVars.get(i).getName();
@@ -225,16 +218,16 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
       '.'); // TODO combine this with last if clause
       b.append(s2);
     } else {
-      Class<?> expectedType = getInputTypes().get(0);
-      String canonicalName = expectedType.getCanonicalName();
-      boolean mustCast = canonicalName != null
+      ConcreteType expectedType = getInputTypes().get(0);
+      String typeName = expectedType.getName();
+      boolean mustCast = typeName != null
       && PrimitiveTypes
       .isBoxedPrimitiveTypeOrString(expectedType)
       && !expectedType.equals(String.class);
       if (mustCast) {
         // this is a little paranoid but we need to cast primitives in
         // order to get them boxed.
-        b.append("((" + canonicalName + ")" + receiverString + ")");
+        b.append("((" + typeName + ")" + receiverString + ")");
       } else {
         b.append(receiverString);
       }
@@ -304,53 +297,6 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * If the method is non-static the first element of the list is the
-   * type of the class to which the method belongs.
-   * 
-   * @return list of argument types for this method.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    if (inputTypesCached == null) {
-      Class<?>[] methodParameterTypes = method.getParameterTypes();
-      inputTypesCached = new ArrayList<Class<?>>(
-          methodParameterTypes.length + (isStatic() ? 0 : 1));
-      if (!isStatic())
-        inputTypesCached.add(method.getDeclaringClass());
-      for (int i = 0; i < methodParameterTypes.length; i++) {
-        inputTypesCached.add(methodParameterTypes[i]);
-      }
-    }
-    return inputTypesCached;
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return return type of this method.
-   */
-  @Override
-  public Class<?> getOutputType() {
-    if (outputTypeCached == null) {
-      outputTypeCached = method.getReturnType();
-    }
-    return outputTypeCached;
-  }
-
-  /**
-   * isVoid is a predicate to indicate whether this method has a void return types.
-   * 
-   * @return true if this method has a void return type, false otherwise.
-   */
-  public boolean isVoid() {
-    if (!isVoidComputed) {
-      isVoidComputed = true;
-      isVoidCached = void.class.equals(this.method.getReturnType());
-    }
-    return isVoidCached;
-  }
-
-  /**
-   * {@inheritDoc}
    * @return true if this method is static, and false otherwise.
    */
   @Override
@@ -386,7 +332,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * @throws OperationParseException if s does not match expected descriptor.
    */
   public static Operation parse(String s) throws OperationParseException {
-    return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
+   // return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
+    return null;
   }
 
   /**
@@ -394,8 +341,9 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * @return the class in which this method is declared.
    */
   @Override
-  public Class<?> getDeclaringClass() {
-    return method.getDeclaringClass();
+  public GeneralType getDeclaringType() {
+    //return method.getDeclaringClass();
+    return null;
   }
 
   /**
