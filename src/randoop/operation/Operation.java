@@ -6,6 +6,8 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
 
 /**
  * Operation represents the constructs that can occur in a statement as part of 
@@ -24,7 +26,8 @@ import randoop.sequence.Variable;
  * op: [T1, T2, ..., Tn] &rarr; T, where [T1, T2, ..., Tn] is the list of input 
  * types, and T is the output type. 
  * The input types are represented by an ordered list of 
- * {@link Class} objects, and the output type is a single {@link Class} object. 
+ * {@link GeneralType} objects, and the output type is a single 
+ * {@link GeneralType} object. 
  * <p>
  * For a non-static method call or instance field access, the first input type
  * is always the declaring class of the method or field. If we have a method 
@@ -60,47 +63,16 @@ public interface Operation extends Comparable<Operation> {
    * If a method call or field access, the first input corresponds to the
    * receiver, which must be an object of the declaring class.
    * 
-   * @return list of types as {@link Class} objects.
+   * @return list of types as {@link GeneralType} objects.
    */
-  List<Class<?>> getInputTypes();
+  GeneralTypeTuple getInputTypes();
 
   /**
    * getOutputTypes gives the type returned by the operation.
    * 
-   * @return type returned by the {@link Operation} as a {@link Class} object.
+   * @return type returned by the {@link Operation} as a {@link GeneralType} object.
    */
-  Class<?> getOutputType();
-
-  /**
-   * Performs this operation using the array of input values. Returns
-   * the results of execution as an ResultOrException object and can
-   * output results to specified PrintStream.
-   * @param input array containing appropriate inputs to operation
-   * @param out stream to output results of execution;
-   *            can be null if you don't want to print.
-   * @return results of executing this statement
-   */
-  ExecutionOutcome execute(Object[] input, PrintStream out);
-
-  /**
-   * Produces a Java source code representation of this statement and append it
-   * to the given StringBuilder.
-   * 
-   * @param inputVars  the list of variables that are inputs to operation.
-   * @param b  the {@link StringBuilder} to which code is added.
-   */
-  void appendCode(List<Variable> inputVars, StringBuilder b);
-
-  /**
-   * Returns a string representation of this Operation, which can be read by 
-   * static parse method for class. 
-   * For a class C implementing the Operation interface, this method should 
-   * return a String s such that parsing the string 
-   * returns an object equivalent to this object, i.e. C.parse(this.s).equals(this).
-   * 
-   * @return string descriptor of {@link Operation} object.
-   */
-  String toParseableString();
+  GeneralType getOutputType();
 
   /**
    * Predicate to indicate whether object represents a static operation on the 
@@ -127,7 +99,7 @@ public interface Operation extends Comparable<Operation> {
    * 
    * @return class to which the operation belongs.
    */
-  Class<?> getDeclaringClass();
+  GeneralType getDeclaringType();
 
   /**
    * Predicate to indicate whether object represents a call to a constructor.
