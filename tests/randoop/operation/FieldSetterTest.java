@@ -13,6 +13,7 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
+import randoop.field.ClassWithFields;
 import randoop.field.FinalInstanceField;
 import randoop.field.InstanceField;
 import randoop.field.StaticField;
@@ -36,13 +37,13 @@ public class FieldSetterTest {
     try {
       StaticField f = new StaticField(c.getField("fourField"));
       FieldSet rhs = new FieldSet(f);
-      
+
       //types
       assertEquals("Should be one input type", 1, rhs.getInputTypes().size());
       assertEquals("Output type should be void", void.class, rhs.getOutputType());
-      
+
       //code generation
-      String expected = "randoop.operation.ClassWithFields.fourField = 24;" + Globals.lineSep;
+      String expected = "randoop.field.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
       Sequence seq0 = new Sequence().extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
@@ -50,7 +51,7 @@ public class FieldSetterTest {
       Statement st_rhs = new Statement(rhs);
       st_rhs.appendCode(null, vars, b);
       assertEquals("Expect assignment to static field",expected,b.toString());
-      
+
       //execution -- gives back null
       assertFalse("Initial value of static is not 24", (int)f.getValue(null) == 24);
       NormalExecution expectedExec = new NormalExecution(null,0);
@@ -61,29 +62,29 @@ public class FieldSetterTest {
       NormalExecution actualNExec = (NormalExecution)actualExec;
       assertTrue("Expect void result and zero execution", expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue() && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
       assertEquals("Expect value to have changed", 24, (int)f.getValue(null));
-      
+
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
       fail("test failed because of unexpected security exception");
     }
   }
-  
+
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
     try {
       InstanceField f = new InstanceField(c.getField("oneField"));
       FieldSet rhs = new FieldSet(f);
-      
+
       //types
       assertEquals("Should be two input types", 2, rhs.getInputTypes().size());
-      assertEquals("Output type should be void", void.class, rhs.getOutputType());      
-      
+      assertEquals("Output type should be void", void.class, rhs.getOutputType());
+
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignatureString("randoop.operation.ClassWithFields.ClassWithFields()"));
+      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignatureString("randoop.field.ClassWithFields.ClassWithFields()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
       Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
@@ -92,14 +93,14 @@ public class FieldSetterTest {
       Statement st_rhs = new Statement(rhs);
       st_rhs.appendCode(null, vars, b);
       assertEquals("Expect assignment to instance field",expected,b.toString());
-      
+
       //execution
       Object[] inputs = new Object[1];
       inputs[0] = 9;
       //null object
       ExecutionOutcome nullOutcome = rhs.execute(inputs, null);
       assertTrue("Expect null pointer exception", nullOutcome instanceof ExceptionalExecution && ((ExceptionalExecution)nullOutcome).getException() instanceof NullPointerException);
-      
+
       //real live object
       Object[] inputs2 = new Object[2];
       inputs2[0] = c.newInstance();
@@ -111,8 +112,8 @@ public class FieldSetterTest {
       NormalExecution actualNExec = (NormalExecution)actualExec;
       assertTrue("Expect void result and zero execution", expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue() && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
       assertEquals("Expect value to have changed", 9, (int)f.getValue(inputs2[0]));
-      
-      
+
+
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
@@ -125,7 +126,7 @@ public class FieldSetterTest {
       fail("test failed because ClassWithFields constructor not found");
     }
   }
-  
+
   @Test
   public void testFinalInstanceField() {
     Class<?> c = ClassWithFields.class;
@@ -144,7 +145,7 @@ public class FieldSetterTest {
       fail("test failed because of unexpected security exception");
     }
   }
-  
+
   @Test
   public void testStaticFinalField() {
     Class<?> c = ClassWithFields.class;
@@ -163,17 +164,17 @@ public class FieldSetterTest {
       fail("test failed because of unexpected security exception");
     }
   }
-  
+
   @Test
   public void parseable() {
-    String setterDesc = "<set>(int:randoop.operation.ClassWithFields.oneField)";
+    String setterDesc = "<set>(int:randoop.field.ClassWithFields.oneField)";
     try {
       FieldSet setter = FieldSet.parse(setterDesc);
       assertEquals("parse should return object that converts to string", setterDesc, setter.toParseableString());
     } catch (OperationParseException e) {
      fail("Parse error: " + e.getMessage());
     }
-    
+
   }
 
 }
