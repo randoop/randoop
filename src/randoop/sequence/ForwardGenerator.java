@@ -560,8 +560,8 @@ public class ForwardGenerator extends AbstractGenerator {
         throw new BugInRandoopException("type: " + t + ", sequence: " + chosenSeq);
       }
 
-      // If we were unlucky and selected a null value as the receiver
-      // for a method call, return with failure.
+      // Fail, if we were unlucky and selected a null or primitive value as the
+      // receiver for a method call.
       if (i == 0
           && operation.isMessage()
           && !(operation.isStatic())
