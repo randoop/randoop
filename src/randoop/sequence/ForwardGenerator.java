@@ -99,6 +99,7 @@ public class ForwardGenerator extends AbstractGenerator {
     }
   }
 
+  @Override
   public ExecutableSequence step() {
 
     long startTime = System.nanoTime();
@@ -388,7 +389,7 @@ public class ForwardGenerator extends AbstractGenerator {
   @SuppressWarnings("unchecked")
   private InputsAndSuccessFlag selectInputs(Operation operation) {
 
-    // Variable inputTypes containsthe  values required as input to the
+    // Variable inputTypes contains the  values required as input to the
     // statement given as a parameter to the selectInputs method.
 
     List<Class<?>> inputTypes = operation.getInputTypes();
@@ -468,7 +469,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // If we got here, it means we will not attempt to use a value already defined in S,
       // so we will have to augment S with new statements that yield a value of type inputTypes[i].
       // We will do this by assembling a list of candidate sequences n(stored in the list declared
-      // immediately below) that create one or more values of the appropriate type, 
+      // immediately below) that create one or more values of the appropriate type,
       // randomly selecting a single sequence from this list, and appending it to S.
       SimpleList<Sequence> l = null;
 
@@ -548,7 +549,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Now, find values that satisfy the constraint set.
       Match m = Match.COMPATIBLE_TYPE;
-      //if (i == 0 && statement.isInstanceMethod()) m = Match.EXACT_TYPE;
+      //if (i == 0 && (operation.isMessage() && ! operation.isStatic())) m = Match.EXACT_TYPE;
       Variable randomVariable = chosenSeq.randomVariableForTypeLastStatement(t, m);
 
       // We are not done yet: we have chosen a sequence that yields a value of the required
@@ -562,10 +563,11 @@ public class ForwardGenerator extends AbstractGenerator {
       // If we were unlucky and selected a null value as the receiver
       // for a method call, return with failure.
       if (i == 0
-          && operation.isMessage() 
-          && !(operation.isStatic()) 
-          && chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization()) {
-        
+          && operation.isMessage()
+          && !(operation.isStatic())
+          && (chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization()
+              || randomVariable.getType().isPrimitive())) {
+
         return new InputsAndSuccessFlag (false, null, null);
 
       }
@@ -593,8 +595,9 @@ public class ForwardGenerator extends AbstractGenerator {
 
   /**
    * Returns the set of sequences that are included in other sequences to
-   * generate inputs (and, so, are subsumed by another sequence).  
+   * generate inputs (and, so, are subsumed by another sequence).
    */
+  @Override
   public Set<Sequence> getSubsumedSequences() {
     return subsumed_sequences;
   }
