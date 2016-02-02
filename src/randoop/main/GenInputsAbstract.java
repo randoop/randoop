@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import randoop.util.Randomness;
-import randoop.util.Util;
-
 import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
 import plume.Unpublicized;
+
+import randoop.util.Randomness;
+import randoop.util.Util;
 
 /**
  * Container for Randoop options.
@@ -216,7 +216,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether OutOfMemoryException is an ERROR, EXPECTED or INVALID")
   public static BehaviorType oom_exception = BehaviorType.INVALID;
-  
+
   /**
    * Ignore the situation where a code sequence that previously executed
    * normally throws an exception when executed as part of a longer test
@@ -230,7 +230,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    */
   @Option("Whether to ignore non-determinism in test execution")
   public static boolean ignore_flaky_tests = false;
-  
+
   /**
    * Maximum number of seconds to spend generating tests.
    *
@@ -313,7 +313,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Values used in tests")
   @Option("Use null as an input with the given frequency")
-  public static double null_ratio = 0;
+  public static double null_ratio = 0.05;
 
   /**
    * Do not use <code>null</code> as input to methods or constructors when no
@@ -327,7 +327,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * determines the frequency that <code>null</code> is used as an input.
    */
   @Option("Never use null as input to methods or constructors")
-  public static boolean forbid_null = true;
+  public static boolean forbid_null = false;
 
   /**
    * A file containing literal values to be used as inputs to methods under test.

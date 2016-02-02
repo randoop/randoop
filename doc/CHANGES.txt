@@ -1,5 +1,11 @@
 Version 2.?, released ????
 
+Changed the defaults for forbid-null and null-ratio to forbid-null=false, and 
+null-ratio=0.05.
+
+Fixed a bug in which a primitive type would be selected as a receiver of a
+method call.
+
 Minor refactoring of randoop.operations and addition of randoop.field in
 preparation for integrating types.
 

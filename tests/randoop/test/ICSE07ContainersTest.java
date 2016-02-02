@@ -31,16 +31,16 @@ import junit.framework.TestCase;
  * across 4 data structures. The coverage level that we check of is the
  * one published in the ICSE 2007 paper "Feedback-directed Random Test
  * Generation" (Section 3.1).
- * 
+ *
  * For each data structure, we expect Randoop to achieve the published
  * coverage in no longer than 2 minutes.
- * 
+ *
  * Note that this test does not constitute the experiment published in
  * the paper; it only checks that the achievable coverage number can be in
  * fact achieved by Randoop.
- * 
+ *
  * IMPORTANT: this test DOES NOT work if GenInputsAbstract.repeat_heuristic is
- * disabled. If the heuristic in {@link randoop.sequence.ForwardGenerator ForwardGenerator} 
+ * disabled. If the heuristic in {@link randoop.sequence.ForwardGenerator ForwardGenerator}
  * is not used, the branch count targets are not met.
  */
 public class ICSE07ContainersTest extends TestCase {
@@ -51,8 +51,8 @@ public class ICSE07ContainersTest extends TestCase {
       Pattern pattern, IStopper stopper, Set<String> excludeNames) {
 
     System.out.println("ICSE 2006 container: " + name);
-    
-    List<Operation> statements = 
+
+    List<Operation> statements =
       OperationExtractor.getOperations(classList, new DefaultReflectionPredicate(pattern,excludeNames));
     System.out.println("Number of operations: " + statements.size());
     assertTrue("model should not be empty", !statements.isEmpty());
@@ -120,7 +120,13 @@ public class ICSE07ContainersTest extends TestCase {
         return TreeMap.tests.size() >= 106;
       }
     };
-    runRandoop("TreeMap", classList, Pattern.compile("toString|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"), stopper, new TreeSet<String>());
+    Set<String> excludeNames = new TreeSet<>();
+    for (Class<?> c : classList) {
+      for (Field f : c.getFields()) {
+        excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
+      }
+    }
+    runRandoop("TreeMap", classList, Pattern.compile("toString|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"), stopper, excludeNames);
     assertEquals(106, TreeMap.tests.size());
   }
 
