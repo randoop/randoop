@@ -83,12 +83,12 @@ tests: clean-tests $(DYNCOMP) bin prepare randoop-tests covtest arraylist  resul
 randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-reflection test-generation
 
 # build pre-agent instrumentation jar
-AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/*.java)
-bin/randoop/instrument/Premain.class: bin $(AGENT_JAVA_FILES)
+AGENT_JAVA_FILES = $(wildcard src/randoop/agent/*.java)
+bin/randoop/agent/Premain.class: bin $(AGENT_JAVA_FILES)
 	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(AGENT_JAVA_FILES)
-randoop_agent.jar : bin/randoop/instrument/Premain.class src/randoop/instrument/manifest.txt
-	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/instrument/manifest.txt \
-	  randoop/instrument/Premain.class
+randoop_agent.jar : bin/randoop/agent/Premain.class src/randoop/agent/manifest.txt
+	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/agent/manifest.txt \
+	  randoop/agent/Premain.class
 
 ifneq (,$(findstring 1.8.,$(shell java -version 2>&1)))
   DOCLINT?=-Xdoclint:all,-missing
@@ -422,13 +422,13 @@ test-reflection: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.FieldReflectionTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.reflection.VisibilityBridgeTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.reflection.VisibilityTest
-	
+
 # run JUnit4 test generation tests
 test-generation: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestFilteringTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestClassificationTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.test.predicate.ExceptionPredicateTest
-	
+
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
 	rm -rf systemtests/df-scratch

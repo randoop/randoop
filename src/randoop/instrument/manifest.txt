@@ -1,2 +1,0 @@
-Premain-Class: randoop.instrument.Premain
-Can-Redefine-Classes: true
