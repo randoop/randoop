@@ -46,6 +46,7 @@ import randoop.JunitFileWriter;
 import randoop.LiteralFileReader;
 import randoop.MultiVisitor;
 import randoop.ObjectContract;
+import randoop.RandoopClassLoader;
 import randoop.RandoopListenerManager;
 import randoop.SeedSequences;
 import randoop.experiments.CodeCoverageTracker;
@@ -78,6 +79,7 @@ import randoop.test.ValidityCheckingVisitor;
 import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.types.TypeNames;
 import randoop.util.ClassFileConstants;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
@@ -89,6 +91,7 @@ import randoop.util.predicate.Predicate;
 
 import cov.Branch;
 import cov.Coverage;
+import javassist.ClassPool;
 
 public class GenTests extends GenInputsAbstract {
 
@@ -178,15 +181,6 @@ public class GenTests extends GenInputsAbstract {
     // If an initializer method was specified, execute it
     executeInitializationRoutine(1);
 
-    // Find classes to test.
-    if (classlist == null && methodlist == null && testclass.size() == 0) {
-      System.out.println("You must specify some classes or methods to test.");
-      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
-      System.exit(1);
-    }
-
-    List<Class<?>> allClasses = findClassesFromArgs(options);
-    
     VisibilityPredicate visibility;
     Package junitPackage = Package.getPackage(GenInputsAbstract.junit_package_name);
     if (junitPackage == null || GenInputsAbstract.only_test_public_members) {
@@ -195,26 +189,7 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(junitPackage);
     }
 
-    // Remove private (non-.isVisible) classes and abstract classes
-    // and interfaces.
-    List<Class<?>> classes = new ArrayList<>(allClasses.size());
-    for (Class<?> c : allClasses) {
-      if (Modifier.isAbstract (c.getModifiers()) && !c.isEnum()) {
-        System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
-      } else if (! visibility.isVisible (c)) {
-        System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
-      } else {
-        classes.add(c);
-      }
-    }
-
-    // Make sure each of the classes is visible.  Should really make sure
-    // there is at least one visible constructor/factory in each class as well.
-    for (Class<?> c : classes) {
-      if (! visibility.isVisible (c)) {
-        throw new Error ("Specified class " + c + " is not visible");
-      }
-    }
+    List<Class<?>> classes = getClassesUnderTest(visibility);
 
     if (classes.isEmpty()) {
       System.out.println("No classes to test");
@@ -259,13 +234,13 @@ public class GenTests extends GenInputsAbstract {
         omitFields.add(cls.getName() + "." + cov.Constants.TRUE_BRANCHES);
       }
     }
-    
+
     CodeCoverageTracker covTracker = new CodeCoverageTracker(covClasses);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     listenerMgr.addListener(covTracker);
-    
+
     DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
-    List<Operation> model = OperationExtractor.getOperations(classes, 
+    List<Operation> model = OperationExtractor.getOperations(classes,
         reflectionPredicate);
 
     // Always add Object constructor (it's often useful).
@@ -284,7 +259,7 @@ public class GenTests extends GenInputsAbstract {
 
         for (String line : rdr) {
           Operation op = OperationParser.parse(line);
-          if (op.satisfies(reflectionPredicate) && !model.contains(op)) {
+          if (op.satisfies(reflectionPredicate) && ! model.contains(op)) {
             model.add(op);
           }
         }
@@ -312,7 +287,7 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> components = new LinkedHashSet<Sequence>();
     if (!componentfile_ser.isEmpty()) {
       for (String onefile : componentfile_ser) {
-        try (ObjectInputStream objectos = 
+        try (ObjectInputStream objectos =
             new ObjectInputStream(
                 new GZIPInputStream(new FileInputStream(onefile)))) {
           Set<Sequence> seqset = (Set<Sequence>)objectos.readObject();
@@ -350,26 +325,26 @@ public class GenTests extends GenInputsAbstract {
     }
 
     addClassLiterals(componentMgr, classes);
-    
+
     /////////////////////////////////////////
     // Create the generator for this session.
     AbstractGenerator explorer;
     explorer = new ForwardGenerator(
-        model, 
-        timelimit * 1000, 
-        inputlimit, 
-        outputlimit, 
-        componentMgr, 
-        null, 
+        model,
+        timelimit * 1000,
+        inputlimit,
+        outputlimit,
+        componentMgr,
+        null,
         listenerMgr);
     /////////////////////////////////////////
 
-    ////// setup for check generation 
+    ////// setup for check generation
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, classes);
-    
+
     // Define test predicate to decide which test sequences will be output
     Predicate<ExecutableSequence> isOutputTest = createTestOutputPredicate(objectConstructor);
-    
+
     // list of visitors for collecting information from test sequences
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
 
@@ -397,14 +372,14 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
-    
+
     ExecutionVisitor visitor;
     if (visitors.isEmpty()) {
       visitor = new DummyVisitor();
     } else {
       visitor = new MultiVisitor(visitors);
     }
-    
+
     explorer.addTestPredicate(isOutputTest);
     explorer.addTestCheckGenerator(testGen);
     explorer.addExecutionVisitor(visitor);
@@ -412,7 +387,7 @@ public class GenTests extends GenInputsAbstract {
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf ("Explorer = %s\n", explorer);
     }
-    
+
     // Generate tests
     try {
       explorer.explore();
@@ -422,7 +397,7 @@ public class GenTests extends GenInputsAbstract {
 
       System.exit(1);
     }
-   // once tests generated, 
+   // once tests generated,
 
     if (GenInputsAbstract.output_branches != null) {
       outputCoverageBranches(covTracker);
@@ -446,7 +421,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (GenInputsAbstract.dont_output_tests)
       return true;
-  
+
     if (! GenInputsAbstract.no_error_revealing_tests) {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
       if (errorSequences.size() > 0) {
@@ -460,7 +435,7 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
-    
+
     if (! GenInputsAbstract.no_regression_tests) {
       List<ExecutableSequence> regressionSequences = explorer.getRegressionSequences();
       if (regressionSequences.size() > 0) {
@@ -474,22 +449,73 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
-    
+
     return true;
+  }
+
+  /**
+   * Collects the classes under test using the command-line arguments.
+   * Also, creates a class loader that will instrument classes for tracking
+   * usage of classes-under-test in test methods for test filtering, and
+   * provides the loader to {@link randoop.types.TypeNames}.
+   *
+   * @param visibility  the {@link randoop.reflection.VisibilityPredicate} to
+   *                    test accessibility of classes and class members.
+   * @return the list of visible classes from the
+   */
+  private List<Class<?>> getClassesUnderTest(VisibilityPredicate visibility) {
+    // Find classes to test.
+    if (classlist == null && methodlist == null && testclass.size() == 0) {
+      System.out.println("You must specify some classes or methods to test.");
+      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
+      System.exit(1);
+    }
+
+    Set<String> classnames = getClassnamesFromArgs(options);
+
+    // setup the class loader; must be done before loading classes for test gen
+    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), classnames));
+
+    ClassNameErrorHandler errorHandler = new ThrowClassNameError();
+    if (GenInputsAbstract.silently_ignore_bad_class_names) {
+      errorHandler = new WarnOnBadClassName();
+    }
+
+    List<Class<?>> classes = new ArrayList<>(classnames.size());
+    for (String classname : classnames) {
+      Class<?> c = null;
+      try {
+        c = TypeNames.getTypeForName(classname);
+      } catch (ClassNotFoundException e) {
+        errorHandler.handle(classname);
+      }
+
+      // ignore private (non-.isVisible) classes and abstract classes
+      // and interfaces.
+      if (Modifier.isAbstract (c.getModifiers()) && !c.isEnum()) {
+        System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
+      } else if (! visibility.isVisible (c)) {
+        System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
+      } else {
+        classes.add(c);
+      }
+
+    }
+    return classes;
   }
 
   /**
    * Handles the occurrence of a {@code SequenceExceptionError} that indicates a
    * flaky test has been found.
    * Prints information to help user identify source of flakiness, including
-   * exception, statement that threw the exception, the full sequence where 
+   * exception, statement that threw the exception, the full sequence where
    * exception was thrown, and the input subsequence.
-   * 
+   *
    * @param explorer  the test generator
    * @param e  the sequence exception
    */
   private void handleFlakySequenceException(AbstractGenerator explorer, SequenceExceptionError e) {
-    
+
     String msg = String.format("%n%nERROR: Randoop stopped because of a flaky test.%n%n"
         + "This can happen when Randoop is run on methods that side-effect global "
         + "state.%n"
@@ -497,9 +523,9 @@ public class GenTests extends GenInputsAbstract {
         + "section of the user manual.%n"
         + "For more details, rerun with logging turned on with --log=FILENAME.%n");
     System.out.printf(msg);
-    
+
     Sequence subsequence = e.getSubsequence();
-    
+
     if (Log.isLoggingOn()) {
       Log.log(msg);
       Log.log(String.format("%nException:%n  %s%n", e.getError()));
@@ -543,14 +569,14 @@ public class GenTests extends GenInputsAbstract {
   /**
    * Builds the test predicate that determines whether a particular sequence will
    * be included in the output based on command-line arguments.
-   * 
+   *
    * @param objectConstructor  the constructor for the Object class
-   * @return the predicate 
+   * @return the predicate
    */
   public Predicate<ExecutableSequence> createTestOutputPredicate(ConstructorCall objectConstructor) {
     Predicate<ExecutableSequence> isOutputTest;
     if (GenInputsAbstract.dont_output_tests) {
-      isOutputTest = new AlwaysFalse<>();      
+      isOutputTest = new AlwaysFalse<>();
     } else {
       Predicate<ExecutableSequence> baseTest;
       // base case: exclude sequences with just "new Object()", keep everything else
@@ -583,9 +609,9 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Outputs JUnit tests for the sequence list. And, if the user indicates by
-   * command-line argument {@link GenInputsAbstract#output_tests_serialized} 
+   * command-line argument {@link GenInputsAbstract#output_tests_serialized}
    * also writes serialized tests.
-   * 
+   *
    * @param sequences  the sequences to output
    * @param junitPrefix  the filename prefix for test output
    */
@@ -598,10 +624,10 @@ public class GenTests extends GenInputsAbstract {
 
     writeJUnitTests (junit_output_dir, sequences, null, junitPrefix);
   }
-  
+
   /**
-   * Manages output for serialized objects. 
-   * 
+   * Manages output for serialized objects.
+   *
    * @param obj  the object to serialize
    * @param filename  the file name for serialization
    */
@@ -613,18 +639,19 @@ public class GenTests extends GenInputsAbstract {
       throw new Error("Unable to serialize object: " + e);
     } catch (IOException e) {
       throw new Error(e);
-    } 
+    }
   }
-  
+
   /**
    * Outputs coverage branches to the file {@link GenInputsAbstract#output_branches}.
    * Branches are sorted by their string representation.
-   * 
+   *
    * @param covTracker  the coverage tracker with branches
    * @throws Error  if an {@link IOException} is thrown during output
    */
   private void outputCoverageBranches(CodeCoverageTracker covTracker) throws Error {
     Comparator<Branch> branchComparator = new Comparator<Branch>() {
+      @Override
       public int compare(Branch o1, Branch o2) {
         return o1.toString().compareTo(o2.toString());
       }
@@ -645,7 +672,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Returns the list of contracts to be used in contract checking.
-   * 
+   *
    * @param classes  the list of annotated classes for retrieving contracts
    * @return the list of {@code ObjectContract} objects for contract checking
    */
@@ -667,30 +694,30 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Creates the test check generator for this run based on the command-line
-   * arguments. 
+   * arguments.
    * The goal of the generator is to produce all appropriate checks for each
    * sequence it is applied to. Validity and contract checks are always needed
    * to determine which sequences have invalid or error behaviors, even if only
    * regression tests are desired. So, this generator will always be built.
-   * If in addition regression tests are to be generated, then the regression 
+   * If in addition regression tests are to be generated, then the regression
    * checks generator is added.
-   * 
+   *
    * @param visibility  the visibility predicate
    * @param classes  the classes for obtaining contract checks
    * @return the {@code TestCheckGenerator} that reflects command line arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, List<Class<?>> classes) {
-    
+
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
     TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid, ! GenInputsAbstract.ignore_flaky_tests);
-    
-    // extend with contract checker 
+
+    // extend with contract checker
     List<ObjectContract> contracts = getContracts(classes);
     ExceptionPredicate isError = new ExceptionBehaviorPredicate(BehaviorType.ERROR);
     ContractCheckingVisitor contractVisitor = new ContractCheckingVisitor(contracts,isError);
     testGen = new ExtendGenerator(testGen, contractVisitor);
-    
+
     // and, generate regression tests, unless user says not to
     if (! GenInputsAbstract.no_regression_tests) {
       ExceptionPredicate isExpected = new AlwaysFalseExceptionPredicate();
@@ -700,18 +727,18 @@ public class GenTests extends GenInputsAbstract {
       } else {
         isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
       }
-      ExpectedExceptionCheckGen expectation; 
+      ExpectedExceptionCheckGen expectation;
       expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
-     
-      RegressionCaptureVisitor regressionVisitor; 
+
+      RegressionCaptureVisitor regressionVisitor;
       regressionVisitor = new RegressionCaptureVisitor(expectation, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }
     return testGen;
   }
-  
-  
+
+
   /**
    * Adds literals to the component manager, by parsing any literals
    * files specified by the user.
@@ -812,7 +839,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Execute the initialization routine (if user specified one)
-   * 
+   *
    * @param phase  the phase number passed to initialization routine
    */
   public static void executeInitializationRoutine (int phase) {
@@ -899,7 +926,7 @@ public class GenTests extends GenInputsAbstract {
     }
     System.out.printf ("Finished saving sequences%n");
   }
-  
+
   /** Print out usage error and stack trace and then exit **/
   static void usage (Throwable t, String format, Object... args) {
 
