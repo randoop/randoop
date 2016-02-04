@@ -4,6 +4,7 @@ import java.util.List;
 
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
+import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
@@ -28,9 +29,10 @@ import randoop.util.RecordProcessor;
  * Capitalized text must appear literally.  Lowercase text is as follows:
  * <ul>
  * <li>classname is the fully-qualified name of a valid class.
- * More specifically, Class.forName(classname) must return a valid Class object.
+ * More specifically, TypeNames.getTypeForName(classname) must return a valid
+ * Class object.
  * <li>Each type:value pair describes the type and value of a literal (for
- * example, <tt>int:3</tt>).  
+ * example, <tt>int:3</tt>).
  * </ul>
  * Blank lines and comment lines (lines starting with "#") are ignored, both
  * between records and inside records.
@@ -60,6 +62,7 @@ public class LiteralFileReader {
       new MultiMap<Class<?>, NonreceiverTerm>();
 
     RecordProcessor processor = new RecordProcessor() {
+      @Override
       public void processRecord(List<String> lines) {
 
         if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals(CLASSNAME))) {
@@ -72,7 +75,7 @@ public class LiteralFileReader {
 
         Class<?> cls = null;
         try {
-          cls = Class.forName(lines.get(1));
+          cls = TypeNames.getTypeForName(lines.get(1));
         } catch (ClassNotFoundException e) {
           throwInvalidRecordError(e, lines, 1);
         }

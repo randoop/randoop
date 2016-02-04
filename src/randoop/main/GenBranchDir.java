@@ -19,6 +19,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
+import plume.Pair;
+
 import randoop.DummyVisitor;
 import randoop.experiments.DFResultsOneSeq;
 import randoop.experiments.DFResultsOneSeq.VariableInfo;
@@ -46,10 +51,6 @@ import randoop.util.SimpleList;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
-import plume.Option;
-import plume.Options;
-import plume.Options.ArgException;
-import plume.Pair;
 
 public class GenBranchDir {
 
@@ -253,12 +254,12 @@ public class GenBranchDir {
     // System.out.printf ("covered = %s%n", coveredByRandoop);
     // System.out.printf ("uncovered = %s%n", uncoveredByRandoop);
     for (DFResultsOneSeq r : dfOut.results) {
-      // System.out.printf ("r = %s%n", 
+      // System.out.printf ("r = %s%n",
       //                    ((Branch)r.frontierBranch).getOppositeBranch());
       if (!coveredByRandoop.contains(((Branch)r.frontierBranch).getOppositeBranch())) {
         assert uncoveredByRandoop.contains
           (((Branch)r.frontierBranch).getOppositeBranch()) :
-          uncoveredByRandoop + " " + coveredByRandoop + " " 
+          uncoveredByRandoop + " " + coveredByRandoop + " "
             + ((Branch)r.frontierBranch).getOppositeBranch();
         processOneSequence(r);
       } else {
@@ -334,6 +335,7 @@ public class GenBranchDir {
 
     // Parse the file using a RecordListReader.
     RecordProcessor processor = new RecordProcessor() {
+      @Override
       public void processRecord(List<String> record) {
         try {
           sequences.add(Sequence.parse(record));
@@ -418,7 +420,7 @@ public class GenBranchDir {
     // Print out the source code surrounding the frontier branch.
     String lineSource = null;
     try {
-      lineSource = Coverage.getMethodSource(Class.forName(r.frontierBranch.getClassName()),
+      lineSource = Coverage.getMethodSource(TypeNames.getTypeForName(r.frontierBranch.getClassName()),
           r.frontierBranch.getLineNumber(), ">>");
     } catch (ClassNotFoundException e) {
       throw new Error(e);
@@ -527,6 +529,7 @@ public class GenBranchDir {
     out.append("WILL TRY TWO-VARIABLE STRATEGIES.");
     Branch goalBranch = ((Branch)r.frontierBranch).getOppositeBranch();
     Comparator<VariableInfo> comp = new Comparator<VariableInfo>() {
+      @Override
       public int compare(VariableInfo o1, VariableInfo o2) {
         return new Integer(o1.value.getDeclIndex()).compareTo(new Integer(o2.value.getDeclIndex()));
       }
@@ -608,6 +611,7 @@ public class GenBranchDir {
 
   private static List<MutableVariable> sortByDeclIndex(Set<MutableVariable> predecessors) {
     Comparator<MutableVariable> c = new Comparator<MutableVariable>() {
+      @Override
       public int compare(MutableVariable o1, MutableVariable o2) {
         return new Integer(o1.getDeclIndex()).compareTo(new Integer(o2.getDeclIndex()));
       }
@@ -678,11 +682,11 @@ public class GenBranchDir {
         out.println("Primitive value or string...");
         return null;
       }
-      
+
       //TODO statement.getValue is a hack that need to revisit
       assert st.getValue() == null : sequence + "," + var;
- 
-      
+
+
       // Find subsequences that create the type.
       // TODO do components have things like "x = null"? We don't want those.
       SimpleList<Sequence> comps = getComponents(st.getOutputType(), false);

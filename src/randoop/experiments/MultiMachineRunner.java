@@ -12,10 +12,12 @@ import plume.Option;
 import plume.Options;
 import plume.Options.ArgException;
 
+import randoop.types.TypeNames;
+
 
 /**
  * MIT-specific! Will probably not work outside CSAIL.
- * 
+ *
  * A program that issues a list of make targets, possibly across
  * multiple machines (via ssh).
  */
@@ -102,7 +104,7 @@ public class MultiMachineRunner {
 
     Class<TargetMaker> targetMakerClass = null;
     try {
-      targetMakerClass = (Class<TargetMaker>) Class.forName(targetMakerName);
+      targetMakerClass = (Class<TargetMaker>) TypeNames.getTypeForName(targetMakerName);
     } catch (ClassNotFoundException e1) {
       System.out.println("Did not find target maker class: " + targetMakerName);
       System.exit(1);
