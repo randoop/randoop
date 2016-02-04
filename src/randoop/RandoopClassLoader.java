@@ -88,7 +88,7 @@ public class RandoopClassLoader extends ClassLoader {
       flagField.setModifiers(Modifier.STATIC);
       cc.addField(flagField, "false");
     } catch (CannotCompileException e) {
-      throw new Error("error in Randoop class loader: " + e);
+      throw new Error("error adding instrumentation field in Randoop class loader: " + e);
     }
     try {
       // add static method to poll and reset the field
@@ -102,7 +102,7 @@ public class RandoopClassLoader extends ClassLoader {
       pollMethod.setModifiers(Modifier.STATIC | Modifier.PUBLIC);
       cc.addMethod(pollMethod);
     } catch (CannotCompileException e) {
-      throw new Error("error in Randoop class loader: " + e);
+      throw new Error("error adding instrumentation method in Randoop class loader: " + e);
     }
 
     // add code to entry of each method to indicate that called
@@ -115,7 +115,7 @@ public class RandoopClassLoader extends ClassLoader {
         }
       }
     } catch (CannotCompileException e) {
-      throw new Error("error in Randoop class loader: " + e);
+      throw new Error("error instrumenting method in Randoop class loader: " + e);
     }
     try {
       for (CtConstructor c : cc.getConstructors()) {
@@ -123,7 +123,7 @@ public class RandoopClassLoader extends ClassLoader {
       }
 
     } catch (CannotCompileException e) {
-      throw new Error("error in Randoop class loader: " + e);
+      throw new Error("error instrumenting constructor in Randoop class loader: " + e);
     }
   }
 }
