@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 import randoop.DummyVisitor;
 import randoop.EqualsHashcode;
@@ -14,6 +15,7 @@ import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
 import randoop.Globals;
 import randoop.ObjectContract;
+import randoop.RandoopClassLoader;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.reflection.PublicVisibilityPredicate;
@@ -23,21 +25,23 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.types.TypeNames;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Util;
 
+import javassist.ClassPool;
 import junit.framework.TestCase;
 
 public class SequenceTests extends TestCase {
 
   /**
    * Tests the sequence execution and code generation aspects of Randoop.
-   * 
+   *
    * Reads in a file describing a collection of sequences along with the test
    * code that Randoop should generate after executing them. The file consists
    * of a collection of records, each of the form:
-   * 
+   *
    * START TEST
    * TEST_ID
    * <string identifying this test for debugging>
@@ -46,23 +50,25 @@ public class SequenceTests extends TestCase {
    * EXPECTED_CODE
    * <Expected Java code resulting from sequence execution>
    * END RECORD
-   * 
+   *
    * Each sequence is parsed, then two checks performed:
-   * 
+   *
    * 1. (Test parsing code) s.toParseableString() can be parsed back into an equivalent sequence
    * 2. (Test execution and test generation code) sequence is executed and the resulting test code is
    *    compared with the expected code from the "EXPECTED_CODE" field in the record.
    */
   public void test1() throws Exception {
-    
+
     RecordProcessor processor = new RecordProcessor() {
+      @Override
       public void processRecord(List<String> lines) {
-        
+
         parseRecord(lines);
 
       }
     };
-    
+
+    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), new TreeSet<String>()));
     boolean long_format_old = GenInputsAbstract.long_format;
     GenInputsAbstract.long_format = true;
     RecordListReader reader = new RecordListReader("TEST", processor);
@@ -71,10 +77,10 @@ public class SequenceTests extends TestCase {
     reader.parse(b);
     GenInputsAbstract.long_format = long_format_old;
   }
-  
+
 
   /**
-   * The "default" set of visitors that Randoop uses during execution. 
+   * The "default" set of visitors that Randoop uses during execution.
    */
   private static final TestCheckGenerator testGen;
   static {
@@ -83,10 +89,10 @@ public class SequenceTests extends TestCase {
     contracts.add(new EqualsToNullRetFalse());
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
-    
+
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
-    ExpectedExceptionCheckGen expectation; 
+    ExpectedExceptionCheckGen expectation;
     expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
     testGen = new ExtendGenerator(
         new ContractCheckingVisitor(contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
@@ -105,7 +111,7 @@ public class SequenceTests extends TestCase {
     if (!lines.get(2).equals("SEQUENCE")) {
       throw new RuntimeException("Malformed test record (does not have a \"SEQUENCE\" field): " + lines.toString());
     }
-    
+
     int currIdx = 3;
     List<String> sequenceLines = new ArrayList<String>();
     while (currIdx < lines.size() && !lines.get(currIdx).equals("EXPECTED_CODE")) {
@@ -138,12 +144,12 @@ public class SequenceTests extends TestCase {
     }
 
     checkListsEqual(sequenceLines, Arrays.asList(sequence.toParseableString().split(Globals.lineSep)), testId);
-    
+
     ExecutableSequence ds = new ExecutableSequence(sequence);
     ds.execute(new DummyVisitor(), testGen);
     checkListsEqual(expectedCode, Arrays.asList(ds.toCodeString().split(Globals.lineSep)), testId);
   }
-  
+
   private static void checkListsEqual(List<String> expected, List<String> actual, String testId) {
 
     expected = trimmedLines(expected);
@@ -157,7 +163,7 @@ public class SequenceTests extends TestCase {
       assertEquals(failureMessage(testId, "(lists differ at index " + i + ")", expected, actual), expected.get(i), actual.get(i));
     }
   }
-  
+
   private static String failureMessage(String testId, String msg, List<String> expected, List<String> actual) {
     StringBuilder b = new StringBuilder();
     b.append("Failure in test " + testId + ": " + msg + ".");
@@ -187,5 +193,5 @@ public class SequenceTests extends TestCase {
     }
     return trimmed;
   }
-  
+
 }

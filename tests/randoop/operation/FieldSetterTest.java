@@ -6,13 +6,16 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
+import randoop.RandoopClassLoader;
 import randoop.field.ClassWithFields;
 import randoop.field.FinalInstanceField;
 import randoop.field.InstanceField;
@@ -21,6 +24,9 @@ import randoop.field.StaticFinalField;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.TypeNames;
+
+import javassist.ClassPool;
 
 
 /**
@@ -30,6 +36,12 @@ import randoop.sequence.Variable;
  *
  */
 public class FieldSetterTest {
+
+
+  @BeforeClass
+  public static void setup() {
+    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), new TreeSet<String>()));
+  }
 
   @Test
   public void testStaticField() {

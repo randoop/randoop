@@ -6,20 +6,31 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import randoop.Globals;
 import randoop.NormalExecution;
+import randoop.RandoopClassLoader;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.TypeNames;
+
+import javassist.ClassPool;
 
 /**
  * EnumConstantTest defines unit tests for {@link randoop.EnumConstant}.
  *
  */
 public class EnumConstantTest {
+
+  @BeforeClass
+  public static void setup() {
+    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), new TreeSet<String>()));
+  }
 
   @Test
   public void parseConstraint() {
@@ -32,7 +43,7 @@ public class EnumConstantTest {
       fail("Parse error: " + e.getMessage());
     }
   }
-  
+
   @SuppressWarnings("unused")
   @Test
   public void parseErrors() {
@@ -44,7 +55,7 @@ public class EnumConstantTest {
     String badType = "SEFT:THREE";
     String badValue = "randoop.operation.SimpleEnumForTests:FOUR";
     String nonEnum = "randoop.operation.EnumConstantTest:FIVE";
-    
+
     try {
       EnumConstant ec = EnumConstant.parse(missingColon);
       fail("Expected StatementKindParseException to be thrown");
@@ -53,10 +64,10 @@ public class EnumConstantTest {
           "<type>:<value>" + " but description is \"" + missingColon + "\".";
       assertEquals("Expecting missing colon message",msg,e.getMessage());
     }
-    
-    String errorPrefix1 = "Error when parsing type-value pair "; 
+
+    String errorPrefix1 = "Error when parsing type-value pair ";
     String errorPrefix2 = " for an enum description of the form <type>:<value>.";
-    
+
     try {
       EnumConstant ec = EnumConstant.parse(missingType);
       fail("Expected StatementKindParseException to be thrown");
@@ -64,7 +75,7 @@ public class EnumConstantTest {
       String msg = errorPrefix1 + missingType + errorPrefix2 + " No type given.";
       assertEquals("Expecting missing type message",msg,e.getMessage());
     }
-    
+
     try {
       EnumConstant ec = EnumConstant.parse(missingValue);
       fail("Expected StatementKindParseException to be thrown");
@@ -72,7 +83,7 @@ public class EnumConstantTest {
       String msg = errorPrefix1 + missingValue + errorPrefix2 + " No value given.";
       assertEquals("Expecting missing value message",msg,e.getMessage());
     }
-    
+
     try {
       EnumConstant ec = EnumConstant.parse(spaceInType);
       fail("Expected StatementKindParseException to be thrown");
@@ -88,7 +99,7 @@ public class EnumConstantTest {
       String msg = errorPrefix1 + spaceInValue + errorPrefix2 + " The value has unexpected whitespace characters.";
       assertEquals("Expecting space in value message",msg,e.getMessage());
     }
-    
+
     try {
       EnumConstant ec = EnumConstant.parse(badType);
       fail("Expected StatementKindParseException to be thrown");
@@ -111,28 +122,28 @@ public class EnumConstantTest {
       assertEquals("Expecting nonenum message",msg,e.getMessage());
     }
   }
-  
+
   @Test
   public void testInheritedMethods() {
     //skipping reflection
     EnumConstant ec1 = new EnumConstant(SimpleEnumForTests.ONE);
     EnumConstant ec1_2 = new EnumConstant(SimpleEnumForTests.ONE);
     EnumConstant ec2 = new EnumConstant(SimpleEnumForTests.TWO);
-    
+
     //equals and hashcode
     assertEquals("Object built from same constant should be equal",ec1,ec1_2);
     assertFalse("Objects of different constants should not be equal",ec1.equals(ec2));
     assertEquals("Objects built from same constant should have same hashcode",ec1.hashCode(),ec1_2.hashCode());
-    
+
     //types
     assertTrue("Should be no input types", ec1.getInputTypes().isEmpty());
     assertEquals("Output type should match enum type of constant",SimpleEnumForTests.ONE.getDeclaringClass(),ec1.getOutputType());
-    
+
     //Execution
     NormalExecution exec = new NormalExecution(ec1.value(),0);
     NormalExecution actual = (NormalExecution)ec1.execute(new Object[0], null);
     assertTrue("Execution should be simply returning value",exec.getRuntimeValue().equals(actual.getRuntimeValue()) && exec.getExecutionTime() == actual.getExecutionTime());
-    
+
     //code generation
     //need a sequence where variable lives
     String expected = "randoop.operation.SimpleEnumForTests simpleEnumForTests0 = randoop.operation.SimpleEnumForTests.TWO;" + Globals.lineSep;

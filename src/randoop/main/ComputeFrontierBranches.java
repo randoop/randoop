@@ -12,19 +12,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
+import plume.Option;
+import plume.Options;
+import plume.Options.ArgException;
+
+import randoop.RandoopClassLoader;
 import randoop.experiments.DataFlowInput;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
+import randoop.types.TypeNames;
 import randoop.util.Files;
 
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
-import plume.Option;
-import plume.Options;
-import plume.Options.ArgException;
+import javassist.ClassPool;
 
 public class ComputeFrontierBranches {
 
@@ -65,6 +70,8 @@ public class ComputeFrontierBranches {
       System.exit(1);
     }
 
+    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), new TreeSet<String>()));
+
     Map<CoverageAtom,Set<Sequence>> covmap = new LinkedHashMap<CoverageAtom, Set<Sequence>>();
 
     System.out.print("Reading coverage map...");
@@ -86,6 +93,7 @@ public class ComputeFrontierBranches {
     // sets will always result in the same output. This help with regression
     // testing.
     Comparator<Branch> branchComparator = new Comparator<Branch>() {
+      @Override
       public int compare(Branch o1, Branch o2) {
         return o1.toString().compareTo(o2.toString());
       }
