@@ -34,7 +34,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   public DefaultReflectionPredicate(Pattern omitMethods) {
     this(omitMethods, new HashSet<String>());
   }
-  
+
   public DefaultReflectionPredicate(VisibilityPredicate visibility) {
     this(null, new HashSet<String>(), visibility);
   }
@@ -47,11 +47,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * DefaultReflectionFilter creates a filter object that uses default
    * criteria for inclusion of reflection objects.
    * @param omitMethods pattern for methods to omit, if null then no methods omitted.
-   * @param visibility  the predicate for testing visibility expectations for members 
+   * @param visibility  the predicate for testing visibility expectations for members
    * @see OperationExtractor#getOperations(java.util.Collection, ReflectionPredicate)
    */
-  public DefaultReflectionPredicate(Pattern omitMethods, 
-      Set<String> omitFields, 
+  public DefaultReflectionPredicate(Pattern omitMethods,
+      Set<String> omitFields,
       VisibilityPredicate visibility) {
     super();
     this.omitMethods = omitMethods;
@@ -59,6 +59,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     this.visibility = visibility;
   }
 
+  @Override
   public boolean test(Class<?> c) {
     if (c.isAnonymousClass()) {
       return false;
@@ -76,9 +77,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * <li>Non-bridge, synthetic methods
    * <li>Methods that are not visible, or do not have visible return type
    * <li>[Special cases that need to be listed TODO]
-   * </ul> 
+   * </ul>
    */
+  @Override
   public boolean test(Method m) {
+
+    if (isRandoopInstrumentation(m)) {
+      return false;
+    }
 
     if (! visibility.isVisible(m)) {
       if (Log.isLoggingOn()) {
@@ -171,23 +177,31 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     return true;
   }
 
+  private boolean isRandoopInstrumentation(Method m) {
+    if (m.getName().contains("randoop_")) {
+      return true;
+    }
+    return false;
+  }
+
+
   /**
-   * Determines whether a bridge method is not a "visibility" bridge, which 
+   * Determines whether a bridge method is not a "visibility" bridge, which
    * allows access to a definition of the method in a non-visible superclass.
    * <p>
    * Bridge methods are synthetic overriding methods that are used by the
-   * compiler to make certain things possible that seem reasonable but need 
+   * compiler to make certain things possible that seem reasonable but need
    * tweaks to make them work. Two of the three known cases involve forcing
    * unchecked casts to allow type narrowing of return types (covariant
    * return types) and instantiation of generic type parameters in methods.
-   * Both of these are situations that we think of as overriding, but really 
-   * aren't. These bridge methods do unchecked type conversions from the 
-   * general type to the more specific type expected by the local method. 
-   * As a result, if included for testing, Randoop would generate many tests 
-   * that would confirm that there is an unchecked type conversion. So, we do 
+   * Both of these are situations that we think of as overriding, but really
+   * aren't. These bridge methods do unchecked type conversions from the
+   * general type to the more specific type expected by the local method.
+   * As a result, if included for testing, Randoop would generate many tests
+   * that would confirm that there is an unchecked type conversion. So, we do
    * not want to include these methods.
    * <p>
-   * The third known case involves a public class inheriting a public method 
+   * The third known case involves a public class inheriting a public method
    * defined in the same package private class. The bridge method in the
    * public class exposes the method outside of the package, and we *do* want
    * to be able to call this method. (This sort of trick is useful in
@@ -197,10 +211,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * To recognize a visibility bridge, it is sufficient to run up the superclass
    * chain and confirm that the visibility of the class changes to non-public.
    * If it does not, then the bridge method is not a visibility bridge.
-   *  
+   *
    * @param m  the bridge method to test
    * @return true if {@code m} is not a visibility bridge, and false otherwise
-   * @throws Error if a {@link SecurityException} is thrown when accessing 
+   * @throws Error if a {@link SecurityException} is thrown when accessing
    * superclass methods
    */
   private boolean isNotVisibilityBridge(Method m) throws Error {
@@ -214,7 +228,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       } catch (NoSuchMethodException e) {
         method = null;
       } catch (SecurityException e) {
-        String msg = "Cannot access method " + m.getName() 
+        String msg = "Cannot access method " + m.getName()
                    + " in class " + c.getCanonicalName();
         throw new Error(msg);
       }
@@ -273,6 +287,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     return null;
   }
 
+  @Override
   public boolean test(Constructor<?> c) {
 
     if (! visibility.isVisible(c)) {
@@ -337,6 +352,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   @Override
   public boolean test(Field f) {
 
+    if (isRandoopInstrumentation(f)) {
+      return false;
+    }
+
     if (omitFields == null) {
       return true;
     }
@@ -352,6 +371,13 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     }
     return result;
 
+  }
+
+  private boolean isRandoopInstrumentation(Field f) {
+    if (f.getName().contains("randoop_")) {
+      return true;
+    }
+    return false;
   }
 
 }
