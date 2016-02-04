@@ -2,10 +2,14 @@ package randoop.main;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import plume.EntryReader;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
@@ -655,4 +659,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     return classes;
   }
+
+  public Set<String> getClassnamesFromArgs(Options opts) {
+    Set<String> classnames = new LinkedHashSet<>(testclass);
+    if (classlist != null) {
+      try (EntryReader er = new EntryReader(classlist, "^#.*", null)) {
+        for (String line : er) {
+          classnames.add(line.trim());
+        }
+      } catch (IOException e) {
+        String msg = Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
+        System.out.println(msg);
+        System.exit(1);
+      }
+    }
+    return classnames;
+  }
+
 }
