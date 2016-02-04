@@ -1,4 +1,4 @@
-package randoop.instrument;
+package randoop.agent;
 
 import static java.lang.System.out;
 import java.lang.instrument.*;

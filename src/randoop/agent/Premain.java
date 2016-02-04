@@ -1,4 +1,4 @@
-package randoop.instrument;
+package randoop.agent;
 
 // import harpoon.ClassFile.HMethod;
 
