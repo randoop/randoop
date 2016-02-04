@@ -59,7 +59,7 @@ all-dist: all javadoc manual distribution-files
 
 # Remove generated .class files.
 clean:
-	rm -rf bin
+	rm -rf bin randoop_agent.jar
 
 # Build Randoop.
 build: bin randoop_agent.jar
