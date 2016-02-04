@@ -1,8 +1,8 @@
 package randoop.types;
 
-import randoop.util.PrimitiveTypes;
-
 import plume.UtilMDE;
+
+import randoop.util.PrimitiveTypes;
 
 /**
  * TypeNames provides a pair of static methods to:
@@ -12,10 +12,21 @@ import plume.UtilMDE;
  * </ul>
  */
 public class TypeNames {
-  
+
+  private static ClassLoader loader;
+
+  /**
+   * Sets the class loader for loading {@code Class<?>} objects.
+   *
+   * @param loader  the class loader
+   */
+  public static void setClassLoader(ClassLoader loader) {
+    TypeNames.loader = loader;
+  }
+
   /**
    * Returns a compilable Java name for the type.
-   * 
+   *
    * @param cls  the type for which name is to be generated
    * @return string that is a compilable version of type name
    */
@@ -38,11 +49,11 @@ public class TypeNames {
 
     return retval;
   }
-  
+
   /**
-   * Returns {@link Class} object for a fully qualified class name or primitive 
+   * Returns {@link Class} object for a fully qualified class name or primitive
    * type name.
-   * 
+   *
    * @param typeName  a fully-qualified class name or primitive type name
    * @return {@link Class} object for type given in string
    * @throws ClassNotFoundException if string is not a recognized type
@@ -50,7 +61,7 @@ public class TypeNames {
   public static Class<?> getTypeForName(String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.getClassForName(typeName);
     if (c == null) {
-        c = Class.forName(typeName);
+        c = Class.forName(typeName, true, loader);
     }
     return c;
   }
