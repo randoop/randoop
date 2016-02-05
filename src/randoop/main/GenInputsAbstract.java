@@ -129,23 +129,24 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean silently_ignore_bad_class_names = false;
 
   /**
-   * Indicate which classes that any test written to output must use.
-   * Written test suites will only include tests that have at least one
-   * use of a member of a class whose name matches the regular expression.
+   * Classes that any test must use.
+   * Randoop will only output tests that have at least one use of a member
+   * of a class whose name matches the regular expression.
    */
   @Option("Regular expression for names of classes that any test written to output must use")
-  public static Pattern include_if_classname_match = null;
+  public static Pattern include_if_classname_appears = null;
 
   /**
-   * The name of a file that contains fully-qualified class names, at least one
-   * of which a test written to output must cover. A test covers a class if it
-   * exercises any constructor or method of the class, even if the class is not
-   * used directly by the test. Only class names given with
-   * <code>--testclass</code> or <code>--classlist</code> are checked for
-   * coverage.
+   * File containing classes that the tests must exercise.
+   * A test is output only if it exercises at least one of the class names
+   * in the file.  A test exercises a class if it executes any constructor
+   * or method of the class, directly or indirectly (the constructor or
+   * method might not appear in the source code of the test).  The file
+   * contains fully-qualified class names, and any class name in it must
+   * also appear in <code>--testclass</code> or <code>--classlist</code>.
    */
   @Option("The name of a file containing class names that tests must cover")
-  public static String include_if_class_covered = null;
+  public static String include_if_class_exercised = null;
 
   /**
    * Whether to output error-revealing tests.

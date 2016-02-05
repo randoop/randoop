@@ -183,7 +183,7 @@ public class GenTests extends GenInputsAbstract {
     // If an initializer method was specified, execute it
     executeInitializationRoutine(1);
 
-    if (GenInputsAbstract.include_if_class_covered != null && ReflectionExecutor.usethreads) {
+    if (GenInputsAbstract.include_if_class_exercised != null && ReflectionExecutor.usethreads) {
       System.out.println("WARNING: using --include-if-class-covered with --use-threads");
       System.out.println("may filter in an unpredictable way.");
     }
@@ -365,7 +365,7 @@ public class GenTests extends GenInputsAbstract {
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
 
     // instrumentation visitor
-    if (GenInputsAbstract.include_if_class_covered != null) {
+    if (GenInputsAbstract.include_if_class_exercised != null) {
       visitors.add(new CoveredClassVisitor(coveredClasses));
     }
 
@@ -494,8 +494,8 @@ public class GenTests extends GenInputsAbstract {
 
     // get names of classes that must be covered by output tests
     Set<String> coveredClassnames = new LinkedHashSet<>();
-    if (GenInputsAbstract.include_if_class_covered != null) {
-      try (EntryReader er = new EntryReader(GenInputsAbstract.include_if_class_covered)) {
+    if (GenInputsAbstract.include_if_class_exercised != null) {
+      try (EntryReader er = new EntryReader(GenInputsAbstract.include_if_class_exercised)) {
         for (String classname : er) {
           if (classnames.contains(classname)) {
             coveredClassnames.add(classname.trim());
@@ -629,7 +629,7 @@ public class GenTests extends GenInputsAbstract {
       if (GenInputsAbstract.include_if_classname_match != null) { //keep only tests with test classes
         baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_if_classname_match));
       }
-      if (GenInputsAbstract.include_if_class_covered != null) {
+      if (GenInputsAbstract.include_if_class_exercised != null) {
         baseTest = baseTest.and(new IncludeIfCoversPredicate(coveredClasses));
       }
 

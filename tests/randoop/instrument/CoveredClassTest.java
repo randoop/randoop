@@ -45,7 +45,7 @@ public class CoveredClassTest {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
     GenInputsAbstract.include_if_classname_match = null;
-    GenInputsAbstract.include_if_class_covered = null;
+    GenInputsAbstract.include_if_class_exercised = null;
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
@@ -87,7 +87,7 @@ public class CoveredClassTest {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
     GenInputsAbstract.include_if_classname_match = Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
-    GenInputsAbstract.include_if_class_covered = null; //"tests/randoop/instrument/testcase/coveredclasses.txt";
+    GenInputsAbstract.include_if_class_exercised = null; //"tests/randoop/instrument/testcase/coveredclasses.txt";
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
@@ -129,7 +129,7 @@ public class CoveredClassTest {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
     GenInputsAbstract.include_if_classname_match = null;
-    GenInputsAbstract.include_if_class_covered = "tests/randoop/instrument/testcase/coveredclasses.txt";
+    GenInputsAbstract.include_if_class_exercised = "tests/randoop/instrument/testcase/coveredclasses.txt";
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
