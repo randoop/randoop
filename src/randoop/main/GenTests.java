@@ -483,7 +483,6 @@ public class GenTests extends GenInputsAbstract {
    *                    test accessibility of classes and class members.
    * @param classes  the list of classes collected
    * @param coveredClasses  the list of classes to check for coverage
-   * @return the list of visible classes from the
    */
   public static void getClassesUnderTest(VisibilityPredicate visibility,
           Set<Class<?>> classes,

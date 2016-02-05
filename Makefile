@@ -428,6 +428,7 @@ test-generation: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestFilteringTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestClassificationTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.test.predicate.ExceptionPredicateTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.CoveredClassTest
 
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
@@ -665,6 +666,7 @@ distribution-files: manual randoop_agent.jar
 	cp lib/plume.jar randoop/lib
 	cp lib/jakarta-oro-2.0.8.jar randoop/lib
 	cp lib/jakarta-oro-license.txt randoop/lib
+	cp lib/javassist.jar randoop/lib
 # Copy license.
 	cp license.txt randoop/
 # Copy eclipse project files.
@@ -672,7 +674,7 @@ distribution-files: manual randoop_agent.jar
 	cp .classpath-dist randoop/.classpath
 # Make sure everything works.
 	cd randoop && \
-	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/jakarta-oro-2.0.8.jar'
+	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/jakarta-oro-2.0.8.jar:lib/javassist.jar'
 # Why doesn't this work (any more)?
 #	cd randoop && \
 #	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
@@ -684,6 +686,7 @@ distribution-files: manual randoop_agent.jar
 	cp -r randoop/bin/* randoop/tmp
 	cd randoop/tmp && jar xf ../lib/plume.jar
 	cd randoop/tmp && jar xf ../lib/jakarta-oro-2.0.8.jar
+	cd randoop/tmp && jar xf ../lib/javassist.jar
 	cd randoop/tmp && jar cf randoop.jar *
 	mv randoop/tmp/randoop.jar randoop/
 	rm -r randoop/tmp
