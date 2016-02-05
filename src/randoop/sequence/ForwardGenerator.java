@@ -192,6 +192,8 @@ public class ForwardGenerator extends AbstractGenerator {
         Log.logLine("Making all indices inactive (sequence has invalid behavior)");
         Log.logLine("Invalid sequence: " + seq.toCodeString());
       }
+      seq.sequence.clearAllActiveFlags();
+      return;
     }
 
     if (! seq.isNormalExecution()) {
