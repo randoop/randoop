@@ -123,14 +123,14 @@ public abstract class AbstractGenerator {
   public List<ExecutableSequence> outErrorSeqs = new ArrayList<>();
 
   /**
-   * The list of regression sequences to be output as JUnit tests
+   * The list of regression sequences to be output as JUnit tests.
    * May include subsequences of other sequences in the list.
    */
   public List<ExecutableSequence> outRegressionSeqs = new ArrayList<>();
   
   /**
    * A filter to determine whether a sequence should be added to the output 
-   * sequence lists
+   * sequence lists.
    */
   public Predicate<ExecutableSequence> outputTest;
 

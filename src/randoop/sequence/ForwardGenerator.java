@@ -328,8 +328,8 @@ public class ForwardGenerator extends AbstractGenerator {
     }
     //System.out.println("###" + statement.toStringVerbose() + "###" + statement.getClass());
 
-    // Keep track of any input sequences that are used in this sequence
-    // Tests that contain only these sequences are probably redundant
+    // Keep track of any input sequences that are used in this sequence.
+    // Tests that contain only these sequences are probably redundant.
     for (Sequence is : sequences.sequences) {
       subsumed_sequences.add (is);
     }
