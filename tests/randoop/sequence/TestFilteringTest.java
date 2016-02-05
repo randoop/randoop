@@ -3,7 +3,6 @@ package randoop.sequence;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -39,7 +38,7 @@ public class TestFilteringTest {
   @Test
   public void nonemptyOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_match = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -51,13 +50,13 @@ public class TestFilteringTest {
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
-    
+
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-   
+
     assertTrue("should have some regression tests", rTests.size() > 0);
     assertTrue("should have some error tests", eTests.size() > 0);
   }
@@ -69,7 +68,7 @@ public class TestFilteringTest {
   @Test
   public void noOutputTest() {
     GenInputsAbstract.dont_output_tests = true;
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_match = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -82,24 +81,24 @@ public class TestFilteringTest {
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
-    
+
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-   
+
     assertTrue("should have no regression tests", rTests.size() == 0);
     assertTrue("should have no error tests", eTests.size() == 0);
   }
-  
+
   /**
    * Make sure get no error test output when no-error-revealing-tests is set.
    */
   @Test
   public void noErrorOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_match = null;
     GenInputsAbstract.no_error_revealing_tests = true;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -111,17 +110,17 @@ public class TestFilteringTest {
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
-    
+
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-   
+
     assertTrue("should have some regression tests", rTests.size() > 0);
     assertTrue("should have no error tests", eTests.size() == 0);
   }
-  
+
   /**
    * Make sure that no regression tests are output when no-regression-tests is set.
    * Better to set inputlimit here since most tests are regression tests.
@@ -129,7 +128,7 @@ public class TestFilteringTest {
   @Test
   public void noRegressionOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_match = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = true;
     // arguments below ensure we get both kinds of tests
@@ -142,17 +141,17 @@ public class TestFilteringTest {
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
-    
+
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-   
+
     assertTrue("should have no regression tests", rTests.size() == 0);
     assertTrue("should have some error tests", eTests.size() > 0);
   }
-  
+
   /**
    * Having both Error and Regression tests turned off should give nothing.
    * Set inputlimit
@@ -160,7 +159,7 @@ public class TestFilteringTest {
   @Test
   public void noErrorOrRegressionOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_match = null;
     GenInputsAbstract.no_error_revealing_tests = true;
     GenInputsAbstract.no_regression_tests = true;
     // arguments below ensure we get both kinds of tests
@@ -173,24 +172,24 @@ public class TestFilteringTest {
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
-    
+
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-   
+
     assertTrue("should have no regression tests", rTests.size() == 0);
     assertTrue("should have no error tests", eTests.size() == 0);
   }
-  
+
   /**
    * Filtering tests matching CUT should produce output tests.
    */
   @Test
   public void matchOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_only_classes = Pattern.compile("randoop\\.sequence\\.Flaky");
+    GenInputsAbstract.include_if_classname_match = Pattern.compile("randoop\\.sequence\\.Flaky");
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -203,19 +202,19 @@ public class TestFilteringTest {
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.inputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
-    
+
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-   
+
     assertTrue("should have some regression tests", rTests.size() > 0);
     assertTrue("should have some error tests", eTests.size() > 0);
   }
-  
+
   private ForwardGenerator buildGenerator(Class<?> c) {
-    List<Class<?>> classes = new ArrayList<>();
+    Set<Class<?>> classes = new LinkedHashSet<>();
     classes.add(c);
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
@@ -226,7 +225,7 @@ public class TestFilteringTest {
     ComponentManager componentMgr = new ComponentManager(components );
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator testGenerator = new ForwardGenerator(
-        model, 
+        model,
         GenInputsAbstract.timelimit * 1000,
         GenInputsAbstract.inputlimit,
         GenInputsAbstract.outputlimit,
@@ -242,7 +241,7 @@ public class TestFilteringTest {
     } catch (Exception e) {
       fail("couldn't get object constructor");
     }
-    Predicate<ExecutableSequence> isOutputTest = genTests.createTestOutputPredicate(objectConstructor);
+    Predicate<ExecutableSequence> isOutputTest = genTests.createTestOutputPredicate(objectConstructor, new HashSet<Class<?>>());
     testGenerator.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
     testGenerator.addTestCheckGenerator(checkGenerator);
