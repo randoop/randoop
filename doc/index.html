@@ -654,6 +654,15 @@ Randoop about your application, and that is how we recommend using Randoop.
  Using this option restricts the tests to only use public members even if
  the class is a member of the same package as the generated tests. [default false]</li>
       <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
+      <li id="option:include-if-classname-match"><b>--include-if-classname-match=</b><i>regex</i>. Indicate which classes that any test written to output must use.
+ Written test suites will only include tests that have at least one
+ use of a member of a class whose name matches the regular expression.</li>
+      <li id="option:include-if-class-covered"><b>--include-if-class-covered=</b><i>string</i>. The name of a file that contains fully-qualified class names, at least one
+ of which a test written to output must cover. A test covers a class if it
+ exercises any constructor or method of the class, even if the class is not
+ used directly by the test. Only class names given with
+ <code>--testclass</code> or <code>--classlist</code> are checked for
+ coverage.</li>
     </ul>
   </li>
   <li id="optiongroup:Test-classification">Test classification
@@ -833,9 +842,6 @@ Randoop about your application, and that is how we recommend using Randoop.
  NOTE: Because there is no output, the value of <code>--outputlimit</code>
  will never be met, so be sure to set <code>--inputlimit</code> or
  <code>--timelimit</code> to a reasonable value when using this option. [default false]</li>
-      <li id="option:include-only-classes"><b>--include-only-classes=</b><i>regex</i>. Indicate which classes that any test written to output must use.
- Written test suites will only include tests that have at least one
- use of a member of a class whose name matches the regular expression.</li>
       <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>. Whether to use JUnit's standard reflective mechanisms for invoking
  tests.  JUnit's reflective invocations can interfere with code
  instrumentation, such as by the DynComp tool.  If that is a problem,
