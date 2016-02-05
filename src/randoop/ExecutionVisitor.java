@@ -39,4 +39,11 @@ public interface ExecutionVisitor {
    */
   void initialize(ExecutableSequence executableSequence);
 
+  /**
+   * Called after execution of a sequence.
+   *
+   * @param executableSequence  the visited code sequence
+   */
+  void visitAfterSequence(ExecutableSequence executableSequence);
+
 }
