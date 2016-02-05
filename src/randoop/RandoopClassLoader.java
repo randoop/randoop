@@ -33,7 +33,8 @@ public class RandoopClassLoader extends ClassLoader {
    * @param pool  the class pool object
    * @param transformClassnames  the names of classes to be instrumented
    */
-  public RandoopClassLoader(ClassPool pool, Set<String> transformClassnames) {
+  public RandoopClassLoader(ClassLoader parent, ClassPool pool, Set<String> transformClassnames) {
+    super(parent);
     this.pool = pool;
     this.transformClassnames = transformClassnames;
   }
@@ -50,14 +51,21 @@ public class RandoopClassLoader extends ClassLoader {
    * @return the instrumented class object for the given class name
    */
   @Override
-  protected Class<?> findClass(String name) throws ClassNotFoundException {
+  protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+    Class<?> c = findLoadedClass(name);
+    if (c != null) {
+      return c;
+    }
+
+    if (! transformClassnames.contains(name)) {
+      return super.loadClass(name, resolve);
+    }
+
     CtClass cc = null;
     byte[] b = null;
     try {
       cc = pool.get(name);
-      if (transformClassnames.contains(name)) {
-        modifyBytecode(cc);
-      }
+      modifyBytecode(cc);
       b = cc.toBytecode();
     } catch (IOException e) {
       throw new ClassNotFoundException(name);
@@ -67,7 +75,11 @@ public class RandoopClassLoader extends ClassLoader {
       throw new ClassNotFoundException(name);
     }
 
-    return defineClass(name, b, 0, b.length);
+    c = defineClass(name, b, 0, b.length);
+    if (resolve) {
+      resolveClass(c);
+    }
+    return c;
   }
 
   /**
@@ -88,7 +100,7 @@ public class RandoopClassLoader extends ClassLoader {
       flagField.setModifiers(Modifier.STATIC);
       cc.addField(flagField, "false");
     } catch (CannotCompileException e) {
-      throw new Error("error adding instrumentation field in Randoop class loader: " + e);
+      throw new Error("error adding instrumentation field: " + e);
     }
     try {
       // add static method to poll and reset the field
@@ -102,7 +114,7 @@ public class RandoopClassLoader extends ClassLoader {
       pollMethod.setModifiers(Modifier.STATIC | Modifier.PUBLIC);
       cc.addMethod(pollMethod);
     } catch (CannotCompileException e) {
-      throw new Error("error adding instrumentation method in Randoop class loader: " + e);
+      throw new Error("error adding instrumentation method: " + e);
     }
 
     // add code to entry of each method to indicate that called
@@ -115,7 +127,7 @@ public class RandoopClassLoader extends ClassLoader {
         }
       }
     } catch (CannotCompileException e) {
-      throw new Error("error instrumenting method in Randoop class loader: " + e);
+      throw new Error("error instrumenting method: " + e);
     }
     try {
       for (CtConstructor c : cc.getConstructors()) {
@@ -123,7 +135,7 @@ public class RandoopClassLoader extends ClassLoader {
       }
 
     } catch (CannotCompileException e) {
-      throw new Error("error instrumenting constructor in Randoop class loader: " + e);
+      throw new Error("error instrumenting constructor: " + e);
     }
   }
 }
