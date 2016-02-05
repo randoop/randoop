@@ -51,6 +51,7 @@ import randoop.RandoopListenerManager;
 import randoop.SeedSequences;
 import randoop.experiments.CodeCoverageTracker;
 import randoop.experiments.CovWitnessHelperVisitor;
+import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.ConstructorCall;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -71,6 +72,7 @@ import randoop.test.ErrorTestPredicate;
 import randoop.test.ExcludeTestPredicate;
 import randoop.test.ExpectedExceptionCheckGen;
 import randoop.test.ExtendGenerator;
+import randoop.test.IncludeIfCoversPredicate;
 import randoop.test.IncludeTestPredicate;
 import randoop.test.RegressionCaptureVisitor;
 import randoop.test.RegressionTestPredicate;
@@ -181,6 +183,18 @@ public class GenTests extends GenInputsAbstract {
     // If an initializer method was specified, execute it
     executeInitializationRoutine(1);
 
+    if (GenInputsAbstract.include_if_class_covered != null && ReflectionExecutor.usethreads) {
+      System.out.println("WARNING: using --include-if-class-covered with --use-threads");
+      System.out.println("may filter in an unpredictable way.");
+    }
+
+    // Check that there are classes to test
+    if (classlist == null && methodlist == null && testclass.size() == 0) {
+      System.out.println("You must specify some classes or methods to test.");
+      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
+      System.exit(1);
+    }
+
     VisibilityPredicate visibility;
     Package junitPackage = Package.getPackage(GenInputsAbstract.junit_package_name);
     if (junitPackage == null || GenInputsAbstract.only_test_public_members) {
@@ -189,7 +203,9 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(junitPackage);
     }
 
-    List<Class<?>> classes = getClassesUnderTest(visibility);
+    Set<Class<?>> classes = new LinkedHashSet<>();
+    Set<Class<?>> coveredClasses = new LinkedHashSet<>();
+    getClassesUnderTest(visibility, classes, coveredClasses);
 
     if (classes.isEmpty()) {
       System.out.println("No classes to test");
@@ -343,15 +359,19 @@ public class GenTests extends GenInputsAbstract {
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, classes);
 
     // Define test predicate to decide which test sequences will be output
-    Predicate<ExecutableSequence> isOutputTest = createTestOutputPredicate(objectConstructor);
+    Predicate<ExecutableSequence> isOutputTest = createTestOutputPredicate(objectConstructor, coveredClasses);
 
     // list of visitors for collecting information from test sequences
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
 
+    // instrumentation visitor
+    if (GenInputsAbstract.include_if_class_covered != null) {
+      visitors.add(new CoveredClassVisitor(coveredClasses));
+    }
+
     // setup coverage visitor if user says so
     if (GenInputsAbstract.output_cov_witnesses) {
-      ExecutionVisitor covVisitor = new CovWitnessHelperVisitor(covTracker);
-      visitors.add(covVisitor);
+      visitors.add(new CovWitnessHelperVisitor(covTracker));
     }
 
     // Install any user-specified visitors.
@@ -461,27 +481,42 @@ public class GenTests extends GenInputsAbstract {
    *
    * @param visibility  the {@link randoop.reflection.VisibilityPredicate} to
    *                    test accessibility of classes and class members.
+   * @param classes  the list of classes collected
+   * @param coveredClasses  the list of classes to check for coverage
    * @return the list of visible classes from the
    */
-  private List<Class<?>> getClassesUnderTest(VisibilityPredicate visibility) {
-    // Find classes to test.
-    if (classlist == null && methodlist == null && testclass.size() == 0) {
-      System.out.println("You must specify some classes or methods to test.");
-      System.out.println("Use the --classlist, --testclass, or --methodlist options.");
-      System.exit(1);
+  public static void getClassesUnderTest(VisibilityPredicate visibility,
+          Set<Class<?>> classes,
+          Set<Class<?>> coveredClasses) {
+
+    // get names of classes under test
+    Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(options);
+
+    // get names of classes that must be covered by output tests
+    Set<String> coveredClassnames = new LinkedHashSet<>();
+    if (GenInputsAbstract.include_if_class_covered != null) {
+      try (EntryReader er = new EntryReader(GenInputsAbstract.include_if_class_covered)) {
+        for (String classname : er) {
+          if (classnames.contains(classname)) {
+            coveredClassnames.add(classname.trim());
+          } else {
+            System.out.println("Ignoring class " + classname + " for covered test since not in --classlist or --testclass.");
+          }
+        }
+      } catch (IOException e) {
+       throw new Error("Unable to read coverage class names: " + e);
+      }
     }
 
-    Set<String> classnames = getClassnamesFromArgs(options);
-
     // setup the class loader; must be done before loading classes for test gen
-    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), classnames));
+    ClassLoader contextLoader = visibility.getClass().getClassLoader();
+    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), coveredClassnames));
 
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     if (GenInputsAbstract.silently_ignore_bad_class_names) {
       errorHandler = new WarnOnBadClassName();
     }
 
-    List<Class<?>> classes = new ArrayList<>(classnames.size());
     for (String classname : classnames) {
       Class<?> c = null;
       try {
@@ -498,10 +533,13 @@ public class GenTests extends GenInputsAbstract {
         System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
       } else {
         classes.add(c);
+        if (coveredClassnames.contains(classname)) {
+          coveredClasses.add(c);
+        }
       }
 
     }
-    return classes;
+
   }
 
   /**
@@ -571,9 +609,12 @@ public class GenTests extends GenInputsAbstract {
    * be included in the output based on command-line arguments.
    *
    * @param objectConstructor  the constructor for the Object class
+   * @param coveredClasses  the list of classes to test for coverage
    * @return the predicate
    */
-  public Predicate<ExecutableSequence> createTestOutputPredicate(ConstructorCall objectConstructor) {
+  public Predicate<ExecutableSequence> createTestOutputPredicate(
+      ConstructorCall objectConstructor,
+      Set<Class<?>> coveredClasses) {
     Predicate<ExecutableSequence> isOutputTest;
     if (GenInputsAbstract.dont_output_tests) {
       isOutputTest = new AlwaysFalse<>();
@@ -585,8 +626,11 @@ public class GenTests extends GenInputsAbstract {
       Set<Sequence> excludeSet = new LinkedHashSet<>();
       excludeSet.add(newObj);
       baseTest = new ExcludeTestPredicate(excludeSet);
-      if (GenInputsAbstract.include_only_classes != null) { //keep only tests with test classes
-        baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_only_classes));
+      if (GenInputsAbstract.include_if_classname_match != null) { //keep only tests with test classes
+        baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_if_classname_match));
+      }
+      if (GenInputsAbstract.include_if_class_covered != null) {
+        baseTest = baseTest.and(new IncludeIfCoversPredicate(coveredClasses));
       }
 
       // Use arguments to determine which kinds of tests to output
@@ -676,7 +720,7 @@ public class GenTests extends GenInputsAbstract {
    * @param classes  the list of annotated classes for retrieving contracts
    * @return the list of {@code ObjectContract} objects for contract checking
    */
-  private List<ObjectContract> getContracts(List<Class<?>> classes) {
+  private List<ObjectContract> getContracts(Set<Class<?>> classes) {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
 
     // Add any @CheckRep-annotated methods
@@ -706,7 +750,7 @@ public class GenTests extends GenInputsAbstract {
    * @param classes  the classes for obtaining contract checks
    * @return the {@code TestCheckGenerator} that reflects command line arguments.
    */
-  public TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, List<Class<?>> classes) {
+  public TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, Set<Class<?>> classes) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
@@ -743,7 +787,7 @@ public class GenTests extends GenInputsAbstract {
    * Adds literals to the component manager, by parsing any literals
    * files specified by the user.
    */
-  private void addClassLiterals(ComponentManager compMgr, List<Class<?>> classes) {
+  private void addClassLiterals(ComponentManager compMgr, Set<Class<?>> classes) {
 
     // Parameter check.
     boolean validMode = GenInputsAbstract.literals_level != ClassLiteralsMode.NONE;
@@ -943,7 +987,7 @@ public class GenTests extends GenInputsAbstract {
     usage (null, format, args);
   }
 
-  public static List<ObjectContract> getContractsFromAnnotations(List<Class<?>> classes) {
+  public static List<ObjectContract> getContractsFromAnnotations(Set<Class<?>> classes) {
 
     List<ObjectContract> contractsFound = new ArrayList<ObjectContract>();
 
