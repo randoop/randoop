@@ -40,8 +40,8 @@ public class CoveredClassTest {
   @Test
   public void testNoFilter() {
     System.out.println("no filter");
-   // GenInputsAbstract.outputlimit = 1000;
-    //GenInputsAbstract.inputlimit = 1000;
+    GenInputsAbstract.outputlimit = 5000;
+    GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
     GenInputsAbstract.include_if_classname_match = null;
@@ -82,8 +82,8 @@ public class CoveredClassTest {
   @Test
   public void testNameFilter() {
     System.out.println("name filter");
-   // GenInputsAbstract.outputlimit = 1000;
-    //GenInputsAbstract.inputlimit = 1000;
+    GenInputsAbstract.outputlimit = 5000;
+    GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
     GenInputsAbstract.include_if_classname_match = Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
@@ -124,8 +124,8 @@ public class CoveredClassTest {
   @Test
   public void testCoverageFilter() {
     System.out.println("coverage filter");
-   // GenInputsAbstract.outputlimit = 1000;
-    //GenInputsAbstract.inputlimit = 1000;
+    GenInputsAbstract.outputlimit = 5000;
+    GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
     GenInputsAbstract.include_if_classname_match = null;
