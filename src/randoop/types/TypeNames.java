@@ -61,7 +61,7 @@ public class TypeNames {
   public static Class<?> getTypeForName(String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.getClassForName(typeName);
     if (c == null) {
-        c = Class.forName(typeName, true, loader);
+      c = Class.forName(typeName, true, loader);
     }
     return c;
   }
