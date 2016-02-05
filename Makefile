@@ -428,6 +428,7 @@ test-generation: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestFilteringTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestClassificationTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.test.predicate.ExceptionPredicateTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.CoveredClassTest
 
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
