@@ -129,6 +129,25 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean silently_ignore_bad_class_names = false;
 
   /**
+   * Indicate which classes that any test written to output must use.
+   * Written test suites will only include tests that have at least one
+   * use of a member of a class whose name matches the regular expression.
+   */
+  @Option("Regular expression for names of classes that any test written to output must use")
+  public static Pattern include_if_classname_match = null;
+
+  /**
+   * The name of a file that contains fully-qualified class names, at least one
+   * of which a test written to output must cover. A test covers a class if it
+   * exercises any constructor or method of the class, even if the class is not
+   * used directly by the test. Only class names given with
+   * <code>--testclass</code> or <code>--classlist</code> are checked for
+   * coverage.
+   */
+  @Option("The name of a file containing class names that tests must cover")
+  public static String include_if_class_covered = null;
+
+  /**
    * Whether to output error-revealing tests.
    * <p>
    * Will completely disable output when used with
@@ -457,14 +476,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean dont_output_tests = false;
 
   /**
-   * Indicate which classes that any test written to output must use.
-   * Written test suites will only include tests that have at least one
-   * use of a member of a class whose name matches the regular expression.
-   */
-  @Option("Regular expression for names of classes that any test written to output must use")
-  public static Pattern include_only_classes = null;
-
-  /**
    * Whether to use JUnit's standard reflective mechanisms for invoking
    * tests.  JUnit's reflective invocations can interfere with code
    * instrumentation, such as by the DynComp tool.  If that is a problem,
@@ -637,7 +648,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
   }
 
-  List<Class<?>> findClassesFromArgs(Options printUsageTo) {
+  public static List<Class<?>> findClassesFromArgs(Options opts) {
     List<Class<?>> classes = new ArrayList<Class<?>>();
 
     if (classlist != null) {
@@ -660,7 +671,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return classes;
   }
 
-  public Set<String> getClassnamesFromArgs(Options opts) {
+  public static Set<String> getClassnamesFromArgs(Options opts) {
     Set<String> classnames = new LinkedHashSet<>(testclass);
     if (classlist != null) {
       try (EntryReader er = new EntryReader(classlist, "^#.*", null)) {
