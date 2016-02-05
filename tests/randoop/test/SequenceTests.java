@@ -68,7 +68,8 @@ public class SequenceTests extends TestCase {
       }
     };
 
-    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), new TreeSet<String>()));
+    ClassLoader contextLoader = this.getClass().getClassLoader();
+    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
     boolean long_format_old = GenInputsAbstract.long_format;
     GenInputsAbstract.long_format = true;
     RecordListReader reader = new RecordListReader("TEST", processor);

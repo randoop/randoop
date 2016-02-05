@@ -70,7 +70,8 @@ public class ComputeFrontierBranches {
       System.exit(1);
     }
 
-    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), new TreeSet<String>()));
+    ClassLoader contextLoader = ComputeFrontierBranches.class.getClassLoader();
+    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
 
     Map<CoverageAtom,Set<Sequence>> covmap = new LinkedHashMap<CoverageAtom, Set<Sequence>>();
 

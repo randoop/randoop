@@ -40,7 +40,8 @@ public class FieldSetterTest {
 
   @BeforeClass
   public static void setup() {
-    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), new TreeSet<String>()));
+    ClassLoader contextLoader = FieldSetterTest.class.getClassLoader();
+    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
   }
 
   @Test

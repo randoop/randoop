@@ -29,7 +29,8 @@ public class EnumConstantTest {
 
   @BeforeClass
   public static void setup() {
-    TypeNames.setClassLoader(new RandoopClassLoader(ClassPool.getDefault(), new TreeSet<String>()));
+    ClassLoader contextLoader = EnumConstantTest.class.getClassLoader();
+    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
   }
 
   @Test
