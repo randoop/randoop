@@ -714,7 +714,8 @@ copy-to-gh-pages: ../randoop-gh-pages
 # Remove all Javadoc files, then copy new contents
 	rm -rf ../randoop-gh-pages/api
 	cp -pr doc/javadoc ../randoop-gh-pages/api
-
+# Git operations
+	(cd ../randoop-gh-pages && git stage .)
 
 showvars:
 	@echo "CLASSPATH = $(CLASSPATH)"
