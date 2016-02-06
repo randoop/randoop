@@ -173,8 +173,7 @@ NEWVERSION=2.1.3</pre>
     <code>doc/CHANGES.txt</code>, and
     <code>doc/index.html</code>.
   </li>
-  <li>Commit and push those changes, and make a repository tag
-    (use the right version number, not 2.1.3!):
+  <li>Commit and push those changes, and make a repository tag:
     <pre>git commit . -m "Update version to $NEWVERSION"
 git push
 git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
@@ -185,7 +184,7 @@ git push --tags</pre>
     <pre>make distribution-files
 (cd dist && mv randoop.jar randoop-$NEWVERSION.jar && mv randoop.zip randoop-$NEWVERSION.zip)
 # Run the following using JDK 8, not JDK 7
-make copy-to-gh-pages      
+make copy-to-gh-pages
 (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION"</pre>
   </li>
   <li>Follow the <a
