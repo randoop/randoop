@@ -20,8 +20,9 @@ default:
 	@echo "update-goals   update test goal files."
 	@echo "manual         update the manual's list of options and table of contents."
 	@echo "javadoc        update the API documentation."
-	@echo "distribution-files  create distribution zip and jar files, in dist/ dir."
+	@echo "distribution-files  create distribution zip and jar files, in dist/ dir"
 	@echo "                    (also updates manual)."
+	@echo "copy-to-gh-pages  copy documentation to gh-pages branch, and push"
 
 # Put user-specific changes in your own Makefile.user.
 # Make will silently continue if that file does not exist.
@@ -701,6 +702,19 @@ distribution-files: manual randoop_agent.jar
 	mv randoop.zip dist
 # Remove scratch directory.
 	rm -r randoop
+
+../randoop-gh-pages:
+	(cd .. && git clone git@github.com:randoop/randoop.git && git checkout gh-pages)
+
+copy-to-gh-pages: ../randoop-gh-pages
+	(cd ../randoop-gh-pages && git pull)
+# Remove all files from manual/ except README, then copy new contents
+	(cd ../randoop-gh-pages/manual && find . -type f -not -name 'README' | xargs rm -f)
+	cp -pr doc/dev.html doc/index.html stylesheets ../randoop-gh-pages/manual
+# Remove all Javadoc files, then copy new contents
+	rm -rf ../randoop-gh-pages/api
+	cp -pr doc/javadoc ../randoop-gh-pages/api
+
 
 showvars:
 	@echo "CLASSPATH = $(CLASSPATH)"
