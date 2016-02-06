@@ -178,7 +178,8 @@ git push --tags</pre>
   </li>
   <li>Create the distribution:
     <pre>make distribution-files
-(cd dist && mv randoop.jar randoop-$NEWVERSION.jar && mv randoop.zip randoop-$NEWVERSION.zip)</pre>
+(cd dist && mv randoop.jar randoop-$NEWVERSION.jar && mv randoop.zip randoop-$NEWVERSION.zip)
+(cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION"</pre>
   </li>
   <li>Follow the <a
     href="https://help.github.com/articles/creating-releases/">GitHub
