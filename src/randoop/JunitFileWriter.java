@@ -89,8 +89,8 @@ public class JunitFileWriter {
    * @param seqPartition  suite of test classes as a list of lists of executable sequences
    * @return File objects corresponding to test class files generated.
    * 
-   * @see writeSuiteFile
-   * @see writeDriverFile
+   * @see #writeSuiteFile
+   * @see #writeDriverFile
    */
   public List<File> writeJUnitTestFiles(List<List<ExecutableSequence>> seqPartition) {
     List<File> ret = new ArrayList<File>();
