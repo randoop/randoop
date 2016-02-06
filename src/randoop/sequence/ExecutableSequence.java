@@ -161,6 +161,8 @@ public class ExecutableSequence implements Serializable {
     StringBuilder b = new StringBuilder();
     for (int i = 0 ; i < sequence.size() ; i++) {
       sequence.appendCode(b, i);
+      // It's a bit confusing, but the commented execution results refer
+      // to the statement ABOVE, not below as is standard for comments.
       if (executionResults.size() > i)
         b.append(executionResults.get(i).toString());
       if ((i == sequence.size() - 1) && (checks != null)) {
