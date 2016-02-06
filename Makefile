@@ -710,7 +710,7 @@ copy-to-gh-pages: ../randoop-gh-pages
 	(cd ../randoop-gh-pages && git pull)
 # Remove all files from manual/ except README, then copy new contents
 	(cd ../randoop-gh-pages/manual && find . -type f -not -name 'README' | xargs rm -f)
-	cp -pr doc/dev.html doc/index.html stylesheets ../randoop-gh-pages/manual
+	cp -pr doc/dev.html doc/index.html doc/stylesheets ../randoop-gh-pages/manual
 # Remove all Javadoc files, then copy new contents
 	rm -rf ../randoop-gh-pages/api
 	cp -pr doc/javadoc ../randoop-gh-pages/api
