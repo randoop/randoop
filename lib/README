@@ -1,0 +1,31 @@
+This file lists the jar files and how they were obtained.
+The jar files were last updated on:  [TODO: UNKNOWN!]
+
+asm-2.2.1.jar
+asm-tree-2.2.1.jar
+bcel.jar
+daikon.jar
+dcomp_premain.jar
+jakarta-oro-2.0.8.jar
+jakarta-oro-license.txt
+javassist.jar:  https://github.com/jboss-javassist/javassist/releases ; version 3.20.0
+  (Don't use the javassist.jar that is checked into the repository; as of
+  2/5/2016, it uses Java 8 class files and is unusable on a Java 7 JVM.)
+jfreechart-1.0.10.jar
+jfreechart-1.0.10-swt.jar
+jfreechart-source.zip
+junit-4.12.jar
+log4j-1.2.9.jar
+log4j-license.txt
+org.eclipse.core.contenttype_3.2.100.v20070319.jar
+org.eclipse.core.jobs_3.3.1.R33x_v20070709.jar
+org.eclipse.core.resources_3.3.1.R33x_v20080205.jar
+org.eclipse.core.runtime_3.3.100.v20070530.jar
+org.eclipse.equinox.common_3.3.0.v20070426.jar
+org.eclipse.equinox.preferences_3.2.101.R33x_v20080117.jar
+org.eclipse.jdt.core_3.3.3.v_793_R33x.jar
+org.eclipse.osgi_3.3.2.R33x_v20080105.jar
+org.eclipse.text_3.3.0.v20070606-0010.jar
+plume.jar
+servlet.jar
+swtgraphics2d.jar
