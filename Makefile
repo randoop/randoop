@@ -524,7 +524,7 @@ execerr:
 ############################################################
 # Targets for creating and printing the results of test diffs.
 
-goal_files = $(shell make  find systemtests/resources -name "*.goal")
+goal_files = $(shell find systemtests/resources -name "*.goal")
 
 # Contains the goal file names, without the .goal suffix.
 goal_files_bases = $(basename $(goal_files))
