@@ -163,7 +163,7 @@ public class ExecutableSequence implements Serializable {
       sequence.appendCode(b, i);
       if (executionResults.size() > i)
         b.append(executionResults.get(i).toString());
-      if (i == sequence.size() - 1) {
+      if ((i == sequence.size() - 1) && (checks != null)) {
         Map<Check,Boolean> ckMap = checks.get();
         for (Map.Entry<Check, Boolean> entry : ckMap.entrySet()) {
           b.append(Globals.lineSep);
@@ -569,8 +569,8 @@ public class ExecutableSequence implements Serializable {
     ExecutableSequence that= (ExecutableSequence)obj;
     if (! this.sequence.equals(that.sequence))
       return false;
-    if (this.checks == null && that.checks == null)
-      return true;
+    if (this.checks == null)
+      return (that.checks == null);
     if (! this.checks.equals(that.checks))
       return false;
 
