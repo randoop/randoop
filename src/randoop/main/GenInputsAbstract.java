@@ -133,7 +133,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Randoop will only output tests that have at least one use of a member
    * of a class whose name matches the regular expression.
    */
-  @Option("Regular expression for names of classes that any test written to output must use")
+  @Option("Regular expression for classes that every test must use")
   public static Pattern include_if_classname_appears = null;
 
   /**
@@ -145,7 +145,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * contains fully-qualified class names, and any class name in it must
    * also appear in <code>--testclass</code> or <code>--classlist</code>.
    */
-  @Option("The name of a file containing class names that tests must cover")
+  @Option("File containing class names that tests must exercise")
   public static String include_if_class_exercised = null;
 
   /**
