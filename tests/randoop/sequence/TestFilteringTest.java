@@ -38,7 +38,7 @@ public class TestFilteringTest {
   @Test
   public void nonemptyOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_match = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -68,7 +68,7 @@ public class TestFilteringTest {
   @Test
   public void noOutputTest() {
     GenInputsAbstract.dont_output_tests = true;
-    GenInputsAbstract.include_if_classname_match = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -98,7 +98,7 @@ public class TestFilteringTest {
   @Test
   public void noErrorOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_match = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_error_revealing_tests = true;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
@@ -128,7 +128,7 @@ public class TestFilteringTest {
   @Test
   public void noRegressionOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_match = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = true;
     // arguments below ensure we get both kinds of tests
@@ -159,7 +159,7 @@ public class TestFilteringTest {
   @Test
   public void noErrorOrRegressionOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_match = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_error_revealing_tests = true;
     GenInputsAbstract.no_regression_tests = true;
     // arguments below ensure we get both kinds of tests
@@ -189,7 +189,7 @@ public class TestFilteringTest {
   @Test
   public void matchOutputTest() {
     GenInputsAbstract.dont_output_tests = false;
-    GenInputsAbstract.include_if_classname_match = Pattern.compile("randoop\\.sequence\\.Flaky");
+    GenInputsAbstract.include_if_classname_appears = Pattern.compile("randoop\\.sequence\\.Flaky");
     GenInputsAbstract.no_error_revealing_tests = false;
     GenInputsAbstract.no_regression_tests = false;
     // arguments below ensure we get both kinds of tests
