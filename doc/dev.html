@@ -147,6 +147,11 @@ make manual
 
 <h2 id="making_new_dist">Making a new distribution (a new release)</h2>
 
+<p>
+Throughout, if you push commits, ensure that the tests continue to pass at
+<a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.
+</p>
+
 <ol>
   <li>Set the old and new version numbers.  (Don't use the examples given here!)
     <pre>OLDVERSION=2.1.2
@@ -156,7 +161,7 @@ NEWVERSION=2.1.3</pre>
     <pre>git status && git log --branches --not --remotes</pre>
   </li>
   <li>Update libraries in <tt>randoop/lib</tt>.  See (and update) the file
-    <tt>randoop/lib/README</tt>.</li>
+    <tt>randoop/lib/README</tt>.  Commit and push changes.</li>
   <li>Compile and test.  If any tests fail, fix them and start over.
     <pre>make clean && make all</pre>
   <li>You should have been updating the changelog <code>doc/CHANGES.txt</code>
