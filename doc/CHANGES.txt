@@ -1,15 +1,15 @@
 Version 2.1.3, released February 5, 2016
 
 Renamed command-line argument --include_only_classes to
---include_if_classname_appears.  Clarified that a test is output only if the
-test's source code uses a member from the 
-source code uses  it is a textual match 
-against the source code of the test.
+--include_if_classname_appears.  Clarified that a test is output only if
+the test's source code textually uses some member from the classes.
 
 New command-line argument --include-if-class-exercised causes Randoop to
-output only tests that execute some method in the given classes, whether or not the method appears in the source code of the test.
+output only tests that execute some method in the given classes, whether or
+not the method appears in the source code of the test.
 
-Changed command-line argument defaults to forbid-null=false and --null-ratio=0.05.
+Changed command-line argument defaults to forbid-null=false and
+--null-ratio=0.05.
 
 Fixed a bug in which a primitive type would be selected as a receiver of a
 method call.
@@ -22,6 +22,7 @@ Fixed issues related to filtering of classes and members so that Randoop ignores
 - synthetic constructor with anonymous parameter (generated for
   private constructor of outer class used by inner class).
 Thanks to Rene Just and Gordon Fraser.
+
 
 Version 2.1.1, released January 22, 2016
 
