@@ -129,11 +129,11 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean silently_ignore_bad_class_names = false;
 
   /**
-   * Classes that any test must use.
+   * Classes, one of which every test must use.
    * Randoop will only output tests that have at least one use of a member
    * of a class whose name matches the regular expression.
    */
-  @Option("Regular expression for classes that every test must use")
+  @Option("Classes, one of which every test must use")
   public static Pattern include_if_classname_appears = null;
 
   /**
