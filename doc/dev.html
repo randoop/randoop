@@ -179,6 +179,8 @@ git push --tags</pre>
   <li>Create the distribution:
     <pre>make distribution-files
 (cd dist && mv randoop.jar randoop-$NEWVERSION.jar && mv randoop.zip randoop-$NEWVERSION.zip)
+# Run the following using JDK 8, not JDK 7
+make copy-to-gh-pages      
 (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION"</pre>
   </li>
   <li>Follow the <a
