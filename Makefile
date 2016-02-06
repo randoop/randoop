@@ -215,7 +215,7 @@ randoop-contracts: bin
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --no-regression-tests \
-	   --timelimit=10 \
+	   --inputlimit=1000 \
 	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
 	   --error-test-filename=BuggyTest \
 	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
@@ -223,8 +223,7 @@ randoop-contracts: bin
 	   --output-tests-serialized=systemtests/randoop-contracts-test-scratch/sequences_serialized.gzip
 	cd systemtests/randoop-contracts-test-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
-# We expect this to fail, so add a "-" so the target doesn't fail.
-	-cd systemtests/randoop-contracts-test-scratch && \
+	cd systemtests/randoop-contracts-test-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopContractsTest
 
