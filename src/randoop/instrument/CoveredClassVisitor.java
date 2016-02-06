@@ -14,7 +14,7 @@ import randoop.sequence.ExecutableSequence;
  */
 public class CoveredClassVisitor implements ExecutionVisitor {
 
-  /** the classes to be polled */
+  /** The classes to be polled. */
   private Set<Class<?>> classes;
 
   /**
