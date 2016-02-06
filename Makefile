@@ -48,11 +48,15 @@ export PATH
 ############################################################
 # Targets for compiling and doing basic tests on Randoop.
 
-# All the source files.
-RANDOOP_FILES = $(shell find src/ tests/ -name '*.java' | ${SORT_DIRECTORY_ORDER})
-RANDOOP_SRC_FILES = $(shell find src/ -name '*.java' | ${SORT_DIRECTORY_ORDER})
-RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java' | ${SORT_DIRECTORY_ORDER})
-RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt' | ${SORT_DIRECTORY_ORDER})
+## All the source files.
+# These aren't sorted with ${SORT_DIRECTORY_ORDER} because
+# the first time the Makefile is run, that script doesn't exist.
+# These are mostly used as dependencies rather than in commands,
+# so the fact that the order is nondeterministic should be OK.
+RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
+RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
+RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
+RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
 
 # Build and run tests
 all: clean build tests
@@ -581,7 +585,7 @@ summary:
 # Plume-lib (only needed by maintainers)
 
 # Checks out a copy of the plume libraries.
-# We only use the html-update package.
+# We only use the html-update and sort-directory-order scripts.
 utils/plume-lib:
 	mkdir -p utils
 	cd utils && git clone https://github.com/mernst/plume-lib.git plume-lib
@@ -721,6 +725,7 @@ copy-to-gh-pages: ../randoop-gh-pages javadoc manual
 
 showvars:
 	@echo "CLASSPATH = $(CLASSPATH)"
+	@echo "RANDOOP_HOME = $(RANDOOP_HOME)"
 	@echo "RANDOOP_FILES = $(RANDOOP_FILES)"
 	@echo "RANDOOP_SRC_FILES = $(RANDOOP_SRC_FILES)"
 	@echo "RANDOOP_TESTS_FILES = $(RANDOOP_TESTS_FILES)"
