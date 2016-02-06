@@ -625,8 +625,8 @@ public class GenTests extends GenInputsAbstract {
       Set<Sequence> excludeSet = new LinkedHashSet<>();
       excludeSet.add(newObj);
       baseTest = new ExcludeTestPredicate(excludeSet);
-      if (GenInputsAbstract.include_if_classname_match != null) { //keep only tests with test classes
-        baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_if_classname_match));
+      if (GenInputsAbstract.include_if_classname_appears != null) { //keep only tests with test classes
+        baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_if_classname_appears));
       }
       if (GenInputsAbstract.include_if_class_exercised != null) {
         baseTest = baseTest.and(new IncludeIfCoversPredicate(coveredClasses));

@@ -44,7 +44,7 @@ public class CoveredClassTest {
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
-    GenInputsAbstract.include_if_classname_match = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised = null;
     // setup classes
 
@@ -86,7 +86,7 @@ public class CoveredClassTest {
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
-    GenInputsAbstract.include_if_classname_match = Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
+    GenInputsAbstract.include_if_classname_appears = Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
     GenInputsAbstract.include_if_class_exercised = null; //"tests/randoop/instrument/testcase/coveredclasses.txt";
     // setup classes
 
@@ -128,7 +128,7 @@ public class CoveredClassTest {
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = "tests/randoop/instrument/testcase/allclasses.txt";
-    GenInputsAbstract.include_if_classname_match = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.include_if_class_exercised = "tests/randoop/instrument/testcase/coveredclasses.txt";
     // setup classes
 
