@@ -148,30 +148,53 @@ make manual
 <h2 id="making_new_dist">Making a new distribution (a new release)</h2>
 
 <ol>
-  <li>Run <tt>git status && git log --branches --not --remotes</tt>.
-    If there are any changes, commit and push them.</li>
-  <li>Update libraries in <tt>randoop/lib</tt>.  See the file
-    <tt>randoop/lib/README</tt>, and update that file.</li>
-  <li>Compile and test: run <code>make clean && make all</code>.
-    If any tests fail, fix them and start over.</li>
+  <li>Set the old and new version numbers.  (Don't use the examples given here!)
+    <pre>OLDVERSION=2.1.2
+NEWVERSION=2.1.3</pre>
+  <li>If there are any changes, commit them; if there are any unpushed
+    commits, push them.  Find out if any exist by running:
+    <pre>git status && git log --branches --not --remotes</pre>
+  </li>
+  <li>Update libraries in <tt>randoop/lib</tt>.  See (and update) the file
+    <tt>randoop/lib/README</tt>.</li>
+  <li>Compile and test.  If any tests fail, fix them and start over.
+    <pre>make clean && make all</pre>
   <li>You should have been updating the changelog <code>doc/CHANGES.txt</code>
     all along, but double-check by running a command such as this:
-    <tt>git log v<em>2.1.2</em>..</tt></li>
-  <li>Increment version number:  modify variable <code>RANDOOP_VERSION</code>
-    in <code>src/randoop/Globals.java</code>, and update it at the top of
-    <code>doc/CHANGES.txt</code> and <code>doc/index.html</code>.</li>
-  <li>Commit and push those changes:
-    <tt>git commit -m "Update version to <em>1.3.6</em>" .</li>
-  <li>Tag the repository tip with the version number; for example:<br/>
-    <code>git tag -a v<em>1.3.6</em> -m "Randoop version 1.3.6" && git push --tags</code>
-    <br/>(the gh-pages branch is not tagged.)
+    <pre>git log v$OLDVERSION..</pre>
   </li>
-  <li>Create the distribution: <tt>make distribution-files</tt></li>
-  <li>Rename the zip and jar files created under the <code>dist/</code> directory to the appropriate version number before uploading them in the next step.</li>
-  <li>Follow the <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>; in particular, start at <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>, click "Tags", click "add release notes" for v1.3.6, name it "Randoop version 1.3.6", and upload the zip and jar files</li>
+  <li>Increment the version number and set the date in
+    <code>src/randoop/Globals.java</code>,
+    <code>doc/CHANGES.txt</code>, and
+    <code>doc/index.html</code>.
+  </li>
+  <li>Commit and push those changes, and make a repository tag
+    (use the right version number, not 2.1.3!):
+    <pre>NEWVERSION=2.1.3
+git commit . -m "Update version to $NEWVERSION"
+git push
+git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
+git push --tags</pre>
+    <!-- The gh-pages branch is not tagged. -->
+  </li>
+  <li>Create the distribution:
+    <pre>make distribution-files
+(cd dist && mv randoop.jar randoop-$NEWVERSION.jar && mv randoop.zip randoop-$NEWVERSION.zip)</pre>
+  </li>
+  <li>Follow the <a
+    href="https://help.github.com/articles/creating-releases/">GitHub
+      instructions for creating a release</a>; in particular, start at <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
+    click "Tags", click "add release notes" for v<em>1.3.6</em>, name it
+    "Randoop version <em>1.3.6</em>", use the changelog entry as the
+    description (remove any extraneous hard line breaks), upload the
+    zip and jar files, and finally click "publish release".
+  </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
-    Intro text:
-    Randoop 1.3.6 has been released and is available at https://github.com/randoop/randoop/releases/ .
+    <br/>
+    Subject: Randoop version <em>1.3.6</em>
+    <br/>
+    Randoop <em>1.3.6</em> has been released and is available at
+    https://github.com/randoop/randoop/releases/.  The changelog appears below.
   </li>
 </ol>
 
