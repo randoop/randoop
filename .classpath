@@ -9,6 +9,7 @@
 	<classpathentry kind="lib" path="lib/daikon.jar"/>
 	<classpathentry kind="lib" path="lib/dcomp_premain.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.8.jar"/>
+	<classpathentry kind="lib" path="lib/javassist.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.10-swt.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.10.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
