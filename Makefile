@@ -101,7 +101,7 @@ ifneq (,$(findstring 1.8.,$(shell java -version 2>&1)))
   DOCLINT?=-Xdoclint:all,-missing
 endif
 
-javadoc:
+javadoc: plume-lib-update
 	\rm -rf doc/javadoc
 	mkdir -p doc/javadoc
 	find src/randoop -name "*.java" | ${SORT_DIRECTORY_ORDER} \
@@ -113,7 +113,7 @@ ideas:
 
 .PHONY: tags
 tags: TAGS
-TAGS: $(RANDOOP_FILES)
+TAGS: $(RANDOOP_FILES) plume-lib-update
 	find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs etags
 
 
@@ -524,7 +524,7 @@ execerr:
 ############################################################
 # Targets for creating and printing the results of test diffs.
 
-goal_files = $(shell find systemtests/resources -name "*.goal" | ${SORT_DIRECTORY_ORDER})
+goal_files = $(shell make  find systemtests/resources -name "*.goal")
 
 # Contains the goal file names, without the .goal suffix.
 goal_files_bases = $(basename $(goal_files))
@@ -646,7 +646,7 @@ validate-manual:
 # Targets for updating Randoop's distribution.
 
 # Creates the zip file for other people to download.
-distribution-files: manual randoop_agent.jar
+distribution-files: manual randoop_agent.jar plume-lib-update
 	rm -rf randoop dist
 	mkdir randoop
 	mkdir randoop/bin
