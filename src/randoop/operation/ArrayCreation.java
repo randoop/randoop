@@ -83,8 +83,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
-   * {@inheritDoc}
-   * @return the type of elements held in created array.
+   * @return the type of the elements held in the created array
    */
   public Class<?> getElementType() {
     return this.elementType;
@@ -93,7 +92,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   /**
    * Returns the length of created array.
    *
-   * @return length of array created by this object.
+   * @return length of array created by this object
    */
   public int getLength() {
     return this.length;

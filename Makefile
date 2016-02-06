@@ -41,16 +41,18 @@ JAVAC_TARGET ?= ${TARGET_DEFAULT}
 # User may set JAVAC_EXTRA_ARGS
 JAVAC_COMMAND ?= ${JAVAC} ${JAVAC_TARGET} ${JAVAC_EXTRA_ARGS}
 
+SORT_DIRECTORY_ORDER ?= ${RANDOOP_HOME}/utils/plume-lib/bin/sort-directory-order
+
 export PATH
 
 ############################################################
 # Targets for compiling and doing basic tests on Randoop.
 
 # All the source files.
-RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
-RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
-RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
-RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
+RANDOOP_FILES = $(shell find src/ tests/ -name '*.java' | ${SORT_DIRECTORY_ORDER})
+RANDOOP_SRC_FILES = $(shell find src/ -name '*.java' | ${SORT_DIRECTORY_ORDER})
+RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java' | ${SORT_DIRECTORY_ORDER})
+RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt' | ${SORT_DIRECTORY_ORDER})
 
 # Build and run tests
 all: clean build tests
@@ -98,7 +100,7 @@ endif
 javadoc:
 	\rm -rf doc/javadoc
 	mkdir -p doc/javadoc
-	find src/randoop -name "*.java" \
+	find src/randoop -name "*.java" | ${SORT_DIRECTORY_ORDER} \
 		| xargs javadoc ${DOCLINT} -d doc/javadoc -quiet -noqualifier all -notimestamp
 jdoc: javadoc
 
@@ -108,7 +110,7 @@ ideas:
 .PHONY: tags
 tags: TAGS
 TAGS: $(RANDOOP_FILES)
-	find src/ tests/ -name "*.java" | xargs etags
+	find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs etags
 
 
 ############################################################
@@ -518,7 +520,7 @@ execerr:
 ############################################################
 # Targets for creating and printing the results of test diffs.
 
-goal_files = $(shell find systemtests/resources -name "*.goal")
+goal_files = $(shell find systemtests/resources -name "*.goal" | ${SORT_DIRECTORY_ORDER})
 
 # Contains the goal file names, without the .goal suffix.
 goal_files_bases = $(basename $(goal_files))
@@ -674,13 +676,13 @@ distribution-files: manual randoop_agent.jar
 	cp .classpath-dist randoop/.classpath
 # Make sure everything works.
 	cd randoop && \
-	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/jakarta-oro-2.0.8.jar:lib/javassist.jar'
+	  find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/jakarta-oro-2.0.8.jar:lib/javassist.jar'
 # Why doesn't this work (any more)?
 #	cd randoop && \
-#	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
+#	  find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
 # (Alternative that may be necessary with certain OpenJDK builds whose javac erroneously double-evaluates command-line arguments.)
 # 	cd randoop && \
-#	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp `ls lib/*.jar | perl -p -e 's/\n/:/g'`
+#	  find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp `ls lib/*.jar | perl -p -e 's/\n/:/g'`
 # Make randoop.jar.
 	mkdir randoop/tmp
 	cp -r randoop/bin/* randoop/tmp
@@ -706,7 +708,7 @@ distribution-files: manual randoop_agent.jar
 ../randoop-gh-pages:
 	(cd .. && git clone git@github.com:randoop/randoop.git && git checkout gh-pages)
 
-copy-to-gh-pages: ../randoop-gh-pages
+copy-to-gh-pages: ../randoop-gh-pages javadoc manual
 	(cd ../randoop-gh-pages && git pull)
 # Remove all files from manual/ except README, then copy new contents
 	(cd ../randoop-gh-pages/manual && find . -type f -not -name 'README' | xargs rm -f)
