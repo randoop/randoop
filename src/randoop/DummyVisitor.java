@@ -20,4 +20,9 @@ public final class DummyVisitor implements ExecutionVisitor {
     // do nothing
   }
 
+  @Override
+  public void visitAfterSequence(ExecutableSequence executableSequence) {
+    // do nothing
+  }
+
 }

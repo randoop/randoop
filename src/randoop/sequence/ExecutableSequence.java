@@ -89,9 +89,9 @@ public class ExecutableSequence implements Serializable {
   /** The underlying sequence. */
   public Sequence sequence;
 
-  /** The checks for this sequence */ 
+  /** The checks for this sequence */
   private TestChecks checks;
-  
+
   /**
    * Contains the runtime objects created and exceptions thrown (if any)
    * during execution of this sequence.
@@ -155,7 +155,7 @@ public class ExecutableSequence implements Serializable {
     this.executionResults = exec;
     this.checks = checks;
   }
-  
+
   @Override
   public String toString() {
     StringBuilder b = new StringBuilder();
@@ -205,7 +205,7 @@ public class ExecutableSequence implements Serializable {
   /**
    * Return this sequence as code.
    * Similar to {@link Sequence#toCodeString()} except includes the
-   * checks. 
+   * checks.
    *
    * If for a given statement there is a check of type
    * {@link randoop.ExceptionCheck}, that check's pre-statement code is printed
@@ -257,7 +257,7 @@ public class ExecutableSequence implements Serializable {
 
   /**
    * Executes sequence, stopping on exceptions.
-   * 
+   *
    * @param visitor  the {@code ExecutionVistior} that collects checks from results
    */
   public void execute (ExecutionVisitor visitor, TestCheckGenerator gen) {
@@ -288,7 +288,7 @@ public class ExecutableSequence implements Serializable {
    *   </ul>
    * </ul>
    *
-   * @param visitor  the {@code ExecutionVisitor} 
+   * @param visitor  the {@code ExecutionVisitor}
    */
   public void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
 
@@ -319,7 +319,7 @@ public class ExecutableSequence implements Serializable {
       }
       //make sure no exception before final statement of sequence
       if ((statementResult instanceof ExceptionalExecution) && i < sequence.size() - 1) {
-        if (ignoreException) { 
+        if (ignoreException) {
           //this preserves previous behavior, which was simply to return if exception occurred
           break;
         } else {
@@ -327,11 +327,13 @@ public class ExecutableSequence implements Serializable {
           throw new Error(msg + ((ExceptionalExecution)statementResult).getException().getMessage());
         }
       }
-      
+
       visitor.visitAfterStatement(this, i);
-      
+
     }
-    
+
+    visitor.visitAfterSequence(this);
+
     checks = gen.visit(this);
 
   }
@@ -340,14 +342,14 @@ public class ExecutableSequence implements Serializable {
       int i, List<Variable> inputs) {
 
     Object[] ros = getRuntimeValuesForVars(inputs, outcome);
-    
+
     //TODO move this check elsewhere -- results shouldn't be part of ES
     for (int ri = 0 ; ri < ros.length ; ri++) {
       if (ros[ri] == null) {
         this.hasNullInput = true;
       }
     }
-    
+
     return ros;
   }
 
@@ -420,7 +422,7 @@ public class ExecutableSequence implements Serializable {
 
   /**
    * Return the set of test checks for the most recent execution.
-   * 
+   *
    * @return the {@code TestChecks} generated from the most recent execution
    */
   public TestChecks getChecks() {
@@ -429,7 +431,7 @@ public class ExecutableSequence implements Serializable {
 
   /**
    * Return the results of each statement for the most recent execution.
-   * 
+   *
    * @return all the execution outcomes for this sequence.
    */
   public ExecutionOutcome[] getAllResults() {
@@ -546,7 +548,7 @@ public class ExecutableSequence implements Serializable {
         return i;
     return -1;
   }
-  
+
   public static <D extends Check> List<Sequence> getSequences(List<ExecutableSequence> exec) {
     List<Sequence> result= new ArrayList<Sequence>(exec.size());
     for (ExecutableSequence execSeq : exec) {
@@ -580,8 +582,8 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-   * Indicate whether checks are failing or passing. 
-   * 
+   * Indicate whether checks are failing or passing.
+   *
    * @return true if checks are all failing, or false if all passing
    */
   public boolean hasFailure() {
@@ -590,7 +592,7 @@ public class ExecutableSequence implements Serializable {
 
   /**
    * Indicate whether there are any checks.
-   * 
+   *
    * @return true if the test checks are nonempty, and false otherwise
    */
   public boolean hasChecks() {
@@ -599,11 +601,31 @@ public class ExecutableSequence implements Serializable {
 
   /**
    * Indicate whether there are any invalid checks.
-   * 
+   *
    * @return true if the test checks have been set and are for invalid behavior, false otherwise
    */
   public boolean hasInvalidBehavior() {
     return checks != null && checks.hasInvalidBehavior();
+  }
+
+  /**
+   * Adds a covered class to the most recent execution results of this sequence.
+   *
+   * @param c  the class covered by the execution of this sequence
+   */
+  public void addCoveredClass(Class<?> c) {
+    executionResults.addCoveredClass(c);
+  }
+
+  /**
+   * Indicates whether the given class is covered by the most recent execution
+   * of this sequence.
+   *
+   * @param c  the class to be covered
+   * @return true if the class is covered by the sequence, false otherwise
+   */
+  public boolean coversClass(Class<?> c) {
+    return executionResults.getCoveredClasses().contains(c);
   }
 
 }

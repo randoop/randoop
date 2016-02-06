@@ -15,7 +15,7 @@ public class RandoopContractsTest {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     JUnitCore junit = new JUnitCore();
     junit.addListener(new TextListener(new PrintStream(baos)));
-    Class<?> testClass = Class.forName("BuggyTest");
+    Class<?> testClass = Class.forName("BuggyTest"); // name of generated test
     Result testResult = junit.run(testClass);
     
     /* 
@@ -24,17 +24,16 @@ public class RandoopContractsTest {
      * be better to make sure that generated tests involve expected contracts
      */
     // TODO change test so that it looks at which contracts are violated
-    int delta = 3;
-    int expectedFailures = 160;
+    int expectedFailures = 81;
     int actualFailures = testResult.getFailureCount();
-    if (actualFailures < (expectedFailures - delta) || (expectedFailures + delta) < actualFailures) {
+    if (actualFailures != expectedFailures) {
       StringBuilder b = new StringBuilder("RANDOOP TEST FAILED: EXPECTED GENERATED UNIT TESTS TO CAUSE " + expectedFailures + " FAILURES BUT GOT " + testResult.getFailureCount());
       b.append("\n\nJUNIT OUTPUT ON RANDOOP-GENERATED TESTS:");
       b.append(baos.toString());
       throw new RuntimeException(b.toString());
     }
 
-    System.out.println("Test passed; got " + actualFailures + " failures in range [" + (expectedFailures - delta) + ", " + (expectedFailures + delta) + "]");
+    System.out.println("Test passed; got " + actualFailures + " expected failures");
 
   }
 

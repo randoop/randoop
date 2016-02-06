@@ -2,30 +2,32 @@ package randoop.operation;
 
 import java.lang.reflect.Constructor;
 
+import randoop.types.TypeNames;
+
 /**
- * ConstructorSignatures provides static methods to write as well as parse 
+ * ConstructorSignatures provides static methods to write as well as parse
  * a string representation of a constructor signature.
  */
 public class ConstructorSignatures {
 
   /**
-   * Parses a constructor signature as produced by 
-   * {@link ConstructorSignatures#getSignatureString(Constructor)} 
+   * Parses a constructor signature as produced by
+   * {@link ConstructorSignatures#getSignatureString(Constructor)}
    * and returns the corresponding reflective {@link Constructor} object.
-   * 
+   *
    * @param signature a string representing a constructor signature.
    * @return reflective {@link Constructor} method corresponding to signature.
-   * @throws OperationParseException if signature parameter does not match 
+   * @throws OperationParseException if signature parameter does not match
    *         expected format.
-   * @throws Error  if there is a reflection exception: the class name is not 
-   *                valid, there is no method with the name, or there is a 
+   * @throws Error  if there is a reflection exception: the class name is not
+   *                valid, there is no method with the name, or there is a
    *                security exception.
    */
   public static Constructor<?> getConstructorForSignatureString(String signature) throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
-    
+
     //TODO simplify argument recognition using regex
     int openPar = signature.indexOf('(');
     int closePar = signature.indexOf(')');
@@ -41,13 +43,13 @@ public class ConstructorSignatures {
     String methodName = clsAndMethod.substring(lastDot + 1);
     assert methodName.equals("<init>");
     String argsOneStr = signature.substring(openPar + 1, closePar);
-    
+
     // Extract parameter types.
     Class<?>[] argTypes = TypeArguments.getTypeArgumentsForString(argsOneStr);
-    
+
     Class<?> cls;
     try {
-      cls = Class.forName(clsName);
+      cls = TypeNames.getTypeForName(clsName);
       return cls.getDeclaredConstructor(argTypes);
     } catch (ClassNotFoundException e1) {
       throw new Error(e1);
@@ -58,10 +60,10 @@ public class ConstructorSignatures {
     }
   }
 
-  
+
 /**
  * Generates a string representation of the signature of the constructor.
- * 
+ *
  * @param constructor for which signature string is to be generated.
  * @return string representing signature of the parameter constructor.
  */

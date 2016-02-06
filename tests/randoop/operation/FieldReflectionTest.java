@@ -15,9 +15,9 @@ import java.util.TreeSet;
 
 import org.junit.Test;
 
+import randoop.field.ClassWithFields;
 import randoop.field.FinalInstanceField;
 import randoop.field.InstanceField;
-import randoop.field.ClassWithFields;
 import randoop.field.StaticField;
 import randoop.field.StaticFinalField;
 import randoop.field.SubclassWithFields;

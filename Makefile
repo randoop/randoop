@@ -59,7 +59,7 @@ all-dist: all javadoc manual distribution-files
 
 # Remove generated .class files.
 clean:
-	rm -rf bin
+	rm -rf bin randoop_agent.jar
 
 # Build Randoop.
 build: bin randoop_agent.jar
@@ -215,7 +215,7 @@ randoop-contracts: bin
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --no-regression-tests \
-	   --timelimit=10 \
+	   --inputlimit=1000 \
 	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
 	   --error-test-filename=BuggyTest \
 	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
@@ -223,8 +223,7 @@ randoop-contracts: bin
 	   --output-tests-serialized=systemtests/randoop-contracts-test-scratch/sequences_serialized.gzip
 	cd systemtests/randoop-contracts-test-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
-# We expect this to fail, so add a "-" so the target doesn't fail.
-	-cd systemtests/randoop-contracts-test-scratch && \
+	cd systemtests/randoop-contracts-test-scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
 	  randoop.main.RandoopContractsTest
 
@@ -428,6 +427,7 @@ test-generation: bin
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestFilteringTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestClassificationTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.test.predicate.ExceptionPredicateTest
+	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.CoveredClassTest
 
 # NOT A TEST! I use this target to communicate problems to Jeff.
 dferr%: $(DYNCOMP) bin
@@ -665,6 +665,7 @@ distribution-files: manual randoop_agent.jar
 	cp lib/plume.jar randoop/lib
 	cp lib/jakarta-oro-2.0.8.jar randoop/lib
 	cp lib/jakarta-oro-license.txt randoop/lib
+	cp lib/javassist.jar randoop/lib
 # Copy license.
 	cp license.txt randoop/
 # Copy eclipse project files.
@@ -672,7 +673,7 @@ distribution-files: manual randoop_agent.jar
 	cp .classpath-dist randoop/.classpath
 # Make sure everything works.
 	cd randoop && \
-	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/jakarta-oro-2.0.8.jar'
+	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/jakarta-oro-2.0.8.jar:lib/javassist.jar'
 # Why doesn't this work (any more)?
 #	cd randoop && \
 #	  find src/ tests/ -name "*.java" | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
@@ -684,6 +685,7 @@ distribution-files: manual randoop_agent.jar
 	cp -r randoop/bin/* randoop/tmp
 	cd randoop/tmp && jar xf ../lib/plume.jar
 	cd randoop/tmp && jar xf ../lib/jakarta-oro-2.0.8.jar
+	cd randoop/tmp && jar xf ../lib/javassist.jar
 	cd randoop/tmp && jar cf randoop.jar *
 	mv randoop/tmp/randoop.jar randoop/
 	rm -r randoop/tmp

@@ -1,7 +1,9 @@
 package randoop.sequence;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import randoop.ExecutionOutcome;
 import randoop.NotExecuted;
@@ -21,6 +23,8 @@ public final class Execution {
   // The sequence whose execution results this object stores.
   protected final Sequence owner;
 
+  private Set<Class<?>> coveredClasses;
+
   /**
    * Create an Execution to store the execution results of the given sequence.
    * The list of outcomes is initialized to NotExecuted for every statement.
@@ -31,11 +35,12 @@ public final class Execution {
     for (int i = 0 ; i < owner.size() ; i++) {
       theList.add(NotExecuted.create());
     }
+    this.coveredClasses = new LinkedHashSet<>();
   }
-  
+
   /**
    * Construct an Execution directly from the given arguments.
-   * 
+   *
    * Do not use this constructor! (Unless you know what you're doing.)
    */
   public Execution(Sequence owner, List<ExecutionOutcome> theList) {
@@ -59,5 +64,13 @@ public final class Execution {
   public ExecutionOutcome get(int i) {
     if (i < 0 || i >= theList.size()) throw new IllegalArgumentException("wrong index.");
     return theList.get(i);
+  }
+
+  public void addCoveredClass(Class<?> c) {
+    coveredClasses.add(c);
+  }
+
+  public Set<Class<?>> getCoveredClasses() {
+    return coveredClasses;
   }
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import plume.Triple;
+
 import randoop.ExecutionVisitor;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Sequence;
@@ -13,31 +15,30 @@ import randoop.sequence.Sequence;
 import cov.Branch;
 import cov.Coverage;
 import cov.CoverageAtom;
-import plume.Triple;
 
 /**
  * This class is only used by the branch-directed generation research project.
  *
  * Records the branches covered after executing all-but-last method
  * call in a sequence.
- * 
+ *
  * ASSUMPTIONS:
- * 
+ *
  * 1. Coverage has been cleared before executing the sequence.
- * 
+ *
  * 2. The statements in a sequence are all executed and visited
  * from beginning to end. This visitor will not work properly with the
  * naive generator that backtracks during execution.
- * 
+ *
  */
 public class CovWitnessHelperVisitor implements ExecutionVisitor {
-  
+
   private final List<Class<?>> covClasses;
 
   private final Map<CoverageAtom, Set<Sequence>> covWitnessMap;
 
   private Map<Class<?>, int[]> trues;
-  
+
   private Map<Class<?>, int[]> falses;
 
 
@@ -59,28 +60,29 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
     // Nothing to do for initialization.
   }
 
+  @Override
   public void visitAfterStatement(ExecutableSequence sequence, int idx) {
-    
+
     assert sequence.sequence.size() > 0;
-    
+
     if (sequence.sequence.size() == 1) {
       addWitnessesLength1Seq(sequence.sequence);
       return;
     }
-    
+
     assert sequence.sequence.size() > 1;
-    
+
     // We've executed all but last statements.
     if (idx == sequence.sequence.size() - 2) {
-      
+
       trues = new LinkedHashMap<Class<?>, int[]>();
       falses = new LinkedHashMap<Class<?>, int[]>();
-      
+
       // Store covered branches.
       for (Class<?> cls : covClasses) {
-        
+
         Coverage.initCoverage(cls);
-        
+
         int[] trueBranches = Coverage.getTrueBranches(cls);
         int[] savedtrues = new int[trueBranches.length];
         System.arraycopy(trueBranches, 0, savedtrues, 0, trueBranches.length);
@@ -93,30 +95,30 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
       }
       return;
     }
-    
+
     if (idx == sequence.sequence.size() - 1) {
-      
+
       Set<Branch> newcov = new LinkedHashSet<Branch>();
-      
+
       // Store covered branches.
       for (Class<?> cls : covClasses) {
         String clsname = cls.getName();
         Coverage.initCoverage(cls);
-        
+
         int[] oldtrues = trues.get(cls);
         assert oldtrues != null;
-        
+
         int[] oldfalses = falses.get(cls);
         assert oldfalses != null;
-        
+
         int[] newtrues = Coverage.getTrueBranches(cls);
         assert oldtrues.length == newtrues.length;
-        
+
         int[] newfalses = Coverage.getFalseBranches(cls);
         assert oldfalses.length == newfalses.length;
-        
+
         assert oldtrues.length == oldfalses.length;
-        assert oldfalses.length == newfalses.length;  
+        assert oldfalses.length == newfalses.length;
 
         for (int i = 0 ; i < newtrues.length ; i++) {
           if (newtrues[i] > oldtrues[i]) {
@@ -127,7 +129,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
           }
         }
       }
-      
+
       // For each branch covered in the last statement, add the sequence to the
       // coverage witness map.
       for (Branch br :newcov) {
@@ -138,7 +140,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
         }
         seqs.add(sequence.sequence);
       }
-      
+
     }
   }
 
@@ -153,7 +155,13 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
     }
   }
 
+  @Override
   public void visitBeforeStatement(ExecutableSequence sequence, int i) {
     //do nothing
+  }
+
+  @Override
+  public void visitAfterSequence(ExecutableSequence executableSequence) {
+    // do nothing
   }
 }

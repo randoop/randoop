@@ -4,11 +4,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.TreeSet;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import randoop.RandoopClassLoader;
 import randoop.operation.OperationParseException;
+import randoop.types.TypeNames;
+
+import javassist.ClassPool;
 
 public class PublicFieldParserTest {
+
+  @BeforeClass
+  public static void setup() {
+    ClassLoader contextLoader = PublicFieldParserTest.class.getClassLoader();
+    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
+  }
 
   @Test
   public void parseConstraintInstance() {

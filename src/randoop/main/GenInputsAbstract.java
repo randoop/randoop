@@ -2,10 +2,14 @@ package randoop.main;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
+import plume.EntryReader;
 import plume.Option;
 import plume.OptionGroup;
 import plume.Options;
@@ -123,6 +127,26 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   @Option("Ignore class names specified by user that cannot be found")
   public static boolean silently_ignore_bad_class_names = false;
+
+  /**
+   * Classes, one of which every test must use.
+   * Randoop will only output tests that have at least one use of a member
+   * of a class whose name matches the regular expression.
+   */
+  @Option("Classes, one of which every test must use")
+  public static Pattern include_if_classname_appears = null;
+
+  /**
+   * File containing classes that the tests must exercise.
+   * A test is output only if it exercises at least one of the class names
+   * in the file.  A test exercises a class if it executes any constructor
+   * or method of the class, directly or indirectly (the constructor or
+   * method might not appear in the source code of the test).  The file
+   * contains fully-qualified class names, and any class name in it must
+   * also appear in <code>--testclass</code> or <code>--classlist</code>.
+   */
+  @Option("File containing class names that tests must exercise")
+  public static String include_if_class_exercised = null;
 
   /**
    * Whether to output error-revealing tests.
@@ -453,14 +477,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   public static boolean dont_output_tests = false;
 
   /**
-   * Indicate which classes that any test written to output must use.
-   * Written test suites will only include tests that have at least one
-   * use of a member of a class whose name matches the regular expression.
-   */
-  @Option("Regular expression for names of classes that any test written to output must use")
-  public static Pattern include_only_classes = null;
-
-  /**
    * Whether to use JUnit's standard reflective mechanisms for invoking
    * tests.  JUnit's reflective invocations can interfere with code
    * instrumentation, such as by the DynComp tool.  If that is a problem,
@@ -633,7 +649,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
   }
 
-  List<Class<?>> findClassesFromArgs(Options printUsageTo) {
+  public static List<Class<?>> findClassesFromArgs(Options opts) {
     List<Class<?>> classes = new ArrayList<Class<?>>();
 
     if (classlist != null) {
@@ -655,4 +671,21 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     return classes;
   }
+
+  public static Set<String> getClassnamesFromArgs(Options opts) {
+    Set<String> classnames = new LinkedHashSet<>(testclass);
+    if (classlist != null) {
+      try (EntryReader er = new EntryReader(classlist, "^#.*", null)) {
+        for (String line : er) {
+          classnames.add(line.trim());
+        }
+      } catch (IOException e) {
+        String msg = Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
+        System.out.println(msg);
+        System.exit(1);
+      }
+    }
+    return classnames;
+  }
+
 }

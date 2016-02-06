@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -45,12 +44,12 @@ public class TestClassificationTest {
 
   /**
    * Tests the classification of tests when all exceptions are invalid.
-   * Because of class will have no error tests, and regression tests 
+   * Because of class will have no error tests, and regression tests
    * should have no exceptions.
    */
   @Test
   public void allInvalidTest() {
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.INVALID;
     GenInputsAbstract.unchecked_exception = BehaviorType.INVALID;
@@ -59,40 +58,40 @@ public class TestClassificationTest {
     GenInputsAbstract.oom_exception = BehaviorType.INVALID;
     GenInputsAbstract.outputlimit = 1000;
     GenInputsAbstract.forbid_null = false;
-    
+
     Class<?> c = Flaky.class;
     ForwardGenerator gen = buildGenerator(c);
     gen.explore();
     List<ExecutableSequence> rTests = gen.getRegressionSequences();
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
-    
+
     assertTrue("should have some regression tests", rTests.size() > 0);
-    
+
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
       assertFalse("these are not error checks", cks.hasErrorBehavior());
       assertFalse("these are not invalid checks", cks.hasInvalidBehavior());
-      
+
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
         String msg = "all exceptions are invalid, regression checks should be null;\n have ";
         fail(msg + eck.getClass().getName() + " with " + eck.getExceptionName());
       }
     }
-    
+
     assertEquals("when all exceptions invalid, have no error tests", 0, eTests.size());
 
   }
-  
+
   /**
    * Tests the classification of tests when all exceptions are errors.
-   * All exceptions should show as NoExceptionCheck, and should be no 
+   * All exceptions should show as NoExceptionCheck, and should be no
    * expected exceptions in regression tests.
    */
   @Test
   public void allErrorTest() {
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.ERROR;
     GenInputsAbstract.unchecked_exception = BehaviorType.ERROR;
@@ -109,7 +108,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
     assertTrue("should have some regression tests", rTests.size() > 0);
-    
+
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
@@ -123,7 +122,7 @@ public class TestClassificationTest {
     }
 
     assertTrue("should have some error tests", eTests.size() > 0);
-    
+
     for (ExecutableSequence s : eTests) {
       TestChecks cks = s.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
@@ -149,7 +148,7 @@ public class TestClassificationTest {
    */
   @Test
   public void allExpectedTest() {
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -166,7 +165,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
     assertTrue("should have some regression tests", rTests.size() > 0);
-    
+
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
@@ -182,9 +181,9 @@ public class TestClassificationTest {
     assertEquals("all exceptions expected, should be no error tests", 0, eTests.size());
 
   }
-  
+
   /**
-   * Tests classification of tests when behavior type defaults are set 
+   * Tests classification of tests when behavior type defaults are set
    * (checked and unchecked exceptions are expected, and both NPE-on-null
    * and OOM are invalid).
    * Because class throws NPE without input, should see NPE as expected when no
@@ -192,7 +191,7 @@ public class TestClassificationTest {
    */
   @Test
   public void defaultsTest() {
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_regression_assertions = false;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -209,7 +208,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
     assertTrue("should have some regression tests", rTests.size() > 0);
-    
+
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
@@ -223,7 +222,7 @@ public class TestClassificationTest {
     }
 
     assertTrue("should have error tests", eTests.size() > 0);
-    
+
     for (ExecutableSequence s : eTests) {
       TestChecks cks = s.getChecks();
       assertTrue("if sequence here should have checks", cks.hasChecks());
@@ -243,13 +242,13 @@ public class TestClassificationTest {
 
   /**
    * Tests default behaviors with regression assertions turned off.
-   * Means that because class throws NPE without input, should see NPE as 
-   * empty exception when there are no null inputs. 
+   * Means that because class throws NPE without input, should see NPE as
+   * empty exception when there are no null inputs.
    * Otherwise, should not see NPE, or any other checks.
    */
   @Test
   public void defaultsWithNoRegressionAssertions() {
-    GenInputsAbstract.include_only_classes = null;
+    GenInputsAbstract.include_if_classname_appears = null;
     GenInputsAbstract.no_regression_assertions = true;
     GenInputsAbstract.checked_exception = BehaviorType.EXPECTED;
     GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
@@ -266,7 +265,7 @@ public class TestClassificationTest {
     List<ExecutableSequence> eTests = gen.getErrorTestSequences();
 
     assertTrue("should have some regression tests", rTests.size() > 0);
-    
+
     for (ExecutableSequence s : rTests) {
       TestChecks cks = s.getChecks();
       assertFalse("these are not error checks", cks.hasErrorBehavior());
@@ -299,9 +298,9 @@ public class TestClassificationTest {
 
     }
   }
-  
+
   private ForwardGenerator buildGenerator(Class<?> c) {
-    List<Class<?>> classes = new ArrayList<>();
+    Set<Class<?>> classes = new LinkedHashSet<>();
     classes.add(c);
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
@@ -312,7 +311,7 @@ public class TestClassificationTest {
     ComponentManager componentMgr = new ComponentManager(components );
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
     ForwardGenerator gen = new ForwardGenerator(
-        model, 
+        model,
         GenInputsAbstract.timelimit * 1000,
         GenInputsAbstract.inputlimit,
         GenInputsAbstract.outputlimit,
