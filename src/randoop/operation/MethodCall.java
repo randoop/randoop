@@ -129,7 +129,15 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder sb) {
 
-    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    String receiverString = null;
+    if (! isStatic()) {
+      if (PrimitiveTypes.isPrimitive(inputVars.get(0).getType())) {
+        Statement statementCreatingVar = inputVars.get(0).getDeclaringStatement();
+        receiverString = statementCreatingVar.getShortForm();
+      } else {
+        receiverString = inputVars.get(0).getName();
+      }
+    }
     appendReceiverOrClassForStatics(receiverString, sb);
 
     sb.append(".");
@@ -142,13 +150,13 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
         sb.append(", ");
 
       // CASTING.
-      if (PrimitiveTypes.isPrimitive(getInputTypes().get(i))) {
-        // Cast if input type is a primitive, because Randoop uses
-        // boxed primitives.  (Is that necessary with autoboxing?)
-        sb.append("(" + getInputTypes().get(i).getName() + ")");
-      } else if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
+      if (! inputVars.get(i).getType().equals(this.getInputTypes().get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+        if (PrimitiveTypes.isPrimitive(getInputTypes().get(i))) {
+          sb.append("(" + getInputTypes().get(i).getName() + ")");
+        } else {
+          sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+        }
       }
 
       String param = inputVars.get(i).getName();
@@ -227,9 +235,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
       Class<?> expectedType = getInputTypes().get(0);
       String canonicalName = expectedType.getCanonicalName();
       boolean mustCast = canonicalName != null
-      && PrimitiveTypes
-      .isBoxedPrimitiveTypeOrString(expectedType)
-      && !expectedType.equals(String.class);
+                   && PrimitiveTypes.isBoxedPrimitiveTypeOrString(expectedType)
+                   && ! expectedType.equals(String.class);
       if (mustCast) {
         // this is a little paranoid but we need to cast primitives in
         // order to get them boxed.
