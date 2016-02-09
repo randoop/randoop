@@ -64,6 +64,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * Weight is used by heuristic that favors smaller sequences
    * so it makes sense to define weight as the inverse of size.
    */
+  @Override
   public double getWeight() {
     return 1/(double)size();
   }
@@ -143,19 +144,18 @@ public final class Sequence implements Serializable, WeightedElement {
     return inputsAsVariables;
   }
 
-  /** 
+  /**
    * Returns the Java source code representation of this sequence.
-   * Similar to {@link ExecutableSequence#toCodeString()} except 
+   * Similar to {@link ExecutableSequence#toCodeString()} except
    * does not include checks.
-   *  
+   *
    * @return a string containing Java code for this sequence
    */
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       // don't dump primitive initializations, if using literals
-      if (!GenInputsAbstract.long_format
-          && getStatement(i).getShortForm() != null) {
+      if (getStatement(i).getShortForm() != null) {
         continue;
       }
       appendCode(b, i);
@@ -166,10 +166,11 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Equivalent to toParseableString().
    */
+  @Override
   public String toString() {
     return toParseableString();
   }
-  
+
   /**
    * A set of bits, where there is one bit associated with each index.
    * Active flags are used during generation, to determine what values
@@ -771,10 +772,10 @@ public final class Sequence implements Serializable, WeightedElement {
       }
     }
   }
-  
+
   /**
    * Create a new sequence that is the concatenation of the given sequences.
-   * 
+   *
    * @param sequences  the list of sequences to concatenate
    * @return the concatenation of the sequences in the list
    */
@@ -1090,6 +1091,7 @@ public final class Sequence implements Serializable, WeightedElement {
   public static void readTextSequences(String file, final Collection<Sequence> collection) {
     // Parse the file using a RecordListReader.
     RecordProcessor processor = new RecordProcessor() {
+      @Override
       public void processRecord(List<String> record) {
         try {
           collection.add(Sequence.parse(record));
@@ -1128,9 +1130,9 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * Test whether any statement of this sequence has an operation whose 
+   * Test whether any statement of this sequence has an operation whose
    * declaring class matches the given regular expression.
-   *  
+   *
    * @param classNames  the regular expression to test class names
    * @return true if any statement has operation with matching declaring class, false otherwise
    */
@@ -1145,9 +1147,9 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * Using compositional structure of this sequence, return the subsequence of 
+   * Using compositional structure of this sequence, return the subsequence of
    * this sequence that contains the statement at the given index.
-   *  
+   *
    * @param index  the statement position in this sequence
    * @return the sequence containing the index position
    */

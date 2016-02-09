@@ -584,45 +584,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Create sequences but never execute them")
   public static boolean dontexecute = false;
 
-  /**
-   * Whether to use the long format for outputting JUnit tests.
-   * The long format emits exactly one line per statement, including
-   * primitive declarations, and uses boxed primitives. This option is used
-   * in the branch-directed generation project.
-   */
-  ///////////////////////////////////////////////////////////////////
-  // These options are only used for the branch-directed generation
-  // research project.
-  @OptionGroup(value="Branch-directed generation", unpublicized=true)
-  @Unpublicized
-  /**
-   * In long format, primitive values are stored in variables and the
-   * variables are used, as in "int x = 3 ; foo(x)".  In short format,
-   * primitive values are directly added to methods, as in "foo(3)".
-   */
-  @Option("Use long format for outputting JUnit tests.")
-  public static boolean long_format = false;
-
-  @Unpublicized
-  @Option("Output branch->witness-sequences map")
-  public static String output_covmap = null;
-
-  @Unpublicized
-  @Option("Output witness sequences for coverage branches")
-  public static boolean output_cov_witnesses = false;
-
-  @Unpublicized
-  @Option("Whenever an object is called for, use an integer")
-  public static boolean always_use_ints_as_objects = false;
-
-  @Unpublicized
-  @Option("The name of a file containing the list of coverage-instrumented classes")
-  public static String coverage_instrumented_classes = null;
-
-  @Unpublicized
-  @Option("Output covered branches to the given text file")
-  public static String output_branches = null;
-
   ///////////////////////////////////////////////////////////////////
   // This is only here to keep the ICSE07ContainersTest working
   // TODO Need to decide to keep the heuristic that uses this in ForwardGenerator

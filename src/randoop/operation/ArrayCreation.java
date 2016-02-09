@@ -10,7 +10,6 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.GenInputsAbstract;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.TypeNames;
@@ -117,6 +116,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
    * {@inheritDoc}
    * @return {@link NormalExecution} object containing constructed array.
    */
+  @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
     if (statementInput.length > length)
       throw new IllegalArgumentException("Too many arguments:"
@@ -174,9 +174,8 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
       // to a sequence; instead, the value (e.g. "3") is inserted directly
       // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (!GenInputsAbstract.long_format &&
-          statementCreatingVar.isPrimitiveInitialization() &&
-          !statementCreatingVar.isNullInitialization()) {
+      if (statementCreatingVar.isPrimitiveInitialization()
+          && ! statementCreatingVar.isNullInitialization()) {
         String shortForm = statementCreatingVar.getShortForm();
         if (shortForm != null) {
           param = shortForm;

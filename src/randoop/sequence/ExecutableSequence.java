@@ -191,8 +191,7 @@ public class ExecutableSequence implements Serializable {
       // If short format, don't print out primitive declarations
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
-      if (!GenInputsAbstract.long_format
-          && sequence.getStatement(i).getShortForm() != null) {
+      if (sequence.getStatement(i).getShortForm() != null) {
         continue;
       }
 
@@ -221,8 +220,7 @@ public class ExecutableSequence implements Serializable {
       // If short format, don't print out primitive declarations
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
-      if (!GenInputsAbstract.long_format
-          && sequence.getStatement(i).getShortForm() != null) {
+      if (sequence.getStatement(i).getShortForm() != null) {
         continue;
       }
 
