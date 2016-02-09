@@ -64,8 +64,26 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 
 <hr />
 
-<h1 id="tasks">Compiling, testing, releasing, etc.</h1>
+<h1 id="setup">Setting up</h1>
 
+Randoop development involves working with both Randoop's code base and the
+website and documentation.
+The first is is in the master (and other branches) of the repository, while
+the website is in the gh-pages branch.
+These instructions assume that you keep subdirectories for both your working
+branch, and the gh-pages branch of Randoop in the same directory.
+Assuming this directory is <code>randoop-working</code>, get started by these steps:
+<code><pre>
+  cd randoop-working
+  git clone git@github.com:randoop/randoop.git myfeature
+  git clone git@github.com:randoop/randoop.git randoop-gh-pages
+  cd randoop-gh-pages
+  git checkout gh-pages
+</pre></code>
+You would then work in the directory <code>myfeature</code>, and follow the
+directions below to move changes into <code>gh-pages</code>.
+
+<h1 id="tasks">Compiling, testing, releasing, etc.</h1>
 
 <h2 id="compiling">Compiling Randoop</h2>
 
