@@ -8,30 +8,30 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.bcel.Constants;
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.Constant;
-import org.apache.bcel.classfile.ConstantClass;
-import org.apache.bcel.classfile.ConstantDouble;
-import org.apache.bcel.classfile.ConstantFieldref;
-import org.apache.bcel.classfile.ConstantFloat;
-import org.apache.bcel.classfile.ConstantInteger;
-import org.apache.bcel.classfile.ConstantInterfaceMethodref;
-import org.apache.bcel.classfile.ConstantLong;
-import org.apache.bcel.classfile.ConstantMethodref;
-import org.apache.bcel.classfile.ConstantNameAndType;
-import org.apache.bcel.classfile.ConstantPool;
-import org.apache.bcel.classfile.ConstantString;
-import org.apache.bcel.classfile.ConstantUtf8;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Method;
-import org.apache.bcel.generic.ClassGen;
-import org.apache.bcel.generic.ConstantPoolGen;
-import org.apache.bcel.generic.ConstantPushInstruction;
-import org.apache.bcel.generic.Instruction;
-import org.apache.bcel.generic.InstructionList;
-import org.apache.bcel.generic.MethodGen;
-import org.apache.bcel.util.ClassPath;
+import org.apache.commons.bcel6.Const;
+import org.apache.commons.bcel6.classfile.ClassParser;
+import org.apache.commons.bcel6.classfile.Constant;
+import org.apache.commons.bcel6.classfile.ConstantClass;
+import org.apache.commons.bcel6.classfile.ConstantDouble;
+import org.apache.commons.bcel6.classfile.ConstantFieldref;
+import org.apache.commons.bcel6.classfile.ConstantFloat;
+import org.apache.commons.bcel6.classfile.ConstantInteger;
+import org.apache.commons.bcel6.classfile.ConstantInterfaceMethodref;
+import org.apache.commons.bcel6.classfile.ConstantLong;
+import org.apache.commons.bcel6.classfile.ConstantMethodref;
+import org.apache.commons.bcel6.classfile.ConstantNameAndType;
+import org.apache.commons.bcel6.classfile.ConstantPool;
+import org.apache.commons.bcel6.classfile.ConstantString;
+import org.apache.commons.bcel6.classfile.ConstantUtf8;
+import org.apache.commons.bcel6.classfile.JavaClass;
+import org.apache.commons.bcel6.classfile.Method;
+import org.apache.commons.bcel6.generic.ClassGen;
+import org.apache.commons.bcel6.generic.ConstantPoolGen;
+import org.apache.commons.bcel6.generic.ConstantPushInstruction;
+import org.apache.commons.bcel6.generic.Instruction;
+import org.apache.commons.bcel6.generic.InstructionList;
+import org.apache.commons.bcel6.generic.MethodGen;
+import org.apache.commons.bcel6.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
 import randoop.types.TypeNames;
@@ -41,7 +41,7 @@ import randoop.types.TypeNames;
 // the constant table.  Integer constants less that 64K are in the code.
 // There are also special opcodes to push values from -1 to 5.  This code
 // does not include them, but it would be easy to add them.  This code also
-// does not include class literals as constants.
+// does not include class literals as Const.
 // It would be possible to determine the method with the constant if you
 // wanted finer-grained information about where the constants were used.
 
@@ -70,6 +70,7 @@ public class ClassFileConstants {
     public Set<String> strings = new TreeSet<String>();
     public Set<Class<?>> classes = new TreeSet<Class<?>>();
 
+    @Override
     public String toString() {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       PrintStream ps = new PrintStream(baos);
@@ -171,333 +172,333 @@ public class ClassFileConstants {
           switch (inst.getOpcode()) {
 
           // Compare two objects, no literals
-          case Constants.IF_ACMPEQ:
-          case Constants.IF_ACMPNE:
+          case Const.IF_ACMPEQ:
+          case Const.IF_ACMPNE:
             break;
 
           // These instructions compare the integer on the top of the stack
           // to zero.  There are no literals here (except 0)
-          case Constants.IFEQ:
-          case Constants.IFNE:
-          case Constants.IFLT:
-          case Constants.IFGE:
-          case Constants.IFGT:
-          case Constants.IFLE: {
+          case Const.IFEQ:
+          case Const.IFNE:
+          case Const.IFLT:
+          case Const.IFGE:
+          case Const.IFGT:
+          case Const.IFLE: {
             break;
           }
 
           // Instanceof pushes either 0 or 1 on the stack depending on whether
-          // the object on top of stack is of the specified type.  
+          // the object on top of stack is of the specified type.
           // If were interested in class literals, this would be interesting
-          case Constants.INSTANCEOF:
+          case Const.INSTANCEOF:
             break;
 
           // Duplicates the item on the top of stack.  No literal.
-          case Constants.DUP: {
+          case Const.DUP: {
             break;
           }
 
           // Duplicates the item on the top of the stack and inserts it 2
           // values down in the stack.  No literals
-          case Constants.DUP_X1: {
+          case Const.DUP_X1: {
             break;
           }
 
           // Duplicates either the top 2 category 1 values or a single
           // category 2 value and inserts it 2 or 3 values down on the
           // stack.
-          case Constants.DUP2_X1: {
+          case Const.DUP2_X1: {
             break;
           }
 
           // Duplicate either one category 2 value or two category 1 values.
-          case Constants.DUP2: {
+          case Const.DUP2: {
             break;
           }
 
           // Dup the category 1 value on the top of the stack and insert it either
           // two or three values down on the stack.
-          case Constants.DUP_X2: {
+          case Const.DUP_X2: {
             break;
           }
 
-          case Constants.DUP2_X2: {
+          case Const.DUP2_X2: {
             break;
           }
 
-          // Pop instructions discard the top of the stack.  
-          case Constants.POP: {
+          // Pop instructions discard the top of the stack.
+          case Const.POP: {
             break;
           }
 
           // Pops either the top 2 category 1 values or a single category 2 value
-          // from the top of the stack.  
-          case Constants.POP2: {
+          // from the top of the stack.
+          case Const.POP2: {
             break;
           }
 
-          // Swaps the two category 1 types on the top of the stack.  
-          case Constants.SWAP: {
+          // Swaps the two category 1 types on the top of the stack.
+          case Const.SWAP: {
             break;
           }
 
           // Compares two integers on the stack
-          case Constants.IF_ICMPEQ:
-          case Constants.IF_ICMPGE:
-          case Constants.IF_ICMPGT:
-          case Constants.IF_ICMPLE:
-          case Constants.IF_ICMPLT:
-          case Constants.IF_ICMPNE: {
+          case Const.IF_ICMPEQ:
+          case Const.IF_ICMPGE:
+          case Const.IF_ICMPGT:
+          case Const.IF_ICMPLE:
+          case Const.IF_ICMPLT:
+          case Const.IF_ICMPNE: {
             break;
           }
 
           // Get the value of a field
-          case Constants.GETFIELD: {
+          case Const.GETFIELD: {
             break;
           }
 
           // stores the top of stack into a field
-          case Constants.PUTFIELD: {
+          case Const.PUTFIELD: {
             break;
           }
 
           // Pushes the value of a static field on the stack
-          case Constants.GETSTATIC: {
+          case Const.GETSTATIC: {
             break;
           }
 
-          // Pops a value off of the stack into a static field 
-          case Constants.PUTSTATIC: {
+          // Pops a value off of the stack into a static field
+          case Const.PUTSTATIC: {
             break;
           }
 
           // pushes a local onto the stack
-          case Constants.DLOAD:
-          case Constants.DLOAD_0:
-          case Constants.DLOAD_1:
-          case Constants.DLOAD_2:
-          case Constants.DLOAD_3:
-          case Constants.FLOAD:
-          case Constants.FLOAD_0:
-          case Constants.FLOAD_1:
-          case Constants.FLOAD_2:
-          case Constants.FLOAD_3:
-          case Constants.ILOAD:
-          case Constants.ILOAD_0:
-          case Constants.ILOAD_1:
-          case Constants.ILOAD_2:
-          case Constants.ILOAD_3:
-          case Constants.LLOAD:
-          case Constants.LLOAD_0:
-          case Constants.LLOAD_1:
-          case Constants.LLOAD_2:
-          case Constants.LLOAD_3: {
+          case Const.DLOAD:
+          case Const.DLOAD_0:
+          case Const.DLOAD_1:
+          case Const.DLOAD_2:
+          case Const.DLOAD_3:
+          case Const.FLOAD:
+          case Const.FLOAD_0:
+          case Const.FLOAD_1:
+          case Const.FLOAD_2:
+          case Const.FLOAD_3:
+          case Const.ILOAD:
+          case Const.ILOAD_0:
+          case Const.ILOAD_1:
+          case Const.ILOAD_2:
+          case Const.ILOAD_3:
+          case Const.LLOAD:
+          case Const.LLOAD_0:
+          case Const.LLOAD_1:
+          case Const.LLOAD_2:
+          case Const.LLOAD_3: {
             break;
           }
 
           // Pops a value off of the stack into a local
-          case Constants.DSTORE:
-          case Constants.DSTORE_0:
-          case Constants.DSTORE_1:
-          case Constants.DSTORE_2:
-          case Constants.DSTORE_3:
-          case Constants.FSTORE:
-          case Constants.FSTORE_0:
-          case Constants.FSTORE_1:
-          case Constants.FSTORE_2:
-          case Constants.FSTORE_3:
-          case Constants.ISTORE:
-          case Constants.ISTORE_0:
-          case Constants.ISTORE_1:
-          case Constants.ISTORE_2:
-          case Constants.ISTORE_3:
-          case Constants.LSTORE:
-          case Constants.LSTORE_0:
-          case Constants.LSTORE_1:
-          case Constants.LSTORE_2:
-          case Constants.LSTORE_3: {
+          case Const.DSTORE:
+          case Const.DSTORE_0:
+          case Const.DSTORE_1:
+          case Const.DSTORE_2:
+          case Const.DSTORE_3:
+          case Const.FSTORE:
+          case Const.FSTORE_0:
+          case Const.FSTORE_1:
+          case Const.FSTORE_2:
+          case Const.FSTORE_3:
+          case Const.ISTORE:
+          case Const.ISTORE_0:
+          case Const.ISTORE_1:
+          case Const.ISTORE_2:
+          case Const.ISTORE_3:
+          case Const.LSTORE:
+          case Const.LSTORE_0:
+          case Const.LSTORE_1:
+          case Const.LSTORE_2:
+          case Const.LSTORE_3: {
             break;
           }
 
           // Push a value from the runtime constant pool.  We'll get these
           // values when processing the constant pool itself
-          case Constants.LDC:
-          case Constants.LDC_W:
-          case Constants.LDC2_W: {
+          case Const.LDC:
+          case Const.LDC_W:
+          case Const.LDC2_W: {
             break;
           }
 
           // Push the length of an array on the stack
-          case Constants.ARRAYLENGTH: {
+          case Const.ARRAYLENGTH: {
             break;
           }
 
           // Push small constants (-1..5) on the stack.  These literals are
           // too common to bother mentioning
-          case Constants.DCONST_0:
-          case Constants.DCONST_1:
-          case Constants.FCONST_0:
-          case Constants.FCONST_1:
-          case Constants.FCONST_2:
-          case Constants.ICONST_0:
-          case Constants.ICONST_1:
-          case Constants.ICONST_2:
-          case Constants.ICONST_3:
-          case Constants.ICONST_4:
-          case Constants.ICONST_5:
-          case Constants.ICONST_M1:
-          case Constants.LCONST_0:
-          case Constants.LCONST_1: {
+          case Const.DCONST_0:
+          case Const.DCONST_1:
+          case Const.FCONST_0:
+          case Const.FCONST_1:
+          case Const.FCONST_2:
+          case Const.ICONST_0:
+          case Const.ICONST_1:
+          case Const.ICONST_2:
+          case Const.ICONST_3:
+          case Const.ICONST_4:
+          case Const.ICONST_5:
+          case Const.ICONST_M1:
+          case Const.LCONST_0:
+          case Const.LCONST_1: {
             break;
           }
 
-          case Constants.BIPUSH: 
-          case Constants.SIPUSH: {
+          case Const.BIPUSH:
+          case Const.SIPUSH: {
             ConstantPushInstruction cpi = (ConstantPushInstruction) inst;
             result.ints.add((Integer)cpi.getValue());
             break;
           }
 
-          // Primitive Binary operators.  
-          case Constants.DADD:
-          case Constants.DCMPG:
-          case Constants.DCMPL:
-          case Constants.DDIV:
-          case Constants.DMUL:
-          case Constants.DREM:
-          case Constants.DSUB:
-          case Constants.FADD:
-          case Constants.FCMPG:
-          case Constants.FCMPL:
-          case Constants.FDIV:
-          case Constants.FMUL:
-          case Constants.FREM:
-          case Constants.FSUB:
-          case Constants.IADD:
-          case Constants.IAND:
-          case Constants.IDIV:
-          case Constants.IMUL:
-          case Constants.IOR:
-          case Constants.IREM:
-          case Constants.ISHL:
-          case Constants.ISHR:
-          case Constants.ISUB:
-          case Constants.IUSHR:
-          case Constants.IXOR:
-          case Constants.LADD:
-          case Constants.LAND:
-          case Constants.LCMP:
-          case Constants.LDIV:
-          case Constants.LMUL:
-          case Constants.LOR:
-          case Constants.LREM:
-          case Constants.LSHL:
-          case Constants.LSHR:
-          case Constants.LSUB:
-          case Constants.LUSHR:
-          case Constants.LXOR:
+          // Primitive Binary operators.
+          case Const.DADD:
+          case Const.DCMPG:
+          case Const.DCMPL:
+          case Const.DDIV:
+          case Const.DMUL:
+          case Const.DREM:
+          case Const.DSUB:
+          case Const.FADD:
+          case Const.FCMPG:
+          case Const.FCMPL:
+          case Const.FDIV:
+          case Const.FMUL:
+          case Const.FREM:
+          case Const.FSUB:
+          case Const.IADD:
+          case Const.IAND:
+          case Const.IDIV:
+          case Const.IMUL:
+          case Const.IOR:
+          case Const.IREM:
+          case Const.ISHL:
+          case Const.ISHR:
+          case Const.ISUB:
+          case Const.IUSHR:
+          case Const.IXOR:
+          case Const.LADD:
+          case Const.LAND:
+          case Const.LCMP:
+          case Const.LDIV:
+          case Const.LMUL:
+          case Const.LOR:
+          case Const.LREM:
+          case Const.LSHL:
+          case Const.LSHR:
+          case Const.LSUB:
+          case Const.LUSHR:
+          case Const.LXOR:
             break;
 
-          case Constants.LOOKUPSWITCH:
-          case Constants.TABLESWITCH:
+          case Const.LOOKUPSWITCH:
+          case Const.TABLESWITCH:
             break;
 
-          case Constants.ANEWARRAY:
-          case Constants.NEWARRAY: {
+          case Const.ANEWARRAY:
+          case Const.NEWARRAY: {
             break;
           }
 
-          case Constants.MULTIANEWARRAY: {
+          case Const.MULTIANEWARRAY: {
             break;
           }
 
           // push the value at an index in an array
-          case Constants.AALOAD:
-          case Constants.BALOAD:
-          case Constants.CALOAD:
-          case Constants.DALOAD:
-          case Constants.FALOAD:
-          case Constants.IALOAD:
-          case Constants.LALOAD:
-          case Constants.SALOAD: {
+          case Const.AALOAD:
+          case Const.BALOAD:
+          case Const.CALOAD:
+          case Const.DALOAD:
+          case Const.FALOAD:
+          case Const.IALOAD:
+          case Const.LALOAD:
+          case Const.SALOAD: {
             break;
           }
 
           // Pop the top of stack into an array location
-          case Constants.AASTORE:
-          case Constants.BASTORE:
-          case Constants.CASTORE:
-          case Constants.DASTORE:
-          case Constants.FASTORE:
-          case Constants.IASTORE:
-          case Constants.LASTORE:
-          case Constants.SASTORE:
+          case Const.AASTORE:
+          case Const.BASTORE:
+          case Const.CASTORE:
+          case Const.DASTORE:
+          case Const.FASTORE:
+          case Const.IASTORE:
+          case Const.LASTORE:
+          case Const.SASTORE:
             break;
 
-          case Constants.ARETURN:
-          case Constants.DRETURN:
-          case Constants.FRETURN:
-          case Constants.IRETURN:
-          case Constants.LRETURN:
-          case Constants.RETURN: {
+          case Const.ARETURN:
+          case Const.DRETURN:
+          case Const.FRETURN:
+          case Const.IRETURN:
+          case Const.LRETURN:
+          case Const.RETURN: {
             break;
           }
 
-          // subroutine calls.  
-          case Constants.INVOKESTATIC:
-          case Constants.INVOKEVIRTUAL:
-          case Constants.INVOKESPECIAL:
-          case Constants.INVOKEINTERFACE:
+          // subroutine calls.
+          case Const.INVOKESTATIC:
+          case Const.INVOKEVIRTUAL:
+          case Const.INVOKESPECIAL:
+          case Const.INVOKEINTERFACE:
             break;
 
-          // Throws an exception.  
-          case Constants.ATHROW:
+          // Throws an exception.
+          case Const.ATHROW:
             break;
 
           // Opcodes that don't need any modifications.  Here for reference
-          case Constants.ACONST_NULL:
-          case Constants.ALOAD:
-          case Constants.ALOAD_0:
-          case Constants.ALOAD_1:
-          case Constants.ALOAD_2:
-          case Constants.ALOAD_3:
-          case Constants.ASTORE:
-          case Constants.ASTORE_0:
-          case Constants.ASTORE_1:
-          case Constants.ASTORE_2:
-          case Constants.ASTORE_3:
-          case Constants.CHECKCAST:
-          case Constants.D2F:     // double to float
-          case Constants.D2I:     // double to integer
-          case Constants.D2L:     // double to long
-          case Constants.DNEG:    // Negate double on top of stack
-          case Constants.F2D:     // float to double
-          case Constants.F2I:     // float to integer
-          case Constants.F2L:     // float to long
-          case Constants.FNEG:    // Negate float on top of stack
-          case Constants.GOTO:
-          case Constants.GOTO_W:
-          case Constants.I2B:     // integer to byte
-          case Constants.I2C:     // integer to char
-          case Constants.I2D:     // integer to double
-          case Constants.I2F:     // integer to float
-          case Constants.I2L:     // integer to long
-          case Constants.I2S:     // integer to short
-          case Constants.IFNONNULL:
-          case Constants.IFNULL:
-          case Constants.IINC:    // increment local variable by a constant
-          case Constants.INEG:    // negate integer on top of stack
-          case Constants.JSR:     // pushes return address on the stack, 
-          case Constants.JSR_W:
-          case Constants.L2D:     // long to double
-          case Constants.L2F:     // long to float
-          case Constants.L2I:     // long to int
-          case Constants.LNEG:    // negate long on top of stack
-          case Constants.MONITORENTER:
-          case Constants.MONITOREXIT:
-          case Constants.NEW:
-          case Constants.NOP:
-          case Constants.RET:     // this is the internal JSR return
+          case Const.ACONST_NULL:
+          case Const.ALOAD:
+          case Const.ALOAD_0:
+          case Const.ALOAD_1:
+          case Const.ALOAD_2:
+          case Const.ALOAD_3:
+          case Const.ASTORE:
+          case Const.ASTORE_0:
+          case Const.ASTORE_1:
+          case Const.ASTORE_2:
+          case Const.ASTORE_3:
+          case Const.CHECKCAST:
+          case Const.D2F:     // double to float
+          case Const.D2I:     // double to integer
+          case Const.D2L:     // double to long
+          case Const.DNEG:    // Negate double on top of stack
+          case Const.F2D:     // float to double
+          case Const.F2I:     // float to integer
+          case Const.F2L:     // float to long
+          case Const.FNEG:    // Negate float on top of stack
+          case Const.GOTO:
+          case Const.GOTO_W:
+          case Const.I2B:     // integer to byte
+          case Const.I2C:     // integer to char
+          case Const.I2D:     // integer to double
+          case Const.I2F:     // integer to float
+          case Const.I2L:     // integer to long
+          case Const.I2S:     // integer to short
+          case Const.IFNONNULL:
+          case Const.IFNULL:
+          case Const.IINC:    // increment local variable by a constant
+          case Const.INEG:    // negate integer on top of stack
+          case Const.JSR:     // pushes return address on the stack,
+          case Const.JSR_W:
+          case Const.L2D:     // long to double
+          case Const.L2F:     // long to float
+          case Const.L2I:     // long to int
+          case Const.LNEG:    // negate long on top of stack
+          case Const.MONITORENTER:
+          case Const.MONITOREXIT:
+          case Const.NEW:
+          case Const.NOP:
+          case Const.RET:     // this is the internal JSR return
             break;
 
           // Make sure we didn't miss anything

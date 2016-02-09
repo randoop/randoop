@@ -1,22 +1,46 @@
 package randoop.agent;
 
 import static java.lang.System.out;
-import java.lang.instrument.*;
-import java.lang.reflect.Modifier;
-import java.security.*;
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
 
-import org.apache.bcel.*;
-import org.apache.bcel.classfile.*;
-import org.apache.bcel.generic.InstructionFactory;
-import org.apache.bcel.generic.*;
-import org.apache.bcel.verifier.VerificationResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.IllegalClassFormatException;
+import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
-import plume.SimpleLog;
+import org.apache.commons.bcel6.Const;
+import org.apache.commons.bcel6.classfile.Attribute;
+import org.apache.commons.bcel6.classfile.ClassParser;
+import org.apache.commons.bcel6.classfile.Constant;
+import org.apache.commons.bcel6.classfile.ConstantUtf8;
+import org.apache.commons.bcel6.classfile.JavaClass;
+import org.apache.commons.bcel6.classfile.Method;
+import org.apache.commons.bcel6.generic.ClassGen;
+import org.apache.commons.bcel6.generic.CodeExceptionGen;
+import org.apache.commons.bcel6.generic.ConstantPoolGen;
+import org.apache.commons.bcel6.generic.INVOKESTATIC;
+import org.apache.commons.bcel6.generic.INVOKEVIRTUAL;
+import org.apache.commons.bcel6.generic.Instruction;
+import org.apache.commons.bcel6.generic.InstructionFactory;
+import org.apache.commons.bcel6.generic.InstructionHandle;
+import org.apache.commons.bcel6.generic.InstructionList;
+import org.apache.commons.bcel6.generic.InstructionTargeter;
+import org.apache.commons.bcel6.generic.LineNumberGen;
+import org.apache.commons.bcel6.generic.LocalVariableGen;
+import org.apache.commons.bcel6.generic.MethodGen;
+import org.apache.commons.bcel6.generic.Type;
+
 import plume.ArraysMDE;
 import plume.BCELUtil;
+import plume.SimpleLog;
 import plume.StrTok;
 import plume.UtilMDE;
 
@@ -70,6 +94,7 @@ public class Instrument implements ClassFileTransformer {
       return (true);
     }
 
+    @Override
     public boolean equals (Object obj) {
       if (!(obj instanceof MethodDef))
         return false;
@@ -77,6 +102,7 @@ public class Instrument implements ClassFileTransformer {
       return equals (md.name, md.arg_types);
     }
 
+    @Override
     public int hashCode() {
       int code = name.hashCode();
       for (Type arg : arg_types)
@@ -84,6 +110,7 @@ public class Instrument implements ClassFileTransformer {
       return code;
     }
 
+    @Override
     public String toString() {
       return String.format ("%s (%s)", name, UtilMDE.join (arg_types, ", "));
     }
@@ -129,6 +156,7 @@ public class Instrument implements ClassFileTransformer {
    * Given another class, return a transformed version of the class which
    * replaces specified calls with alternative static implementations
    */
+  @Override
   public byte[] transform (ClassLoader loader, String className,
                            Class<?> classBeingRedefined,
                            ProtectionDomain protectionDomain,
@@ -342,7 +370,7 @@ public class Instrument implements ClassFileTransformer {
 
     switch (inst.getOpcode()) {
 
-    case Constants.INVOKESTATIC: {
+    case Const.INVOKESTATIC: {
       InstructionList il = new InstructionList();
       INVOKESTATIC is = (INVOKESTATIC)inst;
       String cname = is.getClassName (pgen);
@@ -358,12 +386,12 @@ public class Instrument implements ClassFileTransformer {
                        mg.getClassName(), mg.getName(), cname, mname,
                        UtilMDE.join (args, ", "), classname, methodname);
         il.append (ifact.createInvoke (classname, methodname,
-                        is.getReturnType(pgen), args, Constants.INVOKESTATIC));
+                        is.getReturnType(pgen), args, Const.INVOKESTATIC));
       }
       return (il);
     }
 
-    case Constants.INVOKEVIRTUAL: {
+    case Const.INVOKEVIRTUAL: {
       InstructionList il = new InstructionList();
       INVOKEVIRTUAL iv = (INVOKEVIRTUAL)inst;
       String cname = iv.getClassName (pgen);
@@ -383,7 +411,7 @@ public class Instrument implements ClassFileTransformer {
                        cname, mname, ArraysMDE.toString (args), classname,
                        methodname);
         il.append (ifact.createInvoke (classname, methodname,
-                  iv.getReturnType(pgen), new_args, Constants.INVOKESTATIC));
+                  iv.getReturnType(pgen), new_args, Const.INVOKESTATIC));
       }
       return (il);
     }
@@ -490,6 +518,7 @@ public class Instrument implements ClassFileTransformer {
       this.lr = lr;
       this.map_file = map_file;
     }
+    @Override
     public void tok_error (String s) {
       throw new RuntimeException
         (String.format ("Error on line %d of %s: %s", lr.getLineNumber(),
@@ -621,6 +650,7 @@ public class Instrument implements ClassFileTransformer {
 
     // Add a shutdown hook to printout some debug information
     Runtime.getRuntime().addShutdownHook (new Thread() {
+        @Override
         public void run() {
           for (MethodMapInfo mmi: map_list) {
             dump_map_list();
