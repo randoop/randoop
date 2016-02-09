@@ -9,25 +9,24 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
-import randoop.field.FinalInstanceField;
 import randoop.field.FieldParser;
+import randoop.field.FinalInstanceField;
 import randoop.field.StaticFinalField;
-import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a {@link Operation}
- * that acts like a setter for the field. 
+ * that acts like a setter for the field.
  * @see AccessibleField
  */
 public class FieldSet extends AbstractOperation implements Operation, Serializable{
 
   private static final long serialVersionUID = -5905429635469194115L;
-  
+
   public static String ID = "setter";
-  
+
   private AccessibleField field;
 
   /**
@@ -46,7 +45,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
     this.field = field;
   }
 
-  /** 
+  /**
    * Returns the input types for a field treated as a setter.
    * @return list consisting of types of values needed to set the field.
    */
@@ -65,13 +64,13 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   }
 
   /**
-   * Sets the value of the field given the inputs. Should the action 
+   * Sets the value of the field given the inputs. Should the action
    * raise an exception, those are captured and returned as an {@link ExecutionOutcome}.
-   * Exceptions should only be {@link NullPointerException}, which happens when input 
-   * is null but field is an instance field. {@link AccessibleField#getValue(Object)} suppresses 
-   * exceptions that occur because the field is not valid or accessible 
+   * Exceptions should only be {@link NullPointerException}, which happens when input
+   * is null but field is an instance field. {@link AccessibleField#getValue(Object)} suppresses
+   * exceptions that occur because the field is not valid or accessible
    * (specifically {@link IllegalArgumentException} and {@link IllegalAccessException}).
-   * 
+   *
    * @param statementInput  the inputs for statement.
    * @param out  the stream for printing output (unused).
    * @return outcome of access, either void normal execution or captured exception.
@@ -80,14 +79,14 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
     assert statementInput.length == getInputTypes().size();
-    
+
     Object instance = null;
     Object input = statementInput[0];
     if (statementInput.length == 2) {
      instance = statementInput[0];
      input = statementInput[1];
     }
-     
+
     try {
       field.setValue(instance,input);
     } catch (BugInRandoopException e) {
@@ -95,7 +94,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown,0);
     }
-    
+
     return new NormalExecution(null,0);
   }
 
@@ -108,16 +107,16 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    * or
    * <pre>
    *   field = variable;
-   * </pre>   
-   * 
-   * @param inputVars  the list of input variables. Last element is value to assign. 
-   *                    If an instance field, first is instance, second is value. 
-   * @param b  the StringBuilder to which code is issued. 
+   * </pre>
+   *
+   * @param inputVars  the list of input variables. Last element is value to assign.
+   *                    If an instance field, first is instance, second is value.
+   * @param b  the StringBuilder to which code is issued.
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == 1 || inputVars.size() == 2;
-    
+
     b.append(field.toCode(inputVars));
     b.append(" = ");
 
@@ -127,32 +126,32 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
     //TODO this is duplicate code from RMethod - should factor out behavior
     String rhs = inputVars.get(index).getName();
     Statement statementCreatingVar = inputVars.get(index).getDeclaringStatement();
-    if (!GenInputsAbstract.long_format) {
-      String shortForm = statementCreatingVar.getShortForm();
-      if (shortForm != null) {
-        rhs = shortForm;
-      }
-    } 
+
+    String shortForm = statementCreatingVar.getShortForm();
+    if (shortForm != null) {
+      rhs = shortForm;
+    }
+
     b.append(rhs);
-    
+
   }
 
   /**
    * Returns the string descriptor for field that can be parsed by
    * {@link FieldParser}.
-   * 
+   *
    * @return the parseable string descriptor for this setter.
    */
   @Override
   public String toParseableString() {
     return "<set>(" + field.toParseableString() + ")";
   }
-  
+
   @Override
   public String toString() {
     return toParseableString();
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof FieldSet) {
@@ -161,7 +160,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
     }
     return false;
   }
-  
+
   @Override
   public int hashCode() { return field.hashCode(); }
 
@@ -200,12 +199,12 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   public Class<?> getDeclaringClass() {
     return field.getDeclaringClass();
   }
-  
+
   @Override
   public boolean isStatic() {
     return field.isStatic();
   }
- 
+
   /**
    * A FieldSetter is a method call because it acts like a setter.
    */
@@ -217,7 +216,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   /**
    * Determines whether enclosed {@link java.lang.reflect.Field Field} satisfies
    * the given predicate.
-   * 
+   *
    * @param predicate the {@link ReflectionPredicate} to be checked.
    * @return true only if the field used in this setter satisfies predicate.canUse.
    */

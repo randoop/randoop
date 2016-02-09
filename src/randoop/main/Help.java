@@ -15,7 +15,7 @@ import randoop.util.Util;
 public class Help extends CommandHandler {
 
   public static PrintStream out = System.out;
-  
+
   @Option("Also show unpublicized options")
   public static boolean unpub = false;
 
@@ -43,7 +43,7 @@ public class Help extends CommandHandler {
       System.out.println("Error while parsing command-line arguments: " + ae.getMessage());
       System.exit(1);
     }
-    
+
     if (args.length == 0) {
 
       try {
@@ -80,7 +80,7 @@ public class Help extends CommandHandler {
       // User wants help on a specific command.
       List<CommandHandler> allHandlers = new ArrayList<CommandHandler>();
       allHandlers.addAll(Main.handlers);
-      allHandlers.addAll(Main.invisibleHandlers);
+      // allHandlers.addAll(Main.invisibleHandlers);
 
       for (CommandHandler h : allHandlers) {
 

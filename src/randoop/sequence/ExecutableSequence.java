@@ -191,8 +191,7 @@ public class ExecutableSequence implements Serializable {
       // If short format, don't print out primitive declarations
       // because primitive values will be directly added to methods
       // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
-      if (!GenInputsAbstract.long_format
-          && sequence.getStatement(i).getShortForm() != null) {
+      if (sequence.getStatement(i).getShortForm() != null) {
         continue;
       }
 
@@ -218,11 +217,11 @@ public class ExecutableSequence implements Serializable {
     StringBuilder b = new StringBuilder();
     for (int i = 0 ; i < sequence.size() ; i++) {
 
-      // If short format, don't print out primitive declarations
-      // because primitive values will be directly added to methods
-      // (e.g. "foo(3)" instead of "int x = 3 ; foo(x)".
-      if (!GenInputsAbstract.long_format
-          && sequence.getStatement(i).getShortForm() != null) {
+      // Only print primitive declarations if the last/only statement
+      // of the sequence, because, otherwise, primitive values will be used as
+      // actual parameters: e.g. "foo(3)" instead of "int x = 3 ; foo(x)"
+      if (sequence.getStatement(i).getShortForm() != null
+          && i < sequence.size() - 1) {
         continue;
       }
 

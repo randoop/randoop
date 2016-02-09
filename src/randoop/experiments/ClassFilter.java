@@ -1,6 +1,6 @@
 package randoop.experiments;
 
-import org.apache.bcel.classfile.JavaClass;
+import org.apache.commons.bcel6.classfile.JavaClass;
 
 /**
  * A ClassFilter is used by a ClassListPrinter to determine which
@@ -9,7 +9,7 @@ import org.apache.bcel.classfile.JavaClass;
 public interface ClassFilter {
 
   /**
-   * @return true if the ClassListPrinter should print the given class. 
+   * @return true if the ClassListPrinter should print the given class.
    */
   boolean include(JavaClass cls);
 

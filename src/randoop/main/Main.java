@@ -16,7 +16,7 @@ public class Main {
   public static List<CommandHandler> handlers;
 
   // Handlers whose documentation is not output.
-  public static List<CommandHandler> invisibleHandlers;
+//  public static List<CommandHandler> invisibleHandlers;
 
   static {
 
@@ -24,12 +24,12 @@ public class Main {
     handlers.add(new GenTests());
     handlers.add(new Help());
 
-    // These are very ad-hoc commands that we don't want to 
+    // These are very ad-hoc commands that we don't want to
     // confuse the user of Randoop. Adding them to the invisible
     // handlers list means that they're not printed out when
     // the user uses the `help' command.
-    invisibleHandlers = new ArrayList<CommandHandler>();
-    invisibleHandlers.add(new CovUtils());
+//    invisibleHandlers = new ArrayList<CommandHandler>();
+
   }
 
   // The main method simply calls nonStaticMain.
@@ -55,7 +55,7 @@ public class Main {
     CommandHandler handler = null;
     List<CommandHandler> allHandlers = new ArrayList<CommandHandler>();
     allHandlers.addAll(handlers);
-    allHandlers.addAll(invisibleHandlers);
+//    allHandlers.addAll(invisibleHandlers);
     for (CommandHandler h : allHandlers) {
       if (h.handles(command)) {
         handler = h;
@@ -88,7 +88,7 @@ public class Main {
       System.exit(1);
 
     } catch (Throwable e) {
-      
+
       System.out.println();
       System.out.println("Throwable thrown while handling command: " + e);
       e.printStackTrace();
