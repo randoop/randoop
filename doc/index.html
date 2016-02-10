@@ -600,70 +600,73 @@ Randoop about your application, and that is how we recommend using Randoop.
 <ul>
   <li id="optiongroup:Code-under-test">Code under test
     <ul>
-      <li id="option:testclass"><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class to test.
- This class is tested in addition to any specified using
- <tt>--classlist</tt>, and must be accessible from the package of the tests
- (set with <tt>--junit-package-name</tt>).</li>
+      <li id="option:testclass"><b>--testclass=</b><i>string</i> <tt>[+]</tt>. The fully-qualified name of a class to test. This class is tested in
+ addition to any specified using <tt>--classlist</tt>, and must be
+ accessible from the package of the tests (set with
+ <tt>--junit-package-name</tt>).</li>
       <li id="option:classlist"><b>--classlist=</b><i>string</i>. The name of a file that lists classes to test.
 
- In the file, each class under test is specified by its
- fully-qualified name on a separate line.
- See an <a href="https://raw.githubusercontent.com/randoop/randoop/master/doc/class_list_example.txt">example</a>.
- These classes are tested in addition to any specified using <tt>--testclass</tt>.
- All classes must be accessible from the package of the tests
- (set with <tt>--junit-package-name</tt>).</li>
+ In the file, each class under test is specified by its fully-qualified name
+ on a separate line. See an <a href=
+ "https://raw.githubusercontent.com/randoop/randoop/master/doc/class_list_example.txt">
+ example</a>. These classes are tested in addition to any specified using
+ <tt>--testclass</tt>. All classes must be accessible from the package of
+ the tests (set with <tt>--junit-package-name</tt>).</li>
       <li id="option:methodlist"><b>--methodlist=</b><i>string</i>. The name of a file that lists methods to test.
 
- In the file, each each method under test is specified on a separate
- line. The list of methods given by this argument augment
- any methods derived via the <tt>--testclass</tt> or
- <tt>--classlist</tt> option.
+ In the file, each each method under test is specified on a separate line.
+ The list of methods given by this argument augment any methods derived via
+ the <tt>--testclass</tt> or <tt>--classlist</tt> option.
 
  <p>
  A constructor line begins with <code>"cons :"</code> followed by the
  classname, the string <code>&lt;init&gt;</code> and the constructor's
  parameter types, enclosed in parentheses. Methods are specified in a
  similar way. For example:
+ 
  <pre class="code">
  cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
  method : Type0.method_name(Type1, Type2, ..., TypeN)
  </pre>
- Each <code>Type<i>i</i></code> must be fully-qualified
- (include package names).
+ 
+ Each <code>Type<i>i</i></code> must be fully-qualified (include package
+ names).
 
  <p>
- See an <a href="https://raw.githubusercontent.com/randoop/randoop/master/doc/method_list_example.txt">example</a>.</li>
-      <li id="option:observers"><b>--observers=</b><i>filename</i>. File containing side-effect-free observer methods.
- These are used to create regression assertions, and to prune tests.</li>
-      <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods whose <code>java.lang.reflect.Method#toString()</code> matches the regular expression
- given.  This does not prevent indirect calls to such methods from
- other, allowed methods.
+ See an <a href=
+ "https://raw.githubusercontent.com/randoop/randoop/master/doc/method_list_example.txt">
+ example</a>.</li>
+      <li id="option:observers"><b>--observers=</b><i>filename</i>. File containing side-effect-free observer methods. These are used to create
+ regression assertions, and to prune tests.</li>
+      <li id="option:omitmethods"><b>--omitmethods=</b><i>regex</i>. Randoop will not attempt to directly call methods whose
+ <code>java.lang.reflect.Method#toString()</code> matches the regular expression
+ given. This does not prevent indirect calls to such methods from other,
+ allowed methods.
  <p>
 
- Randoop only calls methods
- that are specified by one of the <tt>--testclass</tt>,
- <tt>-classlist</tt>, or <tt>--methodlist</tt> command-line options;
- the purpose of <tt>--omitmethods</tt> is to override one of those other
- command-line options.</li>
-      <li id="option:omit-field-list"><b>--omit-field-list=</b><i>string</i>. The name of a file that contains fully-qualified
- field names to be excluded from test generation. Otherwise, Randoop
- includes all public fields of a visible class.</li>
-      <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>. Restrict tests to only include public members of classes.
- Ordinarily, the setting of <tt>--junit-package-name</tt> and package
- accessibility is used to determine which members will be used in tests.
- Using this option restricts the tests to only use public members even if
- the class is a member of the same package as the generated tests. [default false]</li>
+ Randoop only calls methods that are specified by one of the
+ <tt>--testclass</tt>, <tt>-classlist</tt>, or <tt>--methodlist</tt>
+ command-line options; the purpose of <tt>--omitmethods</tt> is to override
+ one of those other command-line options.</li>
+      <li id="option:omit-field-list"><b>--omit-field-list=</b><i>string</i>. The name of a file that contains fully-qualified field names to be excluded
+ from test generation. Otherwise, Randoop includes all public fields of a
+ visible class.</li>
+      <li id="option:only-test-public-members"><b>--only-test-public-members=</b><i>boolean</i>. Restrict tests to only include public members of classes. Ordinarily, the
+ setting of <tt>--junit-package-name</tt> and package accessibility is used
+ to determine which members will be used in tests. Using this option
+ restricts the tests to only use public members even if the class is a
+ member of the same package as the generated tests. [default false]</li>
       <li id="option:silently-ignore-bad-class-names"><b>--silently-ignore-bad-class-names=</b><i>boolean</i>. Ignore class names specified by user that cannot be found [default false]</li>
-      <li id="option:include-if-classname-appears"><b>--include-if-classname-appears=</b><i>regex</i>. Classes, one of which every test must use.
- Randoop will only output tests that have at least one use of a member
- of a class whose name matches the regular expression.</li>
-      <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>string</i>. File containing classes that the tests must exercise.
- A test is output only if it exercises at least one of the class names
- in the file.  A test exercises a class if it executes any constructor
- or method of the class, directly or indirectly (the constructor or
- method might not appear in the source code of the test).  The file
- contains fully-qualified class names, and any class name in it must
- also appear in <code>--testclass</code> or <code>--classlist</code>.</li>
+      <li id="option:include-if-classname-appears"><b>--include-if-classname-appears=</b><i>regex</i>. Classes, one of which every test must use. Randoop will only output tests
+ that have at least one use of a member of a class whose name matches the
+ regular expression.</li>
+      <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>string</i>. File containing classes that the tests must exercise. A test is output only
+ if it exercises at least one of the class names in the file. A test
+ exercises a class if it executes any constructor or method of the class,
+ directly or indirectly (the constructor or method might not appear in the
+ source code of the test). The file contains fully-qualified class names,
+ and any class name in it must also appear in <code>--testclass</code> or
+ <code>--classlist</code>.</li>
     </ul>
   </li>
   <li id="optiongroup:Test-classification">Test classification
@@ -671,51 +674,50 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:no-error-revealing-tests"><b>--no-error-revealing-tests=</b><i>boolean</i>. Whether to output error-revealing tests.
  <p>
  Will completely disable output when used with
- <code>--no-regression-tests</code>.
- Be aware that restricting output can result in long runs if the default
- values of <code>--inputlimit</code> and <code>--timelimit</code> are used. [default false]</li>
+ <code>--no-regression-tests</code>. Be aware that restricting output can
+ result in long runs if the default values of <code>--inputlimit</code> and
+ <code>--timelimit</code> are used. [default false]</li>
       <li id="option:no-regression-tests"><b>--no-regression-tests=</b><i>boolean</i>. Whether to output regression tests.
  <p>
  Will completely disable output when used with
- <code>--no-error-revealing-tests</code>.
- Be aware that restricting output can result in long runs if the default
- values of <code>--inputlimit</code> and <code>--timelimit</code> are used. [default false]</li>
-      <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>. Whether to include assertions in regression tests.
- If false, then the regression tests contain no assertions
- (except that if the test throws an exception, it should continue to
- throw an exception of the same type).
- Tests without assertions can be used to exercise the code, but they
- do not enforce any particular behavior, such as values returned. [default false]</li>
+ <code>--no-error-revealing-tests</code>. Be aware that restricting output
+ can result in long runs if the default values of <code>--inputlimit</code>
+ and <code>--timelimit</code> are used. [default false]</li>
+      <li id="option:no-regression-assertions"><b>--no-regression-assertions=</b><i>boolean</i>. Whether to include assertions in regression tests. If false, then the
+ regression tests contain no assertions (except that if the test throws an
+ exception, it should continue to throw an exception of the same type).
+ Tests without assertions can be used to exercise the code, but they do not
+ enforce any particular behavior, such as values returned. [default false]</li>
       <li id="option:checked-exception"><b>--checked-exception=</b><i>enum</i>. If a test throws a checked exception, should it be included in the
- error-revealing test suite (value: ERROR), regression test suite
- (value: EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]<ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
+ error-revealing test suite (value: ERROR), regression test suite (value:
+ EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]<ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
       <li id="option:unchecked-exception"><b>--unchecked-exception=</b><i>enum</i>. If a test throws an unchecked exception, should the test be included in the
- error-revealing test suite (value: ERROR), regression test suite
- (value: EXPECTED), or should it be discarded (value: INVALID)?
+ error-revealing test suite (value: ERROR), regression test suite (value:
+ EXPECTED), or should it be discarded (value: INVALID)?
  <p>
  The arguments <tt>--npe-on-null-input</tt>,
  <tt>--npe-on-non-null-input</tt>, and <tt>--oom-exception</tt> handle
  special cases of unchecked exceptions. [default EXPECTED]<ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
       <li id="option:npe-on-null-input"><b>--npe-on-null-input=</b><i>enum</i>. If a test where a <code>null</code> value is given as an input throws a
  <code>NullPointerException</code>, should the test be be included in the
- error-revealing test suite (value: ERROR), regression test suite
- (value: EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]<ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
+ error-revealing test suite (value: ERROR), regression test suite (value:
+ EXPECTED), or should it be discarded (value: INVALID)? [default EXPECTED]<ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
       <li id="option:npe-on-non-null-input"><b>--npe-on-non-null-input=</b><i>enum</i>. If a test where no <code>null</code> values are given as an input throws a
  <code>NullPointerExceptoin</code>, should the test be included in the
- error-revealing test suite (value: ERROR), regression test suite
- (value: EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]<ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
+ error-revealing test suite (value: ERROR), regression test suite (value:
+ EXPECTED), or should it be discarded (value: INVALID)? [default ERROR]<ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
       <li id="option:oom-exception"><b>--oom-exception=</b><i>enum</i>. If a test throws an <code>OutOfMemoryError</code> exception, should it be
  included in the error-revealing test suite (value: ERROR), regression test
  suite (value: EXPECTED), or should it be discarded (value: INVALID)? [default INVALID]<ul><li><b>ERROR</b> Occurrence of exception reveals an error</li><li><b>EXPECTED</b> Occurrence of exception is expected behavior</li><li><b>INVALID</b> Occurrence of exception indicates an invalid test</li></ul></li>
       <li id="option:ignore-flaky-tests"><b>--ignore-flaky-tests=</b><i>boolean</i>. Ignore the situation where a code sequence that previously executed
  normally throws an exception when executed as part of a longer test
- sequence. If true, the sequence will be classified as invalid.
- If false, Randoop will halt with information about the sequence to
- aid in identifying the issue.
+ sequence. If true, the sequence will be classified as invalid. If false,
+ Randoop will halt with information about the sequence to aid in identifying
+ the issue.
  <p>
- Use of this option is a last resort.  Flaky tests are usually due to
- calling Randoop on side-effecting or nondeterministic methods, and a
- better solution is not to call Randoop on such methods. [default false]</li>
+ Use of this option is a last resort. Flaky tests are usually due to calling
+ Randoop on side-effecting or nondeterministic methods, and a better
+ solution is not to call Randoop on such methods. [default false]</li>
     </ul>
   </li>
   <li id="optiongroup:Limiting-test-generation">Limiting test generation
@@ -723,19 +725,19 @@ Randoop about your application, and that is how we recommend using Randoop.
       <li id="option:timelimit"><b>--timelimit=</b><i>int</i>. Maximum number of seconds to spend generating tests.
 
  Test generation stops when either the time limit (--timelimit) is reached,
- OR the number of generated sequences reaches the input limit (--inputlimit),
- OR the number of error-revealing and regression tests reaches the output
- limit (--outputlimit).
+ OR the number of generated sequences reaches the input limit
+ (--inputlimit), OR the number of error-revealing and regression tests
+ reaches the output limit (--outputlimit).
 
- The default value is appropriate for generating tests for a single
- class in the context of a larger program, but is too small to be effective
- for generating tests for an entire program.
+ The default value is appropriate for generating tests for a single class in
+ the context of a larger program, but is too small to be effective for
+ generating tests for an entire program.
 
- Note that if you use this option, Randoop is nondeterministic: it
- may generate different test suites on different runs. [default 100]</li>
-      <li id="option:outputlimit"><b>--outputlimit=</b><i>int</i>. The maximum number of regression and error-revealing tests to output.
- Test generation stops when either the time limit (--timelimit) is reached,
- OR the number of generated sequences reaches the input limit (--inputlimit),
+ Note that if you use this option, Randoop is nondeterministic: it may
+ generate different test suites on different runs. [default 100]</li>
+      <li id="option:outputlimit"><b>--outputlimit=</b><i>int</i>. The maximum number of regression and error-revealing tests to output. Test
+ generation stops when either the time limit (--timelimit) is reached, OR
+ the number of generated sequences reaches the input limit (--inputlimit),
  OR the number of error-revealing and regression tests reaches the output
  limit (--outputlimit).
  <p>
@@ -743,29 +745,28 @@ Randoop about your application, and that is how we recommend using Randoop.
  --inputlimit, which affects the number of test method candidates that are
  generated internally. This option is a better choice for controlling the
  tests you get, because the number of candidates generated will always be
- larger than the number output since redundant and invalid tests are filtered.
- However, the current implementation means that the actual number of tests
- in the output can still be substantially smaller than this limit.
+ larger than the number output since redundant and invalid tests are
+ filtered. However, the current implementation means that the actual number
+ of tests in the output can still be substantially smaller than this limit.
  <p>
  This limit will have no effect if there is no output, which occurs when
  using either <code>--dont-output-tests</code> or
  <code>--no-error-revealing-tests</code> together with
- <code>--no-regression-tests</code>.
- In this case, the option <code>--inputlimit</code> should be used. [default 100000000]</li>
-      <li id="option:inputlimit"><b>--inputlimit=</b><i>int</i>. Maximum number of test method candidates generated.
- Test generation stops when either the time limit (--timelimit) is reached,
- OR the number of generated sequences reaches the input limit (--inputlimit),
- OR the number of error-revealing and regression tests reaches the output
- limit (--outputlimit).
- The number of tests output will be smaller than then number of test
- candidates generated, because redundant and illegal tests may be discarded.
+ <code>--no-regression-tests</code>. In this case, the option
+ <code>--inputlimit</code> should be used. [default 100000000]</li>
+      <li id="option:inputlimit"><b>--inputlimit=</b><i>int</i>. Maximum number of test method candidates generated. Test generation stops
+ when either the time limit (--timelimit) is reached, OR the number of
+ generated sequences reaches the input limit (--inputlimit), OR the number
+ of error-revealing and regression tests reaches the output limit
+ (--outputlimit). The number of tests output will be smaller than then
+ number of test candidates generated, because redundant and illegal tests
+ may be discarded.
  <p>
- This limit should be used when no tests are output, which occurs when
- using either <code>--dont-output-tests</code> or
+ This limit should be used when no tests are output, which occurs when using
+ either <code>--dont-output-tests</code> or
  <code>--no-error-revealing-tests</code> together with
- <code>--no-regression-tests</code>.
- Otherwise the <code>--outputlimit</code> command-line option is usually
- more appropriate. [default 100000000]</li>
+ <code>--no-regression-tests</code>. Otherwise the
+ <code>--outputlimit</code> command-line option is usually more appropriate. [default 100000000]</li>
       <li id="option:maxsize"><b>--maxsize=</b><i>int</i>. Do not generate tests with more than this many statements [default 100]</li>
     </ul>
   </li>
@@ -773,9 +774,9 @@ Randoop about your application, and that is how we recommend using Randoop.
     <ul>
       <li id="option:null-ratio"><b>--null-ratio=</b><i>double</i>. Use null with the given frequency as an argument to method calls.
 
- For example, a null ratio of 0.05 directs Randoop to use
- <code>null</code> as an input 5 percent of the time when a
- non-<code>null</code> value of the appropriate type is available.
+ For example, a null ratio of 0.05 directs Randoop to use <code>null</code>
+ as an input 5 percent of the time when a non-<code>null</code> value of the
+ appropriate type is available.
 
  Unless --forbid_null is true, a <code>null</code> value will still be used
  if no other value can be passed as an argument even if --null-ratio=0.
@@ -790,74 +791,82 @@ Randoop about your application, and that is how we recommend using Randoop.
  <p>
  Does not affect the behavior based on --null_ratio, which independently
  determines the frequency that <code>null</code> is used as an input. [default false]</li>
-      <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under test.
+      <li id="option:literals-file"><b>--literals-file=</b><i>string</i> <tt>[+]</tt>. A file containing literal values to be used as inputs to methods under
+ test.
  <p>
  Literals in these files are used in addition to all other constants in the
  pool. For the format of this file, see documentation in class
  <code>randoop.LiteralFileReader</code>. The special value "CLASSES" (with no
  quotes) means to read literals from all classes under test.</li>
       <li id="option:literals-level"><b>--literals-level=</b><i>enum</i>. How to use literal values that are specified via the
- <tt>--literals-file</tt> command-line option. See: <code>ClassLiteralsMode</code>. [default CLASS]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
+ <tt>--literals-file</tt> command-line option. See: <code>ClassLiteralsMode</code>. [default CLASS]<ul><li><b>NONE</b> do not use literals specified in a literals file</li><li><b>CLASS</b> a literal for a given class is used as input only to methods of that
+ class</li><li><b>PACKAGE</b> a literal is used as input to methods of any classes in the same package</li><li><b>ALL</b> each literal is used as input to any method under test</li></ul></li>
       <li id="option:string-maxlen"><b>--string-maxlen=</b><i>int</i>. Maximum length of strings in generated tests, including in assertions.
- Strings longer than
- 65KB (or about 10,000 characters) may be rejected by the Java
- compiler, according to the Java Virtual Machine specification. [default 10000]</li>
+ Strings longer than 65KB (or about 10,000 characters) may be rejected by
+ the Java compiler, according to the Java Virtual Machine specification. [default 10000]</li>
     </ul>
   </li>
   <li id="optiongroup:Varying-the-nature-of-generated-tests">Varying the nature of generated tests
     <ul>
       <li id="option:init-routine"><b>--init-routine=</b><i>string</i>. Specifies initialization routine (class.method)</li>
-      <li id="option:alias-ratio"><b>--alias-ratio=</b><i>double</i>. Try to reuse values from a sequence with the given frequency.
- If an alias ratio is given, it should be between 0 and 1.
+      <li id="option:alias-ratio"><b>--alias-ratio=</b><i>double</i>. Try to reuse values from a sequence with the given frequency. If an alias
+ ratio is given, it should be between 0 and 1.
  <p>
- A ratio of 0 results in tests where each value created within a test input is typically used at most once
- as an argument in a method call. A ratio of 1 tries to maximize the number of times
- values are used as inputs to parameters within a test. [default 0.0]</li>
+ A ratio of 0 results in tests where each value created within a test input
+ is typically used at most once as an argument in a method call. A ratio of
+ 1 tries to maximize the number of times values are used as inputs to
+ parameters within a test. [default 0.0]</li>
       <li id="option:small-tests"><b>--small-tests=</b><i>boolean</i>. Favor shorter sequences when assembling new sequences out of old ones.
  <p>
- Randoop generates new tests by combining old previously-generated tests.
- If this option is given, tests with fewer calls are given greater weight during
- its random selection. This has the overall effect of producing smaller JUnit tests. [default false]</li>
+ Randoop generates new tests by combining old previously-generated tests. If
+ this option is given, tests with fewer calls are given greater weight
+ during its random selection. This has the overall effect of producing
+ smaller JUnit tests. [default false]</li>
       <li id="option:clear"><b>--clear=</b><i>int</i>. Clear the component set each time it contains the given number of inputs.
  <p>
- Randoop stores previously-generated tests in a "component" set, and uses them to
- generate new tests. Setting this variable to a small number can sometimes result
- in a greater variety of tests generated during a single run.
+ Randoop stores previously-generated tests in a "component" set, and uses
+ them to generate new tests. Setting this variable to a small number can
+ sometimes result in a greater variety of tests generated during a single
+ run.
  </p> [default 100000000]</li>
     </ul>
   </li>
   <li id="optiongroup:Outputting-the-JUnit-tests">Outputting the JUnit tests
     <ul>
       <li id="option:testsperfile"><b>--testsperfile=</b><i>int</i>. Maximum number of tests to write to each JUnit file [default 500]</li>
-      <li id="option:error-test-filename"><b>--error-test-filename=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing error-revealing tests [default ErrorTest]</li>
+      <li id="option:error-test-filename"><b>--error-test-filename=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing error-revealing
+ tests [default ErrorTest]</li>
       <li id="option:regression-test-filename"><b>--regression-test-filename=</b><i>string</i>. Base name (no ".java" suffix) of the JUnit file containing regression tests [default RegressionTest]</li>
-      <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files.
- When the package is the same as the package of a class under test, then
- package visibility rules are used to determine whether to include the class
- or class members in a test. Tests can be restricted to public members only
- by using the option <tt>--only-test-public-members</tt>. [default ]</li>
+      <li id="option:junit-package-name"><b>--junit-package-name=</b><i>string</i>. Name of the package for the generated JUnit files. When the package is the
+ same as the package of a class under test, then package visibility rules
+ are used to determine whether to include the class or class members in a
+ test. Tests can be restricted to public members only by using the option
+ <tt>--only-test-public-members</tt>. [default ]</li>
       <li id="option:junit-output-dir"><b>--junit-output-dir=</b><i>string</i>. Name of the directory to which JUnit files should be written</li>
-      <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>. Run test generation without output.
- May be desirable when running with a visitor.
+      <li id="option:dont-output-tests"><b>--dont-output-tests=</b><i>boolean</i>. Run test generation without output. May be desirable when running with a
+ visitor.
  <p>
  NOTE: Because there is no output, the value of <code>--outputlimit</code>
  will never be met, so be sure to set <code>--inputlimit</code> or
  <code>--timelimit</code> to a reasonable value when using this option. [default false]</li>
-      <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>. Whether to use JUnit's standard reflective mechanisms for invoking
- tests.  JUnit's reflective invocations can interfere with code
- instrumentation, such as by the DynComp tool.  If that is a problem,
- then set this to false and Randoop will output tests that use direct
- method calls instead of reflection.  The tests will execute methods and
- assertions, but won't be JUnit suites. [default true]</li>
+      <li id="option:junit-reflection-allowed"><b>--junit-reflection-allowed=</b><i>boolean</i>. Whether to use JUnit's standard reflective mechanisms for invoking tests.
+ JUnit's reflective invocations can interfere with code instrumentation,
+ such as by the DynComp tool. If that is a problem, then set this to false
+ and Randoop will output tests that use direct method calls instead of
+ reflection. The tests will execute methods and assertions, but won't be
+ JUnit suites. [default true]</li>
     </ul>
   </li>
   <li id="optiongroup:Runtime-environment">Runtime environment
     <ul>
       <li id="option:system-props"><b>-D</b> <b>--system-props=</b><i>string</i> <tt>[+]</tt>. Specify system properties to be set (similar to java -Dx=y)</li>
-      <li id="option:agent"><b>--agent=</b><i>string</i>. Specify an extra command for recursive JVM calls that Randoop spawns.
- The argument to the --agent option is the entire extra JVM command.  A
- typical invocation of Randoop might be:
- <pre>java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"</pre></li>
+      <li id="option:agent"><b>--agent=</b><i>string</i>. Specify an extra command for recursive JVM calls that Randoop spawns. The
+ argument to the --agent option is the entire extra JVM command. A typical
+ invocation of Randoop might be:
+ 
+ <pre>
+ java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"
+ </pre></li>
       <li id="option:mem-megabytes"><b>--mem-megabytes=</b><i>int</i>. specify the memory size (in megabytes) for recursive JVM calls [default 1000]</li>
       <li id="option:capture-output"><b>--capture-output=</b><i>boolean</i>. Capture all output to stdout and stderr [default false]</li>
     </ul>
@@ -866,18 +875,18 @@ Randoop about your application, and that is how we recommend using Randoop.
     <ul>
       <li id="option:componentfile-ser"><b>--componentfile-ser=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file</li>
       <li id="option:componentfile-txt"><b>--componentfile-txt=</b><i>string</i> <tt>[+]</tt>. Read serialized test inputs from the given file (text-based)</li>
-      <li id="option:output-components"><b>--output-components=</b><i>string</i>. Output components (serialized, GZIPPED) to the given file.
- Suggestion: use a .gz suffix in file name.</li>
-      <li id="option:output-tests-serialized"><b>--output-tests-serialized=</b><i>string</i>. Output tests (sequences plus checkers) in serialized form to the given file.
- Suggestion: use a .gz suffix in file name.</li>
+      <li id="option:output-components"><b>--output-components=</b><i>string</i>. Output components (serialized, GZIPPED) to the given file. Suggestion: use
+ a .gz suffix in file name.</li>
+      <li id="option:output-tests-serialized"><b>--output-tests-serialized=</b><i>string</i>. Output tests (sequences plus checkers) in serialized form to the given
+ file. Suggestion: use a .gz suffix in file name.</li>
     </ul>
   </li>
   <li id="optiongroup:Controlling-randomness">Controlling randomness
     <ul>
-      <li id="option:randomseed"><b>--randomseed=</b><i>int</i>. The random seed to use in the generation process.
- Note that Randoop is deterministic:  running it twice will produce the
- same test suite.  If you want to produced multiple different test
- suites, run Randoop multiple times with a different random seed. [default 0]</li>
+      <li id="option:randomseed"><b>--randomseed=</b><i>int</i>. The random seed to use in the generation process. Note that Randoop is
+ deterministic: running it twice will produce the same test suite. If you
+ want to produced multiple different test suites, run Randoop multiple times
+ with a different random seed. [default 0]</li>
     </ul>
   </li>
   <li id="optiongroup:Notifications">Notifications
@@ -894,21 +903,21 @@ Randoop about your application, and that is how we recommend using Randoop.
   <li id="optiongroup:Logging-and-troubleshooting-Randoop">Logging and troubleshooting Randoop
     <ul>
       <li id="option:debug-checks"><b>--debug-checks=</b><i>boolean</i>. Perform expensive internal checks (for Randoop debugging) [default false]</li>
-      <li id="option:log"><b>--log=</b><i>filename</i>. Name of a file to which to log lots of information.
- If not specified, no logging is done.</li>
+      <li id="option:log"><b>--log=</b><i>filename</i>. Name of a file to which to log lots of information. If not specified, no
+ logging is done.</li>
     </ul>
   </li>
   <li id="optiongroup:Threading-and-timeouts">Threading and timeouts
     <ul>
-      <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>. Use if Randoop is exhibiting nonterminating behavior, which is usually
- due to execution of code under test that results in an infinite
- loop. With this option, Randoop executes each test in a separate
- thread and kills tests that take too long to finish. Tests killed in
- this manner are not reported to the user. The downside is a BIG
- (order-of-magnitude) decrease in generation speed. [default true]</li>
+      <li id="option:usethreads"><b>--usethreads=</b><i>boolean</i>. Use if Randoop is exhibiting nonterminating behavior, which is usually due
+ to execution of code under test that results in an infinite loop. With this
+ option, Randoop executes each test in a separate thread and kills tests
+ that take too long to finish. Tests killed in this manner are not reported
+ to the user. The downside is a BIG (order-of-magnitude) decrease in
+ generation speed. [default true]</li>
       <li id="option:timeout"><b>--timeout=</b><i>int</i>. After this many milliseconds, a non-returning method call, and its
- associated test, are stopped forcefully.
- Only meaningful if --usethreads is also specified. [default 5000]</li>
+ associated test, are stopped forcefully. Only meaningful if --usethreads is
+ also specified. [default 5000]</li>
     </ul>
   </li>
 </ul>
