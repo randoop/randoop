@@ -14,21 +14,12 @@ public class Main {
   // Handlers for user-visible commands.
   public static List<CommandHandler> handlers;
 
-  // Handlers whose documentation is not output.
-  public static List<CommandHandler> invisibleHandlers;
-
   static {
 
     handlers = new ArrayList<CommandHandler>();
     handlers.add(new GenTests());
     handlers.add(new Help());
 
-    // These are very ad-hoc commands that we don't want to
-    // confuse the user of Randoop. Adding them to the invisible
-    // handlers list means that they're not printed out when
-    // the user uses the `help' command.
-    invisibleHandlers = new ArrayList<CommandHandler>();
-    invisibleHandlers.add(new CovUtils());
   }
 
   // The main method simply calls nonStaticMain.
@@ -54,7 +45,6 @@ public class Main {
     CommandHandler handler = null;
     List<CommandHandler> allHandlers = new ArrayList<CommandHandler>();
     allHandlers.addAll(handlers);
-    allHandlers.addAll(invisibleHandlers);
     for (CommandHandler h : allHandlers) {
       if (h.handles(command)) {
         handler = h;
