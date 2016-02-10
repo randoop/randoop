@@ -498,24 +498,13 @@ public class ForwardGenerator extends AbstractGenerator {
       // to S.
       SimpleList<Sequence> l = null;
 
-      // We use one of three ways to gather candidate sequences, but the third
+      // We use one of two ways to gather candidate sequences, but the second
       // case below
       // is by far the most common.
 
-      if (GenInputsAbstract.always_use_ints_as_objects && t.equals(Object.class)) {
+      if (t.isArray()) {
 
-        // 1. OBSCURE, applicable only for branch-directed generation project.
-        // Get all
-        // sequences that create one or more integer. Applicable only when
-        // inputTypes[i]
-        // is "Object" and always_use_ints_as_objects option is specified.
-        if (Log.isLoggingOn())
-          Log.logLine("Integer-as-object heuristic: will use random Integer.");
-        l = componentManager.getSequencesForType(int.class, false);
-
-      } else if (t.isArray()) {
-
-        // 2. If T=inputTypes[i] is an array type, ask the component manager for
+        // 1. If T=inputTypes[i] is an array type, ask the component manager for
         // all sequences
         // of type T (list l1), but also try to directly build some sequences
         // that create arrays (list l2).
@@ -527,7 +516,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
       } else {
 
-        // 3. COMMON CASE: ask the component manager for all sequences that
+        // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
         if (Log.isLoggingOn())
           Log.logLine("Will query component set for objects of type" + t);
