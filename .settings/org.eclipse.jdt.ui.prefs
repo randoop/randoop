@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
 formatter_profile=_randoop
-formatter_settings_version=11
+formatter_settings_version=12
 org.eclipse.jdt.ui.ignorelowercasenames=true
 org.eclipse.jdt.ui.importorder=java;javax;org;com;plume;randoop;
 org.eclipse.jdt.ui.ondemandthreshold=99
