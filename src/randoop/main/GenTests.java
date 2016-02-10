@@ -1,11 +1,9 @@
 package randoop.main;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,7 +12,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -49,8 +46,6 @@ import randoop.ObjectContract;
 import randoop.RandoopClassLoader;
 import randoop.RandoopListenerManager;
 import randoop.SeedSequences;
-import randoop.experiments.CodeCoverageTracker;
-import randoop.experiments.CovWitnessHelperVisitor;
 import randoop.instrument.CoveredClassVisitor;
 import randoop.operation.ConstructorCall;
 import randoop.operation.NonreceiverTerm;
@@ -91,8 +86,6 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
 
-import cov.Branch;
-import cov.Coverage;
 import javassist.ClassPool;
 
 public class GenTests extends GenInputsAbstract {
@@ -221,34 +214,7 @@ public class GenTests extends GenInputsAbstract {
       }
     }
 
-    // Determine classes for which we compute coverage instrumentation
-    // (using cov.Instrument), and omit all fields in any such class
-    // to avoid having them manipulated by generated tests.
-    List<Class<?>> covClasses = new ArrayList<>();
-    if (coverage_instrumented_classes != null) {
-      File covClassesFile = new File(coverage_instrumented_classes);
-      try {
-        covClasses = ClassReader.getClassesForFile(covClassesFile);
-      } catch (IOException e) {
-        throw new Error(e);
-      }
-      for (Class<?> cls : covClasses) {
-        assert Coverage.isInstrumented(cls) : cls.toString();
-        // System.out.println("Will track branch coverage for " + cls);
-        omitFields.add(cls.getName() + "." + cov.Constants.BRANCHLINES);
-        omitFields.add(cls.getName() + "." + cov.Constants.FALSE_BRANCHES);
-        omitFields.add(cls.getName() + "." + cov.Constants.IS_INSTRUMENTED_FIELD);
-        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_ID_ANNOTATION);
-        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_ID_TO_BRANCHES);
-        omitFields.add(cls.getName() + "." + cov.Constants.METHOD_LINE_SPANS_FIELD);
-        omitFields.add(cls.getName() + "." + cov.Constants.SOURCE_FILE_NAME);
-        omitFields.add(cls.getName() + "." + cov.Constants.TRUE_BRANCHES);
-      }
-    }
-
-    CodeCoverageTracker covTracker = new CodeCoverageTracker(covClasses);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    listenerMgr.addListener(covTracker);
 
     DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, reflectionPredicate);
@@ -354,11 +320,6 @@ public class GenTests extends GenInputsAbstract {
       visitors.add(new CoveredClassVisitor(coveredClasses));
     }
 
-    // setup coverage visitor if user says so
-    if (GenInputsAbstract.output_cov_witnesses) {
-      visitors.add(new CovWitnessHelperVisitor(covTracker));
-    }
-
     // Install any user-specified visitors.
     if (!GenInputsAbstract.visitor.isEmpty()) {
       for (String visitorClsName : GenInputsAbstract.visitor) {
@@ -402,14 +363,6 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
     // once tests generated,
-
-    if (GenInputsAbstract.output_branches != null) {
-      outputCoverageBranches(covTracker);
-    }
-
-    if (GenInputsAbstract.output_covmap != null) {
-      outputObject(covTracker.branchesToCoveringSeqs, output_covmap);
-    }
 
     if (GenInputsAbstract.output_components != null) {
 
@@ -669,38 +622,6 @@ public class GenTests extends GenInputsAbstract {
       os.writeObject(obj);
     } catch (FileNotFoundException e) {
       throw new Error("Unable to serialize object: " + e);
-    } catch (IOException e) {
-      throw new Error(e);
-    }
-  }
-
-  /**
-   * Outputs coverage branches to the file
-   * {@link GenInputsAbstract#output_branches}. Branches are sorted by their
-   * string representation.
-   *
-   * @param covTracker
-   *          the coverage tracker with branches
-   * @throws Error
-   *           if an {@link IOException} is thrown during output
-   */
-  private void outputCoverageBranches(CodeCoverageTracker covTracker) throws Error {
-    Comparator<Branch> branchComparator = new Comparator<Branch>() {
-      @Override
-      public int compare(Branch o1, Branch o2) {
-        return o1.toString().compareTo(o2.toString());
-      }
-    };
-    Set<Branch> branches = new TreeSet<Branch>(branchComparator);
-    branches.addAll(covTracker.branchesCovered);
-    // Create a file with branches, sorted by their string representation.
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(output_branches))) {
-      // Touch all covered branches (they may have been reset during
-      // generation).
-      for (Branch b : branches) {
-        writer.append(b.toString());
-        writer.newLine();
-      }
     } catch (IOException e) {
       throw new Error(e);
     }
