@@ -58,10 +58,11 @@ export PATH
 # the first time the Makefile is run, that script doesn't exist.
 # These are mostly used as dependencies rather than in commands,
 # so the fact that the order is nondeterministic should be OK.
-RANDOOP_FILES = $(shell find src/ tests/ systemtests/ -name '*.java')
+RANDOOP_FILES = $(shell find src/ tests/ systemtests/src/java_collections -name '*.java')
 RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
-RANDOOP_TESTS_FILES = $(shell find tests/ systemtests/ -name '*.java')
-RANDOOP_TXT_FILES = $(shell find src/ tests/ systemtests/ -name '*.txt')
+RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
+RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
+SYSTEMTESTS_FILES = $(shell find systemtests/src/java_collections -name '*.java')
 
 # Build and run tests
 all: clean build tests
@@ -71,7 +72,7 @@ all-dist: all javadoc manual distribution-files
 
 # Remove generated .class files.
 clean:
-	rm -rf bin randoop_agent.jar
+	rm -rf bin systemtests/bin randoop_agent.jar
 
 # Build Randoop.
 build: bin randoop_agent.jar
@@ -83,6 +84,9 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
 	@echo "Compiling test files ..."
 	@${JAVAC_COMMAND} -nowarn -g -d bin $(RANDOOP_TESTS_FILES)
+	@echo "Compiling systemtests files ..."
+	mkdir -p systemtests/bin
+	@${JAVAC_COMMAND} -nowarn -g -d systemtests/bin $(SYSTEMTESTS_FILES)
 	mkdir -p bin/randoop/test/resources
 	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
 	touch bin
@@ -152,7 +156,7 @@ randoop-help:
 randoop1: bin
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --no-error-revealing-tests \
 	   --inputlimit=500 \
@@ -168,10 +172,10 @@ randoop1: bin
 	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip \
 	   --omit-field-list=systemtests/resources/testclassomitfields.txt
 	cd systemtests/randoop-scratch && \
-	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
 	cd systemtests/randoop-scratch && \
-	  java  -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	  java  -cp .:$(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  org.junit.runner.JUnitCore foo.bar.TestClass
 	cp systemtests/randoop-scratch/foo/bar/TestClass0.java systemtests/resources/TestClass0.java
 
@@ -179,7 +183,7 @@ randoop1: bin
 randoop2: bin
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=100 \
 	   --testclass=java2.util2.TreeSet \
@@ -194,7 +198,7 @@ randoop2: bin
 	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip \
 	   --omit-field-list=systemtests/resources/naiveomitfields.txt
 	cd systemtests/randoop-scratch && \
-	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/src/java_collections:$(CLASSPATH) \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  foo/bar/Naive*.java
 	cp systemtests/randoop-scratch/foo/bar/Naive*0.java systemtests/resources/
 
@@ -204,7 +208,7 @@ randoop3: bin
 	@echo "***** randoop3 *****"
 	rm -rf systemtests/randoop-scratch
 	mkdir systemtests/randoop-scratch
-	cd systemtests/randoop-scratch && java -ea -classpath $(RANDOOP_HOME):../src/java_collections:$(CLASSPATH) \
+	cd systemtests/randoop-scratch && java -ea -classpath $(RANDOOP_HOME):../bin:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
 	   --null-ratio=0.3 \
