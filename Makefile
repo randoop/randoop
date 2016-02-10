@@ -37,9 +37,14 @@ JAVAC ?= javac
 
 JAVAC_TARGET ?= ${TARGET_DEFAULT}
 
+# Build arguments
+# use -Xlint:-classfile to supress checkerframework introduced annotation warnings
+# from using annotated plume.jar
+JAVAC_ARGS ?= -Xlint:-classfile
+
 # User may set JAVAC_JAR
 # User may set JAVAC_EXTRA_ARGS
-JAVAC_COMMAND ?= ${JAVAC} ${JAVAC_TARGET} ${JAVAC_EXTRA_ARGS}
+JAVAC_COMMAND ?= ${JAVAC} ${JAVAC_TARGET} ${JAVAC_ARGS} ${JAVAC_EXTRA_ARGS}
 
 SORT_DIRECTORY_ORDER ?= ${RANDOOP_HOME}/utils/plume-lib/bin/sort-directory-order
 
@@ -670,8 +675,6 @@ distribution-files: manual randoop_agent.jar plume-lib-update
 # Copy required libraries.
 	mkdir randoop/lib
 	cp lib/plume.jar randoop/lib
-	cp lib/jakarta-oro-2.0.8.jar randoop/lib
-	cp lib/jakarta-oro-license.txt randoop/lib
 	cp lib/javassist.jar randoop/lib
 # Copy license.
 	cp license.txt randoop/
@@ -680,7 +683,7 @@ distribution-files: manual randoop_agent.jar plume-lib-update
 	cp .classpath-dist randoop/.classpath
 # Make sure everything works.
 	cd randoop && \
-	  find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/jakarta-oro-2.0.8.jar:lib/javassist.jar'
+	  find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/javassist.jar'
 # Why doesn't this work (any more)?
 #	cd randoop && \
 #	  find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
@@ -691,7 +694,6 @@ distribution-files: manual randoop_agent.jar plume-lib-update
 	mkdir randoop/tmp
 	cp -r randoop/bin/* randoop/tmp
 	cd randoop/tmp && jar xf ../lib/plume.jar
-	cd randoop/tmp && jar xf ../lib/jakarta-oro-2.0.8.jar
 	cd randoop/tmp && jar xf ../lib/javassist.jar
 	cd randoop/tmp && jar cf randoop.jar *
 	mv randoop/tmp/randoop.jar randoop/
