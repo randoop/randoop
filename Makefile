@@ -58,10 +58,10 @@ export PATH
 # the first time the Makefile is run, that script doesn't exist.
 # These are mostly used as dependencies rather than in commands,
 # so the fact that the order is nondeterministic should be OK.
-RANDOOP_FILES = $(shell find src/ tests/ -name '*.java')
+RANDOOP_FILES = $(shell find src/ tests/ systemtests/ -name '*.java')
 RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
-RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
-RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
+RANDOOP_TESTS_FILES = $(shell find tests/ systemtests/ -name '*.java')
+RANDOOP_TXT_FILES = $(shell find src/ tests/ systemtests/ -name '*.txt')
 
 # Build and run tests
 all: clean build tests
