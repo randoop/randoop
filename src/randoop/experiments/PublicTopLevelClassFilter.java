@@ -3,7 +3,7 @@ package randoop.experiments;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.bcel.classfile.JavaClass;
+import org.apache.commons.bcel6.classfile.JavaClass;
 
 public class PublicTopLevelClassFilter implements ClassFilter {
 

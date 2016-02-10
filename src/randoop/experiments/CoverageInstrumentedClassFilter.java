@@ -1,7 +1,7 @@
 package randoop.experiments;
 
-import org.apache.bcel.classfile.Field;
-import org.apache.bcel.classfile.JavaClass;
+import org.apache.commons.bcel6.classfile.Field;
+import org.apache.commons.bcel6.classfile.JavaClass;
 
 public class CoverageInstrumentedClassFilter implements ClassFilter {
 
