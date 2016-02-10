@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -45,7 +44,7 @@ public class EnumReflectionTest {
     classes.add(se);
 
     @SuppressWarnings("unchecked")
-    List<Enum<?>> include = (List<Enum<?>>) Arrays.asList(se.getEnumConstants());
+    List<Enum<?>> include = asList(se.getEnumConstants());
     @SuppressWarnings("unchecked")
     List<Method> exclude = Arrays.asList(se.getMethods());
     List<Operation> actual = OperationExtractor.getOperations(classes, null);
@@ -58,6 +57,16 @@ public class EnumReflectionTest {
     for (Method m : exclude) {
       assertFalse("method " + m.toGenericString() + " should not occur in simple enum", actual.contains(new MethodCall(m)) );
     }
+  }
+
+  private List<Enum<?>> asList(Object[] enumConstants){
+    List<Enum<?>> list = new ArrayList<>();
+    for (Object obj : enumConstants) {
+      if (obj instanceof Enum) {
+        list.add((Enum<?>)obj);
+      }
+    }
+    return list;
   }
 
   /**
@@ -79,9 +88,9 @@ public class EnumReflectionTest {
       int mods = c.getModifiers();
       if (c.isEnum()) {
         if (Modifier.isPublic(mods)) {
-          include.addAll((Collection<? extends Enum<?>>) Arrays.asList(c.getEnumConstants()));
+          include.addAll(asList(c.getEnumConstants()));
         } else {
-          exclude.addAll((Collection<? extends Enum<?>>) Arrays.asList(c.getEnumConstants()));
+          exclude.addAll(asList(c.getEnumConstants()));
         }
       }
     }
