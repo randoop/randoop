@@ -6,8 +6,7 @@ import java.io.Serializable;
 import randoop.types.TypeNames;
 
 /**
- * Serializable form of {@link NonreceiverTerm} allowing tests to be
- * serialized.
+ * Serializable form of {@link NonreceiverTerm} allowing tests to be serialized.
  * 
  * @see NonreceiverTerm#writeReplace
  */

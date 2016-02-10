@@ -16,14 +16,14 @@ import randoop.util.Files;
  * experiments.
  */
 public class RandWalkExpState {
-  
+
   private final int limit;
   private final String exp;
   private CombinedStats cs;
   private Random rand = new Random();
   private List<String> seedsToCount = new ArrayList<String>();
   private boolean countonly;
-  
+
   public RandWalkExpState(int explimit, final String exp, boolean countonly) {
     if (!countonly && explimit < 0)
       throw new IllegalArgumentException("Invalid experiment limit: " + explimit);
@@ -40,6 +40,7 @@ public class RandWalkExpState {
     }
 
     File[] statfiles = dir.listFiles(new FilenameFilter() {
+      @Override
       public boolean accept(File dir, String name) {
         if (name.endsWith(".stats")) {
           if (!name.startsWith(exp)) {
@@ -50,9 +51,9 @@ public class RandWalkExpState {
         return false;
       }
     });
-    
+
     this.cs = new CombinedStats();
-    
+
     for (File statfile : statfiles) {
       try {
         List<String> lines = Files.readWhole(statfile);
@@ -64,39 +65,37 @@ public class RandWalkExpState {
     printOps();
 
   }
-  
+
   private void printOps() {
-    System.out.print(exp + " Total operations: " 
-        + plume.UtilMDE.lpad(new DecimalFormat("###,###,###,###,###").format(cs.getTotalOperations()), 15));
+    System.out.print(exp + " Total operations: " + plume.UtilMDE.lpad(new DecimalFormat("###,###,###,###,###").format(cs.getTotalOperations()), 15));
     System.out.print("  ");
-    System.out.println(exp + " Total sequences:  " 
-        + plume.UtilMDE.lpad(new DecimalFormat("###,###,###,###,###").format(cs.getTotalSequences()), 15));
+    System.out.println(exp + " Total sequences:  " + plume.UtilMDE.lpad(new DecimalFormat("###,###,###,###,###").format(cs.getTotalSequences()), 15));
   }
 
   public String nextTarget() {
-    
+
     if (countonly)
       return null;
-    
+
     if (cs.getTotalOperations() < limit) {
       printOps();
       String lastSeed = RandomTargets.pad(rand.nextInt(100000));
       seedsToCount.add(lastSeed);
-      return exp + "/" + exp +  lastSeed + ".data.gz";
+      return exp + "/" + exp + lastSeed + ".data.gz";
     }
     return null;
   }
-  
+
   public boolean hasMoreTargets() {
-    
+
     if (countonly)
       return false;
 
     // Are there more targets? To find out, first check
     // if there are new stat files we can add to the totals.
-    for (Iterator<String> it = seedsToCount.iterator() ; it.hasNext() ; ) {
+    for (Iterator<String> it = seedsToCount.iterator(); it.hasNext();) {
       String seed = it.next();
-      File statfile = new File(exp + "/" + exp +  seed + ".stats");
+      File statfile = new File(exp + "/" + exp + seed + ".stats");
       if (statfile.exists()) {
         it.remove();
         try {
@@ -111,9 +110,9 @@ public class RandWalkExpState {
     if (cs.getTotalOperations() < limit) {
       return true;
     }
-    
+
     System.out.println("Reached operation limit for " + exp);
     return false;
   }
-  
+
 }

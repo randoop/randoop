@@ -19,8 +19,8 @@ import plume.Pair;
 import plume.UtilMDE;
 
 /**
- * A collection of frontier branches and sequences that reach them.
- * A DataFlowInput is the input to the DataFlow analysis. 
+ * A collection of frontier branches and sequences that reach them. A
+ * DataFlowInput is the input to the DataFlow analysis.
  */
 public class DataFlowInput implements Serializable {
 
@@ -38,34 +38,31 @@ public class DataFlowInput implements Serializable {
    * 
    * The text file consists of a list of records. Each record is as follows:
    * 
-   * START RECORD
-   * BRANCH
-   * <em>branch-description</em>
-   * SEQUENCE
-   * <em>sequence-description</em>
-   * END RECORD
+   * START RECORD BRANCH <em>branch-description</em> SEQUENCE
+   * <em>sequence-description</em> END RECORD
    *
-   * Where <em>branch-description</em> is a string that can be parsed
-   * by the method cov.OneBranchInfo.parse(String), and <em>sequence-description</em>
+   * Where <em>branch-description</em> is a string that can be parsed by the
+   * method cov.OneBranchInfo.parse(String), and <em>sequence-description</em>
    * is a string that can be parsed by the method
    * randoop.SequenceParser.parse(String).
    * 
-   * Blank lines and comments between records are allowed and ignored.
-   * Comments are lines starting with "#".
+   * Blank lines and comments between records are allowed and ignored. Comments
+   * are lines starting with "#".
    * 
-   * The records are read and used to populate the frontierMap field of the
-   * new DataFlowInput object. If two records specify the same branch, the
-   * two sequences are added to the same set.
+   * The records are read and used to populate the frontierMap field of the new
+   * DataFlowInput object. If two records specify the same branch, the two
+   * sequences are added to the same set.
    * 
-   * @param inFile A text file containing a description of branches and sequences.
-   *        If inFile ends in ".gz" it will be read as a compressed file.
+   * @param inFile
+   *          A text file containing a description of branches and sequences. If
+   *          inFile ends in ".gz" it will be read as a compressed file.
    */
   public static DataFlowInput parse(String inFile) {
-    
-    final Map<Branch, Set<Sequence>> map =
-      new LinkedHashMap<Branch, Set<Sequence>>();
+
+    final Map<Branch, Set<Sequence>> map = new LinkedHashMap<Branch, Set<Sequence>>();
 
     RecordProcessor processor = new RecordProcessor() {
+      @Override
       public void processRecord(List<String> lines) {
         Pair<Branch, Sequence> brAndSeq = parseRecord(lines);
         Set<Sequence> set = map.get(brAndSeq.a);
@@ -76,14 +73,13 @@ public class DataFlowInput implements Serializable {
         set.add(brAndSeq.b);
       }
     };
-    
+
     RecordListReader reader = new RecordListReader("RECORD", processor);
     reader.parse(inFile);
-    
+
     return new DataFlowInput(map);
   }
-    
-  
+
   private static Pair<Branch, Sequence> parseRecord(List<String> lines) {
     try {
       assert lines.get(0).equals("BRANCH");
@@ -102,11 +98,13 @@ public class DataFlowInput implements Serializable {
   /**
    * Output this DataFlowInput as a text file.
    * 
-   * @param outFile The file where output is to be written.
-   * If outFile ends in ".gz" it will be output as a compressed file.
+   * @param outFile
+   *          The file where output is to be written. If outFile ends in ".gz"
+   *          it will be output as a compressed file.
    * 
-   * @param outputCodeRep If true, also output the code representation of
-   * each sequence,  as a comment following each record.
+   * @param outputCodeRep
+   *          If true, also output the code representation of each sequence, as
+   *          a comment following each record.
    */
   public void toParseableFile(String outFile, boolean outputCodeRep) {
     if (outFile == null || outFile.length() == 0)

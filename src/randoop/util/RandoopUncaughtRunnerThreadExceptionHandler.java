@@ -10,6 +10,7 @@ public class RandoopUncaughtRunnerThreadExceptionHandler implements UncaughtExce
     return singleInstance;
   }
 
+  @Override
   public void uncaughtException(Thread t, Throwable e) {
     // Do nothing.
   }

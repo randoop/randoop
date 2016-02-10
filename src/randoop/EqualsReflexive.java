@@ -1,6 +1,5 @@
 package randoop;
 
-
 /**
  * The contract: <code>x0.equals(x0)==true</code>.
  */
@@ -23,10 +22,10 @@ public final class EqualsReflexive implements ObjectContract {
   @Override
   public int hashCode() {
     int h = 17;
-    return h;  // no state to compare.
+    return h; // no state to compare.
   }
 
-  
+  @Override
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
@@ -34,10 +33,12 @@ public final class EqualsReflexive implements ObjectContract {
     return o.equals(o);
   }
 
+  @Override
   public int getArity() {
     return 1;
   }
 
+  @Override
   public String toCommentString() {
     return "x0.equals(x0)";
   }
@@ -47,6 +48,7 @@ public final class EqualsReflexive implements ObjectContract {
     return "EqualsReflexive";
   }
 
+  @Override
   public boolean evalExceptionMeansFailure() {
     return true;
   }
@@ -63,5 +65,5 @@ public final class EqualsReflexive implements ObjectContract {
     b.append(");");
     return b.toString();
   }
-  
+
 }

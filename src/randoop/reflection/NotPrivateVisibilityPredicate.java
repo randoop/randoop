@@ -15,7 +15,9 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * @return true if the class access modifier is not private, and false, otherwise.
+   * 
+   * @return true if the class access modifier is not private, and false,
+   *         otherwise.
    */
   @Override
   public boolean isVisible(Class<?> c) {
@@ -24,7 +26,9 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * @return true if the method access modifier is not private, and false, otherwise.
+   * 
+   * @return true if the method access modifier is not private, and false,
+   *         otherwise.
    */
   @Override
   public boolean isVisible(Method m) {
@@ -33,7 +37,9 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * @return true if the constructor access modifier is not private, and false, otherwise.
+   * 
+   * @return true if the constructor access modifier is not private, and false,
+   *         otherwise.
    */
   @Override
   public boolean isVisible(Constructor<?> c) {
@@ -42,18 +48,21 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * @return true if the field access modifier is not private, and false, otherwise.
+   * 
+   * @return true if the field access modifier is not private, and false,
+   *         otherwise.
    */
   @Override
   public boolean isVisible(Field f) {
     return isVisible(f.getModifiers() & Modifier.fieldModifiers());
   }
-  
+
   /**
-   * Returns true if the {@link java.lang.reflect.Modifier Modifier} value
-   * does not have private set.
+   * Returns true if the {@link java.lang.reflect.Modifier Modifier} value does
+   * not have private set.
    * 
-   * @param mods  the modifiers value.
+   * @param mods
+   *          the modifiers value.
    * @return true if the private bit is not set, false otherwise.
    */
   private boolean isVisible(int mods) {

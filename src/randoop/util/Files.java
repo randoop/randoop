@@ -22,10 +22,12 @@ public final class Files {
 
   // Deletes all files and subdirectories under dir.
   // Returns true if all deletions were successful.
-  // If a deletion fails, the method stops attempting to delete and returns false.
+  // If a deletion fails, the method stops attempting to delete and returns
+  // false.
   // Attempts to detect symbolic links, and fails if it finds one.
   public static boolean deleteRecursive(File dir) {
-    if (dir == null) throw new IllegalArgumentException("dir cannot be null.");
+    if (dir == null)
+      throw new IllegalArgumentException("dir cannot be null.");
     String canonicalPath = null;
     try {
       canonicalPath = dir.getCanonicalPath();
@@ -41,7 +43,7 @@ public final class Files {
     }
     if (dir.isDirectory()) {
       String[] children = dir.list();
-      for (int i=0; i<children.length; i++) {
+      for (int i = 0; i < children.length; i++) {
         boolean success = deleteRecursive(new File(dir, children[i]));
         if (!success) {
           return false;
@@ -54,7 +56,8 @@ public final class Files {
   }
 
   public static List<String> findFilesInDir(File dir, String startsWith, String endsWith) {
-    if (!dir.isDirectory()) throw new IllegalArgumentException("not a directory: " + dir.getAbsolutePath());
+    if (!dir.isDirectory())
+      throw new IllegalArgumentException("not a directory: " + dir.getAbsolutePath());
     File currentDir = dir;
     List<String> retval = new ArrayList<String>();
     for (String fileName : currentDir.list()) {
@@ -73,12 +76,12 @@ public final class Files {
   }
 
   public static void writeToFile(String s, File file, Boolean append) throws IOException {
-    BufferedWriter writer= new BufferedWriter(new FileWriter(file, append));
+    BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
     try {
       writer.append(s);
     } finally {
       writer.close();
-    }        
+    }
   }
 
   public static void writeToFile(String s, String fileName, Boolean append) throws IOException {
@@ -90,41 +93,39 @@ public final class Files {
   }
 
   /**
-   * Reads the whole file. Does not close the reader.
-   * Returns the list of lines.  
+   * Reads the whole file. Does not close the reader. Returns the list of lines.
    */
   public static List<String> readWhole(BufferedReader reader) throws IOException {
-    List<String> result= new ArrayList<String>();
-    String line= reader.readLine();
-    while(line != null) {
+    List<String> result = new ArrayList<String>();
+    String line = reader.readLine();
+    while (line != null) {
       result.add(line);
-      line= reader.readLine();
+      line = reader.readLine();
     }
     return Collections.unmodifiableList(result);
   }
 
   /**
-   * Reads the whole file. Returns the list of lines.  
+   * Reads the whole file. Returns the list of lines.
    */
   public static List<String> readWhole(String fileName) throws IOException {
     return readWhole(new File(fileName));
   }
 
   /**
-   * Reads the whole file. Returns the list of lines.  
+   * Reads the whole file. Returns the list of lines.
    */
   public static List<String> readWhole(File file) throws IOException {
     BufferedReader in = new BufferedReader(new FileReader(file));
     try {
       return readWhole(in);
-    } finally{
+    } finally {
       in.close();
     }
-  }    
+  }
 
   /**
-   * Reads the whole file. Returns the list of lines.
-   * Does not close the stream.  
+   * Reads the whole file. Returns the list of lines. Does not close the stream.
    */
   public static List<String> readWhole(InputStream is) throws IOException {
     BufferedReader in = new BufferedReader(new InputStreamReader(is));
@@ -135,17 +136,16 @@ public final class Files {
    * Reads the whole file. Returns one big String.
    */
   public static String getFileContents(File file) throws IOException {
-    StringBuilder result = new StringBuilder();    
+    StringBuilder result = new StringBuilder();
     Reader in = new BufferedReader(new FileReader(file));
     try {
       int c;
-      while ((c = in.read()) != -1)
-      {
-        result.append((char)c);
+      while ((c = in.read()) != -1) {
+        result.append((char) c);
       }
       in.close();
       return result.toString();
-    } finally{
+    } finally {
       in.close();
     }
   }
@@ -162,10 +162,10 @@ public final class Files {
   }
 
   public static LineNumberReader getFileReader(File fileName) throws FileNotFoundException {
-    return new LineNumberReader(new BufferedReader(
-          new FileReader(fileName)));
+    return new LineNumberReader(new BufferedReader(new FileReader(fileName)));
   }
-  public static String addProjectPath(String string) {  
+
+  public static String addProjectPath(String string) {
     return System.getProperty("user.dir") + File.separator + string;
   }
 
@@ -175,13 +175,14 @@ public final class Files {
   }
 
   /**
-   * Reads a single long from the file.
-   * Returns null if the file does not exist.
-   * @throws  IllegalStateException is the file contains not just 1 line or
-   *          if the file contains something.
+   * Reads a single long from the file. Returns null if the file does not exist.
+   * 
+   * @throws IllegalStateException
+   *           is the file contains not just 1 line or if the file contains
+   *           something.
    */
   public static Long readLongFromFile(File file) {
-    if (! file.exists())
+    if (!file.exists())
       return null;
     List<String> lines;
     try {

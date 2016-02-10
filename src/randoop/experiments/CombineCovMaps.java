@@ -25,36 +25,33 @@ import plume.Options.ArgException;
  * Used to combine the coverage results of multiple Randoop runs.
  * 
  * Input: a list of serialized objects of type
- *        Map&lt;CoverageAtom,Set&lt;Sequence&gt;&gt;
- *        
- * Output: a serialized object of the above type
- *         that combines all the entries from the inputs.
+ * Map&lt;CoverageAtom,Set&lt;Sequence&gt;&gt;
+ * 
+ * Output: a serialized object of the above type that combines all the entries
+ * from the inputs.
  */
 public class CombineCovMaps {
-  
+
   @Option("Input map")
   public static List<String> inputmap = new ArrayList<String>();
-  
+
   @Option("Output map")
   public static String outputmap = null;
 
   @SuppressWarnings("unchecked")
   public static void main(String[] args) {
-    
+
     Options options = new Options(CombineCovMaps.class);
-    
+
     try {
       String[] nonargs = options.parse(args);
       if (nonargs.length > 0)
-        throw new ArgException("Unrecognized arguments: "
-            + Arrays.toString(nonargs));
+        throw new ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
     } catch (ArgException ae) {
-      System.out
-      .println("ERROR while parsing command-line arguments (will exit): "
-          + ae.getMessage());
+      System.out.println("ERROR while parsing command-line arguments (will exit): " + ae.getMessage());
       System.exit(-1);
     }
-    
+
     if (inputmap.size() == 0) {
       System.out.println("ERROR: you must specify at least one --inputmap argument.");
       System.exit(1);
@@ -63,12 +60,13 @@ public class CombineCovMaps {
       System.out.println("ERROR: you must specify an --outputmap argument.");
       System.exit(1);
     }
-    
+
     Map<CoverageAtom, Set<Sequence>> newmap = new LinkedHashMap<CoverageAtom, Set<Sequence>>();
- 
+
     for (String arg : inputmap) {
-      if (!arg.endsWith(".covmap.gz")) throw new IllegalArgumentException(arg);
-      Map<CoverageAtom,Set<Sequence>> onemap = null;
+      if (!arg.endsWith(".covmap.gz"))
+        throw new IllegalArgumentException(arg);
+      Map<CoverageAtom, Set<Sequence>> onemap = null;
       try {
         FileInputStream fileis = new FileInputStream(arg);
         ObjectInputStream objectis = new ObjectInputStream(new GZIPInputStream(fileis));
@@ -78,10 +76,10 @@ public class CombineCovMaps {
       } catch (Exception e) {
         throw new Error(e);
       }
-      
+
       for (Map.Entry<CoverageAtom, Set<Sequence>> entry : onemap.entrySet()) {
         CoverageAtom covatom = entry.getKey();
-        
+
         Set<Sequence> seqs = newmap.get(covatom);
         if (seqs == null) {
           seqs = new LinkedHashSet<Sequence>();
@@ -92,7 +90,7 @@ public class CombineCovMaps {
     }
 
     System.out.println("+++ COMBINED BRANCHES: " + newmap.keySet().size());
-    
+
     try {
       FileOutputStream fileos = new FileOutputStream(outputmap);
       ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));

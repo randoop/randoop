@@ -36,7 +36,7 @@ public class Variable implements Comparable<Variable>, Serializable {
       return false;
     if (o == this)
       return true;
-    Variable other = (Variable)o;
+    Variable other = (Variable) o;
     // Two values are equal only if they are owned by the
     // same sequence, where "same" means the same reference.
     // return this.sequence == other.sequence && this.index == other.index;
@@ -68,7 +68,7 @@ public class Variable implements Comparable<Variable>, Serializable {
   }
 
   public static List<Integer> statementIndexList(List<Variable> values) {
-    List<Integer> result= new ArrayList<Integer>(values.size());
+    List<Integer> result = new ArrayList<Integer>(values.size());
     for (Variable value : values) {
       result.add(value.getDeclIndex());
     }
@@ -87,14 +87,18 @@ public class Variable implements Comparable<Variable>, Serializable {
     return getName(getType(), i);
   }
 
-  /** For use by clients when the statement has not yet been appended,
-   * so getType() would fail. */
+  /**
+   * For use by clients when the statement has not yet been appended, so
+   * getType() would fail.
+   */
   public String getName(Class<?> clazz, int i) {
     return getName(classToVariableName(clazz), index);
   }
 
-  /** For use by clients when the statement has not yet been appended,
-   * so getType() would fail. */
+  /**
+   * For use by clients when the statement has not yet been appended, so
+   * getType() would fail.
+   */
   public String getName(String className) {
     return getName(className, index);
   }
@@ -104,26 +108,30 @@ public class Variable implements Comparable<Variable>, Serializable {
     return basename + Integer.toString(i);
   }
 
+  @Override
   public int compareTo(Variable o) {
-    if (o==null) throw new IllegalArgumentException();
-    if (o.sequence != this.sequence) throw new IllegalArgumentException();
+    if (o == null)
+      throw new IllegalArgumentException();
+    if (o.sequence != this.sequence)
+      throw new IllegalArgumentException();
     return (new Integer(this.index).compareTo(new Integer(o.index)));
   }
 
   /** Convert to string and downcase the first character. */
   public static String classToVariableName(Class<?> clazz) {
-    // assert !clazz.equals(void.class) : "The given variable type can not be void!";
-    // return classNameToVariableName(clazz.getSimpleName().replace("[]", "_array"));
+    // assert !clazz.equals(void.class) : "The given variable type can not be
+    // void!";
+    // return classNameToVariableName(clazz.getSimpleName().replace("[]",
+    // "_array"));
     return VariableRenamer.getVariableName(clazz);
   }
 
   /** Downcase the first character. */
   public static String classNameToVariableName(String className) {
-    assert ! className.contains(".");
-    assert ! className.contains("[");
-    assert ! className.equals("");
-    return Character.toLowerCase(className.charAt(0))
-      + className.substring(1);
+    assert !className.contains(".");
+    assert !className.contains("[");
+    assert !className.equals("");
+    return Character.toLowerCase(className.charAt(0)) + className.substring(1);
   }
 
 }

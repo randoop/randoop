@@ -8,11 +8,9 @@ import randoop.Globals;
 import randoop.util.Util;
 import plume.Options;
 
-
 /**
- * A command is the first argument given to Randoop.  A command handler
- * handles one command. It also takes care of printing the command's
- * documentation.
+ * A command is the first argument given to Randoop. A command handler handles
+ * one command. It also takes care of printing the command's documentation.
  */
 public abstract class CommandHandler {
 
@@ -30,16 +28,8 @@ public abstract class CommandHandler {
   /**
    * No arguments should be null.
    */
-  public CommandHandler(String command,
-      String pitch,
-      String commandGrammar,
-      String where,
-      String summary,
-      List<String> notes,
-      String input,
-      String output,
-      String example,
-      Options options) {
+  public CommandHandler(String command, String pitch, String commandGrammar, String where, String summary, List<String> notes, String input, String output,
+      String example, Options options) {
 
     if ((command == null)) {
       throw new IllegalArgumentException("command cannot be null.");
@@ -131,39 +121,39 @@ public abstract class CommandHandler {
     out.println();
 
     if (!fcommand.trim().equals("")) {
-      out.print(Util.hangingParagraph("COMMAND: " +  fcommand, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(Util.hangingParagraph("COMMAND: " + fcommand, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!fcommandGrammar.trim().equals("")) {
-      out.print(Util.hangingParagraph("Usage: " +  fcommandGrammar, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(Util.hangingParagraph("Usage: " + fcommandGrammar, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!fwhere.trim().equals("")) {
-      out.print(Util.hangingParagraph("Where: " +  fwhere, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(Util.hangingParagraph("Where: " + fwhere, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!fsummary.trim().equals("")) {
-      out.print(Util.hangingParagraph("Summary: " +  fsummary, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(Util.hangingParagraph("Summary: " + fsummary, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!finput.trim().equals("")) {
-      out.print(Util.hangingParagraph("Input: " +  finput, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(Util.hangingParagraph("Input: " + finput, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!foutput.trim().equals("")) {
-      out.print(Util.hangingParagraph("Output: " +  foutput, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(Util.hangingParagraph("Output: " + foutput, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!fexample.trim().equals("")) {
-      out.print(Util.hangingParagraph("Example: " +  fexample, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(Util.hangingParagraph("Example: " + fexample, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (fnotes != null && fnotes.size() > 0) {
       out.println("Notes:");
       out.println();
-      for (int i = 0 ; i < fnotes.size() ; i++) {
+      for (int i = 0; i < fnotes.size(); i++) {
         String note = fnotes.get(i);
-        out.println(Util.hangingParagraph(Integer.toString(i+1) + ". " + note, Globals.COLWIDTH, Globals.INDENTWIDTH));
+        out.println(Util.hangingParagraph(Integer.toString(i + 1) + ". " + note, Globals.COLWIDTH, Globals.INDENTWIDTH));
       }
     }
     out.println();
@@ -173,6 +163,5 @@ public abstract class CommandHandler {
       out.println(foptions.usage(showUnpublicized));
     }
   }
-
 
 }

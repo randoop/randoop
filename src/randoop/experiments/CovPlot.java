@@ -7,9 +7,9 @@ import java.util.List;
 import randoop.util.Files;
 
 public class CovPlot {
-  
+
   private List<Integer> cov;
-  
+
   public CovPlot(String fileName) {
     List<String> lines = null;
     try {
@@ -18,7 +18,7 @@ public class CovPlot {
       throw new Error(e);
     }
     assert lines != null;
-  
+
     cov = new ArrayList<Integer>();
     for (String line : lines) {
       String[] split = line.split("\\s");
@@ -28,7 +28,7 @@ public class CovPlot {
   }
 
   public int getIndex(int covnumber) {
-    for (int i = 0 ; i < cov.size() ; i++) {
+    for (int i = 0; i < cov.size(); i++) {
       int currcov = cov.get(i);
       if (currcov >= covnumber) {
         return i;
@@ -36,7 +36,7 @@ public class CovPlot {
     }
     return Integer.MIN_VALUE;
   }
-  
+
   public int getMaxCov() {
     return cov.get(cov.size() - 1);
   }

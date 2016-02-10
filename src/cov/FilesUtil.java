@@ -8,13 +8,12 @@ import java.util.List;
 /**
  * Various utility methods that cov uses.
  *
- * The cov package implements a basic branch coverage instrumenter
- * that we use for the branch-directed test generation research.
+ * The cov package implements a basic branch coverage instrumenter that we use
+ * for the branch-directed test generation research.
  *
- * This tool is prototype-quality, not for production use. In
- * particular, it is missing a number of features including tracking
- * coverage for switch statements, and lack of support for
- * generics.
+ * This tool is prototype-quality, not for production use. In particular, it is
+ * missing a number of features including tracking coverage for switch
+ * statements, and lack of support for generics.
  */
 public class FilesUtil {
 
@@ -62,11 +61,13 @@ public class FilesUtil {
   }
 
   static void checkAbsolute(File f) {
-    if (!f.isAbsolute()) throw new IllegalStateException();
+    if (!f.isAbsolute())
+      throw new IllegalStateException();
   }
 
   static void checkAbsolute(List<File> fl) {
-    for (File f : fl) checkAbsolute(f);
+    for (File f : fl)
+      checkAbsolute(f);
   }
 
 }

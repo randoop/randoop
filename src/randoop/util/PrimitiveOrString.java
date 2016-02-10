@@ -1,8 +1,7 @@
 package randoop.util;
 
 /**
- * Holds a primitive or string.
- * The string can be null.
+ * Holds a primitive or string. The string can be null.
  */
 public class PrimitiveOrString {
 
@@ -14,8 +13,7 @@ public class PrimitiveOrString {
   }
 
   /**
-   * The given object must not be null and must
-   * be a primitive or string.
+   * The given object must not be null and must be a primitive or string.
    */
   public PrimitiveOrString(Object o) {
 
@@ -23,7 +21,7 @@ public class PrimitiveOrString {
       throw new IllegalArgumentException("o cannot be null.");
     if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
       throw new IllegalArgumentException("o must be a primitive or string.");
-    this.thePrimitiveOrString = o;  
+    this.thePrimitiveOrString = o;
   }
 
   public PrimitiveOrString(boolean b) {

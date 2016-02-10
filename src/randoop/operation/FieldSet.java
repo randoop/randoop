@@ -18,23 +18,27 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 
 /**
- * FieldSetter is an adapter for a {@link AccessibleField} as a {@link Operation}
- * that acts like a setter for the field. 
+ * FieldSetter is an adapter for a {@link AccessibleField} as a
+ * {@link Operation} that acts like a setter for the field.
+ * 
  * @see AccessibleField
  */
-public class FieldSet extends AbstractOperation implements Operation, Serializable{
+public class FieldSet extends AbstractOperation implements Operation, Serializable {
 
   private static final long serialVersionUID = -5905429635469194115L;
-  
+
   public static String ID = "setter";
-  
+
   private AccessibleField field;
 
   /**
-   * Creates a setter {@link Operation} object for a field of a class.
-   * Throws an exception if the field is static final.
-   * @param field  the field object to be set by setter statements.
-   * @throws IllegalArgumentException if field is static final.
+   * Creates a setter {@link Operation} object for a field of a class. Throws an
+   * exception if the field is static final.
+   * 
+   * @param field
+   *          the field object to be set by setter statements.
+   * @throws IllegalArgumentException
+   *           if field is static final.
    */
   public FieldSet(AccessibleField field) {
     if (field instanceof StaticFinalField) {
@@ -46,8 +50,9 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
     this.field = field;
   }
 
-  /** 
+  /**
    * Returns the input types for a field treated as a setter.
+   * 
    * @return list consisting of types of values needed to set the field.
    */
   @Override
@@ -56,8 +61,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   }
 
   /**
-   * Returns object for void type since since represents
-   * setter for field.
+   * Returns object for void type since since represents setter for field.
    */
   @Override
   public Class<?> getOutputType() {
@@ -65,66 +69,75 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   }
 
   /**
-   * Sets the value of the field given the inputs. Should the action 
-   * raise an exception, those are captured and returned as an {@link ExecutionOutcome}.
-   * Exceptions should only be {@link NullPointerException}, which happens when input 
-   * is null but field is an instance field. {@link AccessibleField#getValue(Object)} suppresses 
-   * exceptions that occur because the field is not valid or accessible 
-   * (specifically {@link IllegalArgumentException} and {@link IllegalAccessException}).
+   * Sets the value of the field given the inputs. Should the action raise an
+   * exception, those are captured and returned as an {@link ExecutionOutcome}.
+   * Exceptions should only be {@link NullPointerException}, which happens when
+   * input is null but field is an instance field.
+   * {@link AccessibleField#getValue(Object)} suppresses exceptions that occur
+   * because the field is not valid or accessible (specifically
+   * {@link IllegalArgumentException} and {@link IllegalAccessException}).
    * 
-   * @param statementInput  the inputs for statement.
-   * @param out  the stream for printing output (unused).
-   * @return outcome of access, either void normal execution or captured exception.
-   * @throws BugInRandoopException if field access throws bug exception.
+   * @param statementInput
+   *          the inputs for statement.
+   * @param out
+   *          the stream for printing output (unused).
+   * @return outcome of access, either void normal execution or captured
+   *         exception.
+   * @throws BugInRandoopException
+   *           if field access throws bug exception.
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
     assert statementInput.length == getInputTypes().size();
-    
+
     Object instance = null;
     Object input = statementInput[0];
     if (statementInput.length == 2) {
-     instance = statementInput[0];
-     input = statementInput[1];
+      instance = statementInput[0];
+      input = statementInput[1];
     }
-     
+
     try {
-      field.setValue(instance,input);
+      field.setValue(instance, input);
     } catch (BugInRandoopException e) {
       throw e;
     } catch (Throwable thrown) {
-      return new ExceptionalExecution(thrown,0);
+      return new ExceptionalExecution(thrown, 0);
     }
-    
-    return new NormalExecution(null,0);
+
+    return new NormalExecution(null, 0);
   }
 
   /**
-   * Generates code for setting a field.
-   * Should look like
-   * <pre>
-   *   field = value;
-   * </pre>
-   * or
-   * <pre>
-   *   field = variable;
-   * </pre>   
+   * Generates code for setting a field. Should look like
    * 
-   * @param inputVars  the list of input variables. Last element is value to assign. 
-   *                    If an instance field, first is instance, second is value. 
-   * @param b  the StringBuilder to which code is issued. 
+   * <pre>
+   * field = value;
+   * </pre>
+   * 
+   * or
+   * 
+   * <pre>
+   * field = variable;
+   * </pre>
+   * 
+   * @param inputVars
+   *          the list of input variables. Last element is value to assign. If
+   *          an instance field, first is instance, second is value.
+   * @param b
+   *          the StringBuilder to which code is issued.
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     assert inputVars.size() == 1 || inputVars.size() == 2;
-    
+
     b.append(field.toCode(inputVars));
     b.append(" = ");
 
-    //variable/value to be assigned is either only or second entry in list
+    // variable/value to be assigned is either only or second entry in list
     int index = inputVars.size() - 1;
 
-    //TODO this is duplicate code from RMethod - should factor out behavior
+    // TODO this is duplicate code from RMethod - should factor out behavior
     String rhs = inputVars.get(index).getName();
     Statement statementCreatingVar = inputVars.get(index).getDeclaringStatement();
     if (!GenInputsAbstract.long_format) {
@@ -132,9 +145,9 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
       if (shortForm != null) {
         rhs = shortForm;
       }
-    } 
+    }
     b.append(rhs);
-    
+
   }
 
   /**
@@ -147,31 +160,36 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   public String toParseableString() {
     return "<set>(" + field.toParseableString() + ")";
   }
-  
+
   @Override
   public String toString() {
     return toParseableString();
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof FieldSet) {
-      FieldSet s = (FieldSet)obj;
+      FieldSet s = (FieldSet) obj;
       return field.equals(s.field);
     }
     return false;
   }
-  
+
   @Override
-  public int hashCode() { return field.hashCode(); }
+  public int hashCode() {
+    return field.hashCode();
+  }
 
   /**
-   * Parses a description of a field setter in the given string.
-   * A setter description has the form "&lt;set&gt;( field-descriptor )" where
+   * Parses a description of a field setter in the given string. A setter
+   * description has the form "&lt;set&gt;( field-descriptor )" where
    * "&lt;set&gt;" is literally what is expected.
-   * @param descr  string containing descriptor of field setter.
+   * 
+   * @param descr
+   *          string containing descriptor of field setter.
    * @return {@code FieldSetter} object corresponding to setter descriptor.
-   * @throws OperationParseException if descr does not have expected form.
+   * @throws OperationParseException
+   *           if descr does not have expected form.
    * @see FieldParser#parse(String)
    */
   public static FieldSet parse(String descr) throws OperationParseException {
@@ -200,12 +218,12 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   public Class<?> getDeclaringClass() {
     return field.getDeclaringClass();
   }
-  
+
   @Override
   public boolean isStatic() {
     return field.isStatic();
   }
- 
+
   /**
    * A FieldSetter is a method call because it acts like a setter.
    */
@@ -218,8 +236,10 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    * Determines whether enclosed {@link java.lang.reflect.Field Field} satisfies
    * the given predicate.
    * 
-   * @param predicate the {@link ReflectionPredicate} to be checked.
-   * @return true only if the field used in this setter satisfies predicate.canUse.
+   * @param predicate
+   *          the {@link ReflectionPredicate} to be checked.
+   * @return true only if the field used in this setter satisfies
+   *         predicate.canUse.
    */
   @Override
   public boolean satisfies(ReflectionPredicate predicate) {

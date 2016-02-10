@@ -12,9 +12,9 @@ package randoop;
  * s.getResult(i).getRuntimeVariable(), the state of the object you get is the
  * FINAL state of the object after s finished executing, NOT the state of the
  * object after the i-th statement was executed. Similarly, if you invoke
- * getRuntimeVariable() sometime in the middle of the execution of s (e.g. you're
- * an ExecutionVisitor and you invoke getRuntimeVariable()), you'll get the state
- * in whatever state it is at that point in the execution.
+ * getRuntimeVariable() sometime in the middle of the execution of s (e.g.
+ * you're an ExecutionVisitor and you invoke getRuntimeVariable()), you'll get
+ * the state in whatever state it is at that point in the execution.
  */
 public class NormalExecution extends ExecutionOutcome {
 
@@ -46,6 +46,7 @@ public class NormalExecution extends ExecutionOutcome {
     return b.toString();
   }
 
+  @Override
   public long getExecutionTime() {
     return executionTime;
   }

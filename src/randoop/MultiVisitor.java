@@ -23,15 +23,14 @@ import randoop.sequence.ExecutableSequence;
 public class MultiVisitor implements ExecutionVisitor {
 
   // The list of visitors.
-  private final List<ExecutionVisitor> visitors =
-    new ArrayList<ExecutionVisitor>();
+  private final List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
 
-  public MultiVisitor() { }
+  public MultiVisitor() {
+  }
 
   /**
-   * Calls the initialize method for each of the visitors, in the
-   * order in which the visitors were given during construction of
-   * this MultiVisitor.
+   * Calls the initialize method for each of the visitors, in the order in which
+   * the visitors were given during construction of this MultiVisitor.
    */
   @Override
   public void initialize(ExecutableSequence executableSequence) {

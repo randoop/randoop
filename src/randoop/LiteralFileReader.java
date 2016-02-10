@@ -9,11 +9,10 @@ import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 
-
 /**
- * Reads a file specifying literal values to use during generation.
- * Method parse(String) takes as input the name
- * of a text file. The text file should contain one or more records of the form:
+ * Reads a file specifying literal values to use during generation. Method
+ * parse(String) takes as input the name of a text file. The text file should
+ * contain one or more records of the form:
  *
  * <pre>
  * START CLASSLITERALS
@@ -26,11 +25,11 @@ import randoop.util.RecordProcessor;
  * END CLASSLITERALS
  * </pre>
  *
- * Capitalized text must appear literally.  Lowercase text is as follows:
+ * Capitalized text must appear literally. Lowercase text is as follows:
  * <ul>
- * <li>classname is the fully-qualified name of a valid class.
- * More specifically, TypeNames.getTypeForName(classname) must return a valid
- * Class object.
+ * <li>classname is the fully-qualified name of a valid class. More
+ * specifically, TypeNames.getTypeForName(classname) must return a valid Class
+ * object.
  * <li>Each type:value pair describes the type and value of a literal (for
  * example, <tt>int:3</tt>).
  * </ul>
@@ -39,15 +38,18 @@ import randoop.util.RecordProcessor;
  * <p>
  *
  * An example literals file appears in file
- * randoop/systemtests/resources/literalsfile.txt.<p>
+ * randoop/systemtests/resources/literalsfile.txt.
+ * <p>
  *
- * LIMITATIONS:<p>
+ * LIMITATIONS:
+ * <p>
  *
- * Error messages do not include line numbers pointing to location of the error.</p>
+ * Error messages do not include line numbers pointing to location of the error.
+ * </p>
  *
  * There is no way to specify literals that are not related to any class in
- * particular, or literals that are related to only specific methods within
- * a class.
+ * particular, or literals that are related to only specific methods within a
+ * class.
  */
 public class LiteralFileReader {
 
@@ -58,8 +60,7 @@ public class LiteralFileReader {
   /** Returns a map from class to list of constants. */
   public static MultiMap<Class<?>, NonreceiverTerm> parse(String inFile) {
 
-    final MultiMap<Class<?>, NonreceiverTerm> map =
-      new MultiMap<Class<?>, NonreceiverTerm>();
+    final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<Class<?>, NonreceiverTerm>();
 
     RecordProcessor processor = new RecordProcessor() {
       @Override
@@ -85,7 +86,7 @@ public class LiteralFileReader {
           throwInvalidRecordError("Missing field \"" + LITERALS + "\"", lines, 2);
         }
 
-        for (int i = 3 ; i < lines.size() ; i++) {
+        for (int i = 3; i < lines.size(); i++) {
           try {
             NonreceiverTerm p = NonreceiverTerm.parse(lines.get(i));
             map.add(cls, p);
@@ -94,7 +95,6 @@ public class LiteralFileReader {
           }
         }
       }
-
 
     };
 
@@ -127,6 +127,5 @@ public class LiteralFileReader {
     }
     b.append("------------------------------\n");
   }
-
 
 }

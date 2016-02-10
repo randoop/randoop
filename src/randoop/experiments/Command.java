@@ -12,12 +12,11 @@ import java.io.PrintWriter;
 
 import randoop.Globals;
 
-
 /**
- * The important method in this class is <code>exec(String)</code>. It
- * executes its argument and pipes both stdout and stderr to System.out. Each
- * line in the piped output from stdout is prefixed with "OUT&gt;" and the output
- * from stderr is prefixed with "ERR&gt;"
+ * The important method in this class is <code>exec(String)</code>. It executes
+ * its argument and pipes both stdout and stderr to System.out. Each line in the
+ * piped output from stdout is prefixed with "OUT&gt;" and the output from
+ * stderr is prefixed with "ERR&gt;"
  *
  * <p>
  * Credit: Producer code modified (and augmented) from Michael Daconta's "Java
@@ -32,23 +31,17 @@ public class Command {
   /** Argument to java command to set heap size */
   public static String javaHeapSize = "-Xmx1000m";
 
-  public static void runCommand(String[] command, String prompt,
-      boolean verbose, String nonVerboseMessage, boolean gobbleChars) {
+  public static void runCommand(String[] command, String prompt, boolean verbose, String nonVerboseMessage, boolean gobbleChars) {
 
-    runCommand(command, prompt, verbose, nonVerboseMessage, false,
-        gobbleChars);
+    runCommand(command, prompt, verbose, nonVerboseMessage, false, gobbleChars);
   }
 
-  public static void runCommandOKToFail(String[] command, String prompt,
-      boolean verbose, String nonVerboseMessage, boolean gobbleChars) {
+  public static void runCommandOKToFail(String[] command, String prompt, boolean verbose, String nonVerboseMessage, boolean gobbleChars) {
 
-    runCommand(command, prompt, verbose, nonVerboseMessage, true,
-        gobbleChars);
+    runCommand(command, prompt, verbose, nonVerboseMessage, true, gobbleChars);
   }
 
-  public static void runCommand(String[] command, String prompt,
-      boolean verbose, String nonVerboseMessage, boolean okToFail,
-      boolean gobbleChars) {
+  public static void runCommand(String[] command, String prompt, boolean verbose, String nonVerboseMessage, boolean okToFail, boolean gobbleChars) {
 
     System.out.println(nonVerboseMessage);
 
@@ -60,13 +53,12 @@ public class Command {
     } else {
       out = new ByteArrayOutputStream();
       PrintStream printStream = new PrintStream(out);
-      exitFlag = Command.exec(command, printStream, printStream, prompt,
-          gobbleChars);
+      exitFlag = Command.exec(command, printStream, printStream, prompt, gobbleChars);
     }
 
     if (!okToFail && exitFlag != 0) {
-      throw new Error("Non-zero exit flag when running command "
-          + java.util.Arrays.toString(command) + Globals.lineSep + (verbose ? "" // already
+      throw new Error("Non-zero exit flag when running command " + java.util.Arrays.toString(command) + Globals.lineSep
+          + (verbose ? "" // already
               // output
               // to
               // System.out
@@ -94,19 +86,17 @@ public class Command {
     /**
      * Redirects `is' to out, prefixing each line with the String `type'.
      */
-    StreamGobbler(InputStream is, String type, PrintStream out,
-        boolean gobbleChars) {
+    StreamGobbler(InputStream is, String type, PrintStream out, boolean gobbleChars) {
       this(is, type, null, out, gobbleChars);
 
     }
 
     /*
      * Redirects `is' to out and also to `redirect' (that is, the input from
-     * `is' is duplicated to both streams), prefixing each line with the
-     * String `type'.
+     * `is' is duplicated to both streams), prefixing each line with the String
+     * `type'.
      */
-    StreamGobbler(InputStream is, String type, OutputStream redirect,
-        PrintStream out, boolean gobbleChars) {
+    StreamGobbler(InputStream is, String type, OutputStream redirect, PrintStream out, boolean gobbleChars) {
       this.is = is;
       this.type = type;
       this.os = redirect;
@@ -174,7 +164,10 @@ public class Command {
     return exec(cmd, out, err, prompt, false);
   }
 
-  /** Convenience method. Equivalent to exec(cmd, out, err, prompt, gobbleChars, null). */
+  /**
+   * Convenience method. Equivalent to exec(cmd, out, err, prompt, gobbleChars,
+   * null).
+   */
   public static int exec(String[] cmd, PrintStream out, PrintStream err, String prompt, boolean gobbleChars) {
     return exec(cmd, out, err, prompt, gobbleChars, 0, null);
   }
@@ -182,7 +175,6 @@ public class Command {
   public static int exec(String[] cmd, PrintStream out, PrintStream err, String prompt, boolean gobbleChars, File f) {
     return exec(cmd, out, err, prompt, gobbleChars, 0, null);
   }
-
 
   private static class DestroyableProcessThread extends Thread {
 
@@ -195,11 +187,10 @@ public class Command {
     private Process process;
 
     /** workingDir can be null. */
-    public DestroyableProcessThread(String[] cmd, PrintStream out, PrintStream err, String prompt,
-        boolean gobbleChars, File workingDir) {
+    public DestroyableProcessThread(String[] cmd, PrintStream out, PrintStream err, String prompt, boolean gobbleChars, File workingDir) {
       this.out = out;
       this.err = err;
-      this.prompt =prompt;
+      this.prompt = prompt;
       this.gobbleChars = gobbleChars;
       this.processFinished = false;
       this.exitVal = 1;
@@ -214,12 +205,10 @@ public class Command {
     public void run() {
 
       // any error message?
-      StreamGobbler errorGobbler = new StreamGobbler(process
-          .getErrorStream(), prompt, err, gobbleChars);
+      StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), prompt, err, gobbleChars);
 
       // any output?
-      StreamGobbler outputGobbler = new StreamGobbler(process
-          .getInputStream(), prompt, out, gobbleChars);
+      StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), prompt, out, gobbleChars);
 
       // kick them off
       errorGobbler.start();
@@ -248,8 +237,7 @@ public class Command {
   }
 
   @SuppressWarnings("deprecation")
-  public static int exec(String[] cmd, PrintStream out, PrintStream err, String prompt,
-      boolean gobbleChars, int killAfterMillisPassed, File workingDir) {
+  public static int exec(String[] cmd, PrintStream out, PrintStream err, String prompt, boolean gobbleChars, int killAfterMillisPassed, File workingDir) {
 
     if (killAfterMillisPassed < 0) {
       throw new IllegalArgumentException("killAfterMillis must be >= 0.");
@@ -257,10 +245,10 @@ public class Command {
 
     // If no_execute is set, just print the commands rather than executing them
     if (no_execute) {
-      System.out.printf ("Not executing command: ");
+      System.out.printf("Not executing command: ");
       for (String c : cmd)
-        System.out.printf ("%s ", c);
-      System.out.printf ("%n");
+        System.out.printf("%s ", c);
+      System.out.printf("%n");
       return 0;
     }
 
@@ -278,8 +266,7 @@ public class Command {
         System.err.println("Exceeded max wait: destroying process.");
         thread.process.destroy();
         thread.stop();
-        throw new KillBecauseTimeLimitExceed("Process did not finish after "
-            + killAfterMillisPassed + "ms.");
+        throw new KillBecauseTimeLimitExceed("Process did not finish after " + killAfterMillisPassed + "ms.");
       }
       // We use this deprecated method because it's the only way to
       // stop a thread no matter what it's doing.

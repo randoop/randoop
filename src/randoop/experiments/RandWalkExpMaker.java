@@ -9,8 +9,9 @@ public class RandWalkExpMaker implements TargetMaker {
 
   /**
    * @param args
-   *          Fist argument is either "count" or a number. Each argument is a 4-character
-   *          experiment descriptor, like "fcjc" (fc=technique, jc=subject).
+   *          Fist argument is either "count" or a number. Each argument is a
+   *          4-character experiment descriptor, like "fcjc" (fc=technique,
+   *          jc=subject).
    */
   public RandWalkExpMaker(String[] args) {
     if (args.length < 2)
@@ -23,11 +24,12 @@ public class RandWalkExpMaker implements TargetMaker {
       explimit = Integer.parseInt(args[0]);
     }
     this.experiments = new ArrayList<RandWalkExpState>();
-    for (int i = 1  ; i < args.length ; i++) {
+    for (int i = 1; i < args.length; i++) {
       experiments.add(new RandWalkExpState(explimit, args[i], countonly));
     }
   }
-  
+
+  @Override
   public String getNextTarget() {
     for (RandWalkExpState exp : experiments) {
       if (exp.hasMoreTargets()) {
@@ -37,6 +39,7 @@ public class RandWalkExpMaker implements TargetMaker {
     return null;
   }
 
+  @Override
   public boolean hasMoreTargets() {
     for (RandWalkExpState exp : experiments) {
       if (exp.hasMoreTargets()) {
@@ -46,6 +49,7 @@ public class RandWalkExpMaker implements TargetMaker {
     return false;
   }
 
+  @Override
   public int targetsLeft() {
     return 1000000; // true value not known.
   }

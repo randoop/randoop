@@ -16,7 +16,6 @@ import java.util.Properties;
 
 import randoop.Globals;
 
-
 /**
  * Runs randoop experiments.
  *
@@ -32,9 +31,11 @@ public class RandoopRun {
 
   // Input generation time (input to randoop).
   protected String time;
-  // File containing the results of running randoop (statistics, input to randoop).
+  // File containing the results of running randoop (statistics, input to
+  // randoop).
   protected String resultsFileOnline;
-  // File containing the results of running randoop-offline (statistics, input to randoop).
+  // File containing the results of running randoop-offline (statistics, input
+  // to randoop).
   protected String resultsFileOffline;
   // Prefix to use when generating junit tests (input to randoop).
   protected String junitNamePrefixOnline;
@@ -86,10 +87,11 @@ public class RandoopRun {
     Command.runCommandOKToFail(rm.toArray(new String[0]), "CLEAN", true, "", true);
   }
 
-  public static enum RunType { OFFLINE, ONLINE }
+  public static enum RunType {
+    OFFLINE, ONLINE
+  }
 
-  private void run(RunType runType, String resultsFile,
-      MultiRunResults results, boolean reproduceISSTA06) throws IOException {
+  private void run(RunType runType, String resultsFile, MultiRunResults results, boolean reproduceISSTA06) throws IOException {
 
     System.out.println("========== RUNNING EXPERIMENT:");
     System.out.println(toString());
@@ -109,17 +111,15 @@ public class RandoopRun {
       verifyResults(runType);
       printResultsToStdout(resultsFile);
       Properties p = new Properties();
-      FileInputStream inputStream= null;
+      FileInputStream inputStream = null;
       try {
         inputStream = new FileInputStream(resultsFile);
         p.load(inputStream);
-      } finally{
+      } finally {
         if (inputStream != null)
           inputStream.close();
       }
-      String experimentName =
-        (runType == RunType.ONLINE ? "online" : "offline")
-        + this.base.experimentName.replace(".", "");
+      String experimentName = (runType == RunType.ONLINE ? "online" : "offline") + this.base.experimentName.replace(".", "");
       results.addRunResults(experimentName, p);
       if (reproduceISSTA06) {
         try {
@@ -127,11 +127,9 @@ public class RandoopRun {
           ReproduceISSTA06.checkIfReproduced(runType, this.base.experimentName, p);
           success = true;
         } catch (ReproduceISSTA06Failure e) {
-          System.out.println("Failed to reproduce experiment (try: " + numTries + " out of " + MAX_TRIES_TO_REPRODUCE_ISSTA06
-              + ", message: " + e.getMessage());
+          System.out.println("Failed to reproduce experiment (try: " + numTries + " out of " + MAX_TRIES_TO_REPRODUCE_ISSTA06 + ", message: " + e.getMessage());
           if (numTries == MAX_TRIES_TO_REPRODUCE_ISSTA06) {
-            throw new RuntimeException("Failed to reproduce " + MAX_TRIES_TO_REPRODUCE_ISSTA06 + " times. This is the"
-                + " lmit of tries.");
+            throw new RuntimeException("Failed to reproduce " + MAX_TRIES_TO_REPRODUCE_ISSTA06 + " times. This is the" + " lmit of tries.");
           }
         }
       } else {
@@ -140,18 +138,17 @@ public class RandoopRun {
     }
   }
 
-  private void run(MultiRunResults onlineResults,
-      MultiRunResults offlineResults,
-      boolean reproduceISSTA06) throws IOException {
+  private void run(MultiRunResults onlineResults, MultiRunResults offlineResults, boolean reproduceISSTA06) throws IOException {
 
     System.out.println("========== RUNNING EXPERIMENT:");
     System.out.println(toString());
 
     run(RunType.ONLINE, this.resultsFileOnline, onlineResults, reproduceISSTA06);
 
-    /* NOTE ON UGLY HACK: Running randoop on javax.xml with the -offline flag
-     * crashes randoop. Until this is fixed, method run(..) will not randoop-offline
-     * experimment for package "javax.xml" (hard-wired).
+    /*
+     * NOTE ON UGLY HACK: Running randoop on javax.xml with the -offline flag
+     * crashes randoop. Until this is fixed, method run(..) will not
+     * randoop-offline experimment for package "javax.xml" (hard-wired).
      */
     if (this.base.experimentName.equals("javax.xml")) {
       return;
@@ -161,7 +158,7 @@ public class RandoopRun {
 
   private void printResultsToStdout(String resultsFileName) throws IOException {
     System.out.println("========== Results");
-    BufferedReader reader= null;
+    BufferedReader reader = null;
     try {
       reader = new BufferedReader(new FileReader(resultsFileName));
       String line = reader.readLine();
@@ -169,7 +166,7 @@ public class RandoopRun {
         System.out.println(line);
         line = reader.readLine();
       }
-    } finally{
+    } finally {
       if (reader != null)
         reader.close();
     }
@@ -211,7 +208,6 @@ public class RandoopRun {
     }
   }
 
-
   private void callRandoop(RunType runType) throws IOException {
     System.out.println("========== Running randoop.");
     List<String> randoop = new ArrayList<String>();
@@ -246,11 +242,13 @@ public class RandoopRun {
     // ByteArrayOutputStream bos = new ByteArrayOutputStream();
     FileOutputStream fos = new FileOutputStream("temp.txt");
     PrintStream err = new PrintStream(fos);
-    // Kill the process if randoop takes 100 seconds more to execute than the time limit
+    // Kill the process if randoop takes 100 seconds more to execute than the
+    // time limit
     // (this likely means it's definitely stuck).
     int killAfterMillis = Integer.parseInt(this.time) * 1000 + 100000;
     Command.exec(randoop.toArray(new String[0]), System.out, err, "RUN JOE", true, killAfterMillis, null);
-    // Command.runCommand(randoop.toArray(new String[0]), "RUN JOE", true, "", true);
+    // Command.runCommand(randoop.toArray(new String[0]), "RUN JOE", true, "",
+    // true);
 
     this.junitFiles = findGeneratedJunitFiles(runType);
   }
@@ -266,10 +264,10 @@ public class RandoopRun {
   }
 
   /**
-   * args[0] is the name of the filename to write experiment results to.
-   * The rest of the args are filenames containing experiment properties.
+   * args[0] is the name of the filename to write experiment results to. The
+   * rest of the args are filenames containing experiment properties.
    */
-  public static void main(String[] args) throws IOException     {
+  public static void main(String[] args) throws IOException {
 
     List<String> args2 = new ArrayList<String>();
     String resultsFileName = null;
@@ -277,7 +275,7 @@ public class RandoopRun {
     for (String s : args) {
       if (s.equals("-verbose")) {
         verbose = true;
-      } else  if (s.startsWith("-resultsfile:")) {
+      } else if (s.startsWith("-resultsfile:")) {
         resultsFileName = s.substring("-resultsfile:".length());
       } else if (s.equals(("-reproduceISSTA06"))) {
         reproduceISSTA06 = true;
@@ -288,7 +286,7 @@ public class RandoopRun {
 
     String[] experiments = new String[args2.size()];
 
-    for (int i = 0 ; i < args2.size() ; i++) {
+    for (int i = 0; i < args2.size(); i++) {
       experiments[i] = args2.get(i);
     }
 
@@ -325,6 +323,5 @@ public class RandoopRun {
     }
     return retval;
   }
-
 
 }

@@ -9,25 +9,25 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 
 /**
- * A check that checks for expected properties of one or more objects
- * generated during the execution of a {@link Sequence}, for example:
+ * A check that checks for expected properties of one or more objects generated
+ * during the execution of a {@link Sequence}, for example:
  * <ul>
- * <li> Checking that the objects created during execution of a sequence 
- *      respect reflexivity, transitivity and symmetry of equality.
- * <li> Checking that calling <code>toString()</code> on the objects
- *      created during execution of a sequence does not throw an exception.
- * </ul>  
+ * <li>Checking that the objects created during execution of a sequence respect
+ * reflexivity, transitivity and symmetry of equality.
+ * <li>Checking that calling <code>toString()</code> on the objects created
+ * during execution of a sequence does not throw an exception.
+ * </ul>
  * <p>
  * An <code>ObjectCheck</code> has two parts:
  * <ul>
- * <li>A {@link ObjectContract} responsible for performing
- *     the actual check on a set of runtime values. For example.
- *     the class {@link EqualsReflexive} is a checker code class that,
- *     given an object <i>o</i>, calls <i>o.equals(o)</i> and checks that
- *     it returns <code>true</code>.
- *     
- * <li>A list of {@link Variable}s, which describe the specific
- *     objects in the sequence that the check is over.  </ul>
+ * <li>A {@link ObjectContract} responsible for performing the actual check on a
+ * set of runtime values. For example. the class {@link EqualsReflexive} is a
+ * checker code class that, given an object <i>o</i>, calls <i>o.equals(o)</i>
+ * and checks that it returns <code>true</code>.
+ * 
+ * <li>A list of {@link Variable}s, which describe the specific objects in the
+ * sequence that the check is over.
+ * </ul>
  */
 public class ObjectCheck implements Check {
 
@@ -51,7 +51,7 @@ public class ObjectCheck implements Check {
 
   @Override
   public int hashCode() {
-    return Objects.hash(contract,vars);
+    return Objects.hash(contract, vars);
   }
 
   public ObjectCheck(ObjectContract cc, int stmt_no, Variable... vars) {
@@ -71,6 +71,7 @@ public class ObjectCheck implements Check {
 
   }
 
+  @Override
   public String toString() {
     StringBuilder b = new StringBuilder();
     b.append("<");
@@ -84,14 +85,15 @@ public class ObjectCheck implements Check {
     return "";
   }
 
+  @Override
   public String toCodeStringPostStatement() {
     return ObjectContractUtils.localizeContractCode(contract.toCodeString(), vars);
   }
 
   /**
    * For checks involving a primitive-like value (primitive, String, or null),
-   * returns a string representation of the value. Otherwise, returns
-   * the name of the contract class.
+   * returns a string representation of the value. Otherwise, returns the name
+   * of the contract class.
    */
   @Override
   public String getValue() {
@@ -100,9 +102,9 @@ public class ObjectCheck implements Check {
     } else if (contract instanceof IsNull) {
       return "null";
     } else if (contract instanceof ObserverEqValue) {
-      return String.format ("%s", ((ObserverEqValue)contract).value);
+      return String.format("%s", ((ObserverEqValue) contract).value);
     } else if (contract instanceof PrimValue) {
-      return ((PrimValue)contract).value.toString();
+      return ((PrimValue) contract).value.toString();
     } else {
       return contract.getClass().getName();
     }

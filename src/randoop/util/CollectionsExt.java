@@ -18,13 +18,13 @@ import randoop.Globals;
 import plume.Hasher;
 
 public final class CollectionsExt {
-  private CollectionsExt() { 
+  private CollectionsExt() {
     throw new IllegalStateException("no instances");
   }
 
   /**
-   * Make a copy of the list with duplicates removed. 
-   * The first elements of each equivalence class will be retained (and in the original order) 
+   * Make a copy of the list with duplicates removed. The first elements of each
+   * equivalence class will be retained (and in the original order)
    */
   public static <T> List<T> unique(List<T> lst) {
     return new ArrayList<T>(new LinkedHashSet<T>(lst));
@@ -37,13 +37,13 @@ public final class CollectionsExt {
     return Collections.unmodifiableList(new ArrayList<T>(l));
   }
 
-  @SuppressWarnings({"varargs","unchecked"}) // heap pollution warning
+  @SuppressWarnings({ "varargs", "unchecked" }) // heap pollution warning
   public static <T> Set<T> intersection(Set<? extends T>... sets) {
     if (sets.length == 0)
       return Collections.emptySet();
-    Set<T> result= new LinkedHashSet<T>();
+    Set<T> result = new LinkedHashSet<T>();
     result.addAll(sets[0]);
-    for (Set<? extends T>  s : sets) {
+    for (Set<? extends T> s : sets) {
       result.retainAll(s);
     }
     return result;
@@ -55,15 +55,15 @@ public final class CollectionsExt {
   }
 
   public static <T> Set<T> diff(Set<? extends T> s1, Set<? extends T> s2) {
-    Set<T> result= new LinkedHashSet<T>();
+    Set<T> result = new LinkedHashSet<T>();
     result.addAll(s1);
     result.removeAll(s2);
     return result;
   }
 
-  @SuppressWarnings({"varargs","unchecked"}) // heap pollution warning
+  @SuppressWarnings({ "varargs", "unchecked" }) // heap pollution warning
   public static <T> Set<T> union(Set<? extends T>... sets) {
-    Set<T> result= new LinkedHashSet<T>();
+    Set<T> result = new LinkedHashSet<T>();
     for (Set<? extends T> s : sets) {
       result.addAll(s);
     }
@@ -71,12 +71,12 @@ public final class CollectionsExt {
   }
 
   /**
-   * Returns an ArrayList that is a concatenation of the arguments. 
-   * Elements of arguments are copied, the argument lists are NOT shared. 
+   * Returns an ArrayList that is a concatenation of the arguments. Elements of
+   * arguments are copied, the argument lists are NOT shared.
    */
-  @SuppressWarnings({"varargs","unchecked"}) // heap pollution warning
+  @SuppressWarnings({ "varargs", "unchecked" }) // heap pollution warning
   public static <T> List<T> concat(List<? extends T>... lists) {
-    List<T> result= new ArrayList<T>();
+    List<T> result = new ArrayList<T>();
     for (List<? extends T> list : lists) {
       result.addAll(list);
     }
@@ -84,19 +84,18 @@ public final class CollectionsExt {
   }
 
   /**
-   * Returns an ArrayList that is a concatenation of the arguments. 
-   * Elements of arguments are copied, the argument lists are NOT shared. 
+   * Returns an ArrayList that is a concatenation of the arguments. Elements of
+   * arguments are copied, the argument lists are NOT shared.
    */
   public static <T> List<T> concatAll(Collection<? extends List<? extends T>> lists) {
-    List<T> result= new ArrayList<T>();
+    List<T> result = new ArrayList<T>();
     for (List<? extends T> list : lists) {
       result.addAll(list);
     }
     return result;
   }
 
-
-  public static <T>  T getNthIteratedElement(Collection<? extends T> s, int index) {
+  public static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
     if (s == null)
       throw new IllegalArgumentException("s cannot be null.");
     if (s.isEmpty())
@@ -106,11 +105,11 @@ public final class CollectionsExt {
     return getNthIteratedElement(s.iterator(), index);
   }
 
-  public static <T>  T getNthIteratedElement(Iterator<? extends T> iter, int index) {
+  public static <T> T getNthIteratedElement(Iterator<? extends T> iter, int index) {
     if (index < 0)
       throw new IllegalArgumentException("Index " + index + " invalid");
     int counter = 0;
-    for (Iterator<? extends T> i = iter; i.hasNext() ; ) {
+    for (Iterator<? extends T> i = iter; i.hasNext();) {
       if (counter == index) {
         return i.next();
       }
@@ -124,7 +123,7 @@ public final class CollectionsExt {
     if (list == null)
       throw new IllegalArgumentException("list cannot be null.");
     SortedSet<Integer> result = new TreeSet<Integer>();
-    for (int i = 0, n = list.size() ; i < n ; i++) {
+    for (int i = 0, n = list.size(); i < n; i++) {
       if (list.get(i).equals(elem)) {
         result.add(i);
       }
@@ -134,29 +133,32 @@ public final class CollectionsExt {
   }
 
   /**
-   * Prints out the String.valueOf() of all elements of the collection, inserting a new line after each element. 
-   * The order is specified by the collection's iterator.
+   * Prints out the String.valueOf() of all elements of the collection,
+   * inserting a new line after each element. The order is specified by the
+   * collection's iterator.
    */
   public static String toStringInLines(Collection<?> c) {
-    if (c.isEmpty()) return "";
+    if (c.isEmpty())
+      return "";
     return join(Globals.lineSep, toStringLines(c)) + Globals.lineSep;
   }
 
   /**
-   * Prints out the elements of the collection in lines, 
-   * in lexicographic order of String.valueOf called on each element.
+   * Prints out the elements of the collection in lines, in lexicographic order
+   * of String.valueOf called on each element.
    */
   public static String toStringInSortedLines(Collection<?> c) {
-    if (c.isEmpty()) return "";
+    if (c.isEmpty())
+      return "";
     return join(Globals.lineSep, sort(toStringLines(c))) + Globals.lineSep;
   }
 
   /**
-   * List of String.valueOf() of all elements of the collection. 
-   * The order is specified by the collection's iterator.
+   * List of String.valueOf() of all elements of the collection. The order is
+   * specified by the collection's iterator.
    */
   public static List<String> toStringLines(Collection<?> c) {
-    List<String> lines= new ArrayList<String>(c.size());
+    List<String> lines = new ArrayList<String>(c.size());
     for (Object each : c) {
       lines.add(String.valueOf(each));
     }
@@ -164,8 +166,7 @@ public final class CollectionsExt {
   }
 
   /**
-   * Sort and return the list. 
-   * Useful for chaining the call. 
+   * Sort and return the list. Useful for chaining the call.
    */
   public static List<String> sort(List<String> strings) {
     Collections.sort(strings);
@@ -173,32 +174,33 @@ public final class CollectionsExt {
   }
 
   /**
-   * Divides the argument into chunks of at most the given length.
-   * All chunks except at most one will have length exactly maxLength.
-   * No chunks are empty.
+   * Divides the argument into chunks of at most the given length. All chunks
+   * except at most one will have length exactly maxLength. No chunks are empty.
    * 
-   * The result list is unmodifiable.
-   * It does <em>not</em> copy the list and simply shares it.   
+   * The result list is unmodifiable. It does <em>not</em> copy the list and
+   * simply shares it.
    */
   public static <T> List<List<T>> chunkUp(List<T> list, int maxLength) {
-    if (maxLength <= 0) throw new IllegalArgumentException("maxLength must be > 0 but was " + maxLength);
-    int fullChunks= list.size() / maxLength;
+    if (maxLength <= 0)
+      throw new IllegalArgumentException("maxLength must be > 0 but was " + maxLength);
+    int fullChunks = list.size() / maxLength;
 
-    List<List<T>> result= new ArrayList<List<T>>(fullChunks + 1);
+    List<List<T>> result = new ArrayList<List<T>>(fullChunks + 1);
     for (int i = 0; i < fullChunks; i++) {
       List<T> subList = list.subList(i * maxLength, (i + 1) * maxLength);
-      if (subList.size() != maxLength) throw new IllegalStateException("bogus length:" + subList.size() + " not " + maxLength);
+      if (subList.size() != maxLength)
+        throw new IllegalStateException("bogus length:" + subList.size() + " not " + maxLength);
       result.add(subList);
     }
     List<T> lastChunk = list.subList(fullChunks * maxLength, list.size());
-    if (! lastChunk.isEmpty())
+    if (!lastChunk.isEmpty())
       result.add(lastChunk);
     return Collections.unmodifiableList(result);
   }
 
   public static <T> Set<T> getAll(Enumeration<T> e) {
-    Set<T> result= new LinkedHashSet<T>();
-    while(e.hasMoreElements())
+    Set<T> result = new LinkedHashSet<T>();
+    while (e.hasMoreElements())
       result.add(e.nextElement());
     return result;
   }
@@ -208,7 +210,7 @@ public final class CollectionsExt {
    * Returns the modified collection, for easier chaining.
    */
   public static <T extends Collection<String>> T removeMatching(String pattern, T strings) {
-    for (Iterator<String> iter = strings.iterator(); iter.hasNext(); ) {
+    for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
       String s = iter.next();
       if (s.matches(pattern))
         iter.remove();
@@ -217,12 +219,12 @@ public final class CollectionsExt {
   }
 
   /**
-   * Reverse of String.split.
-   * Glues together the strings and inserts the separator between each consecutive pair. 
+   * Reverse of String.split. Glues together the strings and inserts the
+   * separator between each consecutive pair.
    */
   public static String join(String separator, List<String> strings) {
-    StringBuilder sb= new StringBuilder();
-    for (Iterator<String> iter = strings.iterator(); iter.hasNext(); ) {
+    StringBuilder sb = new StringBuilder();
+    for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
       String s = iter.next();
       sb.append(s);
       if (iter.hasNext())
@@ -235,7 +237,7 @@ public final class CollectionsExt {
    * Adds prefix to each line.
    */
   public static List<String> prefix(String prefix, List<String> lines) {
-    List<String> result= new ArrayList<String>(lines.size());
+    List<String> result = new ArrayList<String>(lines.size());
     for (String line : lines) {
       result.add(prefix + line);
     }
@@ -248,8 +250,9 @@ public final class CollectionsExt {
    * XXX bogus for empty sets
    */
   public static boolean areDisjoint(Set<?>... ss) {
-    if (ss == null || ss.length == 0) return true;
-    int elementCount= 0;
+    if (ss == null || ss.length == 0)
+      return true;
+    int elementCount = 0;
     for (Set<?> set : ss) {
       elementCount += set.size();
     }
@@ -257,21 +260,20 @@ public final class CollectionsExt {
   }
 
   /**
-   * Creates a set of all sequences of length max of objects. 
-   * The order matters and elements may be repeated.
-   * The set is grouped by the number of objects in the array. 
-   * The result is a map from arities to object sequences.
+   * Creates a set of all sequences of length max of objects. The order matters
+   * and elements may be repeated. The set is grouped by the number of objects
+   * in the array. The result is a map from arities to object sequences.
    * 
-   * NOTE: This is done with arrays rather than lists because in JOE we don't want to 
-   * execute any code of the objects. 
+   * NOTE: This is done with arrays rather than lists because in JOE we don't
+   * want to execute any code of the objects.
    */
   public static Map<Integer, Set<Object[]>> createPerArityGroups(Object[] objects, int max) {
-    Map<Integer, Set<Object[]>> result= new LinkedHashMap<Integer, Set<Object[]>>();
+    Map<Integer, Set<Object[]>> result = new LinkedHashMap<Integer, Set<Object[]>>();
     result.put(0, Collections.singleton(new Object[0]));
     for (int i = 1; i <= max; i++) {
-      Set<Object[]> newSet= new LinkedHashSet<Object[]>();
+      Set<Object[]> newSet = new LinkedHashSet<Object[]>();
       // add each object to each one smaller
-      for (Object[] oneSmaller : result.get(i-1)) {
+      for (Object[] oneSmaller : result.get(i - 1)) {
         for (Object object : objects) {
           newSet.add(CollectionsExt.addToArray(oneSmaller, object));
         }
@@ -282,37 +284,39 @@ public final class CollectionsExt {
   }
 
   /**
-   * Creates and returns an array that contains all elements of the array parameter and has 
-   * the el parameter appened. 
+   * Creates and returns an array that contains all elements of the array
+   * parameter and has the el parameter appened.
    * 
-   * The runtime type of the resulting array is the same as the type of the argument array. 
+   * The runtime type of the resulting array is the same as the type of the
+   * argument array.
    */
   @SuppressWarnings("unchecked") // nothing we can do here, we must cast
   public static <T> T[] addToArray(T[] array, T el) {
     T[] newArray = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length + 1);
     System.arraycopy(array, 0, newArray, 0, array.length);
-    newArray[array.length]= el;
+    newArray[array.length] = el;
     return newArray;
   }
 
   /**
-   * Returns whether all objects are instances of a given class. 
+   * Returns whether all objects are instances of a given class.
    */
   public static boolean allInstancesOf(Class<?> clazz, Object[] objs) {
     for (Object obj : objs) {
-      if (! clazz.isInstance(obj)) return false;
+      if (!clazz.isInstance(obj))
+        return false;
     }
     return true;
   }
 
   /**
-   * For a given list of list of objects, create and return the (exponential in size) list of list of objects that comes from
-   * combining the every element from the first list with every element from the second list etc.
-   * Eg for input [[1,2],[a,b]] this returns
-   *   [[1,a][1,b],[2,a],[2,b]]
-   *   
-   * For empty input, returns a list with one element: empty list.
-   * Requires: all lists non-empty
+   * For a given list of list of objects, create and return the (exponential in
+   * size) list of list of objects that comes from combining the every element
+   * from the first list with every element from the second list etc. Eg for
+   * input [[1,2],[a,b]] this returns [[1,a][1,b],[2,a],[2,b]]
+   * 
+   * For empty input, returns a list with one element: empty list. Requires: all
+   * lists non-empty
    */
   public static <T> List<List<T>> allCombinations(List<List<T>> inputs) {
     if (inputs.isEmpty()) {
@@ -320,12 +324,12 @@ public final class CollectionsExt {
       result.add(new ArrayList<T>(1));
       return result;
     }
-    List<T> lastList = inputs.get(inputs.size()-1);
+    List<T> lastList = inputs.get(inputs.size() - 1);
 
-    List<List<T>> result= new ArrayList<List<T>>();
+    List<List<T>> result = new ArrayList<List<T>>();
     for (int i = 0; i < lastList.size(); i++) {
-      List<List<T>> tails = allCombinations(inputs.subList(0, inputs.size()-1));
-      T x= lastList.get(i);
+      List<List<T>> tails = allCombinations(inputs.subList(0, inputs.size() - 1));
+      T x = lastList.get(i);
       for (List<T> tail : tails) {
         tail.add(x);
       }
@@ -335,8 +339,8 @@ public final class CollectionsExt {
   }
 
   /**
-   * Returns true iff the collection contains the element.
-   * Objects are compared by identity (==).
+   * Returns true iff the collection contains the element. Objects are compared
+   * by identity (==).
    */
   public static <T> boolean containsIdentical(Collection<T> c, Object o) {
     for (T t : c) {
@@ -347,23 +351,22 @@ public final class CollectionsExt {
   }
 
   /**
-   * Returns true iff the collection contains an element equivalent to the given one, 
-   * as decided by the hasher. 
+   * Returns true iff the collection contains an element equivalent to the given
+   * one, as decided by the hasher.
    */
   public static <T> boolean containsEquivalent(Collection<T> c, Object o, Hasher h) {
     for (T t : c) {
       if (h.equals(t, o))
         return true;
     }
-    return false;        
+    return false;
   }
 
   /**
-   * Maps all values to new values.
-   * Returns a new list.
+   * Maps all values to new values. Returns a new list.
    */
   public static <T> List<T> map(List<T> values, Map<T, T> map) {
-    List<T> result= new ArrayList<T>(values.size());
+    List<T> result = new ArrayList<T>(values.size());
     for (T t : values) {
       result.add(map.get(t));
     }

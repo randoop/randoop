@@ -23,8 +23,7 @@ public class PrintStatsOneClassExp {
     String expFileName = "experiments/" + expName + ".experiment";
     File expFile = new File(expFileName);
     if (!expFile.exists())
-      throw new IllegalArgumentException("Experiment file does not exist: "
-          + expFile.getAbsolutePath());
+      throw new IllegalArgumentException("Experiment file does not exist: " + expFile.getAbsolutePath());
 
     ExperimentBase exp = new ExperimentBase(expFile.getAbsolutePath());
 
@@ -48,8 +47,7 @@ public class PrintStatsOneClassExp {
     }
 
     ExperimentBase.printCommand(printstats, false, true);
-    int retval = Command.exec(printstats.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(printstats.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");

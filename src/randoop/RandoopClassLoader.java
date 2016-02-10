@@ -15,9 +15,9 @@ import javassist.NotFoundException;
 /**
  * Special class loader that instruments bytecode of certain loaded classes to
  * allow tracking of whether any method or constructor of instrumented classes
- * has been called.
- * Loaded classes have a public static method {@code randoop_checkAndReset()}
- * that returns true if some method or constructor of the class has been called.
+ * has been called. Loaded classes have a public static method
+ * {@code randoop_checkAndReset()} that returns true if some method or
+ * constructor of the class has been called.
  */
 public class RandoopClassLoader extends ClassLoader {
 
@@ -30,8 +30,10 @@ public class RandoopClassLoader extends ClassLoader {
   /**
    * Creates a class loader from a {@code javassist.ClassPool}.
    *
-   * @param pool  the class pool object
-   * @param transformClassnames  the names of classes to be instrumented
+   * @param pool
+   *          the class pool object
+   * @param transformClassnames
+   *          the names of classes to be instrumented
    */
   public RandoopClassLoader(ClassLoader parent, ClassPool pool, Set<String> transformClassnames) {
     super(parent);
@@ -40,13 +42,13 @@ public class RandoopClassLoader extends ClassLoader {
   }
 
   /**
-   * {@inheritDoc}
-   * Before returning class, first instruments a class whose names are in the
-   * "transform" set held by this loader, otherwise returns the class untouched.
-   * Instrumentation records whether a constructor or method of the class has
-   * been called: adding a method {@code boolean randoop_checkAndReset()} that
-   * returns whether the class has been used since loaded or last call, and then
-   * resets the usage flag for the class to false.
+   * {@inheritDoc} Before returning class, first instruments a class whose names
+   * are in the "transform" set held by this loader, otherwise returns the class
+   * untouched. Instrumentation records whether a constructor or method of the
+   * class has been called: adding a method
+   * {@code boolean randoop_checkAndReset()} that returns whether the class has
+   * been used since loaded or last call, and then resets the usage flag for the
+   * class to false.
    *
    * @return the instrumented class object for the given class name
    */
@@ -57,7 +59,7 @@ public class RandoopClassLoader extends ClassLoader {
       return c;
     }
 
-    if (! transformClassnames.contains(name)) {
+    if (!transformClassnames.contains(name)) {
       return super.loadClass(name, resolve);
     }
 
@@ -84,13 +86,14 @@ public class RandoopClassLoader extends ClassLoader {
 
   /**
    * Instruments the bytecode of the given class object to track constructor and
-   * method calls for the class.
-   * Modifies each method and constructor to set an inserted private field that
-   * keeps track
-   * Adds a public method {@code boolean randoop_checkAndReset()}
+   * method calls for the class. Modifies each method and constructor to set an
+   * inserted private field that keeps track Adds a public method
+   * {@code boolean randoop_checkAndReset()}
    *
-   * @param cc  the {@code javassist.CtClass} object
-   * @throws CannotCompileException if inserted code doesn't compile
+   * @param cc
+   *          the {@code javassist.CtClass} object
+   * @throws CannotCompileException
+   *           if inserted code doesn't compile
    */
   private void modifyBytecode(CtClass cc) {
     // add static field
@@ -106,11 +109,7 @@ public class RandoopClassLoader extends ClassLoader {
       // add static method to poll and reset the field
       String methodName = "randoop_checkAndReset";
       CtMethod pollMethod = new CtMethod(CtClass.booleanType, methodName, new CtClass[0], cc);
-      pollMethod.setBody("{"
-          + "boolean state = " + flagFieldName + ";"
-          + flagFieldName + " = false" + ";"
-          + "return state" + ";"
-          + "}");
+      pollMethod.setBody("{" + "boolean state = " + flagFieldName + ";" + flagFieldName + " = false" + ";" + "return state" + ";" + "}");
       pollMethod.setModifiers(Modifier.STATIC | Modifier.PUBLIC);
       cc.addMethod(pollMethod);
     } catch (CannotCompileException e) {
@@ -122,7 +121,7 @@ public class RandoopClassLoader extends ClassLoader {
 
     try {
       for (CtMethod m : cc.getMethods()) {
-        if (! Modifier.isNative(m.getModifiers())) {
+        if (!Modifier.isNative(m.getModifiers())) {
           m.insertBefore(statementToSetFlag);
         }
       }

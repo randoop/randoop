@@ -62,7 +62,7 @@ public class JCrasherRun {
     jcrasher.add("--verbose");
     jcrasher.add("--depth=1000");
     {
-      BufferedReader reader= null;
+      BufferedReader reader = null;
       try {
         reader = new BufferedReader(new FileReader(this.base.targetClassListFile));
         String line = reader.readLine();
@@ -70,7 +70,7 @@ public class JCrasherRun {
           jcrasher.add(line.trim());
           line = reader.readLine();
         }
-      } finally{
+      } finally {
         if (reader != null)
           reader.close();
       }
@@ -93,9 +93,9 @@ public class JCrasherRun {
     compileJunit.add(finalOutputDir);
     compileJunit.add("-classpath");
     compileJunit.add(finalOutputDir
-        // + (this.jcrasherPackageToPrepend != null ? "/" + this.jcrasherPackageToPrepend : "")
-        + ":" 
-        + this.base.classPath);
+        // + (this.jcrasherPackageToPrepend != null ? "/" +
+        // this.jcrasherPackageToPrepend : "")
+        + ":" + this.base.classPath);
     compileJunit.addAll(jcrasherGeneratedJunitFiles);
     ExperimentBase.printCommand(compileJunit, true, true);
     Command.runCommand(compileJunit.toArray(new String[0]), "COMPILE JCRASHER JUNIT", true, "", true);
@@ -104,9 +104,9 @@ public class JCrasherRun {
     runJunit.add("java");
     runJunit.add("-classpath");
     runJunit.add(finalOutputDir
-        // + (this.jcrasherPackageToPrepend != null ? "/" + this.jcrasherPackageToPrepend : "")
-        + ":" 
-        + this.base.classPath);
+        // + (this.jcrasherPackageToPrepend != null ? "/" +
+        // this.jcrasherPackageToPrepend : "")
+        + ":" + this.base.classPath);
     runJunit.add("edu.gatech.cc.junit.textui.RaGTestRunner");
     runJunit.add("-noreinit");
     runJunit.add("JUnitAll");
@@ -119,22 +119,20 @@ public class JCrasherRun {
     results.processJcrasherOutput(s);
   }
 
-
-  private void run(JCrasherResults
-      resultsRaw, JCrasherResults resultsSuppressNull) throws IOException {
+  private void run(JCrasherResults resultsRaw, JCrasherResults resultsSuppressNull) throws IOException {
 
     {
       long startJcrasher = System.currentTimeMillis();
       callJcrasher(resultsRaw, false);
       long endJcrasher = System.currentTimeMillis();
-      System.out.println("JCrasher took " + (endJcrasher - startJcrasher)/1000);
+      System.out.println("JCrasher took " + (endJcrasher - startJcrasher) / 1000);
     }
 
     {
       long startJcrasher = System.currentTimeMillis();
       callJcrasher(resultsSuppressNull, true);
       long endJcrasher = System.currentTimeMillis();
-      System.out.println("JCrasher took " + (endJcrasher - startJcrasher)/1000);
+      System.out.println("JCrasher took " + (endJcrasher - startJcrasher) / 1000);
     }
 
     System.out.println("==================== RESULTS SO FAR:");
@@ -143,7 +141,7 @@ public class JCrasherRun {
 
   }
 
-  public static void main(String[] args) throws IOException     {
+  public static void main(String[] args) throws IOException {
 
     List<JCrasherRun> jcrasherRuns = getJCrasherRuns(ExperimentBase.getExperimentBasesFromFiles(args));
 

@@ -1,24 +1,22 @@
 package randoop.util;
 
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
 import randoop.BugInRandoopException;
 
-
-
 public final class Randomness {
 
   private Randomness() {
     throw new IllegalStateException("no instances");
   }
+
   public static final long SEED = 0;
 
   /**
-   * The random number used any testtime a random choice is made. (Developer note:
-   * do not declare new Random objects; use this one instead).
+   * The random number used any testtime a random choice is made. (Developer
+   * note: do not declare new Random objects; use this one instead).
    */
   static Random random = new Random(SEED);
 
@@ -30,7 +28,8 @@ public final class Randomness {
 
   public static boolean nextRandomBool() {
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
+    if (Log.isLoggingOn())
+      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return random.nextBoolean();
   }
 
@@ -39,9 +38,11 @@ public final class Randomness {
    */
   public static int nextRandomInt(int i) {
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
+    if (Log.isLoggingOn())
+      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return random.nextInt(i);
   }
+
   public static <T> T randomMember(List<T> list) {
     if (list == null || list.isEmpty())
       throw new IllegalArgumentException("Expected non-empty list");
@@ -54,24 +55,27 @@ public final class Randomness {
     return list.get(nextRandomInt(list.size()));
   }
 
-  // Warning: iterates through the entire list twice (once to compute interval length, once to select element).
+  // Warning: iterates through the entire list twice (once to compute interval
+  // length, once to select element).
   public static <T extends WeightedElement> T randomMemberWeighted(SimpleList<T> list) {
 
     // Find interval length.
     double max = 0;
-    for (int i = 0 ; i < list.size() ; i++) {
+    for (int i = 0; i < list.size(); i++) {
       double weight = list.get(i).getWeight();
-      if (weight <= 0) throw new BugInRandoopException("weight was " + weight);
+      if (weight <= 0)
+        throw new BugInRandoopException("weight was " + weight);
       max += weight;
     }
     assert max > 0;
 
     // Select a random point in interval and find its corresponding element.
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
+    if (Log.isLoggingOn())
+      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     double randomPoint = Randomness.random.nextDouble() * max;
     double currentPoint = 0;
-    for (int i = 0 ; i < list.size() ; i++) {
+    for (int i = 0; i < list.size(); i++) {
       currentPoint += list.get(i).getWeight();
       if (currentPoint >= randomPoint) {
         return list.get(i);
@@ -90,14 +94,16 @@ public final class Randomness {
       throw new IllegalArgumentException("arg must be between 0 and 1.");
     double falseProb = 1 - trueProb;
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
+    if (Log.isLoggingOn())
+      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return (Randomness.random.nextDouble() >= falseProb);
   }
 
   public static boolean randomBoolFromDistribution(double falseProb_, double trueProb_) {
-    double falseProb = falseProb_/(falseProb_+trueProb_);
+    double falseProb = falseProb_ / (falseProb_ + trueProb_);
     totalCallsToRandom++;
-    if (Log.isLoggingOn()) Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
+    if (Log.isLoggingOn())
+      Log.logLine("randoop.util.Randomness: " + totalCallsToRandom + " calls so far.");
     return (Randomness.random.nextDouble() >= falseProb);
   }
 }

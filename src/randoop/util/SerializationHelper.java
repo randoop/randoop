@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-
 /**
  * A collection of static methods to serialize an object to a file and
  * visceversa.
@@ -29,8 +28,7 @@ public final class SerializationHelper {
       out.writeObject(o);
 
     } catch (Exception e) {
-      Log.out.println("When trying to create a PrintWriter for file "
-          + outFile + ", exception thrown: " + e);
+      Log.out.println("When trying to create a PrintWriter for file " + outFile + ", exception thrown: " + e);
       e.printStackTrace();
       throw new Error(e);
     }
@@ -52,8 +50,7 @@ public final class SerializationHelper {
       fs.close();
       return ret;
     } catch (Exception e) {
-      Log.out.println("When trying to read serialized file " + inFile
-          + ", exception thrown: " + e);
+      Log.out.println("When trying to read serialized file " + inFile + ", exception thrown: " + e);
       e.printStackTrace();
       throw new Error(e);
     }

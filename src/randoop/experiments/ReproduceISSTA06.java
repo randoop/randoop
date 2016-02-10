@@ -5,16 +5,11 @@ import java.util.Properties;
 import randoop.Globals;
 import randoop.experiments.RandoopRun.RunType;
 
-
-
-
-
 public class ReproduceISSTA06 {
 
   public static void checkIfReproduced(RunType runType, String packageName, Properties p) throws ReproduceISSTA06Failure {
 
-    System.out.println("Checking results against ISSTA06 results, runType=" + runType
-        + ", package=" + packageName);
+    System.out.println("Checking results against ISSTA06 results, runType=" + runType + ", package=" + packageName);
 
     if (runType == RunType.ONLINE) {
       if (packageName.equals("org.apache.commons.chain")) {
@@ -64,7 +59,7 @@ public class ReproduceISSTA06 {
       if (packageName.equals("org.apache.commons.math")) {
         checkRange(p, "faultymethods", 3, Integer.MAX_VALUE);
         checkRange(p, "faultyclasses", 2, Integer.MAX_VALUE);
-        checkRange  (p, "exceptioncontractviolations", 0, Integer.MAX_VALUE);
+        checkRange(p, "exceptioncontractviolations", 0, Integer.MAX_VALUE);
         checkRange(p, "npecontractviolations", 0, Integer.MAX_VALUE);
         checkRange(p, "objectcontractviolations", 3, Integer.MAX_VALUE);
         checkRange(p, "hashcodecontractviolations", 3, Integer.MAX_VALUE);

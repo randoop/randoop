@@ -14,12 +14,11 @@ import plume.Options.ArgException;
 
 import randoop.types.TypeNames;
 
-
 /**
  * MIT-specific! Will probably not work outside CSAIL.
  *
- * A program that issues a list of make targets, possibly across
- * multiple machines (via ssh).
+ * A program that issues a list of make targets, possibly across multiple
+ * machines (via ssh).
  */
 public class MultiMachineRunner {
 
@@ -66,7 +65,7 @@ public class MultiMachineRunner {
     List<MachineManager> managers = new ArrayList<MachineManager>();
     RANDOOP_MACHINES = System.getProperty("RANDOOP_MACHINES");
     if (RANDOOP_MACHINES == null) {
-      if (RANDOOP_MACHINES ==null) {
+      if (RANDOOP_MACHINES == null) {
         RANDOOP_MACHINES = System.getenv("RANDOOP_MACHINES");
         if (RANDOOP_MACHINES == null) {
           managers.add(new MachineManager("local", spawner, stdout_to_file));
@@ -99,8 +98,9 @@ public class MultiMachineRunner {
       throw new IllegalArgumentException("Missing required argument.");
 
     String targetMakerName = args[0];
-    String[] targetMakerArgs = new String[args.length-1];
-    for (int i = 1 ; i < args.length ; i++) targetMakerArgs[i - 1] = args[i];
+    String[] targetMakerArgs = new String[args.length - 1];
+    for (int i = 1; i < args.length; i++)
+      targetMakerArgs[i - 1] = args[i];
 
     Class<TargetMaker> targetMakerClass = null;
     try {
@@ -110,7 +110,7 @@ public class MultiMachineRunner {
       System.exit(1);
     }
     try {
-      spawner.targetMaker = targetMakerClass.getConstructor(String[].class).newInstance(new Object[]{targetMakerArgs});
+      spawner.targetMaker = targetMakerClass.getConstructor(String[].class).newInstance(new Object[] { targetMakerArgs });
     } catch (Exception e1) {
       System.out.println("Error while creating instance of target maker class: " + e1.getMessage());
       System.out.println("Stack trace: ");
@@ -128,8 +128,8 @@ public class MultiMachineRunner {
   }
 
   /**
-   * @return The name of the next (undone) target in the list. Returns
-   * null if there are no more undone targets.
+   * @return The name of the next (undone) target in the list. Returns null if
+   *         there are no more undone targets.
    */
   public synchronized String nextTarget() {
 
@@ -159,8 +159,7 @@ public class MultiMachineRunner {
 
   private synchronized void checkIfDone() {
     // This is the exit point of the program.
-    if (targetsInProgress.size() == 0
-        && !targetMaker.hasMoreTargets()) {
+    if (targetsInProgress.size() == 0 && !targetMaker.hasMoreTargets()) {
       System.out.println("No more experiments left.");
       if (!targetsEndedWithError.isEmpty()) {
         System.out.println("Some targets failed. Will exit with code 1.");
@@ -177,8 +176,7 @@ public class MultiMachineRunner {
 
     try {
 
-      BufferedReader console =
-        new BufferedReader ( new InputStreamReader (System.in));
+      BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
       System.out.println("Enter a command (e.g. \"help\"):");
 
@@ -204,12 +202,12 @@ public class MultiMachineRunner {
           System.out.println("Terminated with error (will not retry): " + targetsEndedWithError.size());
 
         } else if (line.toUpperCase().startsWith("KILLALL")) {
-            for (int i = 0 ; i < managers.size() ; i++) {
-              MachineManager m = managers.get(i);
-              m.fswapOut = true;
-              killJavaProcesses(m.machine);
-              managers.remove(i);
-            }
+          for (int i = 0; i < managers.size(); i++) {
+            MachineManager m = managers.get(i);
+            m.fswapOut = true;
+            killJavaProcesses(m.machine);
+            managers.remove(i);
+          }
         } else if (line.toUpperCase().startsWith("KILL")) {
           String[] split = line.split("\\s");
           if (split.length != 2) {
@@ -217,13 +215,12 @@ public class MultiMachineRunner {
           } else {
             String machine = split[1].trim();
             boolean found = false;
-            for (int i = 0 ; i < managers.size() ; i++) {
+            for (int i = 0; i < managers.size(); i++) {
               MachineManager m = managers.get(i);
               if (m.machine.equals(machine)) {
                 found = true;
                 if (machine.equals("local")) {
-                  System.out.println("This command will attempt to kill all Java processes"
-                      + " in your local machine! Proceed? ");
+                  System.out.println("This command will attempt to kill all Java processes" + " in your local machine! Proceed? ");
                   String answer = console.readLine();
                   if (answer.toUpperCase().trim().equals("YES"))
                     break;
@@ -234,7 +231,7 @@ public class MultiMachineRunner {
                 break;
               }
             }
-            if (! found) {
+            if (!found) {
               System.out.println("Machine " + machine + " not found.");
             }
           }
@@ -253,7 +250,7 @@ public class MultiMachineRunner {
           } else {
             String machine = split[1].trim();
             boolean found = false;
-            for (int i = 0 ; i < managers.size() ; i++) {
+            for (int i = 0; i < managers.size(); i++) {
               MachineManager m = managers.get(i);
               if (m.machine.equals(machine)) {
                 found = true;
@@ -263,7 +260,7 @@ public class MultiMachineRunner {
                 break;
               }
             }
-            if (! found) {
+            if (!found) {
               System.out.println("Machine " + machine + " not found.");
             }
           }
@@ -287,7 +284,7 @@ public class MultiMachineRunner {
           } else {
             String machine = split[1].trim();
             boolean found = false;
-            for (int i = 0 ; i < managers.size() ; i++) {
+            for (int i = 0; i < managers.size(); i++) {
               MachineManager m = managers.get(i);
               if (m.machine.equals(machine)) {
                 found = true;
@@ -297,18 +294,17 @@ public class MultiMachineRunner {
                   PrintStream str = new PrintStream(out);
                   command.add("cat");
                   command.add(m.tmp.getAbsolutePath());
-                  Command.exec(command.toArray(new String[0]), str, str,  "", false);
+                  Command.exec(command.toArray(new String[0]), str, str, "", false);
                   System.out.println(out.toString());
                 } catch (Exception e) {
-                  System.out.print("EXCEPTION " + e.getClass() +
-                    " while running command: ");
+                  System.out.print("EXCEPTION " + e.getClass() + " while running command: ");
                   System.out.println(command.toString());
                   System.out.println("Exception message: " + e.getMessage());
                 }
                 break;
               }
             }
-            if (! found) {
+            if (!found) {
               System.out.println("Machine " + machine + " not found.");
             }
           }
@@ -333,12 +329,10 @@ public class MultiMachineRunner {
     String user = System.getProperty("user.name");
 
     if (user == null) {
-      System.out.println("Could not find System property user.name. Cannot kill " +
-      "any processes.");
+      System.out.println("Could not find System property user.name. Cannot kill " + "any processes.");
     }
 
-    System.out.println("Will kill all java/javac processes for user "
-        + user + " in machine " + machine);
+    System.out.println("Will kill all java/javac processes for user " + user + " in machine " + machine);
 
     List<String> command = new ArrayList<String>();
     command.add("ssh");
@@ -362,8 +356,7 @@ public class MultiMachineRunner {
           try {
             Long.parseLong(processNumber);
           } catch (NumberFormatException e) {
-            System.out.println("Process number \"" +
-                processNumber + "\" not a number in line: " + s);
+            System.out.println("Process number \"" + processNumber + "\" not a number in line: " + s);
             System.out.println("Aborting kill.");
             return;
           }

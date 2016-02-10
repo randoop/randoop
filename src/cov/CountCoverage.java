@@ -10,36 +10,34 @@ import java.util.Set;
 
 /**
  *
- * This class reads in a file with coverage data from a run, and
- * computes coverage information for classes that were instrumented
- * using the coverage instrumenter.
+ * This class reads in a file with coverage data from a run, and computes
+ * coverage information for classes that were instrumented using the coverage
+ * instrumenter.
  * 
  * Reads a text file. Parses any lines that look like
  * 
- *   COV:MyClass:c:t:n
- *   
- *   Where
- *   
- *    MyClass is the name of a class
- *    c is the number of branches covered in MyClass
- *    t is the total number of branches in MyClass
- *    n is a unique id for a covered branch, e.g. "26T"
- *    
+ * COV:MyClass:c:t:n
+ * 
+ * Where
+ * 
+ * MyClass is the name of a class c is the number of branches covered in MyClass
+ * t is the total number of branches in MyClass n is a unique id for a covered
+ * branch, e.g. "26T"
+ * 
  * Outputs the percent branch coverage computed from the lines.
  *
- * The cov package implements a basic branch coverage instrumenter
- * that we use for the branch-directed test generation research.
+ * The cov package implements a basic branch coverage instrumenter that we use
+ * for the branch-directed test generation research.
  *
- * This tool is prototype-quality, not for production use. In
- * particular, it is missing a number of features including tracking
- * coverage for switch statements, and lack of support for
- * generics.
+ * This tool is prototype-quality, not for production use. In particular, it is
+ * missing a number of features including tracking coverage for switch
+ * statements, and lack of support for generics.
  */
 public class CountCoverage {
 
-  private static Map<String,Integer> totalBranches = new LinkedHashMap<String,Integer>();
+  private static Map<String, Integer> totalBranches = new LinkedHashMap<String, Integer>();
 
-  private static Map<String,Set<String>> coveredBranches = new LinkedHashMap<String,Set<String>>();
+  private static Map<String, Set<String>> coveredBranches = new LinkedHashMap<String, Set<String>>();
 
   public static void main(String[] args) throws IOException {
 
@@ -59,23 +57,26 @@ public class CountCoverage {
 
     assert totalBranches.keySet().equals(coveredBranches.keySet());
     for (String cls : totalBranches.keySet()) {
-      System.out.println("COVERAGE for " + cls + ":" + 
-          coveredBranches.get(cls).size()/(double)totalBranches.get(cls));
+      System.out.println("COVERAGE for " + cls + ":" + coveredBranches.get(cls).size() / (double) totalBranches.get(cls));
     }
 
   }
 
   private static void addCoverage(String line) {
-    if (line==null) throw new IllegalArgumentException();
-    if (!line.startsWith("COV")) throw new IllegalArgumentException(line);
+    if (line == null)
+      throw new IllegalArgumentException();
+    if (!line.startsWith("COV"))
+      throw new IllegalArgumentException(line);
     String[] tokens = line.split(":");
-    if (tokens.length != 5) throw new IllegalArgumentException(line);
-    if (!tokens[0].equals("COV")) throw new IllegalArgumentException(line);
+    if (tokens.length != 5)
+      throw new IllegalArgumentException(line);
+    if (!tokens[0].equals("COV"))
+      throw new IllegalArgumentException(line);
     String className = tokens[1];
 
     int totBr = Integer.parseInt(tokens[3]);
     if (totalBranches.containsKey(className)) {
-      assert totBr==totalBranches.get(className).intValue();
+      assert totBr == totalBranches.get(className).intValue();
     } else {
       totalBranches.put(className, totBr);
     }

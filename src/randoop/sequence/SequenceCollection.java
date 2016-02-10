@@ -12,7 +12,6 @@ import java.util.Set;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.Operation;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
@@ -21,37 +20,36 @@ import randoop.util.Reflection.Match;
 import randoop.util.SimpleList;
 
 /**
- * A collection of sequences that makes its efficient to ask for
- * all the sequences that create a value of a given type.
+ * A collection of sequences that makes its efficient to ask for all the
+ * sequences that create a value of a given type.
  *
  * <p>
  * RANDOOP IMPLEMENTATION NOTE.
  * <p>
  * 
- * When creating new sequences, Randoop often needs to search for all
- * the previously-generated sequences that create one or more values
- * of a given type. Since this set can contain thousands of sequences,
- * finding these sequences can can be time-consuming and a bottleneck
- * in generation (as we discovered during profiling).
+ * When creating new sequences, Randoop often needs to search for all the
+ * previously-generated sequences that create one or more values of a given
+ * type. Since this set can contain thousands of sequences, finding these
+ * sequences can can be time-consuming and a bottleneck in generation (as we
+ * discovered during profiling).
  * 
  * <p>
  *
  * This class makes the above search faster by maintaining two data structures:
  *
  * <ul>
- * <li> A map from types to the sets of all sequences that create one
- *      or more values of exactly the given type.
+ * <li>A map from types to the sets of all sequences that create one or more
+ * values of exactly the given type.
  *
- * <li> A set of all the types that can be created with the existing
- *      set of sequences.  The set is maintained as a {@link
- *      SubTypeSet} that allows for quick queries about can-be-used-as
- *      relationships among the types in the set.
+ * <li>A set of all the types that can be created with the existing set of
+ * sequences. The set is maintained as a {@link SubTypeSet} that allows for
+ * quick queries about can-be-used-as relationships among the types in the set.
  * </ul>
  *
- * To find all the sequences that create values of a given type,
- * Randoop first uses the <code>SubTypeSet</code> to find the set
- * <code>S</code> of feasible subtypes in set of sequences, and
- * returns the range of <code>S</code> in the sequence map.
+ * To find all the sequences that create values of a given type, Randoop first
+ * uses the <code>SubTypeSet</code> to find the set <code>S</code> of feasible
+ * subtypes in set of sequences, and returns the range of <code>S</code> in the
+ * sequence map.
  */
 public class SequenceCollection {
 
@@ -86,27 +84,28 @@ public class SequenceCollection {
    * Removes all sequences from this collection.
    */
   public void clear() {
-    if (Log.isLoggingOn()) Log.logLine("Clearing sequence collection.");
-    this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence >>();
+    if (Log.isLoggingOn())
+      Log.logLine("Clearing sequence collection.");
+    this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
     this.typesWithSequencesMap = new SubTypeSet(false);
     numActivesequences = 0;
     checkRep();
   }
 
   /**
-   * Create a new, empty collection. 
+   * Create a new, empty collection.
    */
   public SequenceCollection() {
     this(new ArrayList<Sequence>());
   }
- 
+
   /**
    * Create a new collection and adds the given initial sequences.
    */
   public SequenceCollection(Collection<Sequence> initialSequences) {
     if (initialSequences == null)
       throw new IllegalArgumentException("initialSequences is null.");
-    this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence >>();
+    this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
     this.typesWithSequencesMap = new SubTypeSet(false);
     numActivesequences = 0;
     addAll(initialSequences);
@@ -117,17 +116,17 @@ public class SequenceCollection {
     if (col == null) {
       throw new IllegalArgumentException("col is null");
     }
-    for (Sequence  c : col) {
+    for (Sequence c : col) {
       add(c);
     }
   }
 
   public void addAll(SequenceCollection components) {
-    for (ArrayListSimpleList<Sequence> s:components.activeSequences.values()) {
-      for (Sequence seq:s.theList) {
+    for (ArrayListSimpleList<Sequence> s : components.activeSequences.values()) {
+      for (Sequence seq : s.theList) {
         add(seq);
       }
-    }       
+    }
   }
 
   /**
@@ -145,7 +144,7 @@ public class SequenceCollection {
     List<Class<?>> constraints = sequence.getLastStatementTypes();
     List<Variable> values = sequence.getLastStatementVariables();
     assert constraints.size() == values.size();
-    for (int i = 0 ; i < constraints.size() ; i++) {
+    for (int i = 0; i < constraints.size(); i++) {
       Variable v = values.get(i);
       assert Reflection.canBeUsedAs(v.getType(), constraints.get(i));
       if (sequence.isActive(v.getDeclIndex()))
@@ -165,25 +164,25 @@ public class SequenceCollection {
   private void updateCompatibleMap(Sequence newsequence, List<Class<?>> classes) {
     for (int i = 0; i < classes.size(); i++) {
       Class<?> t = classes.get(i);
-      ArrayListSimpleList<Sequence > set = this.activeSequences.get(t);
+      ArrayListSimpleList<Sequence> set = this.activeSequences.get(t);
       if (set == null) {
-        set = new ArrayListSimpleList<Sequence >();
+        set = new ArrayListSimpleList<Sequence>();
         this.activeSequences.put(t, set);
       }
       if (Log.isLoggingOn())
         Log.logLine("Adding sequence to active sequences of type " + t);
-      boolean added = set.add(newsequence); numActivesequences++;
+      boolean added = set.add(newsequence);
+      numActivesequences++;
       assert added == true;
     }
   }
 
-
   /**
-   * Searches through the set of active sequences to find all sequences whose types
-   * match with the parameter type.
+   * Searches through the set of active sequences to find all sequences whose
+   * types match with the parameter type.
    *
-   * @param clazz -
-   *            the type desired for the sequences being sought
+   * @param clazz
+   *          - the type desired for the sequences being sought
    * @return list of sequence objects that are of typp 'type' and abide by the
    *         constraints defined by nullOk.
    */
@@ -193,15 +192,14 @@ public class SequenceCollection {
       throw new IllegalArgumentException("clazz cannot be null.");
 
     if (Log.isLoggingOn()) {
-      Log.logLine("getActivesequencesThatYield: entering method, clazz=" + clazz .toString());
+      Log.logLine("getActivesequencesThatYield: entering method, clazz=" + clazz.toString());
       // Log.logLine(activesequences.toString());
     }
 
     List<SimpleList<Sequence>> ret = new ArrayList<SimpleList<Sequence>>();
 
-
     if (exactMatch) {
-      SimpleList<Sequence > l = this.activeSequences.get(clazz);
+      SimpleList<Sequence> l = this.activeSequences.get(clazz);
       if (l != null) {
         ret.add(l);
       }
@@ -231,7 +229,7 @@ public class SequenceCollection {
 
   public Set<Sequence> getAllSequences() {
     Set<Sequence> result = new LinkedHashSet<Sequence>();
-    for (ArrayListSimpleList<Sequence> a: activeSequences.values()) {
+    for (ArrayListSimpleList<Sequence> a : activeSequences.values()) {
       result.addAll(a.theList);
     }
     return result;
@@ -240,7 +238,7 @@ public class SequenceCollection {
 
   public Set<Statement> getAllStatements() {
     Set<Statement> result = new LinkedHashSet<>();
-    for (Sequence s: getAllSequences()) {
+    for (Sequence s : getAllSequences()) {
       for (Statement stmtWithInputs : s.getStatementsWithInputs().toJDKList()) {
         result.add(stmtWithInputs);
       }

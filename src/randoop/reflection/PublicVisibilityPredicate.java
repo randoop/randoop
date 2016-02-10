@@ -14,6 +14,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
+   * 
    * @return true if class is declared public, false otherwise.
    */
   @Override
@@ -23,6 +24,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
+   * 
    * @return true if method is declared public, false otherwise.
    */
   @Override
@@ -32,6 +34,7 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
+   * 
    * @return true if constructor is declared public, false otherwise.
    */
   @Override
@@ -41,13 +44,14 @@ public class PublicVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
+   * 
    * @return true if field is declared public, false otherwise.
    */
   @Override
   public boolean isVisible(Field f) {
     return isVisible(f.getModifiers() & Modifier.fieldModifiers());
   }
-  
+
   /*
    * Checks whether the provided modifiers indicate public bit is set.
    */

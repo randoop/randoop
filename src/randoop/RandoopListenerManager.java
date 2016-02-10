@@ -12,7 +12,7 @@ public class RandoopListenerManager {
   public RandoopListenerManager() {
     listeners = new LinkedList<IEventListener>();
   }
-  
+
   public void addListener(IEventListener listener) {
     if (listener == null) {
       throw new IllegalArgumentException("listener is null");
@@ -32,7 +32,7 @@ public class RandoopListenerManager {
       n.generationStepPost(es);
     }
   }
-  
+
   public void progressThreadUpdateNotify() {
     for (IEventListener n : listeners) {
       n.progressThreadUpdate();

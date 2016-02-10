@@ -10,6 +10,7 @@ import randoop.operation.Operation;
 
 /**
  * A statement that is part of a mutable sequence.
+ * 
  * @see MutableSequence
  */
 public class MutableStatement {
@@ -19,7 +20,8 @@ public class MutableStatement {
   public final List<MutableVariable> inputs;
 
   public final MutableVariable result;
-  
+
+  @Override
   public String toString() {
     StringBuilder b = new StringBuilder();
     b.append(result.toString());
@@ -31,8 +33,8 @@ public class MutableStatement {
   }
 
   /**
-   * Create a new statement of type statement that takes as input the
-   * given values.
+   * Create a new statement of type statement that takes as input the given
+   * values.
    */
   public MutableStatement(Operation statement, List<MutableVariable> inputVariables, MutableVariable result) {
     this.operation = statement;

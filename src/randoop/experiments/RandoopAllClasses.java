@@ -12,19 +12,19 @@ import plume.Options;
 import plume.Options.ArgException;
 
 /**
- * Runs Randoop on a all the classes (together) of a given subject program.
- * This command must be run from $RANDOOP_HOME/systemtests.
- * The command is run as follows:
+ * Runs Randoop on a all the classes (together) of a given subject program. This
+ * command must be run from $RANDOOP_HOME/systemtests. The command is run as
+ * follows:
  *
- *   java randoop.experiments.RandoopOneClass <em>subject-program-string</em>
+ * java randoop.experiments.RandoopOneClass <em>subject-program-string</em>
  *
  * The command assumes:
  *
- *   + The file experiments/<em>subject-program-string</em>.experiment exists and
- *     specifies a subject program property file.
+ * + The file experiments/<em>subject-program-string</em>.experiment exists and
+ * specifies a subject program property file.
  *
- *  The command reads in the property file and uses it to create the
- *  appropriate classpath and other parameters.
+ * The command reads in the property file and uses it to create the appropriate
+ * classpath and other parameters.
  */
 public class RandoopAllClasses {
 
@@ -38,7 +38,7 @@ public class RandoopAllClasses {
 
   private static ExperimentBase exp;
 
-    private static PrintStream err;
+  private static PrintStream err;
 
   public static void main(String[] args2) throws IOException {
 
@@ -54,7 +54,7 @@ public class RandoopAllClasses {
     if (component_based == null) {
       throw new IllegalArgumentException("component-based option must be specfied.");
     }
-    
+
     if (component_based) {
       if (objectcache == null) {
         throw new IllegalArgumentException("objectcache option must be specified.");
@@ -67,8 +67,10 @@ public class RandoopAllClasses {
     }
     // argument format: TTSS/TTSSN.data.gz
     // where TT is the name of technique (om=random walk, fc=randoop, etc.)
-    // SS is the name of experiment (jf=jfreechart, cc=commons collections, etc.)
-    // N is a number specifying the random seed to use; can be more than one digit.
+    // SS is the name of experiment (jf=jfreechart, cc=commons collections,
+    // etc.)
+    // N is a number specifying the random seed to use; can be more than one
+    // digit.
     assert args[0].endsWith(".data.gz");
     String ttss = args[0].substring(0, 4);
     assert args[0].charAt(4) == '/';
@@ -122,20 +124,15 @@ public class RandoopAllClasses {
     }
     randoop.add("--maxsize=50");
     randoop.add("--randomseed=" + seed);
-    // randoop.add("--output-components=" + exp.experimentName + ".components.gz");
+    // randoop.add("--output-components=" + exp.experimentName +
+    // ".components.gz");
     // randoop.add("--output-covmap=" + exp.experimentName + ".covmap.gz");
     // randoop.add("--randoop-exp");
     // randoop.add("--dontexecute");
-    randoop.add("--expfile="
-                + ttss
-                + "/"
-                + ttss
-                + seed
-                + ".data");
+    randoop.add("--expfile=" + ttss + "/" + ttss + seed + ".data");
 
     ExperimentBase.printCommand(randoop, false, true);
-    int retval = Command.exec(randoop.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(randoop.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");

@@ -5,7 +5,6 @@ import java.util.List;
 
 import randoop.sequence.AbstractGenerator;
 
-
 /**
  * Main entry point for Randoop. Asks the command handlers who can handle the
  * command given by the user, and passes control to whoever does.
@@ -24,7 +23,7 @@ public class Main {
     handlers.add(new GenTests());
     handlers.add(new Help());
 
-    // These are very ad-hoc commands that we don't want to 
+    // These are very ad-hoc commands that we don't want to
     // confuse the user of Randoop. Adding them to the invisible
     // handlers list means that they're not printed out when
     // the user uses the `help' command.
@@ -48,7 +47,7 @@ public class Main {
 
     String command = args[0];
     String[] args2 = new String[args.length - 1];
-    for (int i = 1 ; i < args.length ; i++)
+    for (int i = 1; i < args.length; i++)
       args2[i - 1] = args[i];
 
     // Figure out which handler handles this command.
@@ -66,8 +65,7 @@ public class Main {
     // If there was no handler for the command, print error message and exit.
     if (handler == null) {
       System.out.println("Unrecognized command: " + command + ".");
-      System.out.println("For more help, invoke Randoop "
-          + "with \"help\" as its sole argument.");
+      System.out.println("For more help, invoke Randoop " + "with \"help\" as its sole argument.");
       System.exit(1);
     }
 
@@ -88,7 +86,7 @@ public class Main {
       System.exit(1);
 
     } catch (Throwable e) {
-      
+
       System.out.println();
       System.out.println("Throwable thrown while handling command: " + e);
       e.printStackTrace();

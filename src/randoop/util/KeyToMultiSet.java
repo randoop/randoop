@@ -31,8 +31,8 @@ public class KeyToMultiSet<T1, T2> {
   public void add(T1 key, T2 value) {
     MultiSet<T2> values = map.get(key);
     if (values == null) {
-      values = new MultiSet<T2>();  
-    } 
+      values = new MultiSet<T2>();
+    }
     values.add(value);
     map.put(key, values);
   }
@@ -41,7 +41,7 @@ public class KeyToMultiSet<T1, T2> {
     MultiSet<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException("No values where found when trying to remove from multiset. Key: " + key + " Variable: " + value);
-    } 
+    }
     values.remove(value);
   }
 
@@ -49,13 +49,14 @@ public class KeyToMultiSet<T1, T2> {
     MultiSet<T2> values = map.get(key);
     if (values == null) {
       throw new IllegalStateException("No values where found when trying to remove from multiset. Key: " + key);
-    } 
+    }
     map.remove(key);
   }
 
   public Set<T2> getVariables(T1 key) {
     MultiSet<T2> values = map.get(key);
-    if (values == null) return Collections.emptySet();
+    if (values == null)
+      return Collections.emptySet();
     return values.getElements();
   }
 
@@ -69,7 +70,7 @@ public class KeyToMultiSet<T1, T2> {
 
   // Removes all keys with an empty set
   public void clean() {
-    for (Iterator<Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
+    for (Iterator<Entry<T1, MultiSet<T2>>> iter = map.entrySet().iterator(); iter.hasNext();) {
       Entry<T1, MultiSet<T2>> element = iter.next();
       if (element.getValue().isEmpty()) {
         iter.remove();
@@ -78,7 +79,7 @@ public class KeyToMultiSet<T1, T2> {
   }
 
   public void removeAllInstances(Set<T2> values) {
-    for (MultiSet<T2> multiSet:map.values()) {
+    for (MultiSet<T2> multiSet : map.values()) {
       multiSet.removeAllInstances(values);
     }
   }
@@ -94,6 +95,5 @@ public class KeyToMultiSet<T1, T2> {
   public boolean isEmpty() {
     return map.isEmpty();
   }
-
 
 }

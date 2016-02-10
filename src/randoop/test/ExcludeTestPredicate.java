@@ -7,7 +7,7 @@ import randoop.sequence.Sequence;
 import randoop.util.predicate.DefaultPredicate;
 
 public class ExcludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
-  
+
   private Set<Sequence> excludeSet;
 
   public ExcludeTestPredicate(Set<Sequence> excludeSet) {
@@ -16,7 +16,7 @@ public class ExcludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
 
   @Override
   public boolean test(ExecutableSequence s) {
-    return ! excludeSet.contains(s.sequence);
+    return !excludeSet.contains(s.sequence);
   }
 
 }

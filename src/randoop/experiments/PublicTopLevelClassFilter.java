@@ -10,7 +10,8 @@ public class PublicTopLevelClassFilter implements ClassFilter {
   private final Pattern omitPattern;
 
   /**
-   * @param omitPatternString can be null.
+   * @param omitPatternString
+   *          can be null.
    */
   public PublicTopLevelClassFilter(String omitPatternString) {
     if (omitPatternString != null) {
@@ -20,6 +21,7 @@ public class PublicTopLevelClassFilter implements ClassFilter {
     }
   }
 
+  @Override
   public boolean include(JavaClass cls) {
     assert cls != null;
 

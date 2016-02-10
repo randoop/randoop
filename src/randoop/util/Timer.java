@@ -1,10 +1,9 @@
 package randoop.util;
 
 /**
- * A simple timer implementation. The timer has two
- * states: running and stopped. The timer can be started
- * and stopped multiple times. A newly-constructed timer
- * is in a stopped state.
+ * A simple timer implementation. The timer has two states: running and stopped.
+ * The timer can be started and stopped multiple times. A newly-constructed
+ * timer is in a stopped state.
  *
  * Time is measured in milliseconds, using System.currentTimeMillis().
  *

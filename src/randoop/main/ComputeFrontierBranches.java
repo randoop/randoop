@@ -53,12 +53,9 @@ public class ComputeFrontierBranches {
     try {
       String[] nonargs = options.parse(args);
       if (nonargs.length > 0)
-        throw new ArgException("Unrecognized arguments: "
-            + Arrays.toString(nonargs));
+        throw new ArgException("Unrecognized arguments: " + Arrays.toString(nonargs));
     } catch (ArgException ae) {
-      System.out
-      .println("ERROR while parsing command-line arguments (will exit): "
-          + ae.getMessage());
+      System.out.println("ERROR while parsing command-line arguments (will exit): " + ae.getMessage());
       System.exit(-1);
     }
     if (input_map == null) {
@@ -73,7 +70,7 @@ public class ComputeFrontierBranches {
     ClassLoader contextLoader = ComputeFrontierBranches.class.getClassLoader();
     TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
 
-    Map<CoverageAtom,Set<Sequence>> covmap = new LinkedHashMap<CoverageAtom, Set<Sequence>>();
+    Map<CoverageAtom, Set<Sequence>> covmap = new LinkedHashMap<CoverageAtom, Set<Sequence>>();
 
     System.out.print("Reading coverage map...");
 
@@ -106,10 +103,9 @@ public class ComputeFrontierBranches {
     for (CoverageAtom ca : covmap.keySet()) {
 
       // Maps a branch to a set of sequences that cover the branch.
-      Map<Branch, Set<Sequence>> frontierMap =
-        new TreeMap<Branch, Set<Sequence>>(branchComparator);
+      Map<Branch, Set<Sequence>> frontierMap = new TreeMap<Branch, Set<Sequence>>(branchComparator);
 
-      Branch br = (Branch)ca;
+      Branch br = (Branch) ca;
 
       // Only put frontier branches that are inside methods or constructors.
       if (Coverage.getMemberContaining(br) == null)
@@ -123,7 +119,7 @@ public class ComputeFrontierBranches {
       assert candidates != null;
       assert !candidates.isEmpty();
 
-      Map<Statement,Integer> statements = new LinkedHashMap<Statement, Integer>();
+      Map<Statement, Integer> statements = new LinkedHashMap<Statement, Integer>();
 
       Set<Sequence> ss = new LinkedHashSet<Sequence>();
 

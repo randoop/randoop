@@ -6,20 +6,23 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
 
 /**
- * Utility methods for safely executing and printing {@link ObjectContract} code.
+ * Utility methods for safely executing and printing {@link ObjectContract}
+ * code.
  */
 public class ObjectContractUtils {
 
   /**
    * Executes the given contract via reflection.
    * 
-   * @param c  the contract to execute.
-   * @param objs  the list of values to substitute for variables.
+   * @param c
+   *          the contract to execute.
+   * @param objs
+   *          the list of values to substitute for variables.
    */
   public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
     ReflectionCode refl = new ReflectionCode() {
       // Before runReflectionCodeRaw is executed, both of these fields are
-      // null.  After runReflectionCodeRaw is executed, exactly one of
+      // null. After runReflectionCodeRaw is executed, exactly one of
       // these fields is null (unless runReflectionCodeRaw itself threw an
       // exception, in which case both fields remain null).
       private Object result;
@@ -52,28 +55,29 @@ public class ObjectContractUtils {
     timer.stopTiming();
 
     if (refl.getExceptionThrown() != null) {
-      return new ExceptionalExecution(refl.getExceptionThrown(), timer
-          .getTimeElapsedMillis());
+      return new ExceptionalExecution(refl.getExceptionThrown(), timer.getTimeElapsedMillis());
     }
     if (t != null) {
       return new ExceptionalExecution(t, timer.getTimeElapsedMillis());
     }
-    return new NormalExecution(refl.getReturnVariable(), timer
-        .getTimeElapsedMillis());
+    return new NormalExecution(refl.getReturnVariable(), timer.getTimeElapsedMillis());
   }
-  
-  /** 
+
+  /**
    * Replace dummy variables such as "x0" in the code by their real names.
    * 
-   * @param str  the contract code as a string with dummy variables.
-   * @param vars  list of {@link randoop.sequence.Variable Variable} objects.
-   * @return the contract code with actual variable names substituted for dummy names.
+   * @param str
+   *          the contract code as a string with dummy variables.
+   * @param vars
+   *          list of {@link randoop.sequence.Variable Variable} objects.
+   * @return the contract code with actual variable names substituted for dummy
+   *         names.
    */
   public static String localizeContractCode(String str, Variable... vars) {
-    for (int i = 0 ; i < vars.length ; i++) {
+    for (int i = 0; i < vars.length; i++) {
       // See documentation for Expression.toCommentString().
       str = str.replaceAll("x" + i, vars[i].getName());
     }
-    return str; 
+    return str;
   }
 }

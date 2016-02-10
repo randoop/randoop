@@ -20,6 +20,7 @@ public class NotExecuted extends ExecutionOutcome {
     return "<not_executed>";
   }
 
+  @Override
   public long getExecutionTime() {
     throw new IllegalStateException("NotExecuted outcome has no execution time.");
   }

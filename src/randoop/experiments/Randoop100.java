@@ -14,7 +14,7 @@ public class Randoop100 {
   private static PrintStream err;
 
   // Takes a single argument, a string of the form
-  //  randoop100-ttss-tl-sd
+  // randoop100-ttss-tl-sd
   // where ttss is an experiment description string, tl is
   // a time limit, and sd is a random seed.
   public static void main(String[] args2) throws IOException {
@@ -30,7 +30,8 @@ public class Randoop100 {
     assert args[1].length() == 4;
 
     // where TT is the name of technique (om=random walk, fc=randoop, etc.)
-    // SS is the name of experiment (jf=jfreechart, cc=commons collections, etc.)
+    // SS is the name of experiment (jf=jfreechart, cc=commons collections,
+    // etc.)
     String ttss = args[1];
 
     // Determine experiment parameters.
@@ -104,8 +105,7 @@ public class Randoop100 {
     randoop.add("--expfile=randoop100/randoop100" + ttss + seed + ".data");
 
     ExperimentBase.printCommand(randoop, false, true);
-    int retval = Command.exec(randoop.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(randoop.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");

@@ -16,7 +16,7 @@ public class RegressionChecks implements TestChecks, Serializable {
    * 
    */
   private static final long serialVersionUID = -4118240133477960983L;
-  
+
   private Set<Check> checks;
   private ExceptionCheck exceptionCheck;
 
@@ -36,20 +36,20 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   /**
    * Adds the given check to the sequence. Only one {@code ExceptionCheck} is
-   * allowed, and attempting to add a second check of this type will result in 
+   * allowed, and attempting to add a second check of this type will result in
    * an {@code IllegalArgumentException}
    *
    * @throws IllegalArgumentException
-   *           If the given check's class is {@code ExceptionCheck} and
-   *           there is already an check of this class at the give index.
+   *           If the given check's class is {@code ExceptionCheck} and there is
+   *           already an check of this class at the give index.
    */
+  @Override
   public void add(Check check) {
     if (check instanceof ExceptionCheck) {
       if (exceptionCheck != null) {
-        throw new IllegalArgumentException("Sequence already has a check"
-            + " of type " + exceptionCheck.getClass().getCanonicalName());
+        throw new IllegalArgumentException("Sequence already has a check" + " of type " + exceptionCheck.getClass().getCanonicalName());
       }
-      exceptionCheck = (ExceptionCheck)check;
+      exceptionCheck = (ExceptionCheck) check;
     } else {
       checks.add(check);
     }
@@ -57,11 +57,13 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * @return map of non-exception checks in this object, all of which are passing
+   * 
+   * @return map of non-exception checks in this object, all of which are
+   *         passing
    */
   @Override
   public Map<Check, Boolean> get() {
-    Map<Check,Boolean> mp = new LinkedHashMap<Check,Boolean>();
+    Map<Check, Boolean> mp = new LinkedHashMap<Check, Boolean>();
     for (Check ck : checks) {
       mp.put(ck, true);
     }
@@ -70,15 +72,18 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * @return true if there are regression checks or an expected exception, false otherwise
+   * 
+   * @return true if there are regression checks or an expected exception, false
+   *         otherwise
    */
   @Override
   public boolean hasChecks() {
-    return (! checks.isEmpty() || exceptionCheck != null);
+    return (!checks.isEmpty() || exceptionCheck != null);
   }
 
   /**
    * {@inheritDoc}
+   * 
    * @return false, since all regression checks are passing
    */
   @Override
@@ -93,11 +98,11 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof RegressionChecks)) {
+    if (!(obj instanceof RegressionChecks)) {
       return false;
     }
-    RegressionChecks cks = (RegressionChecks)obj;
-    if (! checks.equals(cks.checks)) {
+    RegressionChecks cks = (RegressionChecks) obj;
+    if (!checks.equals(cks.checks)) {
       return false;
     }
     if (exceptionCheck == null) {
@@ -108,19 +113,19 @@ public class RegressionChecks implements TestChecks, Serializable {
     }
     return exceptionCheck.equals(cks.exceptionCheck);
   }
-  
+
   @Override
   public int hashCode() {
-    return Objects.hash(checks,exceptionCheck);
+    return Objects.hash(checks, exceptionCheck);
   }
 
   @Override
   public TestChecks commonChecks(TestChecks testChecks) {
-    if (! (testChecks instanceof RegressionChecks)) {
+    if (!(testChecks instanceof RegressionChecks)) {
       throw new IllegalArgumentException("Must compare with a RegressionChecks object");
     }
     RegressionChecks common = new RegressionChecks();
-    RegressionChecks rc = (RegressionChecks)testChecks;
+    RegressionChecks rc = (RegressionChecks) testChecks;
     for (Check ck : checks) {
       if (rc.checks.contains(ck)) {
         common.add(ck);
@@ -133,8 +138,7 @@ public class RegressionChecks implements TestChecks, Serializable {
   }
 
   /**
-   * {@inheritDoc}
-   * Returns false because regression checks are not invalid.
+   * {@inheritDoc} Returns false because regression checks are not invalid.
    * 
    * @return false, always
    */

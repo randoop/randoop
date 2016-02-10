@@ -7,8 +7,8 @@ public class EqualsMethodMatcher implements StateMatcher {
 
   Set<Object> cache = new LinkedHashSet<Object>();
 
-  public boolean add(Object object)
-  {
+  @Override
+  public boolean add(Object object) {
     try {
       return this.cache.add(object);
     } catch (Throwable e) {
@@ -17,6 +17,7 @@ public class EqualsMethodMatcher implements StateMatcher {
     }
   }
 
+  @Override
   public int size() {
     return this.cache.size();
   }

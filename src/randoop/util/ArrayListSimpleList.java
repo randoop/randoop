@@ -9,11 +9,11 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
   private static final long serialVersionUID = 9155161101212598259L;
 
   public final ArrayList<T> theList;
-  
+
   public ArrayListSimpleList(ArrayList<T> list) {
     theList = new ArrayList<T>(list);
   }
-  
+
   public ArrayListSimpleList() {
     theList = new ArrayList<T>();
   }
@@ -31,7 +31,7 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
   public T get(int index) {
     return theList.get(index);
   }
-  
+
   @Override
   public SimpleList<T> getSublist(int index) {
     return this;
@@ -45,7 +45,7 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
   public List<T> toJDKList() {
     return new ArrayList<T>(theList);
   }
-  
+
   @Override
   public String toString() {
     return toJDKList().toString();

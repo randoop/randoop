@@ -12,15 +12,18 @@ public class RandoopOneClassTargetMaker implements TargetMaker {
 
   /**
    *
-   * @param args first argument is a prefix. Second argument is an experiment name.
-   * @throws IOException if unable to read target file
-   * @throws IllegalArgumentException if not at least two arguments 
+   * @param args
+   *          first argument is a prefix. Second argument is an experiment name.
+   * @throws IOException
+   *           if unable to read target file
+   * @throws IllegalArgumentException
+   *           if not at least two arguments
    */
   public RandoopOneClassTargetMaker(String[] args) throws IOException {
     if (args.length < 2)
       throw new IllegalArgumentException("Must give at least two arguments.");
     String prefix = args[0];
-    for (int i = 1 ; i < args.length ; i++) {
+    for (int i = 1; i < args.length; i++) {
       ExperimentBase exp = new ExperimentBase("experiments/" + args[i] + ".experiment");
       List<String> classNames = Files.readWhole(exp.targetClassListFile);
 
@@ -33,16 +36,19 @@ public class RandoopOneClassTargetMaker implements TargetMaker {
     }
   }
 
+  @Override
   public String getNextTarget() {
     if (targets.isEmpty())
       return null;
     return targets.remove(0);
   }
 
+  @Override
   public boolean hasMoreTargets() {
     return !targets.isEmpty();
   }
 
+  @Override
   public int targetsLeft() {
     return targets.size();
   }

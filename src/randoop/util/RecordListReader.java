@@ -8,33 +8,30 @@ import java.util.List;
 import plume.UtilMDE;
 
 /**
- * Reads a list of records from a text file, where a record is
- * partially specified by the client of this class.
+ * Reads a list of records from a text file, where a record is partially
+ * specified by the client of this class.
  * 
  * A record is a sequence of lines, beginning with the string
- * "START &lt;recordtype&gt;" and ending with the string "END &lt;recordtype&gt;"
- * where &lt;recordtype&gt; is specified by the client. For example:
+ * "START &lt;recordtype&gt;" and ending with the string
+ * "END &lt;recordtype&gt;" where &lt;recordtype&gt; is specified by the client.
+ * For example:
  * 
- * START person
- * ...
- * ... arbitrary text
- * ...
- * END person
+ * START person ... ... arbitrary text ... END person
  * 
- * Any lines within and between records, that are only whitespace
- * or start with "#", are skipped.
+ * Any lines within and between records, that are only whitespace or start with
+ * "#", are skipped.
  * 
- * This class includes the functionality to parse individual records
- * out of a file. How each record is processed is up to the client,
- * who provides a RecordProcessor.
+ * This class includes the functionality to parse individual records out of a
+ * file. How each record is processed is up to the client, who provides a
+ * RecordProcessor.
  */
 public class RecordListReader {
-  
+
   // startMarker is "START <recordType>"
-  // endMarker   is "END <recordType>"
+  // endMarker is "END <recordType>"
   private final String startMarker, endMarker;
 
-  // The object in charge of doing whatever is to be done with the record. 
+  // The object in charge of doing whatever is to be done with the record.
   private final RecordProcessor processor;
 
   public RecordListReader(String recordType, RecordProcessor proc) {
@@ -57,10 +54,10 @@ public class RecordListReader {
     } catch (IOException e) {
       throw new Error(e);
     }
-    
+
     parse(reader);
   }
-  
+
   public void parse(BufferedReader reader) {
 
     String line;
@@ -80,7 +77,7 @@ public class RecordListReader {
       throw new Error(e);
     }
   }
-  
+
   private List<String> readOneRecord(BufferedReader reader) throws IOException {
     List<String> ret = new ArrayList<String>();
     String line = nextNWCLine(reader);
@@ -92,7 +89,6 @@ public class RecordListReader {
     }
     return ret;
   }
-
 
   private static String nextNWCLine(BufferedReader reader) throws IOException {
     String line = reader.readLine();

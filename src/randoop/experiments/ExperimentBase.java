@@ -10,13 +10,12 @@ import java.util.Properties;
 
 import randoop.Globals;
 
-
 /**
  * Specifies a number of properties about a subject program, e.g.:
  *
- *   + A classpath containing the subject program classes,
- *   + A classpath containing coverage-instrumented versions of the classes,
- *   + The location of a file containing a list of public, top-level classes.
+ * + A classpath containing the subject program classes, + A classpath
+ * containing coverage-instrumented versions of the classes, + The location of a
+ * file containing a list of public, top-level classes.
  *
  * For most of these properties to refer to valid resources, the script
  * randoop.experiments.PrepareSubjectPrograms must be called first.
@@ -48,16 +47,18 @@ public class ExperimentBase {
   public String classPath;
   // The name of a file containing the target class names.
   public String targetClassListFile;
-  // The name of a file containing the list of all coverage-instumented class names.
+  // The name of a file containing the list of all coverage-instumented class
+  // names.
   public String covInstClassListFile;
   // The name of a file containing the source (.java) files.
-  // public String sourceListFile; // XXX this includes everything now, not just one package, right? same for targetClassListFile.
-  // The name of the coverage-instrumented sources (This directory is created by running randoop.experiments.PrepareSubjectProgram).
+  // public String sourceListFile; // XXX this includes everything now, not just
+  // one package, right? same for targetClassListFile.
+  // The name of the coverage-instrumented sources (This directory is created by
+  // running randoop.experiments.PrepareSubjectProgram).
   public String covInstSourcesDir;
 
   /**
-   * Creates a new ExperimentBase whose properties are
-   * obtained from inStream.
+   * Creates a new ExperimentBase whose properties are obtained from inStream.
    */
   public ExperimentBase(String fileName) throws IOException {
     String experimentNameFull = new File(fileName).getName();
@@ -68,8 +69,8 @@ public class ExperimentBase {
     Properties allProperties = new Properties();
     allProperties.load(inStream);
     this.extraProperties = new Properties();
-    for (Enumeration<?> propertyEnum = allProperties.propertyNames() ; propertyEnum.hasMoreElements() ; ) {
-      String property = (String)propertyEnum.nextElement();
+    for (Enumeration<?> propertyEnum = allProperties.propertyNames(); propertyEnum.hasMoreElements();) {
+      String property = (String) propertyEnum.nextElement();
       if (property.equals("CLASS_DIR")) {
         this.classDirAbs = allProperties.getProperty(property);
       } else if (property.equals("AUX_JARS_DIR")) {

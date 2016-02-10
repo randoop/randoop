@@ -15,12 +15,12 @@ public abstract class ExecutionOutcome {
   public abstract long getExecutionTime();
 
   /** Set the output of the statement **/
-  public void set_output (String output) {
+  public void set_output(String output) {
     this.output = output;
   }
 
   /** Retrieve the output of the statement **/
-  public String get_output () {
+  public String get_output() {
     return output;
   }
 

@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A target maker that creates targets by preprending the given
- * prefixes to the given arguments (one target per prefix/argument
- * pair).
+ * A target maker that creates targets by preprending the given prefixes to the
+ * given arguments (one target per prefix/argument pair).
  *
- * A prefix is an argument by the string "prefix=". All other
- * are considered regular arguments.
+ * A prefix is an argument by the string "prefix=". All other are considered
+ * regular arguments.
  */
 public class OneTargetPerArgument implements TargetMaker {
 
@@ -43,16 +42,19 @@ public class OneTargetPerArgument implements TargetMaker {
     }
   }
 
+  @Override
   public String getNextTarget() {
     if (targets.isEmpty())
       return null;
     return targets.remove(0);
   }
 
+  @Override
   public boolean hasMoreTargets() {
     return !targets.isEmpty();
   }
 
+  @Override
   public int targetsLeft() {
     return targets.size();
   }

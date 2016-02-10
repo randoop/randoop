@@ -68,9 +68,10 @@ public class GenBranchDir {
 
   // Results are placed here.
   // A result is a pair. The first element is a goal branch, which is the branch
-  // opposite a frontier branch. The second element is a sequence that covers the
+  // opposite a frontier branch. The second element is a sequence that covers
+  // the
   // goal branch.
-  private static List<Pair<Branch, Sequence>> successes = new ArrayList<Pair<Branch,Sequence>>();
+  private static List<Pair<Branch, Sequence>> successes = new ArrayList<Pair<Branch, Sequence>>();
   private static List<DFResultsOneSeq> failures = new ArrayList<DFResultsOneSeq>();
   private static int noDFInfo = 0;
   private static int nonRepro = 0;
@@ -124,7 +125,7 @@ public class GenBranchDir {
   private static SequenceCollection components = null;
 
   private static PrintStream componentsUsedStream = null;
-  private static Set<Sequence> alreadyPrinted  = new LinkedHashSet<Sequence>();
+  private static Set<Sequence> alreadyPrinted = new LinkedHashSet<Sequence>();
 
   private static PrintStream successSeqsStream = null;
 
@@ -158,8 +159,8 @@ public class GenBranchDir {
       throw new Error(e);
     }
 
-    if (args2.length != 0) throw new IllegalArgumentException("Invalid arguments:" +
-                                                              Arrays.asList(args2));
+    if (args2.length != 0)
+      throw new IllegalArgumentException("Invalid arguments:" + Arrays.asList(args2));
 
     try {
       if (output_components_used != null)
@@ -169,7 +170,6 @@ public class GenBranchDir {
     } catch (FileNotFoundException e) {
       throw new Error(e);
     }
-
 
     // Read in the coverage-instrumented classes.
     // We need them in order to reset their coverage before executing
@@ -195,11 +195,8 @@ public class GenBranchDir {
     }
     System.out.println("ALL BRANCHES=" + allBranches.size());
 
-
-
     // Read coverage map.
-    Map<CoverageAtom,Set<Sequence>> inputmap =
-      new LinkedHashMap<CoverageAtom, Set<Sequence>>();
+    Map<CoverageAtom, Set<Sequence>> inputmap = new LinkedHashMap<CoverageAtom, Set<Sequence>>();
     if (input_covmap != null) {
       try {
         FileInputStream fileis = new FileInputStream(input_covmap);
@@ -214,7 +211,7 @@ public class GenBranchDir {
 
     Set<Branch> coveredByRandoop = new LinkedHashSet<Branch>();
     for (CoverageAtom ca : inputmap.keySet()) {
-      coveredByRandoop.add((Branch)ca);
+      coveredByRandoop.add((Branch) ca);
     }
 
     System.out.println("COVERED BY RANDOOP=" + coveredByRandoop.size());
@@ -224,7 +221,6 @@ public class GenBranchDir {
         uncoveredByRandoop.add((Branch) ca);
     }
     System.out.println("NOT COVERED BY RANDOOP=" + uncoveredByRandoop.size());
-
 
     // If log file given, set out to it. Otherwise, set out to System.out.
     if (logfile != null) {
@@ -240,27 +236,26 @@ public class GenBranchDir {
 
     getComponents(String.class, false);
 
-
     String inputFile = input_df_results;
     DataFlowOutput dfOut = DataFlowOutput.parse(inputFile);
     assert dfOut.results.size() > 0;
 
     if (!many_branches) {
-      // Sanity check: all results for this file correspond to the same frontier branch.
-      Branch frontier = (Branch)dfOut.results.get(0).frontierBranch;
-      for (DFResultsOneSeq r : dfOut.results) assert frontier.equals(r.frontierBranch);
+      // Sanity check: all results for this file correspond to the same frontier
+      // branch.
+      Branch frontier = (Branch) dfOut.results.get(0).frontierBranch;
+      for (DFResultsOneSeq r : dfOut.results)
+        assert frontier.equals(r.frontierBranch);
     }
 
     // System.out.printf ("covered = %s%n", coveredByRandoop);
     // System.out.printf ("uncovered = %s%n", uncoveredByRandoop);
     for (DFResultsOneSeq r : dfOut.results) {
       // System.out.printf ("r = %s%n",
-      //                    ((Branch)r.frontierBranch).getOppositeBranch());
-      if (!coveredByRandoop.contains(((Branch)r.frontierBranch).getOppositeBranch())) {
-        assert uncoveredByRandoop.contains
-          (((Branch)r.frontierBranch).getOppositeBranch()) :
-          uncoveredByRandoop + " " + coveredByRandoop + " "
-            + ((Branch)r.frontierBranch).getOppositeBranch();
+      // ((Branch)r.frontierBranch).getOppositeBranch());
+      if (!coveredByRandoop.contains(((Branch) r.frontierBranch).getOppositeBranch())) {
+        assert uncoveredByRandoop.contains(((Branch) r.frontierBranch).getOppositeBranch()) : uncoveredByRandoop + " " + coveredByRandoop + " "
+            + ((Branch) r.frontierBranch).getOppositeBranch();
         processOneSequence(r);
       } else {
         System.out.println("FRONTIER BRANCH COVERED IN A DIFFERENT RUN OF RANDOOP.");
@@ -288,11 +283,8 @@ public class GenBranchDir {
       }
     }
 
-    String summ_detailed = "There were "
-        + successes.size() + " successes, "
-        + failures.size() + " failures, "
-        + noDFInfo + " no DF info, and "
-      + nonRepro + " nonrepro frontier branch.";
+    String summ_detailed = "There were " + successes.size() + " successes, " + failures.size() + " failures, " + noDFInfo + " no DF info, and " + nonRepro
+        + " nonrepro frontier branch.";
 
     System.out.println(summ_detailed);
 
@@ -328,7 +320,8 @@ public class GenBranchDir {
       componentsUsedStream.close();
   }
 
-  // Reads a file containing a collection of sequences in textual representation.
+  // Reads a file containing a collection of sequences in textual
+  // representation.
   private static Set<Sequence> readTextSequences(String file) {
 
     final Set<Sequence> sequences = new LinkedHashSet<Sequence>();
@@ -350,14 +343,14 @@ public class GenBranchDir {
     return sequences;
   }
 
-
   /**
    * @param dfOut
    */
   private static void processOneSequence(DFResultsOneSeq r) {
 
     // Workaround for the fact that dataflow gives no information on null
-    // values. If DF gives says that at least one non-primitive declaration was compared
+    // values. If DF gives says that at least one non-primitive declaration was
+    // compared
     // to null, We add to the set of interesting variables every variable
     // declared as "var = null", and we add "null" as one of the values it was
     // compared to.
@@ -370,7 +363,7 @@ public class GenBranchDir {
     }
     if (null_is_interesting) {
       // Try single-variable null flip strategy on variables that were null.
-      for (int i = 0 ; i < r.sequence.size() ; i++) {
+      for (int i = 0; i < r.sequence.size(); i++) {
         Statement st = r.sequence.getStatement(i);
         // If i-th statement is "x = null;" ...
         if (st.isNullInitialization()) {
@@ -420,8 +413,7 @@ public class GenBranchDir {
     // Print out the source code surrounding the frontier branch.
     String lineSource = null;
     try {
-      lineSource = Coverage.getMethodSource(TypeNames.getTypeForName(r.frontierBranch.getClassName()),
-          r.frontierBranch.getLineNumber(), ">>");
+      lineSource = Coverage.getMethodSource(TypeNames.getTypeForName(r.frontierBranch.getClassName()), r.frontierBranch.getLineNumber(), ">>");
     } catch (ClassNotFoundException e) {
       throw new Error(e);
     }
@@ -431,7 +423,7 @@ public class GenBranchDir {
     // Verify that sequence covers frontier branch.
     ExecutableSequence eseq = new ExecutableSequence(r.sequence);
     Coverage.clearCoverage(covClasses);
-    eseq.execute(new DummyVisitor(),new DummyCheckGenerator());
+    eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
     if (!Coverage.getCoveredAtoms(covClasses).contains(r.frontierBranch)) {
       nonRepro++;
       out.println("WARNING: Sequence doesn't cover frontier branch (WILL NOT add to successes or failures).");
@@ -485,19 +477,18 @@ public class GenBranchDir {
     }
   }
 
-  private static Pair<Branch, Sequence> twoVarsAliasLastStatementVars(
-      DFResultsOneSeq r) {
+  private static Pair<Branch, Sequence> twoVarsAliasLastStatementVars(DFResultsOneSeq r) {
 
     Statement st = r.sequence.getLastStatement();
     List<Class<?>> types = r.sequence.getLastStatement().getInputTypes();
     List<Variable> vars = r.sequence.getInputs(r.sequence.size() - 1);
     assert vars.size() == types.size();
-    Branch goalBranch = ((Branch)r.frontierBranch).getOppositeBranch();
+    Branch goalBranch = ((Branch) r.frontierBranch).getOppositeBranch();
 
     boolean isInstanceMethod = st.isMethodCall() && !st.isStatic();
 
-    for (int i = 0 ; i < types.size() ; i++) {
-      for (int j = 0 ; j < types.size() ; j++) {
+    for (int i = 0; i < types.size(); i++) {
+      for (int j = 0; j < types.size(); j++) {
         if (i == j)
           continue;
         // See if we can replace i <- j.
@@ -525,9 +516,9 @@ public class GenBranchDir {
     return null;
   }
 
-  private static Pair<Branch,Sequence> twoVarStrategies(DFResultsOneSeq r) {
+  private static Pair<Branch, Sequence> twoVarStrategies(DFResultsOneSeq r) {
     out.append("WILL TRY TWO-VARIABLE STRATEGIES.");
-    Branch goalBranch = ((Branch)r.frontierBranch).getOppositeBranch();
+    Branch goalBranch = ((Branch) r.frontierBranch).getOppositeBranch();
     Comparator<VariableInfo> comp = new Comparator<VariableInfo>() {
       @Override
       public int compare(VariableInfo o1, VariableInfo o2) {
@@ -538,8 +529,8 @@ public class GenBranchDir {
     sorted.addAll(r.values);
     // System.out.println("vars: " + sorted);
     VariableInfo[] vars = sorted.toArray(new VariableInfo[0]);
-    for (int i = 0 ; i < vars.length ; i++) {
-      for (int j = 0 ; j < vars.length ; j++) {
+    for (int i = 0; i < vars.length; i++) {
+      for (int j = 0; j < vars.length; j++) {
         if (i == j)
           continue;
         MutableSequence s = r.sequence.toModifiableSequence();
@@ -550,7 +541,7 @@ public class GenBranchDir {
             continue;
         }
         if (!canReplace(s, ith, jth))
-            continue;
+          continue;
         MutableSequence s2 = s.makeCopy();
         MutableVariable s2i = s2.getVariable(ith.getDeclIndex());
         MutableVariable s2j = s2.getVariable(jth.getDeclIndex());
@@ -582,8 +573,7 @@ public class GenBranchDir {
     return null;
   }
 
-  private static void replaceUsesWithCopy(MutableSequence mseq, MutableVariable mv1,
-      MutableVariable mv2) {
+  private static void replaceUsesWithCopy(MutableSequence mseq, MutableVariable mv1, MutableVariable mv2) {
 
     MutableSequence copy = mseq.makeCopy();
     MutableVariable mv1_copy = copy.getVariable(mv1.getDeclIndex());
@@ -599,9 +589,9 @@ public class GenBranchDir {
     Map<MutableVariable, MutableVariable> map = mseq.insert(0, copy);
     MutableVariable mv1_new = map.get(mv1_copy);
 
-    for (int i = mv2.getDeclIndex() + 1 ; i < mseq.size() ; i++) {
+    for (int i = mv2.getDeclIndex() + 1; i < mseq.size(); i++) {
       MutableStatement st = mseq.getStatement(i);
-      for (int j = 0 ; j < st.inputs.size() ; j++) {
+      for (int j = 0; j < st.inputs.size(); j++) {
         if (st.inputs.get(j).equals(mv2)) {
           st.inputs.set(j, mv1_new);
         }
@@ -622,9 +612,9 @@ public class GenBranchDir {
   }
 
   private static void replaceUses(MutableSequence mseq, MutableVariable mv1, MutableVariable mv2) {
-    for (int i = mv2.getDeclIndex() + 1 ; i < mseq.size() ; i++) {
+    for (int i = mv2.getDeclIndex() + 1; i < mseq.size(); i++) {
       MutableStatement st = mseq.getStatement(i);
-      for (int j = 0 ; j < st.inputs.size() ; j++) {
+      for (int j = 0; j < st.inputs.size(); j++) {
         if (st.inputs.get(j).equals(mv2)) {
           st.inputs.set(j, mv1);
         }
@@ -635,7 +625,7 @@ public class GenBranchDir {
   private static boolean canReplace(MutableSequence seq, MutableVariable v1, MutableVariable v2) {
     // Check if v1 is type-compatible with all uses of v2.
     for (int statementIndex : seq.getUses(v2)) {
-      for (int ithInput = 0 ; ithInput < seq.getInputs(statementIndex).size() ; ithInput++) {
+      for (int ithInput = 0; ithInput < seq.getInputs(statementIndex).size(); ithInput++) {
         if (seq.getInputs(statementIndex).get(ithInput).equals(v2)) {
           Class<?> inputType = seq.getOperation(statementIndex).getInputTypes().get(ithInput);
           if (!Reflection.canBeUsedAs(v1.getType(), inputType)) {
@@ -646,8 +636,6 @@ public class GenBranchDir {
     }
     return true;
   }
-
-
 
   private static Pair<Branch, Sequence> oneVarStrategies(DFResultsOneSeq r) {
     out.append("WILL TRY ONE-VARIABLE STRATEGIES.");
@@ -668,9 +656,7 @@ public class GenBranchDir {
     return null;
   }
 
-  private static Pair<Branch,Sequence> oneVarNullStrat(Sequence sequence,
-      Branch frontierBranch, Variable var) {
-
+  private static Pair<Branch, Sequence> oneVarNullStrat(Sequence sequence, Branch frontierBranch, Variable var) {
 
     Branch goalBranch = (frontierBranch).getOppositeBranch();
 
@@ -683,9 +669,8 @@ public class GenBranchDir {
         return null;
       }
 
-      //TODO statement.getValue is a hack that need to revisit
+      // TODO statement.getValue is a hack that need to revisit
       assert st.getValue() == null : sequence + "," + var;
-
 
       // Find subsequences that create the type.
       // TODO do components have things like "x = null"? We don't want those.
@@ -710,10 +695,8 @@ public class GenBranchDir {
 
       // Choose a variable in the sub-sequence. We'll call it the "new
       // variable".
-      List<Variable> varsOfType = comp.getVariablesOfType(st.getOutputType(),
-          Match.COMPATIBLE_TYPE);
+      List<Variable> varsOfType = comp.getVariablesOfType(st.getOutputType(), Match.COMPATIBLE_TYPE);
       Variable compvar = getLast(varsOfType);
-
 
       // Translate everything into the modifiable sequence world.
       // The old (original) sequence.
@@ -725,8 +708,9 @@ public class GenBranchDir {
       // The variable to replace oldvar's uses.
       MutableVariable newvar = subseq.getVariable(compvar.getDeclIndex());
 
-      // Insert sub-sequence into old sequence, right before the old var declaration.
-      Map<MutableVariable,MutableVariable> varmap = seq.insert(oldvar.getDeclIndex(), subseq);
+      // Insert sub-sequence into old sequence, right before the old var
+      // declaration.
+      Map<MutableVariable, MutableVariable> varmap = seq.insert(oldvar.getDeclIndex(), subseq);
       // update newvar to its MVariable in the modified sequence.
       newvar = varmap.get(newvar);
       assert newvar != null;
@@ -758,7 +742,6 @@ public class GenBranchDir {
       comp = comp.extend(newSt, new ArrayList<Variable>());
       Variable compvar = comp.getLastVariable();
 
-
       // Translate everything into the modifiable sequence world.
       // The old (original) sequence.
       MutableSequence seq = sequence.toModifiableSequence();
@@ -769,8 +752,9 @@ public class GenBranchDir {
       // The variable to replace oldvar's uses.
       MutableVariable newvar = subseq.getVariable(compvar.getDeclIndex());
 
-      // Insert sub-sequence into old sequence, right before the old var declaration.
-      Map<MutableVariable,MutableVariable> varmap = seq.insert(oldvar.getDeclIndex(), subseq);
+      // Insert sub-sequence into old sequence, right before the old var
+      // declaration.
+      Map<MutableVariable, MutableVariable> varmap = seq.insert(oldvar.getDeclIndex(), subseq);
       // update newvar to its MVariable in the modified sequence.
       newvar = varmap.get(newvar);
       assert newvar != null;
@@ -794,7 +778,6 @@ public class GenBranchDir {
       }
     }
 
-
     return null;
   }
 
@@ -810,9 +793,8 @@ public class GenBranchDir {
             FileInputStream fileos = new FileInputStream(onefile);
             ObjectInputStream objectos = new ObjectInputStream(new GZIPInputStream(fileos));
             @SuppressWarnings("unchecked")
-            Set<Sequence> seqset = (Set<Sequence>)objectos.readObject();
-            System.out.println("Adding " + seqset.size() + " component sequences from file "
-                               + onefile);
+            Set<Sequence> seqset = (Set<Sequence>) objectos.readObject();
+            System.out.println("Adding " + seqset.size() + " component sequences from file " + onefile);
             components.addAll(seqset);
           } catch (Exception e) {
             throw new Error(e);
@@ -822,8 +804,7 @@ public class GenBranchDir {
       if (!input_components_txt.isEmpty()) {
         for (String onefile : input_components_txt) {
           Set<Sequence> seqset = readTextSequences(onefile);
-          System.out.println("Adding " + seqset.size() + " component sequences from file "
-                             + onefile);
+          System.out.println("Adding " + seqset.size() + " component sequences from file " + onefile);
           components.addAll(seqset);
         }
       }
@@ -837,7 +818,7 @@ public class GenBranchDir {
   private static Variable getLast(List<Variable> varsOfType) {
     assert varsOfType.size() > 0;
     Variable last = varsOfType.get(0);
-    for (int i = 1 ; i < varsOfType.size() ; i++) {
+    for (int i = 1; i < varsOfType.size(); i++) {
       Variable v2 = varsOfType.get(i);
       if (v2.getDeclIndex() > last.getDeclIndex())
         last = v2;
@@ -858,26 +839,25 @@ public class GenBranchDir {
   private static Sequence getSmallest(SimpleList<Sequence> comps) {
     assert comps.size() > 0;
     Sequence smallest = comps.get(0);
-    for (int i = 1 ; i < comps.size() ; i++) {
+    for (int i = 1; i < comps.size(); i++) {
       if (comps.get(i).size() < smallest.size())
         smallest = comps.get(i);
     }
     return smallest;
   }
 
-  private static Pair<Branch,Sequence> oneVarNumericStrats(DFResultsOneSeq r, VariableInfo varinfo) {
+  private static Pair<Branch, Sequence> oneVarNumericStrats(DFResultsOneSeq r, VariableInfo varinfo) {
 
     Variable var = varinfo.value;
     assert var.sequence == r.sequence;
 
     // Determine goal branch.
     assert r.frontierBranch instanceof Branch;
-    Branch goalBranch = ((Branch)r.frontierBranch).getOppositeBranch();
+    Branch goalBranch = ((Branch) r.frontierBranch).getOppositeBranch();
     out.println("GOAL BRANCH (WILL TRY TO COVER): " + goalBranch);
 
     if (!var.getType().equals(int.class))
       return null;
-
 
     // First, try setting its value to a value compared to it during execution.
     for (String val : varinfo.branch_compares) {
@@ -885,7 +865,7 @@ public class GenBranchDir {
       out.println("WILL TRY REPLACING " + var + " WITH VALUE " + val);
       int intval = -1;
       try {
-         intval = Integer.parseInt(val);
+        intval = Integer.parseInt(val);
       } catch (NumberFormatException e) {
         System.out.println("WARNING: NumberFormatException when parsing value in VariableInfo: " + varinfo);
         continue;
@@ -897,12 +877,13 @@ public class GenBranchDir {
       }
     }
 
-    // First, try setting its value to a value compared to it during execution, +1.
+    // First, try setting its value to a value compared to it during execution,
+    // +1.
     for (String val : varinfo.branch_compares) {
       out.println("WILL TRY REPLACING " + var + " WITH VALUE " + val + " PLUS ONE.");
       int intval = -1;
       try {
-         intval = Integer.parseInt(val);
+        intval = Integer.parseInt(val);
       } catch (NumberFormatException e) {
         System.out.println("WARNING: NumberFormatException when parsing value in VariableInfo: " + varinfo);
         continue;
@@ -914,17 +895,18 @@ public class GenBranchDir {
       }
     }
 
-    // First, try setting its value to a value compared to it during execution, -1.
+    // First, try setting its value to a value compared to it during execution,
+    // -1.
     for (String val : varinfo.branch_compares) {
       out.println("WILL TRY REPLACING " + var + " WITH VALUE " + val + " MINUS ONE.");
       int intval = -1;
       try {
-         intval = Integer.parseInt(val);
+        intval = Integer.parseInt(val);
       } catch (NumberFormatException e) {
         System.out.println("WARNING: NumberFormatException when parsing value in VariableInfo: " + varinfo);
         continue;
       }
-      Sequence news = replaceVarValue(r.sequence, var, intval - 1 , goalBranch);
+      Sequence news = replaceVarValue(r.sequence, var, intval - 1, goalBranch);
       if (coversUncovered(news, goalBranch, "prim replace with " + var + " -1")) {
         out.println("SUCCESS! (onevarnum)");
         return new Pair<Branch, Sequence>(goalBranch, news);
@@ -955,7 +937,7 @@ public class GenBranchDir {
       }
     }
 
-    for (int i = 1 ; i <= 10000 ; i = i * 10) {
+    for (int i = 1; i <= 10000; i = i * 10) {
       // Try adding i, then setting to i.
       {
         {
@@ -965,7 +947,7 @@ public class GenBranchDir {
           assert st.getDeclaringClass().equals(int.class);
           int value = (Integer) st.getValue();
           Sequence news = replaceVarValue(r.sequence, var, value + i, goalBranch);
-          if (coversUncovered(news, goalBranch, "prim plus " + var )) {
+          if (coversUncovered(news, goalBranch, "prim plus " + var)) {
             out.println("SUCCESS! (onevarnum)");
             return new Pair<Branch, Sequence>(goalBranch, news);
           }
@@ -983,8 +965,6 @@ public class GenBranchDir {
         }
       }
     }
-
-
 
     // Try adding 1.
     {
@@ -1008,8 +988,7 @@ public class GenBranchDir {
   // Modifies sequence so that instead of "var = old_val", it has "var = val".
   // Executes sequence and checks if goalBranch is covered.
   // If so, returns true, else false.
-  private static Sequence replaceVarValue(Sequence sequence, Variable var,
-      int val, Branch goalBranch) {
+  private static Sequence replaceVarValue(Sequence sequence, Variable var, int val, Branch goalBranch) {
     assert var.sequence == sequence;
 
     MutableSequence seq = sequence.toModifiableSequence();
@@ -1032,7 +1011,7 @@ public class GenBranchDir {
     eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
     for (CoverageAtom ca : Coverage.getCoveredAtoms(covClasses)) {
       assert ca instanceof Branch;
-      coveredBranches.add((Branch)ca);
+      coveredBranches.add((Branch) ca);
     }
 
     coveredByBDGen.addAll(coveredBranches);
@@ -1043,7 +1022,8 @@ public class GenBranchDir {
       frontierWasCovered = true;
     }
 
-    // Branch db = Branch.parse("classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=true");
+    // Branch db =
+    // Branch.parse("classname=java2.util2.AbstractCollection,methodname=remove,line=254,id=13,direction=true");
 
     boolean usefulSequence = false;
     for (Branch b : coveredBranches) {
@@ -1079,12 +1059,13 @@ public class GenBranchDir {
     List<MutableVariable> valuesAfter = valuesAfter(oldv);
     valuesAfter.retainAll(newvPreds);
     // newvPreds has the values that newv depends on that come after v.
-    // Those (and newv itself) are the values that we have to move to before oldv.
+    // Those (and newv itself) are the values that we have to move to before
+    // oldv.
     List<MutableVariable> valuesAfter2 = valuesAfter(oldv);
     valuesAfter2.removeAll(newvPreds);
 
     List<MutableStatement> newStatements = new ArrayList<MutableStatement>();
-    for (int i = 0 ; i < oldv.getDeclIndex() ; i++) {
+    for (int i = 0; i < oldv.getDeclIndex(); i++) {
       newStatements.add(s.statements.get(i));
     }
     // At this point, add the values from newv.
@@ -1102,15 +1083,15 @@ public class GenBranchDir {
 
   private static List<MutableVariable> valuesAfter(MutableVariable oldv) {
     List<MutableVariable> valuesAfter = new ArrayList<MutableVariable>();
-    for (int i = oldv.getDeclIndex() + 1 ; i < oldv.owner.size() ; i++) {
+    for (int i = oldv.getDeclIndex() + 1; i < oldv.owner.size(); i++) {
       valuesAfter.add(oldv.owner.getVariable(i));
     }
     return valuesAfter;
   }
 
   /**
-   * Returns a set that includes v and any variables that are
-   * inputs to its declaring statement, recursively.
+   * Returns a set that includes v and any variables that are inputs to its
+   * declaring statement, recursively.
    */
   private static Set<MutableVariable> getPredecessors(MutableVariable v) {
     if (v == null)
@@ -1129,6 +1110,5 @@ public class GenBranchDir {
       assert input.owner == owner;
     return inputsSet;
   }
-
 
 }

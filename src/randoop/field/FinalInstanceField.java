@@ -7,8 +7,8 @@ import java.util.List;
 import randoop.sequence.Variable;
 
 /**
- * FinalInstanceField implements getter methods for final
- * instance fields of a class.
+ * FinalInstanceField implements getter methods for final instance fields of a
+ * class.
  */
 public class FinalInstanceField extends AccessibleField {
 
@@ -20,6 +20,7 @@ public class FinalInstanceField extends AccessibleField {
 
   /**
    * {@inheritDoc}
+   * 
    * @return empty list since a final field may not be set
    */
   @Override
@@ -29,6 +30,7 @@ public class FinalInstanceField extends AccessibleField {
 
   /**
    * {@inheritDoc}
+   * 
    * @return list with just the declaring type.
    */
   @Override
@@ -37,7 +39,7 @@ public class FinalInstanceField extends AccessibleField {
     types.add(getDeclaringClass());
     return types;
   }
-  
+
   @Override
   public String toCode(List<Variable> inputVars) {
     return inputVars.get(0) + "." + getName();

@@ -24,23 +24,23 @@ import plume.Options;
 import plume.Options.ArgException;
 
 /**
- * Creates a textual report of the coverage achieved for a collections
- * of classes.
+ * Creates a textual report of the coverage achieved for a collections of
+ * classes.
  */
 public class CreateCovReport {
-  
+
   @Option("Input coverage map")
   public static String input_map = null;
-  
+
   @Option("File with list of coverage-instrumented classes")
   public static String input_cov_class_list = null;
-  
+
   @Option("Output file (will output a text file)")
   public static String output_report = null;
-  
+
   @SuppressWarnings("unchecked")
   public static void main(String[] args) {
-    
+
     // Parse options and ensure that a scratch directory was specified.
     Options options = new Options(CreateCovReport.class);
     try {
@@ -58,7 +58,7 @@ public class CreateCovReport {
     }
     if (output_report == null) {
       System.out.println("ERROR: missing required argument --output-report.");
-      System.exit(1);      
+      System.exit(1);
     }
 
     // Read list of coverage-instrumented classes.
@@ -72,7 +72,7 @@ public class CreateCovReport {
     for (Class<?> cls : covClasses) {
       assert Coverage.isInstrumented(cls) : cls.toString();
     }
-    
+
     // Read coverage map.
     Map<CoverageAtom, Set<Sequence>> covmap = null;
     try {
@@ -84,24 +84,24 @@ public class CreateCovReport {
     } catch (Exception e) {
       throw new Error(e);
     }
-    
+
     // Touch all covered branches (they may have been reset during generation).
     for (CoverageAtom br : covmap.keySet()) {
       Coverage.touch((Branch) br);
     }
-    
+
     // Output report.
     Set<String> sourceFilesProcessed = new LinkedHashSet<String>();
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(output_report));
       for (Class<?> cls : covClasses) {
-        
+
         String filename = Coverage.getSourceFileName(cls);
         if (sourceFilesProcessed.contains(filename))
           continue;
 
         sourceFilesProcessed.add(filename);
-        
+
         for (String s : Coverage.getCoverageAnnotatedSource(cls)) {
           writer.append(s);
           writer.newLine();

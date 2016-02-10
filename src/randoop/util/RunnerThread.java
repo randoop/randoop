@@ -12,12 +12,15 @@ public class RunnerThread extends Thread {
   // The state of the thread.
   private NextCallMustBe state;
 
-  private enum NextCallMustBe { SETUP, RUN }
+  private enum NextCallMustBe {
+    SETUP, RUN
+  }
 
   /**
    * Create a new runner thread.
    *
-   * @param threadGroup  the group for this thread
+   * @param threadGroup
+   *          the group for this thread
    */
   public RunnerThread(ThreadGroup threadGroup) {
     super(threadGroup, "");
@@ -29,15 +32,18 @@ public class RunnerThread extends Thread {
   }
 
   public void setup(ReflectionCode code) {
-    if (state != NextCallMustBe.SETUP) throw new IllegalArgumentException();
-    if (code == null) throw new IllegalArgumentException("code cannot be null.");
+    if (state != NextCallMustBe.SETUP)
+      throw new IllegalArgumentException();
+    if (code == null)
+      throw new IllegalArgumentException("code cannot be null.");
     this.code = code;
     this.state = NextCallMustBe.RUN;
   }
 
   @Override
   public final void run() {
-    if (state != NextCallMustBe.RUN) throw new IllegalArgumentException();
+    if (state != NextCallMustBe.RUN)
+      throw new IllegalArgumentException();
     runFinished = false;
     executeReflectionCode();
     runFinished = true;
@@ -50,7 +56,8 @@ public class RunnerThread extends Thread {
       // exceptionThrown remains null.
     } catch (ThreadDeath e) {// can't stop these guys
       throw e;
-    } catch (ReflectionCode.NotCaughtIllegalStateException e) {// bug in randoop code
+    } catch (ReflectionCode.NotCaughtIllegalStateException e) {// bug in randoop
+                                                               // code
       throw e;
     } catch (Throwable e) {
       if (e instanceof java.lang.reflect.InvocationTargetException)

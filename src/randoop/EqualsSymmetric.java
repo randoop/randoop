@@ -22,9 +22,10 @@ public final class EqualsSymmetric implements ObjectContract {
   @Override
   public int hashCode() {
     int h = 19;
-    return h;  // no state to compare.
+    return h; // no state to compare.
   }
-  
+
+  @Override
   public boolean evaluate(Object... objects) {
 
     Object o1 = objects[0];
@@ -36,10 +37,12 @@ public final class EqualsSymmetric implements ObjectContract {
     return true;
   }
 
+  @Override
   public int getArity() {
     return 2;
   }
 
+  @Override
   public String toCommentString() {
     return "equals-symmetric on x0 and x1.";
   }

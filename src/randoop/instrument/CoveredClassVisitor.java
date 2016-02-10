@@ -8,9 +8,9 @@ import randoop.ExecutionVisitor;
 import randoop.sequence.ExecutableSequence;
 
 /**
- * A {@link ExecutionVisitor} that polls a set of coverage instrumented
- * classes and adds each covered class to an {@link ExecutableSequence} after
- * it is executed.
+ * A {@link ExecutionVisitor} that polls a set of coverage instrumented classes
+ * and adds each covered class to an {@link ExecutableSequence} after it is
+ * executed.
  */
 public class CoveredClassVisitor implements ExecutionVisitor {
 
@@ -21,15 +21,16 @@ public class CoveredClassVisitor implements ExecutionVisitor {
    * Creates a visitor to poll the given classes for coverage by sequence
    * executions.
    *
-   * @param classes  the set of classes to poll for coverage by a sequence
+   * @param classes
+   *          the set of classes to poll for coverage by a sequence
    */
   public CoveredClassVisitor(Set<Class<?>> classes) {
     this.classes = classes;
   }
 
   /**
-   * {@inheritDoc}
-   * Registers each class covered with the sequence execution results.
+   * {@inheritDoc} Registers each class covered with the sequence execution
+   * results.
    */
   @Override
   public void visitAfterSequence(ExecutableSequence executableSequence) {
@@ -43,7 +44,8 @@ public class CoveredClassVisitor implements ExecutionVisitor {
   /**
    * Calls the coverage instrumentation method.
    *
-   * @param c  the class for which method is to be called
+   * @param c
+   *          the class for which method is to be called
    * @return true if the instrumentation method is true, false otherwise
    */
   private boolean checkAndReset(Class<?> c) {

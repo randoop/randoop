@@ -40,14 +40,12 @@ import plume.Pair;
 import plume.Options.ArgException;
 
 /**
- * The cov.Instrument program implements a basic branch coverage
- * instrumenter that we use for the branch-directed test generation
- * research.
+ * The cov.Instrument program implements a basic branch coverage instrumenter
+ * that we use for the branch-directed test generation research.
  *
- * This tool is prototype-quality, not for production use. In
- * particular, it is missing a number of features including tracking
- * coverage for switch statements, and lack of support for
- * generics.
+ * This tool is prototype-quality, not for production use. In particular, it is
+ * missing a number of features including tracking coverage for switch
+ * statements, and lack of support for generics.
  *
  * This class contains the main method for the source code coverage
  * instrumenter.
@@ -93,8 +91,8 @@ public class Instrument extends ASTVisitor {
   private static int classDepth = 0;
   private static int methodDepth = 0;
   private static int methodId = 0;
-  private static Map<String,Set<Integer>> allMethodIndices = null;
-  private static Map<String,Pair<Integer,Integer>> allMethodLineSpans = null;
+  private static Map<String, Set<Integer>> allMethodIndices = null;
+  private static Map<String, Pair<Integer, Integer>> allMethodLineSpans = null;
 
   private static Set<Integer> oneMethodIndices = null;
   private static List<Integer> branchToLine = null;
@@ -111,8 +109,7 @@ public class Instrument extends ASTVisitor {
     }
     File destinationDir = new File(destination);
     if (destinationDir.exists() && !overwrite) {
-      System.out.println("Destination directory \"" + destinationDir +
-      "\" exists but --overwrite option was not given. Will not proceed.");
+      System.out.println("Destination directory \"" + destinationDir + "\" exists but --overwrite option was not given. Will not proceed.");
       System.exit(1);
     }
 
@@ -136,7 +133,7 @@ public class Instrument extends ASTVisitor {
       System.out.println("Instrumenting " + oneFile);
 
       ASTParser parser = ASTParser.newParser(AST.JLS3);
-      Map<String,String> compilerOptions = new HashMap<String,String>();
+      Map<String, String> compilerOptions = new HashMap<String, String>();
       compilerOptions.put(JavaCore.COMPILER_SOURCE, "1.5");
       parser.setCompilerOptions(compilerOptions);
       String fileContents = Files.getFileContents(oneFile);
@@ -161,9 +158,7 @@ public class Instrument extends ASTVisitor {
 
       try {
 
-        File instrumentedFileDir = new File(destinationDir.getPath()
-            + File.separator
-            + packageName.replace(".", File.separator));
+        File instrumentedFileDir = new File(destinationDir.getPath() + File.separator + packageName.replace(".", File.separator));
 
         if (!instrumentedFileDir.exists()) {
           instrumentedFileDir.mkdirs();
@@ -178,13 +173,12 @@ public class Instrument extends ASTVisitor {
         char[] contents = null;
         try {
           Document doc = new Document(fileContents);
-          TextEdit edits = unit.rewrite(doc,null);
+          TextEdit edits = unit.rewrite(doc, null);
           edits.apply(doc);
           String sourceCode = doc.get();
           if (sourceCode != null)
             contents = sourceCode.toCharArray();
-        }
-        catch (BadLocationException e) {
+        } catch (BadLocationException e) {
           throw new RuntimeException(e);
         }
 
@@ -207,9 +201,6 @@ public class Instrument extends ASTVisitor {
     }
   }
 
-
-
-
   private static List<String> readJavaFileNames(List<String> fileListings) throws IOException {
     assert fileListings != null;
     List<String> ret = new ArrayList<String>();
@@ -225,9 +216,6 @@ public class Instrument extends ASTVisitor {
     return ret;
   }
 
-
-
-
   private boolean preProcessClassDeclaration(TypeDeclaration type) {
     // If this is a top-level class, reset state.
     if (classDepth == 0) {
@@ -236,14 +224,12 @@ public class Instrument extends ASTVisitor {
       assert branchToLine == null;
       assert packageName != null;
       assert covFieldsCls == null;
-      covFieldsCls =
-        (packageName.length()==0 ? "" : packageName + ".")
-        + type.getName().toString();
+      covFieldsCls = (packageName.length() == 0 ? "" : packageName + ".") + type.getName().toString();
       branchNumber = 0;
       methodDepth = 0;
       methodId = 0;
       allMethodIndices = new LinkedHashMap<String, Set<Integer>>();
-      allMethodLineSpans = new LinkedHashMap<String, Pair<Integer,Integer>>();
+      allMethodLineSpans = new LinkedHashMap<String, Pair<Integer, Integer>>();
       branchToLine = new ArrayList<Integer>();
     }
     classDepth++;
@@ -292,18 +278,18 @@ public class Instrument extends ASTVisitor {
     postProcessClassOrEnumDeclaration(type.bodyDeclarations());
   }
 
-// We don't handle enums currently (we'll do so at some point, first writing
-// tests to make sure we do things correctly).
-//
-//  @Override
-//  public boolean visit(EnumDeclaration en) {
-//    return preProcessClassOrEnumDeclaration(en);
-//  }
-//
-//  @Override
-//  public void endVisit(EnumDeclaration en) {
-//    postProcessClassOrEnumDeclaration(en.bodyDeclarations());
-//  }
+  // We don't handle enums currently (we'll do so at some point, first writing
+  // tests to make sure we do things correctly).
+  //
+  // @Override
+  // public boolean visit(EnumDeclaration en) {
+  // return preProcessClassOrEnumDeclaration(en);
+  // }
+  //
+  // @Override
+  // public void endVisit(EnumDeclaration en) {
+  // postProcessClassOrEnumDeclaration(en.bodyDeclarations());
+  // }
 
   @Override
   public boolean visit(MethodDeclaration method) {
@@ -332,8 +318,8 @@ public class Instrument extends ASTVisitor {
         allMethodIndices.put(Integer.toString(methodId), oneMethodIndices);
         int startLine = unit.getLineNumber(method.getStartPosition());
         int endLine = unit.getLineNumber(method.getStartPosition() + method.getLength());
-        allMethodLineSpans.put(Integer.toString(methodId), new Pair<Integer,Integer>(startLine, endLine));
-      } catch (Exception e ) {
+        allMethodLineSpans.put(Integer.toString(methodId), new Pair<Integer, Integer>(startLine, endLine));
+      } catch (Exception e) {
         System.out.println(method.toString());
         throw new RuntimeException(e);
       }
@@ -344,29 +330,27 @@ public class Instrument extends ASTVisitor {
   }
 
   /**
-   * Augments boolean expression e to also record whether it evaluates to
-   * true or false. Each expression is assigned a unique id.
+   * Augments boolean expression e to also record whether it evaluates to true
+   * or false. Each expression is assigned a unique id.
    *
-   * If instrumentation==ARRAYS,
-   * e becomes ((e && ++branchTrue[13]!=0) || ++branchFalse[13]==0)
-   * which is equivalent to ((e && true) || false), because the array elements are
-   * initialized to zero and are only incremented.
+   * If instrumentation==ARRAYS, e becomes ((e && ++branchTrue[13]!=0) ||
+   * ++branchFalse[13]==0) which is equivalent to ((e && true) || false),
+   * because the array elements are initialized to zero and are only
+   * incremented.
    *
    * Then:
    *
-   * If e==true,  ((true  && true) || false) == true
-   * If e==false, ((false && true) || false) == false
+   * If e==true, ((true && true) || false) == true If e==false, ((false && true)
+   * || false) == false
    *
-   * If instrumentation==PRINTOUT
-   * e becomes ((e && branchTrue(13)) || branchFalse(13))
-   * which works similar to ARRAYS but the branchTrue and branchFalse methods
-   * print out new coverage to System.out.
+   * If instrumentation==PRINTOUT e becomes ((e && branchTrue(13)) ||
+   * branchFalse(13)) which works similar to ARRAYS but the branchTrue and
+   * branchFalse methods print out new coverage to System.out.
    *
    */
   @Override
   public boolean visit(IfStatement ifst) {
-    ifst.setExpression(coverageAugmentedExpr(ifst.getExpression(),
-        unit.getLineNumber(ifst.getStartPosition())));
+    ifst.setExpression(coverageAugmentedExpr(ifst.getExpression(), unit.getLineNumber(ifst.getStartPosition())));
     return true;
   }
 
@@ -397,8 +381,8 @@ public class Instrument extends ASTVisitor {
    * generated tests mess with the instrumentation.
    *
    */
-  private static List<BodyDeclaration> getCovIndicesMethod(Map<String,Set<Integer>> methodIndices,
-      List<Integer> branchToLine, int totBranches, Map<String, Pair<Integer, Integer>> allMethodLineSpans) {
+  private static List<BodyDeclaration> getCovIndicesMethod(Map<String, Set<Integer>> methodIndices, List<Integer> branchToLine, int totBranches,
+      Map<String, Pair<Integer, Integer>> allMethodLineSpans) {
 
     assert totBranches == branchToLine.size() : "totBranches:" + totBranches + ",branchToLine.size()=" + branchToLine.size();
     StringBuilder code = new StringBuilder();
@@ -408,20 +392,21 @@ public class Instrument extends ASTVisitor {
 
     code.append("public static int[] " + Constants.TRUE_BRANCHES + " = new int[" + totBranches + "];");
     code.append("public static int[] " + Constants.FALSE_BRANCHES + " = new int[" + totBranches + "];");
-    code.append("public static java.util.Map<String,int[]> " + Constants.METHOD_ID_TO_BRANCHES +  " = new java.util.LinkedHashMap<String,int[]>();");
+    code.append("public static java.util.Map<String,int[]> " + Constants.METHOD_ID_TO_BRANCHES + " = new java.util.LinkedHashMap<String,int[]>();");
     code.append("public static java.util.Map<String,int[]> " + Constants.METHOD_LINE_SPANS_FIELD + " = new java.util.LinkedHashMap<String,int[]>();");
     code.append("static {  ");
-    for (Map.Entry<String,Set<Integer>> entry : methodIndices.entrySet()) {
+    for (Map.Entry<String, Set<Integer>> entry : methodIndices.entrySet()) {
       String methodSig = entry.getKey();
       code.append(Constants.METHOD_ID_TO_BRANCHES + ".put(\"" + methodSig + "\", new int[]{");
       List<Integer> intList = new ArrayList<Integer>(entry.getValue());
-      for (int i = 0 ; i < intList.size() ; i++) {
-        if (i > 0) code.append(",");
+      for (int i = 0; i < intList.size(); i++) {
+        if (i > 0)
+          code.append(",");
         code.append(intList.get(i));
       }
       code.append("});");
     }
-    for (Map.Entry<String,Pair<Integer,Integer>> entry : allMethodLineSpans.entrySet()) {
+    for (Map.Entry<String, Pair<Integer, Integer>> entry : allMethodLineSpans.entrySet()) {
       String methodSig = entry.getKey();
       code.append(Constants.METHOD_LINE_SPANS_FIELD + ".put(\"" + methodSig + "\", new int[]{");
       code.append(entry.getValue().a + "," + entry.getValue().b + "});");
@@ -429,8 +414,9 @@ public class Instrument extends ASTVisitor {
     code.append("}");
 
     code.append("public static int " + Constants.BRANCHLINES + "[] = new int[]{");
-    for (int i = 0 ; i < branchToLine.size() ; i++) {
-      if (i > 0) code.append(",");
+    for (int i = 0; i < branchToLine.size(); i++) {
+      if (i > 0)
+        code.append(",");
       code.append(branchToLine.get(i));
     }
     code.append("};");
@@ -444,7 +430,6 @@ public class Instrument extends ASTVisitor {
     List<BodyDeclaration> decls = ASTUtil.parseBodyDeclarations(code.toString(), ast);
     return decls;
   }
-
 
   private static Expression coverageAugmentedExpr(Expression exp, int lineNumber) {
 

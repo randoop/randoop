@@ -24,7 +24,7 @@ public final class CheckRepContract implements ObjectContract {
   public final Method checkRepMethod;
   boolean returnsBoolean; // derived from checkRepMethod
   public final Class<?> declaringClass; // derived from checkRepMethod
-  
+
   @Override
   public boolean equals(Object o) {
     if (o == null)
@@ -32,7 +32,7 @@ public final class CheckRepContract implements ObjectContract {
     if (o == this)
       return true;
     if (!(o instanceof CheckRepContract)) {
-      return false;  // I collected the results of get_value() 
+      return false; // I collected the results of get_value()
 
     }
     CheckRepContract other = (CheckRepContract) o;
@@ -45,7 +45,7 @@ public final class CheckRepContract implements ObjectContract {
     h = h * 31 + checkRepMethod.hashCode();
     return h;
   }
-  
+
   public CheckRepContract(Method checkRepMethod) {
     if (checkRepMethod == null) {
       throw new IllegalArgumentException("argument cannot be null.");
@@ -64,7 +64,7 @@ public final class CheckRepContract implements ObjectContract {
     this.checkRepMethod = checkRepMethod;
     this.declaringClass = checkRepMethod.getDeclaringClass();
   }
-  
+
   @Override
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 1;
@@ -72,13 +72,13 @@ public final class CheckRepContract implements ObjectContract {
     if (declaringClass.equals(objects[0].getClass())) {
       try {
         if (returnsBoolean) {
-          return (Boolean)checkRepMethod.invoke(objects[0]);
+          return (Boolean) checkRepMethod.invoke(objects[0]);
         } else {
           checkRepMethod.invoke(objects[0]);
           return true;
         }
       } catch (IllegalArgumentException e) {
-       // This will never happen.
+        // This will never happen.
         throw new BugInRandoopException(e);
       } catch (IllegalAccessException e) {
         throw new RuntimeException(e);
@@ -96,7 +96,7 @@ public final class CheckRepContract implements ObjectContract {
 
   @Override
   public String toCommentString() {
-    return "Check rep invariant (method " + checkRepMethod.getName() + ") for x0"; 
+    return "Check rep invariant (method " + checkRepMethod.getName() + ") for x0";
   }
 
   @Override
@@ -113,7 +113,7 @@ public final class CheckRepContract implements ObjectContract {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-        b.append("// Check representation invariant." + Globals.lineSep);
+    b.append("// Check representation invariant." + Globals.lineSep);
     if (returnsBoolean) {
       b.append("org.junit.Assert.assertTrue(");
       b.append("\"Representation invariant failed: " + toCommentString() + "\", ");
@@ -124,13 +124,12 @@ public final class CheckRepContract implements ObjectContract {
     }
     return b.toString();
   }
-  
+
   /**
    * Serialize with a String version of checkRepMethod.
    */
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableCheckRepContract(checkRepMethod);
   }
-
 
 }

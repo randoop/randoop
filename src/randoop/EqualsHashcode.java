@@ -1,12 +1,13 @@
 package randoop;
 
 /**
- * The contract: <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.
+ * The contract:
+ * <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.
  */
 public final class EqualsHashcode implements ObjectContract {
 
   private static final long serialVersionUID = -1662539974264914487L;
-  
+
   @Override
   public boolean equals(Object o) {
     if (o == null)
@@ -22,9 +23,10 @@ public final class EqualsHashcode implements ObjectContract {
   @Override
   public int hashCode() {
     int h = 7;
-    return h;  // no state to compare.
+    return h; // no state to compare.
   }
 
+  @Override
   public boolean evaluate(Object... objects) {
 
     Object o1 = objects[0];
@@ -36,10 +38,12 @@ public final class EqualsHashcode implements ObjectContract {
     return true;
   }
 
+  @Override
   public int getArity() {
     return 2;
   }
 
+  @Override
   public String toCommentString() {
     return "equals-hashcode on x0 and x1";
   }
@@ -49,6 +53,7 @@ public final class EqualsHashcode implements ObjectContract {
     return "EqualsHashcode";
   }
 
+  @Override
   public boolean evalExceptionMeansFailure() {
     return true;
   }

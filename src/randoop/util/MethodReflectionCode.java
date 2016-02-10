@@ -7,12 +7,9 @@ import java.util.Arrays;
 
 import randoop.main.GenInputsAbstract;
 
-
-
-
 /**
- * This is used to wrap a method together with its parameters, ready for execution.
- * Can be run only once.
+ * This is used to wrap a method together with its parameters, ready for
+ * execution. Can be run only once.
  */
 public final class MethodReflectionCode extends ReflectionCode {
 
@@ -26,8 +23,10 @@ public final class MethodReflectionCode extends ReflectionCode {
    * receiver is ok to be null - will cause NPE on invocation
    */
   public MethodReflectionCode(Method method, Object receiver, Object[] inputs) {
-    if (method == null) throw new IllegalArgumentException("method is null");
-    if (inputs == null) throw new IllegalArgumentException("inputs is null");
+    if (method == null)
+      throw new IllegalArgumentException("method is null");
+    if (inputs == null)
+      throw new IllegalArgumentException("inputs is null");
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;
@@ -37,14 +36,14 @@ public final class MethodReflectionCode extends ReflectionCode {
   private void checkRep() {
     if (!GenInputsAbstract.debug_checks)
       return;
-    String error= Reflection.checkArgumentTypes(inputs, method.getParameterTypes(), method);
+    String error = Reflection.checkArgumentTypes(inputs, method.getParameterTypes(), method);
     if (error != null)
       throw new IllegalArgumentException(error);
     if (Modifier.isStatic(this.method.getModifiers())) {
       if (receiver != null)
         throw new IllegalArgumentException("receiver must be null for static method.");
     } else {
-      if (! Reflection.canBePassedAsArgument(receiver, method.getDeclaringClass()))
+      if (!Reflection.canBePassedAsArgument(receiver, method.getDeclaringClass()))
         throw new IllegalArgumentException("method " + method + " cannot be invoked on " + receiver);
     }
     // TODO check that the lookup starting at receiver.getClass<?> will result
@@ -76,10 +75,10 @@ public final class MethodReflectionCode extends ReflectionCode {
       if (receiver == null && isInstanceMethod())
         throw new NotCaughtIllegalStateException("receiver was null - expected NPE from call to: " + method);
     } catch (NullPointerException e) {
-      this.exceptionThrown= e;
+      this.exceptionThrown = e;
       throw e;
     } catch (InvocationTargetException e) {
-      this.exceptionThrown= e.getCause();
+      this.exceptionThrown = e.getCause();
       throw e;
     } finally {
       if (retval != null && exceptionThrown != null)
@@ -88,12 +87,12 @@ public final class MethodReflectionCode extends ReflectionCode {
   }
 
   private boolean isInstanceMethod() {
-    return ! Modifier.isStatic(method.getModifiers());
+    return !Modifier.isStatic(method.getModifiers());
   }
 
   @Override
   public Object getReturnVariable() {
-    if (! hasRunAlready())
+    if (!hasRunAlready())
       throw new IllegalStateException("run first, then ask");
     if (receiver == null && retval != null && isInstanceMethod())
       throw new IllegalStateException("receiver was null - expected NPE from call to: " + method);
@@ -102,7 +101,7 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public Throwable getExceptionThrown() {
-    if (! hasRunAlready())
+    if (!hasRunAlready())
       throw new IllegalStateException("run first, then ask");
     if (receiver == null && !(exceptionThrown instanceof NullPointerException) && isInstanceMethod())
       throw new IllegalStateException("receiver was null - expected NPE from call to: " + method);
@@ -123,8 +122,8 @@ public final class MethodReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    String ret= "Call to " + method + " receiver:" + receiver + " args:" + Arrays.toString(inputs);
-    if (! hasRunAlready())
+    String ret = "Call to " + method + " receiver:" + receiver + " args:" + Arrays.toString(inputs);
+    if (!hasRunAlready())
       return ret + " not run yet";
     else if (exceptionThrown == null)
       return ret + " returned:" + retval;

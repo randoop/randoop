@@ -15,20 +15,19 @@ public class InvalidExceptionCheck extends ExceptionCheck {
     super(exception, statementIndex, catchClassName);
   }
 
-
   @Override
   protected void appendCatchBehavior(StringBuilder b, String exceptionClassName) {
     String prefix = "statement threw an invalid exception ";
     String suffix = " during test generation";
-    b.append("// " + prefix  + exception.getClass().getName() + suffix);
-    
+    b.append("// " + prefix + exception.getClass().getName() + suffix);
+
   }
 
   @Override
   protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
     // do nothing
   }
-  
+
   @Override
   public String getValue() {
     return "invalid exception " + exception.getClass().getName();
@@ -45,9 +44,11 @@ public class InvalidExceptionCheck extends ExceptionCheck {
   }
 
   /**
-   * {@inheritDoc}
-   * An invalid check cannot be evaluated, so this throws an exception.
-   * @throws IllegalArgumentException whenever called
+   * {@inheritDoc} An invalid check cannot be evaluated, so this throws an
+   * exception.
+   * 
+   * @throws IllegalArgumentException
+   *           whenever called
    */
   @Override
   public boolean evaluate(Execution execution) {

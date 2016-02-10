@@ -12,34 +12,35 @@ public final class PrimitiveTypes {
     throw new IllegalStateException("no instances");
   }
 
-  private static final Map<String, Class<?>> typeNameToBoxed= new LinkedHashMap<String, Class<?>>();
+  private static final Map<String, Class<?>> typeNameToBoxed = new LinkedHashMap<String, Class<?>>();
+
   static {
-    typeNameToBoxed.put("int",     Integer.class);
+    typeNameToBoxed.put("int", Integer.class);
     typeNameToBoxed.put("boolean", Boolean.class);
-    typeNameToBoxed.put("float",   Float.class);
-    typeNameToBoxed.put("char",    Character.class);
-    typeNameToBoxed.put("double",  Double.class);
-    typeNameToBoxed.put("long",    Long.class);
-    typeNameToBoxed.put("short",   Short.class);
-    typeNameToBoxed.put("byte",    Byte.class);
+    typeNameToBoxed.put("float", Float.class);
+    typeNameToBoxed.put("char", Character.class);
+    typeNameToBoxed.put("double", Double.class);
+    typeNameToBoxed.put("long", Long.class);
+    typeNameToBoxed.put("short", Short.class);
+    typeNameToBoxed.put("byte", Byte.class);
     typeNameToBoxed.put(String.class.getName(), String.class);
   }
 
-  private static final Map<Class<?>, Class<?>> boxedToPrimitiveAndString= new LinkedHashMap<Class<?>, Class<?>>();
+  private static final Map<Class<?>, Class<?>> boxedToPrimitiveAndString = new LinkedHashMap<Class<?>, Class<?>>();
+
   static {
-    boxedToPrimitiveAndString.put(Integer.class,   int.class);
-    boxedToPrimitiveAndString.put(Boolean.class,   boolean.class);
-    boxedToPrimitiveAndString.put(Float.class,     float.class);
+    boxedToPrimitiveAndString.put(Integer.class, int.class);
+    boxedToPrimitiveAndString.put(Boolean.class, boolean.class);
+    boxedToPrimitiveAndString.put(Float.class, float.class);
     boxedToPrimitiveAndString.put(Character.class, char.class);
-    boxedToPrimitiveAndString.put(Double.class,    double.class);
-    boxedToPrimitiveAndString.put(Long.class,      long.class);
-    boxedToPrimitiveAndString.put(Short.class,     short.class);
-    boxedToPrimitiveAndString.put(Byte.class,      byte.class);
+    boxedToPrimitiveAndString.put(Double.class, double.class);
+    boxedToPrimitiveAndString.put(Long.class, long.class);
+    boxedToPrimitiveAndString.put(Short.class, short.class);
+    boxedToPrimitiveAndString.put(Byte.class, byte.class);
     boxedToPrimitiveAndString.put(String.class, String.class);
   }
 
-  private static final Map<Class<?>, Class<?>> primitiveAndStringToBoxed
-  = new LinkedHashMap<Class<?>, Class<?>>(8);
+  private static final Map<Class<?>, Class<?>> primitiveAndStringToBoxed = new LinkedHashMap<Class<?>, Class<?>>(8);
 
   static {
     primitiveAndStringToBoxed.put(boolean.class, Boolean.class);
@@ -50,20 +51,22 @@ public final class PrimitiveTypes {
     primitiveAndStringToBoxed.put(int.class, Integer.class);
     primitiveAndStringToBoxed.put(long.class, Long.class);
     primitiveAndStringToBoxed.put(short.class, Short.class);
-    primitiveAndStringToBoxed.put(String.class, String.class); // TODO remove this hack!
+    primitiveAndStringToBoxed.put(String.class, String.class); // TODO remove
+                                                               // this hack!
   }
 
-  protected static final Map<String, Class<?>> typeNameToPrimitiveOrString= new LinkedHashMap<String, Class<?>>();
+  protected static final Map<String, Class<?>> typeNameToPrimitiveOrString = new LinkedHashMap<String, Class<?>>();
+
   static {
     typeNameToPrimitiveOrString.put("void", void.class);
-    typeNameToPrimitiveOrString.put("int",     int.class);
+    typeNameToPrimitiveOrString.put("int", int.class);
     typeNameToPrimitiveOrString.put("boolean", boolean.class);
-    typeNameToPrimitiveOrString.put("float",   float.class);
-    typeNameToPrimitiveOrString.put("char",    char.class);
-    typeNameToPrimitiveOrString.put("double",  double.class);
-    typeNameToPrimitiveOrString.put("long",    long.class);
-    typeNameToPrimitiveOrString.put("short",   short.class);
-    typeNameToPrimitiveOrString.put("byte",    byte.class);
+    typeNameToPrimitiveOrString.put("float", float.class);
+    typeNameToPrimitiveOrString.put("char", char.class);
+    typeNameToPrimitiveOrString.put("double", double.class);
+    typeNameToPrimitiveOrString.put("long", long.class);
+    typeNameToPrimitiveOrString.put("short", short.class);
+    typeNameToPrimitiveOrString.put("byte", byte.class);
     typeNameToPrimitiveOrString.put(String.class.getName(), String.class);
   }
 
@@ -102,12 +105,11 @@ public final class PrimitiveTypes {
     return primitiveAndStringToBoxed.containsKey(type);
   }
 
-  public static Map<Class<?>,Boolean> isPrimitiveCached =
-    new LinkedHashMap<Class<?>, Boolean>();
+  public static Map<Class<?>, Boolean> isPrimitiveCached = new LinkedHashMap<Class<?>, Boolean>();
 
   /**
-   * Same as c.isPrimitive() but faster if this test is done very
-   * frequently (as it is in Randoop).
+   * Same as c.isPrimitive() but faster if this test is done very frequently (as
+   * it is in Randoop).
    */
   public static boolean isPrimitive(Class<?> c) {
     if (c == null)
@@ -137,11 +139,12 @@ public final class PrimitiveTypes {
   }
 
   /**
-   * Given a primitive, boxed primitive, or String, returns a String that can
-   * be uesd in Java source to represent it.
+   * Given a primitive, boxed primitive, or String, returns a String that can be
+   * uesd in Java source to represent it.
    *
-   * @param value the value to create a String representation for.
-   * The value's type must be a primitive type, a String, or null.
+   * @param value
+   *          the value to create a String representation for. The value's type
+   *          must be a primitive type, a String, or null.
    */
   public static String toCodeString(Object value) {
 
@@ -149,7 +152,7 @@ public final class PrimitiveTypes {
       return "null";
     }
     Class<?> valueClass = primitiveType(value.getClass());
-    assert valueClass != null : value + " "  + value.getClass();
+    assert valueClass != null : value + " " + value.getClass();
 
     if (String.class.equals(valueClass)) {
       String escaped = StringEscapeUtils.escapeJava(value.toString());
@@ -245,8 +248,8 @@ public final class PrimitiveTypes {
   /**
    * Returns true if the given string looks like it came from a call of
    * Object.toString(); in other words, looks something like
-   * "&lt;classname&gt;@&lt;hex&gt;". Such strings are rarely useful in generation because
-   * they contain non-reproducible hash strings.
+   * "&lt;classname&gt;@&lt;hex&gt;". Such strings are rarely useful in
+   * generation because they contain non-reproducible hash strings.
    * 
    * This method is actually more restrictive in what it determines to look like
    * it came from Object.toString(): it deems anything that matches the pattern
@@ -254,8 +257,8 @@ public final class PrimitiveTypes {
    * .*@[0-9a-h]{1,8}.*
    * 
    * Meaning, if it looks like the string contains the telltale "@&lt;hex&gt;"
-   * pattern, the method returns false. This almost always works and is a
-   * faster check.
+   * pattern, the method returns false. This almost always works and is a faster
+   * check.
    */
   public static boolean looksLikeObjectToString(String s) {
     if (s == null) {
@@ -271,54 +274,56 @@ public final class PrimitiveTypes {
 
     return s.matches(OBJECT_REF_PATTERN);
   }
-  
+
   // Used to increase performance of stringLengthOK method.
-  private static Map<String, Boolean> stringLengthOKCached =
-    new LinkedHashMap<String, Boolean>();
-  
+  private static Map<String, Boolean> stringLengthOKCached = new LinkedHashMap<String, Boolean>();
+
   /**
-   * Returns true if the given string is deemed to be reasonable (i.e. not too long)
-   * based on the --string-maxlen=N parameter.
+   * Returns true if the given string is deemed to be reasonable (i.e. not too
+   * long) based on the --string-maxlen=N parameter.
    * <p>
-   * If Randoop generates tests using strings that are too long, this can
-   * result in non-compilable tests due to the JVM's limit on the length of a string.
+   * If Randoop generates tests using strings that are too long, this can result
+   * in non-compilable tests due to the JVM's limit on the length of a string.
    * <p>
    * A string S is too long if, when printed as code in a generated unit test,
    * it may result in a non-compilable test. In order to determine this, we have
    * to consider not the length of s, but the length of the string that would be
-   * printed to obtain s, which may be different due to escaped and unicode characters.
-   * This method takes this into account.
+   * printed to obtain s, which may be different due to escaped and unicode
+   * characters. This method takes this into account.
    *
-   *  @see GenInputsAbstract
+   * @see GenInputsAbstract
    */
   public static boolean stringLengthOK(String s) {
     if (s == null) {
       throw new IllegalArgumentException("s is null");
     }
-    
+
     // Optimization: return cached value if available.
     Boolean b = stringLengthOKCached.get(s);
     if (b != null) {
       return b;
     }
-    
+
     int length = s.length();
-    
+
     // Optimization: if length greater than maxlen, return false right away.
     if (length > GenInputsAbstract.string_maxlen) {
       stringLengthOKCached.put(s, false);
       return false;
     }
-    
-    // Optimization: if the string is definitely short enough, return true right away.
-    // If a string's length is less than 1/6 * maxlen, it's definitely short enough, since
-    // the worst that could happen is that every character in s is unicode and is
+
+    // Optimization: if the string is definitely short enough, return true right
+    // away.
+    // If a string's length is less than 1/6 * maxlen, it's definitely short
+    // enough, since
+    // the worst that could happen is that every character in s is unicode and
+    // is
     // expanded to "\u0000" format, blowing up the length to s.length() * 6.
     if (length * 6 < GenInputsAbstract.string_maxlen) {
       stringLengthOKCached.put(s, true);
       return true;
     }
-    
+
     boolean retval = StringEscapeUtils.escapeJava(s).length() <= GenInputsAbstract.string_maxlen;
     stringLengthOKCached.put(s, retval);
     return retval;

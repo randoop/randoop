@@ -14,16 +14,19 @@ public class PrepareTargetMaker implements TargetMaker {
     }
   }
 
+  @Override
   public String getNextTarget() {
     if (experiments.isEmpty())
       return null;
     return experiments.remove(0);
   }
 
+  @Override
   public boolean hasMoreTargets() {
     return !experiments.isEmpty();
   }
 
+  @Override
   public int targetsLeft() {
     return experiments.size();
   }

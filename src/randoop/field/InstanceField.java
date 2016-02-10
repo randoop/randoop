@@ -7,9 +7,8 @@ import java.util.List;
 import randoop.sequence.Variable;
 
 /**
- * InstanceField represents an instance field of a class.
- * This means that to be set, the field must be qualified
- * by the object.
+ * InstanceField represents an instance field of a class. This means that to be
+ * set, the field must be qualified by the object.
  *
  */
 public class InstanceField extends AccessibleField {
@@ -21,9 +20,8 @@ public class InstanceField extends AccessibleField {
   }
 
   /**
-   * Returns a list consisting of the declaring class
-   * and the type of the field. These are types needed to set
-   * an instance field.
+   * Returns a list consisting of the declaring class and the type of the field.
+   * These are types needed to set an instance field.
    */
   @Override
   public List<Class<?>> getSetTypes() {
@@ -39,8 +37,8 @@ public class InstanceField extends AccessibleField {
   }
 
   /**
-   * Returns list of types needed to access field.
-   * Should be singleton list of declaring class.
+   * Returns list of types needed to access field. Should be singleton list of
+   * declaring class.
    */
   @Override
   public List<Class<?>> getAccessTypes() {
@@ -48,7 +46,5 @@ public class InstanceField extends AccessibleField {
     types.add(getDeclaringClass());
     return types;
   }
-  
-
 
 }

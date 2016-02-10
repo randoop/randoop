@@ -1,11 +1,12 @@
 package randoop.util.predicate;
 
 /**
- * Predicate that implements the and-also operator on a pair of predicates.
- * The and-also operator is a short-circuited and operator, which only tests
- * the second predicate if the first predicate is true.
+ * Predicate that implements the and-also operator on a pair of predicates. The
+ * and-also operator is a short-circuited and operator, which only tests the
+ * second predicate if the first predicate is true.
  *
- * @param <T>  the type of object to be tested
+ * @param <T>
+ *          the type of object to be tested
  */
 public class AndPredicate<T> extends DefaultPredicate<T> {
 
@@ -13,11 +14,13 @@ public class AndPredicate<T> extends DefaultPredicate<T> {
   private Predicate<T> second;
 
   /**
-   * Creates a Predicate that performs the and-also operator: testing the
-   * first predicate, and then the second.
+   * Creates a Predicate that performs the and-also operator: testing the first
+   * predicate, and then the second.
    * 
-   * @param first  the predicate to test first
-   * @param second  the predicate to test second
+   * @param first
+   *          the predicate to test first
+   * @param second
+   *          the predicate to test second
    */
   public AndPredicate(Predicate<T> first, Predicate<T> second) {
     this.first = first;
@@ -25,9 +28,11 @@ public class AndPredicate<T> extends DefaultPredicate<T> {
   }
 
   /**
-   * {@inheritDoc}
-   * Return the short-circuited and of the two predicates for the value t
-   * @return true if both the first and second predicate is true on t, and false otherwise  
+   * {@inheritDoc} Return the short-circuited and of the two predicates for the
+   * value t
+   * 
+   * @return true if both the first and second predicate is true on t, and false
+   *         otherwise
    */
   @Override
   public boolean test(T t) {

@@ -33,13 +33,13 @@ import randoop.util.WeightedElement;
  * Immutable.
  * <p>
  * A sequence of {@link Statement}s. Each element in the sequence represents a
- * particular {@link Statement}, like a method call <code>Foo f = m(i1...iN)</code> or a
- * declaration <code>int x = 0</code>.
+ * particular {@link Statement}, like a method call
+ * <code>Foo f = m(i1...iN)</code> or a declaration <code>int x = 0</code>.
  * <p>
  * This class represents only the structure of a well-formed sequence of
  * statements, and does not contain any information about the runtime behavior
- * of the sequence. The class randoop.ExecutableSequence adds
- * functionality that executes the sequence.
+ * of the sequence. The class randoop.ExecutableSequence adds functionality that
+ * executes the sequence.
  */
 public final class Sequence implements Serializable, WeightedElement {
 
@@ -61,11 +61,12 @@ public final class Sequence implements Serializable, WeightedElement {
   private transient/* final */List<Class<?>> lastStatementTypes;
 
   /*
-   * Weight is used by heuristic that favors smaller sequences
-   * so it makes sense to define weight as the inverse of size.
+   * Weight is used by heuristic that favors smaller sequences so it makes sense
+   * to define weight as the inverse of size.
    */
+  @Override
   public double getWeight() {
-    return 1/(double)size();
+    return 1 / (double) size();
   }
 
   /**
@@ -92,30 +93,28 @@ public final class Sequence implements Serializable, WeightedElement {
   /** The values associated with this sequence. */
   public List<Variable> getAllVariables() {
     List<Variable> retval = new ArrayList<Variable>();
-    for (int i = 0 ; i < this.statements. size() ; i++) {
+    for (int i = 0; i < this.statements.size(); i++) {
       retval.add(new Variable(this, i));
     }
     return retval;
   }
 
   /**
-   * The variables involved in the last statement.
-   * This includes the output variable.
+   * The variables involved in the last statement. This includes the output
+   * variable.
    */
   public List<Variable> getLastStatementVariables() {
     return this.lastStatementVariables;
   }
 
   /**
-   * The types of all the variables involved in the last statement.
-   * This includes the output variable.
-   * The types returned are not the types in the signature of the
-   * StatementKind, but the types of the variables.
+   * The types of all the variables involved in the last statement. This
+   * includes the output variable. The types returned are not the types in the
+   * signature of the StatementKind, but the types of the variables.
    */
   public List<Class<?>> getLastStatementTypes() {
     return this.lastStatementTypes;
   }
-
 
   /** The value created by the last statement in the sequence. */
   public Variable getLastVariable() {
@@ -134,8 +133,9 @@ public final class Sequence implements Serializable, WeightedElement {
     return statements.get((value).index);
   }
 
-  /** The inputs for the ith statement.
-   * Includes the receiver. */
+  /**
+   * The inputs for the ith statement. Includes the receiver.
+   */
   public List<Variable> getInputs(int statementIndex) {
     List<Variable> inputsAsVariables = new ArrayList<Variable>();
     for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs)
@@ -143,19 +143,17 @@ public final class Sequence implements Serializable, WeightedElement {
     return inputsAsVariables;
   }
 
-  /** 
-   * Returns the Java source code representation of this sequence.
-   * Similar to {@link ExecutableSequence#toCodeString()} except 
-   * does not include checks.
-   *  
+  /**
+   * Returns the Java source code representation of this sequence. Similar to
+   * {@link ExecutableSequence#toCodeString()} except does not include checks.
+   * 
    * @return a string containing Java code for this sequence
    */
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       // don't dump primitive initializations, if using literals
-      if (!GenInputsAbstract.long_format
-          && getStatement(i).getShortForm() != null) {
+      if (!GenInputsAbstract.long_format && getStatement(i).getShortForm() != null) {
         continue;
       }
       appendCode(b, i);
@@ -166,15 +164,16 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Equivalent to toParseableString().
    */
+  @Override
   public String toString() {
     return toParseableString();
   }
-  
+
   /**
-   * A set of bits, where there is one bit associated with each index.
-   * Active flags are used during generation, to determine what values
-   * in an existing sequence are useful to be used as inputs when
-   * creating a new sequence out of the existing one.
+   * A set of bits, where there is one bit associated with each index. Active
+   * flags are used during generation, to determine what values in an existing
+   * sequence are useful to be used as inputs when creating a new sequence out
+   * of the existing one.
    */
   public BitSet activeFlags;
 
@@ -388,15 +387,15 @@ public final class Sequence implements Serializable, WeightedElement {
     return create(NonreceiverTerm.createNullOrZeroTerm(c));
   }
 
-
   // Create a sequence with the given statements.
-  /*package*/ public Sequence(SimpleList<Statement> statements) {
+  /* package */ public Sequence(SimpleList<Statement> statements) {
     this(statements, computeHashcode(statements), computeNetSize(statements));
   }
 
   // The hashcode of a sequence is the sum of each statement's hashcode.
   // This seems good enough, and it makes computing hashCode of a
-  // concatenation of sequences faster (it's just the addition of each sequence's'
+  // concatenation of sequences faster (it's just the addition of each
+  // sequence's'
   // hashCode). Otherwise, hashCode computation used to be a hotspot.
   private static int computeHashcode(SimpleList<Statement> statements) {
     int hashCode = 0;
@@ -411,7 +410,8 @@ public final class Sequence implements Serializable, WeightedElement {
    * Counts the number of statements in a list that are not initializations with
    * a primitive type. For instance <code>int var7 = 0</code>.
    *
-   * @param statements  the list of {@link Statement} objects
+   * @param statements
+   *          the list of {@link Statement} objects
    * @return count of statements other than primitive initializations
    */
   private static int computeNetSize(SimpleList<Statement> statements) {
@@ -451,7 +451,8 @@ public final class Sequence implements Serializable, WeightedElement {
 
       // Process return value
       if (si.getOutputType().equals(void.class)) {
-        lastStatementTypes.add(void.class); // used for void methods and Dummy statements
+        lastStatementTypes.add(void.class); // used for void methods and Dummy
+                                            // statements
       } else {
         lastStatementTypes.add(si.getOutputType());
       }
@@ -462,13 +463,22 @@ public final class Sequence implements Serializable, WeightedElement {
         throw new RuntimeException(si.inputs + ", " + si.getInputTypes() + ", " + si.toString());
 
       List<Variable> v = this.getInputs(this.statements.size() - 1);
-      if (v.size() != si.getInputTypes().size()) throw new RuntimeException();
+      if (v.size() != si.getInputTypes().size())
+        throw new RuntimeException();
 
       for (int i = 0; i < v.size(); i++) {
         Variable value = v.get(i);
         assert Reflection.canBeUsedAs(value.getType(), si.getInputTypes().get(i));
         lastStatementTypes.add(value.getType());
-        Variable idx = getVariableForInput(this.size() - 1, si.inputs.get(i)); // XXX bogus. Isn't this just recomputing v from above?
+        Variable idx = getVariableForInput(this.size() - 1, si.inputs.get(i)); // XXX
+                                                                               // bogus.
+                                                                               // Isn't
+                                                                               // this
+                                                                               // just
+                                                                               // recomputing
+                                                                               // v
+                                                                               // from
+                                                                               // above?
         lastStatementVariables.add(idx);
       }
     }
@@ -499,9 +509,8 @@ public final class Sequence implements Serializable, WeightedElement {
       // of them,
       // and they refer to appropriate input values.
       if (statementWithInputs.getInputTypes().size() != statementWithInputs.inputs.size())
-        throw new IllegalArgumentException("statement.getInputConstraints().size()="
-            + statementWithInputs.getInputTypes().size() + " is different from inputIndices.length="
-            + statementWithInputs.inputs.size() + ", sequence: " + this.toString());
+        throw new IllegalArgumentException("statement.getInputConstraints().size()=" + statementWithInputs.getInputTypes().size()
+            + " is different from inputIndices.length=" + statementWithInputs.inputs.size() + ", sequence: " + this.toString());
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
         if (index >= 0)
@@ -510,9 +519,8 @@ public final class Sequence implements Serializable, WeightedElement {
         if (newRefConstraint == null)
           throw new IllegalStateException();
         if (!Reflection.canBeUsedAs(newRefConstraint, statementWithInputs.getInputTypes().get(i)))
-          throw new IllegalArgumentException(i + "th input constraint " + newRefConstraint + " does not imply " + "statement's " + i
-              + "th input constraint " + statementWithInputs.getInputTypes().get(i) + Globals.lineSep + ".Sequence:" + Globals.lineSep
-              + this.toString());
+          throw new IllegalArgumentException(i + "th input constraint " + newRefConstraint + " does not imply " + "statement's " + i + "th input constraint "
+              + statementWithInputs.getInputTypes().get(i) + Globals.lineSep + ".Sequence:" + Globals.lineSep + this.toString());
       }
     }
   }
@@ -530,18 +538,18 @@ public final class Sequence implements Serializable, WeightedElement {
     Sequence other = (Sequence) o;
     if (this.getStatementsWithInputs().size() != other.getStatementsWithInputs().size())
       return GenInputsAbstract.debug_checks ? verifyFalse("size", other) : false;
-      for (int i = 0; i < this.statements.size(); i++) {
-        Statement thisStatement = this.statements.get(i);
-        Statement otherStatement = other.statements.get(i);
-        if (GenInputsAbstract.debug_checks) {
-          assert this.statements.get(i) == thisStatement;
-          assert other.statements.get(i) == otherStatement;
-        }
-        if (!thisStatement.equals(otherStatement)) {
-          return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i, other) : false;
-        }
+    for (int i = 0; i < this.statements.size(); i++) {
+      Statement thisStatement = this.statements.get(i);
+      Statement otherStatement = other.statements.get(i);
+      if (GenInputsAbstract.debug_checks) {
+        assert this.statements.get(i) == thisStatement;
+        assert other.statements.get(i) == otherStatement;
       }
-      return true;
+      if (!thisStatement.equals(otherStatement)) {
+        return GenInputsAbstract.debug_checks ? verifyFalse("statement index " + i, other) : false;
+      }
+    }
+    return true;
   }
 
   // Debugging helper for equals method.
@@ -586,14 +594,14 @@ public final class Sequence implements Serializable, WeightedElement {
     return this.statements;
   }
 
-  /** The statement(+inputs) at the given index.
+  /**
+   * The statement(+inputs) at the given index.
    */
   protected final Statement getStatementWithInputs(int index) {
     if (!isValidIndex(index))
       throw new IllegalArgumentException("Index " + index + " not valid for sequence " + this);
     return this.getStatementsWithInputs().get(index);
   }
-
 
   public Variable randomVariableForTypeLastStatement(Class<?> t, Match match) {
     return randomVariableOfTypeLastStatement(t, match);
@@ -607,8 +615,8 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * A value declared in this sequence whose type matches the given
-   * class. Returns null if there are no matches.
+   * A value declared in this sequence whose type matches the given class.
+   * Returns null if there are no matches.
    */
   public final Variable randomVariableOfTypeLastStatement(Class<?> clazz, Reflection.Match match) {
     List<Variable> possibleVariables = valuesAppearingInLastStatement(clazz, match);
@@ -617,8 +625,9 @@ public final class Sequence implements Serializable, WeightedElement {
     return Randomness.randomMember(possibleVariables);
   }
 
-  /** All the values declared in this sequences whose type matches the
-   * given class. Returns an empty list if there are no matches.
+  /**
+   * All the values declared in this sequences whose type matches the given
+   * class. Returns an empty list if there are no matches.
    */
   public final List<Variable> valuesAppearingInLastStatement(Class<?> clazz, Reflection.Match match) {
     if (clazz == null || match == null)
@@ -634,17 +643,17 @@ public final class Sequence implements Serializable, WeightedElement {
     return possibleIndices;
   }
 
-  /** All the variables declared in this sequences whose type matches the
-   * given class. Returns an empty list if there are no matches.
+  /**
+   * All the variables declared in this sequences whose type matches the given
+   * class. Returns an empty list if there are no matches.
    */
   public List<Variable> getVariablesOfType(Class<?> clazz, Reflection.Match match) {
     if (clazz == null || match == null)
       throw new IllegalArgumentException("parameters cannot be null.");
     List<Variable> possibleIndices = new ArrayList<Variable>(this.lastStatementVariables.size());
-    for (int i = 0 ; i < this.size() ; i++) {
+    for (int i = 0; i < this.size(); i++) {
       Statement s = statements.get(i);
-      if (!s.isVoidMethodCall()
-          && varTypeMatches(s.getOutputType(), clazz, match)) {
+      if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), clazz, match)) {
         possibleIndices.add(getVariable(i));
       }
     }
@@ -653,12 +662,12 @@ public final class Sequence implements Serializable, WeightedElement {
 
   private boolean varTypeMatches(Class<?> t, Class<?> clazz, Match match) {
     switch (match) {
-    case COMPATIBLE_TYPE:
-      return Reflection.canBeUsedAs(t, clazz);
-    case EXACT_TYPE:
-      return t.equals(clazz);
-    default:
-      return false;
+      case COMPATIBLE_TYPE:
+        return Reflection.canBeUsedAs(t, clazz);
+      case EXACT_TYPE:
+        return t.equals(clazz);
+      default:
+        return false;
     }
   }
 
@@ -679,8 +688,7 @@ public final class Sequence implements Serializable, WeightedElement {
     }
     Statement statement = new Statement(operation, indexList);
     int newNetSize = (operation.isNonreceivingValue()) ? this.savedNetSize : this.savedNetSize + 1;
-    return new Sequence(new OneMoreElementList<Statement>(this.statements, statement), this.savedHashCode
-        + statement.hashCode(), newNetSize);
+    return new Sequence(new OneMoreElementList<Statement>(this.statements, statement), this.savedHashCode + statement.hashCode(), newNetSize);
   }
 
   /**
@@ -692,11 +700,14 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * extend adds a new statement to this sequence using the operation of the given statement.
-   * Intended as the only place that we reach inside a {@link Statement} for its operation.
+   * extend adds a new statement to this sequence using the operation of the
+   * given statement. Intended as the only place that we reach inside a
+   * {@link Statement} for its operation.
    *
-   * @param statement is a {@link Statement} object from which the operation is copied.
-   * @param inputs is the list of variables for input.
+   * @param statement
+   *          is a {@link Statement} object from which the operation is copied.
+   * @param inputs
+   *          is the list of variables for input.
    * @return sequence constructed from this one plus the operation
    * @see Sequence#extend(Operation, List)
    */
@@ -708,74 +719,36 @@ public final class Sequence implements Serializable, WeightedElement {
   // These checks should be caught by checkRep() too.
   private void checkInputs(Operation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
-      String msg = "statement.getInputTypes().size():"
-        + operation.getInputTypes().size()
-        + " inputVariables.size():"
-        + inputVariables.size()
-        +" statement:"
-        + operation;
+      String msg = "statement.getInputTypes().size():" + operation.getInputTypes().size() + " inputVariables.size():" + inputVariables.size() + " statement:"
+          + operation;
       throw new IllegalArgumentException(msg);
     }
     for (int i = 0; i < inputVariables.size(); i++) {
       if (inputVariables.get(i).sequence != this) {
-        String msg = "inputVariables.get("
-          + i
-          + ").owner != this for"
-          + Globals.lineSep
-          + "sequence: "
-          + toString()
-          + Globals.lineSep
-          + "statement:"
-          + operation
-          + Globals.lineSep
-          + "inputVariables:"
-          + inputVariables;
+        String msg = "inputVariables.get(" + i + ").owner != this for" + Globals.lineSep + "sequence: " + toString() + Globals.lineSep + "statement:"
+            + operation + Globals.lineSep + "inputVariables:" + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      Class<?> newRefConstraint =
-        statements.get(inputVariables.get(i).index).getOutputType();
+      Class<?> newRefConstraint = statements.get(inputVariables.get(i).index).getOutputType();
       if (newRefConstraint == null) {
-        String msg = "newRefConstraint == null for"
-          + Globals.lineSep
-          + "sequence: "
-          + toString()
-          + Globals.lineSep
-          + "statement:"
-          + operation
-          + Globals.lineSep
-          + "inputVariables:"
-          + inputVariables;
+        String msg = "newRefConstraint == null for" + Globals.lineSep + "sequence: " + toString() + Globals.lineSep + "statement:" + operation + Globals.lineSep
+            + "inputVariables:" + inputVariables;
         throw new IllegalArgumentException(msg);
       }
       if (!Reflection.canBeUsedAs(newRefConstraint, operation.getInputTypes().get(i))) {
-        String msg = i
-          + "th input constraint "
-          + newRefConstraint
-          + " does not imply "
-          + "statement's "
-          + i
-          + "th input constraint "
-          + operation.getInputTypes().get(i)
-          + Globals.lineSep
-          + ".Sequence:"
-          + Globals.lineSep
-          + ""
-          + this.toString()
-          + Globals.lineSep
-          + "statement:"
-          + operation
-          + Globals.lineSep
-          + "inputVariables:"
-          + inputVariables;
+        String msg = i + "th input constraint " + newRefConstraint + " does not imply " + "statement's " + i + "th input constraint "
+            + operation.getInputTypes().get(i) + Globals.lineSep + ".Sequence:" + Globals.lineSep + "" + this.toString() + Globals.lineSep + "statement:"
+            + operation + Globals.lineSep + "inputVariables:" + inputVariables;
         throw new IllegalArgumentException(msg);
       }
     }
   }
-  
+
   /**
    * Create a new sequence that is the concatenation of the given sequences.
    * 
-   * @param sequences  the list of sequences to concatenate
+   * @param sequences
+   *          the list of sequences to concatenate
    * @return the concatenation of the sequences in the list
    */
   public static Sequence concatenate(List<Sequence> sequences) {
@@ -797,9 +770,9 @@ public final class Sequence implements Serializable, WeightedElement {
     return lastStatementVariables.get(0);
   }
 
-  /** The inputs for the ith statement, as indices. An index equal to x
-   * means that the input is the value created by the x-th statement in
-   * the sequence.
+  /**
+   * The inputs for the ith statement, as indices. An index equal to x means
+   * that the input is the value created by the x-th statement in the sequence.
    */
   public List<Integer> getInputsAsAbsoluteIndices(int i) {
     List<Integer> inputsAsVariables = new ArrayList<Integer>();
@@ -811,8 +784,10 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Appends the statement at the given index to the {@code StringBuilder}.
    *
-   * @param b  the {@link StringBuilder} to which the code is appended.
-   * @param index  the position of the statement to print in this {@code Sequence}.
+   * @param b
+   *          the {@link StringBuilder} to which the code is appended.
+   * @param index
+   *          the position of the statement to print in this {@code Sequence}.
    */
   public void appendCode(StringBuilder b, int index) {
     // Get strings representing the inputs to this statement.
@@ -825,15 +800,17 @@ public final class Sequence implements Serializable, WeightedElement {
    * this object as a prefix, repeating the operation the given number of times.
    * Used during generation.
    *
-   * @param operation  the {@link Operation} to repeat.
-   * @param times  the number of times to repeat the {@link Operation}.
+   * @param operation
+   *          the {@link Operation} to repeat.
+   * @param times
+   *          the number of times to repeat the {@link Operation}.
    * @return a new {@code Sequence}
    */
   public Sequence repeat(Operation operation, int times) {
     Sequence retval = new Sequence(this.statements);
-    for (int i = 0 ; i < times ; i++) {
+    for (int i = 0; i < times; i++) {
       List<Integer> vil = new ArrayList<Integer>();
-      for (Variable v : retval.getInputs(retval.size()-1)) {
+      for (Variable v : retval.getInputs(retval.size() - 1)) {
         if (v.getType().equals(int.class)) {
           int randint = Randomness.nextRandomInt(100);
           retval = retval.extend(new NonreceiverTerm(int.class, randint));
@@ -846,7 +823,7 @@ public final class Sequence implements Serializable, WeightedElement {
       for (Integer vi : vil) {
         vl.add(retval.getVariable(vi));
       }
-      retval = retval.extend(operation,  vl);
+      retval = retval.extend(operation, vl);
     }
     return retval;
   }
@@ -854,22 +831,23 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Creates a {@code MutableSequence} from this sequence.
    *
-   * @return a {@link MutableSequence} objects with the same statements as this object.
+   * @return a {@link MutableSequence} objects with the same statements as this
+   *         object.
    */
   public MutableSequence toModifiableSequence() {
     MutableSequence slowSeq = new MutableSequence();
     List<MutableVariable> values = new ArrayList<MutableVariable>();
-    for (int i = 0 ; i < size() ; i++) {
+    for (int i = 0; i < size(); i++) {
       values.add(new MutableVariable(slowSeq, getVariable(i).getName()));
     }
     List<MutableStatement> statements = new ArrayList<MutableStatement>();
-    for (int i = 0 ; i < size() ; i++) {
+    for (int i = 0; i < size(); i++) {
       Statement sti = this.statements.get(i);
       List<MutableVariable> inputs = new ArrayList<MutableVariable>();
       for (Variable v : getInputs(i)) {
         inputs.add(values.get(v.index));
       }
-      MutableStatement slowSti = sti.toModifiableStatement(inputs,values.get(i));
+      MutableStatement slowSti = sti.toModifiableStatement(inputs, values.get(i));
       statements.add(slowSti);
     }
     slowSeq.statements = statements;
@@ -879,7 +857,8 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Checks whether the variable is defined in this sequence.
    *
-   * @param v  the {@link Variable} to test.
+   * @param v
+   *          the {@link Variable} to test.
    * @return true if this object defines the variable, and false otherwise.
    */
   public boolean isOwnerOf(Variable v) {
@@ -890,23 +869,26 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a string representing this sequence. The string can be parsed back
    * into a sequence using the method Sequence.parse(String). In particular, the
    * following invariant holds:
+   * 
    * <pre>
-   *  st.equals(parse(st.toParseableCode()))
+   * st.equals(parse(st.toParseableCode()))
    * </pre>
-   * See the {@link #parse(List)} for the
-   * required format of a String representing a Sequence.
+   * 
+   * See the {@link #parse(List)} for the required format of a String
+   * representing a Sequence.
    *
-   *  @return parseable string description of sequence.
+   * @return parseable string description of sequence.
    */
   public String toParseableString() {
     return toParseableString(Globals.lineSep);
   }
 
   /**
-   * Like toParseableString, but the client can specify a string that
-   * will be used a separator between statements.
+   * Like toParseableString, but the client can specify a string that will be
+   * used a separator between statements.
    *
-   * @param statementSep  the statement separator.
+   * @param statementSep
+   *          the statement separator.
    */
   public String toParseableString(String statementSep) {
     assert statementSep != null;
@@ -924,32 +906,40 @@ public final class Sequence implements Serializable, WeightedElement {
    * one statement. This method is similar to parse(String), but expects the
    * individual statements already as separate strings. Each statement is
    * expected to be of the form:
+   * 
    * <pre>
    *   VAR = OPERATION : VAR ... VAR
    * </pre>
-   * where the VAR are strings representing a variable name, and OPERATION
-   * is a string representing a StatementKind. For more on OPERATION, see
-   * the documentation for {@link OperationParser#parse(String)}.
+   * 
+   * where the VAR are strings representing a variable name, and OPERATION is a
+   * string representing a StatementKind. For more on OPERATION, see the
+   * documentation for {@link OperationParser#parse(String)}.
    *
    * The first VAR token represents the "output variable" that is the result of
-   * the statement call. The VAR tokens appearing after OPERATION represent
-   * the "input variables" to the statement call. At the i-th line, the input
+   * the statement call. The VAR tokens appearing after OPERATION represent the
+   * "input variables" to the statement call. At the i-th line, the input
    * variable tokens should appear as an output variable for some previous j-th
    * line, j &lt; i.
    *
    * Here is an example of a list of lines representing a sequence.
+   * 
    * <pre>
    * var0 = cons : java.util.HashMap.&lt;init&gt;() :
    * var1 = prim : double:-1.0 :
    * var2 = prim : java.lang.String:"hi!" :
    * var3 = method : java.util.HashMap.put(java.lang.Object,java.lang.Object) : var0 var1 var2
    * </pre>
+   * 
    * The above sequence corresponds to the following java code (with package
    * names omitted for brevity):
+   * 
    * <pre>
-   * HashMap var0 = new HashMap(); double var1 = -1.0; String var2 = "hi!";
+   * HashMap var0 = new HashMap();
+   * double var1 = -1.0;
+   * String var2 = "hi!";
    * Object var3 = var0.put(var1, var2);
    * </pre>
+   * 
    * When writing/reading sequences out to file: you have two options: serialize
    * the sequences using java's serialization mechanism, or write them out as
    * parseable text. Serialization is faster, and text is human-readable.
@@ -962,32 +952,27 @@ public final class Sequence implements Serializable, WeightedElement {
     try {
       for (String statement : statements) {
 
-
         // Remove surrounding whitespace.
         statement = statement.trim();
 
         // Extract elements:
-        //   var    =     <operation>     :     var ... var
-        //    |                |                     |
-        //    |                |                     |
-        // newVar           stKind                inVars
+        // var = <operation> : var ... var
+        // | | |
+        // | | |
+        // newVar stKind inVars
         int equalsInd = statement.indexOf('=');
         int colonInd = statement.lastIndexOf(':');
 
         if (equalsInd == -1) {
-            String msg = "A statement must be of the form "
-                + "varname = <statementkind> : varname ... varname"
-                + " but the " + statementCount + "-th (1-based) is missing"
-                + " an \"=\" symbol.";
-            throw new SequenceParseException(msg, statements, statementCount);
+          String msg = "A statement must be of the form " + "varname = <statementkind> : varname ... varname" + " but the " + statementCount
+              + "-th (1-based) is missing" + " an \"=\" symbol.";
+          throw new SequenceParseException(msg, statements, statementCount);
         }
 
         if (colonInd == -1) {
-            String msg = "A statement must be of the form "
-                + "varname = <statementkind> : varname ... varname"
-                + " but the " + statementCount + "-th (1-based) is missing"
-                + " a \":\" symbol.";
-            throw new SequenceParseException(msg, statements, statementCount);
+          String msg = "A statement must be of the form " + "varname = <statementkind> : varname ... varname" + " but the " + statementCount
+              + "-th (1-based) is missing" + " a \":\" symbol.";
+          throw new SequenceParseException(msg, statements, statementCount);
         }
 
         String newVar = statement.substring(0, equalsInd).trim();
@@ -995,9 +980,7 @@ public final class Sequence implements Serializable, WeightedElement {
         String inVarsStr = statement.substring(colonInd + 1).trim();
 
         if (valueMap.containsKey(newVar)) {
-          String msg = "(Statement "
-            + statementCount + ") result variable name " + newVar +
-            " was already declared in a previous statement.";
+          String msg = "(Statement " + statementCount + ") result variable name " + newVar + " was already declared in a previous statement.";
           throw new SequenceParseException(msg, statements, statementCount);
         }
 
@@ -1025,9 +1008,7 @@ public final class Sequence implements Serializable, WeightedElement {
         for (String inVar : inVars) {
           Integer index = valueMap.get(inVar);
           if (index == null) {
-            String msg = "(Statement "
-              + statementCount + ") input variable name " + newVar +
-              " is not declared by a previous statement.";
+            String msg = "(Statement " + statementCount + ") input variable name " + newVar + " is not declared by a previous statement.";
             throw new IllegalArgumentException(msg);
           }
           inputs.add(sequence.getVariable(index));
@@ -1057,21 +1038,26 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * Parse a sequence encoded as a strings. Convenience method for {@link #parse(List)},
-   * which parses a sequence of strings, each representing a Statement. See
-   * that method for more documentation on the string representation of a sequence.
+   * Parse a sequence encoded as a strings. Convenience method for
+   * {@link #parse(List)}, which parses a sequence of strings, each representing
+   * a Statement. See that method for more documentation on the string
+   * representation of a sequence.
    * <p>
    * This method breaks up the given string into statements assuming that each
    * statement is separated by a line separator character.
    * <p>
    * The following invariant holds:
+   * 
    * <pre>
-   *     st.equals(parse(st.toParseableCode()))
+   * st.equals(parse(st.toParseableCode()))
    * </pre>
+   * 
    * When writing/reading sequences out to file: you have two options: serialize
    * the sequences using java's serialization mechanism, or write them out as
    * parseable text. Serialization is faster, and text is human-readable.
-   * @throws SequenceParseException if string is not valid sequence
+   * 
+   * @throws SequenceParseException
+   *           if string is not valid sequence
    */
   public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
@@ -1083,13 +1069,12 @@ public final class Sequence implements Serializable, WeightedElement {
    *
    * The file should be made up of a list of records, each as follows:
    *
-   * START SEQUENCE
-   * &lt;parseable-sequence-string&gt;
-   * END SEQUENCE
+   * START SEQUENCE &lt;parseable-sequence-string&gt; END SEQUENCE
    */
   public static void readTextSequences(String file, final Collection<Sequence> collection) {
     // Parse the file using a RecordListReader.
     RecordProcessor processor = new RecordProcessor() {
+      @Override
       public void processRecord(List<String> record) {
         try {
           collection.add(Sequence.parse(record));
@@ -1102,11 +1087,10 @@ public final class Sequence implements Serializable, WeightedElement {
     reader.parse(file);
   }
 
-
   public int lastUseBefore(int idx, Variable var) {
     if (var.sequence != this)
       throw new IllegalArgumentException("variable does not belong to sequence.");
-    for (int i = idx - 1 ; i >= 0 ; i--) {
+    for (int i = idx - 1; i >= 0; i--) {
       if (getVariable(i).equals(var)) {
         return i;
       }
@@ -1120,19 +1104,21 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * A sequence representing a single primitive values, like
-   * "Foo var0 = null" or "int var0 = 1".
+   * A sequence representing a single primitive values, like "Foo var0 = null"
+   * or "int var0 = 1".
    */
   public boolean isPrimitive() {
     return (size() == 1 && getStatement(0).isPrimitiveInitialization());
   }
 
   /**
-   * Test whether any statement of this sequence has an operation whose 
+   * Test whether any statement of this sequence has an operation whose
    * declaring class matches the given regular expression.
-   *  
-   * @param classNames  the regular expression to test class names
-   * @return true if any statement has operation with matching declaring class, false otherwise
+   * 
+   * @param classNames
+   *          the regular expression to test class names
+   * @return true if any statement has operation with matching declaring class,
+   *         false otherwise
    */
   public boolean hasUseOfMatchingClass(Pattern classNames) {
     for (int i = 0; i < statements.size(); i++) {
@@ -1145,10 +1131,11 @@ public final class Sequence implements Serializable, WeightedElement {
   }
 
   /**
-   * Using compositional structure of this sequence, return the subsequence of 
+   * Using compositional structure of this sequence, return the subsequence of
    * this sequence that contains the statement at the given index.
-   *  
-   * @param index  the statement position in this sequence
+   * 
+   * @param index
+   *          the statement position in this sequence
    * @return the sequence containing the index position
    */
   public Sequence getSubsequence(int index) {

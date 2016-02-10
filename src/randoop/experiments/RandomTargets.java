@@ -25,6 +25,7 @@ public class RandomTargets implements TargetMaker {
     targets = 0;
   }
 
+  @Override
   public String getNextTarget() {
     if (hasMoreTargets()) {
       targets++;
@@ -32,7 +33,7 @@ public class RandomTargets implements TargetMaker {
     }
     return null;
   }
-  
+
   // Adds 0's to the left of the given num
   // to make it a 5-character string.
   static String pad(int num) {
@@ -44,10 +45,12 @@ public class RandomTargets implements TargetMaker {
     return str;
   }
 
+  @Override
   public boolean hasMoreTargets() {
     return (targets + 1 <= maxtargets);
   }
 
+  @Override
   public int targetsLeft() {
     return maxtargets - targets;
   }

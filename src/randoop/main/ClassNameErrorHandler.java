@@ -5,11 +5,12 @@ package randoop.main;
  * occurs.
  */
 public interface ClassNameErrorHandler {
-  
+
   /**
    * Performs error handling behavior for bad class name.
    * 
-   * @param className  the name of the class for inclusion in messages.
+   * @param className
+   *          the name of the class for inclusion in messages.
    */
   void handle(String className);
 }

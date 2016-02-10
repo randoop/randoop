@@ -3,20 +3,21 @@ package randoop.util;
 import randoop.Globals;
 
 /**
- * Compares two SimpleLists for member-wise equality, e.g.
- * two lists l1 and l2 are equals if they have the same size and at every
- * valid index i, l1.get(i).equals(l2.get(i))==true.
+ * Compares two SimpleLists for member-wise equality, e.g. two lists l1 and l2
+ * are equals if they have the same size and at every valid index i,
+ * l1.get(i).equals(l2.get(i))==true.
  * 
- * The compare method returns a ComparisonResult, which in addition
- * to returning the boolean result of the comparison, also returns
- * a message explaining the result, such as the first index at which the
- * collections differ, the toString() representation of the first
- * differing elements, etc.
+ * The compare method returns a ComparisonResult, which in addition to returning
+ * the boolean result of the comparison, also returns a message explaining the
+ * result, such as the first index at which the collections differ, the
+ * toString() representation of the first differing elements, etc.
  */
 public class InformationalComparator<T> {
 
-  /** Communicates the result of the comparison,
-   * and  also a message describing the result. */
+  /**
+   * Communicates the result of the comparison, and also a message describing
+   * the result.
+   */
   public static class ComparisonResult {
 
     public String message;
@@ -42,11 +43,10 @@ public class InformationalComparator<T> {
     } else {
       lastIndex = sizeOfSmaller(l1, l2);
       comparisonSuccess = false;
-      b.append("Lists differ in size. List " + l1Name + " has size " +
-          l1.size() + " and list " + l2Name + " has size " + l2.size() + Globals.lineSep);
+      b.append("Lists differ in size. List " + l1Name + " has size " + l1.size() + " and list " + l2Name + " has size " + l2.size() + Globals.lineSep);
     }
 
-    for (int i = 0 ; i < lastIndex ; i++) {
+    for (int i = 0; i < lastIndex; i++) {
 
       if (i < l1.size() && i >= l2.size()) {
         assert !comparisonSuccess;
@@ -56,7 +56,7 @@ public class InformationalComparator<T> {
 
       if (i < l2.size() && i >= l1.size()) {
         assert !comparisonSuccess;
-        b.append("Smaller suite is equal to larger suite up to its last index.");                
+        b.append("Smaller suite is equal to larger suite up to its last index.");
         break;
       }
 
@@ -64,8 +64,7 @@ public class InformationalComparator<T> {
       // into both lists. Compare elements at i.
       if (!Util.equalsWithNull(l1.get(i), l2.get(i))) {
         comparisonSuccess = false;
-        b.append("Lists differ at index " + i 
-            + "." + Globals.lineSep);
+        b.append("Lists differ at index " + i + "." + Globals.lineSep);
         b.append(l1Name + " element at this index:" + Globals.lineSep);
         b.append(l1.get(i) + Globals.lineSep);
         b.append(l2Name + " element at this index:" + Globals.lineSep);

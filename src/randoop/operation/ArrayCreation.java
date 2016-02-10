@@ -17,18 +17,17 @@ import randoop.types.TypeNames;
 
 /**
  * ArrayCreation is an {@link Operation} representing the construction of a
- * one-dimensional array with a given element type and length.
- * The The ArrayCreation operation requires a list of elements in an initializer.
- * For instance, <code>new int[2]</code> is the {@code ArrayCreation} in the
+ * one-dimensional array with a given element type and length. The The
+ * ArrayCreation operation requires a list of elements in an initializer. For
+ * instance, <code>new int[2]</code> is the {@code ArrayCreation} in the
  * initialization<br>
  * <code>int[] x = new int[2] { 3, 7 };</code><br>
  * with the initializer list as inputs.
  * <p>
- * In terms of the notation used for the {@link Operation} class,
- * a creation of an array of elements of type <i>e</i> with length <i>n</i>
- * has a signature [<i>e,...,e</i>] &rarr; <i>t</i>,
- * where [<i>e,...,e</i>] is a list of length <i>n</i>, and <i>t</i> is the
- * array type.
+ * In terms of the notation used for the {@link Operation} class, a creation of
+ * an array of elements of type <i>e</i> with length <i>n</i> has a signature [
+ * <i>e,...,e</i>] &rarr; <i>t</i>, where [<i>e,...,e</i>] is a list of length
+ * <i>n</i>, and <i>t</i> is the array type.
  * <p>
  * ArrayCreation objects are immutable.
  */
@@ -51,20 +50,24 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   private Class<?> outputType;
 
   private int hashCodeCached;
-  private boolean hashCodeComputed= false;
+  private boolean hashCodeComputed = false;
 
   /**
    * Creates an object representing the construction of an array that holds
    * values of the element type and has the given length.
    *
-   * @param elementType type of objects in the array
-   * @param length number of objects allowed in the array
+   * @param elementType
+   *          type of objects in the array
+   * @param length
+   *          number of objects allowed in the array
    */
   public ArrayCreation(Class<?> elementType, int length) {
 
     // Check legality of arguments.
-    if (elementType == null) throw new IllegalArgumentException("elementType cannot be null.");
-    if (length < 0) throw new IllegalArgumentException("arity cannot be less than zero: " + length);
+    if (elementType == null)
+      throw new IllegalArgumentException("elementType cannot be null.");
+    if (length < 0)
+      throw new IllegalArgumentException("arity cannot be less than zero: " + length);
 
     // Set state variables.
     this.elementType = elementType;
@@ -100,13 +103,14 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
 
   /**
    * {@inheritDoc}
+   * 
    * @return list of identical element types matching length of created array.
    */
   @Override
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
       this.inputTypesCached = new ArrayList<Class<?>>(length);
-      for (int i = 0 ; i < length ; i++)
+      for (int i = 0; i < length; i++)
         inputTypesCached.add(elementType);
       inputTypesCached = Collections.unmodifiableList(inputTypesCached);
     }
@@ -115,12 +119,13 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
 
   /**
    * {@inheritDoc}
+   * 
    * @return {@link NormalExecution} object containing constructed array.
    */
+  @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
     if (statementInput.length > length)
-      throw new IllegalArgumentException("Too many arguments:"
-          + statementInput.length + " capacity:" + length);
+      throw new IllegalArgumentException("Too many arguments:" + statementInput.length + " capacity:" + length);
     long startTime = System.currentTimeMillis();
     assert statementInput.length == this.length;
     Object theArray = Array.newInstance(this.elementType, this.length);
@@ -145,6 +150,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
 
   /**
    * {@inheritDoc}
+   * 
    * @return type of created array.
    */
   @Override
@@ -158,8 +164,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     if (inputVars.size() > length)
-      throw new IllegalArgumentException("Too many arguments:"
-          + inputVars.size() + " capacity:" + length);
+      throw new IllegalArgumentException("Too many arguments:" + inputVars.size() + " capacity:" + length);
 
     String arrayTypeName = this.elementType.getCanonicalName();
 
@@ -174,9 +179,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
       // to a sequence; instead, the value (e.g. "3") is inserted directly
       // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (!GenInputsAbstract.long_format &&
-          statementCreatingVar.isPrimitiveInitialization() &&
-          !statementCreatingVar.isNullInitialization()) {
+      if (!GenInputsAbstract.long_format && statementCreatingVar.isPrimitiveInitialization() && !statementCreatingVar.isNullInitialization()) {
         String shortForm = statementCreatingVar.getShortForm();
         if (shortForm != null) {
           param = shortForm;
@@ -213,13 +216,10 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
-   * {@inheritDoc}
-   * Creates string of the form
-   *   TYPE[NUMELEMS]
-   * where TYPE is the type of the array, and NUMELEMS is the number of elements.
+   * {@inheritDoc} Creates string of the form TYPE[NUMELEMS] where TYPE is the
+   * type of the array, and NUMELEMS is the number of elements.
    *
-   * Example:
-   *   int[3]
+   * Example: int[3]
    *
    * @return string descriptor for array creation.
    */
@@ -229,13 +229,16 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   }
 
   /**
-   * Parses an array declaration in a string descriptor in the form generated
-   * by {@link ArrayCreation#toParseableString()}.
+   * Parses an array declaration in a string descriptor in the form generated by
+   * {@link ArrayCreation#toParseableString()}.
+   * 
    * @see OperationParser#parse(String)
    *
-   * @param str  the string to be parsed for the {@code ArrayCreation}.
+   * @param str
+   *          the string to be parsed for the {@code ArrayCreation}.
    * @return the {@code ArrayCreation} object for the string.
-   * @throws OperationParseException if string does not have expected form.
+   * @throws OperationParseException
+   *           if string does not have expected form.
    */
   public static Operation parse(String str) throws OperationParseException {
     int openBr = str.indexOf('[');

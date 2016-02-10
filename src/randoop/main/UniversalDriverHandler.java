@@ -7,7 +7,6 @@ import java.util.List;
 
 import randoop.experiments.WriteModelCheckerDriver;
 import randoop.experiments.WriteModelCheckerDriver.Target;
-import randoop.util.Reflection;
 import plume.Option;
 import plume.Options;
 import plume.Options.ArgException;
@@ -29,11 +28,10 @@ public class UniversalDriverHandler extends CommandHandler {
   @Override
   public boolean handle(String[] args) throws RandoopTextuiException {
 
-    Options parsedArgs = new Options(usage_synopsis,
-        WriteModelCheckerDriver.class);
+    Options parsedArgs = new Options(usage_synopsis, WriteModelCheckerDriver.class);
 
     try {
-      parsedArgs.parse (args);
+      parsedArgs.parse(args);
     } catch (ArgException ae) {
       throw new RuntimeException(ae);
     }
@@ -51,8 +49,7 @@ public class UniversalDriverHandler extends CommandHandler {
       throw new IllegalArgumentException(targetStr);
     }
     try {
-      randoop.experiments.WriteModelCheckerDriver.writeDriver(target,
-          className, findClassesFromArgs(parsedArgs));
+      randoop.experiments.WriteModelCheckerDriver.writeDriver(target, className, findClassesFromArgs(parsedArgs));
     } catch (IOException e) {
       // TODO this exception will propagate to top-level. bad.
       throw new RuntimeException(e);
@@ -61,12 +58,11 @@ public class UniversalDriverHandler extends CommandHandler {
     return true;
   }
 
-  private static List<Class<?>> findClassesFromArgs(Options printUsageTo)
-  throws IOException {
+  private static List<Class<?>> findClassesFromArgs(Options printUsageTo) throws IOException {
     List<Class<?>> classes = new ArrayList<Class<?>>();
     if (classlist == null && test_class.size() == 0) {
-      
-      System.out.println ("You must specify some classes to test! Use the `classlist' or `testclass' options.");
+
+      System.out.println("You must specify some classes to test! Use the `classlist' or `testclass' options.");
       System.out.println(printUsageTo.usage());
       System.exit(1);
     }

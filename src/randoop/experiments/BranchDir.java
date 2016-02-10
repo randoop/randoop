@@ -10,24 +10,24 @@ import java.util.List;
 import randoop.util.Files;
 
 /**
- * Runs branch-directed generation on a given subject program.
- * This command must be run from $RANDOOP_HOME/systemtests.
- * The command is run as follows:
+ * Runs branch-directed generation on a given subject program. This command must
+ * be run from $RANDOOP_HOME/systemtests. The command is run as follows:
  * 
- *   java randoop.experiments.BranchDir <em>subject-program-string</em>-<em>classname</em>
- *   
+ * java randoop.experiments.BranchDir <em>subject-program-string</em>-
+ * <em>classname</em>
+ * 
  * The command assumes:
  * 
- *   + The file experiments/<em>subject-program-string</em>.experiment exists and
- *     specifies a subject program property file.
- *     
- *   + The file <em>subject-program-string</em>-<em>suffix</em>.ser.output exists and contains
- *     the serialized results of a run of DataFlow on classes in the subject
- *     program.
- *     
- *  The command reads in the property file and uses it to create the
- *  appropriate classpath. It invokes randoop.main.GenBranchDir
- *  with the given classpath and passes the serialized file as input.
+ * + The file experiments/<em>subject-program-string</em>.experiment exists and
+ * specifies a subject program property file.
+ * 
+ * + The file <em>subject-program-string</em>-<em>suffix</em>.ser.output exists
+ * and contains the serialized results of a run of DataFlow on classes in the
+ * subject program.
+ * 
+ * The command reads in the property file and uses it to create the appropriate
+ * classpath. It invokes randoop.main.GenBranchDir with the given classpath and
+ * passes the serialized file as input.
  */
 
 public class BranchDir {
@@ -35,9 +35,11 @@ public class BranchDir {
   public static void main(String[] args) throws IOException {
 
     // Parse experiment string.
-    if (args.length != 1) throw new IllegalArgumentException("No experiment string specified.");
+    if (args.length != 1)
+      throw new IllegalArgumentException("No experiment string specified.");
     String expName = args[0];
-    if (expName.length() == 0) throw new IllegalArgumentException("Invalid experiment name (empty).");
+    if (expName.length() == 0)
+      throw new IllegalArgumentException("Invalid experiment name (empty).");
 
     // Create experiment base from experiment name. The experiment file
     // is expected to be in experiments/<experiment-name>.exp
@@ -49,7 +51,6 @@ public class BranchDir {
     ExperimentBase exp = new ExperimentBase(expFile.getAbsolutePath());
 
     List<String> targetClassNames = Files.readWhole(exp.targetClassListFile);
-
 
     FileOutputStream fos = new FileOutputStream("log.txt");
     PrintStream err = new PrintStream(fos);
@@ -76,8 +77,7 @@ public class BranchDir {
     }
 
     ExperimentBase.printCommand(branchdir, false, true);
-    int retval = Command.exec(branchdir.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(branchdir.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");

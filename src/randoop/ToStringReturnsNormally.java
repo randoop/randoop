@@ -22,9 +22,10 @@ public final class ToStringReturnsNormally implements ObjectContract {
   @Override
   public int hashCode() {
     int h = 51;
-    return h;  // no state to compare.
+    return h; // no state to compare.
   }
-  
+
+  @Override
   public boolean evaluate(Object... objects) {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
@@ -33,10 +34,12 @@ public final class ToStringReturnsNormally implements ObjectContract {
     return true;
   }
 
+  @Override
   public int getArity() {
     return 1;
   }
 
+  @Override
   public String toCommentString() {
     return "x0.toString() throws no Exception.";
   }

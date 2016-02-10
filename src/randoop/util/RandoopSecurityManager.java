@@ -7,7 +7,9 @@ import java.security.Permission;
 
 public class RandoopSecurityManager extends SecurityManager {
 
-  public enum Status { ON, OFF }
+  public enum Status {
+    ON, OFF
+  }
 
   public Status status;
 
@@ -17,116 +19,137 @@ public class RandoopSecurityManager extends SecurityManager {
 
   @Override
   public void checkAccept(String host, int port) {
-    if (status == Status.OFF) return;
-    //super.checkAccept(host, port);
+    if (status == Status.OFF)
+      return;
+    // super.checkAccept(host, port);
   }
 
   @Override
   public void checkAccess(Thread t) {
-    if (status == Status.OFF) return;
-    //super.checkAccess(t);
+    if (status == Status.OFF)
+      return;
+    // super.checkAccess(t);
   }
 
   @Override
   public void checkAccess(ThreadGroup g) {
-    if (status == Status.OFF) return;
-    //super.checkAccess(g);
+    if (status == Status.OFF)
+      return;
+    // super.checkAccess(g);
   }
 
   @SuppressWarnings("deprecation")
   @Override
   public void checkAwtEventQueueAccess() {
-    if (status == Status.OFF) return;
-    //super.checkAwtEventQueueAccess();
+    if (status == Status.OFF)
+      return;
+    // super.checkAwtEventQueueAccess();
   }
 
   @Override
   public void checkConnect(String host, int port, Object context) {
-    if (status == Status.OFF) return;
-    //super.checkConnect(host, port, context);
+    if (status == Status.OFF)
+      return;
+    // super.checkConnect(host, port, context);
   }
 
   @Override
   public void checkConnect(String host, int port) {
-    if (status == Status.OFF) return;
-    //super.checkConnect(host, port);
+    if (status == Status.OFF)
+      return;
+    // super.checkConnect(host, port);
   }
 
   @Override
   public void checkCreateClassLoader() {
-    if (status == Status.OFF) return;
+    if (status == Status.OFF)
+      return;
     // This must be allowed--when disallowed, Randoop failed to invoke simple
     // methods like "new BitSet()".
-    //throw new SecurityException("checkCreateClassLoader: Randoop does not allow this operation by tested code");
+    // throw new SecurityException("checkCreateClassLoader: Randoop does not
+    // allow this operation by tested code");
   }
 
   @Override
   public void checkDelete(String file) {
-    if (status == Status.OFF) return;
-    if (file == null) throw new NullPointerException();
+    if (status == Status.OFF)
+      return;
+    if (file == null)
+      throw new NullPointerException();
     throw new SecurityException("checkDelete: Randoop does not allow this operation by tested code");
   }
 
   @Override
   public void checkExec(String cmd) {
-    if (status == Status.OFF) return;
-    if (cmd == null) throw new NullPointerException();
+    if (status == Status.OFF)
+      return;
+    if (cmd == null)
+      throw new NullPointerException();
     throw new SecurityException("checkExec: Randoop does not allow this operation by tested code");
   }
 
   @Override
   public void checkExit(int stat) {
-    if (status == Status.OFF) return;
+    if (status == Status.OFF)
+      return;
     throw new SecurityException("checkExit: Randoop does not allow this operation by tested code");
   }
 
   @Override
   public void checkLink(String lib) {
-    if (status == Status.OFF) return;
-    //super.checkLink(lib);
+    if (status == Status.OFF)
+      return;
+    // super.checkLink(lib);
   }
 
   @Override
   public void checkListen(int port) {
-    if (status == Status.OFF) return;
-    //super.checkListen(port);
+    if (status == Status.OFF)
+      return;
+    // super.checkListen(port);
   }
 
   @SuppressWarnings("deprecation")
   @Override
   public void checkMemberAccess(Class<?> clazz, int which) {
-    if (status == Status.OFF) return;
-    //super.checkMemberAccess(clazz, which);
+    if (status == Status.OFF)
+      return;
+    // super.checkMemberAccess(clazz, which);
   }
 
   @SuppressWarnings("deprecation")
   @Override
   public void checkMulticast(InetAddress maddr, byte ttl) {
-    if (status == Status.OFF) return;
-    //super.checkMulticast(maddr, ttl);
+    if (status == Status.OFF)
+      return;
+    // super.checkMulticast(maddr, ttl);
   }
 
   @Override
   public void checkMulticast(InetAddress maddr) {
-    if (status == Status.OFF) return;
-    //super.checkMulticast(maddr);
+    if (status == Status.OFF)
+      return;
+    // super.checkMulticast(maddr);
   }
 
   @Override
   public void checkPackageAccess(String pkg) {
-    if (status == Status.OFF) return;
-    //super.checkPackageAccess(pkg);
+    if (status == Status.OFF)
+      return;
+    // super.checkPackageAccess(pkg);
   }
 
   @Override
   public void checkPackageDefinition(String pkg) {
-    if (status == Status.OFF) return;
-    //super.checkPackageDefinition(pkg);
+    if (status == Status.OFF)
+      return;
+    // super.checkPackageDefinition(pkg);
   }
 
   @Override
   public void checkPermission(Permission perm, Object context) {
-    if (status == Status.OFF) return;
+    if (status == Status.OFF)
+      return;
     if (perm instanceof ReflectPermission) {
       // Randoop allows reflection operations.
       return;
@@ -136,7 +159,8 @@ public class RandoopSecurityManager extends SecurityManager {
 
   @Override
   public void checkPermission(Permission perm) {
-    if (status == Status.OFF) return;
+    if (status == Status.OFF)
+      return;
     if (perm instanceof ReflectPermission) {
       // Randoop allows reflection operations.
       return;
@@ -146,82 +170,101 @@ public class RandoopSecurityManager extends SecurityManager {
 
   @Override
   public void checkPrintJobAccess() {
-    if (status == Status.OFF) return;
-    //super.checkPrintJobAccess();
+    if (status == Status.OFF)
+      return;
+    // super.checkPrintJobAccess();
   }
 
   @Override
   public void checkPropertiesAccess() {
-    if (status == Status.OFF) return;
-    //super.checkPropertiesAccess();
+    if (status == Status.OFF)
+      return;
+    // super.checkPropertiesAccess();
   }
 
   @Override
   public void checkPropertyAccess(String key) {
-    if (status == Status.OFF) return;
-    //super.checkPropertyAccess(key);
+    if (status == Status.OFF)
+      return;
+    // super.checkPropertyAccess(key);
   }
 
   @Override
   public void checkRead(FileDescriptor fd) {
-    if (status == Status.OFF) return;
-    if (fd == null) throw new NullPointerException();
+    if (status == Status.OFF)
+      return;
+    if (fd == null)
+      throw new NullPointerException();
     throw new SecurityException("checkRead: Randoop does not allow this operation by tested code");
   }
 
   @Override
   public void checkRead(String file, Object context) {
-    if (status == Status.OFF) return;
-    if (file == null) throw new NullPointerException();
+    if (status == Status.OFF)
+      return;
+    if (file == null)
+      throw new NullPointerException();
     throw new SecurityException("checkRead(String,Object): Randoop does not allow this operation by tested code");
   }
 
   @Override
   public void checkRead(String file) {
-    if (status == Status.OFF) return;
-    if (file == null) throw new NullPointerException();
-    //throw new SecurityException("Randoop does not allow this operation by tested code");
+    if (status == Status.OFF)
+      return;
+    if (file == null)
+      throw new NullPointerException();
+    // throw new SecurityException("Randoop does not allow this operation by
+    // tested code");
   }
 
   @Override
   public void checkSecurityAccess(String target) {
-    if (status == Status.OFF) return;
-    //super.checkSecurityAccess(target);
+    if (status == Status.OFF)
+      return;
+    // super.checkSecurityAccess(target);
   }
 
   @Override
   public void checkSetFactory() {
-    if (status == Status.OFF) return;
-    //super.checkSetFactory();
+    if (status == Status.OFF)
+      return;
+    // super.checkSetFactory();
   }
 
   @SuppressWarnings("deprecation")
   @Override
   public void checkSystemClipboardAccess() {
-    if (status == Status.OFF) return;
-    //super.checkSystemClipboardAccess();
+    if (status == Status.OFF)
+      return;
+    // super.checkSystemClipboardAccess();
   }
 
   @SuppressWarnings("deprecation")
   @Override
   public boolean checkTopLevelWindow(Object window) {
-    if (status == Status.OFF) return true;
-    if (window == null) throw new NullPointerException();
+    if (status == Status.OFF)
+      return true;
+    if (window == null)
+      throw new NullPointerException();
     throw new SecurityException("checkTopLevelWindow(Object): Randoop does not allow this operation by tested code");
-    //return super.checkTopLevelWindow(window);
+    // return super.checkTopLevelWindow(window);
   }
 
   @Override
   public void checkWrite(FileDescriptor fd) {
-    if (status == Status.OFF) return;
-    if (fd == null) throw new NullPointerException();
+    if (status == Status.OFF)
+      return;
+    if (fd == null)
+      throw new NullPointerException();
     throw new SecurityException("checkWrite(FileDescriptor): Randoop does not allow this operation by tested code");
   }
 
   @Override
   public void checkWrite(String file) {
-    if (status == Status.OFF) return;
-    if (file == null) throw new NullPointerException();
+    if (status == Status.OFF)
+      return;
+    if (file == null)
+      throw new NullPointerException();
     throw new SecurityException("checkWrite(String): Randoop does not allow this operation by tested code");
   }
 

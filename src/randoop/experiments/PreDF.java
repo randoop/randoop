@@ -15,8 +15,8 @@ import plume.Options.ArgException;
  * 
  * MIT-specific! Will probably not work outside CSAIL.
  * 
- * Calls Randoop, then determines frontier branches and creates input
- * files for DataFlow (one file per frontier branch).
+ * Calls Randoop, then determines frontier branches and creates input files for
+ * DataFlow (one file per frontier branch).
  */
 public class PreDF {
 
@@ -102,8 +102,7 @@ public class PreDF {
     randoop.add("--output_cov_witnesses=true");
 
     ExperimentBase.printCommand(randoop, false, true);
-    int retval = Command.exec(randoop.toArray(new String[0]), System.out,
-                              err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(randoop.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
@@ -127,8 +126,7 @@ public class PreDF {
     report.add("--output-report=" + expName + ".covreport.txt");
 
     ExperimentBase.printCommand(report, false, true);
-    int retval = Command.exec(report.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(report.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
@@ -151,8 +149,7 @@ public class PreDF {
     frontiers.add("--input-map=" + expName + ".covmap.gz");
     frontiers.add("--experiment=" + expName);
     ExperimentBase.printCommand(frontiers, false, true);
-    int retval = Command.exec(frontiers.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(frontiers.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
@@ -162,134 +159,134 @@ public class PreDF {
 
 }
 
+// private static void combineCovMaps() {
 
-//   private static void combineCovMaps() {
+// System.out.println("========== Combining coverage maps: " + exp.classDirAbs);
 
-//     System.out.println("========== Combining coverage maps: " + exp.classDirAbs);
+// List<String> combine = new ArrayList<String>();
+// combine.add("java");
+// combine.add("-ea");
+// combine.add(Command.javaHeapSize);
+// combine.add("-classpath");
+// combine.add(exp.covInstSourcesDir + ":" + exp.classPath);
+// combine.add("randoop.experiments.CombineCovMaps");
+// combine.add("--outputmap=" + expName + ".covmap.gz");
+// combine.add("--inputmap=" + expName + ".covmap.gz");
 
-//     List<String> combine = new ArrayList<String>();
-//     combine.add("java");
-//     combine.add("-ea");
-//     combine.add(Command.javaHeapSize);
-//     combine.add("-classpath");
-//     combine.add(exp.covInstSourcesDir + ":" + exp.classPath);
-//     combine.add("randoop.experiments.CombineCovMaps");
-//     combine.add("--outputmap=" + expName + ".covmap.gz");
-//     combine.add("--inputmap=" + expName + ".covmap.gz");
+// ExperimentBase.printCommand(combine, false, true);
+// int retval = Command.exec(combine.toArray(new String[0]), System.out,
+// err, "", false, Integer.MAX_VALUE, null);
+// if (retval != 0) {
+// System.out.println("Command exited with error code " + retval);
+// System.out.println("File log.txt contains output of stderr.");
+// System.exit(1);
+// }
+// }
 
-//     ExperimentBase.printCommand(combine, false, true);
-//     int retval = Command.exec(combine.toArray(new String[0]), System.out,
-//         err, "", false, Integer.MAX_VALUE, null);
-//     if (retval != 0) {
-//       System.out.println("Command exited with error code " + retval);
-//       System.out.println("File log.txt contains output of stderr.");
-//       System.exit(1);
-//     }
-//   }
+// private static void df() {
 
-//   private static void df() {
+// System.out.println("========== Calling DataFlow: " + exp.classDirAbs);
+// List<String> df = new ArrayList<String>();
+// df.add("java");
+// df.add("-ea");
+// df.add(Command.javaHeapSize);
+// df.add("-classpath");
+// df.add(exp.classPath);
+// df.add("randoop.main.DataFlow");
+// df.add("--scratchdir=" + expName + "-scratch");
+// df.add("--overwrite");
+// df.add(expName + ".frontiers.gz");
+// ExperimentBase.printCommand(df, false, true);
+// int retval = Command.exec(df.toArray(new String[0]), System.out,
+// err, "", false, Integer.MAX_VALUE, null);
+// if (retval != 0) {
+// System.out.println("Command exited with error code " + retval);
+// System.out.println("File log.txt contains output of stderr.");
+// System.exit(1);
+// }
+// }
 
-//     System.out.println("========== Calling DataFlow: " + exp.classDirAbs);
-//     List<String> df = new ArrayList<String>();
-//     df.add("java");
-//     df.add("-ea");
-//     df.add(Command.javaHeapSize);
-//     df.add("-classpath");
-//     df.add(exp.classPath);
-//     df.add("randoop.main.DataFlow");
-//     df.add("--scratchdir=" + expName + "-scratch");
-//     df.add("--overwrite");
-//     df.add(expName + ".frontiers.gz");
-//     ExperimentBase.printCommand(df, false, true);
-//     int retval = Command.exec(df.toArray(new String[0]), System.out,
-//         err, "", false, Integer.MAX_VALUE, null);
-//     if (retval != 0) {
-//       System.out.println("Command exited with error code " + retval);
-//       System.out.println("File log.txt contains output of stderr.");
-//       System.exit(1);
-//     }
-//   }
+// private static void bdgen() {
+// System.out.println("========== Calling BDGen: " + exp.classDirAbs);
+// List<String> branchdir = new ArrayList<String>();
+// branchdir.add("java");
+// branchdir.add("-ea");
+// branchdir.add(Command.javaHeapSize);
+// branchdir.add("-classpath");
+// branchdir.add(exp.covInstSourcesDir + ":" + exp.classPath);
+// branchdir.add("randoop.main.GenBranchDir");
 
-//   private static void bdgen() {
-//     System.out.println("========== Calling BDGen: " + exp.classDirAbs);
-//     List<String> branchdir = new ArrayList<String>();
-//     branchdir.add("java");
-//     branchdir.add("-ea");
-//     branchdir.add(Command.javaHeapSize);
-//     branchdir.add("-classpath");
-//     branchdir.add(exp.covInstSourcesDir + ":" + exp.classPath);
-//     branchdir.add("randoop.main.GenBranchDir");
+// branchdir.add("--logfile=" + expName + ".bdgen.log.txt");
+// branchdir.add("--input-covinst-classes=" + exp.covInstClassListFile);
+// branchdir.add("--input-df-results=" + expName + ".frontiers.gz.output");
 
-//     branchdir.add("--logfile=" + expName + ".bdgen.log.txt");
-//     branchdir.add("--input-covinst-classes=" + exp.covInstClassListFile);
-//     branchdir.add("--input-df-results=" + expName + ".frontiers.gz.output");
+// branchdir.add("--input-covmap=" + expName + ".covmap.gz");
+// // branchdir.add("--output-new-branches=" + expName + ".bdgencovmap.gz");
 
+// branchdir.add("--output-success-seqs=" + expName + ".successes.txt");
+// branchdir.add("--output-components-used=" + expName + ".componentsused.txt");
+// branchdir.add("--output-new-sequences=" + expName + ".bdgen.output.txt");
 
-//     branchdir.add("--input-covmap=" + expName + ".covmap.gz");
-//     // branchdir.add("--output-new-branches=" + expName + ".bdgencovmap.gz");
+// List<String> classNames = null;
+// try {
+// classNames = Files.readWhole(exp.targetClassListFile);
+// } catch (IOException e) {
+// throw new Error(e);
+// }
+// for (String cls : classNames)
+// branchdir.add("--input-components-ser=rp1." + expName + "-" + cls +
+// ".components.gz");
 
-//     branchdir.add("--output-success-seqs=" + expName + ".successes.txt");
-//     branchdir.add("--output-components-used=" + expName + ".componentsused.txt");
-//     branchdir.add("--output-new-sequences=" + expName + ".bdgen.output.txt");
+// ExperimentBase.printCommand(branchdir, false, true);
+// int retval = Command.exec(branchdir.toArray(new String[0]), System.out,
+// err, "", false, Integer.MAX_VALUE, null);
+// if (retval != 0) {
+// System.out.println("Command exited with error code " + retval);
+// System.out.println("File log.txt contains output of stderr.");
+// System.exit(1);
+// }
+// }
 
-//     List<String> classNames = null;
-//     try {
-//       classNames = Files.readWhole(exp.targetClassListFile);
-//     } catch (IOException e) {
-//       throw new Error(e);
-//     }
-//     for (String cls : classNames)
-//       branchdir.add("--input-components-ser=rp1." + expName + "-" + cls + ".components.gz");
+// private static void randoop2() {
+// System.out.println("========== Calling Randoop post-BDGen: " +
+// exp.classDirAbs);
+// List<String> randoop = new ArrayList<String>();
+// randoop.add("java");
+// randoop.add("-ea");
+// randoop.add(Command.javaHeapSize);
+// randoop.add("-classpath");
+// randoop.add(exp.covInstSourcesDir + ":" + exp.classPath);
+// randoop.add("randoop.main.Main");
+// randoop.add("gentests");
+// randoop.add("--check-object-contracts=false");
+// // No time limit. We use plateau limit.
+// randoop.add("--timelimit=10000");
+// randoop.add("--stop-when-plateau=10");
+// List<String> classNames;
+// try {
+// classNames = Files.readWhole(exp.targetClassListFile);
+// } catch (IOException e) {
+// throw new Error(e);
+// }
+// for (String className : classNames) {
+// randoop.add("--testclass=" + className);
+// }
+// randoop.add("--dont-output-tests");
+// randoop.add("--forbid-null=false");
+// randoop.add("--null-ratio=0.5");
 
-//     ExperimentBase.printCommand(branchdir, false, true);
-//     int retval = Command.exec(branchdir.toArray(new String[0]), System.out,
-//         err, "", false, Integer.MAX_VALUE, null);
-//     if (retval != 0) {
-//       System.out.println("Command exited with error code " + retval);
-//       System.out.println("File log.txt contains output of stderr.");
-//       System.exit(1);
-//     }
-//   }
+// randoop.add("--componentfile-txt=" + expName + ".bdgen.output.txt");
 
-//   private static void randoop2() {
-//     System.out.println("========== Calling Randoop post-BDGen: " + exp.classDirAbs);
-//     List<String> randoop = new ArrayList<String>();
-//     randoop.add("java");
-//     randoop.add("-ea");
-//     randoop.add(Command.javaHeapSize);
-//     randoop.add("-classpath");
-//     randoop.add(exp.covInstSourcesDir + ":" + exp.classPath);
-//     randoop.add("randoop.main.Main");
-//     randoop.add("gentests");
-//     randoop.add("--check-object-contracts=false");
-//     // No time limit. We use plateau limit.
-//     randoop.add("--timelimit=10000");
-//     randoop.add("--stop-when-plateau=10");
-//     List<String> classNames;
-//     try {
-//       classNames = Files.readWhole(exp.targetClassListFile);
-//     } catch (IOException e) {
-//       throw new Error(e);
-//     }
-//     for (String className : classNames) {
-//       randoop.add("--testclass=" + className);
-//     }
-//     randoop.add("--dont-output-tests");
-//     randoop.add("--forbid-null=false");
-//     randoop.add("--null-ratio=0.5");
+// randoop.add("--output-stats=" + expName + ".stats2.ser");
 
-//     randoop.add("--componentfile-txt=" + expName + ".bdgen.output.txt");
+// randoop.add("--coverage-instrumented-classes=" + exp.covInstClassListFile);
 
-//     randoop.add("--output-stats=" + expName + ".stats2.ser");
-
-//     randoop.add("--coverage-instrumented-classes=" + exp.covInstClassListFile);
-
-//     ExperimentBase.printCommand(randoop, false, true);
-//     int retval = Command.exec(randoop.toArray(new String[0]), System.out,
-//         err, "", false, Integer.MAX_VALUE, null);
-//     if (retval != 0) {
-//       System.out.println("Command exited with error code " + retval);
-//       System.out.println("File log.txt contains output of stderr.");
-//       System.exit(1);
-//     }
-//   }
+// ExperimentBase.printCommand(randoop, false, true);
+// int retval = Command.exec(randoop.toArray(new String[0]), System.out,
+// err, "", false, Integer.MAX_VALUE, null);
+// if (retval != 0) {
+// System.out.println("Command exited with error code " + retval);
+// System.out.println("File log.txt contains output of stderr.");
+// System.exit(1);
+// }
+// }

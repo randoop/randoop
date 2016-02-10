@@ -13,22 +13,25 @@ public class CalculateSequenceSpace {
 
   /**
    * Compute the size of the sequence space for lengths 1, 2, ... MAX_LENGTH.
-   * This command must be run from $RANDOOP_HOME/systemtests.
-   * The command is run as follows:
+   * This command must be run from $RANDOOP_HOME/systemtests. The command is run
+   * as follows:
    *
-   *   java randoop.experiments.CalculateSequenceSpace <em>subject-program-string</em>
+   * java randoop.experiments.CalculateSequenceSpace
+   * <em>subject-program-string</em>
    *
    * The command assumes:
    *
-   *   + The file experiments/<em>subject-program-string</em>.experiment exists and
-   *     specifies a subject program property file.
+   * + The file experiments/<em>subject-program-string</em>.experiment exists
+   * and specifies a subject program property file.
    */
   public static void main(String[] args) throws IOException {
 
     // Parse experiment string.
-    if (args.length != 1) throw new IllegalArgumentException("No experiment string specified.");
+    if (args.length != 1)
+      throw new IllegalArgumentException("No experiment string specified.");
     String expName = args[0];
-    if (expName.length() == 0) throw new IllegalArgumentException("Invalid experiment name (empty).");
+    if (expName.length() == 0)
+      throw new IllegalArgumentException("Invalid experiment name (empty).");
 
     // Create experiment base from experiment name. The experiment file
     // is expected to be in experiments/<experiment-name>.exp
@@ -43,7 +46,7 @@ public class CalculateSequenceSpace {
     PrintStream err = new PrintStream(fos);
 
     System.out.println("========== Calculating sequence space for " + exp.experimentName);
-    for (int length = 1 ; length <= MAX_LENGTH ; length++) {
+    for (int length = 1; length <= MAX_LENGTH; length++) {
       System.out.println("Length " + length + ": ");
       List<String> randoop = new ArrayList<String>();
       randoop.add("java");
@@ -57,12 +60,11 @@ public class CalculateSequenceSpace {
       randoop.add("--calc-sequence-space=" + length);
       randoop.add("--output-sequence-space=" + expName + "_" + length + ".sequencespace");
       randoop.add("--classlist=" + exp.targetClassListFile);
-      
+
       ExperimentBase.printCommand(randoop, false, true);
 
       // ExperimentBase.printCommand(randoop, false, true);
-      int retval = Command.exec(randoop.toArray(new String[0]), System.out,
-          err, "", false, Integer.MAX_VALUE, null);
+      int retval = Command.exec(randoop.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
       if (retval != 0) {
         System.out.println("Command exited with error code " + retval);
         System.out.println("File log.txt contains output of stderr.");

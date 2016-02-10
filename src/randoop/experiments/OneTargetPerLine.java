@@ -8,7 +8,8 @@ import randoop.util.Files;
 
 /**
  * A target maker that takes as input a file name with one target per line, and
- * give back the targets (preprended with user-specified prefix/suffix) in the file.
+ * give back the targets (preprended with user-specified prefix/suffix) in the
+ * file.
  *
  * If prefix == "&lt;none&gt;" then no prefix is used. Same for suffix.
  */
@@ -43,16 +44,19 @@ public class OneTargetPerLine implements TargetMaker {
     }
   }
 
+  @Override
   public String getNextTarget() {
     if (targets.isEmpty())
       return null;
     return prefix + targets.remove(0) + suffix;
   }
 
+  @Override
   public boolean hasMoreTargets() {
     return !targets.isEmpty();
   }
 
+  @Override
   public int targetsLeft() {
     return targets.size();
   }

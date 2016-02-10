@@ -13,10 +13,9 @@ import randoop.util.ReversibleSet;
 import randoop.util.SimpleSet;
 
 /**
- * A set of classes. This data structure additionally allows for
- * efficient answers to queries about can-be-used-as
- * ({@link randoop.util.Reflection#canBeUsedAs(Class,Class)})
- *  relationships.
+ * A set of classes. This data structure additionally allows for efficient
+ * answers to queries about can-be-used-as (
+ * {@link randoop.util.Reflection#canBeUsedAs(Class,Class)}) relationships.
  */
 public class SubTypeSet {
 
@@ -29,7 +28,7 @@ public class SubTypeSet {
   // The list for a given type can be empty, which means that there
   // are no subtypes with sequences for the given type.
   public IMultiMap<Class<?>, Class<?>> subTypesWithsequences;
-  
+
   public boolean reversible;
 
   public SubTypeSet(boolean reversible) {
@@ -43,23 +42,23 @@ public class SubTypeSet {
       this.typesWithsequences = new SimpleSet<Class<?>>();
     }
   }
-  
+
   public void mark() {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<Class<?>, Class<?>>)subTypesWithsequences).mark();
-    ((ReversibleSet<Class<?>>)typesWithsequences).mark();
+    ((ReversibleMultiMap<Class<?>, Class<?>>) subTypesWithsequences).mark();
+    ((ReversibleSet<Class<?>>) typesWithsequences).mark();
   }
 
   public void undoLastStep() {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<Class<?>, Class<?>>)subTypesWithsequences).undoToLastMark();
-    ((ReversibleSet<Class<?>>)typesWithsequences).undoToLastMark();    
+    ((ReversibleMultiMap<Class<?>, Class<?>>) subTypesWithsequences).undoToLastMark();
+    ((ReversibleSet<Class<?>>) typesWithsequences).undoToLastMark();
   }
-  
+
   public void add(Class<?> c) {
     if (c == null)
       throw new IllegalArgumentException("c cannot be null.");
@@ -108,12 +107,13 @@ public class SubTypeSet {
   // TODO create tests for this method.
   /**
    * If <code>match==COMPATIBLE_TYPE</code>, returns <code>true</code> if this
-   * set contains any classes that can-be-used-as the given class <code>c</code>.
+   * set contains any classes that can-be-used-as the given class <code>c</code>
+   * .
    *
    * <p>
    *
-   * Otherwise, returns <code>true</code> if this set contains the
-   * given class <code>c</code>
+   * Otherwise, returns <code>true</code> if this set contains the given class
+   * <code>c</code>
    */
   public boolean containsAssignableType(Class<?> c, Reflection.Match match) {
     if (!subTypesWithsequences.keySet().contains(c)) {
@@ -124,7 +124,7 @@ public class SubTypeSet {
       return true;
 
     if (match == Reflection.Match.COMPATIBLE_TYPE) {
-      return ! subTypesWithsequences.getValues(c).isEmpty();
+      return !subTypesWithsequences.getValues(c).isEmpty();
     }
     return false;
   }

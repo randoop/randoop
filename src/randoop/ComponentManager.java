@@ -48,43 +48,43 @@ public class ComponentManager {
   private SequenceCollection gralComponents;
 
   /**
-   * The subset of the sequences that were given pre-generation
-   * to the component manager (via its constructor).
+   * The subset of the sequences that were given pre-generation to the component
+   * manager (via its constructor).
    */
   // Seeds are all contained in gralComponents. This list
   // is kept to restore seeds if the user calls
   // clearGeneratedSequences().
   private final Collection<Sequence> gralSeeds;
-  
+
   /**
-   * A set of additional components representing literals that
-   * should only be used as input to specific classes.
+   * A set of additional components representing literals that should only be
+   * used as input to specific classes.
    */
   // May be null, which represents no class literals present.
   private ClassLiterals classLiterals = null;
-  
+
   /**
-   * A set of additional components representing literals that
-   * should only be used as input to specific packages.
+   * A set of additional components representing literals that should only be
+   * used as input to specific packages.
    */
   // May be null, which represents no package literals present.
   private PackageLiterals packageLiterals = null;
-
 
   /**
    * Create an empty component manager, with an empty seed sequence set.
    */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
-    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
+    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence> emptySet());
   }
-  
+
   /**
-   * Create a component manager, initially populated with the
-   * given sequences, which are considered seed sequences.
+   * Create a component manager, initially populated with the given sequences,
+   * which are considered seed sequences.
    * 
-   * @param generalSeeds seed sequences. Can be null, in which case
-   * the seed sequences set is considered empty.
+   * @param generalSeeds
+   *          seed sequences. Can be null, in which case the seed sequences set
+   *          is considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
     Set<Sequence> seedSet = new LinkedHashSet<Sequence>(generalSeeds.size());
@@ -106,8 +106,8 @@ public class ComponentManager {
   }
 
   /**
-   * Add a sequence representing a literal value that can be used
-   * when testing members of the given class.
+   * Add a sequence representing a literal value that can be used when testing
+   * members of the given class.
    */
   public void addClassLevelLiteral(Class<?> cls, Sequence seq) {
     if (classLiterals == null) {
@@ -117,8 +117,8 @@ public class ComponentManager {
   }
 
   /**
-   * Add a sequence representing a literal value that can be used
-   * when testing classes in the given package.
+   * Add a sequence representing a literal value that can be used when testing
+   * classes in the given package.
    */
   public void addPackageLevelLiteral(Package pkg, Sequence seq) {
     if (packageLiterals == null) {
@@ -126,7 +126,7 @@ public class ComponentManager {
     }
     packageLiterals.addSequence(pkg, seq);
   }
-  
+
   /**
    * Add a component sequence.
    */
@@ -203,13 +203,12 @@ public class ComponentManager {
   }
 
   /**
-   * Returns all sequences that represent primitive values
-   * (e.g. sequences like "Foo var0 = null" or "int var0 = 1"),
-   * including general components, class literals and package
-   * literals.
+   * Returns all sequences that represent primitive values (e.g. sequences like
+   * "Foo var0 = null" or "int var0 = 1"), including general components, class
+   * literals and package literals.
    */
   public Set<Sequence> getAllPrimitiveSequences() {
-    
+
     Set<Sequence> ret = new LinkedHashSet<Sequence>();
     if (classLiterals != null) {
       ret.addAll(classLiterals.getAllSequences());

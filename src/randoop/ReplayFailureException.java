@@ -1,6 +1,5 @@
 package randoop;
 
-
 /**
  * Thrown by a ContractFailureReplayVisitor or a RegressionReplayVisitor when a
  * regression decoration fails to replay.
@@ -12,7 +11,7 @@ public class ReplayFailureException extends RuntimeException {
 
   public ReplayFailureException(String message, Check d) {
     super(message);
-    this.decoration= d;
+    this.decoration = d;
   }
 
   public Check getDecoration() {

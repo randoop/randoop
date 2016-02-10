@@ -5,22 +5,21 @@ import java.lang.reflect.InvocationTargetException;
 import randoop.util.RandoopSecurityManager.Status;
 
 /**
- * Implemented by parts of randoop that want to execute reflection
- * code via ReflectionExecutor.
+ * Implemented by parts of randoop that want to execute reflection code via
+ * ReflectionExecutor.
  *
  */
 public abstract class ReflectionCode {
 
-  private boolean runAlready;        /** has this been executed already*/
+  private boolean runAlready; /** has this been executed already */
 
   /**
    * Runs the reflection code that this object represents, but first, if
    * System.getSecurityManager() returns a RandoopSecurityManager, this method
-   * sets the security manager's status to ON. Before exiting, this method
-   * sets the security manager's status to its status before this call.
+   * sets the security manager's status to ON. Before exiting, this method sets
+   * the security manager's status to its status before this call.
    */
-  public final void runReflectionCode() throws InstantiationException, IllegalAccessException,
-  InvocationTargetException, NotCaughtIllegalStateException {
+  public final void runReflectionCode() throws InstantiationException, IllegalAccessException, InvocationTargetException, NotCaughtIllegalStateException {
 
     // The following few lines attempt to find out if there is a
     // RandoopSecurityManager installed, and if so, record its status.
@@ -29,14 +28,13 @@ public abstract class ReflectionCode {
 
     SecurityManager security = System.getSecurityManager();
     if (security != null && security instanceof RandoopSecurityManager) {
-      randoopsecurity = (RandoopSecurityManager)security;
+      randoopsecurity = (RandoopSecurityManager) security;
       oldStatus = randoopsecurity.status;
       randoopsecurity.status = Status.ON;
     }
 
     // At this point, this is the state of the method.
-    assert Util.iff(security != null && security instanceof RandoopSecurityManager,
-        randoopsecurity != null && oldStatus != null);
+    assert Util.iff(security != null && security instanceof RandoopSecurityManager, randoopsecurity != null && oldStatus != null);
 
     try {
 
@@ -58,15 +56,15 @@ public abstract class ReflectionCode {
    * NotCaughtIllegalStateException because everything else is caught.
    *
    */
-  protected abstract void runReflectionCodeRaw() throws InstantiationException, IllegalAccessException,
-  InvocationTargetException, NotCaughtIllegalStateException;
-
-
+  protected abstract void runReflectionCodeRaw()
+      throws InstantiationException, IllegalAccessException, InvocationTargetException, NotCaughtIllegalStateException;
 
   protected final void setRunAlready() {
-    // called from inside runReflectionCode, so use NotCaughtIllegalStateException
-    if (runAlready) throw new NotCaughtIllegalStateException("cannot call this twice");
-    runAlready= true;
+    // called from inside runReflectionCode, so use
+    // NotCaughtIllegalStateException
+    if (runAlready)
+      throw new NotCaughtIllegalStateException("cannot call this twice");
+    runAlready = true;
   }
 
   public abstract Object getReturnVariable();
@@ -82,6 +80,9 @@ public abstract class ReflectionCode {
    */
   static final class NotCaughtIllegalStateException extends IllegalStateException {
     private static final long serialVersionUID = -7508201027241079866L;
-    NotCaughtIllegalStateException(String msg) { super(msg); }
+
+    NotCaughtIllegalStateException(String msg) {
+      super(msg);
+    }
   }
 }

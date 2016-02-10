@@ -4,7 +4,7 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-/** 
+/**
  * Serializable version of {@link MethodCall} allowing tests to be serialized.
  * 
  * @see MethodCall#writeReplace

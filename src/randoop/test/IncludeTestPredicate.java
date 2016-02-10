@@ -10,7 +10,7 @@ import randoop.util.predicate.DefaultPredicate;
  * given regular expression.
  */
 public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
-  
+
   private Pattern testClasses;
 
   public IncludeTestPredicate(Pattern testClasses) {
@@ -19,8 +19,9 @@ public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
 
   /**
    * {@inheritDoc}
-   * @return true if the sequence uses a member of a class that matches the 
-   * regular expression, false otherwise
+   * 
+   * @return true if the sequence uses a member of a class that matches the
+   *         regular expression, false otherwise
    */
   @Override
   public boolean test(ExecutableSequence s) {

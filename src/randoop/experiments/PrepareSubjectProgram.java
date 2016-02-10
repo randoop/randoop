@@ -11,15 +11,14 @@ import randoop.util.Files;
 
 /**
  *
- * This command does a number of tasks to prepare a subject program
- * for experimentation. The tasks include:
+ * This command does a number of tasks to prepare a subject program for
+ * experimentation. The tasks include:
  *
- *   + Compiling the subject program.
- *   + Instrumenting the subject program for coverage.
- *   + Compiling the instrumented version.
+ * + Compiling the subject program. + Instrumenting the subject program for
+ * coverage. + Compiling the instrumented version.
  *
- * WARNING! This script deletes files and directories.
- * However, they are all files that can be recreated.
+ * WARNING! This script deletes files and directories. However, they are all
+ * files that can be recreated.
  */
 public class PrepareSubjectProgram {
 
@@ -37,7 +36,6 @@ public class PrepareSubjectProgram {
     FileOutputStream fos = new FileOutputStream("log.txt");
     PrintStream err = new PrintStream(fos);
 
-
     System.out.println("========== Removing temporary files from previous run of this experiment.");
     List<String> rm = new ArrayList<String>();
     rm.add("rm");
@@ -45,7 +43,6 @@ public class PrepareSubjectProgram {
     rm.add(exp.targetClassListFile);
     ExperimentBase.printCommand(rm, true, true);
     Command.runCommandOKToFail(rm.toArray(new String[0]), "CLEAN", true, "", true);
-
 
     System.out.println("========== Deleting .class files in " + exp.classDirAbs);
     List<String> delCmd = new ArrayList<String>();
@@ -55,32 +52,28 @@ public class PrepareSubjectProgram {
     delCmd.add("*.class");
     delCmd.add("-delete");
     ExperimentBase.printCommand(delCmd, true, true);
-    int retval = Command.exec(delCmd.toArray(new String[0]),
-        new PrintStream(new FileOutputStream(sourceListingFile)),
-        System.err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(delCmd.toArray(new String[0]), new PrintStream(new FileOutputStream(sourceListingFile)), System.err, "", false, Integer.MAX_VALUE,
+        null);
     if (retval != 0) {
       System.out.println("find command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
       System.exit(1);
     }
 
-    System.out.println("========== Creating list of .java files for experiment (stored in "
-        + sourceListingFile + ")");
+    System.out.println("========== Creating list of .java files for experiment (stored in " + sourceListingFile + ")");
     List<String> findCmd = new ArrayList<String>();
     findCmd.add("find");
     findCmd.add(exp.classDirAbs);
     findCmd.add("-name");
     findCmd.add("*.java");
     ExperimentBase.printCommand(findCmd, true, true);
-    retval = Command.exec(findCmd.toArray(new String[0]),
-        new PrintStream(new FileOutputStream(sourceListingFile)),
-        System.err, "", false, Integer.MAX_VALUE, null);
+    retval = Command.exec(findCmd.toArray(new String[0]), new PrintStream(new FileOutputStream(sourceListingFile)), System.err, "", false, Integer.MAX_VALUE,
+        null);
     if (retval != 0) {
       System.out.println("find command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
       System.exit(1);
     }
-
 
     System.out.println("========== Compiling subject program: " + exp.experimentName);
     List<String> compile = new ArrayList<String>();
@@ -91,8 +84,7 @@ public class PrepareSubjectProgram {
     compile.add("-g");
     compile.add("@" + sourceListingFile.getAbsolutePath());
     ExperimentBase.printCommand(compile, false, false);
-    retval = Command.exec(compile.toArray(new String[0]), System.out, err, "", true,
-        Integer.MAX_VALUE, null);
+    retval = Command.exec(compile.toArray(new String[0]), System.out, err, "", true, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("javac command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
@@ -121,25 +113,22 @@ public class PrepareSubjectProgram {
     instrument.add("--destination=" + covDir.getAbsolutePath());
     instrument.add("--files=" + sourceListingFile);
     ExperimentBase.printCommand(instrument, true, false);
-    retval = Command.exec(instrument.toArray(new String[0]), System.out, err, "", true,
-        Integer.MAX_VALUE, null);
+    retval = Command.exec(instrument.toArray(new String[0]), System.out, err, "", true, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
       System.exit(1);
     }
 
-    System.out.println("========== Creating list of coverage-instrumented .java files for experiment (stored in "
-        + sourceListingFile + ")");
+    System.out.println("========== Creating list of coverage-instrumented .java files for experiment (stored in " + sourceListingFile + ")");
     List<String> findInstrSources = new ArrayList<String>();
     findInstrSources.add("find");
     findInstrSources.add(covDir.getName());
     findInstrSources.add("-name");
     findInstrSources.add("*.java");
     ExperimentBase.printCommand(findInstrSources, true, true);
-    retval = Command.exec(findInstrSources.toArray(new String[0]),
-        new PrintStream(new FileOutputStream(sourceListingFile)),
-        System.err, "", false, Integer.MAX_VALUE, null);
+    retval = Command.exec(findInstrSources.toArray(new String[0]), new PrintStream(new FileOutputStream(sourceListingFile)), System.err, "", false,
+        Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("find command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
@@ -155,8 +144,7 @@ public class PrepareSubjectProgram {
     compileInstr.add("-g");
     compileInstr.add("@" + sourceListingFile.getAbsolutePath());
     ExperimentBase.printCommand(compileInstr, true, false);
-    retval = Command.exec(compileInstr.toArray(new String[0]), System.out, err, "", true,
-        Integer.MAX_VALUE, null);
+    retval = Command.exec(compileInstr.toArray(new String[0]), System.out, err, "", true, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("javac command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");

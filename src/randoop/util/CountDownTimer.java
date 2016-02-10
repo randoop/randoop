@@ -20,7 +20,8 @@ public class CountDownTimer {
 
   public long remainingTime() {
     long remainingTime = totalTime - elapsedTime();
-    if (remainingTime < 0) return 0;
+    if (remainingTime < 0)
+      return 0;
     return remainingTime;
   }
 
@@ -30,6 +31,6 @@ public class CountDownTimer {
 
   @Override
   public String toString() {
-    return "elapsed:" + elapsedTime() + " remaining:" + remainingTime(); 
+    return "elapsed:" + elapsedTime() + " remaining:" + remainingTime();
   }
 }

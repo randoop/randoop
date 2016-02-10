@@ -15,8 +15,9 @@ public class TestCoverageInfo {
   public final int[] branchFalse;
   public final Map<String, Set<Integer>> methodToIndices;
 
-  public TestCoverageInfo(int numBranches, Map<String,Set<Integer>> map) {
-    if (numBranches < 0) throw new IllegalArgumentException();
+  public TestCoverageInfo(int numBranches, Map<String, Set<Integer>> map) {
+    if (numBranches < 0)
+      throw new IllegalArgumentException();
     branchTrue = new int[numBranches];
     branchFalse = new int[numBranches];
     methodToIndices = Collections.unmodifiableMap(map);
@@ -28,15 +29,16 @@ public class TestCoverageInfo {
     int totalBranches = 0;
     for (Map.Entry<String, Set<Integer>> entry : methodToIndices.entrySet()) {
       String methodSignature = entry.getKey();
-      Pair<Integer,Integer> covAndTot = getCoverageInfo(methodSignature);
+      Pair<Integer, Integer> covAndTot = getCoverageInfo(methodSignature);
       int branchesCovered = covAndTot.a;
       int branchesInMethod = covAndTot.b;
       totalBranchesCovered += branchesCovered;
       totalBranches += branchesInMethod;
-      double percentCovered = ((double)branchesCovered)/((double)branchesInMethod);
-      b.append((methodSignature == null ? "other" : methodSignature) + ": " + branchesCovered + "/" + branchesInMethod + " (" + percentCovered + "%)" + Globals.lineSep);
+      double percentCovered = ((double) branchesCovered) / ((double) branchesInMethod);
+      b.append((methodSignature == null ? "other" : methodSignature) + ": " + branchesCovered + "/" + branchesInMethod + " (" + percentCovered + "%)"
+          + Globals.lineSep);
     }
-    double totalPercent = ((double)totalBranchesCovered)/((double)totalBranches);
+    double totalPercent = ((double) totalBranchesCovered) / ((double) totalBranches);
     b.append("TOTAL :" + totalBranchesCovered + "/" + totalBranches + " (" + totalPercent + "%)" + Globals.lineSep);
     return b.toString();
   }
@@ -54,7 +56,7 @@ public class TestCoverageInfo {
       }
     }
     assert branchesCovered <= totalBranches;
-    return new Pair<Integer,Integer>(branchesCovered, totalBranches);
+    return new Pair<Integer, Integer>(branchesCovered, totalBranches);
   }
 
   public static String getCoverageInfo(Class<?> clazz) {
@@ -70,8 +72,8 @@ public class TestCoverageInfo {
     }
   }
 
-
-  private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz) throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
+  private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz)
+      throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
     Field f = clazz.getDeclaredField("randoopCoverageInfo");
     f.setAccessible(true);
     return (TestCoverageInfo) f.get(null);

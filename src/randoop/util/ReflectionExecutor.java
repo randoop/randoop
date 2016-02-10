@@ -6,43 +6,40 @@ import plume.Option;
 import plume.OptionGroup;
 import plume.UtilMDE;
 
-
 /**
  * Executes the code of a ReflectionCode object.
  *
- * This class maintains an "executor" thread. Code is executed
- * on that thread. If the code takes longer than the specified
- * timeout, the thread is killed and a TimeoutExceededException
- * exception is reported.
+ * This class maintains an "executor" thread. Code is executed on that thread.
+ * If the code takes longer than the specified timeout, the thread is killed and
+ * a TimeoutExceededException exception is reported.
  *
  */
 public final class ReflectionExecutor {
 
   /**
-   * Use if Randoop is exhibiting nonterminating behavior, which is usually
-   * due to execution of code under test that results in an infinite
-   * loop. With this option, Randoop executes each test in a separate
-   * thread and kills tests that take too long to finish. Tests killed in
-   * this manner are not reported to the user. The downside is a BIG
-   * (order-of-magnitude) decrease in generation speed.
+   * Use if Randoop is exhibiting nonterminating behavior, which is usually due
+   * to execution of code under test that results in an infinite loop. With this
+   * option, Randoop executes each test in a separate thread and kills tests
+   * that take too long to finish. Tests killed in this manner are not reported
+   * to the user. The downside is a BIG (order-of-magnitude) decrease in
+   * generation speed.
    */
   @OptionGroup("Threading and timeouts")
   @Option("Execute each test in a separate thread, with timeout")
   public static boolean usethreads = true;
-  
+
   /**
    * After this many milliseconds, a non-returning method call, and its
-   * associated test, are stopped forcefully.
-   * Only meaningful if --usethreads is also specified.
+   * associated test, are stopped forcefully. Only meaningful if --usethreads is
+   * also specified.
    */
   @Option("Maximum number of milliseconds a test may run. Only meaningful with --usethreads")
   public static int timeout = 5000;
 
-
   // Execution statistics.
-  private static long normal_exec_accum  = 0;
+  private static long normal_exec_accum = 0;
   private static int normal_exec_count = 0;
-  private static long excep_exec_accum  = 0;
+  private static long excep_exec_accum = 0;
   private static int excep_exec_count = 0;
 
   public static int normalExecs() {
@@ -54,11 +51,11 @@ public final class ReflectionExecutor {
   }
 
   public static double normalExecAvgMillis() {
-    return ((normal_exec_accum / (double) normal_exec_count)/Math.pow(10,6));
+    return ((normal_exec_accum / (double) normal_exec_count) / Math.pow(10, 6));
   }
 
   public static double excepExecAvgMillis() {
-    return ((excep_exec_accum / (double) excep_exec_count)/Math.pow(10,6));
+    return ((excep_exec_accum / (double) excep_exec_count) / Math.pow(10, 6));
   }
 
   public static Throwable executeReflectionCode(ReflectionCode code, PrintStream out) {
@@ -90,8 +87,10 @@ public final class ReflectionExecutor {
   /**
    * Executes code.runReflectionCode(). If no exception is thrown, returns null.
    * Otherwise, returns the exception thrown.
+   * 
    * @param code
-   * @param out stream to print message to or null if message is to be ignored.
+   * @param out
+   *          stream to print message to or null if message is to be ignored.
    * @return null or the exception thrown
    */
   @SuppressWarnings("deprecation")
@@ -112,19 +111,18 @@ public final class ReflectionExecutor {
         if (Log.isLoggingOn()) {
           Log.log("Exceeded max wait: aborting test input.");
         }
-        
+
         // We use this deprecated method because it's the only way to
         // stop a thread no matter what it's doing.
         runnerThread.stop();
-        
+
         return new TimeoutExceededException();
       }
 
       return runnerThread.exceptionThrown;
 
     } catch (java.lang.InterruptedException e) {
-      throw new IllegalStateException("A RunnerThread thread shouldn't be interrupted by anyone! "
-          + "(this may be a bug in Randoop; please report it.)");
+      throw new IllegalStateException("A RunnerThread thread shouldn't be interrupted by anyone! " + "(this may be a bug in Randoop; please report it.)");
     }
   }
 
@@ -137,7 +135,8 @@ public final class ReflectionExecutor {
       return null;
     } catch (ThreadDeath e) { // can't stop these guys
       throw e;
-    } catch (ReflectionCode.NotCaughtIllegalStateException e) { // exception in randoop code
+    } catch (ReflectionCode.NotCaughtIllegalStateException e) { // exception in
+                                                                // randoop code
       throw e;
     } catch (Throwable e) {
       Throwable orig_e = null;
@@ -149,7 +148,7 @@ public final class ReflectionExecutor {
       // Debugging -- prints unconditionally, to System.out.
       // printExceptionDetails(e, System.out);
       // if (orig_e != null) {
-      //   System.out.println("Original exception: " + orig_e);
+      // System.out.println("Original exception: " + orig_e);
       // }
       if (out != null) {
         printExceptionDetails(e, out);
@@ -171,7 +170,7 @@ public final class ReflectionExecutor {
       try {
         // Workaround for http://bugs.sun.com/view_bug.do?bug_id=6973831
         // Note that field Throwable.suppressedExceptions only exists in JDK 7.
-        Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");    
+        Object eSuppressedExceptions = UtilMDE.getPrivateField(e, "suppressedExceptions");
         if (eSuppressedExceptions == null) {
           UtilMDE.setFinalField(e, "suppressedExceptions", new java.util.ArrayList<Object>());
         }

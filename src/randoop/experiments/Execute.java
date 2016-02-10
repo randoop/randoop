@@ -21,9 +21,9 @@ import cov.Coverage;
 import cov.CoverageAtom;
 
 public class Execute {
-  
+
   public static void main(String[] args) {
-    
+
     File covClassesFile = new File(args[0]);
     List<Class<?>> covClasses = new ArrayList<Class<?>>();
     List<String> covClassNames = null;
@@ -36,41 +36,40 @@ public class Execute {
       Class<?> cls;
       try {
         cls = TypeNames.getTypeForName(className);
-       } catch (ClassNotFoundException e1) {
+      } catch (ClassNotFoundException e1) {
         throw new Error("Error finding coverage class " + e1);
       }
       System.out.println(cls.toString() + " " + Coverage.getBranches(cls).size());
       covClasses.add(cls);
     }
-    
+
     DataFlowInput dfin = DataFlowInput.parse(args[1]);
-    
+
     for (Map.Entry<Branch, Set<Sequence>> e : dfin.frontierMap.entrySet()) {
       assert e.getValue().size() == 1;
-      
+
       Sequence s = e.getValue().toArray(new Sequence[0])[0];
       ExecutableSequence eseq = new ExecutableSequence(s);
-      
+
       Set<CoverageAtom> coveredBranches = new LinkedHashSet<CoverageAtom>();
       Coverage.clearCoverage(covClasses);
-      
+
       eseq.execute(new DummyVisitor(), new DummyCheckGenerator());
-      
+
       for (ExecutionOutcome o : eseq.getAllResults()) {
         System.out.println(">" + o);
       }
-      
+
       for (Class<?> cls : covClasses) {
         System.out.println("@" + cls + " " + Coverage.getCoveredAtoms(cls));
       }
-      
+
       coveredBranches = Coverage.getCoveredAtoms(covClasses);
-      
-      
+
       if (coveredBranches.contains(e.getKey())) {
-        System.out.println("COVERED BRANCH "+ e.getKey());
+        System.out.println("COVERED BRANCH " + e.getKey());
       } else {
-        System.out.println("DID NOT COVER BRANCH "+ e.getKey());
+        System.out.println("DID NOT COVER BRANCH " + e.getKey());
         System.out.println("Covered branches:");
         for (CoverageAtom a : coveredBranches) {
           System.out.println(a);
@@ -78,4 +77,4 @@ public class Execute {
       }
     }
   }
-  }
+}

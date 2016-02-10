@@ -44,44 +44,43 @@ public final class DoubleKeyToSetMap<K1, K2, V> {
   /**
    * Returns true if the doubly-nested set did not contain v.
    */
-   public boolean add(K1 k1, K2 k2, V v) {
-     ensureSetExists(k1, k2);
-     return dkMap.get(k1, k2).add(v);
-   }
+  public boolean add(K1 k1, K2 k2, V v) {
+    ensureSetExists(k1, k2);
+    return dkMap.get(k1, k2).add(v);
+  }
 
-   /**
-    * Returns true if the doubly-nested set contained v.
-    */
-   public boolean remove(K1 k1, K2 k2, V v) {
-     ensureSetExists(k1, k2);
-     return dkMap.get(k1, k2).remove(v);
-   }
+  /**
+   * Returns true if the doubly-nested set contained v.
+   */
+  public boolean remove(K1 k1, K2 k2, V v) {
+    ensureSetExists(k1, k2);
+    return dkMap.get(k1, k2).remove(v);
+  }
 
-   /**
-    * Returns true if the doubly-nested set did not contain all of
-    * the vs.
-    */
-   public boolean addAll(K1 k1, K2 k2, Set<V> vs) {
-     ensureSetExists(k1, k2);
-     return dkMap.get(k1, k2).addAll(vs);
-   }
+  /**
+   * Returns true if the doubly-nested set did not contain all of the vs.
+   */
+  public boolean addAll(K1 k1, K2 k2, Set<V> vs) {
+    ensureSetExists(k1, k2);
+    return dkMap.get(k1, k2).addAll(vs);
+  }
 
-   @Override
-   public String toString() {
-     return dkMap.toString();
-   }
+  @Override
+  public String toString() {
+    return dkMap.toString();
+  }
 
-   public void clear() {
-     dkMap.clear();
-   }
+  public void clear() {
+    dkMap.clear();
+  }
 
-   public Set<V> getAllVs() {
-     Set<V> result= new LinkedHashSet<V>();
-     for (K1 k1 : getK1Set()) {
-       for (K2 k2 : getK2Set(k1)) {
-         result.addAll(get(k1, k2));
-       }
-     }
-     return Collections.unmodifiableSet(result);
-   }
+  public Set<V> getAllVs() {
+    Set<V> result = new LinkedHashSet<V>();
+    for (K1 k1 : getK1Set()) {
+      for (K2 k2 : getK2Set(k1)) {
+        result.addAll(get(k1, k2));
+      }
+    }
+    return Collections.unmodifiableSet(result);
+  }
 }

@@ -23,28 +23,25 @@ import randoop.BugInRandoopException;
 import plume.Triple;
 
 /**
- * This class contains utility methods to access the coverage
- * information in classes that were instrumented using the coverage
- * instrumenter.
+ * This class contains utility methods to access the coverage information in
+ * classes that were instrumented using the coverage instrumenter.
  *
- * The cov package implements a basic branch coverage instrumenter
- * that we use for the branch-directed test generation research.
+ * The cov package implements a basic branch coverage instrumenter that we use
+ * for the branch-directed test generation research.
  *
- * This tool is prototype-quality, not for production use. In
- * particular, it is missing a number of features including tracking
- * coverage for switch statements, and lack of support for
- * generics.
+ * This tool is prototype-quality, not for production use. In particular, it is
+ * missing a number of features including tracking coverage for switch
+ * statements, and lack of support for generics.
  */
 public class Coverage {
 
   private static final String lineSep = System.getProperty("line.separator");
-  
-  public static Map<Class<?>,Boolean> isInstrumentedCached =
-    new LinkedHashMap<Class<?>, Boolean>();
-  
+
+  public static Map<Class<?>, Boolean> isInstrumentedCached = new LinkedHashMap<Class<?>, Boolean>();
+
   /**
-   * Same as c.isPrimitive() but faster if this test is done very 
-   * frequently (as it is in Randoop).
+   * Same as c.isPrimitive() but faster if this test is done very frequently (as
+   * it is in Randoop).
    */
   public static boolean isInstrumented(Class<?> c) {
     if (c == null)
@@ -64,7 +61,8 @@ public class Coverage {
   }
 
   public static boolean isInstrumented(Member member) {
-    if (member==null) throw new IllegalArgumentException("member cannot be null.");
+    if (member == null)
+      throw new IllegalArgumentException("member cannot be null.");
     return isInstrumented(member.getDeclaringClass());
   }
 
@@ -73,8 +71,10 @@ public class Coverage {
    * method) returns null.
    */
   public static String getMethodIdForLine(Class<?> cls, int lineNumber) {
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
 
     Map<String, int[]> startEndLines = getMethodStartEndLines(cls);
     for (Map.Entry<String, int[]> e : startEndLines.entrySet()) {
@@ -93,7 +93,6 @@ public class Coverage {
     return lineNumber >= value[0] && lineNumber <= value[1];
   }
 
-
   /**
    *
    * @param cls
@@ -109,11 +108,16 @@ public class Coverage {
   public static List<String> getSourceLines(Class<?> cls, int startLine, int endLine) {
 
     // Check inputs.
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
-    if (startLine <= 0) throw new IllegalArgumentException("startLine must be >0: " + startLine);
-    if (endLine <= 0) throw new IllegalArgumentException("endLine must be >0: " + endLine);
-    if (startLine > endLine) throw new IllegalArgumentException("startLine must be <= endLine.");
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+    if (startLine <= 0)
+      throw new IllegalArgumentException("startLine must be >0: " + startLine);
+    if (endLine <= 0)
+      throw new IllegalArgumentException("endLine must be >0: " + endLine);
+    if (startLine > endLine)
+      throw new IllegalArgumentException("startLine must be <= endLine.");
 
     String sourceFileName = getSourceFileName(cls) + ".orig";
     InputStream fileStream = cls.getResourceAsStream(sourceFileName);
@@ -151,21 +155,22 @@ public class Coverage {
     List<String> lines = getSourceLines(cls, 1, Integer.MAX_VALUE);
     Set<Integer> branchLines = new LinkedHashSet<Integer>();
     int[] branchLinesArray = getBranchLineNumbers(cls);
-    for (int l : branchLinesArray) branchLines.add(l);
+    for (int l : branchLinesArray)
+      branchLines.add(l);
     int[] trues = getTrueBranches(cls);
     int[] falses = getFalseBranches(cls);
 
     List<String> ret = new ArrayList<String>();
 
-    for (int line = 1 ; line <= lines.size() ; line++) {
+    for (int line = 1; line <= lines.size(); line++) {
       StringBuilder b = new StringBuilder();
       if (branchLines.contains(line)) {
 
         // Find branch number. Iterate through branchLines and when we find
         // that branchLines[x]=i, then x is the branch number.
         int branchNumber = -1;
-        for (int j = 0 ; j < branchLinesArray.length ; j++) {
-          if (branchLinesArray[j]==line) {
+        for (int j = 0; j < branchLinesArray.length; j++) {
+          if (branchLinesArray[j] == line) {
             branchNumber = j;
             break;
           }
@@ -196,10 +201,14 @@ public class Coverage {
    * @return Returns null if lineNumber is greater than lines in source file.
    */
   public static String getMethodSource(Class<?> cls, int lineNumber, String prefix) {
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (prefix==null) throw new IllegalArgumentException("prefix cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
-    if (lineNumber <= 0) throw new IllegalArgumentException("lineNumber must be >0.");
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (prefix == null)
+      throw new IllegalArgumentException("prefix cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+    if (lineNumber <= 0)
+      throw new IllegalArgumentException("lineNumber must be >0.");
 
     String methodId = getMethodIdForLine(cls, lineNumber);
     int startLine = -1;
@@ -216,11 +225,11 @@ public class Coverage {
     int relativeLineNumber = lineNumber - startLine; // zero-based.
     assert relativeLineNumber < lines.size();
     StringBuilder b = new StringBuilder();
-    for (int i = 0 ; i < lines.size() ; i++) {
+    for (int i = 0; i < lines.size(); i++) {
       if (i == relativeLineNumber) {
         b.append(prefix);
       } else {
-        for (int j = 0 ; j < prefix.length() ; j++)
+        for (int j = 0; j < prefix.length(); j++)
           b.append(' ');
       }
       b.append(lines.get(i));
@@ -234,7 +243,8 @@ public class Coverage {
    *         instrumented.
    */
   public static Set<CoverageAtom> getBranches(Member m) {
-    if (m == null) throw new IllegalArgumentException("m cannot be null.");
+    if (m == null)
+      throw new IllegalArgumentException("m cannot be null.");
     if (!((m instanceof Method) || (m instanceof Constructor<?>)))
       throw new IllegalArgumentException("m must be a method or constructor.");
     initCoverage(m.getDeclaringClass());
@@ -247,8 +257,10 @@ public class Coverage {
    * @return Returns null if the class is not instrumented.
    */
   public static Set<CoverageAtom> getBranches(Class<?> cls) {
-    if (cls == null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented.");
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented.");
     initCoverage(cls);
     return classesToAtoms.get(cls);
   }
@@ -259,10 +271,10 @@ public class Coverage {
   public static String getMethodId(Member m) {
     Annotation[] annos = null;
     if (m instanceof Method) {
-      Method method = (Method)m;
+      Method method = (Method) m;
       annos = method.getDeclaredAnnotations();
     } else if (m instanceof Constructor<?>) {
-      Constructor<?> cons = (Constructor<?>)m;
+      Constructor<?> cons = (Constructor<?>) m;
       annos = cons.getDeclaredAnnotations();
     } else {
       throw new IllegalArgumentException("m must be a Method or Constructor.");
@@ -278,7 +290,7 @@ public class Coverage {
       return null;
     try {
       Method valueMethod = methodIdAnno.annotationType().getMethod("value");
-      return (String)valueMethod.invoke(methodIdAnno);
+      return (String) valueMethod.invoke(methodIdAnno);
     } catch (Exception e) {
       // Should never get here. XXX COULD HAPPEN IF PRIVATE CLASS?
       throw new RuntimeException("Error in coverage instrumenter.");
@@ -293,8 +305,10 @@ public class Coverage {
   }
 
   public static int[] getTrueBranches(Class<?> cls) {
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
       Field f = cls.getField(Constants.TRUE_BRANCHES);
       makeAccessible(f);
@@ -308,8 +322,10 @@ public class Coverage {
   }
 
   public static int[] getFalseBranches(Class<?> cls) {
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
       Field f = cls.getField(Constants.FALSE_BRANCHES);
       makeAccessible(f);
@@ -323,8 +339,10 @@ public class Coverage {
   }
 
   public static int[] getBranchLineNumbers(Class<?> cls) {
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
       Field f = cls.getField(Constants.BRANCHLINES);
       makeAccessible(f);
@@ -338,13 +356,15 @@ public class Coverage {
   }
 
   @SuppressWarnings("unchecked")
-  public static Map<String,int[]> getMethodIdToBranches(Class<?> cls) {
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+  public static Map<String, int[]> getMethodIdToBranches(Class<?> cls) {
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
       Field f = cls.getField(Constants.METHOD_ID_TO_BRANCHES);
       makeAccessible(f);
-      return (Map<String,int[]>) f.get(null);
+      return (Map<String, int[]>) f.get(null);
     } catch (Exception e) {
       throw new RuntimeException("Error in coverage instrumenter: " + e); // Should
       // never
@@ -354,13 +374,15 @@ public class Coverage {
   }
 
   @SuppressWarnings("unchecked")
-  public static Map<String,int[]> getMethodStartEndLines(Class<?> cls) {
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+  public static Map<String, int[]> getMethodStartEndLines(Class<?> cls) {
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
       Field f = cls.getField(Constants.METHOD_LINE_SPANS_FIELD);
       makeAccessible(f);
-      return (Map<String,int[]>) f.get(null);
+      return (Map<String, int[]>) f.get(null);
     } catch (Exception e) {
       throw new RuntimeException("Error in coverage instrumenter."); // Should
       // never
@@ -369,11 +391,11 @@ public class Coverage {
     }
   }
 
-
-
   public static String getSourceFileName(Class<?> cls) {
-    if (cls==null) throw new IllegalArgumentException("cls cannot be null.");
-    if (!isInstrumented(cls)) throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
+    if (cls == null)
+      throw new IllegalArgumentException("cls cannot be null.");
+    if (!isInstrumented(cls))
+      throw new IllegalArgumentException("cls is not coverage-instrumented: " + cls.getName());
     try {
       Field f = cls.getField(Constants.SOURCE_FILE_NAME);
       makeAccessible(f);
@@ -398,9 +420,11 @@ public class Coverage {
     String className = cls.getName();
     int[] trueBranches = getTrueBranches(cls);
     int[] falseBranches = getFalseBranches(cls);
-    for (int i = 0 ; i < trueBranches.length ; i++) {
-      if (trueBranches[i] > 0) atoms.add(atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(className, i, true)));
-      if (falseBranches[i] > 0) atoms.add(atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(className, i, false)));
+    for (int i = 0; i < trueBranches.length; i++) {
+      if (trueBranches[i] > 0)
+        atoms.add(atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(className, i, true)));
+      if (falseBranches[i] > 0)
+        atoms.add(atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(className, i, false)));
     }
     return atoms;
   }
@@ -413,20 +437,22 @@ public class Coverage {
       String className = cls.getName();
       int[] trueBranches = getTrueBranches(cls);
       int[] falseBranches = getFalseBranches(cls);
-      for (int i = 0 ; i < trueBranches.length ; i++) {
-        if (trueBranches[i] > 0) atoms.add(atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(className, i, true)));
-        if (falseBranches[i] > 0) atoms.add(atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(className, i, false)));
+      for (int i = 0; i < trueBranches.length; i++) {
+        if (trueBranches[i] > 0)
+          atoms.add(atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(className, i, true)));
+        if (falseBranches[i] > 0)
+          atoms.add(atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(className, i, false)));
       }
     }
     return atoms;
   }
 
-  private static Map<CoverageAtom,Member> atomsToMembers = new LinkedHashMap<CoverageAtom, Member>();
-  private static Map<Member,Set<CoverageAtom>> membersToAtoms = new LinkedHashMap<Member,Set<CoverageAtom>>();
+  private static Map<CoverageAtom, Member> atomsToMembers = new LinkedHashMap<CoverageAtom, Member>();
+  private static Map<Member, Set<CoverageAtom>> membersToAtoms = new LinkedHashMap<Member, Set<CoverageAtom>>();
   private static Map<Class<?>, Set<CoverageAtom>> classesToAtoms = new LinkedHashMap<Class<?>, Set<CoverageAtom>>();
-  // Given class name, branch number, and boolean value, returns the corresponding coverage atom.
-  public static Map<Triple<String,Integer,Boolean>,CoverageAtom> atomInfoToAtoms =
-    new LinkedHashMap<Triple<String,Integer,Boolean>, CoverageAtom>();
+  // Given class name, branch number, and boolean value, returns the
+  // corresponding coverage atom.
+  public static Map<Triple<String, Integer, Boolean>, CoverageAtom> atomInfoToAtoms = new LinkedHashMap<Triple<String, Integer, Boolean>, CoverageAtom>();
 
   public static void initCoverage(Class<?> cls) {
     assert cls != null;
@@ -438,10 +464,10 @@ public class Coverage {
     int[] branchLineNumbers = getBranchLineNumbers(cls);
 
     Set<Integer> branchNumbers = new LinkedHashSet<Integer>();
-    for (int i = 0 ; i < branchLineNumbers.length ; i++)
+    for (int i = 0; i < branchLineNumbers.length; i++)
       branchNumbers.add(i);
 
-    Map<String,int[]> methodIdToBranches = getMethodIdToBranches(cls);
+    Map<String, int[]> methodIdToBranches = getMethodIdToBranches(cls);
 
     Set<Member> allDeclaredMembers = new LinkedHashSet<Member>();
     allDeclaredMembers.addAll(Arrays.asList(cls.getDeclaredMethods()));
@@ -453,7 +479,8 @@ public class Coverage {
 
       membersToAtoms.put(method, new LinkedHashSet<CoverageAtom>());
 
-      // Get the id for this method (added as an annotation in the instrumented sources).
+      // Get the id for this method (added as an annotation in the instrumented
+      // sources).
       String methodId = getMethodId(method);
       // If the method has no id, it means we do not keep track of its
       // individual coverage, so it will have no entries in the maps.
@@ -461,7 +488,7 @@ public class Coverage {
         continue;
       // Get the branch numbers for this method.
       int[] methodBranchNumbers = methodIdToBranches.get(methodId);
-      //   Every method with an id has a non-null value in the above map.
+      // Every method with an id has a non-null value in the above map.
       assert methodBranchNumbers != null : cls.toString();
 
       for (int branchNumber : methodBranchNumbers) {
@@ -493,7 +520,7 @@ public class Coverage {
     }
 
     // The remaining branch numbers belong to no method or constructor.
-    for (Iterator<Integer> it = branchNumbers.iterator() ; it.hasNext() ; ) {
+    for (Iterator<Integer> it = branchNumbers.iterator(); it.hasNext();) {
       Integer branchNumber = it.next();
       int lineNumber = branchLineNumbers[branchNumber];
       Branch t = Branch.getBranchInfo(cls.getName(), null, lineNumber, branchNumber, true);
@@ -507,21 +534,24 @@ public class Coverage {
       it.remove();
     }
 
-    assert classesToAtoms.get(cls).size() == 2 * branchLineNumbers.length
-    : "classesToAtoms.size()=" + classesToAtoms.size() + ",branchLineNumbers.length=" + branchLineNumbers.length;
+    assert classesToAtoms.get(cls).size() == 2 * branchLineNumbers.length : "classesToAtoms.size()=" + classesToAtoms.size() + ",branchLineNumbers.length="
+        + branchLineNumbers.length;
   }
-
 
   /**
    * Retrieves the class member that contains the {@link CoverageAtom}
    * 
    * @param cov
-   * @return Returns the method or constructor to which this {@code CoverageAtom} belongs.
-   * @throws IllegalArgumentException if {@code CoverageAtom} argument is null.
-   * @throws BugInRandoopException if {@code CoverageAtom} argument does not correspond to a class.
+   * @return Returns the method or constructor to which this
+   *         {@code CoverageAtom} belongs.
+   * @throws IllegalArgumentException
+   *           if {@code CoverageAtom} argument is null.
+   * @throws BugInRandoopException
+   *           if {@code CoverageAtom} argument does not correspond to a class.
    */
   public static Member getMemberContaining(CoverageAtom cov) {
-    if (cov == null) throw new IllegalArgumentException("cov cannot be null.");
+    if (cov == null)
+      throw new IllegalArgumentException("cov cannot be null.");
 
     try {
       initCoverage(Class.forName(cov.getClassName()));
@@ -535,17 +565,18 @@ public class Coverage {
   /**
    * Increments the count for the given branch by 1.
    * 
-   * @param br  the branch to update.
+   * @param br
+   *          the branch to update.
    */
   public static void touch(Branch br) {
-    
+
     Class<?> cls;
     try {
       cls = Class.forName(br.getClassName());
     } catch (ClassNotFoundException e) {
       throw new BugInRandoopException("Error in Coverage.touch: " + e);
     }
-    
+
     if (br.branch) {
       getTrueBranches(cls)[br.branchNumber]++;
     } else {

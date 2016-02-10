@@ -10,11 +10,11 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 
 /**
- * PublicField is an abstract class representing a public field of a class object,
- * which can be an instance field, a static field, or a static final field.
- * Each is implemented as a separate class.
- * Meant to be adapted by either {@link randoop.operation.FieldSet FieldSet} or
- * {@link randoop.operation.FieldGet FieldGet} for use as a 
+ * PublicField is an abstract class representing a public field of a class
+ * object, which can be an instance field, a static field, or a static final
+ * field. Each is implemented as a separate class. Meant to be adapted by either
+ * {@link randoop.operation.FieldSet FieldSet} or
+ * {@link randoop.operation.FieldGet FieldGet} for use as a
  * {@link randoop.operation.Operation Operation}.
  *
  * @see InstanceField
@@ -31,7 +31,8 @@ public abstract class AccessibleField implements Serializable {
   /**
    * Create the public field object for the given {@code Field}.
    *
-   * @param field  the field.
+   * @param field
+   *          the field.
    */
   public AccessibleField(Field field) {
     this.field = field;
@@ -39,8 +40,8 @@ public abstract class AccessibleField implements Serializable {
   }
 
   /**
-   * Returns a list of types needed to set a field.
-   * What is returned depends on the implementing class.
+   * Returns a list of types needed to set a field. What is returned depends on
+   * the implementing class.
    *
    * @return list of types needed to set the field.
    */
@@ -73,6 +74,7 @@ public abstract class AccessibleField implements Serializable {
 
   /**
    * Returns the declared name of the field.
+   * 
    * @return unqualified name of the field.
    */
   public String getName() {
@@ -80,10 +82,10 @@ public abstract class AccessibleField implements Serializable {
   }
 
   /**
-   * Translates field into a string representing fully qualified
-   * name.
+   * Translates field into a string representing fully qualified name.
    *
-   * @param inputVars  list of input variables
+   * @param inputVars
+   *          list of input variables
    * @return string representing code representation of field.
    */
   public abstract String toCode(List<Variable> inputVars);
@@ -99,7 +101,8 @@ public abstract class AccessibleField implements Serializable {
   }
 
   /**
-   * Uses {@link AccessibleField#toParseableString()} to create string representation.
+   * Uses {@link AccessibleField#toParseableString()} to create string
+   * representation.
    */
   @Override
   public String toString() {
@@ -109,7 +112,7 @@ public abstract class AccessibleField implements Serializable {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof AccessibleField) {
-      AccessibleField f = (AccessibleField)obj;
+      AccessibleField f = (AccessibleField) obj;
       return this.field.equals(f.field);
     }
     return false;
@@ -122,11 +125,15 @@ public abstract class AccessibleField implements Serializable {
 
   /**
    * Uses reflection to return the value of the field for the given object.
-   * Suppresses exceptions that occur because PublicField was not correctly initialized.
+   * Suppresses exceptions that occur because PublicField was not correctly
+   * initialized.
    *
-   * @param object - instance to which field belongs, or null if field is static.
+   * @param object
+   *          - instance to which field belongs, or null if field is static.
    * @return reference to value of field.
-   * @throws BugInRandoopException if field access throws {@link IllegalArgumentException} or {@link IllegalAccessException}.
+   * @throws BugInRandoopException
+   *           if field access throws {@link IllegalArgumentException} or
+   *           {@link IllegalAccessException}.
    */
   public Object getValue(Object object) {
     Object ret = null;
@@ -135,8 +142,7 @@ public abstract class AccessibleField implements Serializable {
     } catch (IllegalArgumentException e) {
       throw new BugInRandoopException("Field access to object of wrong type: " + e.getMessage());
     } catch (IllegalAccessException e) {
-      throw new BugInRandoopException("Access control violation for field: "
-                                      + field.getName() + "; " + e.getMessage());
+      throw new BugInRandoopException("Access control violation for field: " + field.getName() + "; " + e.getMessage());
     }
     return ret;
   }
@@ -145,9 +151,13 @@ public abstract class AccessibleField implements Serializable {
    * Uses reflection to set the value of the field for the given object.
    * Suppresses exceptions that occur because setup was incorrect.
    *
-   * @param object - instance to which field belongs, or null if static.
-   * @param value - new value to assign to field
-   * @throws BugInRandoopException if field access throws {@link IllegalArgumentException} or {@link IllegalAccessException}.
+   * @param object
+   *          - instance to which field belongs, or null if static.
+   * @param value
+   *          - new value to assign to field
+   * @throws BugInRandoopException
+   *           if field access throws {@link IllegalArgumentException} or
+   *           {@link IllegalAccessException}.
    */
   public void setValue(Object object, Object value) {
     try {
@@ -161,10 +171,12 @@ public abstract class AccessibleField implements Serializable {
 
   /**
    * Converts this object to a form that can be serialized.
+   * 
    * @see SerializableAccessibleField
    *
    * @return serializable form of this object
-   * @throws ObjectStreamException if serialization fails.
+   * @throws ObjectStreamException
+   *           if serialization fails.
    */
   protected Object writeReplace() throws ObjectStreamException {
     return new SerializableAccessibleField(field);
@@ -172,6 +184,7 @@ public abstract class AccessibleField implements Serializable {
 
   /**
    * isStatic returns the default that a field is not static.
+   * 
    * @return false (default for a field).
    */
   public boolean isStatic() {
@@ -179,10 +192,11 @@ public abstract class AccessibleField implements Serializable {
   }
 
   /**
-   * satisfies checks whether the enclosed {@link Field} object satisfies
-   * the given predicate.
+   * satisfies checks whether the enclosed {@link Field} object satisfies the
+   * given predicate.
    *
-   * @param predicate the {@link ReflectionPredicate} to check this.field against.
+   * @param predicate
+   *          the {@link ReflectionPredicate} to check this.field against.
    * @return true if this.field satisfies predicate.canUse(field).
    */
   public boolean satisfies(ReflectionPredicate predicate) {

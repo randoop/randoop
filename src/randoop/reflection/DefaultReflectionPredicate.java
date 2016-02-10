@@ -16,9 +16,8 @@ import randoop.util.Log;
  * Returns true for public members, with some exceptions (see
  * doNotUseSpecialCase method).
  * <p>
- * If a method has the @CheckRep annotation, returns false
- * (the method will be used as a contract checker, not
- *  as a method under test).
+ * If a method has the @CheckRep annotation, returns false (the method will be
+ * used as a contract checker, not as a method under test).
  */
 public class DefaultReflectionPredicate implements ReflectionPredicate {
 
@@ -40,19 +39,21 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields) {
-   this(omitMethods, omitFields, new PublicVisibilityPredicate());
+    this(omitMethods, omitFields, new PublicVisibilityPredicate());
   }
 
   /**
-   * DefaultReflectionFilter creates a filter object that uses default
-   * criteria for inclusion of reflection objects.
-   * @param omitMethods pattern for methods to omit, if null then no methods omitted.
-   * @param visibility  the predicate for testing visibility expectations for members
-   * @see OperationExtractor#getOperations(java.util.Collection, ReflectionPredicate)
+   * DefaultReflectionFilter creates a filter object that uses default criteria
+   * for inclusion of reflection objects.
+   * 
+   * @param omitMethods
+   *          pattern for methods to omit, if null then no methods omitted.
+   * @param visibility
+   *          the predicate for testing visibility expectations for members
+   * @see OperationExtractor#getOperations(java.util.Collection,
+   *      ReflectionPredicate)
    */
-  public DefaultReflectionPredicate(Pattern omitMethods,
-      Set<String> omitFields,
-      VisibilityPredicate visibility) {
+  public DefaultReflectionPredicate(Pattern omitMethods, Set<String> omitFields, VisibilityPredicate visibility) {
     super();
     this.omitMethods = omitMethods;
     this.omitFields = omitFields;
@@ -64,12 +65,11 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     if (c.isAnonymousClass()) {
       return false;
     }
-    return visibility.isVisible (c);
+    return visibility.isVisible(c);
   }
 
   /**
-   * {@inheritDoc}
-   * Does checks for the following cases:
+   * {@inheritDoc} Does checks for the following cases:
    * <ul>
    * <li>Main methods
    * <li>Methods matching omission pattern
@@ -86,14 +86,14 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
 
-    if (! visibility.isVisible(m)) {
+    if (!visibility.isVisible(m)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: the method is not visible from test classes");
       }
       return false;
     }
-    if (! visibility.isVisible(m.getReturnType())) {
+    if (!visibility.isVisible(m.getReturnType())) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: the method's return type is not visible from test classes");
@@ -101,7 +101,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
     for (Class<?> p : m.getParameterTypes()) {
-      if (! visibility.isVisible(p)) {
+      if (!visibility.isVisible(p)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Will not use: " + m.toString());
           Log.logLine("  reason: the method has a parameter that is not visible from test classes");
@@ -113,10 +113,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     // If it's a main entry method, don't use it (we're doing unit
     // testing, not running programs).
     Class<?>[] paramTypes = m.getParameterTypes();
-    if (m.getName().equals("main")
-        && paramTypes.length == 1
-        && paramTypes[0].isArray()
-        && paramTypes[0].getComponentType().equals(String.class)) {
+    if (m.getName().equals("main") && paramTypes.length == 1 && paramTypes[0].isArray() && paramTypes[0].getComponentType().equals(String.class)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: main method not applicable to unit testing.");
@@ -146,7 +143,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       }
     }
 
-    if (! m.isBridge() && m.isSynthetic()) {
+    if (!m.isBridge() && m.isSynthetic()) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + m.toString());
         Log.logLine("  reason: it's a synthetic method");
@@ -184,7 +181,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
     return false;
   }
 
-
   /**
    * Determines whether a bridge method is not a "visibility" bridge, which
    * allows access to a definition of the method in a non-visible superclass.
@@ -192,44 +188,44 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    * Bridge methods are synthetic overriding methods that are used by the
    * compiler to make certain things possible that seem reasonable but need
    * tweaks to make them work. Two of the three known cases involve forcing
-   * unchecked casts to allow type narrowing of return types (covariant
-   * return types) and instantiation of generic type parameters in methods.
-   * Both of these are situations that we think of as overriding, but really
-   * aren't. These bridge methods do unchecked type conversions from the
-   * general type to the more specific type expected by the local method.
-   * As a result, if included for testing, Randoop would generate many tests
-   * that would confirm that there is an unchecked type conversion. So, we do
-   * not want to include these methods.
+   * unchecked casts to allow type narrowing of return types (covariant return
+   * types) and instantiation of generic type parameters in methods. Both of
+   * these are situations that we think of as overriding, but really aren't.
+   * These bridge methods do unchecked type conversions from the general type to
+   * the more specific type expected by the local method. As a result, if
+   * included for testing, Randoop would generate many tests that would confirm
+   * that there is an unchecked type conversion. So, we do not want to include
+   * these methods.
    * <p>
    * The third known case involves a public class inheriting a public method
-   * defined in the same package private class. The bridge method in the
-   * public class exposes the method outside of the package, and we *do* want
-   * to be able to call this method. (This sort of trick is useful in
-   * providing a facade to an API where implementation details are accessible
-   * within the package.)
+   * defined in the same package private class. The bridge method in the public
+   * class exposes the method outside of the package, and we *do* want to be
+   * able to call this method. (This sort of trick is useful in providing a
+   * facade to an API where implementation details are accessible within the
+   * package.)
    * <p>
    * To recognize a visibility bridge, it is sufficient to run up the superclass
    * chain and confirm that the visibility of the class changes to non-public.
    * If it does not, then the bridge method is not a visibility bridge.
    *
-   * @param m  the bridge method to test
+   * @param m
+   *          the bridge method to test
    * @return true if {@code m} is not a visibility bridge, and false otherwise
-   * @throws Error if a {@link SecurityException} is thrown when accessing
-   * superclass methods
+   * @throws Error
+   *           if a {@link SecurityException} is thrown when accessing
+   *           superclass methods
    */
   private boolean isNotVisibilityBridge(Method m) throws Error {
     Method method = m;
     Class<?> c = m.getDeclaringClass();
-    while (c != null && visibility.isVisible(c)
-        && method != null && method.isBridge()) {
+    while (c != null && visibility.isVisible(c) && method != null && method.isBridge()) {
       c = c.getSuperclass();
       try {
         method = c.getDeclaredMethod(m.getName(), m.getParameterTypes());
       } catch (NoSuchMethodException e) {
         method = null;
       } catch (SecurityException e) {
-        String msg = "Cannot access method " + m.getName()
-                   + " in class " + c.getCanonicalName();
+        String msg = "Cannot access method " + m.getName() + " in class " + c.getCanonicalName();
         throw new Error(msg);
       }
     }
@@ -239,11 +235,10 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   private String doNotUseSpecialCase(Method m) {
 
     // Special case 1:
-    // We're skipping compareTo method in enums - you can call it only with the same type as receiver
+    // We're skipping compareTo method in enums - you can call it only with the
+    // same type as receiver
     // but the signature does not tell you that
-    if (m.getDeclaringClass().getCanonicalName().equals("java.lang.Enum")
-        && m.getName().equals("compareTo")
-        && m.getParameterTypes().length == 1
+    if (m.getDeclaringClass().getCanonicalName().equals("java.lang.Enum") && m.getName().equals("compareTo") && m.getParameterTypes().length == 1
         && m.getParameterTypes()[0].equals(Enum.class))
       return "We're skipping compareTo method in enums";
 
@@ -253,7 +248,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
 
     // Special case 2:
     // hashCode is bad in general but String.hashCode is fair game
-    if (m.getName().equals("hashCode") && ! m.getDeclaringClass().equals(String.class))
+    if (m.getName().equals("hashCode") && !m.getDeclaringClass().equals(String.class))
       return "hashCode";
 
     // Special case 3: (just clumps together a bunch of hashCodes, so skip it)
@@ -290,7 +285,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   @Override
   public boolean test(Constructor<?> c) {
 
-    if (! visibility.isVisible(c)) {
+    if (!visibility.isVisible(c)) {
       if (Log.isLoggingOn()) {
         Log.logLine("Will not use: " + c.toString());
         Log.logLine("  reason: the constructor is not visible from test classes");
@@ -298,7 +293,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
       return false;
     }
     for (Class<?> p : c.getParameterTypes()) {
-      if (! visibility.isVisible(p)) {
+      if (!visibility.isVisible(p)) {
         if (Log.isLoggingOn()) {
           Log.logLine("Will not use: " + c.toString());
           Log.logLine("  reason: the constructor has a parameter that is not visible from test classes");
@@ -331,23 +326,24 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   }
 
   private boolean matchesOmitMethodPattern(String name) {
-     if (omitMethods == null) {
-       return false;
-     }
-     boolean result = omitMethods.matcher(name).find();
-     if (Log.isLoggingOn()) {
-       Log.logLine (String.format("Comparing '%s' against pattern '%s' = %b%n", name,
-                    omitMethods, result));
-     }
-     return result;
+    if (omitMethods == null) {
+      return false;
+    }
+    boolean result = omitMethods.matcher(name).find();
+    if (Log.isLoggingOn()) {
+      Log.logLine(String.format("Comparing '%s' against pattern '%s' = %b%n", name, omitMethods, result));
+    }
+    return result;
   }
 
   /**
-   * Determines whether the name of a field is included among the
-   * omitted field names.
+   * Determines whether the name of a field is included among the omitted field
+   * names.
    *
-   * @param f field to test
-   * @return true if field name does not occur in omitFields pattern, and false if it does.
+   * @param f
+   *          field to test
+   * @return true if field name does not occur in omitFields pattern, and false
+   *         if it does.
    */
   @Override
   public boolean test(Field f) {

@@ -22,8 +22,9 @@ import randoop.operation.MethodCall;
 import randoop.operation.Operation;
 
 /**
- * OperationExtractor is a {@link ClassVisitor} that creates a collection of {@link Operation}
- * objects through its visit methods as called by {@link ReflectionManager#apply(Class)}.
+ * OperationExtractor is a {@link ClassVisitor} that creates a collection of
+ * {@link Operation} objects through its visit methods as called by
+ * {@link ReflectionManager#apply(Class)}.
  * 
  * @see ReflectionManager
  * @see ClassVisitor
@@ -32,33 +33,35 @@ import randoop.operation.Operation;
 public class OperationExtractor implements ClassVisitor {
 
   private Set<Operation> operations;
- 
+
   /**
-   * Creates a visitor object that collects Operation objects corresponding
-   * to class members visited by {@link ReflectionManager}. 
-   * Stores {@link Operation} objects in an ordered collection to ensure they
-   * are strictly ordered once flattened to a list. This is needed to guarantee 
-   * determinism between Randoop runs with the same classes and parameters. 
+   * Creates a visitor object that collects Operation objects corresponding to
+   * class members visited by {@link ReflectionManager}. Stores
+   * {@link Operation} objects in an ordered collection to ensure they are
+   * strictly ordered once flattened to a list. This is needed to guarantee
+   * determinism between Randoop runs with the same classes and parameters.
    */
   public OperationExtractor() {
     this.operations = new TreeSet<>();
   }
-  
+
   public List<Operation> getOperations() {
     return new ArrayList<Operation>(operations);
   }
-  
+
   /**
-   * Collects the members of a collection of classes.
-   * Returns a filtered list of {@code Operation} objects.
+   * Collects the members of a collection of classes. Returns a filtered list of
+   * {@code Operation} objects.
    * 
-   * @param classListing  the collection of class objects from which to extract
-   * @param predicate  whether to include class members in results
+   * @param classListing
+   *          the collection of class objects from which to extract
+   * @param predicate
+   *          whether to include class members in results
    * @return list of {@code Operation} objects satisfying the predicate
    */
-  public static List<Operation> getOperations(Collection<Class<?>> classListing, 
-      ReflectionPredicate predicate) {
-    if (predicate == null) predicate = new DefaultReflectionPredicate();
+  public static List<Operation> getOperations(Collection<Class<?>> classListing, ReflectionPredicate predicate) {
+    if (predicate == null)
+      predicate = new DefaultReflectionPredicate();
     ReflectionManager mgr = new ReflectionManager(predicate);
     OperationExtractor op = new OperationExtractor();
     mgr.add(op);
@@ -71,7 +74,9 @@ public class OperationExtractor implements ClassVisitor {
   /**
    * Creates a {@link ConstructorCall} object for the {@link Constructor}.
    * 
-   * @param c  a {@link Constructor} object to be represented as an {@link Operation}.
+   * @param c
+   *          a {@link Constructor} object to be represented as an
+   *          {@link Operation}.
    */
   @Override
   public void visit(Constructor<?> c) {
@@ -81,7 +86,8 @@ public class OperationExtractor implements ClassVisitor {
   /**
    * Creates a {@link MethodCall} object for the {@link Method}.
    * 
-   * @param method  a {@link Method} object to be represented as an {@link Operation}.
+   * @param method
+   *          a {@link Method} object to be represented as an {@link Operation}.
    */
   @Override
   public void visit(Method method) {
@@ -89,15 +95,16 @@ public class OperationExtractor implements ClassVisitor {
   }
 
   /**
-   * Adds the {@link Operation} objects corresponding to 
-   * getters and setters appropriate to the kind of field.
+   * Adds the {@link Operation} objects corresponding to getters and setters
+   * appropriate to the kind of field.
    * 
-   * @param field  a {@link Field} object to be represented as an {@link Operation}.
+   * @param field
+   *          a {@link Field} object to be represented as an {@link Operation}.
    */
   @Override
   public void visit(Field field) {
     int mods = field.getModifiers();
-    
+
     if (Modifier.isStatic(mods)) {
       if (Modifier.isFinal(mods)) {
         StaticFinalField s = new StaticFinalField(field);
@@ -122,7 +129,8 @@ public class OperationExtractor implements ClassVisitor {
   /**
    * Creates a {@link EnumConstant} object for the {@link Enum}.
    * 
-   * @param e an {@link Enum} object to be represented as an {@link Operation}.
+   * @param e
+   *          an {@link Enum} object to be represented as an {@link Operation}.
    */
   @Override
   public void visit(Enum<?> e) {
@@ -131,12 +139,12 @@ public class OperationExtractor implements ClassVisitor {
 
   @Override
   public void visitBefore(Class<?> c) {
-    //nothing to do here
+    // nothing to do here
   }
 
   @Override
   public void visitAfter(Class<?> c) {
-   //nothing to do here
+    // nothing to do here
   }
 
 }

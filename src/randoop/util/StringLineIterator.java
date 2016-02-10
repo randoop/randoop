@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * Given a string consisting of words separated by white space, lets the
- * user ask for the words as lines of text of a desired length, until there
- * are no more words.
+ * Given a string consisting of words separated by white space, lets the user
+ * ask for the words as lines of text of a desired length, until there are no
+ * more words.
  */
 public class StringLineIterator {
 
@@ -27,13 +27,12 @@ public class StringLineIterator {
   }
 
   /**
-   * Returns a line of words, ensuring that the length of the line
-   * is no greater than the given length. If such a line is not possible,
-   * returns an empty String.
+   * Returns a line of words, ensuring that the length of the line is no greater
+   * than the given length. If such a line is not possible, returns an empty
+   * String.
    * 
-   * Note that if length is always too small for the iterator to make
-   * progress by returning non-empty lines, the iterator will not
-   * terminate.
+   * Note that if length is always too small for the iterator to make progress
+   * by returning non-empty lines, the iterator will not terminate.
    */
   public String nextLine(int length) {
     if (length < 0)
@@ -51,7 +50,7 @@ public class StringLineIterator {
         // No more words. Return current line.
         return b.toString();
       }
-      int lengthWithNextWord = b.length() + /* potential space*/ (b.length() > 0 ? 1 : 0) +  nextWord.length();
+      int lengthWithNextWord = b.length() + /* potential space */ (b.length() > 0 ? 1 : 0) + nextWord.length();
       if (lengthWithNextWord > length) {
         // Adding another word (plus space to separate from the
         // last word currently in the line) would make the line too long.

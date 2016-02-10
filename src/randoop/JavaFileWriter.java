@@ -10,7 +10,8 @@ import randoop.util.CollectionsExt;
 import randoop.util.Log;
 
 /**
- * Outputs a collection of sequences as Java files, with one method per sequence.
+ * Outputs a collection of sequences as Java files, with one method per
+ * sequence.
  */
 public class JavaFileWriter {
 
@@ -22,9 +23,9 @@ public class JavaFileWriter {
       return;
     }
 
-    List<List<Sequence>> subSuites = CollectionsExt.<Sequence>chunkUp(sequences, testsPerFile);
-    for (int i = 0 ; i < subSuites.size() ; i++) {
-      writeSubSuite(subSuites.get(i), i, junitClassName);            
+    List<List<Sequence>> subSuites = CollectionsExt.<Sequence> chunkUp(sequences, testsPerFile);
+    for (int i = 0; i < subSuites.size(); i++) {
+      writeSubSuite(subSuites.get(i), i, junitClassName);
     }
 
     writeDriverFile(subSuites.size(), junitClassName);
@@ -47,7 +48,7 @@ public class JavaFileWriter {
       }
 
       out.println("public static void run() {");
-      for (int ti = 0 ; ti < testCounter ; ti++) {
+      for (int ti = 0; ti < testCounter; ti++) {
         out.println("testclasses" + ti + "();");
       }
       out.println("}");

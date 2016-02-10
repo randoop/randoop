@@ -13,17 +13,17 @@ import randoop.ExceptionCheck;
 /**
  * ErrorRevealingChecks represent failing checks for a particular test sequence.
  * Each check may refer to different variables defined in the sequence, so can
- * only be assumed to be valid at the end of the sequence.
- * Note that there are no expected exceptions in error revealing tests, and so
- * there should be no {@link ExceptionCheck} objects.
+ * only be assumed to be valid at the end of the sequence. Note that there are
+ * no expected exceptions in error revealing tests, and so there should be no
+ * {@link ExceptionCheck} objects.
  */
 public class ErrorRevealingChecks implements TestChecks, Serializable {
-  
+
   /**
    * 
    */
   private static final long serialVersionUID = 6824110337347191631L;
-  
+
   private Set<Check> checks;
 
   /**
@@ -35,6 +35,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
+   * 
    * @return count of error revealing checks
    */
   @Override
@@ -44,14 +45,15 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
+   * 
    * @return all checks with false, indicating all are failing
    */
   @Override
   public Map<Check, Boolean> get() {
-    Map<Check, Boolean> result = new LinkedHashMap<Check,Boolean>(); 
+    Map<Check, Boolean> result = new LinkedHashMap<Check, Boolean>();
     if (hasChecks()) {
       for (Check ck : checks) {
-        result.put(ck,false);
+        result.put(ck, false);
       }
     }
     return result;
@@ -59,16 +61,18 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
+   * 
    * @return true if not empty
    */
   @Override
   public boolean hasChecks() {
-    return ! checks.isEmpty();
+    return !checks.isEmpty();
   }
 
   /**
    * {@inheritDoc}
-   * @return true if there are any error revealing checks (not empty) 
+   * 
+   * @return true if there are any error revealing checks (not empty)
    */
   @Override
   public boolean hasErrorBehavior() {
@@ -77,6 +81,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
+   * 
    * @return null, since no expected exceptions in error-revealing tests
    */
   @Override
@@ -86,7 +91,9 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * @throws Error if {@code check} is an exception check
+   * 
+   * @throws Error
+   *           if {@code check} is an exception check
    */
   @Override
   public void add(Check check) {
@@ -95,19 +102,19 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
       String msg = "No expected exceptions in error-revealing tests";
       throw new Error(msg);
     }
-    
+
     checks.add(check);
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof ErrorRevealingChecks)) {
+    if (!(obj instanceof ErrorRevealingChecks)) {
       return false;
     }
-    ErrorRevealingChecks cks = (ErrorRevealingChecks)obj;
+    ErrorRevealingChecks cks = (ErrorRevealingChecks) obj;
     return this.checks.equals(cks.checks);
   }
-  
+
   @Override
   public int hashCode() {
     return Objects.hash(checks);
@@ -115,10 +122,10 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   @Override
   public TestChecks commonChecks(TestChecks testChecks) {
-    if (! (testChecks instanceof ErrorRevealingChecks)) {
+    if (!(testChecks instanceof ErrorRevealingChecks)) {
       throw new IllegalArgumentException("Must compare with ErrorRevealingChecks");
     }
-    ErrorRevealingChecks erc = (ErrorRevealingChecks)testChecks;
+    ErrorRevealingChecks erc = (ErrorRevealingChecks) testChecks;
     TestChecks common = new ErrorRevealingChecks();
     for (Check ck : checks) {
       if (erc.checks.contains(ck)) {
@@ -129,8 +136,8 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
   }
 
   /**
-   * {@inheritDoc}
-   * Returns false because error checks are not considered invalid.
+   * {@inheritDoc} Returns false because error checks are not considered
+   * invalid.
    * 
    * @return false, always.
    */

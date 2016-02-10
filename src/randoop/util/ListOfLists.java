@@ -26,7 +26,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   private int totalelements;
 
-  @SuppressWarnings({"varargs","unchecked"}) // heap pollution warning
+  @SuppressWarnings({ "varargs", "unchecked" }) // heap pollution warning
   public ListOfLists(SimpleList<T>... lists) {
     this.lists = new ArrayList<SimpleList<T>>(lists.length);
     for (SimpleList<T> sl : lists) {
@@ -34,7 +34,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     }
     this.accumulatedSize = new int[lists.length];
     this.totalelements = 0;
-    for (int i = 0; i < lists.length ; i++) {
+    for (int i = 0; i < lists.length; i++) {
       SimpleList<T> l = lists[i];
       if (l == null) {
         throw new IllegalArgumentException("All lists should be non-null");
@@ -43,7 +43,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
       this.accumulatedSize[i] = this.totalelements;
     }
   }
-  
+
   public ListOfLists(List<SimpleList<T>> lists) {
     if (lists == null)
       throw new IllegalArgumentException("param cannot be null");
@@ -60,7 +60,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     }
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see randoop.util.SimpleList#size()
    */
   @Override
@@ -68,7 +70,9 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     return this.totalelements;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see randoop.util.SimpleList#get(int)
    */
   @Override
@@ -81,8 +85,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
         return this.lists.get(i).get(index - previousListSize);
       previousListSize = this.accumulatedSize[i];
     }
-    throw new BugInRandoopException(
-        "Indexing error in ListOfLists");
+    throw new BugInRandoopException("Indexing error in ListOfLists");
   }
 
   @Override
@@ -98,16 +101,16 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
     }
     throw new BugInRandoopException("indexing error in ListOfLists");
   }
-  
+
   @Override
   public List<T> toJDKList() {
-    List<T> result= new ArrayList<T>();
+    List<T> result = new ArrayList<T>();
     for (SimpleList<T> l : lists) {
       result.addAll(l.toJDKList());
     }
     return result;
   }
-  
+
   @Override
   public String toString() {
     return toJDKList().toString();

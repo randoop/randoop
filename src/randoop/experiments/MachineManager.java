@@ -7,21 +7,19 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * A thread that issues make targets on a specified machine. The manager
- * enters a loop. At each iteration, it asks its spawner for the next
- * target to execute. If there are no more targets, the thread dies.
+ * A thread that issues make targets on a specified machine. The manager enters
+ * a loop. At each iteration, it asks its spawner for the next target to
+ * execute. If there are no more targets, the thread dies.
  *
- * If there is a target and this manager's machine name is "local",
- * the manager issues the command
+ * If there is a target and this manager's machine name is "local", the manager
+ * issues the command
  *
- *   make -C $RANDOOP_HOME/systemtests <em>target</em>
+ * make -C $RANDOOP_HOME/systemtests <em>target</em>
  *
- * If the machine name is other than "local", the target issues the
- * command
+ * If the machine name is other than "local", the target issues the command
  *
- *   ssh <em>machine</em> make -C $RANDOOP_HOME/systemtests <em>target</em>
+ * ssh <em>machine</em> make -C $RANDOOP_HOME/systemtests <em>target</em>
  */
 public class MachineManager extends Thread {
 
@@ -65,9 +63,7 @@ public class MachineManager extends Thread {
         }
         command.add("make");
         command.add("-C");
-        command.add(MultiMachineRunner.RANDOOP_HOME
-            + File.separator
-            + "systemtests");
+        command.add(MultiMachineRunner.RANDOOP_HOME + File.separator + "systemtests");
         command.add(e);
 
         fproc = null;
@@ -86,13 +82,14 @@ public class MachineManager extends Thread {
         } catch (Exception ex) {
           throw new Error(ex);
         }
-        exitVariable = Command.exec(command.toArray(new String[0]), str, str,  "", false);
+        exitVariable = Command.exec(command.toArray(new String[0]), str, str, "", false);
 
         try {
           str.close();
           out.close();
           if (exitVariable == 0) {
-            // tmp.delete(); // Succeeded executing target; no need to keep around output.
+            // tmp.delete(); // Succeeded executing target; no need to keep
+            // around output.
           }
         } catch (Exception ex) {
           throw new Error(ex);
@@ -108,28 +105,21 @@ public class MachineManager extends Thread {
             command.add(tmp.getAbsolutePath());
             String output = e + ".output";
             command.add(output);
-            if (Command.exec(command.toArray(new String[0]), str2, str2,  "", false) != 0) {
+            if (Command.exec(command.toArray(new String[0]), str2, str2, "", false) != 0) {
               System.out.println("FAILURE COPYING " + tmp.getAbsolutePath() + " TO " + output);
             }
             out2.close();
             str2.close();
           } catch (Exception ex) {
-            System.out.print("EXCEPTION " + ex.getClass() +
-              " while running command: ");
+            System.out.print("EXCEPTION " + ex.getClass() + " while running command: ");
             System.out.println(command.toString());
             System.out.println("Exception message: " + ex.getMessage());
           }
         }
 
         if (exitVariable != 0) {
-          System.out
-          .println("FAILURE: return value of process was != 0. Machine "
-              + machine
-              + " will get a new experiment. Command was:\n"
-              + command
-              + "\n\nOutput of the command is in file "
-              + tmp.getAbsolutePath()
-              + "\n");
+          System.out.println("FAILURE: return value of process was != 0. Machine " + machine + " will get a new experiment. Command was:\n" + command
+              + "\n\nOutput of the command is in file " + tmp.getAbsolutePath() + "\n");
           spawner.markTargetEndedWithError(e);
         } else {
           System.out.println("Machine " + machine + " finished experiment " + e + " (exit " + exitVariable + ")");

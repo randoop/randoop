@@ -20,18 +20,19 @@ public class ExceptionalExecution extends ExecutionOutcome {
     return this.exception;
   }
 
-  /** Warning: this method calls toString() of code under test, which may have
+  /**
+   * Warning: this method calls toString() of code under test, which may have
    * arbitrary behavior. We use this method in randoop.test.SequenceTests.
    */
   @Override
   public String toString() {
     StringBuilder b = new StringBuilder();
-    b.append("// <ExceptionalExecution, exception type="
-             + exception.getClass().getName());
+    b.append("// <ExceptionalExecution, exception type=" + exception.getClass().getName());
     b.append(">;");
     return b.toString();
   }
 
+  @Override
   public long getExecutionTime() {
     return executionTime;
   }

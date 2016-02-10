@@ -11,9 +11,9 @@ import randoop.NotExecuted;
 /**
  * Represents the unfolding execution of a sequence.
  *
- * This is essentially a wrapper around List&lt;ExecutionOutcome&gt;.
- * Stores information in a list of ExecutionOutcome objects, one for each
- * statement in the sequence.
+ * This is essentially a wrapper around List&lt;ExecutionOutcome&gt;. Stores
+ * information in a list of ExecutionOutcome objects, one for each statement in
+ * the sequence.
  */
 public final class Execution {
 
@@ -32,7 +32,7 @@ public final class Execution {
   public Execution(Sequence owner) {
     this.owner = owner;
     this.theList = new ArrayList<ExecutionOutcome>(owner.size());
-    for (int i = 0 ; i < owner.size() ; i++) {
+    for (int i = 0; i < owner.size(); i++) {
       theList.add(NotExecuted.create());
     }
     this.coveredClasses = new LinkedHashSet<>();
@@ -55,14 +55,17 @@ public final class Execution {
 
   /** Set the i-th slot to the given outcome. */
   public void set(int i, ExecutionOutcome outcome) {
-    if (i < 0 || i >= theList.size()) throw new IllegalArgumentException("wrong index " + i);
-    if (outcome == null) throw new IllegalArgumentException("outcome cannot be null.");
+    if (i < 0 || i >= theList.size())
+      throw new IllegalArgumentException("wrong index " + i);
+    if (outcome == null)
+      throw new IllegalArgumentException("outcome cannot be null.");
     theList.set(i, outcome);
   }
 
   /** Get the outcome in the i-th slot. */
   public ExecutionOutcome get(int i) {
-    if (i < 0 || i >= theList.size()) throw new IllegalArgumentException("wrong index.");
+    if (i < 0 || i >= theList.size())
+      throw new IllegalArgumentException("wrong index.");
     return theList.get(i);
   }
 

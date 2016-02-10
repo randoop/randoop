@@ -21,8 +21,7 @@ import plume.UtilMDE;
 public class ProgressDisplay extends Thread {
 
   /**
-   * Lock so that unfortunate interleaving of this printing can be
-   * avoided
+   * Lock so that unfortunate interleaving of this printing can be avoided
    */
   public static Object print_synchro = new Object();
 
@@ -30,7 +29,9 @@ public class ProgressDisplay extends Thread {
 
   private static int exit_if_no_new_sequences_after_mseconds = 10000;
 
-  public static enum Mode { SINGLE_LINE_OVERWRITE, MULTILINE, NO_DISPLAY }
+  public static enum Mode {
+    SINGLE_LINE_OVERWRITE, MULTILINE, NO_DISPLAY
+  }
 
   private Mode outputMode;
 
@@ -38,8 +39,7 @@ public class ProgressDisplay extends Thread {
 
   private AbstractGenerator generator;
 
-  public ProgressDisplay(AbstractGenerator generator, RandoopListenerManager listenerMgr,
-      Mode outputMode, int progressWidth) {
+  public ProgressDisplay(AbstractGenerator generator, RandoopListenerManager listenerMgr, Mode outputMode, int progressWidth) {
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
     }
@@ -52,16 +52,15 @@ public class ProgressDisplay extends Thread {
 
   public String message() {
     StringBuilder b = new StringBuilder();
-      b.append("Progress update: test inputs generated=" + generator.num_sequences_generated);
-      b.append(", failing inputs=" + generator.num_failing_sequences);
-      b.append("      (" + new Date() + ")");
+    b.append("Progress update: test inputs generated=" + generator.num_sequences_generated);
+    b.append(", failing inputs=" + generator.num_failing_sequences);
+    b.append("      (" + new Date() + ")");
     return b.toString();
   }
 
   /**
-   * Clients should set this variable instead of calling Thread.stop(),
-   * which is deprecated.  Typically a client calls "display()" before
-   * setting this.
+   * Clients should set this variable instead of calling Thread.stop(), which is
+   * deprecated. Typically a client calls "display()" before setting this.
    **/
   public boolean shouldStop = false;
 
@@ -112,12 +111,12 @@ public class ProgressDisplay extends Thread {
     System.out.println();
     System.out.println("Will print all thread stack traces and exit with code 1.");
 
-    for (Map.Entry<Thread,StackTraceElement[]> trace : Thread.getAllStackTraces().entrySet()) {
+    for (Map.Entry<Thread, StackTraceElement[]> trace : Thread.getAllStackTraces().entrySet()) {
       System.out.println("--------------------------------------------------");
       System.out.println("Thread " + trace.getKey().toString());
       System.out.println("Stack trace:");
       StackTraceElement[] elts = trace.getValue();
-      for (int i = 0 ; i < elts.length ; i++) {
+      for (int i = 0; i < elts.length; i++) {
         System.out.println(elts[i]);
       }
     }
@@ -135,7 +134,6 @@ public class ProgressDisplay extends Thread {
     }
   }
 
-
   public long lastCovIncrease = System.currentTimeMillis();
   private int lastNumBranches = 0;
 
@@ -152,8 +150,8 @@ public class ProgressDisplay extends Thread {
   }
 
   /**
-   * Displays the current status. Call this if you don't want to wait
-   * until the next automatic display.
+   * Displays the current status. Call this if you don't want to wait until the
+   * next automatic display.
    */
   public void display() {
     if (GenInputsAbstract.progressinterval == -1)
@@ -167,18 +165,17 @@ public class ProgressDisplay extends Thread {
       return;
     String status = message;
     synchronized (print_synchro) {
-      System.out.print((this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r"
-                        : Globals.lineSep) + status);
+      System.out.print((this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + status);
       System.out.flush();
     }
     // System.out.println (status);
 
-//  if (Log.loggingOn) {
-//  Log.log("Free memory: "
-//  + java.lang.Runtime.getRuntime().freeMemory());
-//  Log.log("Used memory: "
-//  + (java.lang.Runtime.getRuntime().totalMemory() - java.lang.Runtime
-//  .getRuntime().freeMemory()));
-//  }
+    // if (Log.loggingOn) {
+    // Log.log("Free memory: "
+    // + java.lang.Runtime.getRuntime().freeMemory());
+    // Log.log("Used memory: "
+    // + (java.lang.Runtime.getRuntime().totalMemory() - java.lang.Runtime
+    // .getRuntime().freeMemory()));
+    // }
   }
 }

@@ -7,8 +7,8 @@ import java.util.Arrays;
 import randoop.main.GenInputsAbstract;
 
 /**
- * This is used to wrap a constructor together with its parameters, ready for execution.
- * Can be run only once.
+ * This is used to wrap a constructor together with its parameters, ready for
+ * execution. Can be run only once.
  */
 public final class ConstructorReflectionCode extends ReflectionCode {
   private final Constructor<?> constructor;
@@ -17,8 +17,10 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   private Throwable exceptionThrown;
 
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
-    if (constructor == null) throw new IllegalArgumentException("constrcutor is null");
-    if (inputs == null) throw new IllegalArgumentException("inputs is null");
+    if (constructor == null)
+      throw new IllegalArgumentException("constrcutor is null");
+    if (inputs == null)
+      throw new IllegalArgumentException("inputs is null");
     this.constructor = constructor;
     this.inputs = inputs;
     checkRep();
@@ -43,15 +45,17 @@ public final class ConstructorReflectionCode extends ReflectionCode {
     if (!this.constructor.isAccessible()) {
       this.constructor.setAccessible(true);
       Log.logLine("not accessible:" + this.constructor);
-      // TODO something is bizzare - it seems that a public method can be not-accessible sometimes. RatNum(int,int)
-      // TODO you cannot just throw the exception below - because no sequences will be created in the randoop.experiments.
+      // TODO something is bizzare - it seems that a public method can be
+      // not-accessible sometimes. RatNum(int,int)
+      // TODO you cannot just throw the exception below - because no sequences
+      // will be created in the randoop.experiments.
       // throw new IllegalStateException("Not accessible: " + this.constructor);
     }
 
     try {
       this.retval = this.constructor.newInstance(this.inputs);
     } catch (InvocationTargetException e) {
-      this.exceptionThrown= e.getCause();
+      this.exceptionThrown = e.getCause();
       throw e;
     } finally {
       if (retval != null && exceptionThrown != null)
@@ -61,14 +65,14 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public Object getReturnVariable() {
-    if (! hasRunAlready())
+    if (!hasRunAlready())
       throw new IllegalStateException("run first, then ask");
     return retval;
   }
 
   @Override
   public Throwable getExceptionThrown() {
-    if (! hasRunAlready())
+    if (!hasRunAlready())
       throw new IllegalStateException("run first, then ask");
     return exceptionThrown;
   }
@@ -83,7 +87,7 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public String toString() {
-    String ret= "Call to " + constructor + " args:" + Arrays.toString(inputs);
+    String ret = "Call to " + constructor + " args:" + Arrays.toString(inputs);
     if (hasRunAlready())
       return ret + " not run yet";
     else if (exceptionThrown == null)

@@ -6,7 +6,7 @@ public class OperationParseException extends Exception {
   private static final long serialVersionUID = 1L;
 
   public OperationParseException(String string) {
-    super(string); 
+    super(string);
   }
 
 }

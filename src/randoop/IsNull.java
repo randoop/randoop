@@ -4,10 +4,10 @@ package randoop;
  * The contract: <code>x == null</code>.
  * <p>
  * Obviously, this is not a property that must hold of all objects in a test.
- * Randoop creates an instance of this contract when, during execution of
- * a sequence, it determines that the above property holds. The property
- * thus represents a <i>regression</i> as it captures the behavior of the
- * code when it is executed.
+ * Randoop creates an instance of this contract when, during execution of a
+ * sequence, it determines that the above property holds. The property thus
+ * represents a <i>regression</i> as it captures the behavior of the code when
+ * it is executed.
  */
 public final class IsNull implements ObjectContract {
 
@@ -28,9 +28,8 @@ public final class IsNull implements ObjectContract {
   @Override
   public int hashCode() {
     int h = 37;
-    return h;  // no state to compare.
+    return h; // no state to compare.
   }
-  
 
   @Override
   public boolean evaluate(Object... objects) throws Throwable {
@@ -66,8 +65,7 @@ public final class IsNull implements ObjectContract {
   public boolean evalExceptionMeansFailure() {
     // Should never actually reach here: no way evaluating "objects[0] == null"
     // will throw an exception.
-   return false; 
+    return false;
   }
-
 
 }

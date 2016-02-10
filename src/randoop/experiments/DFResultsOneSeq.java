@@ -18,8 +18,8 @@ import cov.Branch;
 import cov.CoverageAtom;
 
 /**
- * Encapsulates the results of the branch analysis for a given
- * sequence and its frontier branch.
+ * Encapsulates the results of the branch analysis for a given sequence and its
+ * frontier branch.
  */
 public class DFResultsOneSeq implements Serializable {
 
@@ -35,12 +35,16 @@ public class DFResultsOneSeq implements Serializable {
     // (For regression testing, since order may vary on other
     // set implementations on Linux vs. OS X.)
     public Set<String> branch_compares = new TreeSet<String>();
-    public VariableInfo (Variable value) {
+
+    public VariableInfo(Variable value) {
       this.value = value;
     }
-    public void add_branch_compare (String compared_to) {
-      branch_compares.add (compared_to);
+
+    public void add_branch_compare(String compared_to) {
+      branch_compares.add(compared_to);
     }
+
+    @Override
     public String toString() {
       return value + ":" + branch_compares;
     }
@@ -50,9 +54,7 @@ public class DFResultsOneSeq implements Serializable {
   public CoverageAtom frontierBranch;
   public Set<VariableInfo> values;
 
-  public DFResultsOneSeq(Sequence sequence,
-      CoverageAtom frontierBranch,
-      Set<VariableInfo> values) {
+  public DFResultsOneSeq(Sequence sequence, CoverageAtom frontierBranch, Set<VariableInfo> values) {
     this.sequence = sequence;
     this.frontierBranch = frontierBranch;
     this.values = values;
@@ -65,26 +67,27 @@ public class DFResultsOneSeq implements Serializable {
   public String toString() {
     return toParseableString();
   }
-  
+
   /**
-   * Outputs this object as a String that can be parsed
-   * by method DFResultsOneSeq.parse(List&lt;String&gt;).
+   * Outputs this object as a String that can be parsed by method
+   * DFResultsOneSeq.parse(List&lt;String&gt;).
    * 
    * See documentation for DataFlowOutput.parse(String filename).
    */
   public String toParseableString() {
-        
+
     StringBuilder out = new StringBuilder();
     out.append(frontierBranch.toString());
     out.append(Globals.lineSep);
     out.append(sequence.toParseableString());
     out.append("VARS " + values.size());
     out.append(Globals.lineSep);
-    
+
     // We want to ensure output is always the same across multiple
     // runs (on different operating systems), for regression testing.
     // So we sort the variables based on their string representation.
     Comparator<VariableInfo> comp = new Comparator<VariableInfo>() {
+      @Override
       public int compare(VariableInfo o1, VariableInfo o2) {
         return o1.toString().compareTo(o2.toString());
       }
@@ -101,7 +104,7 @@ public class DFResultsOneSeq implements Serializable {
     }
     return out.toString();
   }
-  
+
   /**
    * Creates a DFResultsOneSeq from a list of lines (presumably generated via
    * the toParseableString() method).
@@ -109,13 +112,13 @@ public class DFResultsOneSeq implements Serializable {
   public static DFResultsOneSeq parse(List<String> lines) {
     if (lines.size() < 3)
       throw new IllegalArgumentException("Invalid record: " + print(lines));
-    
+
     // First line is branch description.
     Branch b = Branch.parse(lines.get(0));
 
     // Find end of sequence.
     int varIndex = -1;
-    for (int i = 1 ; i < lines.size() ; i++) {
+    for (int i = 1; i < lines.size(); i++) {
       if (lines.get(i).startsWith("VARS")) {
         varIndex = i;
         break;
@@ -145,11 +148,12 @@ public class DFResultsOneSeq implements Serializable {
 
     // Read the VariableInfos.
     Set<VariableInfo> varinfos = new LinkedHashSet<VariableInfo>();
-    for (int i = varIndex + 1; i < lines.size() ; i++) {
+    for (int i = varIndex + 1; i < lines.size(); i++) {
       String[] split = lines.get(i).trim().split("\\s");
-      
+
       // Check that there is at least one token.
-      // If line is all whitespace, array will have length 1, so need second check.      
+      // If line is all whitespace, array will have length 1, so need second
+      // check.
       if (split.length <= 1 && split[0].length() == 0)
         throw new IllegalArgumentException("Invalid record: " + print(lines));
       String varname = split[0];
@@ -159,16 +163,16 @@ public class DFResultsOneSeq implements Serializable {
       VariableInfo vi = new VariableInfo(allvarnames.get(varname));
 
       // Add compared values to vi.
-      for (int j = 1 ; j < split.length ; j++) {
+      for (int j = 1; j < split.length; j++) {
         vi.add_branch_compare(split[j]);
       }
-      
+
       // Finally, add variable to list of variables.
       varinfos.add(vi);
     }
     return new DFResultsOneSeq(sequence, b, varinfos);
   }
-  
+
   // Print each line separately.
   private static String print(List<String> record) {
     StringBuilder b = new StringBuilder();

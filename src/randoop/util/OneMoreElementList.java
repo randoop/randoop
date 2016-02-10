@@ -45,7 +45,7 @@ public final class OneMoreElementList<T> extends SimpleList<T> implements Serial
 
   @Override
   public List<T> toJDKList() {
-    List<T> result= new ArrayList<T>();
+    List<T> result = new ArrayList<T>();
     result.addAll(list.toJDKList());
     result.add(lastElement);
     return result;

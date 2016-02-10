@@ -33,8 +33,10 @@ public class Repro100 {
     }
     // argument format: TTSS
     // where TT is the name of technique (om=random walk, fc=randoop, etc.)
-    // SS is the name of experiment (jf=jfreechart, cc=commons collections, etc.)
-    // N is a number specifying the random seed to use; can be more than one digit.
+    // SS is the name of experiment (jf=jfreechart, cc=commons collections,
+    // etc.)
+    // N is a number specifying the random seed to use; can be more than one
+    // digit.
     String ttss = args[0];
 
     // Create experiment base from experiment name. The experiment file
@@ -63,8 +65,7 @@ public class Repro100 {
     randoop.add("randoop100");
 
     ExperimentBase.printCommand(randoop, false, true);
-    int retval = Command.exec(randoop.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(randoop.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");
@@ -80,8 +81,7 @@ public class Repro100 {
     randoop.add(ttss);
 
     ExperimentBase.printCommand(randoop, false, true);
-    retval = Command.exec(randoop.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    retval = Command.exec(randoop.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");

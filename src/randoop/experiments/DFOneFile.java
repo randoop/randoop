@@ -9,29 +9,32 @@ import java.util.List;
 
 public class DFOneFile {
 
-
   /**
-   * Runs DF on a single file (i.e. frontier branch).
-   * This command must be run from $RANDOOP_HOME/systemtests.
-   * The command is run as follows:
+   * Runs DF on a single file (i.e. frontier branch). This command must be run
+   * from $RANDOOP_HOME/systemtests. The command is run as follows:
    *
-   *   java randoop.experiments.DFOneFile <em>subject-program-string</em>-<em>df-input-file</em>
+   * java randoop.experiments.DFOneFile <em>subject-program-string</em>-
+   * <em>df-input-file</em>
    *
    * The command assumes:
    *
-   *   + The file experiments/<em>subject-program-string</em>.experiment exists and
-   *     specifies a subject program property file.
+   * + The file experiments/<em>subject-program-string</em>.experiment exists
+   * and specifies a subject program property file.
    */
   public static void main(String[] args) throws IOException {
 
     // Parse experiment string.
-    if (args.length != 1) throw new IllegalArgumentException("No experiment string specified.");
+    if (args.length != 1)
+      throw new IllegalArgumentException("No experiment string specified.");
     String[] split = args[0].split("-");
-    if (split.length != 2) throw new IllegalArgumentException("Invalid experiment string:" + args[0]);
+    if (split.length != 2)
+      throw new IllegalArgumentException("Invalid experiment string:" + args[0]);
     String expName = split[0];
-    if (expName.length() == 0) throw new IllegalArgumentException("Invalid experiment name (empty).");
+    if (expName.length() == 0)
+      throw new IllegalArgumentException("Invalid experiment name (empty).");
     String frontier = split[1];
-    if (frontier.length() == 0) throw new IllegalArgumentException("Invalid input file name (empty).");
+    if (frontier.length() == 0)
+      throw new IllegalArgumentException("Invalid input file name (empty).");
 
     // Create experiment base from experiment name. The experiment file
     // is expected to be in experiments/<experiment-name>.exp
@@ -59,8 +62,7 @@ public class DFOneFile {
     randoop.add(frontier);
 
     ExperimentBase.printCommand(randoop, false, true);
-    int retval = Command.exec(randoop.toArray(new String[0]), System.out,
-        err, "", false, Integer.MAX_VALUE, null);
+    int retval = Command.exec(randoop.toArray(new String[0]), System.out, err, "", false, Integer.MAX_VALUE, null);
     if (retval != 0) {
       System.out.println("Command exited with error code " + retval);
       System.out.println("File log.txt contains output of stderr.");

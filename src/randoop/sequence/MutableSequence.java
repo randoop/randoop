@@ -15,7 +15,8 @@ import randoop.util.CollectionsExt;
 import randoop.util.Reflection;
 
 /**
- * A sequence that can be mutated (unlike a {@code Sequence}, which is immutable).
+ * A sequence that can be mutated (unlike a {@code Sequence}, which is
+ * immutable).
  */
 public class MutableSequence {
 
@@ -25,19 +26,19 @@ public class MutableSequence {
    * Checks the following well-formedness properties for every statement in the
    * list of statements:
    * <ul>
-   * <li> The number of inputs is the same as the input of inputs specified by
+   * <li>The number of inputs is the same as the input of inputs specified by
    * the statement kind.
-   * <li> Type type of each input is compatible with the type required by the
+   * <li>Type type of each input is compatible with the type required by the
    * statement kind.
-   * <li> The input variables come from earlier statements.
-   * <li> The result variable does not appear in earlier statements.
+   * <li>The input variables come from earlier statements.
+   * <li>The result variable does not appear in earlier statements.
    * </ul>
    */
   public void checkRep() {
     Set<MutableVariable> prevVars = new LinkedHashSet<MutableVariable>();
     for (MutableStatement st : statements) {
       assert st.inputs.size() == st.operation.getInputTypes().size();
-      for (int i = 0 ; i < st.inputs.size() ; i++) {
+      for (int i = 0; i < st.inputs.size(); i++) {
         MutableVariable in = st.inputs.get(i);
         assert prevVars.contains(in) : this;
         assert in.owner == this : this;
@@ -53,13 +54,13 @@ public class MutableSequence {
 
     // Create a list of new variables, one per index.
     List<MutableVariable> newvars = new ArrayList<MutableVariable>();
-    for (int i = 0 ; i < size() ; i++) {
+    for (int i = 0; i < size(); i++) {
       newvars.add(new MutableVariable(newSeq, getVariable(i).getName()));
     }
 
     // Create a list of new statements that use the new variables.
     List<MutableStatement> statements = new ArrayList<MutableStatement>();
-    for (int i = 0 ; i < size() ; i++) {
+    for (int i = 0; i < size(); i++) {
       MutableStatement sti = this.statements.get(i);
       List<MutableVariable> newinputs = new ArrayList<MutableVariable>();
       for (MutableVariable v : sti.inputs) {
@@ -80,7 +81,7 @@ public class MutableSequence {
   public List<Integer> getUses(MutableVariable v) {
     List<Integer> uses = new ArrayList<Integer>();
     // All uses will come after declaration.
-    for (int i = v.getDeclIndex() + 1 ; i < size() ; i++) {
+    for (int i = v.getDeclIndex() + 1; i < size(); i++) {
       if (statements.get(i).inputs.contains(v))
         uses.add(i);
     }
@@ -94,7 +95,7 @@ public class MutableSequence {
       findInfluencingVars(v, influencingVars);
     }
     int count = 0;
-    for (int i = 0 ; i <= maxIdx ; i++) {
+    for (int i = 0; i <= maxIdx; i++) {
       MutableStatement st = statements.get(i);
       Set<MutableVariable> statementVars = new LinkedHashSet<MutableVariable>(st.inputs);
       statementVars.add(st.result);
@@ -109,8 +110,7 @@ public class MutableSequence {
     infvars.add(v);
 
     for (MutableVariable v2 : v.getCreatingStatementWithInputs().inputs) {
-      if (v2.getCreatingStatementWithInputs().operation
-          instanceof NonreceiverTerm)
+      if (v2.getCreatingStatementWithInputs().operation instanceof NonreceiverTerm)
         continue;
       if (!infvars.contains(v2)) {
         infvars.add(v2);
@@ -122,15 +122,13 @@ public class MutableSequence {
 
       MutableVariable result = statements.get(i).result;
       if (!infvars.contains(result)) {
-        assert !(result.getCreatingStatementWithInputs().operation
-                 instanceof NonreceiverTerm);
+        assert !(result.getCreatingStatementWithInputs().operation instanceof NonreceiverTerm);
         infvars.add(result);
         findInfluencingVars(result, infvars);
       }
 
       for (MutableVariable v2 : statements.get(i).inputs) {
-        if (v2.getCreatingStatementWithInputs().operation
-            instanceof NonreceiverTerm)
+        if (v2.getCreatingStatementWithInputs().operation instanceof NonreceiverTerm)
           continue;
         if (!infvars.contains(v2)) {
           infvars.add(v2);
@@ -140,7 +138,7 @@ public class MutableSequence {
     }
   }
 
-
+  @Override
   public String toString() {
     StringBuilder b = new StringBuilder();
     for (MutableStatement st : statements) {
@@ -159,9 +157,11 @@ public class MutableSequence {
   }
 
   public int getIndex(MutableVariable v) {
-    if (v == null) throw new IllegalArgumentException();
-    if (v.owner != this) throw new IllegalArgumentException();
-    for (int i = 0 ; i < statements.size() ; i++) {
+    if (v == null)
+      throw new IllegalArgumentException();
+    if (v.owner != this)
+      throw new IllegalArgumentException();
+    for (int i = 0; i < statements.size(); i++) {
       MutableStatement st = statements.get(i);
       if (st.result == v)
         return i;
@@ -174,13 +174,14 @@ public class MutableSequence {
   }
 
   public MutableVariable getVariable(int i) {
-    if (i < 0 || i >= this.size()) throw new IllegalArgumentException();
+    if (i < 0 || i >= this.size())
+      throw new IllegalArgumentException();
     return this.statements.get(i).result;
   }
 
   public Sequence toImmutableSequence() {
     Sequence seq = new Sequence();
-    for (int i = 0 ; i < this.size() ; i++) {
+    for (int i = 0; i < this.size(); i++) {
       List<Variable> inputs = new ArrayList<Variable>();
       for (MutableVariable sv : this.statements.get(i).inputs) {
         inputs.add(seq.getVariable(sv.getDeclIndex()));

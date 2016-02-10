@@ -38,11 +38,9 @@ public class Globals {
         System.setErr(oldStdErr);
       } else {
         try {
-          System.setErr(new PrintStream(new PrintStream(destination),
-              true));
+          System.setErr(new PrintStream(new PrintStream(destination), true));
         } catch (FileNotFoundException e) {
-          System.out.println(Globals.lineSep + "Could not create a stream for file "
-              + destination);
+          System.out.println(Globals.lineSep + "Could not create a stream for file " + destination);
           throw new RuntimeException(e);
         }
       }
@@ -50,11 +48,11 @@ public class Globals {
   }
 
   public static String getRandoopVersion() {
-      return RANDOOP_VERSION;
+    return RANDOOP_VERSION;
   }
 
   public static String getClassPath() {
-      return System.getProperty("java.class.path");
+    return System.getProperty("java.class.path");
   }
 
   public static final int COLWIDTH = 70;

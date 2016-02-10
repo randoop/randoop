@@ -11,13 +11,11 @@ import java.io.PrintWriter;
 
 import randoop.Globals;
 
-
-
 /**
  * The important method in this class is <code>exec(String[])</code>. It
  * executes its argument and pipes both stdout and stderr to System.out. Each
- * line in the piped output from stdout is prefixed with "OUT&gt;" and the output
- * from stderr is prefixed with "ERR&gt;"
+ * line in the piped output from stdout is prefixed with "OUT&gt;" and the
+ * output from stderr is prefixed with "ERR&gt;"
  *
  * <p>
  * Credit: Producer code modified (and augmented) from Michael Daconta's
@@ -26,31 +24,17 @@ import randoop.Globals;
  */
 public class Command {
 
-  public static void runCommand(String[] command,
-      String prompt,
-      boolean verbose,
-      String nonVerboseMessage,
-      boolean gobbleChars) {
+  public static void runCommand(String[] command, String prompt, boolean verbose, String nonVerboseMessage, boolean gobbleChars) {
 
     runCommand(command, prompt, verbose, nonVerboseMessage, false, gobbleChars);
   }
 
-  public static void runCommandOKToFail(String[] command,
-      String prompt,
-      boolean verbose,
-      String nonVerboseMessage,
-      boolean gobbleChars) {
+  public static void runCommandOKToFail(String[] command, String prompt, boolean verbose, String nonVerboseMessage, boolean gobbleChars) {
 
     runCommand(command, prompt, verbose, nonVerboseMessage, true, gobbleChars);
   }
 
-  public static void runCommand(String[] command,
-      String prompt,
-      boolean verbose,
-      String nonVerboseMessage,
-      boolean okToFail,
-      boolean gobbleChars) {
-
+  public static void runCommand(String[] command, String prompt, boolean verbose, String nonVerboseMessage, boolean okToFail, boolean gobbleChars) {
 
     System.out.println(nonVerboseMessage);
 
@@ -65,15 +49,13 @@ public class Command {
     }
 
     if (!okToFail && exitFlag != 0) {
-      throw new Error("Non-zero exit flag when running command "
-          + java.util.Arrays.toString(command)
-          + Globals.lineSep
-          + (verbose
-              ? "" // already output to System.out
-                  : " output: " + String.valueOf(out)));
+      throw new Error("Non-zero exit flag when running command " + java.util.Arrays.toString(command) + Globals.lineSep + (verbose ? "" // already
+                                                                                                                                        // output
+                                                                                                                                        // to
+                                                                                                                                        // System.out
+          : " output: " + String.valueOf(out)));
     }
   }
-
 
   /**
    * Helper class for Command. A StreamGobbler thread is Responsible for
@@ -102,11 +84,10 @@ public class Command {
 
     /*
      * Redirects `is' to out and also to `redirect' (that is, the input from
-     * `is' is duplicated to both streams), prefixing each line with the
-     * String `type'.
+     * `is' is duplicated to both streams), prefixing each line with the String
+     * `type'.
      */
-    StreamGobbler(InputStream is, String type, OutputStream redirect,
-        PrintStream out, boolean gobbleChars) {
+    StreamGobbler(InputStream is, String type, OutputStream redirect, PrintStream out, boolean gobbleChars) {
       this.is = is;
       this.type = type;
       this.os = redirect;
@@ -176,9 +157,9 @@ public class Command {
    * Returns whatever exit number is returned by the subprocess invoking the
    * command.
    */
-  //     public static int exec(String cmd, PrintStream out) {
-  //         return exec(cmd,  out, new File(System.getProperty("user.dir")));
-  //     }
+  // public static int exec(String cmd, PrintStream out) {
+  // return exec(cmd, out, new File(System.getProperty("user.dir")));
+  // }
 
   public static int exec(String[] cmd, PrintStream out) {
     return exec(cmd, out, "");
@@ -195,12 +176,10 @@ public class Command {
       Process proc = rt.exec(cmd);
 
       // any error message?
-      StreamGobbler errorGobbler =
-        new StreamGobbler(proc.getErrorStream(), prompt, out, gobbleChars);
+      StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream(), prompt, out, gobbleChars);
 
       // any output?
-      StreamGobbler outputGobbler =
-        new StreamGobbler(proc.getInputStream(), prompt, out, gobbleChars);
+      StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream(), prompt, out, gobbleChars);
 
       // kick them off
       errorGobbler.start();
@@ -213,6 +192,5 @@ public class Command {
     }
     return exitVal;
   }
-
 
 }

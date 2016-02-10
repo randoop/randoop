@@ -25,7 +25,7 @@ public class JarReader {
     if (debug)
       System.out.println("Jar " + jarName + " looking for " + packageName);
 
-    JarInputStream jarFile= null;
+    JarInputStream jarFile = null;
     try {
       jarFile = new JarInputStream(new FileInputStream(jarName));
       JarEntry jarEntry;
@@ -54,7 +54,7 @@ public class JarReader {
     if (debug)
       System.out.println("Jar " + jarName);
 
-    JarInputStream jarFile= null;
+    JarInputStream jarFile = null;
     try {
       jarFile = new JarInputStream(new FileInputStream(jarName));
       JarEntry jarEntry;
@@ -70,7 +70,7 @@ public class JarReader {
           classes.add(jarEntry.getName().replaceAll("/", "\\."));
         }
       }
-    } finally{
+    } finally {
       if (jarFile != null)
         jarFile.close();
     }

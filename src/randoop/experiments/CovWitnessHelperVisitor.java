@@ -19,16 +19,16 @@ import cov.CoverageAtom;
 /**
  * This class is only used by the branch-directed generation research project.
  *
- * Records the branches covered after executing all-but-last method
- * call in a sequence.
+ * Records the branches covered after executing all-but-last method call in a
+ * sequence.
  *
  * ASSUMPTIONS:
  *
  * 1. Coverage has been cleared before executing the sequence.
  *
- * 2. The statements in a sequence are all executed and visited
- * from beginning to end. This visitor will not work properly with the
- * naive generator that backtracks during execution.
+ * 2. The statements in a sequence are all executed and visited from beginning
+ * to end. This visitor will not work properly with the naive generator that
+ * backtracks during execution.
  *
  */
 public class CovWitnessHelperVisitor implements ExecutionVisitor {
@@ -41,9 +41,9 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
 
   private Map<Class<?>, int[]> falses;
 
-
   /**
-   * @param tracker the classes that are coverage-instrumented.
+   * @param tracker
+   *          the classes that are coverage-instrumented.
    */
   public CovWitnessHelperVisitor(CodeCoverageTracker tracker) {
     if (tracker == null) {
@@ -89,7 +89,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
         trues.put(cls, savedtrues);
 
         int[] falseBranches = Coverage.getFalseBranches(cls);
-        int[]  savedfalses = new int[falseBranches.length];
+        int[] savedfalses = new int[falseBranches.length];
         System.arraycopy(falseBranches, 0, savedfalses, 0, falseBranches.length);
         falses.put(cls, savedfalses);
       }
@@ -120,7 +120,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
         assert oldtrues.length == oldfalses.length;
         assert oldfalses.length == newfalses.length;
 
-        for (int i = 0 ; i < newtrues.length ; i++) {
+        for (int i = 0; i < newtrues.length; i++) {
           if (newtrues[i] > oldtrues[i]) {
             newcov.add((Branch) Coverage.atomInfoToAtoms.get(new Triple<String, Integer, Boolean>(clsname, i, true)));
           }
@@ -132,7 +132,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
 
       // For each branch covered in the last statement, add the sequence to the
       // coverage witness map.
-      for (Branch br :newcov) {
+      for (Branch br : newcov) {
         Set<Sequence> seqs = covWitnessMap.get(br);
         if (seqs == null) {
           seqs = new LinkedHashSet<Sequence>();
@@ -157,7 +157,7 @@ public class CovWitnessHelperVisitor implements ExecutionVisitor {
 
   @Override
   public void visitBeforeStatement(ExecutableSequence sequence, int i) {
-    //do nothing
+    // do nothing
   }
 
   @Override

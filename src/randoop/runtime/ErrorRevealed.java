@@ -5,13 +5,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-
 public class ErrorRevealed implements IMessage {
 
   public final String testCode;
   public final String description;
   public final File junitFile;
-  
+
   // Unmodifiable collection.
   public final List<String> failingClassNames;
 
@@ -32,5 +31,5 @@ public class ErrorRevealed implements IMessage {
   public List<String> getFailingClassNames() {
     return failingClassNames;
   }
-  
+
 }

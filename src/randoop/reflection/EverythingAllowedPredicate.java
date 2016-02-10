@@ -8,14 +8,17 @@ import randoop.reflection.ReflectionPredicate;
 
 public class EverythingAllowedPredicate implements ReflectionPredicate {
 
+  @Override
   public boolean test(Class<?> c) {
     return true;
   }
 
+  @Override
   public boolean test(Method m) {
     return true;
   }
 
+  @Override
   public boolean test(Constructor<?> m) {
     return true;
   }
