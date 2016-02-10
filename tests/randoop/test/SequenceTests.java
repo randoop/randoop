@@ -16,7 +16,6 @@ import randoop.EqualsToNullRetFalse;
 import randoop.Globals;
 import randoop.ObjectContract;
 import randoop.RandoopClassLoader;
-import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -70,13 +69,10 @@ public class SequenceTests extends TestCase {
 
     ClassLoader contextLoader = this.getClass().getClassLoader();
     TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
-    boolean long_format_old = GenInputsAbstract.long_format;
-    GenInputsAbstract.long_format = true;
     RecordListReader reader = new RecordListReader("TEST", processor);
     InputStream stream = SequenceTests.class.getResourceAsStream("resources/sequence_tests_script.txt");
     BufferedReader b = new BufferedReader(new InputStreamReader(stream));
     reader.parse(b);
-    GenInputsAbstract.long_format = long_format_old;
   }
 
 
