@@ -12,7 +12,6 @@ import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -25,7 +24,7 @@ import randoop.util.Util;
  * ConstructorCall is an {@link Operation} that represents a call to a
  * constructor, and holds a reference to a reflective
  * {@link java.lang.reflect.Constructor} object.
- * 
+ *
  * As an {@link Operation}, a call to constructor <i>c</i> with <i>n</i>
  * arguments is represented as <i>c</i> : [<i>t1,...,tn</i>] &rarr; <i>c</i>,
  * where the output type <i>c</i> is also the name of the class.
@@ -36,7 +35,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * ID for parsing purposes.
-   * 
+   *
    * @see OperationParser#getId(Operation)
    */
   public static final String ID = "cons";
@@ -53,7 +52,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * Converts this object to a form that can be serialized.
-   * 
+   *
    * @return serializable form of this object
    * @see SerializableConstructorCall
    */
@@ -63,7 +62,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * Creates object corresponding to the given reflection constructor.
-   * 
+   *
    * @param constructor
    *          reflective object for a constructor.
    */
@@ -80,7 +79,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * Return the reflective constructor corresponding to this ConstructorCall.
-   * 
+   *
    * @return {@link Constructor} object called by this constructor call.
    */
   public Constructor<?> getConstructor() {
@@ -90,7 +89,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   /**
    * Creates the {@code ConstructorCall} corresponding to the given reflection
    * constructor.
-   * 
+   *
    * @param constructor
    *          the {@link Constructor} object for calls
    * @return a new {@code ConstructorCall} object for the given
@@ -121,7 +120,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * Adds code for a constructor call to the given {@link StringBuilder}.
-   * 
+   *
    * @param inputVars
    *          a list of variables representing the actual arguments for the
    *          constructor call.
@@ -134,7 +133,9 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     assert inputVars.size() == this.getInputTypes().size();
 
     Class<?> declaringClass = constructor.getDeclaringClass();
-    boolean isNonStaticMember = !Modifier.isStatic(declaringClass.getModifiers()) && declaringClass.isMemberClass();
+    boolean isNonStaticMember = (
+        ! Modifier.isStatic(declaringClass.getModifiers())
+        && declaringClass.isMemberClass());
     assert Util.implies(isNonStaticMember, inputVars.size() > 0);
 
     // Note on isNonStaticMember: if a class is a non-static member class, the
@@ -146,7 +147,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     // TODO the last replace is ugly. There should be a method that does it.
     String declaringClassStr = TypeNames.getCompilableName(declaringClass);
 
-    b.append((isNonStaticMember ? inputVars.get(0) + "." : "") + "new " + (isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr) + "(");
+    b.append((isNonStaticMember ? inputVars.get(0) + "." : "") + "new ");
+    b.append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr + "(");
     for (int i = (isNonStaticMember ? 1 : 0); i < inputVars.size(); i++) {
       if (i > (isNonStaticMember ? 1 : 0))
         b.append(", ");
@@ -162,12 +164,12 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
       // instead, the value (e.g. "3") is inserted directly added as
       // arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (!GenInputsAbstract.long_format) {
-        String shortForm = statementCreatingVar.getShortForm();
-        if (shortForm != null) {
-          param = shortForm;
-        }
+
+      String shortForm = statementCreatingVar.getShortForm();
+      if (shortForm != null) {
+        param = shortForm;
       }
+
       b.append(param);
     }
     b.append(")");
@@ -176,7 +178,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * Tests whether the parameter is a call to the same constructor.
-   * 
+   *
    * @param o
    *          an object
    * @return true if o is a ConstructorCall referring to same constructor
@@ -212,7 +214,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   /**
    * {@inheritDoc} Performs call to the constructor given the objects as actual
    * parameters, and the output stream for any output.
-   * 
+   *
    * @param statementInput
    *          is an array of values corresponding to signature of the
    *          constructor.
@@ -240,7 +242,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return list of parameter types for constructor.
    */
   @Override
@@ -253,7 +255,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return type of the object created (i.e., class for constructor).
    */
   @Override
@@ -266,14 +268,14 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * signature.
    *
    * Examples:
-   * 
+   *
    * <pre>
    * <code>
    *  java.util.ArrayList.&lt;init&gt;()
    *  java.util.ArrayList.&lt;init&gt;(java.util.Collection)
    * </code>
    * </pre>
-   * 
+   *
    * @see ConstructorSignatures#getSignatureString(Constructor)
    *
    * @return signature string for constructor.
@@ -287,9 +289,9 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    * Parse a constructor call in a string with the format generated by
    * {@link ConstructorCall#toParseableString()} and returns the corresponding
    * {@link ConstructorCall} object.
-   * 
+   *
    * @see OperationParser#parse(String)
-   * 
+   *
    * @param s
    *          a string descriptor of a constructor call.
    * @return {@link ConstructorCall} object corresponding to the given
@@ -303,7 +305,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return class object representing declaring class for the constructor.
    */
   @Override
@@ -313,7 +315,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true, because this is a {@link ConstructorCall}.
    */
   @Override
@@ -324,7 +326,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   /**
    * {@inheritDoc} Determines whether enclosed {@link Constructor} satisfies the
    * given predicate.
-   * 
+   *
    * @return true only if the constructor in this object satisfies the
    *         {@link ReflectionPredicate#test(Constructor)} implemented by
    *         predicate.

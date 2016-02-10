@@ -9,10 +9,9 @@ import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
-import randoop.field.FinalInstanceField;
 import randoop.field.FieldParser;
+import randoop.field.FinalInstanceField;
 import randoop.field.StaticFinalField;
-import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -76,7 +75,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    * {@link AccessibleField#getValue(Object)} suppresses exceptions that occur
    * because the field is not valid or accessible (specifically
    * {@link IllegalArgumentException} and {@link IllegalAccessException}).
-   * 
+   *
    * @param statementInput
    *          the inputs for statement.
    * @param out
@@ -120,7 +119,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    * <pre>
    * field = variable;
    * </pre>
-   * 
+   *
    * @param inputVars
    *          the list of input variables. Last element is value to assign. If
    *          an instance field, first is instance, second is value.
@@ -140,12 +139,12 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
     // TODO this is duplicate code from RMethod - should factor out behavior
     String rhs = inputVars.get(index).getName();
     Statement statementCreatingVar = inputVars.get(index).getDeclaringStatement();
-    if (!GenInputsAbstract.long_format) {
-      String shortForm = statementCreatingVar.getShortForm();
-      if (shortForm != null) {
-        rhs = shortForm;
-      }
+
+    String shortForm = statementCreatingVar.getShortForm();
+    if (shortForm != null) {
+      rhs = shortForm;
     }
+
     b.append(rhs);
 
   }
@@ -153,7 +152,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   /**
    * Returns the string descriptor for field that can be parsed by
    * {@link FieldParser}.
-   * 
+   *
    * @return the parseable string descriptor for this setter.
    */
   @Override
@@ -235,7 +234,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   /**
    * Determines whether enclosed {@link java.lang.reflect.Field Field} satisfies
    * the given predicate.
-   * 
+   *
    * @param predicate
    *          the {@link ReflectionPredicate} to be checked.
    * @return true only if the field used in this setter satisfies

@@ -17,7 +17,6 @@ import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
-import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -70,7 +69,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * Converts this object to a form that can be serialized.
-   * 
+   *
    * @return serializable form of this object
    * @see SerializableMethodCall
    */
@@ -89,7 +88,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * MethodCall creates an object corresponding to the given reflective method.
-   * 
+   *
    * @param method
    *          the reflective method object.
    */
@@ -106,7 +105,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * Creates {@code MethodCall} object for the given reflective method.
-   * 
+   *
    * @param method
    *          the {@link Method} object
    * @return constructed {@link MethodCall}
@@ -136,7 +135,15 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder sb) {
 
-    String receiverString = isStatic() ? null : inputVars.get(0).getName();
+    String receiverString = null;
+    if (!isStatic()) {
+      if (PrimitiveTypes.isPrimitive(inputVars.get(0).getType())) {
+        Statement statementCreatingVar = inputVars.get(0).getDeclaringStatement();
+        receiverString = statementCreatingVar.getShortForm();
+      } else {
+        receiverString = inputVars.get(0).getName();
+      }
+    }
     appendReceiverOrClassForStatics(receiverString, sb);
 
     sb.append(".");
@@ -149,13 +156,13 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
         sb.append(", ");
 
       // CASTING.
-      if (PrimitiveTypes.isPrimitive(getInputTypes().get(i)) && GenInputsAbstract.long_format) {
-        // Cast if input type is a primitive, because Randoop uses
-        // boxed primitives. (Is that necessary with autoboxing?)
-        sb.append("(" + getInputTypes().get(i).getName() + ")");
-      } else if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
+      if (!inputVars.get(i).getType().equals(this.getInputTypes().get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+        if (PrimitiveTypes.isPrimitive(getInputTypes().get(i))) {
+          sb.append("(" + getInputTypes().get(i).getName() + ")");
+        } else {
+          sb.append("(" + getInputTypes().get(i).getCanonicalName() + ")");
+        }
       }
 
       String param = inputVars.get(i).getName();
@@ -164,12 +171,12 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
       // to a sequence; instead, the value (e.g. "3") is inserted directly added
       // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (!GenInputsAbstract.long_format) {
-        String shortForm = statementCreatingVar.getShortForm();
-        if (shortForm != null) {
-          param = shortForm;
-        }
+
+      String shortForm = statementCreatingVar.getShortForm();
+      if (shortForm != null) {
+        param = shortForm;
       }
+
       sb.append(param);
 
     }
@@ -309,7 +316,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * {@inheritDoc} If the method is non-static the first element of the list is
    * the type of the class to which the method belongs.
-   * 
+   *
    * @return list of argument types for this method.
    */
   @Override
@@ -342,7 +349,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * isVoid is a predicate to indicate whether this method has a void return
    * types.
-   * 
+   *
    * @return true if this method has a void return type, false otherwise.
    */
   public boolean isVoid() {
@@ -370,7 +377,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * {@inheritDoc} The descriptor for a method is a string representing the
    * method signature.
-   * 
+   *
    * Examples: java.util.ArrayList.get(int)
    * java.util.ArrayList.add(int,java.lang.Object)
    */
@@ -385,7 +392,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * <code>parse(op.toParseableString()).equals(op)</code> for Operation op.
    * 
    * @see OperationParser#parse(String)
-   * 
+   *
    * @param s
    *          a string descriptor
    * @return the {@link MethodCall} object described by the string.
@@ -444,7 +451,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * {@inheritDoc} Determines whether enclosed {@link Method} satisfies the
    * given predicate.
-   * 
+   *
    * @param predicate
    *          the {@link ReflectionPredicate} to be checked.
    * @return true only if the method in this object satisfies the canUse(Method)

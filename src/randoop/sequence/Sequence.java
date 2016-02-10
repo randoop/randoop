@@ -146,14 +146,14 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Returns the Java source code representation of this sequence. Similar to
    * {@link ExecutableSequence#toCodeString()} except does not include checks.
-   * 
+   *
    * @return a string containing Java code for this sequence
    */
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < size(); i++) {
       // don't dump primitive initializations, if using literals
-      if (!GenInputsAbstract.long_format && getStatement(i).getShortForm() != null) {
+      if (getStatement(i).getShortForm() != null) {
         continue;
       }
       appendCode(b, i);
@@ -746,7 +746,7 @@ public final class Sequence implements Serializable, WeightedElement {
 
   /**
    * Create a new sequence that is the concatenation of the given sequences.
-   * 
+   *
    * @param sequences
    *          the list of sequences to concatenate
    * @return the concatenation of the sequences in the list
@@ -1114,7 +1114,7 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Test whether any statement of this sequence has an operation whose
    * declaring class matches the given regular expression.
-   * 
+   *
    * @param classNames
    *          the regular expression to test class names
    * @return true if any statement has operation with matching declaring class,
@@ -1133,7 +1133,7 @@ public final class Sequence implements Serializable, WeightedElement {
   /**
    * Using compositional structure of this sequence, return the subsequence of
    * this sequence that contains the statement at the given index.
-   * 
+   *
    * @param index
    *          the statement position in this sequence
    * @return the sequence containing the index position
