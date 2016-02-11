@@ -65,6 +65,7 @@ public class ForwardExplorerTests extends TestCase {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model should not be empty", model.size() != 0);
+    GenInputsAbstract.ignore_flaky_tests = true;
     ForwardGenerator exp =
       new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(classes));
@@ -107,7 +108,7 @@ public class ForwardExplorerTests extends TestCase {
     classes.add(Tree.class);
 
     System.out.println(classes);
-
+    GenInputsAbstract.ignore_flaky_tests = true;
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model should not be empty", model.size() != 0);
