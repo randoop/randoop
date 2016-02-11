@@ -70,7 +70,11 @@ public class ForwardExplorerTests extends TestCase {
       new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(classes));
     exp.addTestPredicate(createOutputTest());
-    exp.explore();
+    try {
+      exp.explore();
+    } catch (Throwable t) {
+      fail("Exception during generation: " + t);
+    }
     ReflectionExecutor.timeout = oldTimeout;
     for (Sequence s : exp.getAllSequences()) {
       String str = s.toCodeString();
@@ -117,7 +121,11 @@ public class ForwardExplorerTests extends TestCase {
     GenInputsAbstract.forbid_null = false;
     exp.addTestCheckGenerator(createChecker(classes));
     exp.addTestPredicate(createOutputTest());
-    exp.explore();
+    try {
+      exp.explore();
+    } catch (Throwable t) {
+      fail("Exception during generation: " + t);
+    }
     for (Sequence s : exp.getAllSequences()) {
       String str = s.toCodeString();
       if (str.contains("BH")) bh = true;
