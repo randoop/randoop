@@ -1,4 +1,0 @@
-PaluluRegressionRegression0.java
-PaluluRegressionRegression1.java
-PaluluRegressionRegression2.java
-PaluluRegressionRegression3.java

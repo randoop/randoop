@@ -1,7 +1,0 @@
-collections2.ArrayList
-collections2.ArrayListDriver
-collections2.HashSet
-collections2.LinkedHashSet
-collections2.LinkedList$Entry
-collections2.LinkedList$ListItr
-collections2.LinkedList
