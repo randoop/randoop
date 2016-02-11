@@ -1,5 +1,0 @@
-CLASS_DIR=src/trove/trove-2.0.4/src
-AUX_JARS_DIR=
-CLASS_OMIT=benchmark|Generate
-METHOD_OMIT=
-USETHREADS=false
