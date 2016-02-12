@@ -36,7 +36,7 @@ public class ForwardExplorerPerformanceTest extends TestCase {
   @SuppressWarnings("unchecked")
   public static void test1() {
 
-    String resourcename = "resources/java.util.classlist.java1.6.txt";
+    String resourcename = "java.util.classlist.java1.6.txt";
 
     InputStream classStream =
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);

@@ -8,30 +8,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+import randoop.DummyVisitor;
+import randoop.EqualsHashcode;
+import randoop.EqualsReflexive;
+import randoop.EqualsSymmetric;
+import randoop.EqualsToNullRetFalse;
+import randoop.Globals;
+import randoop.ObjectContract;
+import randoop.RandoopClassLoader;
+import randoop.main.GenInputsAbstract.BehaviorType;
+import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.VisibilityPredicate;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.SequenceParseException;
+import randoop.test.predicate.ExceptionBehaviorPredicate;
+import randoop.test.predicate.ExceptionPredicate;
+import randoop.types.TypeNames;
+import randoop.util.RecordListReader;
+import randoop.util.RecordProcessor;
+import randoop.util.Util;
+
+import javassist.ClassPool;
 import junit.framework.TestCase;
-import main.java.randoop.DummyVisitor;
-import main.java.randoop.EqualsHashcode;
-import main.java.randoop.EqualsReflexive;
-import main.java.randoop.EqualsSymmetric;
-import main.java.randoop.EqualsToNullRetFalse;
-import main.java.randoop.Globals;
-import main.java.randoop.ObjectContract;
-import main.java.randoop.RandoopClassLoader;
-import main.java.randoop.main.GenInputsAbstract.BehaviorType;
-import main.java.randoop.reflection.PublicVisibilityPredicate;
-import main.java.randoop.reflection.VisibilityPredicate;
-import main.java.randoop.sequence.ExecutableSequence;
-import main.java.randoop.sequence.SequenceParseException;
-import main.java.randoop.test.ContractCheckingVisitor;
-import main.java.randoop.test.ExpectedExceptionCheckGen;
-import main.java.randoop.test.ExtendGenerator;
-import main.java.randoop.test.RegressionCaptureVisitor;
-import main.java.randoop.test.TestCheckGenerator;
-import main.java.randoop.test.predicate.ExceptionBehaviorPredicate;
-import main.java.randoop.test.predicate.ExceptionPredicate;
-import main.java.randoop.types.TypeNames;
-import main.java.randoop.util.RecordListReader;
-import main.java.randoop.util.RecordProcessor;
 
 public class SequenceTests extends TestCase {
 

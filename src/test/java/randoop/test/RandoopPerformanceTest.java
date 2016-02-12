@@ -13,7 +13,7 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
 
   @Override
   void execute() {
-    String resourcename = "resources/java.util.classlist.java1.6.txt";
+    String resourcename = "java.util.classlist.java1.6.txt";
 
     InputStream classStream =
       ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
