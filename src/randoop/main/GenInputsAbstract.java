@@ -459,13 +459,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * tests
    */
   @Option("Base name of the JUnit file(s) containing error-revealing tests")
-  public static String error_test_filename = "ErrorTest";
+  public static String error_test_basename = "ErrorTest";
 
   /**
    * Base name (no ".java" suffix) of the JUnit file containing regression tests
    */
   @Option("Base name of the JUnit file(s) containing regression tests")
-  public static String regression_test_filename = "RegressionTest";
+  public static String regression_test_basename = "RegressionTest";
 
   /**
    * Name of the package for the generated JUnit files. When the package is the

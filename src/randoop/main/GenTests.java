@@ -385,7 +385,7 @@ public class GenTests extends GenInputsAbstract {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nError-revealing test output:%n");
         }
-        outputTests(errorSequences, GenInputsAbstract.error_test_filename);
+        outputTests(errorSequences, GenInputsAbstract.error_test_basename);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nNo error-revealing tests to output%n");
@@ -399,7 +399,7 @@ public class GenTests extends GenInputsAbstract {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nRegression test output:%n");
         }
-        outputTests(regressionSequences, GenInputsAbstract.regression_test_filename);
+        outputTests(regressionSequences, GenInputsAbstract.regression_test_basename);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("No regression tests to output%n");

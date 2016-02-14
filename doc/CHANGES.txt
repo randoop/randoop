@@ -1,7 +1,13 @@
+Version 2.1.4, released ??
+
+Renamed command-line arguments --{error,regression}-test-filename to
+--{error,regression}-test-basename.
+
+
 Version 2.1.3, released February 5, 2016
 
-Renamed command-line argument --include_only_classes to
---include_if_classname_appears.  Clarified that a test is output only if
+Renamed command-line argument --include-only-classes to
+--include-if-classname-appears.  Clarified that a test is output only if
 the test's source code textually uses some member from the classes.
 
 New command-line argument --include-if-class-exercised causes Randoop to

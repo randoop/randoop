@@ -162,7 +162,7 @@ randoop1: bin
 	   --inputlimit=500 \
 	   --testclass=java2.util2.TreeSet \
 	   --testclass=java2.util2.Collections \
-	   --regression-test-filename=TestClass \
+	   --regression-test-basename=TestClass \
 	   --npe-on-null-input=EXPECTED \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
@@ -190,8 +190,8 @@ randoop2: bin
 	   --testclass=java2.util2.ArrayList \
 	   --testclass=java2.util2.LinkedList \
 	   --testclass=java2.util2.Collections \
-	   --regression-test-filename=NaiveRegression \
-	   --error-test-filename=NaiveError \
+	   --regression-test-basename=NaiveRegression \
+	   --error-test-basename=NaiveError \
 	   --junit-package-name=foo.bar \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/randoop-log.txt \
@@ -216,8 +216,8 @@ randoop3: bin
 	   --small-tests \
 	   --clear=100 \
 	   --classlist=../resources/jdk_classlist.txt \
-	   --regression-test-filename=JDK_Tests_regression \
-	   --error-test-filename=JDK_Tests_error \
+	   --regression-test-basename=JDK_Tests_regression \
+	   --error-test-basename=JDK_Tests_error \
 	   --junit-package-name=jdktests \
 	   --junit-output-dir=../randoop-scratch
 
@@ -231,7 +231,7 @@ randoop-contracts: bin
 	   --no-regression-tests \
 	   --inputlimit=1000 \
 	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
-	   --error-test-filename=BuggyTest \
+	   --error-test-basename=BuggyTest \
 	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
 	   --log=systemtests/randoop-contracts-log.txt \
 	   --output-tests-serialized=systemtests/randoop-contracts-test-scratch/sequences_serialized.gzip
@@ -251,7 +251,7 @@ randoop-checkrep: bin
 	   --timelimit=2 \
 	   --testclass=examples.CheckRep1 \
 	   --testclass=examples.CheckRep2 \
-	   --error-test-filename=CheckRepTest \
+	   --error-test-basename=CheckRepTest \
 	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
 	   --log=systemtests/randoop-checkrep-contracts-log.txt
 	cd systemtests/randoop-contracts-test-scratch && \
@@ -272,8 +272,8 @@ randoop-literals: bin
 	   --testclass=randoop.literals.A \
 	   --testclass=randoop.literals.A2 \
 	   --testclass=randoop.literals.B \
-	   --regression-test-filename=LiteralsReg \
-	   --error-test-filename=LiteralsErr \
+	   --regression-test-basename=LiteralsReg \
+	   --error-test-basename=LiteralsErr \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --literals-level=CLASS \
 	   --literals-file=systemtests/resources/literalsfile.txt
@@ -286,7 +286,7 @@ randoop-long-string: bin
 	  randoop.main.Main gentests \
 	   --timelimit=1 \
 	   --testclass=randoop.test.LongString \
-	   --regression-test-filename=LongString \
+	   --regression-test-basename=LongString \
 	   --junit-output-dir=systemtests/randoop-scratch
 	cd systemtests/randoop-scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) LongString.java
@@ -307,7 +307,7 @@ randoop-visibility: bin
 	  randoop.main.Main gentests \
 	   --timelimit=2 \
 	   --testclass=examples.Visibility \
-	   --regression-test-filename=VisibilityTest \
+	   --regression-test-basename=VisibilityTest \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/log.txt
 	cd systemtests/randoop-scratch && \
@@ -326,7 +326,7 @@ randoop-no-output: bin
 	  randoop.main.Main gentests \
 	   --timelimit=1 \
 	   --testclass=java.util.LinkedList \
-	   --regression-test-filename=NoOutputTest \
+	   --regression-test-basename=NoOutputTest \
 	   --junit-output-dir=systemtests/randoop-scratch \
 	   --log=systemtests/log.txt \
 	   --noprogressdisplay \
