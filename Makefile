@@ -480,7 +480,6 @@ plugin-manual: build plume-lib-update
 validate-manual:
 	validate doc/index.html
 	validate doc/dev.html
-	validate plugin/doc/index.html
 
 
 ############################################################
