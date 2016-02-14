@@ -101,12 +101,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * {@link java.lang.reflect.Method#toString()} matches the regular expression
    * given. This does not prevent indirect calls to such methods from other,
    * allowed methods.
-   * <br/>
    *
+   * <p>
    * Randoop only calls methods that are specified by one of the
    * <tt>--testclass</tt>, <tt>-classlist</tt>, or <tt>--methodlist</tt>
    * command-line options; the purpose of <tt>--omitmethods</tt> is to override
    * one of those other command-line options.
+   * </p>
    */
   @Option("Do not call methods that match regular expression <string>")
   public static Pattern omitmethods = null;
@@ -154,11 +155,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Whether to output error-revealing tests.
-   * <br/>
+   *
+   * <p>
    * Will completely disable output when used with
    * <code>--no-regression-tests</code>. Be aware that restricting output can
    * result in long runs if the default values of <code>--inputlimit</code> and
    * <code>--timelimit</code> are used.
+   * </p>
    */
   @OptionGroup("Test classification")
   @Option("Whether to output error-revealing tests")
@@ -166,11 +169,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * Whether to output regression tests.
-   * <br/>
+   *
+   * <p>
    * Will completely disable output when used with
    * <code>--no-error-revealing-tests</code>. Be aware that restricting output
    * can result in long runs if the default values of <code>--inputlimit</code>
    * and <code>--timelimit</code> are used.
+   * </p>
    */
   @Option("Whether to output regression tests")
   public static boolean no_regression_tests = false;
@@ -210,10 +215,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * If a test throws an unchecked exception, should the test be included in the
    * error-revealing test suite (value: ERROR), regression test suite (value:
    * EXPECTED), or should it be discarded (value: INVALID)?
-   * <br/>
+   *
+   * <p>
    * The arguments <tt>--npe-on-null-input</tt>,
    * <tt>--npe-on-non-null-input</tt>, and <tt>--oom-exception</tt> handle
    * special cases of unchecked exceptions.
+   * </p>
    */
   @Option("Whether unchecked exception is an ERROR, EXPECTED or INVALID")
   public static BehaviorType unchecked_exception = BehaviorType.EXPECTED;
@@ -250,10 +257,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * sequence. If true, the sequence will be classified as invalid. If false,
    * Randoop will halt with information about the sequence to aid in identifying
    * the issue.
-   * <br/>
+   *
+   * <p>
    * Use of this option is a last resort. Flaky tests are usually due to calling
    * Randoop on side-effecting or nondeterministic methods, and a better
    * solution is not to call Randoop on such methods.
+   * </p>
    */
   @Option("Whether to ignore non-determinism in test execution")
   public static boolean ignore_flaky_tests = false;
@@ -284,7 +293,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * the number of generated sequences reaches the input limit (--inputlimit),
    * OR the number of error-revealing and regression tests reaches the output
    * limit (--outputlimit).
-   * <br/>
+   *
+   * <p>
    * This option affects how many tests will occur in the output, as opposed to
    * --inputlimit, which affects the number of test method candidates that are
    * generated internally. This option is a better choice for controlling the
@@ -292,12 +302,15 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * larger than the number output since redundant and invalid tests are
    * filtered. However, the current implementation means that the actual number
    * of tests in the output can still be substantially smaller than this limit.
-   * <br/>
+   * </p>
+   *
+   * <p>
    * This limit will have no effect if there is no output, which occurs when
    * using either <code>--dont-output-tests</code> or
    * <code>--no-error-revealing-tests</code> together with
    * <code>--no-regression-tests</code>. In this case, the option
    * <code>--inputlimit</code> should be used.
+   * </p>
    */
   @Option("Maximum number of tests to ouput; contrast to --inputlimit")
   public static int outputlimit = 100000000;
@@ -310,12 +323,14 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * (--outputlimit). The number of tests output will be smaller than then
    * number of test candidates generated, because redundant and illegal tests
    * may be discarded.
-   * <br/>
+   *
+   * <p>
    * This limit should be used when no tests are output, which occurs when using
    * either <code>--dont-output-tests</code> or
    * <code>--no-error-revealing-tests</code> together with
    * <code>--no-regression-tests</code>. Otherwise the
    * <code>--outputlimit</code> command-line option is usually more appropriate.
+   * </p>
    */
   @Option("Maximum number of tests generated")
   public static int inputlimit = 100000000;
@@ -344,13 +359,17 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Do not use <code>null</code> as input to methods or constructors when no
    * other argument value can be generated.
-   * <br/>
+   *
+   * <p>
    * If true, Randoop will not generate a test when unable to find a non-null
    * value of appropriate type as an input. This could result in certain class
    * members being untested.
-   * <br/>
+   * </p>
+   *
+   * <p>
    * Does not affect the behavior based on --null_ratio, which independently
    * determines the frequency that <code>null</code> is used as an input.
+   * </p>
    */
   @Option("Never use null as input to methods or constructors")
   public static boolean forbid_null = false;
@@ -358,11 +377,13 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * A file containing literal values to be used as inputs to methods under
    * test, or "CLASSES".
-   * <br/>
+   *
+   * <p>
    * Literals in these files are used in addition to all other constants in the
    * pool. For the format of this file, see documentation in class
    * {@link randoop.LiteralFileReader}. The special value "CLASSES" (with no
    * quotes) means to read literals from all classes under test.
+   * </p>
    */
   @Option("A file containing literal values to be used as inputs to methods under test")
   public static List<String> literals_file = new ArrayList<String>();
@@ -416,33 +437,39 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Try to reuse values from a sequence with the given frequency. If an alias
    * ratio is given, it should be between 0 and 1.
-   * <br/>
+   *
+   * <p>
    * A ratio of 0 results in tests where each value created within a test input
    * is typically used at most once as an argument in a method call. A ratio of
    * 1 tries to maximize the number of times values are used as inputs to
    * parameters within a test.
+   * </p>
    */
   @Option("Reuse values with the given frequency")
   public static double alias_ratio = 0;
 
   /**
    * Favor shorter sequences when assembling new sequences out of old ones.
-   * <br/>
+   *
+   * <p>
    * Randoop generates new tests by combining old previously-generated tests. If
    * this option is given, tests with fewer calls are given greater weight
    * during its random selection. This has the overall effect of producing
    * smaller JUnit tests.
+   * </p>
    */
   @Option("Favor shorter tests during generation")
   public static boolean small_tests = false;
 
   /**
    * Clear the component set each time it contains the given number of inputs.
-   * <br/>
+   *
+   * <p>
    * Randoop stores previously-generated tests in a "component" set, and uses
    * them to generate new tests. Setting this variable to a small number can
    * sometimes result in a greater variety of tests generated during a single
    * run.
+   * </p>
    */
   @Option("Clear the component set when it gets this big")
   public static int clear = 100000000;
@@ -484,10 +511,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * Run test generation without output. May be desirable when running with a
    * visitor.
-   * <br/>
+   *
+   * <p>
    * NOTE: Because there is no output, the value of <code>--outputlimit</code>
    * will never be met, so be sure to set <code>--inputlimit</code> or
    * <code>--timelimit</code> to a reasonable value when using this option.
+   * </p>
    */
   @Option("Run Randoop but do not output JUnit tests")
   public static boolean dont_output_tests = false;
