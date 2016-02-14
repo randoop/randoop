@@ -231,7 +231,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (methodlist != null) {
 
-      try (EntryReader rdr = new EntryReader(new File(methodlist), "^#.*", null)) {
+      try (EntryReader rdr = new EntryReader(methodlist, "^#.*", null)) {
 
         for (String line : rdr) {
           Operation op = OperationParser.parse(line);
@@ -262,7 +262,7 @@ public class GenTests extends GenInputsAbstract {
     // Initialize components.
     Set<Sequence> components = new LinkedHashSet<Sequence>();
     if (!componentfile_ser.isEmpty()) {
-      for (String onefile : componentfile_ser) {
+      for (File onefile : componentfile_ser) {
         try (ObjectInputStream objectos = new ObjectInputStream(new GZIPInputStream(new FileInputStream(onefile)))) {
           Set<Sequence> seqset = (Set<Sequence>) objectos.readObject();
           if (!GenInputsAbstract.noprogressdisplay) {
@@ -275,7 +275,7 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     if (!componentfile_txt.isEmpty()) {
-      for (String onefile : componentfile_txt) {
+      for (File onefile : componentfile_txt) {
         Set<Sequence> seqset = new LinkedHashSet<Sequence>();
         Sequence.readTextSequences(onefile, seqset);
         if (!GenInputsAbstract.noprogressdisplay) {
@@ -619,6 +619,24 @@ public class GenTests extends GenInputsAbstract {
    */
   private void outputObject(Object obj, String filename) {
     try (ObjectOutputStream os = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filename)))) {
+      os.writeObject(obj);
+    } catch (FileNotFoundException e) {
+      throw new Error("Unable to serialize object: " + e);
+    } catch (IOException e) {
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * Manages output for serialized objects.
+   *
+   * @param obj
+   *          the object to serialize
+   * @param file
+   *          the file for serialization
+   */
+  private void outputObject(Object obj, File file) {
+    try (ObjectOutputStream os = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)))) {
       os.writeObject(obj);
     } catch (FileNotFoundException e) {
       throw new Error("Unable to serialize object: " + e);
