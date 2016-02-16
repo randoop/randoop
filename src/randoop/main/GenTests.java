@@ -435,11 +435,7 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.include_if_class_exercised != null) {
       try (EntryReader er = new EntryReader(GenInputsAbstract.include_if_class_exercised)) {
         for (String classname : er) {
-          if (classnames.contains(classname)) {
-            coveredClassnames.add(classname.trim());
-          } else {
-            System.out.println("Ignoring class " + classname + " for covered test since not in --classlist or --testclass.");
-          }
+          coveredClassnames.add(classname.trim());
         }
       } catch (IOException e) {
         throw new Error("Unable to read coverage class names: " + e);
@@ -464,20 +460,43 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // ignore interfaces and non-visible classes
-      if (c.isInterface()) {
-        System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
-      } else if (! visibility.isVisible(c)) {
+      if (! visibility.isVisible(c)) {
         System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
+      } else if (c.isInterface()) {
+        System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
       } else {
-        classes.add(c);
+        if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum())  {
+          System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
+        } else {
+          classes.add(c);
+        }
         if (coveredClassnames.contains(classname)) {
           coveredClasses.add(c);
         }
       }
+    }
 
+    for (String classname : coveredClassnames) {
+      if (! classnames.contains(classname)) {
+        Class<?> c = null;
+        try {
+          c = TypeNames.getTypeForName(classname);
+        } catch (ClassNotFoundException e) {
+          errorHandler.handle(classname);
+        }
+
+        if (! visibility.isVisible(c)) {
+          System.out.println("Ignorning non-visible " + c + " specified as include-if-class-exercised target");
+        } else if (c.isInterface()) {
+          System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
+        } else {
+          coveredClasses.add(c);
+        }
+      }
     }
 
   }
+
 
   /**
    * Handles the occurrence of a {@code SequenceExceptionError} that indicates a
