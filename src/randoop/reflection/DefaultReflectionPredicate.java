@@ -82,12 +82,6 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   @Override
   public boolean test(Method m) {
 
-    // get rid of abstract methods if not in an enum
-    if (! m.getDeclaringClass().isEnum()
-        && Modifier.isAbstract(m.getModifiers() & Modifier.methodModifiers())) {
-      return false;
-    }
-
     if (isRandoopInstrumentation(m)) {
       return false;
     }
