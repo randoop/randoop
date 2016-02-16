@@ -92,10 +92,15 @@ public class RandoopClassLoader extends ClassLoader {
    *
    * @param cc
    *          the {@code javassist.CtClass} object
+   * @throws InstrumentationException
    * @throws CannotCompileException
    *           if inserted code doesn't compile
    */
   private void modifyBytecode(CtClass cc) {
+    if (cc.isInterface()) {
+      return;
+    }
+
     // add static field
     String flagFieldName = "randoop_classUsedFlag";
     try {
@@ -121,13 +126,15 @@ public class RandoopClassLoader extends ClassLoader {
 
     try {
       for (CtMethod m : cc.getMethods()) {
-        if (!Modifier.isNative(m.getModifiers())) {
+        int mods = m.getModifiers();
+        if (!Modifier.isNative(mods) && !Modifier.isAbstract(mods)) {
           m.insertBefore(statementToSetFlag);
         }
       }
     } catch (CannotCompileException e) {
       throw new Error("error instrumenting method: " + e);
     }
+
     try {
       for (CtConstructor c : cc.getConstructors()) {
         c.insertBefore(statementToSetFlag);
@@ -136,5 +143,6 @@ public class RandoopClassLoader extends ClassLoader {
     } catch (CannotCompileException e) {
       throw new Error("error instrumenting constructor: " + e);
     }
+
   }
 }
