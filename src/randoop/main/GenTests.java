@@ -172,8 +172,9 @@ public class GenTests extends GenInputsAbstract {
     executeInitializationRoutine(1);
 
     if (GenInputsAbstract.include_if_class_exercised != null && ReflectionExecutor.usethreads) {
-      System.out.println("WARNING: using --include-if-class-covered with --use-threads");
-      System.out.println("may filter in an unpredictable way.");
+      System.out.println("Cannot use --include-if-class-exercised with --use-threads.");
+      System.out.println("Exiting.");
+      System.exit(1);
     }
 
     // Check that there are classes to test
@@ -856,7 +857,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Read a list of sequences from a serialized file
-   * 
+   *
    * @param filename
    *          is name of file containing sequences.
    * @return list of sequence objects read from file.
@@ -882,7 +883,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Write out a serialized file of sequences
-   * 
+   *
    * @param seqs
    *          list of sequences to write.
    * @param outfile
