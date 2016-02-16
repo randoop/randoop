@@ -1,5 +1,9 @@
 Version 2.1.4, released ??
 
+Modified --include-if-class-exercised to allow any class, and not just those
+specified by --testclass or --classlist. Also allows abstract classes, which
+cannot be given to --testclass.
+
 Renamed command-line arguments --{error,regression}-test-filename to
 --{error,regression}-test-basename.
 

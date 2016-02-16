@@ -73,7 +73,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
    * method : Type0.method_name(Type1, Type2, ..., TypeN)
    * </pre>
-   * 
+   *
    * <p>
    * Each <code>Type<i>i</i></code> must be fully-qualified (include package
    * names).
@@ -146,9 +146,9 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * if it exercises at least one of the class names in the file. A test
    * exercises a class if it executes any constructor or method of the class,
    * directly or indirectly (the constructor or method might not appear in the
-   * source code of the test). The file contains fully-qualified class names,
-   * and any class name in it must also appear in <code>--testclass</code> or
-   * <code>--classlist</code>.
+   * source code of the test). The file contains fully-qualified class names.
+   * It is not necessary that any class name in the file also appear in
+   * <code>--testclass</code> or <code>--classlist</code>.
    */
   @Option("File containing class names that tests must exercise")
   public static File include_if_class_exercised = null;
@@ -391,7 +391,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
   /**
    * How to use literal values that are specified via the
    * <tt>--literals-file</tt> command-line option.
-   * 
+   *
    * @see ClassLiteralsMode
    */
   @Option("How to use literal values specified via --literals-file: ALL, PACKAGE, CLASS, or NONE")
@@ -399,7 +399,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   /**
    * The possible values of the literals_level command-line argument.
-   * 
+   *
    * @see #literals_level
    */
   public static enum ClassLiteralsMode {
@@ -543,7 +543,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * Specify an extra command for recursive JVM calls that Randoop spawns. The
    * argument to the --agent option is the entire extra JVM command. A typical
    * invocation of Randoop might be:
-   * 
+   *
    * <pre>
    * java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"
    * </pre>
