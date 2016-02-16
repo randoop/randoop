@@ -45,7 +45,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   /**
    * DefaultReflectionFilter creates a filter object that uses default criteria
    * for inclusion of reflection objects.
-   * 
+   *
    * @param omitMethods
    *          pattern for methods to omit, if null then no methods omitted.
    * @param visibility
@@ -81,6 +81,12 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
    */
   @Override
   public boolean test(Method m) {
+
+    // get rid of abstract methods if not in an enum
+    if (! m.getDeclaringClass().isEnum()
+        && Modifier.isAbstract(m.getModifiers() & Modifier.methodModifiers())) {
+      return false;
+    }
 
     if (isRandoopInstrumentation(m)) {
       return false;
