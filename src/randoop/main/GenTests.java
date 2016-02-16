@@ -463,11 +463,10 @@ public class GenTests extends GenInputsAbstract {
         errorHandler.handle(classname);
       }
 
-      // ignore private (non-.isVisible) classes and abstract classes
-      // and interfaces.
-      if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
-        System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
-      } else if (!visibility.isVisible(c)) {
+      // ignore interfaces and non-visible classes
+      if (c.isInterface()) {
+        System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
+      } else if (! visibility.isVisible(c)) {
         System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
       } else {
         classes.add(c);
