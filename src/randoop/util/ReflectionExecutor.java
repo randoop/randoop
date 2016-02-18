@@ -22,7 +22,7 @@ public final class ReflectionExecutor {
    * option, Randoop executes each test in a separate thread and kills tests
    * that take too long to finish. Tests killed in this manner are not reported
    * to the user. The downside is a BIG (order-of-magnitude) decrease in
-   * generation speed.
+   * generation speed.  The tests are not run in parallel, merely in isolation.
    */
   @OptionGroup("Threading and timeouts")
   @Option("Execute each test in a separate thread, with timeout")
