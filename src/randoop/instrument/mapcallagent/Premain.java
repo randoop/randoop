@@ -1,17 +1,27 @@
-package randoop.agent;
+package randoop.instrument.mapcallagent;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 
 // import harpoon.ClassFile.HMethod;
-
-import java.lang.instrument.*;
-import java.io.*;
-import java.io.File;
-import java.util.*;
-import java.util.jar.*;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
-import plume.SimpleLog;
 import plume.Option;
 import plume.Options;
+import plume.SimpleLog;
 
 public class Premain {
 
