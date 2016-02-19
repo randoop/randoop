@@ -46,7 +46,7 @@ import randoop.ObjectContract;
 import randoop.RandoopClassLoader;
 import randoop.RandoopListenerManager;
 import randoop.SeedSequences;
-import randoop.instrument.CoveredClassVisitor;
+import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.ConstructorCall;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -318,7 +318,7 @@ public class GenTests extends GenInputsAbstract {
 
     // instrumentation visitor
     if (GenInputsAbstract.include_if_class_exercised != null) {
-      visitors.add(new CoveredClassVisitor(coveredClasses));
+      visitors.add(new ExercisedClassVisitor(coveredClasses));
     }
 
     // Install any user-specified visitors.
