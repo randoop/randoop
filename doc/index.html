@@ -53,6 +53,7 @@ The Randoop homepage is
               <li><a href="#nontermination">Randoop does not terminate</a></li>
               <li><a href="#nondeterminism">Randoop produces different output on different runs</a></li>
               <li><a href="#flaky-tests">Randoop stopped because of a flaky test</a></li>
+              <li><a href="#dependent-tests">Tests behave differently in isolation or when reordered</a></li>
             </ul></li>
         </ul></li>
     </ul>
@@ -351,7 +352,7 @@ classes and methods to test.</i></b>
 <p>
 Randoop classifies each generated test as one of
 error-revealing, expected behavior, or invalid.  The classification depends
-primarily on whether the last statement thows an exception or
+primarily on whether the last statement throws an exception or
 <a href="#kinds_of_errors">violates a contract</a>.
 </p>
 
@@ -387,8 +388,8 @@ alternative would be to consider a test that throws
 <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/AssertionError.html">AssertionError</a>
 as error-revealing.  However, a random test generator often supplies illegal
 arguments (such as <tt>null</tt> to a method that requires a non-null
-rgument), and this approach will lead to false alarms in which Randoop
-output an "error-revealing test" that misuses the sofware under test.
+argument), and this approach will lead to false alarms in which Randoop
+output an "error-revealing test" that misuses the software under test.
 Depending on your needs, you can override Randoop's default.
 </p>
 
@@ -1370,16 +1371,23 @@ sequential Java program are:
 
 <p>
 Randoop extends previously-generated tests by adding new method calls to them.
-If, in the new longer test, one of the embedded subtests throws an exception,
+If, in the new longer test, one of the embedded subtests throws an exception
+(even though when previously run on its own the subtest passed),
 then we say the test is <i>flaky</i>.
 </p>
 
 <p>
 Flaky tests are usually due to Randoop calling a method that has global
 side effects.  Such methods are not appropriate for randomly-generated
-tests, and so you should not call Randoop on such methods.  If Randoop
+tests, and so you should not call Randoop on such methods.  Calling Randoop
+on a method that side-effects local state, such as a field of the receiver
+or of an argument, is fine.
+</p>
+
+<p>
+If Randoop
 encounters a flaky test, Randoop halts so that you can correct your
-invocation of Randoop, excluding the side-effecting method from
+invocation of Randoop, excluding the global-side-effecting method from
 consideration.  You can do so by passing the
 <a href="#option:omitmethods"><code>--omitmethods</code></a> command-line
 option.
@@ -1416,6 +1424,25 @@ option, then you can resort to the command-line argument
 to discard the flaky tests.
 This is a last resort because it is better to avoid generating flaky tests
 rather than discarding them after generating them.
+</p>
+
+
+<h4 id="dependent-tests">Tests behave differently in isolation or when reordered</h4>
+
+<p>
+Another symptom of calling Randoop on methods that have global side effects, in
+addition to <a href="#flaky-tests">flaky tests</a>, is
+<a href="http://homes.cs.washington.edu/~mernst/pubs/test-independence-issta2014-abstract.html">dependent
+tests</a>:  tests that behave differently depending on whether some other
+test has already run.  For instance, test B might succeed if run after test
+A, but fail if run on its own.
+</p>
+
+<p>
+You can either always run Randoop's generated tests in the same order
+(without performing test selection, prioritization, or parallelization),
+or you can avoid calling Randoop on methods with global side effects as
+described in the section on <a href="#flaky-tests">flaky tests</a>.
 </p>
 
 
