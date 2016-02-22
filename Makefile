@@ -98,12 +98,12 @@ tests: clean-tests bin randoop-tests  results
 randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-reflection test-generation
 
 # build pre-agent instrumentation jar
-AGENT_JAVA_FILES = $(wildcard src/randoop/agent/*.java)
-bin/randoop/agent/Premain.class: bin $(AGENT_JAVA_FILES)
+AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/mapcallagent/*.java)
+bin/randoop/instrument/mapcallagent/Premain.class: bin $(AGENT_JAVA_FILES)
 	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(AGENT_JAVA_FILES)
-randoop_agent.jar : bin/randoop/agent/Premain.class src/randoop/agent/manifest.txt
-	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/agent/manifest.txt \
-	  randoop/agent/Premain.class
+randoop_agent.jar : bin/randoop/instrument/mapcallagent/Premain.class src/randoop/instrument/mapcallagent/manifest.txt
+	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/instrument/mapcallagent/manifest.txt \
+	  randoop/instrument/mapcallagent/Premain.class
 
 ifneq (,$(findstring 1.8.,$(shell java -version 2>&1)))
   DOCLINT?=-Xdoclint:all,-missing

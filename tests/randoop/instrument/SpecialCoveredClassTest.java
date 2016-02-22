@@ -95,7 +95,7 @@ public class SpecialCoveredClassTest {
     testGenerator.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
     testGenerator.addTestCheckGenerator(checkGenerator);
-    testGenerator.addExecutionVisitor(new CoveredClassVisitor(coveredClasses));
+    testGenerator.addExecutionVisitor(new ExercisedClassVisitor(coveredClasses));
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();

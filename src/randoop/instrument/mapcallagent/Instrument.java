@@ -1,4 +1,4 @@
-package randoop.agent;
+package randoop.instrument.mapcallagent;
 
 import static java.lang.System.out;
 
@@ -248,7 +248,7 @@ public class Instrument implements ClassFileTransformer {
   /**
    * Processes each method in cg replacing any specified calls with static user
    * calls.
-   * 
+   *
    * @param fullClassName
    *          must be packageName.className
    */
@@ -462,7 +462,7 @@ public class Instrument implements ClassFileTransformer {
 
   /**
    * Returns true iff mgen is a constructor
-   * 
+   *
    * @return true iff mgen is a constructor
    */
   private boolean is_constructor(MethodGen mgen) {
