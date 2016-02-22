@@ -7,6 +7,9 @@ cannot be given to --testclass.
 Renamed command-line arguments --{error,regression}-test-filename to
 --{error,regression}-test-basename.
 
+Documented that Randoop may create dependent tests whose outcome depends
+on the order in which they are run, and what to do about it.
+
 
 Version 2.1.3, released February 5, 2016
 
