@@ -1,2 +1,2 @@
-Premain-Class: randoop.agent.Premain
+Premain-Class: randoop.instrument.mapcallagent.Premain
 Can-Redefine-Classes: true
