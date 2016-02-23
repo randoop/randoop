@@ -54,7 +54,7 @@ public class JunitFileWriter {
   /**
    * JunitFileWriter creates an instance of class holding information needed to
    * write a test suite.
-   * 
+   *
    * @param junitDirName
    *          directory where files are to be written
    * @param packageName
@@ -72,7 +72,7 @@ public class JunitFileWriter {
   /**
    * writeJUnitTestFile is a static method that writes a single test class to
    * the specified directory and with the specified class name.
-   * 
+   *
    * @param junitOutputDir
    *          directory where files are to be written.
    * @param packageName
@@ -94,11 +94,11 @@ public class JunitFileWriter {
    * of executable sequences. Each executable sequence corresponds to a test
    * method, a list of executable sequences corresponds to a test class, and the
    * list of lists to a test suite.
-   * 
+   *
    * @param seqPartition
    *          suite of test classes as a list of lists of executable sequences
    * @return File objects corresponding to test class files generated.
-   * 
+   *
    * @see #writeSuiteFile
    * @see #writeDriverFile
    */
@@ -122,7 +122,7 @@ public class JunitFileWriter {
    * writeTestClass writes a code sequence as a JUnit4 test class to a .java
    * file. Tests are executed in ascending alphabetical order by test method
    * name.
-   * 
+   *
    * @param sequences
    *          list of executable sequences for method bodies.
    * @param testClassName
@@ -171,11 +171,11 @@ public class JunitFileWriter {
   }
 
   /*
-   * 
+   *
    */
   /**
    * Writes a test method to the output stream for the sequence s.
-   * 
+   *
    * @param out
    *          the output stream for test class file.
    * @param className
@@ -198,7 +198,7 @@ public class JunitFileWriter {
   /**
    * Generates the list of test class names for previously generated test
    * suites.
-   * 
+   *
    * @return list of class names.
    */
   private List<String> getTestClassNames() {
@@ -215,7 +215,7 @@ public class JunitFileWriter {
    * {@link #writeJUnitTestFiles(List)} and additional classes provided as a
    * parameter. The file is written to the directory pointed to by writer object
    * in a class whose name is the {@link #masterTestClassName}.
-   * 
+   *
    * @param additionalTestClassNames
    *          a list of class names to be added to suite.
    * @return {@link File} object for test suite file.
@@ -263,7 +263,7 @@ public class JunitFileWriter {
    * writeDriverFile writes non-reflective driver for tests as a main class. The
    * file is written to the directory pointed to by writer object in a class
    * whose name is the {@link #masterTestClassName}.
-   * 
+   *
    * @return {@link File} object for generated Java file.
    */
   public File writeDriverFile() {
@@ -289,7 +289,7 @@ public class JunitFileWriter {
       NameGenerator instanceNameGen = new NameGenerator("t");
       for (String testClass : testClassNames) {
         String testVariable = instanceNameGen.next();
-        out.println(testClass + " " + testVariable + "= new " + testClass + "()");
+        out.println("    " + testClass + " " + testVariable + "= new " + testClass + "();");
 
         int classMethodCount = classMethodCounts.get(testClass);
         NameGenerator methodGen = new NameGenerator("test", 1, numDigits(classMethodCount));
@@ -297,7 +297,7 @@ public class JunitFileWriter {
         while (methodGen.nameCount() < classMethodCount) {
           String methodName = methodGen.next();
           out.println("    try {");
-          out.println("      " + testVariable + "." + methodName + "()");
+          out.println("      " + testVariable + "." + methodName + "();");
           out.println("    } catch (Throwable e) {");
           out.println("      wasSuccessful = false;");
           out.println("      e.printStackTrace();");
@@ -338,11 +338,11 @@ public class JunitFileWriter {
     /*
      * Creates an instance that generates names beginning with prefix, count
      * starting at the initialValue, and 0-padded to digits digits.
-     * 
+     *
      * @param prefix a string to be used as the prefix for all generated names.
-     * 
+     *
      * @param initialValue integer starting value for name counter
-     * 
+     *
      * @param digits the minimum number of digits (determines 0-padding)
      */
     public NameGenerator(String prefix, int initialValue, int digits) {
@@ -359,7 +359,7 @@ public class JunitFileWriter {
 
     /*
      * Generates names without 0-padding on counter.
-     * 
+     *
      * @param prefix is a string to be used as a prefix for all names generated.
      */
     public NameGenerator(String prefix) {
