@@ -168,12 +168,6 @@ public class GenTests extends GenInputsAbstract {
     // If an initializer method was specified, execute it
     executeInitializationRoutine(1);
 
-    if (GenInputsAbstract.include_if_class_exercised != null && ReflectionExecutor.usethreads) {
-      System.out.println("Cannot use --include-if-class-exercised with --use-threads.");
-      System.out.println("Exiting.");
-      System.exit(1);
-    }
-
     // Check that there are classes to test
     if (classlist == null && methodlist == null && testclass.size() == 0) {
       System.out.println("You must specify some classes or methods to test.");
