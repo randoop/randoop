@@ -26,7 +26,7 @@ import javassist.CtMethod;
  *      sets the flag.
  * <li> Adds a static method that polls and resets the value of the flag.
  * </ol>
- * Avoids instrumenting JDK classes and skips interfaces.
+ * Avoids instrumenting JDK and JUnit classes and skips interfaces.
  * Otherwise, all other classes are instrumented.
  */
 public class ExercisedClassTransformer implements ClassFileTransformer {
@@ -45,8 +45,8 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
   /**
    * {@inheritDoc}
    * Transforms bytecode for a class by adding "exercised" instrumentation.
-   * Avoids JDK classes, interfaces and any "frozen" classes that have already
-   * been loaded.
+   * Avoids JDK and JUnit classes, interfaces and any "frozen" classes that
+   * have already been loaded.
    */
   @Override
   public byte[] transform(ClassLoader loader, String className,
@@ -56,21 +56,25 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
 
     byte[] bytecode = null;
 
+    String qualifiedName = className.replace('/', '.');
+
     // don't transform rt.jar classes
     // list derived from jdk1.8.0_71
-    if (className.startsWith("java.")
-        || className.startsWith("javax.")
-        || className.startsWith("jdk.")
-        || className.startsWith("apple.")
-        || className.startsWith("com.apple.")
-        || className.startsWith("com.oracle.")
-        || className.startsWith("com.sun.")
-        || className.startsWith("org.ietf.")
-        || className.startsWith("org.jcp.")
-        || className.startsWith("org.omg.")
-        || className.startsWith("org.w3c")
-        || className.startsWith("org.xml.")
-        || className.startsWith("sun.")) {
+    // include org.junit because tests were not running
+    if (qualifiedName.startsWith("java.")  // start of rt.jar name prefixes
+        || qualifiedName.startsWith("javax.")
+        || qualifiedName.startsWith("jdk.")
+        || qualifiedName.startsWith("apple.")
+        || qualifiedName.startsWith("com.apple.")
+        || qualifiedName.startsWith("com.oracle.")
+        || qualifiedName.startsWith("com.sun.")
+        || qualifiedName.startsWith("org.ietf.")
+        || qualifiedName.startsWith("org.jcp.")
+        || qualifiedName.startsWith("org.omg.")
+        || qualifiedName.startsWith("org.w3c")
+        || qualifiedName.startsWith("org.xml.")
+        || qualifiedName.startsWith("sun.")  // end of rt.jar name prefixes
+        || qualifiedName.startsWith("org.junit.")) {
       return bytecode;
     }
 
@@ -86,7 +90,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
     }
 
     // OK to transform bytecode
-    modifyBytecode(cc);
+    modifyClass(cc);
     try {
       bytecode = cc.toBytecode();
     } catch (IOException e) {
@@ -110,7 +114,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
    * @throws CannotCompileException
    *           if inserted code doesn't compile
    */
-  private void modifyBytecode(CtClass cc) {
+  private void modifyClass(CtClass cc) {
     // add static field
     String flagFieldName = "randoop_classUsedFlag";
     try {
