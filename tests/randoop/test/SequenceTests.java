@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TreeSet;
 
 import randoop.DummyVisitor;
 import randoop.EqualsHashcode;
@@ -15,7 +14,6 @@ import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
 import randoop.Globals;
 import randoop.ObjectContract;
-import randoop.RandoopClassLoader;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -24,12 +22,10 @@ import randoop.sequence.Sequence;
 import randoop.sequence.SequenceParseException;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.types.TypeNames;
 import randoop.util.RecordListReader;
 import randoop.util.RecordProcessor;
 import randoop.util.Util;
 
-import javassist.ClassPool;
 import junit.framework.TestCase;
 
 public class SequenceTests extends TestCase {
@@ -67,8 +63,6 @@ public class SequenceTests extends TestCase {
       }
     };
 
-    ClassLoader contextLoader = this.getClass().getClassLoader();
-    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
     RecordListReader reader = new RecordListReader("TEST", processor);
     InputStream stream = SequenceTests.class.getResourceAsStream("resources/sequence_tests_script.txt");
     BufferedReader b = new BufferedReader(new InputStreamReader(stream));

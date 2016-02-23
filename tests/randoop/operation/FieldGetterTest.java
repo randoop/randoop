@@ -6,16 +6,13 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.Globals;
 import randoop.NormalExecution;
-import randoop.RandoopClassLoader;
 import randoop.field.ClassWithFields;
 import randoop.field.InstanceField;
 import randoop.field.StaticField;
@@ -23,9 +20,6 @@ import randoop.field.StaticFinalField;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.TypeNames;
-
-import javassist.ClassPool;
 
 /**
  * FieldGetterTest defines unit tests for FieldGetter class.
@@ -34,12 +28,6 @@ import javassist.ClassPool;
  *
  */
 public class FieldGetterTest {
-
-  @BeforeClass
-  public static void setup() {
-    ClassLoader contextLoader = FieldGetterTest.class.getClassLoader();
-    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
-  }
 
   @Test
   public void testStaticField() {

@@ -43,7 +43,6 @@ import randoop.JunitFileWriter;
 import randoop.LiteralFileReader;
 import randoop.MultiVisitor;
 import randoop.ObjectContract;
-import randoop.RandoopClassLoader;
 import randoop.RandoopListenerManager;
 import randoop.SeedSequences;
 import randoop.instrument.ExercisedClassVisitor;
@@ -85,8 +84,6 @@ import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
-
-import javassist.ClassPool;
 
 public class GenTests extends GenInputsAbstract {
 
@@ -441,10 +438,6 @@ public class GenTests extends GenInputsAbstract {
         throw new Error("Unable to read coverage class names: " + e);
       }
     }
-
-    // setup the class loader; must be done before loading classes for test gen
-    ClassLoader contextLoader = visibility.getClass().getClassLoader();
-    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), coveredClassnames));
 
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     if (GenInputsAbstract.silently_ignore_bad_class_names) {
