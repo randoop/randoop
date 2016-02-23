@@ -72,10 +72,10 @@ all-dist: all javadoc manual distribution-files
 
 # Remove generated .class files.
 clean:
-	rm -rf bin systemtests/bin randoop_agent.jar
+	rm -rf bin systemtests/bin mapcall_agent.jar exercised_agent.jar
 
 # Build Randoop.
-build: bin randoop_agent.jar
+build: bin mapcall_agent.jar exercised_agent.jar
 compile: build
 
 bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
@@ -97,14 +97,26 @@ tests: clean-tests bin randoop-tests  results
 # Runs pure Randoop-related tests.
 randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-reflection test-generation
 
-# build pre-agent instrumentation jar
-AGENT_JAVA_FILES = $(wildcard src/randoop/instrument/mapcallagent/*.java)
-bin/randoop/instrument/mapcallagent/Premain.class: bin $(AGENT_JAVA_FILES)
-	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(AGENT_JAVA_FILES)
-randoop_agent.jar : bin/randoop/instrument/mapcallagent/Premain.class src/randoop/instrument/mapcallagent/manifest.txt
-	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/instrument/mapcallagent/manifest.txt \
+# build mapcall-agent instrumentation jar
+MAPCALL_JAVA_FILES = $(wildcard src/randoop/instrument/mapcallagent/*.java)
+bin/randoop/instrument/mapcallagent/Premain.class: bin $(MAPCALL_JAVA_FILES)
+	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(MAPCALL_JAVA_FILES)
+mapcall_agent.jar : bin/randoop/instrument/mapcallagent/Premain.class src/randoop/instrument/mapcallagent/manifest.txt
+	cd bin && jar cfm ../mapcall_agent.jar ../src/randoop/instrument/mapcallagent/manifest.txt \
 	  randoop/instrument/mapcallagent/Premain.class
+	  
+	  
+# build exercised-class instrumentation agent
+EXERCISED_JAVA_FILES = $(wildcard src/randoop/instrument/exercisedagent/*.java)
+bin/randoop/instrument/exercisedagent/ExercisedAgent.class: bin $(EXERCISED_JAVA_FILES)
+	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(EXERCISED_JAVA_FILES)
+exercised_agent.jar: bin/randoop/instrument/exercisedagent/ExercisedAgent.class src/randoop/instrument/exercisedagent/manifest.txt
+	cd bin && jar cfm ../exercised_agent.jar ../src/randoop/instrument/exercisedagent/manifest.txt \
+	  randoop/instrument/exercisedagent/ExercisedAgent.class \
+	  randoop/instrument/exercisedagent/ExercisedClassTransformer.class
 
+
+# documentation
 ifneq (,$(findstring 1.8.,$(shell java -version 2>&1)))
   DOCLINT?=-Xdoclint:all,-missing
 endif
@@ -486,11 +498,11 @@ validate-manual:
 # Targets for updating Randoop's distribution.
 
 # Creates the zip file for other people to download.
-distribution-files: manual randoop_agent.jar plume-lib-update
+distribution-files: manual mapcall_agent.jar plume-lib-update
 	rm -rf randoop dist
 	mkdir randoop
 	mkdir randoop/bin
-	cp randoop_agent.jar randoop/
+	cp mapcall_agent.jar randoop/
 # Copy sources and required libraries.
 	cp -R src randoop/src
 	cp -R tests randoop/tests
