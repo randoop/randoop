@@ -54,7 +54,7 @@ public class SpecialCoveredClassTest {
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     GenTests.getClassesUnderTest(visibility, classes, coveredClasses);
-//
+    //
     assertTrue("should be one covered classes", coveredClasses.size() == 1);
     for (Class<?> c : coveredClasses) {
       assertEquals("name should be AbstractTarget", "randoop.instrument.testcase.AbstractTarget", c.getName());
@@ -64,12 +64,12 @@ public class SpecialCoveredClassTest {
     for (Class<?> c : classes) {
       assertTrue("should not be interface: " + c.getName(), ! c.isInterface());
     }
-//
+    //
     ReflectionPredicate predicate = new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, predicate);
-//
+    //
     assertEquals("model operations", 5, model.size());
-//
+    //
     Collection<Sequence> components = new LinkedHashSet<Sequence>();
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
     ComponentManager componentMgr = new ComponentManager(components );
@@ -99,11 +99,11 @@ public class SpecialCoveredClassTest {
     testGenerator.explore();
     List<ExecutableSequence> rTests = testGenerator.getRegressionSequences();
     List<ExecutableSequence> eTests = testGenerator.getErrorTestSequences();
-//
+    //
     System.out.println("number of regression tests: " + rTests.size());
     assertTrue("should have some regression tests", rTests.size() > 0);
     assertFalse("don't expect error tests", eTests.size() > 0);
-//
+    //
     Class<?> at = null;
     try {
       at = TypeNames.getTypeForName("randoop.instrument.testcase.AbstractTarget");
@@ -121,7 +121,17 @@ public class SpecialCoveredClassTest {
         }
       }
     }
-    assertEquals("all model operations should be used", model.size(), opSet.size());
+
+    Class<?> it = null;
+    try {
+      it = TypeNames.getTypeForName("randoop.instrument.testcase.ImplementorOfTarget");
+    } catch (ClassNotFoundException e) {
+      fail("cannot find implementor class " + e);
+    }
+    for (Operation op : model) {
+      assertTrue("all model operations should be used or from wrong implementor",
+          opSet.contains(op) || op.getDeclaringClass().equals(it));
+    }
 
   }
 

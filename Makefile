@@ -95,7 +95,7 @@ bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
 tests: clean-tests bin randoop-tests  results
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-reflection test-generation
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-reflection test-generation exercised-instrumentation
 
 # build mapcall-agent instrumentation jar
 MAPCALL_JAVA_FILES = $(wildcard src/randoop/instrument/mapcallagent/*.java)
@@ -369,6 +369,7 @@ test-constants: bin
 
 # runs JUnit4 tests on reflection
 test-reflection: bin
+	@echo "**** test-reflection ****"
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumConstantTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumReflectionTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.field.InstanceFieldTest
@@ -383,10 +384,16 @@ test-reflection: bin
 
 # run JUnit4 test generation tests
 test-generation: bin
+	@echo "**** test-generation ****"
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestFilteringTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestClassificationTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.test.predicate.ExceptionPredicateTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.CoveredClassTest
+
+exercised-instrumentation: bin
+	java -javaagent:exercised_agent.jar -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.CoveredClassTest
+	java -javaagent:exercised_agent.jar -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.ExerciseInstrumentationTest
+	java -javaagent:exercised_agent.jar -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.SpecialCoveredClassTest
+	java -javaagent:exercised_agent.jar -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.LoadingWithAnnotationTest
 
 ############################################################
 # Targets for creating and printing the results of test diffs.
