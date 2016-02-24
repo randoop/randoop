@@ -7,7 +7,8 @@ syntax: glob
 Makefile.user
 bin/randoop/version.txt
 randoop.zip
-randoop_agent.jar
+exercised_agent.jar
+mapcall_agent.jar
 bin/randoop/instrument/manifest.txt
 bin/randoop/test/resources/dependencytests-output.txt
 bin/randoop/test/resources/dependencytests.txt

@@ -1,5 +1,6 @@
 package randoop.sequence;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -1072,6 +1073,30 @@ public final class Sequence implements Serializable, WeightedElement {
    * START SEQUENCE &lt;parseable-sequence-string&gt; END SEQUENCE
    */
   public static void readTextSequences(String file, final Collection<Sequence> collection) {
+    // Parse the file using a RecordListReader.
+    RecordProcessor processor = new RecordProcessor() {
+      @Override
+      public void processRecord(List<String> record) {
+        try {
+          collection.add(Sequence.parse(record));
+        } catch (SequenceParseException e) {
+          throw new Error(e);
+        }
+      }
+    };
+    RecordListReader reader = new RecordListReader("SEQUENCE", processor);
+    reader.parse(file);
+  }
+
+  /**
+   * Reads a file containing a collection of sequences in textual
+   * representation.
+   *
+   * The file should be made up of a list of records, each as follows:
+   *
+   * START SEQUENCE &lt;parseable-sequence-string&gt; END SEQUENCE
+   */
+  public static void readTextSequences(File file, final Collection<Sequence> collection) {
     // Parse the file using a RecordListReader.
     RecordProcessor processor = new RecordProcessor() {
       @Override

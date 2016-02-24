@@ -14,18 +14,6 @@ import randoop.util.PrimitiveTypes;
  */
 public class TypeNames {
 
-  private static ClassLoader loader;
-
-  /**
-   * Sets the class loader for loading {@code Class<?>} objects.
-   *
-   * @param loader
-   *          the class loader
-   */
-  public static void setClassLoader(ClassLoader loader) {
-    TypeNames.loader = loader;
-  }
-
   /**
    * Returns a compilable Java name for the type.
    *
@@ -66,7 +54,7 @@ public class TypeNames {
   public static Class<?> getTypeForName(String typeName) throws ClassNotFoundException {
     Class<?> c = PrimitiveTypes.getClassForName(typeName);
     if (c == null) {
-      c = Class.forName(typeName, true, loader);
+      c = Class.forName(typeName);
     }
     return c;
   }

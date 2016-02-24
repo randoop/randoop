@@ -45,7 +45,7 @@ public class DefaultReflectionPredicate implements ReflectionPredicate {
   /**
    * DefaultReflectionFilter creates a filter object that uses default criteria
    * for inclusion of reflection objects.
-   * 
+   *
    * @param omitMethods
    *          pattern for methods to omit, if null then no methods omitted.
    * @param visibility

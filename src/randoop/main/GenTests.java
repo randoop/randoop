@@ -43,10 +43,9 @@ import randoop.JunitFileWriter;
 import randoop.LiteralFileReader;
 import randoop.MultiVisitor;
 import randoop.ObjectContract;
-import randoop.RandoopClassLoader;
 import randoop.RandoopListenerManager;
 import randoop.SeedSequences;
-import randoop.instrument.CoveredClassVisitor;
+import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.ConstructorCall;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
@@ -85,8 +84,6 @@ import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
-
-import javassist.ClassPool;
 
 public class GenTests extends GenInputsAbstract {
 
@@ -171,11 +168,6 @@ public class GenTests extends GenInputsAbstract {
     // If an initializer method was specified, execute it
     executeInitializationRoutine(1);
 
-    if (GenInputsAbstract.include_if_class_exercised != null && ReflectionExecutor.usethreads) {
-      System.out.println("WARNING: using --include-if-class-covered with --use-threads");
-      System.out.println("may filter in an unpredictable way.");
-    }
-
     // Check that there are classes to test
     if (classlist == null && methodlist == null && testclass.size() == 0) {
       System.out.println("You must specify some classes or methods to test.");
@@ -231,7 +223,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (methodlist != null) {
 
-      try (EntryReader rdr = new EntryReader(new File(methodlist), "^#.*", null)) {
+      try (EntryReader rdr = new EntryReader(methodlist, "^#.*", null)) {
 
         for (String line : rdr) {
           Operation op = OperationParser.parse(line);
@@ -262,7 +254,7 @@ public class GenTests extends GenInputsAbstract {
     // Initialize components.
     Set<Sequence> components = new LinkedHashSet<Sequence>();
     if (!componentfile_ser.isEmpty()) {
-      for (String onefile : componentfile_ser) {
+      for (File onefile : componentfile_ser) {
         try (ObjectInputStream objectos = new ObjectInputStream(new GZIPInputStream(new FileInputStream(onefile)))) {
           Set<Sequence> seqset = (Set<Sequence>) objectos.readObject();
           if (!GenInputsAbstract.noprogressdisplay) {
@@ -275,7 +267,7 @@ public class GenTests extends GenInputsAbstract {
       }
     }
     if (!componentfile_txt.isEmpty()) {
-      for (String onefile : componentfile_txt) {
+      for (File onefile : componentfile_txt) {
         Set<Sequence> seqset = new LinkedHashSet<Sequence>();
         Sequence.readTextSequences(onefile, seqset);
         if (!GenInputsAbstract.noprogressdisplay) {
@@ -317,7 +309,7 @@ public class GenTests extends GenInputsAbstract {
 
     // instrumentation visitor
     if (GenInputsAbstract.include_if_class_exercised != null) {
-      visitors.add(new CoveredClassVisitor(coveredClasses));
+      visitors.add(new ExercisedClassVisitor(coveredClasses));
     }
 
     // Install any user-specified visitors.
@@ -385,7 +377,7 @@ public class GenTests extends GenInputsAbstract {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nError-revealing test output:%n");
         }
-        outputTests(errorSequences, GenInputsAbstract.error_test_filename);
+        outputTests(errorSequences, GenInputsAbstract.error_test_basename);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nNo error-revealing tests to output%n");
@@ -399,7 +391,7 @@ public class GenTests extends GenInputsAbstract {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nRegression test output:%n");
         }
-        outputTests(regressionSequences, GenInputsAbstract.regression_test_filename);
+        outputTests(regressionSequences, GenInputsAbstract.regression_test_basename);
       } else {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("No regression tests to output%n");
@@ -434,20 +426,12 @@ public class GenTests extends GenInputsAbstract {
     if (GenInputsAbstract.include_if_class_exercised != null) {
       try (EntryReader er = new EntryReader(GenInputsAbstract.include_if_class_exercised)) {
         for (String classname : er) {
-          if (classnames.contains(classname)) {
-            coveredClassnames.add(classname.trim());
-          } else {
-            System.out.println("Ignoring class " + classname + " for covered test since not in --classlist or --testclass.");
-          }
+          coveredClassnames.add(classname.trim());
         }
       } catch (IOException e) {
         throw new Error("Unable to read coverage class names: " + e);
       }
     }
-
-    // setup the class loader; must be done before loading classes for test gen
-    ClassLoader contextLoader = visibility.getClass().getClassLoader();
-    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), coveredClassnames));
 
     ClassNameErrorHandler errorHandler = new ThrowClassNameError();
     if (GenInputsAbstract.silently_ignore_bad_class_names) {
@@ -462,22 +446,44 @@ public class GenTests extends GenInputsAbstract {
         errorHandler.handle(classname);
       }
 
-      // ignore private (non-.isVisible) classes and abstract classes
-      // and interfaces.
-      if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
-        System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
-      } else if (!visibility.isVisible(c)) {
+      // ignore interfaces and non-visible classes
+      if (! visibility.isVisible(c)) {
         System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
+      } else if (c.isInterface()) {
+        System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
       } else {
-        classes.add(c);
+        if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum())  {
+          System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
+        } else {
+          classes.add(c);
+        }
         if (coveredClassnames.contains(classname)) {
           coveredClasses.add(c);
         }
       }
+    }
 
+    for (String classname : coveredClassnames) {
+      if (! classnames.contains(classname)) {
+        Class<?> c = null;
+        try {
+          c = TypeNames.getTypeForName(classname);
+        } catch (ClassNotFoundException e) {
+          errorHandler.handle(classname);
+        }
+
+        if (! visibility.isVisible(c)) {
+          System.out.println("Ignorning non-visible " + c + " specified as include-if-class-exercised target");
+        } else if (c.isInterface()) {
+          System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
+        } else {
+          coveredClasses.add(c);
+        }
+      }
     }
 
   }
+
 
   /**
    * Handles the occurrence of a {@code SequenceExceptionError} that indicates a
@@ -619,6 +625,24 @@ public class GenTests extends GenInputsAbstract {
    */
   private void outputObject(Object obj, String filename) {
     try (ObjectOutputStream os = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filename)))) {
+      os.writeObject(obj);
+    } catch (FileNotFoundException e) {
+      throw new Error("Unable to serialize object: " + e);
+    } catch (IOException e) {
+      throw new Error(e);
+    }
+  }
+
+  /**
+   * Manages output for serialized objects.
+   *
+   * @param obj
+   *          the object to serialize
+   * @param file
+   *          the file for serialization
+   */
+  private void outputObject(Object obj, File file) {
+    try (ObjectOutputStream os = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)))) {
       os.writeObject(obj);
     } catch (FileNotFoundException e) {
       throw new Error("Unable to serialize object: " + e);
@@ -838,7 +862,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Read a list of sequences from a serialized file
-   * 
+   *
    * @param filename
    *          is name of file containing sequences.
    * @return list of sequence objects read from file.
@@ -864,7 +888,7 @@ public class GenTests extends GenInputsAbstract {
 
   /**
    * Write out a serialized file of sequences
-   * 
+   *
    * @param seqs
    *          list of sequences to write.
    * @param outfile
