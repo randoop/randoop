@@ -633,7 +633,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  cons : Type0.&lt;init&gt;(Type1, Type2, ..., TypeN)
  method : Type0.method_name(Type1, Type2, ..., TypeN)
  </pre>
- 
+
  <p>
  Each <code>Type<i>i</i></code> must be fully-qualified (include package
  names).
@@ -908,7 +908,7 @@ Randoop about your application, and that is how we recommend using Randoop.
  Specify an extra command for recursive JVM calls that Randoop spawns. The
  argument to the --agent option is the entire extra JVM command. A typical
  invocation of Randoop might be:
- 
+
  <pre>
  java -javaagent:<em>jarpath</em>=<em>args</em> randoop.main.Main gentests --agent="-javaagent:<em>jarpath</em>=<em>args</em>"
  </pre></li>
@@ -1011,7 +1011,7 @@ To transform calls to undesired methods, pass the following command-line
 option to <tt>java</tt> when running Randoop:
 </p>
 <pre>
-    -javaagent:$(randoop)/randoop_agent.jar=--map_calls=map_calls.txt
+    -javaagent:$(randoop)/mapcall_agent.jar=--map_calls=map_calls.txt
 </pre>
 <p>
 (<b>Note:</b> If you supply the <tt>-javaagent</tt> option to <tt>java</tt>
@@ -1121,6 +1121,29 @@ exception escaping the method as the rep invariant being violated.
 </li>
 
 </ul>
+
+<h3 id="exercised-filter">Instrumenting classes for filtering tests on exercised-classes</h3>
+
+<p>
+  Randoop will ordinarily generate tests involving all accessible constructors,
+  fields and methods of tests given using the <code>--testclass</code> and
+  <code>--classlist</code> options.
+  These can be restricted to tests that exercise the constructors and methods of
+  classes from a different list given by using the
+  <code>--include-if-class-exercised</code> option.
+  However, for this option to work, the classes must be instrumented to indicate
+  when they are exercised.
+  To instrument classes for this filter, also use the <code>exercised_agent.jar</code>
+  by giving the following command-line option for java
+</p>
+<code><pre>
+  -javaagent:$(randoop)exercised_agent.jar
+</pre><code>
+<p>
+  This will instrument any non-abstract constructor and method of loaded
+  classes so that the use of a class can be detected.
+  (The instrumentation is not done on any JDK or JUnit classes.)
+</p>
 
 <h3 id="primitives">Specifying additional primitive values</h3>
 
