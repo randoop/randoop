@@ -17,7 +17,7 @@ import javassist.CtField;
 import javassist.CtMethod;
 
 /**
- * A {@link java.lang.instrument.ClassTransformer} that instruments loaded
+ * A {@code java.lang.instrument.ClassTransformer} that instruments loaded
  * classes to determine if exercised.
  * Does the following instrumentation of each class:
  * <ol>
@@ -28,6 +28,9 @@ import javassist.CtMethod;
  * </ol>
  * Avoids instrumenting JDK and JUnit classes and skips interfaces.
  * Otherwise, all other classes are instrumented.
+ *
+ * @see ExercisedAgent
+ * @see #modifyClass(CtClass)
  */
 public class ExercisedClassTransformer implements ClassFileTransformer {
 
@@ -108,6 +111,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
    * method calls for the class. Modifies each method and constructor to set an
    * inserted private field that keeps track.
    * Adds a public method {@code boolean randoop_checkAndReset()}
+   * @see #transform(ClassLoader, String, Class, ProtectionDomain, byte[])
    *
    * @param cc  the {@code javassist.CtClass} object
    * @throws InstrumentationException
