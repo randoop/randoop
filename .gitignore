@@ -70,6 +70,7 @@ utils/plume-lib/
 plugin/bin/
 plugin/randoop.jar
 
+.gradle/
 
 syntax: regexp
 # Not a glob because it starts with # which looks like a comment.
