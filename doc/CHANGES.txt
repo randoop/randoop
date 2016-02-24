@@ -1,11 +1,13 @@
 Version 2.1.4, released ??
 
+Fixed a bug in --include-if-class-exercised that was including too many tests.
+The option now requires that Randoop be run with -javaagent:exercised_agent.jar.
+Also, modified the option so that allow any class, and not just those specified
+by --testclass or --classlist. This change allows abstract classes, which cannot
+be given to --testclass.
+
 Fixed code generation in --junit_reflection_allowed so that all generated
 statements that need them have semicolons.
-
-Modified --include-if-class-exercised to allow any class, and not just those
-specified by --testclass or --classlist. Also allows abstract classes, which
-cannot be given to --testclass.
 
 Renamed command-line arguments --{error,regression}-test-filename to
 --{error,regression}-test-basename.
