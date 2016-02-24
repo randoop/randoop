@@ -42,6 +42,7 @@ The Randoop homepage is
           <li><a href="#map_calls">Avoiding calls to specific methods</a></li>
           <li><a href="#determining-calls-to-map">Determining which calls to place in the map_calls file</a></li>
           <li><a href="#checkrep">Specifying representation invariant ("checkRep") methods</a></li>
+          <li><a href="#exercised-filter">Instrumenting classes for filtering tests on exercised-classes</a></li>
           <li><a href="#primitives">Specifying additional primitive values</a></li>
           <li><a href="#usethreads">Speeding up test generation</a></li>
         </ul></li>
@@ -676,13 +677,14 @@ Randoop about your application, and that is how we recommend using Randoop.
  that have at least one use of a member of a class whose name matches the
  regular expression.</li>
       <li id="option:include-if-class-exercised"><b>--include-if-class-exercised=</b><i>filename</i>.
- File containing classes that the tests must exercise. A test is output only
- if it exercises at least one of the class names in the file. A test
- exercises a class if it executes any constructor or method of the class,
- directly or indirectly (the constructor or method might not appear in the
- source code of the test). The file contains fully-qualified class names.
- It is not necessary that any class name in the file also appear in
- <code>--testclass</code> or <code>--classlist</code>.</li>
+ File containing fully qualified names of classes that the tests must exercise.
+ This option only works if Randoop is run using
+ <code>-javaagent:exercised_agent.jar</code>
+ to instrument the classes. A test is output only if it exercises at least one
+ of the class names in the file. A test exercises a class if it executes any
+ constructor or method of the class, directly or indirectly (the constructor
+ or method might not appear in the source code of the test).
+ Included classes may be abstract.</li>
     </ul>
   </li>
   <li id="optiongroup:Test-classification">Test classification
