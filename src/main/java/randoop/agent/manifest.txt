@@ -1,2 +1,0 @@
-Premain-Class: randoop.agent.Premain
-Can-Redefine-Classes: true

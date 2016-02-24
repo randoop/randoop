@@ -6,32 +6,20 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.TreeSet;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import randoop.Globals;
 import randoop.NormalExecution;
-import randoop.RandoopClassLoader;
 import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.TypeNames;
-
-import javassist.ClassPool;
 
 /**
  * EnumConstantTest defines unit tests for {@link randoop.EnumConstant}.
  *
  */
 public class EnumConstantTest {
-
-  @BeforeClass
-  public static void setup() {
-    ClassLoader contextLoader = EnumConstantTest.class.getClassLoader();
-    TypeNames.setClassLoader(new RandoopClassLoader(contextLoader, ClassPool.getDefault(), new TreeSet<String>()));
-  }
 
   @Test
   public void parseConstraint() {

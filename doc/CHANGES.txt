@@ -1,7 +1,29 @@
+Version 2.1.4, released February 24, 2016
+
+Fixed a bug in --include-if-class-exercised that was including too many tests.
+The option now requires that Randoop be run with -javaagent:exercised_agent.jar.
+Also, modified the option so that allow any class, and not just those specified
+by --testclass or --classlist. This change allows abstract classes, which cannot
+be given to --testclass.
+
+The Java agent jar files are now part of distribution files and can be found in
+dist after running 'make distribution-files'. The agent jar randoop_agent.jar
+has been renamed to mapcall_agent.jar.
+
+Fixed code generation in --junit_reflection_allowed so that generated
+driver file will compile.
+
+Renamed command-line arguments --{error,regression}-test-filename to
+--{error,regression}-test-basename.
+
+Documented that Randoop may create dependent tests whose outcome depends
+on the order in which they are run, and what to do about it.
+
+
 Version 2.1.3, released February 5, 2016
 
-Renamed command-line argument --include_only_classes to
---include_if_classname_appears.  Clarified that a test is output only if
+Renamed command-line argument --include-only-classes to
+--include-if-classname-appears.  Clarified that a test is output only if
 the test's source code textually uses some member from the classes.
 
 New command-line argument --include-if-class-exercised causes Randoop to

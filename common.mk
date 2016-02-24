@@ -3,7 +3,7 @@
 -include ../Makefile.user
 -include Makefile.user
 
-CLASS_DIRS := $(RANDOOP_HOME)/bin $(RANDOOP_HOME)/tests
+CLASS_DIRS := $(RANDOOP_HOME)/bin $(RANDOOP_HOME)/systemtests/bin
 
 # A classpath like $(CLASS_DIRS):$(RANDOOP_HOME)/lib/* is easier to read,
 # but the * classpath operator doesn't work under some (not well

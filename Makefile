@@ -50,6 +50,10 @@ SORT_DIRECTORY_ORDER ?= ${RANDOOP_HOME}/utils/plume-lib/bin/sort-directory-order
 
 export PATH
 
+.SUFFIXES: .java .class
+
+.java.class:
+
 ############################################################
 # Targets for compiling and doing basic tests on Randoop.
 
@@ -60,9 +64,11 @@ export PATH
 # so the fact that the order is nondeterministic should be OK.
 RANDOOP_FILES = $(shell find src/ tests/ systemtests/src/java_collections -name '*.java')
 RANDOOP_SRC_FILES = $(shell find src/ -name '*.java')
+RANDOOP_SRC_TXT_FILES = $(shell find src/ -name '*.txt')
 RANDOOP_TESTS_FILES = $(shell find tests/ -name '*.java')
-RANDOOP_TXT_FILES = $(shell find src/ tests/ -name '*.txt')
-SYSTEMTESTS_FILES = $(shell find systemtests/src/java_collections -name '*.java')
+RANDOOP_TESTS_TXT_FILES = $(shell find tests/ -name '*.txt')
+SYSTEMTESTS_FILES = $(shell find systemtests/src/ -name '*.java')
+SYSTEMTESTS_TXT_FILES = $(shell find systemtests/src/ -name '*.txt')
 
 # Build and run tests
 all: clean build tests
@@ -72,39 +78,63 @@ all-dist: all javadoc manual distribution-files
 
 # Remove generated .class files.
 clean:
-	rm -rf bin systemtests/bin randoop_agent.jar
+	rm -rf bin systemtests/bin mapcall_agent.jar exercised_agent.jar
 
 # Build Randoop.
-build: bin randoop_agent.jar
+build: bin mapcall_agent.jar exercised_agent.jar
 compile: build
 
-bin: $(RANDOOP_FILES) $(RANDOOP_TXT_FILES)
+.PHONY: bin-dirs
+
+bin-dirs:
 	mkdir -p bin
+	mkdir -p systemtests/bin
+
+bin: bin-dirs $(RANDOOP_SRC_FILES) $(RANDOOP_SRC_TXT_FILES)
 	@echo ${JAVAC_COMMAND} -Xlint -Xlint:unchecked -g -d bin ...
 	@${JAVAC_COMMAND} -Xlint -g -d bin $(RANDOOP_SRC_FILES)
-	@echo "Compiling test files ..."
-	@${JAVAC_COMMAND} -nowarn -g -d bin $(RANDOOP_TESTS_FILES)
-	@echo "Compiling systemtests files ..."
-	mkdir -p systemtests/bin
-	@${JAVAC_COMMAND} -nowarn -g -d systemtests/bin $(SYSTEMTESTS_FILES)
-	mkdir -p bin/randoop/test/resources
-	cp tests/randoop/test/resources/*.txt bin/randoop/test/resources
 	touch bin
 
+systemtests/bin: bin $(RANDOOP_TESTS_FILES) $(RANDOOP_TESTS_TXT_FILES) $(SYSTEMTESTS_FILES) $(SYSTEMTESTS_TXT_FILES)
+	@echo "Compiling test files ..."
+	@${JAVAC_COMMAND} -cp $(CLASSPATH):bin -nowarn -g -d systemtests/bin $(RANDOOP_TESTS_FILES)
+	@echo "Compiling systemtests files ..."
+	@${JAVAC_COMMAND} -cp $(CLASSPATH):bin -nowarn -g -d systemtests/bin $(SYSTEMTESTS_FILES)
+	mkdir -p systemtests/bin/randoop/test/resources
+	cp tests/randoop/test/resources/*.txt systemtests/bin/randoop/test/resources
+	touch systemtests/bin
+
 # Run all tests.
-tests: clean-tests bin randoop-tests  results
+tests: clean-tests bin systemtests/bin result-dir randoop-tests  results
+
+# Make the result directory
+.PHONY: result-dir
+result-dir:
+	mkdir -p systemtests/results
 
 # Runs pure Randoop-related tests.
-randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-reflection test-generation
+randoop-tests: unit randoop-help ds-coverage randoop1 randoop2 randoop3 randoop-contracts randoop-checkrep randoop-literals randoop-long-string randoop-visibility randoop-no-output test-reflection test-generation exercised-instrumentation
 
-# build pre-agent instrumentation jar
-AGENT_JAVA_FILES = $(wildcard src/randoop/agent/*.java)
-bin/randoop/agent/Premain.class: bin $(AGENT_JAVA_FILES)
-	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(AGENT_JAVA_FILES)
-randoop_agent.jar : bin/randoop/agent/Premain.class src/randoop/agent/manifest.txt
-	cd bin && jar cfm ../randoop_agent.jar ../src/randoop/agent/manifest.txt \
-	  randoop/agent/Premain.class
+# build mapcall-agent instrumentation jar
+MAPCALL_JAVA_FILES = $(wildcard src/randoop/instrument/mapcallagent/*.java)
+bin/randoop/instrument/mapcallagent/Premain.class: bin $(MAPCALL_JAVA_FILES)
+	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(MAPCALL_JAVA_FILES)
+mapcall_agent.jar : bin/randoop/instrument/mapcallagent/Premain.class src/randoop/instrument/mapcallagent/manifest.txt
+	cd bin && jar cfm ../mapcall_agent.jar ../src/randoop/instrument/mapcallagent/manifest.txt \
+	  randoop/instrument/mapcallagent/Premain.class
 
+
+# build exercised-class instrumentation agent
+EXERCISED_JAVA_FILES = $(wildcard src/randoop/instrument/exercisedagent/*.java)
+bin/randoop/instrument/exercisedagent/ExercisedAgent.class: bin $(EXERCISED_JAVA_FILES)
+	${JAVAC_COMMAND} -Xlint -g -d bin -cp src:$(CLASSPATH) $(EXERCISED_JAVA_FILES)
+exercised_agent.jar: bin/randoop/instrument/exercisedagent/ExercisedAgent.class src/randoop/instrument/exercisedagent/manifest.txt
+	cd bin && jar cfm ../exercised_agent.jar ../src/randoop/instrument/exercisedagent/manifest.txt \
+	  randoop/instrument/exercisedagent/ExercisedAgent.class \
+	  randoop/instrument/exercisedagent/ExercisedClassTransformer.class
+
+
+# documentation
 ifneq (,$(findstring 1.8.,$(shell java -version 2>&1)))
   DOCLINT?=-Xdoclint:all,-missing
 endif
@@ -130,17 +160,17 @@ TAGS: $(RANDOOP_FILES) plume-lib-update
 
 # The tests run correctly under Java 1.6. Using an earlier version of
 # Java may result in test failures.
-unit: bin
+unit: systemtests/bin
 	@echo "******running unit tests******"
-	java ${XMXHEAP} -ea \
+	java ${XMXHEAP} -ea -cp $(CLASSPATH) \
 	  junit.textui.TestRunner \
 	   randoop.test.AllRandoopTests
 
 # The tests run correctly under Java 1.6. Using an earlier version of
 # Java may result in test failures.
-ds-coverage: bin
+ds-coverage: systemtests/bin
 	@echo "******running ds-coverage******"
-	java ${XMXHEAP} -ea \
+	java ${XMXHEAP} -ea -cp $(CLASSPATH) \
 	  junit.textui.TestRunner \
 	   randoop.test.ICSE07ContainersTest
 
@@ -153,36 +183,36 @@ randoop-help:
 	java -ea -classpath $(CLASSPATH) randoop.main.Main help --unpub help
 
 # Runs Randoop on Collections and TreeSet.
-randoop1: bin
-	rm -rf systemtests/randoop-scratch
-	mkdir systemtests/randoop-scratch
+randoop1: systemtests/bin result-dir
+	rm -rf systemtests/scratch
+	mkdir systemtests/scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --no-error-revealing-tests \
 	   --inputlimit=500 \
 	   --testclass=java2.util2.TreeSet \
 	   --testclass=java2.util2.Collections \
-	   --regression-test-filename=TestClass \
+	   --regression-test-basename=TestClass \
 	   --npe-on-null-input=EXPECTED \
 	   --junit-package-name=foo.bar \
-	   --junit-output-dir=systemtests/randoop-scratch \
-	   --log=systemtests/randoop-log.txt \
+	   --junit-output-dir=systemtests/scratch \
+	   --log=systemtests/scratch/log.txt \
 	   --debug_checks \
 	   --observers=systemtests/resources/randoop1_observers.txt \
-	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip \
+	   --output-tests-serialized=systemtests/scratch/sequences_serialized.gzip \
 	   --omit-field-list=systemtests/resources/testclassomitfields.txt
-	cd systemtests/randoop-scratch && \
+	cd systemtests/scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  foo/bar/TestClass*.java
-	cd systemtests/randoop-scratch && \
+	cd systemtests/scratch && \
 	  java  -cp .:$(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  org.junit.runner.JUnitCore foo.bar.TestClass
-	cp systemtests/randoop-scratch/foo/bar/TestClass0.java systemtests/resources/TestClass0.java
+	cp systemtests/scratch/foo/bar/TestClass0.java systemtests/results/TestClass0.java
 
 # Runs Randoop on Collections and TreeSet, capture output.
-randoop2: bin
-	rm -rf systemtests/randoop-scratch
-	mkdir systemtests/randoop-scratch
+randoop2: systemtests/bin result-dir
+	rm -rf systemtests/scratch
+	mkdir systemtests/scratch
 	java -ea -classpath $(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=100 \
@@ -190,149 +220,151 @@ randoop2: bin
 	   --testclass=java2.util2.ArrayList \
 	   --testclass=java2.util2.LinkedList \
 	   --testclass=java2.util2.Collections \
-	   --regression-test-filename=NaiveRegression \
-	   --error-test-filename=NaiveError \
+	   --regression-test-basename=NaiveRegression \
+	   --error-test-basename=NaiveError \
 	   --junit-package-name=foo.bar \
-	   --junit-output-dir=systemtests/randoop-scratch \
-	   --log=systemtests/randoop-log.txt \
-	   --output-tests-serialized=systemtests/randoop-scratch/sequences_serialized.gzip \
+	   --junit-output-dir=systemtests/scratch \
+	   --log=systemtests/scratch/log.txt \
+	   --output-tests-serialized=systemtests/scratch/sequences_serialized.gzip \
 	   --omit-field-list=systemtests/resources/naiveomitfields.txt
-	cd systemtests/randoop-scratch && \
+	cd systemtests/scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
 	  foo/bar/Naive*.java
-	cp systemtests/randoop-scratch/foo/bar/Naive*0.java systemtests/resources/
+	cp systemtests/scratch/foo/bar/Naive*0.java systemtests/results/
 
 # Sanity check. Runs Randoop on a large collections of classes from the JDK,
 # with a set of options, and just makes sure that Randoop terminates normally.
-randoop3: bin
+randoop3: systemtests/bin
 	@echo "***** randoop3 *****"
-	rm -rf systemtests/randoop-scratch
-	mkdir systemtests/randoop-scratch
-	cd systemtests/randoop-scratch && java -ea -classpath $(RANDOOP_HOME):../bin:$(CLASSPATH) \
+	rm -rf systemtests/scratch
+	mkdir systemtests/scratch
+	java -ea -classpath $(RANDOOP_HOME):systemtests/bin:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
 	   --null-ratio=0.3 \
 	   --alias-ratio=0.3 \
 	   --small-tests \
 	   --clear=100 \
-	   --classlist=../resources/jdk_classlist.txt \
-	   --regression-test-filename=JDK_Tests_regression \
-	   --error-test-filename=JDK_Tests_error \
+	   --classlist=systemtests/resources/jdk_classlist.txt \
+	   --regression-test-basename=JDK_Tests_regression \
+	   --error-test-basename=JDK_Tests_error \
 	   --junit-package-name=jdktests \
-	   --junit-output-dir=../randoop-scratch
+	   --junit-output-dir=systemtests/scratch
+	cd systemtests/scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin/:$(CLASSPATH) \
+		jdktests/JDK_Tests_regression.java
 
-randoop-contracts: bin
+randoop-contracts: systemtests/bin
 	@echo "***** randoop-contracts *****"
-	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Buggy.java
-	rm -rf systemtests/randoop-contracts-test-scratch
-	mkdir systemtests/randoop-contracts-test-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	rm -rf systemtests/scratch
+	mkdir systemtests/scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --no-regression-tests \
 	   --inputlimit=1000 \
-	   --classlist=systemtests/resources/randoop/examples/buggyclasses.txt \
-	   --error-test-filename=BuggyTest \
-	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
-	   --log=systemtests/randoop-contracts-log.txt \
-	   --output-tests-serialized=systemtests/randoop-contracts-test-scratch/sequences_serialized.gzip
-	cd systemtests/randoop-contracts-test-scratch && \
-	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) BuggyTest.java
-	cd systemtests/randoop-contracts-test-scratch && \
-	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	   --classlist=systemtests/resources/buggyclasses.txt \
+	   --error-test-basename=BuggyTest \
+	   --junit-output-dir=systemtests/scratch \
+	   --log=systemtests/scratch/randoop-contracts-log.txt \
+	   --output-tests-serialized=systemtests/scratch/sequences_serialized.gzip
+	cd systemtests/scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) BuggyTest.java
+	cd systemtests/scratch && \
+	  java  -cp .:$(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) \
 	  randoop.main.RandoopContractsTest
 
-randoop-checkrep: bin
+randoop-checkrep: systemtests/bin
 	@echo "****** randoop-checkrep *****"
-	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/CheckRep*.java
-	rm -rf systemtests/randoop-contracts-test-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	rm -rf systemtests/scratch
+	mkdir systemtests/scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --no-regression-tests \
 	   --timelimit=2 \
 	   --testclass=examples.CheckRep1 \
 	   --testclass=examples.CheckRep2 \
-	   --error-test-filename=CheckRepTest \
-	   --junit-output-dir=systemtests/randoop-contracts-test-scratch \
-	   --log=systemtests/randoop-checkrep-contracts-log.txt
-	cd systemtests/randoop-contracts-test-scratch && \
-	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) CheckRepTest.java
-# We expect this to fail, so add a "-" so the target doesn't fail.
-	cd systemtests/randoop-contracts-test-scratch && \
-	  java  -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	   --error-test-basename=CheckRepTest \
+	   --junit-output-dir=systemtests/scratch \
+	   --log=systemtests/scratch/randoop-checkrep-contracts-log.txt
+	cd systemtests/scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) CheckRepTest.java
+	cd systemtests/scratch && \
+	  java  -cp .:$(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) \
 	  randoop.main.RandoopCheckRepTest
 
 # Reads file systemtests/resources/literalsfile.txt.
-# Creates file randoop/systemtests/randoop-scratch/Literals0.java.
-randoop-literals: bin
+# Creates file randoop/systemtests/scratch/Literals0.java.
+randoop-literals: systemtests/bin result-dir
 	@echo "***** randoop-literals *****"
-	rm -rf systemtests/randoop-scratch
+	rm -rf systemtests/scratch
 	java -ea -classpath $(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --inputlimit=1000 \
 	   --testclass=randoop.literals.A \
 	   --testclass=randoop.literals.A2 \
 	   --testclass=randoop.literals.B \
-	   --regression-test-filename=LiteralsReg \
-	   --error-test-filename=LiteralsErr \
-	   --junit-output-dir=systemtests/randoop-scratch \
+	   --regression-test-basename=LiteralsReg \
+	   --error-test-basename=LiteralsErr \
+	   --junit-output-dir=systemtests/scratch \
 	   --literals-level=CLASS \
 	   --literals-file=systemtests/resources/literalsfile.txt
-	-cp systemtests/randoop-scratch/Literals*0.java systemtests/resources/
+	cp systemtests/scratch/Literals*0.java systemtests/results/
+	cd systemtests/scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) LiteralsReg.java
 
-randoop-long-string: bin
+randoop-long-string: systemtests/bin result-dir
 	@echo "***** randoop-long-string ******"
-	rm -rf systemtests/randoop-scratch
+	rm -rf systemtests/scratch
 	java -ea -classpath $(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --timelimit=1 \
 	   --testclass=randoop.test.LongString \
-	   --regression-test-filename=LongString \
-	   --junit-output-dir=systemtests/randoop-scratch
-	cd systemtests/randoop-scratch && \
+	   --regression-test-basename=LongString \
+	   --junit-output-dir=systemtests/scratch
+	cd systemtests/scratch && \
 	  ${JAVAC_COMMAND} -nowarn -cp .:$(CLASSPATH) LongString.java
-	cd systemtests/randoop-scratch && \
+	cd systemtests/scratch && \
 	  java  -cp .:$(CLASSPATH) org.junit.runner.JUnitCore LongString
-	cp systemtests/randoop-scratch/LongString0.java \
-	  systemtests/resources/LongString0.java
+	cp systemtests/scratch/LongString0.java \
+	  systemtests/results/LongString0.java
 
 # Tests that Randoop does not create tests for methods that return non-public types, as this would
 # lead to non-compilable tests.
 # Actually, it should create the tests but declare them with a supertype!
-randoop-visibility: bin
+randoop-visibility: systemtests/bin
 	@echo "***** randoop-visibility *****"
-	cd systemtests/resources/randoop && ${JAVAC_COMMAND} -nowarn examples/Visibility.java
-	rm -rf systemtests/randoop-scratch
-	mkdir systemtests/randoop-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	rm -rf systemtests/scratch
+	mkdir systemtests/scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --timelimit=2 \
 	   --testclass=examples.Visibility \
-	   --regression-test-filename=VisibilityTest \
-	   --junit-output-dir=systemtests/randoop-scratch \
-	   --log=systemtests/log.txt
-	cd systemtests/randoop-scratch && \
-	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) VisibilityTest.java
+	   --regression-test-basename=VisibilityTest \
+	   --junit-output-dir=systemtests/scratch \
+	   --log=systemtests/scratch/log.txt
+	cd systemtests/scratch && \
+	  ${JAVAC_COMMAND} -nowarn -cp .:$(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) VisibilityTest.java
 
 # Ensure that no output goes to console if user specifies --noprogressdisplay.
 # This is important for plugin, since console output results in a Console window
 # popping up during Randoop run.
 #
 # Test only checks for no output on the happy (no errors) path.
-randoop-no-output: bin
+randoop-no-output: systemtests/bin
 	@echo "***** randoop-no-output *****"
-	rm -rf systemtests/randoop-scratch
-	mkdir systemtests/randoop-scratch
-	java -ea -classpath $(RANDOOP_HOME)/systemtests/resources/randoop:$(CLASSPATH) \
+	rm -rf systemtests/scratch
+	mkdir systemtests/scratch
+	java -ea -classpath $(RANDOOP_HOME)/systemtests/bin:$(CLASSPATH) \
 	  randoop.main.Main gentests \
 	   --timelimit=1 \
 	   --testclass=java.util.LinkedList \
-	   --regression-test-filename=NoOutputTest \
-	   --junit-output-dir=systemtests/randoop-scratch \
-	   --log=systemtests/log.txt \
+	   --regression-test-basename=NoOutputTest \
+	   --junit-output-dir=systemtests/scratch \
+	   --log=systemtests/scratch/log.txt \
 	   --noprogressdisplay \
-	   > systemtests/randoop-scratch/stdout.txt 2> systemtests/randoop-scratch/stderr.txt
-	cp $(RANDOOP_HOME)/systemtests/randoop-scratch/stdout.txt $(RANDOOP_HOME)/systemtests/resources
-	cp $(RANDOOP_HOME)/systemtests/randoop-scratch/stderr.txt $(RANDOOP_HOME)/systemtests/resources
+	   > systemtests/scratch/stdout.txt 2> systemtests/scratch/stderr.txt
+	cp $(RANDOOP_HOME)/systemtests/scratch/stdout.txt $(RANDOOP_HOME)/systemtests/resources
+	cp $(RANDOOP_HOME)/systemtests/scratch/stderr.txt $(RANDOOP_HOME)/systemtests/resources
 
 
 # Performance tests. Removed from Randoop tests because results highly dependent on machine that
@@ -340,12 +372,12 @@ randoop-no-output: bin
 perf: perf1 perf2
 
 # -Xrunhprof:cpu=samples,depth=30
-perf1: bin
+perf1: systemtests/bin
 	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	  randoop.test.RandoopPerformanceTest
 
-perf2: bin
+perf2: systemtests/bin
 	java ${XMXHEAP} -ea \
 	  junit.textui.TestRunner \
 	  randoop.test.NaivePerformanceTest
@@ -357,6 +389,7 @@ test-constants: bin
 
 # runs JUnit4 tests on reflection
 test-reflection: bin
+	@echo "**** test-reflection ****"
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumConstantTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.operation.EnumReflectionTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.field.InstanceFieldTest
@@ -371,15 +404,21 @@ test-reflection: bin
 
 # run JUnit4 test generation tests
 test-generation: bin
+	@echo "**** test-generation ****"
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestFilteringTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.sequence.TestClassificationTest
 	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.test.predicate.ExceptionPredicateTest
-	java -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.CoveredClassTest
+
+exercised-instrumentation: bin
+	java -javaagent:exercised_agent.jar -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.CoveredClassTest
+	java -javaagent:exercised_agent.jar -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.ExerciseInstrumentationTest
+	java -javaagent:exercised_agent.jar -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.SpecialCoveredClassTest
+	java -javaagent:exercised_agent.jar -cp $(CLASSPATH) org.junit.runner.JUnitCore randoop.instrument.LoadingWithAnnotationTest
 
 ############################################################
 # Targets for creating and printing the results of test diffs.
 
-goal_files = $(shell find systemtests/resources -name "*.goal")
+goal_files = $(shell find systemtests/goals -name "*.goal")
 
 # Contains the goal file names, without the .goal suffix.
 goal_files_bases = $(basename $(goal_files))
@@ -401,6 +440,8 @@ update-goals:
 clean-tests:
 	rm -f $(diff_files)
 	rm -f $(goal_files_bases)
+	rm -rf systemtests/results
+	rm -rf systemtests/scratch
 
 # Calls Make recursively to make the necessary .diff files.
 diffs:
@@ -437,8 +478,9 @@ summary:
 
 
 ############################################################
-# Plume-lib (only needed for scripts to wrangle documentation, get plume.jar
-# from actual release.)
+# Plume-lib
+# Only needed for scripts to wrangle documentation;
+# get lib/plume.jar using instructions in lib/README
 
 # Checks out a copy of the plume libraries.
 # We only use the html-update and sort-directory-order scripts.
@@ -480,21 +522,22 @@ plugin-manual: build plume-lib-update
 validate-manual:
 	validate doc/index.html
 	validate doc/dev.html
-	validate plugin/doc/index.html
 
 
 ############################################################
 # Targets for updating Randoop's distribution.
 
 # Creates the zip file for other people to download.
-distribution-files: manual randoop_agent.jar plume-lib-update
+distribution-files: manual mapcall_agent.jar plume-lib-update
 	rm -rf randoop dist
 	mkdir randoop
 	mkdir randoop/bin
-	cp randoop_agent.jar randoop/
+	cp mapcall_agent.jar randoop/
+	cp exercised_agent.jar randoop/
 # Copy sources and required libraries.
 	cp -R src randoop/src
 	cp -R tests randoop/tests
+	cp -R systemtests randoop/systemtests
 # Copy sources and required libraries.
 	cp -R doc randoop/doc
 # Copy required libraries.
@@ -508,7 +551,8 @@ distribution-files: manual randoop_agent.jar plume-lib-update
 	cp .classpath-dist randoop/.classpath
 # Make sure everything works.
 	cd randoop && \
-	  find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/javassist.jar'
+	  find src/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/plume.jar:lib/javassist.jar' && \
+		find tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d systemtests/bin -cp 'lib/plume.jar:lib/javassist.jar'
 # Why doesn't this work (any more)?
 #	cd randoop && \
 #	  find src/ tests/ -name "*.java" | ${SORT_DIRECTORY_ORDER} | xargs ${JAVAC_COMMAND} -d bin -cp 'lib/*'
@@ -533,6 +577,8 @@ distribution-files: manual randoop_agent.jar plume-lib-update
 	mkdir dist
 	mv randoop/randoop.jar dist
 	mv randoop.zip dist
+	mv randoop/mapcall_agent.jar dist
+	mv randoop/exercised_agent.jar dist
 # Remove scratch directory.
 	rm -r randoop
 
