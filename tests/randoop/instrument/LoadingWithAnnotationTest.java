@@ -1,7 +1,7 @@
 package randoop.instrument;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -19,6 +19,12 @@ import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.TypeNames;
 
+/**
+ * This test was originally written when the exercised-class instrumentation
+ * was being handled by a classloader, and the CheckRep annotation was lost.
+ * This is here mainly to make sure that annotations are still arriving when
+ * the transforming java agent is used.
+ */
 public class LoadingWithAnnotationTest {
 
   @Test
@@ -34,7 +40,7 @@ public class LoadingWithAnnotationTest {
 
     Class<?> cc = null;
     try {
-      cc = TypeNames.getTypeForName("randoop.instrument.testcase.C");
+      cc = TypeNames.getTypeForName("randoop.instrument.testcase.D");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -56,12 +62,15 @@ public class LoadingWithAnnotationTest {
     }
 
     Class<?> c = CheckRep.class;
-    for (Annotation a : m.getAnnotations()) {
+    Annotation[] annotations = m.getAnnotations();
+    assertTrue("should be one annotation", annotations.length == 1);
+
+    for (Annotation a : annotations) {
       Class<?> annot_c = a.annotationType();
       assertEquals("name matches", "randoop.CheckRep", annot_c.getName() );
 
       assertEquals("class should match once loaded", crc, annot_c);
-      assertFalse("should not match loaded from default loader", c.equals(annot_c));
+      assertEquals("class should match", c, annot_c);
     }
 
   }
