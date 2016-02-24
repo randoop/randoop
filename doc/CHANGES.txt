@@ -1,5 +1,8 @@
 Version 2.1.4, released ??
 
+Fixed code generation in --junit_reflection_allowed so that all generated
+statements that need them have semicolons.
+
 Modified --include-if-class-exercised to allow any class, and not just those
 specified by --testclass or --classlist. Also allows abstract classes, which
 cannot be given to --testclass.

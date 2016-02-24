@@ -527,7 +527,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * such as by the DynComp tool. If that is a problem, then set this to false
    * and Randoop will output tests that use direct method calls instead of
    * reflection. The tests will execute methods and assertions, but won't be
-   * JUnit suites.
+   * JUnit suites. The tests will include a <code>main</code> method.
    */
   @Option("If true, use JUnit's reflective invocation; if false, use direct method calls")
   public static boolean junit_reflection_allowed = true;
