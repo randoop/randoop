@@ -104,8 +104,8 @@ bin/randoop/instrument/mapcallagent/Premain.class: bin $(MAPCALL_JAVA_FILES)
 mapcall_agent.jar : bin/randoop/instrument/mapcallagent/Premain.class src/randoop/instrument/mapcallagent/manifest.txt
 	cd bin && jar cfm ../mapcall_agent.jar ../src/randoop/instrument/mapcallagent/manifest.txt \
 	  randoop/instrument/mapcallagent/Premain.class
-	  
-	  
+
+
 # build exercised-class instrumentation agent
 EXERCISED_JAVA_FILES = $(wildcard src/randoop/instrument/exercisedagent/*.java)
 bin/randoop/instrument/exercisedagent/ExercisedAgent.class: bin $(EXERCISED_JAVA_FILES)
@@ -510,6 +510,7 @@ distribution-files: manual mapcall_agent.jar plume-lib-update
 	mkdir randoop
 	mkdir randoop/bin
 	cp mapcall_agent.jar randoop/
+	cp exercised_agent.jar randoop/
 # Copy sources and required libraries.
 	cp -R src randoop/src
 	cp -R tests randoop/tests
@@ -551,6 +552,8 @@ distribution-files: manual mapcall_agent.jar plume-lib-update
 	mkdir dist
 	mv randoop/randoop.jar dist
 	mv randoop.zip dist
+	mv randoop/mapcall_agent.jar dist
+	mv randoop/exercised_agent.jar dist
 # Remove scratch directory.
 	rm -r randoop
 
