@@ -1,4 +1,4 @@
-package randoop.instrument.exercisedagent;
+package randoop.instrument;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

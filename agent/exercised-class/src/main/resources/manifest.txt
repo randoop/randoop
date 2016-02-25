@@ -1,2 +1,2 @@
-Premain-Class: randoop.instrument.exercisedagent.ExercisedAgent
+Premain-Class: randoop.instrument.ExercisedAgent
 Can-Redefine-Classes: true
