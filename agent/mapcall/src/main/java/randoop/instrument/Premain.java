@@ -1,4 +1,4 @@
-package randoop.instrument.mapcallagent;
+package randoop.instrument;
 
 import java.io.BufferedReader;
 import java.io.File;

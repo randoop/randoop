@@ -1,4 +1,4 @@
-package randoop.instrument.mapcallagent;
+package randoop.instrument;
 
 import static java.lang.System.out;
 
