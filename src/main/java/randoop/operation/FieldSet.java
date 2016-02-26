@@ -19,7 +19,7 @@ import randoop.sequence.Variable;
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a
  * {@link Operation} that acts like a setter for the field.
- * 
+ *
  * @see AccessibleField
  */
 public class FieldSet extends AbstractOperation implements Operation, Serializable {
@@ -33,7 +33,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
   /**
    * Creates a setter {@link Operation} object for a field of a class. Throws an
    * exception if the field is static final.
-   * 
+   *
    * @param field
    *          the field object to be set by setter statements.
    * @throws IllegalArgumentException
@@ -51,7 +51,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
 
   /**
    * Returns the input types for a field treated as a setter.
-   * 
+   *
    * @return list consisting of types of values needed to set the field.
    */
   @Override
@@ -87,7 +87,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-    assert statementInput.length == getInputTypes().size();
+    assert statementInput.length == getInputTypes().size() : "expected " + getInputTypes().size() + " got " + statementInput.length;
 
     Object instance = null;
     Object input = statementInput[0];
@@ -109,13 +109,13 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
 
   /**
    * Generates code for setting a field. Should look like
-   * 
+   *
    * <pre>
    * field = value;
    * </pre>
-   * 
+   *
    * or
-   * 
+   *
    * <pre>
    * field = variable;
    * </pre>
@@ -183,7 +183,7 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    * Parses a description of a field setter in the given string. A setter
    * description has the form "&lt;set&gt;( field-descriptor )" where
    * "&lt;set&gt;" is literally what is expected.
-   * 
+   *
    * @param descr
    *          string containing descriptor of field setter.
    * @return {@code FieldSetter} object corresponding to setter descriptor.

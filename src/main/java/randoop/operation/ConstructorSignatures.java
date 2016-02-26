@@ -43,7 +43,7 @@ public class ConstructorSignatures {
     assert lastDot >= 0;
     String clsName = clsAndMethod.substring(0, lastDot);
     String methodName = clsAndMethod.substring(lastDot + 1);
-    assert methodName.equals("<init>");
+    assert methodName.equals("<init>") : "expected init, saw " + methodName;
     String argsOneStr = signature.substring(openPar + 1, closePar);
 
     // Extract parameter types.

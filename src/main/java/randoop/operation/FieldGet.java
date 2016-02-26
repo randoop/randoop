@@ -16,7 +16,7 @@ import randoop.sequence.Variable;
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a
  * {@link AccessibleField} and behaves like a getter for the field.
- * 
+ *
  * @see AccessibleField
  *
  */
@@ -30,7 +30,7 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
 
   /**
    * FieldGetter sets the public field for the getter statement.
-   * 
+   *
    * @param field
    *          the {@link AccessibleField} object from which to get values.
    */
@@ -40,7 +40,7 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
 
   /**
    * Returns the types required to access the field.
-   * 
+   *
    * @return singleton list if field is instance field, empty if static
    */
   @Override
@@ -62,7 +62,7 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
    * when input is null but field is an instance field.
    * {@link AccessibleField#getValue(Object)} suppresses exceptions that occur
    * because field is not valid or accessible.
-   * 
+   *
    * @param statementInput
    *          the inputs for statement.
    * @param out
@@ -73,7 +73,7 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-    assert statementInput.length == getInputTypes().size();
+    assert statementInput.length == getInputTypes().size() : "expected " + getInputTypes().size() + " got " + statementInput.length;
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
     Object input = statementInput.length == 0 ? null : statementInput[0];
@@ -94,7 +94,7 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
   /**
    * Adds the text for an initialization of a variable from a field to the
    * StringBuilder.
-   * 
+   *
    * @param inputVars
    *          the list of variables to be used (ignored).
    * @param b
@@ -138,9 +138,9 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
    * form "&lt;get&gt;( field-descriptor )" where &lt;get&gt;" is literal ("&lt;
    * " and "&gt;" included), and field-descriptor is as recognized by
    * {@link FieldParser#parse(String)}.
-   * 
+   *
    * @see FieldParser#parse(String)
-   * 
+   *
    * @param descr
    *          the string containing descriptor of getter for a field.
    * @return the getter object for the descriptor.
@@ -176,7 +176,7 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true, always.
    */
   @Override
@@ -192,7 +192,7 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
   /**
    * Determines whether enclosed {@link java.lang.reflect.Field} satisfies the
    * given predicate.
-   * 
+   *
    * @param predicate
    *          the {@link ReflectionPredicate} to be checked.
    * @return true only if the field used in this getter satisfies
