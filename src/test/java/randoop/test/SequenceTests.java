@@ -14,6 +14,7 @@ import randoop.EqualsSymmetric;
 import randoop.EqualsToNullRetFalse;
 import randoop.Globals;
 import randoop.ObjectContract;
+import randoop.main.GenInputsAbstract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;
@@ -64,7 +65,7 @@ public class SequenceTests extends TestCase {
     };
 
     RecordListReader reader = new RecordListReader("TEST", processor);
-    InputStream stream = SequenceTests.class.getResourceAsStream("sequence_tests_script.txt");
+    InputStream stream = SequenceTests.class.getResourceAsStream("/sequence_tests_script.txt");
     BufferedReader b = new BufferedReader(new InputStreamReader(stream));
     reader.parse(b);
   }
@@ -81,6 +82,7 @@ public class SequenceTests extends TestCase {
     contracts.add(new EqualsHashcode());
     contracts.add(new EqualsSymmetric());
 
+    GenInputsAbstract.unchecked_exception = BehaviorType.EXPECTED;
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
     ExpectedExceptionCheckGen expectation;
