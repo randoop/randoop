@@ -1,1 +1,15 @@
-apply plugin: 'java'
+description = "mapcall agent"
+
+dependencies {
+  // use plume.jar from parent project
+  compile project(path: ':', configuration: 'compile' )
+}
+
+jar {
+  manifest {
+    attributes(
+      "Premain-Class": "randoop.instrument.Premain",
+      "Can-Redefine-Classes": "true"
+      )
+  }
+}
