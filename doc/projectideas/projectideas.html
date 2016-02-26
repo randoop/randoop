@@ -1,4 +1,36 @@
-<h1 id="project-ideas">Project Ideas</h1>
+<h1 id="project-ideas">Project Ideas</h1> <!-- omit from toc -->
+
+<p>Contents:</p>
+<!-- start toc.  do not edit; run html-update-toc instead -->
+<ul>
+  <li><a href="#test-generation-for-c">Test generation for C</a></li>
+  <li><a href="#test-generation-projects">Test generation projects</a>
+    <ul>
+      <li><a href="#better-choice-of-methods">Better choice of methods</a>
+        <ul>
+          <li><a href="#mimic-real-call-sequences">Mimic real call sequences</a></li>
+        </ul></li>
+      <li><a href="#better-choice-of-arguments">Better choice of arguments</a>
+        <ul>
+          <li><a href="#use-readwritten-fields">Use read/written fields</a></li>
+        </ul></li>
+      <li><a href="#parallelizing-randoop">Parallelizing Randoop</a></li>
+      <li><a href="#creating-independent-tests">Creating independent tests</a>
+        <ul>
+          <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
+          <li><a href="#Approach_2:_covert_a_set_of_interdependent_tests_into_independent_ones">Approach 2: covert a set of interdependent tests into independent ones</a></li>
+        </ul></li>
+    </ul></li>
+  <li><a href="#user-interface-and-user-experience-projects">User interface and user experience projects</a>
+    <ul>
+      <li><a href="#robustness">Robustness</a></li>
+      <li><a href="#test-cases-with-debugging-clues">Test cases with debugging clues</a></li>
+      <li><a href="#integration-with-eclipse">Integration with Eclipse</a></li>
+    </ul></li>
+  <li><a href="#smaller-projects">Smaller projects</a></li>
+</ul>
+<!-- end toc -->
+
 
 <p>Do you love writing unit tests to find bugs in your programs?  Or, would you
 prefer that the tests were written for you automatically?</p>
@@ -84,7 +116,7 @@ next method to test. Here are a few example strategies; the project would involv
   <li>Combine random selection with non-random selection strategies (for example, exhaustive testing).</li>
 </ul>
 
-<h4 id="mimic-real-call-sequences">Mimic real call sequences</h4>
+<h3 id="mimic-real-call-sequences">Mimic real call sequences</h3>
 
 <p>Randoop does a very good job of generating tests for library classes (such as java.util). However, Randoop does not always achieve good coverage of the classes under test. Libraries are usually designed to have few restrictions on their calling sequences and parameters. Classes that make up programs often have a number of restrictions on both the sequences of calls and their parameters.</p>
 
@@ -96,7 +128,7 @@ next method to test. Here are a few example strategies; the project would involv
 type T1.  Currently, Randoop selects an object of type T1 at random.
 Randoop can do better.  Here is one idea; other approaches are possible.</p>
 
-<h4 id="use-readwritten-fields">Use read/written fields</h4>
+<h3 id="use-readwritten-fields">Use read/written fields</h3>
 
 <p>It would be even more directed if Randoop determined what fields the method
 will read, and then chose an object for which those fields had been
@@ -143,7 +175,35 @@ same JVM.  All of the tests are entangled, which makes it difficult to run
 a subset of them, to understand them, or to debug failures.</p>
 
 <p>Ideally, all of the tests in a test suite should be independent, in that
-they can be run in any order.  The goal of this project is to convert
+  they can be run in any order.</p>
+
+<h3 id="Approach_1:_Undo_state_changes">Approach 1: Undo state changes</h3>
+
+<p>
+One approach is to undo state changes:  for each global field that a
+Randoop test sets (directly or indirectly), the test should reset it at the
+end of the test.
+</p>
+
+<p>
+This requires determining which fields the test changes and restoring them
+to their original values.
+</p>
+
+<p>
+A research question is whether this degrades the fault-finding ability of
+the test suite.  Setting global fields may change the behavior of
+subsequent tests &mdash; is that a positive or a negative?
+It would also be interesting to exclude the fields from being modified by
+Randoop, via the <tt>--omitmethods</tt> and <tt>--omit-filed-list</tt> 
+command-line options.  How much does that degrade Randoop's fault-finding
+ability?
+</p>
+
+<h3 id="Approach_2:_covert_a_set_of_interdependent_tests_into_independent_ones">Approach 2: covert a set of interdependent tests into independent ones</h3>
+
+<p>
+The goal of this project is to convert
 the Randoop output, which is currently a set of interdependent tests, into a
 set of independent tests.</p>
 
