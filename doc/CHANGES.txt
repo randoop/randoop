@@ -1,3 +1,9 @@
+Version 2.1.5, released ????
+
+For developers: Randoop is now built using Gradle (with the Gradle Wrapper).
+File organization has changed to the default used by Gradle Java plugin.
+See the developer manual for details.
+
 Version 2.1.4, released February 24, 2016
 
 Fixed a bug in --include-if-class-exercised that was including too many tests.
