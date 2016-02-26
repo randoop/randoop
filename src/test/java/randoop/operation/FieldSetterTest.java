@@ -84,7 +84,7 @@ public class FieldSetterTest {
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignatureString("randoop.field.ClassWithFields.ClassWithFields()"));
+      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignatureString("randoop.field.ClassWithFields.<init>()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
       Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
@@ -95,8 +95,9 @@ public class FieldSetterTest {
       assertEquals("Expect assignment to instance field",expected,b.toString());
 
       //execution
-      Object[] inputs = new Object[1];
-      inputs[0] = 9;
+      Object[] inputs = new Object[2];
+      inputs[0] = null;
+      inputs[1] = 9;
       //null object
       ExecutionOutcome nullOutcome = rhs.execute(inputs, null);
       assertTrue("Expect null pointer exception", nullOutcome instanceof ExceptionalExecution && ((ExceptionalExecution)nullOutcome).getException() instanceof NullPointerException);

@@ -2,6 +2,7 @@ package randoop.operation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class FieldGetterTest {
   @Test
   public void testInstanceField() {
     Class<?> c = ClassWithFields.class;
+    assertFalse("class should exist", c == null);
     try {
 
       InstanceField f = new InstanceField(c.getField("oneField"));
@@ -85,7 +87,7 @@ public class FieldGetterTest {
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
       ConstructorCall cons = new ConstructorCall(
-          ConstructorSignatures.getConstructorForSignatureString("randoop.field.ClassWithFields.ClassWithFields()"));
+          ConstructorSignatures.getConstructorForSignatureString("randoop.field.ClassWithFields.<init>()"));
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seqInit, 0));
@@ -104,13 +106,14 @@ public class FieldGetterTest {
 
       //execution
       //null object
-      ExecutionOutcome nullOutcome = rhs.execute(new Object[0], null);
+      Object[] inputs = { null };
+      ExecutionOutcome nullOutcome = rhs.execute(inputs, null);
       assertTrue("Expect null pointer exception", nullOutcome instanceof ExceptionalExecution &&
           ((ExceptionalExecution)nullOutcome).getException() instanceof NullPointerException);
 
       //actual object
       NormalExecution expectedExec = new NormalExecution(1, 0);
-      Object[] inputs = new Object[1];
+      inputs = new Object[1];
       inputs[0] = c.newInstance();
       NormalExecution actualExec = (NormalExecution)rhs.execute(inputs, null);
       assertTrue("Execution should simply return value",
