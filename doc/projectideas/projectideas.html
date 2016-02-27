@@ -1,4 +1,14 @@
-<h1 id="project-ideas">Project Ideas</h1> <!-- omit from toc -->
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>Randoop project ideas</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+<h1 id="project-ideas">Randoop project ideas</h1> <!-- omit from toc -->
 
 <p>Contents:</p>
 <!-- start toc.  do not edit; run html-update-toc instead -->
@@ -241,10 +251,10 @@ We could compute the property via a static analysis, or by executing the tests t
 
 <p>Static analysis seems cleaner to me.  Compute what action methods can write to static fields.  For each test t, construct a new unit test that is just like t, but it omits all actions (&amp; their associated observers) that side-effect static fields.  Now, those unit tests can be run in any order.  Also concatenate all omitted actions (or, more likely, all actions whatsoever) into one big test that must be run in a new JVM.</p>
 
-<p>Dynamic analysis:  In a new JVM, run all tests and compute oracles.  For each test t, run (in a new JVM) t followed by all tests.  If any test does not satisfy its oracle, then say that the test t has side effects on global state.  (This isn”t quite right:  The effect of test t may be masked by the effect of the first test, for example.)  Retain all side-effect-free tests as unit tests.  (Verify that they don”t affect one another by running them all in a new JVM, in random order; do this (say) 5 times.)  Concatenate all other tests (or maybe all tests whatsoever) as one big test that must be run in a new JVM, or at least as the last test of the suite.</p>
+<p>Dynamic analysis:  In a new JVM, run all tests and compute oracles.  For each test t, run (in a new JVM) t followed by all tests.  If any test does not satisfy its oracle, then say that the test t has side effects on global state.  (This isn't quite right:  The effect of test t may be masked by the effect of the first test, for example.)  Retain all side-effect-free tests as unit tests.  (Verify that they don't affect one another by running them all in a new JVM, in random order; do this (say) 5 times.)  Concatenate all other tests (or maybe all tests whatsoever) as one big test that must be run in a new JVM, or at least as the last test of the suite.</p>
 
 <p>Questions:
-What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm”s output is just the big hairball.test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
+What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm's output is just the big hairball.test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
 
 
 <h2 id="parallelizing-randoop">Parallelizing Randoop</h2>
@@ -274,9 +284,9 @@ problem for Randoop; effort would probably be better invested elsewhere.
 
 <h2 id="robustness">Robustness</h2>
 
-<p>Randoop executes methods under test with random inputs, and this can cause usability problems. Code under test may exhaust memory or other resources to the point that impedes Randoop from making progress, or even causes Randoop itself to crash. Making Randoop more robust in the face of these kinds of failures would greatly improve the tool’s usability and attract more users.</p>
+<p>Randoop executes methods under test with random inputs, and this can cause usability problems. Code under test may exhaust memory or other resources to the point that impedes Randoop from making progress, or even causes Randoop itself to crash. Making Randoop more robust in the face of these kinds of failures would greatly improve the tool's usability and attract more users.</p>
 
-<p>This project involves creating a “wrapper” around Randoop: a process that that monitors test generation and can terminate/restart the generator if it fails to make progress or aborts unexpectedly. For more details on the wrapper idea, see <a href="http://people.csail.mit.edu/cpacheco/publications/randoop-case-study-abstract.html">Finding Errors in .NET with Feedback-Directed Random Testing</a> (Section 3).</p>
+<p>This project involves creating a wrapper around Randoop: a process that that monitors test generation and can terminate/restart the generator if it fails to make progress or aborts unexpectedly. For more details on the wrapper idea, see <a href="http://people.csail.mit.edu/cpacheco/publications/randoop-case-study-abstract.html">Finding Errors in .NET with Feedback-Directed Random Testing</a> (Section 3).</p>
 
 <h2 id="test-cases-with-debugging-clues">Test cases with debugging clues</h2>
 
@@ -298,7 +308,7 @@ test). For example, consider the following test generated by Randoop:
 }
 </code></pre>
 
-<p>This test reveals an error in Sun’s JDK (version 1.5). It shows a short sequence of calls leading up to the creation of an object that is not equal to itself! Unfortunately, it is difficult to tell simply by looking at the test what is the source of the failure.</p>
+<p>This test reveals an error in Sun's JDK (version 1.5). It shows a short sequence of calls leading up to the creation of an object that is not equal to itself! Unfortunately, it is difficult to tell simply by looking at the test what is the source of the failure.</p>
 
 <p>This project would augment Randoop with the ability to provide debugging clues: comments within a failing test that provide potentially-useful facts about the failure and can help the user with debugging. For example, an improved version of the above test may look something like this:</p>
 
@@ -330,7 +340,7 @@ test). For example, consider the following test generated by Randoop:
   <li>Synthesize the results of the above executions as debugging comments</li>
 </ul>
 
-<p>In theory this sounds simple, but there are several issues that make the problem interesting: creating a set of “variations” of a test is non-trivial, and synthesizing test executions into useful comments, are both non-trivial tasks.</p>
+<p>In theory this sounds simple, but there are several issues that make the problem interesting: creating a set of variations of a test is non-trivial, and synthesizing test executions into useful comments, are both non-trivial tasks.</p>
 
 
 <h2 id="integration-with-eclipse">Integration with Eclipse</h2>
@@ -339,7 +349,7 @@ test). For example, consider the following test generated by Randoop:
 
 <p>The most basic way would be to add menu items, or short-cut buttons, to Eclipse that invoke Randoop on a set of classes, perhaps walking the user through a wizard-like series of steps to specify the classes under test and any non-standard generation parameters. The resulting JUnit classes could automatically be added to the Java project.</p>
 
-<p>There are more interesting, but also more open-ended and challenging ways of integrating Randoop into a development environment. For example, a project could involve creating an Eclipse plugin that continuously runs Randoop on the class that the user is currently editing, with the results of Randoop’s exploration displayed in a non-intrusive way into the source code editing window itself. Imagine, for example, if as you type code into Eclipse, a thin bar on the side shows which lines of code have been tested by Randoop and which ones have not by displaying the line numbers in green or red (much in the same way some coverage tools do), or a small symbol appears next to a method definition to flag the fact that Randoop may have revealed an error in the method. There are many exciting possibilities in integrating a test generation tool like Randoop with an IDE.</p>
+<p>There are more interesting, but also more open-ended and challenging ways of integrating Randoop into a development environment. For example, a project could involve creating an Eclipse plugin that continuously runs Randoop on the class that the user is currently editing, with the results of Randoop's exploration displayed in a non-intrusive way into the source code editing window itself. Imagine, for example, if as you type code into Eclipse, a thin bar on the side shows which lines of code have been tested by Randoop and which ones have not by displaying the line numbers in green or red (much in the same way some coverage tools do), or a small symbol appears next to a method definition to flag the fact that Randoop may have revealed an error in the method. There are many exciting possibilities in integrating a test generation tool like Randoop with an IDE.</p>
 
 <p>
 A downside of this project is that UI is less important than features:
@@ -347,7 +357,7 @@ programmers who are sophisticated enough to appreciate Randoop are
 comfortable enough with the command line.
 </p>
 
-<p><strong>Additional required skills:</strong>  You should have experience with (or be able to quickly learn) Eclipse’s plugin infrastructure.</p>
+<p><strong>Additional required skills:</strong>  You should have experience with (or be able to quickly learn) Eclipse's plugin infrastructure.</p>
 
 
 <h1 id="test-generation-for-c">Test generation for other languages, such as C</h1>
@@ -365,7 +375,7 @@ makes the task easier and in some ways harder.</p>
 <p>Another reason to focus on C is that there is a wealth of important
 software that would be greatly improved by better tests.  This codebase has
 been largely untapped by previous work, so there should be some
-“low-hanging fruit” as well as deeper and harder problems.</p>
+low-hanging fruit as well as deeper and harder problems.</p>
 
 <p>The project is to adapt the Randoop testing approach to C code, and
 evaluate it.  Other languages than C would also be interesting.</p>
@@ -390,7 +400,7 @@ started with Randoop development and make a contribution.
     testing certain code). Currently, Randoop can create and execute such
     tests (via the unpublicized option <tt>--public-only=boolean</tt>), but
     the resulting JUnit tests do not compile. This task involves modifying
-    Randoop’s JUnit output format so that non-public methods are called via
+    Randoop's JUnit output format so that non-public methods are called via
     reflection, making them accessible for execution.
   </li>
   <li>
@@ -445,3 +455,6 @@ started with Randoop development and make a contribution.
     performance, propose a way to improve Randoop, and evaluate it.
   </li>
 </ul>
+
+</body>
+</html>
