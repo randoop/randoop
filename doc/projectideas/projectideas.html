@@ -3,23 +3,19 @@
 <p>Contents:</p>
 <!-- start toc.  do not edit; run html-update-toc instead -->
 <ul>
-  <li><a href="#test-generation-for-c">Test generation for C</a></li>
   <li><a href="#test-generation-projects">Test generation projects</a>
     <ul>
       <li><a href="#better-choice-of-methods">Better choice of methods</a>
         <ul>
           <li><a href="#mimic-real-call-sequences">Mimic real call sequences</a></li>
         </ul></li>
-      <li><a href="#better-choice-of-arguments">Better choice of arguments</a>
-        <ul>
-          <li><a href="#use-readwritten-fields">Use read/written fields</a></li>
-        </ul></li>
-      <li><a href="#parallelizing-randoop">Parallelizing Randoop</a></li>
+      <li><a href="#better-choice-of-arguments">Better choice of arguments</a></li>
       <li><a href="#creating-independent-tests">Creating independent tests</a>
         <ul>
           <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
           <li><a href="#Approach_2:_covert_a_set_of_interdependent_tests_into_independent_ones">Approach 2: covert a set of interdependent tests into independent ones</a></li>
         </ul></li>
+      <li><a href="#parallelizing-randoop">Parallelizing Randoop</a></li>
     </ul></li>
   <li><a href="#user-interface-and-user-experience-projects">User interface and user experience projects</a>
     <ul>
@@ -27,7 +23,8 @@
       <li><a href="#test-cases-with-debugging-clues">Test cases with debugging clues</a></li>
       <li><a href="#integration-with-eclipse">Integration with Eclipse</a></li>
     </ul></li>
-  <li><a href="#smaller-projects">Smaller projects</a></li>
+  <li><a href="#test-generation-for-c">Test generation for other languages, such as C</a></li>
+  <li><a href="#other-projects">Other projects</a></li>
 </ul>
 <!-- end toc -->
 
@@ -78,28 +75,6 @@ You should be willing to dive into and understand a moderate-sized codebase.</p>
 developers at randoop-developers@googlegroups.com.  We look forward to
 hearing from you!</p>
 
-<h1 id="test-generation-for-c">Test generation for C</h1>
-
-<p>Many test generation techniques have been proposed and evaluated in the
-context of Java.  C programs have rather different characteristics,
-starting with the fact that C is a procedural language whereas Java is an
-object-oriented one.  These different abstraction mechanisms raise
-interesting research questions, such as whether previously-proposed
-techniques work well and what new techniques can work even better, by
-taking advantage of the unique characteristics of C.  In some ways this
-makes the task easier and in some ways harder.</p>
-
-<p>Another reason to focus on C is that there is a wealth of important
-software that would be greatly improved by better tests.  This codebase has
-been largely untapped by previous work, so there should be some
-“low-hanging fruit” as well as deeper and harder problems.</p>
-
-<p>The project is to adapt the Randoop testing approach to C code, and
-evaluate it.</p>
-
-<p><strong>Additional required skills:</strong>  In addition to familiarity with C, it is
-helpful to know, or be able to quickly learn, the C system interface.  For
-example, the <code>fork</code> call is likely to come in very handy.</p>
 
 <h1 id="test-generation-projects">Test generation projects</h1>
 
@@ -112,15 +87,46 @@ next method to test. Here are a few example strategies; the project would involv
 
 <ul>
   <li>Track code coverage information and use it to guide the generation process, by choosing methods that have not been covered so far.</li>
-  <li>Let the user specify (e.g. via Java annotations) methods that are critical to test and Randoop should select more often.</li>
+  <li>Let the user specify methods that are critical to test and Randoop should select more often.</li>
   <li>Combine random selection with non-random selection strategies (for example, exhaustive testing).</li>
 </ul>
 
 <h3 id="mimic-real-call-sequences">Mimic real call sequences</h3>
 
-<p>Randoop does a very good job of generating tests for library classes (such as java.util). However, Randoop does not always achieve good coverage of the classes under test. Libraries are usually designed to have few restrictions on their calling sequences and parameters. Classes that make up programs often have a number of restrictions on both the sequences of calls and their parameters.</p>
+<p>
+Randoop's generated test sequences are random and may not be characteristic
+of real use.  One problem is that there may be restrictions on usage of a
+class:  <tt>close</tt> may only be called after <tt>open</tt>, or arguments
+must have particular relationships, such as the non-array argument to
+binary search must appear in the array argument.  Another problem is that
+random invocations may not create interesting data structures, such as very
+large ones or ones with particular qualities such as duplicate elements.
+</p>
 
-<p>We want to extend the system to provide better coverage for such classes. One way to do this is to do analysis (either dynamic or static) that determines valid and invalid sequences of calls. For example, Randoop could observe what call sequences real code makes, perhaps using a tool like <a href="http://www.cs.washington.edu/homes/mernst/pubs/oo-test-gen-mtoos2006-abstract.html">Palulu</a>. Then, bias could be introduced into the generator to make call sequences that are more realistic, and therefore better test the most commonly-used and important parts of the code. A similar project implementing this idea could be found <a href="http://code.google.com/p/tpalus">here</a>.</p>
+<p>
+Randoop does a very good job of generating tests for library classes (such
+as java.util.*) that have few restrictions on their calling sequences and
+parameters.  Classes that make up programs often have a number of
+restrictions on both the sequences of calls and their parameters.
+</p>
+
+<p>
+We want to extend the system to provide better coverage for such
+classes. One way to do this is to do analysis (either dynamic or static)
+that determines valid and invalid sequences of calls. For example, Randoop
+could observe what call sequences real code makes, perhaps using a tool
+like
+<a href="http://www.cs.washington.edu/homes/mernst/pubs/oo-test-gen-mtoos2006-abstract.html">Palulu</a>. Then,
+bias could be introduced into the generator to make call sequences that are
+more realistic, and therefore better test the most commonly-used and
+important parts of the code.
+</p>
+
+<p>
+A possible downside is reduced diversity in tests.  A research question is
+whether mimicking real executions is worthwhile overall.
+</p>
+
 
 <h2 id="better-choice-of-arguments">Better choice of arguments</h2>
 
@@ -128,13 +134,10 @@ next method to test. Here are a few example strategies; the project would involv
 type T1.  Currently, Randoop selects an object of type T1 at random.
 Randoop can do better.  Here is one idea; other approaches are possible.</p>
 
-<h3 id="use-readwritten-fields">Use read/written fields</h3>
-
-<p>It would be even more directed if Randoop determined what fields the method
-will read, and then chose an object for which those fields had been
-recently side-effected.</p>
-
-<p>As an example, when obtaining a point to pass to the getX() method, a point
+<p>
+Randoop could determine what fields a method will read, and then chose an
+object for which those fields have been recently side-effected.
+As an example, when obtaining a point to pass to the getX() method, a point
 produced by the setX() or move() method is more interesting than one
 produced by the setY() method.</p>
 
@@ -142,22 +145,6 @@ produced by the setY() method.</p>
 achieve additional coverage in the called method, perhaps because the
 values will cause particular branches to be taken.</p>
 
-<h2 id="parallelizing-randoop">Parallelizing Randoop</h2>
-
-<p>This project would modify Randoop so that it can run on multiple machines. This would greatly increase the efficiency of the system, by distributing the generation effort across multiple processors. The test generation techniques that Randoop uses are amenable to parallelization: Randoop could spawn multiple test generation engine instances, each with a different random seed.</p>
-
-<p>There are a number of challenges to overcome in parallelizing Randoop. Two examples:</p>
-
-<ul>
-  <li>
-    <p><strong>Coordinating multiple instances.</strong> Making Randoop parallel requires writing code that can spawn, monitor, and combine the results of multiple processes running in separate machines or processors.</p>
-  </li>
-  <li>
-    <p><strong>Managing quantity of output.</strong> A parallel version of Randoop might produce many repetitive test cases. Avoiding repetitive tests is a general challenge for a tool like Randoop, but is even more important to manage this challenge in a parallel version of the tool.</p>
-  </li>
-</ul>
-
-<p><strong>Additional required skills:</strong>  Knowledge of Java APIs for spawning processes, creating streams, reading/writing files, would also be helpful.</p>
 
 <h2 id="creating-independent-tests">Creating independent tests</h2>
 
@@ -214,7 +201,7 @@ The result is 101 tests:  100 of them are even smaller than before, but are
 completely independent of one another, and the last one is relatively large
 but captures all the dependencies.</p>
 
-<p>We have ideas for either a static or a dynamic analysis to perform this task. An ongoing project implementing one of the ideas could be found <a href="http://code.google.com/p/i-test/">here</a>.</p>
+<p>Either a static or a dynamic analysis could perform this task.</p>
 
 <p>We would like to convert this sequence of interdependent tests into a set of tests that are independent of one another and can be run in any order, or any subset of them can be run.</p>
 
@@ -239,12 +226,16 @@ The test oracle checks the result of each method call (actions and observers) ag
 
 <p>Input:  n tests that might depend on one another
 Output:  n independent tests that may be run in any order (each of these is a subset of one of the original tests), plus one big test that concatenates all n of the original tests.  The big test must be run in a fresh JVM or sandbox, or at least as the last test of the suite.
-The big test may seem problematic – too hard to understand and debug – but it is no worse than the original suite, and at least it is honest in putting all the possible effects together.  I suspect that slicing, delta debugging, or other test case minimization approaches will be extremely effective on the big test for those situations where it fails but none of the little tests does.
+The big test may seem problematic -- too hard to understand and debug -- but it is no worse than the original suite, and at least it is honest in putting all the possible effects together.  I suspect that slicing, delta debugging, or other test case minimization approaches will be extremely effective on the big test for those situations where it fails but none of the little tests does.
 One could imagine putting only a subset of the original tests into the big test suite, but including everything is more likely to catch serendipitous interactions among rarely-called methods.  We could empirically evaluate whether that benefit is worthwhile.</p>
 
 <p>An analysis can compute 2 distinct properties of a test case:
-* whether this test”s method outputs depend on previous test executions.
-* whether this test affects the outputs of methods in subsequent tests.  (If observers are guaranteed to be side-effect-free, then that is relevant only for action methods.)
+</p>
+<ul>
+  <li>whether this test's method outputs depend on previous test executions.</li>
+  <li>whether this test affects the outputs of methods in subsequent tests.  (If observers are guaranteed to be side-effect-free, then that is relevant only for action methods.)</li>
+</ul>
+<p>
 Only the latter property matters:  An independent test that can be run in any order, must have no side effects on global (static) state.
 We could compute the property via a static analysis, or by executing the tests to see what happens.</p>
 
@@ -255,7 +246,29 @@ We could compute the property via a static analysis, or by executing the tests t
 <p>Questions:
 What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm”s output is just the big hairball.test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
 
-<p>Are interdependent tests really a problem (fails when run in isolation, can’t understand why)?  Do users care about this problem?  If not, then this whole proposal is moot.</p>
+
+<h2 id="parallelizing-randoop">Parallelizing Randoop</h2>
+
+<p>This project would modify Randoop so that it can run on multiple machines. This would greatly increase the efficiency of the system, by distributing the generation effort across multiple processors. The test generation techniques that Randoop uses are amenable to parallelization: Randoop could spawn multiple test generation engine instances, each with a different random seed.</p>
+
+<p>There are a number of challenges to overcome in parallelizing Randoop. Two examples:</p>
+
+<ul>
+  <li>
+    <p><strong>Coordinating multiple instances.</strong> Making Randoop parallel requires writing code that can spawn, monitor, and combine the results of multiple processes running in separate machines or processors.</p>
+  </li>
+  <li>
+    <p><strong>Managing quantity of output.</strong> A parallel version of Randoop might produce many repetitive test cases. Avoiding repetitive tests is a general challenge for a tool like Randoop, but is even more important to manage this challenge in a parallel version of the tool.</p>
+  </li>
+</ul>
+
+<p>
+A downside of this project is that generation speed is not the most important
+problem for Randoop; effort would probably be better invested elsewhere.
+</p>
+
+<p><strong>Additional required skills:</strong>  Knowledge of Java APIs for spawning processes, creating streams, reading/writing files, would also be helpful.</p>
+
 
 <h1 id="user-interface-and-user-experience-projects">User interface and user experience projects</h1>
 
@@ -267,7 +280,11 @@ What % of tests are separable?  This will affect whether the technique is able t
 
 <h2 id="test-cases-with-debugging-clues">Test cases with debugging clues</h2>
 
-<p>Debugging is difficult. When a test fails, it can be very time consuming to understand the source of the failure in order to fix the code (or the test). For example, consider the following test generated by Randoop:</p>
+<p>
+Debugging is difficult. When a test fails, it can be very time-consuming to
+understand the source of the failure in order to fix the code (or the
+test). For example, consider the following test generated by Randoop:
+</p>
 
 <pre><code>public static void test1() {
 
@@ -315,7 +332,6 @@ What % of tests are separable?  This will affect whether the technique is able t
 
 <p>In theory this sounds simple, but there are several issues that make the problem interesting: creating a set of “variations” of a test is non-trivial, and synthesizing test executions into useful comments, are both non-trivial tasks.</p>
 
-<p>A project implements this idea could be found <a href="https://code.google.com/p/failuredoc/">here</a></p>
 
 <h2 id="integration-with-eclipse">Integration with Eclipse</h2>
 
@@ -325,26 +341,107 @@ What % of tests are separable?  This will affect whether the technique is able t
 
 <p>There are more interesting, but also more open-ended and challenging ways of integrating Randoop into a development environment. For example, a project could involve creating an Eclipse plugin that continuously runs Randoop on the class that the user is currently editing, with the results of Randoop’s exploration displayed in a non-intrusive way into the source code editing window itself. Imagine, for example, if as you type code into Eclipse, a thin bar on the side shows which lines of code have been tested by Randoop and which ones have not by displaying the line numbers in green or red (much in the same way some coverage tools do), or a small symbol appears next to a method definition to flag the fact that Randoop may have revealed an error in the method. There are many exciting possibilities in integrating a test generation tool like Randoop with an IDE.</p>
 
+<p>
+A downside of this project is that UI is less important than features:
+programmers who are sophisticated enough to appreciate Randoop are
+comfortable enough with the command line.
+</p>
+
 <p><strong>Additional required skills:</strong>  You should have experience with (or be able to quickly learn) Eclipse’s plugin infrastructure.</p>
 
-<h1 id="smaller-projects">Smaller projects</h1>
 
-<p>These small projects would be a good way to get started with Randoop development and make a contribution. They are not major research contributions, but useful enhancements to the tool.</p>
+<h1 id="test-generation-for-c">Test generation for other languages, such as C</h1>
+
+<p>Many test generation techniques have been proposed and evaluated in the
+context of Java.  Randoop works for Java and C#.
+C programs have rather different characteristics,
+starting with the fact that C is a procedural language whereas Java is an
+object-oriented one.  These different abstraction mechanisms raise
+interesting research questions, such as whether previously-proposed
+techniques work well and what new techniques can work even better, by
+taking advantage of the unique characteristics of C.  In some ways this
+makes the task easier and in some ways harder.</p>
+
+<p>Another reason to focus on C is that there is a wealth of important
+software that would be greatly improved by better tests.  This codebase has
+been largely untapped by previous work, so there should be some
+“low-hanging fruit” as well as deeper and harder problems.</p>
+
+<p>The project is to adapt the Randoop testing approach to C code, and
+evaluate it.  Other languages than C would also be interesting.</p>
+
+<p><strong>Additional required skills:</strong>  In addition to familiarity with C, it is
+helpful to know, or be able to quickly learn, the C system interface.  For
+example, the <code>fork</code> call is likely to come in very handy.</p>
+
+
+<h1 id="other-projects">Other projects</h1>
+
+<p>
+These projects (some of which are small, and others of which are quite
+ambitious and would make research contributions) would be a good way to get
+started with Randoop development and make a contribution.
+</p>
 
 <ul>
   <li>
-    <p>Make Randoop able to generate tests that directly call non-public methods and constructors (this is sometimes useful when testing certain code). Currently, Randoop can create and execute such tests (via the unpublicized option –public-only=blean), but the resulting JUnit tests do not compile. This task involves modifying Randoop’s JUnit output format so that non-public methods are called via reflection, making the accessible for execution.</p>
+    Make Randoop able to test private methods: generate tests that directly
+    call non-public methods and constructors (this is sometimes useful when
+    testing certain code). Currently, Randoop can create and execute such
+    tests (via the unpublicized option <tt>--public-only=boolean</tt>), but
+    the resulting JUnit tests do not compile. This task involves modifying
+    Randoop’s JUnit output format so that non-public methods are called via
+    reflection, making them accessible for execution.
   </li>
   <li>
-    <p>Randoop has an option for a user to declare “observer” methods that can be used to create regression assertions. However, the feature is not tested and thus the option (–observers=file) is not currently publicized. This task involves creating tests to ensure this feature works, and documentating the feature. A second part of this task is to dd more kinds of regression assertions that are built into Randoop. For example, a feature the tool used to have (but was removed at some point) was to heuristically determine observer methods and use them to create regression assertions.</p>
+    New contracts:
+    Add more kinds of regression assertions that are built into
+    Randoop. For example, a feature the tool used to have (but was removed
+    at some point) was to heuristically determine observer methods and use
+    them to create regression assertions.
   </li>
   <li>
-    <p>Add the ability for Randoop to report all thrown exceptions, which are currently not listen at the end of generation. This information could be useful to developers.</p>
+    Create or adapt a side effect analysis to make Randoop perform better,
+    as noted above.
   </li>
   <li>
-    <p>Make several relatively obscure, but very useful, Randoop options be on by default: (1) the capture-output option (separates Randoop output from code-under-test  output) should be on by default? (But are we sure it is not confusing to hide the output from the user? We used to hide output generated by code under test from the user but this was sometimes confusing because there might be useful debugging information in such output.) (1) A basic Randoop agent that gets rid of System.exit(int) calls. (3) Randoop’s ability to rerun and remove non-deterministic tests.</p>
+    Rewrite bytecode as Randoop loads it, to get rid of System.exit(int) calls. and other issues.
   </li>
   <li>
-    <p>Clean up logging facilities: running Randoop with –log=filename option should result in a log file that contains useful information for someone trying to troubleshoot Randoop.</p>
+    Make Randoop able to rerun and remove non-deterministic tests.
+  </li>
+  <li>
+    Combine Randoop and EvoSuite.  EvoSuite has multiple components: test
+    generation, test evaluation, test minimization.  If EvoSuite's test
+    generation component were replaced by Randoop, what would the effect
+    be?  Another way of asking this is how much of EvoSuite's good
+    performance is due to its different components.
+  </li>
+  <li>
+    Compare Randoop to Quickcheck, which is another popular test generation
+    tool.  Once you see the ways in which each of them is better than the
+    other, add features to each to make each one better.
+  </li>
+  <li>
+    Better classification.  Given a test that throws an exception (or does
+    not!), Randoop guesses whether the behavior is expected or unexpected.
+    Evaluate its heuristics and try to improve them.
+  </li>
+  <li>
+    Run on open source.  Randoop doesn't just generate tests:  it detects
+    bugs.  Run Randoop on open-source programs and report bugs to their
+    maintainers.
+  </li>
+  <li>
+    Read specifications about method behavior, such as whether a method is
+    pure or whether a particular parameter may be null, and make Randoop
+    respect those specifications.  The specifications could be expressed as
+    Java annotations.
+  </li>
+  <li>
+    Create your own enhancement suggestion.  Run Randoop on a benchmark
+    such as Defects4J, and work to improve Randoop's performance such as
+    its coverage or mutation score.  Identify a reason for poor
+    performance, propose a way to improve Randoop, and evaluate it.
   </li>
 </ul>
