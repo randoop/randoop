@@ -418,6 +418,19 @@ started with Randoop development and make a contribution.
     Rewrite bytecode as Randoop loads it, to get rid of System.exit(int) calls. and other issues.
   </li>
   <li>
+    GRT (Guided Random Testing) is a variant of Randoop that adds some
+    features to Randoop.  The source code isn't available, and some of the
+    features that GRT claims are already part of Randoop anyway.
+    Incorporate the rest into Randoop in order to create a tool with all
+    the positive features of each.
+  </li>
+  <li>
+    Randoop takes optional inputs such as a list of pure methods.  Create a
+    wrapper around Randoop that automatically invokes a purity analysis and
+    does other pre-processing, so that a user doesn't have to do those
+    steps and Randoop is more automated.
+  </li>
+  <li>
     Make Randoop able to rerun and remove non-deterministic tests.
   </li>
   <li>
