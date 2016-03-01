@@ -4,3 +4,4 @@ dist/
 doc/javadoc/
 .gradle/
 *.orig
+utils/
