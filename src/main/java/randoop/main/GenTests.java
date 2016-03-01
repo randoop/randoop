@@ -782,6 +782,8 @@ public class GenTests extends GenInputsAbstract {
    *          a list of sequences to write.
    * @param additionalJUnitClasses
    *          other classes to write (may be null).
+   * @param junitClassname
+   *          the base name for the class 
    * @return list of files written.
    **/
   public static List<File> writeJUnitTests(String output_dir, List<ExecutableSequence> seqList, List<String> additionalJUnitClasses, String junitClassname) {

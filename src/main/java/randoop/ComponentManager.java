@@ -20,16 +20,16 @@ import randoop.util.SimpleList;
  * Stores and provides means to access the component sequences generated during
  * a run of Randoop. "Component sequences" are sequences that Randoop uses to
  * create larger sequences.
- * 
+ *
  * This class manages different collections of component sequences:
- * 
+ *
  * <ul>
  * <li>General components that can be used as input to any method in any class.
  * <li>Class literals: components representing literal values that apply only to
  * a specific class and should not be used as inputs to other classes.
  * <li>Package literals: analogous to class literals but at the package level.
  * </ul>
- * 
+ *
  * SEED SEQUENCES. Seed sequences are sequences that were not created during the
  * generation process but obtained via other means. They include (1) sequences
  * passed via the constructor, (2) class literals, and (3) package literals. The
@@ -81,7 +81,7 @@ public class ComponentManager {
   /**
    * Create a component manager, initially populated with the given sequences,
    * which are considered seed sequences.
-   * 
+   *
    * @param generalSeeds
    *          seed sequences. Can be null, in which case the seed sequences set
    *          is considered empty.
@@ -97,7 +97,7 @@ public class ComponentManager {
 
   /**
    * Returns the number of (non-seed) sequences stored by the manager.
-   * 
+   *
    * @return count of generated sequences in this {@link ComponentManager}.
    */
   // FIXME subtract size of seeds!
@@ -108,6 +108,9 @@ public class ComponentManager {
   /**
    * Add a sequence representing a literal value that can be used when testing
    * members of the given class.
+   *
+   * @param cls  the class literal to add for the sequence
+   * @param seq  the sequence
    */
   public void addClassLevelLiteral(Class<?> cls, Sequence seq) {
     if (classLiterals == null) {
@@ -119,6 +122,9 @@ public class ComponentManager {
   /**
    * Add a sequence representing a literal value that can be used when testing
    * classes in the given package.
+   *
+   * @param pkg the package to add for the sequence
+   * @param seq the sequence
    */
   public void addPackageLevelLiteral(Package pkg, Sequence seq) {
     if (packageLiterals == null) {
@@ -129,6 +135,8 @@ public class ComponentManager {
 
   /**
    * Add a component sequence.
+   *
+   * @param sequence - the sequence
    */
   public void addGeneratedSequence(Sequence sequence) {
     gralComponents.add(sequence);
@@ -143,6 +151,9 @@ public class ComponentManager {
     gralComponents.addAll(this.gralSeeds);
   }
 
+  /*
+   * @return the set of generated sequences
+   */
   public Set<Sequence> getAllGeneratedSequences() {
     return gralComponents.getAllSequences();
   }
@@ -153,6 +164,8 @@ public class ComponentManager {
    * the exact class specified; if exactMatch==false returns sequences declaring
    * values of cls or any other class that can be used as a cls (i.e. a subclass
    * of cls).
+   *
+   *@return the sequences that create values of the given type
    */
   public SimpleList<Sequence> getSequencesForType(Class<?> cls, boolean exactMatch) {
     return gralComponents.getSequencesForType(cls, exactMatch);

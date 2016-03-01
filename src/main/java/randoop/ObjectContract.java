@@ -14,7 +14,7 @@ import java.io.Serializable;
  * <p>
  *
  * Implementing classes provide two key pieces functionality:
- * 
+ *
  * <ul>
  * <li>A method <code>evaluate(Object... objects)</code> that evaluates ones or
  * more objects at runtime and determines if the given object(s) satisfy the
@@ -22,18 +22,20 @@ import java.io.Serializable;
  * <li>A method <code>toCodeString()</code> that emits Java code that can be
  * inserted into a unit test to check for the given property.
  * </ul>
- * 
- * 
+ *
+ *
  * <p>
- * 
+ *
  * See the various implementing classes for examples (for an example, see
  * {@link EqualsReflexive}).
- * 
+ *
  */
 public interface ObjectContract extends Serializable {
 
   /**
    * The number of values that this contract is over.
+   *
+   * @return the number of arguments to the contract
    */
   int getArity();
 
@@ -46,6 +48,9 @@ public interface ObjectContract extends Serializable {
    * <p>
    * This method should return <code>true</code> if the contract was satisfied
    * and <code>false</code> if it was violated.
+   *
+   * @param objects  the actual parameters to this contract
+   * @return true if this contract evaluates to true for the given values, and false otherwise
    */
   boolean evaluate(Object... objects) throws Throwable;
 
@@ -58,12 +63,17 @@ public interface ObjectContract extends Serializable {
    * <p>
    * If the method returns <code>false</code>, Randoop will interpret an
    * exception as passing behavior.
+   *
+   * @return true if an exception in evaluating this contract should be
+   *         interpreted as a failure, false otherwise.
    */
   boolean evalExceptionMeansFailure();
 
   /**
    * A string that will be inserted as a comment in the test before the code
    * corresponding to this contract.
+   *
+   * @return the commment string representation of this contract
    */
   String toCommentString();
 
@@ -78,10 +88,16 @@ public interface ObjectContract extends Serializable {
    * like "x0.equals(x1)".
    * <p>
    * The returned string should not be null.
+   *
+   * @return the code string representation of this contract
    */
   String toCodeString();
 
-  /** Returns a string describing the observer **/
+  /**
+   * Returns a string describing the observer.
+   *
+   * @return a string description of the contract
+   */
   String get_observer_str();
 
 }
