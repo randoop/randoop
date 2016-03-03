@@ -30,9 +30,9 @@ public class LoadingWithAnnotationTest {
   @Test
   public void test() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
-    GenInputsAbstract.classlist = new File("tests/randoop/instrument/testcase/allclasses.txt");
+    GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     GenInputsAbstract.include_if_classname_appears = null;
-    GenInputsAbstract.include_if_class_exercised = new File("tests/randoop/instrument/testcase/annotatedclasses.txt");
+    GenInputsAbstract.include_if_class_exercised = new File("randoop/instrument/testcase/annotatedclasses.txt");
     Set<Class<?>> coveredClasses = new LinkedHashSet<>();
     Set<Class<?>> classes = new LinkedHashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();

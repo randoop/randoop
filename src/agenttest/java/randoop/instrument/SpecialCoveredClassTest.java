@@ -43,8 +43,8 @@ public class SpecialCoveredClassTest {
   @Test
   public void abstractClassTest() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
-    GenInputsAbstract.classlist = new File("tests/randoop/instrument/testcase/special-allclasses.txt");
-    GenInputsAbstract.include_if_class_exercised = new File("tests/randoop/instrument/testcase/special-coveredclasses.txt");
+    GenInputsAbstract.classlist = new File("randoop/instrument/testcase/special-allclasses.txt");
+    GenInputsAbstract.include_if_class_exercised = new File("randoop/instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;

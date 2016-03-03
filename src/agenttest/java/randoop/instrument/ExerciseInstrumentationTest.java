@@ -37,7 +37,7 @@ public class ExerciseInstrumentationTest {
     // get class for A
     Class<?> ac = null;
     try {
-      ac = TypeNames.getTypeForName("randoop.instrument.testcase.A");
+      ac = TypeNames.getTypeForName("randoop.instrument.testcase.AE");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -67,7 +67,7 @@ public class ExerciseInstrumentationTest {
     // get class B
     Class<?> bc = null;
     try {
-      bc = TypeNames.getTypeForName("randoop.instrument.testcase.B");
+      bc = TypeNames.getTypeForName("randoop.instrument.testcase.BE");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -76,7 +76,7 @@ public class ExerciseInstrumentationTest {
     Method bcheck = null;
     try {
       bcheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
-      assertTrue("B should have method because everything does", bcheck != null);
+      assertTrue("BE should have method because everything does", bcheck != null);
     } catch (NoSuchMethodException e1) {
       // passes
     } catch (SecurityException e1) {
@@ -86,7 +86,7 @@ public class ExerciseInstrumentationTest {
     // get class A
     Class<?> cc = null;
     try {
-      cc = TypeNames.getTypeForName("randoop.instrument.testcase.C");
+      cc = TypeNames.getTypeForName("randoop.instrument.testcase.CE");
     } catch (ClassNotFoundException e) {
       fail("cannot find class: " + e);
     }
@@ -95,7 +95,7 @@ public class ExerciseInstrumentationTest {
     Method ccheck = null;
     try {
       ccheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
-      assertTrue("B should have method because everything does", bcheck != null);
+      assertTrue("CE should have method because everything does", ccheck != null);
     } catch (NoSuchMethodException e1) {
       // passes
     } catch (SecurityException e1) {
@@ -155,7 +155,7 @@ public class ExerciseInstrumentationTest {
       fail("can't access field " + e2);
     }
 
-    // Make an A(B) constructor to check direct manipulation of flag
+    // Make an AE(BE) constructor to check direct manipulation of flag
     Constructor<?> acon = null;
     try {
       acon = ac.getDeclaredConstructor(bc);
@@ -171,9 +171,9 @@ public class ExerciseInstrumentationTest {
       bcon = bc.getConstructor(int.class);
       bcon.setAccessible(true);
     } catch (NoSuchMethodException e) {
-     fail("can't find B(int) " + e);
+     fail("can't find BE(int) " + e);
     } catch (SecurityException e) {
-      fail("security exception for B(int) " + e);
+      fail("security exception for BE(int) " + e);
     }
 
     try {
@@ -210,7 +210,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      assertTrue("should be true after B constructor",
+      assertTrue("should be true after BE constructor",
           (boolean)check.invoke(null, new Object[0]) );
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
@@ -243,7 +243,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      assertTrue("field should be true after A constructor", (boolean)used.get(null));
+      assertTrue("field should be true after AE constructor", (boolean)used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -251,7 +251,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      assertTrue("flag should be true after A constructor",
+      assertTrue("flag should be true after AE constructor",
           (boolean)check.invoke(null, new Object[0]) );
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
