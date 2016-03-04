@@ -16,9 +16,6 @@ public class Help extends CommandHandler {
 
   public static PrintStream out = System.out;
 
-  @Option("Also show unpublicized options")
-  public static boolean unpub = false;
-
   public Help() {
     super("help", "Displays a help message for a given command.", "help", "", "Displays a help message for a given command.", null,
         "None (for the general help message), or the name of a command (for command-specific help).", "A help message is printed to stdout.", "",
@@ -50,8 +47,6 @@ public class Help extends CommandHandler {
       out.println();
       out.println("Type `help' followed by a command name to see documentation.");
       out.println();
-      out.println("Type `help --unpub' followed by a command name to also see ");
-      out.println("unsupported command-line options.");
       out.println();
       out.println("Commands:");
       out.println();
@@ -75,7 +70,7 @@ public class Help extends CommandHandler {
       for (CommandHandler h : allHandlers) {
 
         if (h.fcommand.equals(command)) {
-          h.usageMessage(out, unpub);
+          h.usageMessage(out);
           return true;
         }
       }
