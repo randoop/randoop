@@ -288,7 +288,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      jump.invoke(bobj, null);
+      jump.invoke(bobj, new Object[0]);
     } catch (IllegalAccessException e) {
       fail("cannot access " + e);
     } catch (IllegalArgumentException e) {
