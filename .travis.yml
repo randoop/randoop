@@ -16,7 +16,7 @@ jdk:
 
 script:
   - ./gradlew assemble
-  - ./gradlew --debug check
+  - ./gradlew --debug --stacktrace check
 
 ## Use Travis defaults for notifications (send to committer and author).
 # notifications:
