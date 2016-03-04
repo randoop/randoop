@@ -1,4 +1,4 @@
-// list agent subproject 'agent/agentname' as 'agentname'
+// These subprojects are in subdirectories of the 'agent/' directory.
 include 'exercised-class'
 include 'mapcall'
 
