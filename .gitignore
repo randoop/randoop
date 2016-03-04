@@ -1,7 +1,6 @@
 .DS_Store
 *build/
 dist/
-doc/javadoc/
 .gradle/
 *.orig
-utils/
+*~
