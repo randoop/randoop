@@ -35,6 +35,7 @@ subprojects {
 
 /******
  * Configuration specific to Randoop and not agents
+ * Configuration for agent FOO appears in agents/FOO/FOO.gradle .
  ******/
 
 description = "Randoop automated test generation"
@@ -63,7 +64,7 @@ sourceSets {
 
 configurations {
   manual {
-    description = "Generate user/developer documentation"
+    description = "Generate user and developer documentation"
   }
 
   /*
@@ -109,17 +110,18 @@ dependencies {
  */
 sourceCompatibility = 1.7
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
+// TODO: remove -nowarn from next two lines?
 compileTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 compileAgentTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
 /*
  * Configuration for testing.
- * In terms of build, have two kinds of tests, both using JUnit. One kind
- * requires the exercised-class Java agent, and lives in src/agenttest.
- * The other is run without the agent, and lives in src/test.
- * This second group includes tests that run the full Randoop over classes that
- * (mostly) are located in src/systemtest.
+ * In terms of build, we have two kinds of tests, both using JUnit.
+ *   * Those in src/agenttest require the exercised-class Java agent.
+ *   * Those in src/test are run without the agent.
+ *     This second group includes tests that run the full Randoop over
+ *     classes that (mostly) are located in src/systemtest.
  */
 
 /*
@@ -274,6 +276,7 @@ task clone << {
  */
 task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc']) {
   source sourceSets.main.allJava
+// TODO: run on all files to shorten this and make it less error-prone
   include '**/randoop/Globals.java'
   include '**/randoop/main/GenTests.java'
   include '**/randoop/main/GenInputsAbstract.java'
@@ -296,6 +299,8 @@ task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc']) {
  * user documentation after options update.
  * Operates on copy of file: build/docs/manual/index.html
  */
+// TODO: here and below, run on the source version before copying, not
+// the build version after copying.
 task updateUserTOC(type:Exec, dependsOn: ['clone', 'generateOptionsDoc']) {
   executable 'utils/plume-lib/bin/html-update-toc'
   args  "${buildDir}/docs/manual/index.html"
