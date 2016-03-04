@@ -1,8 +1,8 @@
 /*
  * build.gradle for Randoop
  *
- * Quick instructions: run with command
- *   gradlew build 
+ * Quick instructions: in project directory run with command
+ *   ./gradlew build
  */
 
 plugins {
@@ -111,8 +111,8 @@ dependencies {
 sourceCompatibility = 1.7
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 // TODO: remove -nowarn from next two lines?
-compileTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
-compileAgentTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
 /*
@@ -195,12 +195,19 @@ task agentTest(type: Test, dependsOn: 'copyJars') {
  */
 check.dependsOn agentTest
 
-/*
- * Set the destination directory for JUnit XML output files
- */
+
 tasks.withType(Test) {
+ /*
+  * Set the destination directory for JUnit XML output files
+  */
   reports.junitXml.destination = file("$buildDir/test-results/${name}")
+ /*
+  * Set the heap size and GC for running tests.
+  */
+  jvmArgs '-Xmx384m', '-XX:+UseG1GC', '-XX:SoftRefLRUPolicyMSPerMB=250'
 }
+
+
 
 /*
  * Configuration of task to write HTML reports into build/reports/allTests for
@@ -266,7 +273,34 @@ javadoc {
  * Get the plume-lib repo using gradle-git, and save into utils/plume-lib
  */
 task clone << {
-  org.ajoberstar.grgit.Grgit.clone(dir: file('utils/plume-lib'), uri: 'https://github.com/mernst/plume-lib.git')
+  def plumeFolder = file("$buildDir/utils/plume-lib")
+  if ( ! plumeFolder.exists() ) {
+    org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+  } else {
+    println("WARNING: not cloning plume-lib because already exists.")
+    println("         Force clone by running after clean")
+  }
+}
+
+/*
+ * Configuration of updateUserTOC task to update the table-of-contents for the
+ * user documentation.
+ * Operates on original file: doc/index.html
+ */
+task updateUserTOC(type:Exec, dependsOn: 'clone') {
+  executable "$buildDir/utils/plume-lib/bin/html-update-toc"
+  args  "doc/index.html"
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+}
+
+/* Configuration of task updateDevTOC to update table of contents in developer
+ * documentation.
+ * Operates on original file: doc/dev.html
+ */
+task updateDevTOC(type:Exec, dependsOn: 'clone') {
+  executable "$buildDir/utils/plume-lib/bin/html-update-toc"
+  args "doc/dev.html"
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
 }
 
 /*
@@ -274,17 +308,8 @@ task clone << {
  * to doc/index.html to add command-line arguments extracted from the given
  * @Option annotated classes. Writes resulting file as build/docs/manual/index.html
  */
-task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc']) {
+task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'updateUserTOC']) {
   source sourceSets.main.allJava
-// TODO: run on all files to shorten this and make it less error-prone
-  include '**/randoop/Globals.java'
-  include '**/randoop/main/GenTests.java'
-  include '**/randoop/main/GenInputsAbstract.java'
-  include '**/randoop/util/Log.java'
-  include '**/randoop/util/ReflectionExecutor.java'
-  include '**/randoop/sequence/ForwardGenerator.java'
-  include '**/randoop/sequence/AbstractGenerator.java'
-
   classpath = sourceSets.main.runtimeClasspath + sourceSets.main.compileClasspath
   title = "" // workaround to Javadoc task wanting to spit out title
   destinationDir = file("${buildDir}/docs/manual")
@@ -295,25 +320,12 @@ task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc']) {
 }
 
 /*
- * Configuration of updateUserTOC task to update the table-of-contents for the
- * user documentation after options update.
- * Operates on copy of file: build/docs/manual/index.html
- */
-// TODO: here and below, run on the source version before copying, not
-// the build version after copying.
-task updateUserTOC(type:Exec, dependsOn: ['clone', 'generateOptionsDoc']) {
-  executable 'utils/plume-lib/bin/html-update-toc'
-  args  "${buildDir}/docs/manual/index.html"
-  environment PATH: "$System.env.PATH:utils/plume-lib/bin"
-}
-
-/*
  * Configuration of copyManual task that copies files (other than doc/index.html)
  * into build/docs/manual directory.
  * These files include the developer documentation and text for example Randoop
  * config files.
  */
-task copyManual(type:Copy) {
+task copyManual(type:Copy, dependsOn: 'updateDevTOC') {
   from ('doc') {
     include 'dev.html'
     include '*_example.txt'
@@ -324,14 +336,11 @@ task copyManual(type:Copy) {
   into "${buildDir}/docs/manual"
 }
 
-/* Configuration of task updateDevTOC to update table of contents in developer
- * documentation after copied to build directory (as build/docs/manual/dev.html)
+/*
+ * Configuration of manual task to generate/update and move documentation into
+ * build/docs directory. 
  */
-task updateDevTOC(type:Exec, dependsOn: ['clone', 'copyManual']) {
-  executable 'utils/plume-lib/bin/html-update-toc'
-  args "${buildDir}/docs/manual/dev.html"
-  environment PATH: "$System.env.PATH:utils/plume-lib/bin"
-}
+task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', 'javadoc'])
 
 /*************** Gradle Wrapper ******************/
 /* Declares the Gradle version to be used when the wrapper is built */
