@@ -115,14 +115,15 @@ in some cases, a <i>resources</i> subdirectory containing other files.
 <h1 id="tasks">Compiling, testing, releasing, etc.</h1>
 
 <p>
-Randoop (since version 2.1.5) is built with Gradle, but has a Gradle Wrapper so
-that you don't need to install Gradle.
-Instead, the wrapper will do it for you -- downloading the files the first time
-you run Gradle in the project.
+Randoop (since version 2.1.5) is built with Gradle.
+The script named <tt>gradlew</tt> is the Gradle wrapper for the project, and
+is the recommended way to run Gradle commands.
+Using the wrapper means you don't have to install Gradle yourself, instead
+the wrapper will download Gradle the first time you run a build command.
 </p>
 
 <p>You can learn about the tasks that the Randoop build script supports by typing
-<code>gradlew tasks</code>.
+<code>./gradlew tasks</code>.
 Also, for general information about the Gradle command-line, visit the Gradle
 <a href="https://docs.gradle.org/current/userguide/tutorial_gradle_command_line.html">command-line tutorial</a>.
 </p>
@@ -131,13 +132,13 @@ Also, for general information about the Gradle command-line, visit the Gradle
 
 <p>
   From the command line, and in Randoop's top-level directory, simply run
-  <code>gradlew build</code>.
+  <code>./gradlew build</code>.
   This command will compile Randoop, compile the Java agents, run all tests,
   and build the jar files.
   For this and other commands that generate files, the generated files will be
   placed in a subdirectory named <i>build</i> in both the parent directory and
   each of the agent subdirectories.n
-  Once the <code>gradlew build</code> command completes, the jar files will be
+  Once the <code>./gradlew build</code> command completes, the jar files will be
   located in the directory <code>build/libs</code>.
 </p>
 
@@ -146,18 +147,18 @@ Also, for general information about the Gradle command-line, visit the Gradle
   Particular tasks that may be useful during development include
 </p>
 <ul>
-  <li><code>gradlew compile</code> to compile without running tests,</li>
-  <li><code>gradlew jar</code> to build the jar files,</li>
-  <li><code>gradlew assemble</code> to compile and build jar files,<li>
-  <li><code>gradlew check</code> to run the all of the tests,</li>
-  <li><code>gradlew testReport</code> to generate HTML reports from tests
+  <li><code>./gradlew compile</code> to compile without running tests,</li>
+  <li><code>./gradlew jar</code> to build the jar files,</li>
+  <li><code>./gradlew assemble</code> to compile and build jar files,</li>
+  <li><code>./gradlew check</code> to run the all of the tests,</li>
+  <li><code>./gradlew testReport</code> to generate HTML reports from tests
     (in <tt>build/reports/allTests</tt>), and</li>
-  <li><code>gradlew clean</code> to remove the <tt>build</tt> subdirectory.<li>
+  <li><code>./gradlew clean</code> to remove the <tt>build</tt> subdirectory.</li>
 </ul>
 
 <p>
-  As explained in the command-line tutorial, you can combine tasks.
-  For instance, for a clean build, type <code>gradlew clean build</code>.
+  Gradle allows you to combine tasks.
+  For instance, for a clean build, type <code>./gradlew clean build</code>.
 </p>
 
 <p>Using an IDE, you should import Randoop as a Gradle project, and then you
@@ -167,64 +168,72 @@ Also, for general information about the Gradle command-line, visit the Gradle
 <h2 id="classpath">Randoop classpath</h2>
 
 <p>
-After building Randoop, the Randoop jar file is in <code>build/libs</code> of
-the Randoop project, while the Java agents are located in this subdirectory of
-the agent project directory.
-Your classpath must include the Randoop jar file, <tt>lib/plume.jar</tt>, and
-the jar of any Java agent you are using.  (You can either include the
-literal text &ldquo;<tt>lib/*</tt>&rdquo; or explicit listing all the
-<tt>.jar</tt> files under <tt>lib/</tt> .).
+To run Randoop, your classpath must include either the Randoop class files or
+the Randoop jar file, and <tt>lib/plume.jar</tt>.
+After the build, the classpath should include either of the following
+</p>
+<ul>
+  <li>
+<code>
+&lt;randoop-path&gt;/build/libs/randoop-2.1.4.jar:&lt;randoop-path&gt;/lib/plume.jar
+</code>
+</li>
+<li>
+<code>
+&lt;randoop-path&gt;/build/build/classes/main:&lt;randoop-path&gt;/lib/plume.jar
+</code> </li>
+</ul>
+<p>
+It is recommended that the classpath for classes under test be placed before
+Plume-lib.
 </p>
 
 <p>
-To avoid repeatedly setting up the classpath, you can do either of the
-following:
+To run one of the Java agents, the jar files for Java agents are located in
+the <code>build/libs</code> subdirectory of both the Randoop project and the
+agent project directories.
+So, for instance, the following will work to run the <tt>exercised-class</tt> agent:
 </p>
+<code><pre>
+  -javaagent:&lt;randoop-path&gt;/build/libs/exercised-class-2.1.4.jar
+</pre></code>
 
-<ul>
-  <li>Set your (global) CLASSPATH
-  variable in <tt>~/.bashrc</tt> or some other configuration file.
-  </li>
-
-  <li>Create a shell script or Makefile that sets the classpath; for instance, a <tt>Makefile</tt> such as:
-
-<pre class="code">
-  RANDOOP_HOME ?= <em>directory</em>
-  include $(RANDOOP_HOME)/common.mk
-  run:
-	java -ea randoop.main.Main help gentests
-</pre>
-
-  </li>
-</ul>
 
 <h2 id="modmanual">Modifying the manual</h2>
 
+<p>
+The documentation for Randoop is in the subdirectory <tt>doc</tt>:
+</p>
 <ul>
-<li> <code>index.html</code> has the user manual. Note: the command-line argument
-documentation is extracted from the code. Any changes to code annotated by
-<code>Options</code> will affect this file.</li>
-<li> <code>dev.html</code> has the developer manual with instructions
-for hacking Randoop</li>
+<li> <code>doc/index.html</code> has the user manual.
+  Note: the command-line argument documentation is extracted from the code.
+  Any changes to code annotated by <code>Options</code> will affect this file.</li>
+<li> <code>doc/dev.html</code> is this developer manual.</li>
 </ul>
 
 <p>
-After editing the HTML files or command-line arguments, run the following command-line
-in Randoop's home directory:
+Running the command <code>./gradlew manual</code> will create the Javadoc for
+Randoop, update command-line arguments in the user documentation, update the
+table-of-contents in both manuals, and place the Javadoc in <tt>build/docs/api</tt>
+and the updated manual files in <tt>build/docs/manual</tt> with other files
+needed for inclusion on the Randoop website.
 </p>
 
-<pre class="code">
-make manual
-</pre>
 
-<h2 id="making_new_dist">Making a new distribution (a new release)</h2>
+<h2 id="making_new_dist">Making a new release</h2>
 
 <p>
 Throughout, if you push commits, ensure that the tests continue to pass at
 <a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.
-You can preemptively find most problems that Travis will find by running
-<code>make clean && make all-dist</code> locally
-before doing a push to GitHub.
+You can preemptively find most problems that Travis will find by running the
+commands
+</p>
+<code><pre>
+  ./gradlew clean assemble
+  ./gradlew check
+</pre></code>
+<p>
+locally before doing a push to GitHub.
 </p>
 
 <ol>
