@@ -18,6 +18,8 @@ allprojects {
 
   /* This project and agent subprojects are Java projects */
   apply plugin: 'java'
+  sourceCompatibility = 1.7
+  targetCompatility = 1.7
 
   /* Use Maven Central when have external dependencies */
   repositories {
@@ -108,9 +110,8 @@ dependencies {
 /*
  * Configuration for compilation.
  */
-sourceCompatibility = 1.7
+
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
-// TODO: remove -nowarn from next two lines?
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileSystemTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
@@ -338,7 +339,7 @@ task copyManual(type:Copy, dependsOn: 'updateDevTOC') {
 
 /*
  * Configuration of manual task to generate/update and move documentation into
- * build/docs directory. 
+ * build/docs directory.
  */
 task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', 'javadoc'])
 
