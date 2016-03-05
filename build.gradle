@@ -19,7 +19,7 @@ allprojects {
   /* This project and agent subprojects are Java projects */
   apply plugin: 'java'
   sourceCompatibility = 1.7
-  targetCompatility = 1.7
+  targetCompatibility = 1.7
 
   /* Use Maven Central when have external dependencies */
   repositories {
