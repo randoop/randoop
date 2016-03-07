@@ -5,12 +5,21 @@ dist/
 *.orig
 *~
 
-# IntelliJ IDEA specific files
-.idea/
-*.iml
+# IDE-specific ignores
+# lists comes from import, and running project build
 
-# Eclipse specific files
+# IntelliJ IDEA
+.idea/
+out/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
 .settings/
 .classpath
 .project
 bin/
+
+# NetBeans
+/.nb-gradle/
