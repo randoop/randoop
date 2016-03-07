@@ -10,6 +10,7 @@ dist/
 *.iml
 
 # Eclipse specific files
+.settings/
 .classpath
 .project
 bin/
