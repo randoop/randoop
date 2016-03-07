@@ -4,3 +4,12 @@ dist/
 .gradle/
 *.orig
 *~
+
+# IntelliJ IDEA specific files
+.idea/
+*.iml
+
+# Eclipse specific files
+.classpath
+.project
+bin/
