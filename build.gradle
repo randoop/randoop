@@ -18,6 +18,8 @@ allprojects {
 
   /* This project and agent subprojects are Java projects */
   apply plugin: 'java'
+  apply plugin: 'eclipse'
+  apply plugin: 'idea'
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
 
