@@ -25,11 +25,12 @@
           <li><a href="#Approach_1:_Undo_state_changes">Approach 1: Undo state changes</a></li>
           <li><a href="#Approach_2:_covert_a_set_of_interdependent_tests_into_independent_ones">Approach 2: covert a set of interdependent tests into independent ones</a></li>
         </ul></li>
+      <li><a href="#flakiness">Flakiness</a></li>
+      <li><a href="#robustness">Robustness</a></li>
       <li><a href="#parallelizing-randoop">Parallelizing Randoop</a></li>
     </ul></li>
   <li><a href="#user-interface-and-user-experience-projects">User interface and user experience projects</a>
     <ul>
-      <li><a href="#robustness">Robustness</a></li>
       <li><a href="#test-cases-with-debugging-clues">Test cases with debugging clues</a></li>
       <li><a href="#integration-with-eclipse">Integration with Eclipse</a></li>
     </ul></li>
@@ -257,6 +258,42 @@ We could compute the property via a static analysis, or by executing the tests t
 What % of tests are separable?  This will affect whether the technique is able to create independent tests, or those end up empty and the algorithm's output is just the big hairball.test.  That would be no worse than the current situation, and at least the user would know that interdependent tests are a problem.</p>
 
 
+<h2 id="flakiness">Flakiness</h2>
+
+<p>
+  Randoop can call APIs whose value changes from run to run of tests, and
+  this can cause flaky tests (tests that spuriously fail).
+  Examples of such APIs are ones that retrieve the current date, the username, etc.
+  <!-- Examples:
+    System.getProperty("user.dir") or System.getProperty("file.encoding")
+  -->
+  Two ways to mitigate such flakiness are:
+</p>
+<ul>
+ <li>identify all Java API calls that can lead to flaky information and replace them with mocks</li>
+ <li>identify information that is "tainted" by flaky data and avoid assertions on them</li>
+</ul>
+<p>
+EvoSuite follows approach #1 so far, and you can see its source code for
+the APIs it mocks.
+Approach #2 would avoid the need for a dedicated runtime library.
+</p>
+
+
+<h2 id="robustness">Robustness</h2>
+
+<p>Randoop executes methods under test with random inputs, and this can cause usability problems. Code under test may exhaust memory or other resources to the point that impedes Randoop from making progress, or even causes Randoop itself to crash. Making Randoop more robust in the face of these kinds of failures would greatly improve the tool's usability and attract more users.</p>
+
+<p>
+One approach is to create a wrapper around Randoop: a process that that
+monitors test generation and can terminate/restart the generator if it
+fails to make progress or aborts unexpectedly. For more details on the
+wrapper idea, see
+<a href="http://people.csail.mit.edu/cpacheco/publications/randoop-case-study-abstract.html">Finding
+Errors in .NET with Feedback-Directed Random Testing</a> (Section 3).
+</p>
+
+
 <h2 id="parallelizing-randoop">Parallelizing Randoop</h2>
 
 <p>This project would modify Randoop so that it can run on multiple machines. This would greatly increase the efficiency of the system, by distributing the generation effort across multiple processors. The test generation techniques that Randoop uses are amenable to parallelization: Randoop could spawn multiple test generation engine instances, each with a different random seed.</p>
@@ -264,12 +301,14 @@ What % of tests are separable?  This will affect whether the technique is able t
 <p>There are a number of challenges to overcome in parallelizing Randoop. Two examples:</p>
 
 <ul>
-  <li>
-    <p><strong>Coordinating multiple instances.</strong> Making Randoop parallel requires writing code that can spawn, monitor, and combine the results of multiple processes running in separate machines or processors.</p>
-  </li>
-  <li>
-    <p><strong>Managing quantity of output.</strong> A parallel version of Randoop might produce many repetitive test cases. Avoiding repetitive tests is a general challenge for a tool like Randoop, but is even more important to manage this challenge in a parallel version of the tool.</p>
-  </li>
+  <li> <p><strong>Coordinating multiple instances.</strong> Making Randoop
+    parallel requires writing code that can spawn, monitor, and combine the
+    results of multiple processes running in separate machines or
+    processors.</p>  </li> <li> <p><strong>Managing quantity of
+    output.</strong> A parallel version of Randoop might produce many
+    repetitive test cases. Avoiding repetitive tests is a general challenge
+    for a tool like Randoop, but is even more important to manage this
+    challenge in a parallel version of the tool.</p>  </li>
 </ul>
 
 <p>
@@ -281,12 +320,6 @@ problem for Randoop; effort would probably be better invested elsewhere.
 
 
 <h1 id="user-interface-and-user-experience-projects">User interface and user experience projects</h1>
-
-<h2 id="robustness">Robustness</h2>
-
-<p>Randoop executes methods under test with random inputs, and this can cause usability problems. Code under test may exhaust memory or other resources to the point that impedes Randoop from making progress, or even causes Randoop itself to crash. Making Randoop more robust in the face of these kinds of failures would greatly improve the tool's usability and attract more users.</p>
-
-<p>This project involves creating a wrapper around Randoop: a process that that monitors test generation and can terminate/restart the generator if it fails to make progress or aborts unexpectedly. For more details on the wrapper idea, see <a href="http://people.csail.mit.edu/cpacheco/publications/randoop-case-study-abstract.html">Finding Errors in .NET with Feedback-Directed Random Testing</a> (Section 3).</p>
 
 <h2 id="test-cases-with-debugging-clues">Test cases with debugging clues</h2>
 
