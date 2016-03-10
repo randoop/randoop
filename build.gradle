@@ -44,6 +44,8 @@ subprojects {
 
 description = "Randoop automated test generation"
 
+def workingDirectories = "$buildDir/working-directories"
+
 sourceSets {
   /* JUnit tests that must be run with -javaagent */
   agentTest {
@@ -55,13 +57,24 @@ sourceSets {
     }
   }
 
-  /* Code sets used by system tests. There are no actual tests here. */
+  /* system tests */
   systemTest {
     java {
       srcDir 'src/systemtest/java'
     }
     resources {
       srcDir 'src/systemtest/resources'
+    }
+    output.dir(workingDirectories, builtBy: 'generateWorkingDirs')
+  }
+
+  /* Code sets used by system tests. There are no actual tests here. */
+  testInput {
+    java {
+      srcDir 'src/testinput/java'
+    }
+    resources {
+      srcDir 'src/testinput/resources'
     }
   }
 }
@@ -77,15 +90,18 @@ configurations {
    */
   agentTestCompile.extendsFrom testCompile
   agentTestRuntime.extendsFrom testRuntime
+
+  systemTestCompile.extendsFrom testCompile
+  systemTestRuntime.extendsFrom testRuntime
 }
 
 dependencies {
   /* Randoop uses local copy of Plume */
   compile files('lib/plume.jar')
 
-  /* sourceSet test uses JUnit and some use systemTest source set */
+  /* sourceSet test uses JUnit and some use testInput source set */
   testCompile group: 'junit', name: 'junit', version: '4.+'
-  testCompile sourceSets.systemTest.output
+  testCompile sourceSets.testInput.output
 
   /*
    * sourceSet agentTest uses output from main sourceSet, and agent projects.
@@ -95,11 +111,22 @@ dependencies {
   agentTestRuntime project(':exercised-class')
 
   /*
-   * sourceSet systemtests depends on output of main.
-   * Also, src/systemtest/java/ps1/RatPolyTest.java uses JUnit
+   * source set systemTest
    */
-  systemTestCompile sourceSets.main.output
-  systemTestCompile group: 'junit', name: 'junit', version: '4.+'
+   systemTestCompile sourceSets.main.output
+   /*
+    * system tests use system-rules for capturing output of Randoop runs
+    * http://stefanbirkner.github.io/system-rules/
+    */
+   systemTestCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.16.0'
+   systemTestRuntime sourceSets.testInput.output
+
+  /*
+   * sourceSet testInput depends on output of main.
+   * Also, src/testinput/java/ps1/RatPolyTest.java uses JUnit
+   */
+  testInputCompile sourceSets.main.output
+  testInputCompile group: 'junit', name: 'junit', version: '4.+'
 
   /*
    * building documentation uses Options doclet that is part of plume, and
@@ -116,7 +143,8 @@ dependencies {
 compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
 compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
 compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
-compileSystemTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
 
 /*
  * Configuration for testing.
@@ -124,7 +152,7 @@ compileSystemTestJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile'
  *   * Those in src/agenttest require the exercised-class Java agent.
  *   * Those in src/test are run without the agent.
  *     This second group includes tests that run the full Randoop over
- *     classes that (mostly) are located in src/systemtest.
+ *     classes that (mostly) are located in src/testinput.
  */
 
 /*
@@ -136,7 +164,7 @@ test {
    * Set the working directory for JUnit tests to the resources directory
    * instead of the project directory.
    */
-  workingDir = sourceSets.test.output.resourcesDir
+  workingDir = file("$buildDir/resources")
 
   /*
    * Show as much as possible to console.
@@ -198,6 +226,31 @@ task agentTest(type: Test, dependsOn: 'copyJars') {
  */
 check.dependsOn agentTest
 
+task generateWorkingDirs {
+  doLast {
+    def generated = file(workingDirectories)
+    if (! generated.exists()) {
+      generated.mkdir()
+    }
+  }
+}
+
+task systemTest(type: Test, dependsOn: generateWorkingDirs) {
+  workingDir = file("$buildDir")
+  testClassesDir = sourceSets.systemTest.output.classesDir
+  classpath = sourceSets.systemTest.runtimeClasspath
+
+  /*
+   * Show as much as possible to console.
+   */
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = 'full'
+  }
+
+  /* Turn off HTML reports -- handled by testReport task */
+  reports.html.enabled = false
+}
 
 tasks.withType(Test) {
  /*
@@ -209,8 +262,6 @@ tasks.withType(Test) {
   */
   jvmArgs '-Xmx384m', '-XX:+UseG1GC', '-XX:SoftRefLRUPolicyMSPerMB=250'
 }
-
-
 
 /*
  * Configuration of task to write HTML reports into build/reports/allTests for
