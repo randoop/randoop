@@ -376,6 +376,7 @@ public class GenTests extends GenInputsAbstract {
       if (errorSequences.size() > 0) {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nError-revealing test output:%n");
+          System.out.printf("Error-revealing test count: %d%n", errorSequences.size());
         }
         outputTests(errorSequences, GenInputsAbstract.error_test_basename);
       } else {
@@ -390,6 +391,7 @@ public class GenTests extends GenInputsAbstract {
       if (regressionSequences.size() > 0) {
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.printf("%nRegression test output:%n");
+          System.out.printf("Regression test count: %d%n", regressionSequences.size());
         }
         outputTests(regressionSequences, GenInputsAbstract.regression_test_basename);
       } else {
@@ -606,12 +608,17 @@ public class GenTests extends GenInputsAbstract {
    */
   private void outputTests(List<ExecutableSequence> sequences, String junitPrefix) {
     if (GenInputsAbstract.output_tests_serialized != null) {
-      System.out.println("Serializing tests...");
+      if (!GenInputsAbstract.noprogressdisplay) {
+        System.out.println("Serializing tests...");
+      }
       // using prefix as a suffix here because of path info in
       // output_tests_serialized
       outputObject(sequences, output_tests_serialized + junitPrefix);
     }
 
+    if (!GenInputsAbstract.noprogressdisplay) {
+      System.out.printf("Writing JUnit tests...%n");
+    }
     writeJUnitTests(junit_output_dir, sequences, null, junitPrefix);
   }
 
@@ -783,14 +790,10 @@ public class GenTests extends GenInputsAbstract {
    * @param additionalJUnitClasses
    *          other classes to write (may be null).
    * @param junitClassname
-   *          the base name for the class 
+   *          the base name for the class
    * @return list of files written.
    **/
   public static List<File> writeJUnitTests(String output_dir, List<ExecutableSequence> seqList, List<String> additionalJUnitClasses, String junitClassname) {
-
-    if (!GenInputsAbstract.noprogressdisplay) {
-      System.out.printf("Writing %d junit tests%n", seqList.size());
-    }
 
     List<File> files = new ArrayList<File>();
 
