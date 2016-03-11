@@ -2,6 +2,7 @@
 *build/
 dist/
 .gradle/
+ui/
 *.orig
 *~
 
