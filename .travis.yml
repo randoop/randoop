@@ -18,6 +18,7 @@ jdk:
 script:
   - ./gradlew assemble
   - ./gradlew --info check
+  - ./gradlew --info manual
 
 ## Use Travis defaults for notifications (send to committer and author).
 # notifications:
