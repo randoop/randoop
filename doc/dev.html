@@ -95,10 +95,11 @@ Randoop has the following directory organization:
   <li> <i>presentations</i> - presentations on Randoop, and</li>
   <li> <i>src</i> - source directories for Randoop, including
     <ul>
-      <li> <i>main</i> - Randoop source code,</li>
-      <li> <i>test</i> - Source for JUnit tests of Randoop,</li>
-      <li> <i>systemtest</i> - Source for libraries used in Randoop testing, and</li>
-      <li> <i>agenttest</i> - Source for JUnit tests of the excercised-class Java agent.</li>
+      <li><i>main</i> - Randoop source code,</li>
+      <li><i>test</i> - source for JUnit tests of Randoop,</li>
+      <li><i>agenttest</i> - source for JUnit tests of the excercised-class Java agent,</li>
+      <li><i>testinput</i> - source for libraries used in Randoop testing, and</li>
+      <li><i>systemtest</i> - source for Randoop system tests.
     </ul>
   </li>
 </ul>
@@ -149,7 +150,6 @@ given here.
   Particular tasks that may be useful during development include
 </p>
 <ul>
-  <li><code>./gradlew compile</code> to compile without running tests,</li>
   <li><code>./gradlew jar</code> to build the jar files,</li>
   <li><code>./gradlew assemble</code> to compile and build jar files,</li>
   <li><code>./gradlew check</code> to run the all of the tests,</li>
@@ -159,14 +159,44 @@ given here.
 </ul>
 
 <p>
+  Compiling is a little more complex, since the code is organized by
+  <i>source sets</i>, which is a concept from the
+  <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Gradle Java plugin</a>.
+  A source set is a grouping of source files that can have its own set of
+  dependencies and tasks.
+  For instance, in the Randoop <tt>build.gradle</tt> there is the
+  <tt>agentTest</tt> source set that is separate from the <tt>test</tt> source
+  set because the test classes must run using the <tt>exercised-class</tt> Java
+  agent.
+  The plugin normally has two source sets named <tt>main</tt> and <tt>test</tt>,
+  and the Randoop build script defines others to better structure the build process.
+  Each source set has its own compile task:
+</p>
+<ul>
+  <li><code>./gradlew compileJava</code> to compile the <tt>main</tt> source set,</li>
+  <li><code>./gradlew compileTestJava</code> to compile the <tt>test</tt> source set,</li>
+  <li><code>./gradlew compileAgentTestJava</code> to compile the <tt>agentTest</tt> source set.</li>
+</ul>
+
+<p>
   For the full list of tasks supported by the Randoop build script, type
   <code>./gradlew tasks</code>.
 </p>
 
 <p>
-  Note that Gradle allows you to combine tasks.
-  For instance, for a clean build, type <code>./gradlew clean build</code>.
+  Otherewise, there are some Gradle tricks that may be useful:
 </p>
+<ul>
+  <li>Gradle allows you to combine tasks, for instance, for a clean build,
+    type <code>./gradlew clean build</code>.</li>
+  <li>You can run a task <tt>taskName</tt> on individual classes by setting the
+    system property <code>taskName.single</code> on the command line.
+    For instance, to run just the tests in <tt>RandoopSystemTest</tt> use the
+    command
+    <code><pre>
+      ./gradlew -Dtest.single=RandoopSystemTest test
+    </pre></code></li>
+</ul>
 
 
 <h2 id="usinganide">Using an IDE</h2>
