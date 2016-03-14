@@ -32,11 +32,6 @@ allprojects {
   version = '2.1.4'
 }
 
-/* Don't generate Javadoc for agents */
-subprojects {
-    tasks.withType(Javadoc).all { enabled = false }
-}
-
 /******
  * Configuration specific to Randoop and not agents
  * Configuration for agent FOO appears in agents/FOO/FOO.gradle .
