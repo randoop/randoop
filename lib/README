@@ -4,10 +4,4 @@ and how they were obtained.
 
 plume.jar: https://github.com/mernst/plume-lib/releases; version 1.0.9
 Currently installed copy was locally generated to include changes to Options
-doclet that includes -d option for Gradle build.
-
-
-Version numbers for Gradle build dependencies should also be checked and updated
-periodically. These can be found in build files:
-- randoop/build.gradle
-- randoop/agent/exercised-class/exercised-class.gradle:
+doclet that includes a -d option to support the Gradle build.
