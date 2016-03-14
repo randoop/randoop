@@ -51,7 +51,7 @@ public interface ObjectContract extends Serializable {
    *
    * @param objects  the actual parameters to this contract
    * @return true if this contract evaluates to true for the given values, and false otherwise
-   * @throws {@code Throwable} if an exception is thrown in evaluation 
+   * @throws Throwable if an exception is thrown in evaluation 
    */
   boolean evaluate(Object... objects) throws Throwable;
 

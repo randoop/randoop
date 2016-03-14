@@ -96,6 +96,9 @@ public class SubTypeSet {
   /**
    * Returns all the classes in the set that can-be-used-as the given
    * <code>c</code>.
+   *
+   * @param c  the query type
+   * @return the set of types that can be used in place of the query type
    */
   public Set<Class<?>> getMatches(Class<?> c) {
     if (!subTypesWithsequences.keySet().contains(c)) {
@@ -114,6 +117,12 @@ public class SubTypeSet {
    *
    * Otherwise, returns <code>true</code> if this set contains the given class
    * <code>c</code>
+   *
+   * @param c  the query type
+   * @param match  the type matching criterion
+   * @return true if either there is a sequence with the query type as its output
+   *   type, or {@code match=COMPATIBLE_TYPE} and there is a sequence with a
+   *   subtype of the query type as its output type.
    */
   public boolean containsAssignableType(Class<?> c, Reflection.Match match) {
     if (!subTypesWithsequences.keySet().contains(c)) {

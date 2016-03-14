@@ -13,11 +13,13 @@ public class EmptyExceptionCheck extends ExceptionCheck {
 
   /**
    * Creates an exception check for the given statement index.
-   * 
+   *
    * @param exception
    *          the exception thrown by statement
    * @param statementIndex
    *          the position of statement in sequence
+   * @param catchClassName
+   *          the name of the exception class to be caught
    */
   public EmptyExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
@@ -43,7 +45,7 @@ public class EmptyExceptionCheck extends ExceptionCheck {
   /**
    * {@inheritDoc} This check passes if execution is either normal or an
    * exception is thrown.
-   * 
+   *
    * @return true if execution outcome is normal or an exception, false
    *         otherwise
    * @throws IllegalArgumentException

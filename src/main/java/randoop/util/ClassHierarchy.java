@@ -74,6 +74,9 @@ public final class ClassHierarchy {
   /**
    * Returns the set of all direct and indirect superclasses and superinterfaces
    * of the given class. The returned set includes also the class itself.
+   *
+   * @param classes  the query type
+   * @return the set of supertypes of the query type
    */
   public static Set<Class<?>> superClassClosure(Set<Class<?>> classes) {
     Set<Class<?>> result = new LinkedHashSet<Class<?>>();

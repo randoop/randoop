@@ -105,6 +105,8 @@ public class ClassFileConstants {
    * A simple driver program that prints output literals file format.
    *
    * @see randoop.LiteralFileReader
+   * @param args  the command line arguments
+   * @throws IOException if an error occurs in writing the constants
    */
   public static void main(String args[]) throws IOException {
     for (String classname : args) {
@@ -116,6 +118,8 @@ public class ClassFileConstants {
    * Returns all the constants found in the given class.
    *
    * @see #getConstants(String,ConstantSet)
+   * @param classname  the name of the type
+   * @return the set of constants of the given type
    */
   public static ConstantSet getConstants(String classname) {
     ConstantSet result = new ConstantSet();
@@ -128,6 +132,9 @@ public class ClassFileConstants {
    * and returns it.
    *
    * @see #getConstants(String)
+   * @param classname  the name of the type
+   * @param result  the set of constants to which constans are added
+   * @return the set of constants with new constants of given type added
    */
   public static ConstantSet getConstants(String classname, ConstantSet result) {
 
@@ -526,6 +533,8 @@ public class ClassFileConstants {
   /**
    * Convert a collection of ConstantSets to the format expected by
    * GenTest.addClassLiterals.
+   * @param constantSets  the sets of constantSets
+   * @return a map of types to constant operations
    */
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
     final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<Class<?>, NonreceiverTerm>();

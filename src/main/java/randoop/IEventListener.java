@@ -54,7 +54,7 @@ public interface IEventListener {
    *
    * @see randoop.sequence.AbstractGenerator
    *
-   * @param true if generation should stop, false otherwise.
+   * @return true if generation should stop, false otherwise.
    */
   boolean stopGeneration();
 
