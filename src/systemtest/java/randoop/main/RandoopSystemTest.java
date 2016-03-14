@@ -110,7 +110,7 @@ public class RandoopSystemTest {
     options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
     options.add("--omit-field-list=resources/systemTest/testclassomitfields.txt");
 
-    long timeout = 9000L;
+    long timeout = 18000L;
     RandoopRunDescription randoopRunDesc =
         generateAndCompile(
             classpath,
@@ -231,7 +231,7 @@ public class RandoopSystemTest {
     options.add("--classlist=resources/systemTest/buggyclasses.txt");
     options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
 
-    long timeout = 30000L;
+    long timeout = 60000L;
 
     RandoopRunDescription randoopRunDesc =
         generateAndCompile(
@@ -538,7 +538,7 @@ public class RandoopSystemTest {
       String regressionBasename,
       String errorBasename,
       List<String> randoopOptions) {
-    long defaultTimeout = 5000L;
+    long defaultTimeout = 10000L;
     return generateAndCompile(
         classpath,
         workingPath,
@@ -655,7 +655,7 @@ public class RandoopSystemTest {
 
   public TestRunDescription runTests(
       String classpath, Path workingPath, String packageName, String basename) {
-    long defaultTimeout = 5000L;
+    long defaultTimeout = 10000L;
     return runTests(classpath, workingPath, packageName, basename, defaultTimeout);
   }
 
