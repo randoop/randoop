@@ -184,7 +184,7 @@ given here.
 </p>
 
 <p>
-  Otherewise, there are some Gradle tricks that may be useful:
+  Otherwise, there are some Gradle tricks that may be useful:
 </p>
 <ul>
   <li>Gradle allows you to combine tasks, for instance, for a clean build,
@@ -192,7 +192,7 @@ given here.
   <li>You can run a task <tt>taskName</tt> on individual classes by setting the
     system property <code>taskName.single</code> on the command line.
     For instance, to run just the tests in <tt>RandoopSystemTest</tt> use the
-    command
+    command<br>
     <code><pre>
       ./gradlew -Dtest.single=RandoopSystemTest test
     </pre></code></li>
@@ -290,7 +290,74 @@ So, for instance, the following will work to run the <tt>exercised-class</tt> ag
 </pre></code>
 
 
-<h2 id="modmanual">Modifying the manual</h2>
+<h2 id="prereleasemaintenance">Maintaining Randoop Pre-Release</h2>
+
+<h3 id="maintaininglibraries">Updating libraries</h3>
+
+<p>
+  Most of the libraries that Randoop uses are managed in the Gradle build script
+  <tt>build.gradle</tt>. Running Gradle will download the library files needed
+  to compile Randoop for those libraries that are listed in the build script.
+  However, Randoop also uses other libraries that are kept in the <tt>lib</tt>
+  directory.
+  Periodically, these libraries, and those used in <tt>build.gradle</tt> should
+  be updated.
+</p>
+<p>
+  Instructions for updating the "local" libraries can be found in
+  <tt>lib/README</tt> while version numbers and links to the other libraries
+  can be found in the Gradle build scripts, and should also be checked and updated
+  periodically. The build files include:
+</p>
+<ul>
+  <li><tt>randoop/build.gradle</tt></li>
+  <li><tt>randoop/agent/exercised-class/exercised-class.gradle</tt></li>
+</ul>
+<p>
+  and the library information occurs in configuration blocks for plugins,
+  dependencies, and the Gradle wrapper task.
+</p>
+
+<h3 id="documentingchanges">Documenting Changes</h3>
+
+<p>
+  Any user interface changes should be documented in the changelog
+  <code>doc/CHANGES.txt</code>.
+  Be sure to describe the changes in terms of how it affects the user.
+  List any bug fixes that may affect any user visible behavior, and mention
+  any reported issues, and the person who reported the issue.
+  Order listed information by importance to the user and subsequent release.
+  This text is used for documenting releases, so keeping it up-to-date and
+  ready for public release is important.
+</p>
+
+
+<h3 id="codeformatting">Formatting Randoop Source Code</h3>
+
+<p>
+  The Randoop source code is formatted in
+  <a href="https://google.github.io/styleguide/javaguide.html">Google Java Format</a>
+  by using the
+   <a href="https://github.com/google/google-java-format">google-java-format</a>
+  tool.
+  The RandoopGradle build script is setup to allow this tool to be applied using
+  the following commands:
+  (Please read cautions below before running the tool.)
+</p>
+<ul>
+  <li><code>./gradlew googleJavaFormat</code> (or <tt>goJF</tt>) to reformat
+    all Java files in the repository. (CAUTION!)</li>
+  <li><code>./gradlew verifyGoogleJavaFormat</code> (or <tt>verGJF</tt>)</li>
+</ul>
+<p>
+  <b>CAUTION</b>: The first command will change every single Java file in the
+  repository, and should not be done before submitting a Pull Request against a
+  branch that is out of format. Instead, make sure that the base branch is
+  reformatted before creating the PR.
+</p>
+
+
+<h3 id="modmanual">Modifying the manual</h3>
 
 <p>
 The documentation for Randoop is in the subdirectory <tt>doc</tt>:
@@ -311,78 +378,122 @@ The files are placed in <tt>build/docs</tt>, with the Javadoc in
 </p>
 
 
-<h2 id="making_new_dist">Making a new release</h2>
+
+<h2 id="making_new_dist">Releasing a New Version of Randoop</h2>
 
 <p>
-Throughout, if you push commits, ensure that the tests continue to pass at
+Throughout, if you push commits to the Github repository, ensure that the tests
+continue to pass at
 <a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.
 You can preemptively find most problems that Travis will find by running the
 commands
 </p>
 <code><pre>
-  ./gradlew clean assemble
-  ./gradlew check
+./gradlew clean assemble
+./gradlew check
+./gradlew manual
 </pre></code>
 <p>
 locally before doing a push to GitHub.
+Though, it may be that some build problems may not occur without a clean project
+build, and so it is a good idea to push a branch to the Randoop repository before
+merging new work with the master branch.
 </p>
 
+<p>
+  To make a release from the master branch, follow these steps:
+</p>
 <ol>
-  <li>Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
-    <pre>
-      OLDVERSION=<em>2.1.2</em>
-      NEWVERSION=<em>2.1.3</em>
-    </pre>
+  <li>
+    Be sure that everything related to
+    <a href="#prereleasemaintenance">pre-release maintenance</a>
+    is up-to-date.
   </li>
-  <li>If there are any changes, commit them; if there are any unpushed
-    commits, push them.  Find out if any exist by running:
+  <li>
+    Setup a clone of the Randoop gh-pages branch in a sibling subdirectory:
+    <pre>
+  cd ..
+  git clone git@github.com:randoop/randoop.git randoop-gh-pages
+  cd ../randoop-gh-pages
+  git checkout gh-pages
+    </pre>
+    If you already have a copy of the <tt>gh-pages</tt> branch, do <tt>git pull</tt>
+    to make sure that everything is up-to-date with the repository.
+  </li>
+  <li>
+    Increment the Randoop version number:
+    <ol>
+      <li>
+        Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
+        <pre>
+  OLDVERSION=<em>2.1.4</em>
+  NEWVERSION=<em>2.1.5</em>
+        </pre>
+        These are used for working with git.
+      </li>
+      <li>
+        Update the version number in <tt>build.gradle</tt> to the new number.
+        This number allows Gradle to automatically number the generated jar files.
+      </li>
+      <li>Also, update the version number and set the release date in
+        <code>src/main/java/randoop/Globals.java</code>,
+        <code>doc/CHANGES.txt</code>, and
+        <code>doc/index.html</code>.
+      </li>
+    </ol>
+  </li>
+  <li>Commit any changes; push any unpushed
+    commits.  Find out if any exist by running:
     <pre>git status && git log --branches --not --remotes</pre>
   </li>
-  <li>Update libraries in <tt>randoop/lib</tt>.  See (and update) the file
-    <tt>randoop/lib/README</tt>.  Commit and push changes.</li>
   <li>Compile and test.  If any tests fail, fix them and start over.
-    <pre>make clean && make all</pre>
+    <pre>./gradlew clean build</pre>
   </li>
   <li>You should have been updating the changelog <code>doc/CHANGES.txt</code>
     all along, but double-check by running a command such as this:
     <pre>git log v$OLDVERSION..</pre>
   </li>
   <li>Ensure that the manual HTML is valid; commit any necessary changes:
-    <pre>make manual validate-manual</pre>
+    <pre>./gradlew manual</pre>
   </li>
-  <li>Increment the version number and set the release date in
-    <code>src/randoop/Globals.java</code>,
-    <code>doc/CHANGES.txt</code>, and
-    <code>doc/index.html</code>.
-  </li>
-  <li>Commit and push those changes, and make a repository tag:
-    <pre>git commit . -m "Update version to $NEWVERSION"
-git push
-git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
-git push --tags</pre>
+</ol>
+<p>
+  Once there are no more changes to make:
+</p>
+<ol>
+  <li>Commit and push any changes, and make a
+    repository tag:
+    <pre>
+  git commit . -m "Update version to $NEWVERSION"
+  git push
+  git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
+  git push --tags
+    </pre>
     <!-- The gh-pages branch is not tagged. -->
   </li>
-  <li>Create the distribution:
-    <pre>make distribution-files
-(cd dist && mv randoop.jar randoop-$NEWVERSION.jar && mv randoop.zip randoop-$NEWVERSION.zip\
- && mv mapcall_agent.jar mapcall_agent-$NEWVERSION.jar && mv exercised_agent.jar exercised_agent-$NEWVERSION.jar)
-# Run the following using JDK 8, not JDK 7
-make copy-to-gh-pages
-(cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)</pre>
+  <li>Create the distribution files with <code>./gradlew clean build manual</code></li>
+  <li>
+    Update the <tt>gh-pages</tt> branch using the sibling clone of the repository
+    created above:
+    <pre>
+  mv build/docs/manual ../randoop-gh-pages/
+  mv build/docs/api ../randoop-gh-pages/
+  (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)
+    </pre>
   </li>
   <li>Follow the <a
     href="https://help.github.com/articles/creating-releases/">GitHub
       instructions for creating a release</a>; in particular, start at <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Tags", click "add release notes" for the tag v<em>2.1.3</em>, name it
-    "Randoop version <em>2.1.3</em>", use the changelog entry as the
+    click "Tags", click "add release notes" for the new tag (e.g., v<em>2.1.5</em>), name it
+    "Randoop version <em>2.1.5</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
-    zip and jar files, and finally click "publish release".
+    jar files from <tt>build/libs</tt>, and, finally, click "publish release".
   </li>
   <li>Email an announcement to randoop-discuss@googlegroups.com.
     <br/>
-    Subject: Randoop version <em>2.1.3</em>
+    Subject: Randoop version <em>2.1.5</em>
     <br/>
-    Randoop <em>2.1.3</em> has been released and is available at
+    Randoop <em>2.1.5</em> has been released and is available at
     https://github.com/randoop/randoop/releases/.  The changelog appears below.
   </li>
 </ol>
