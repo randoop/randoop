@@ -11,6 +11,12 @@ plugins {
    * https://github.com/ajoberstar/gradle-git
    */
   id 'org.ajoberstar.grgit' version '1.4.2'
+
+  /*
+   * Plugin that applies Google-Java-format to the Java files in the project.
+   * https://github.com/sherter/google-java-format-gradle-plugin
+   */
+  id 'com.github.sherter.google-java-format' version '0.2'
 }
 
 /* Common build configuration for Randoop and agents */
@@ -26,6 +32,7 @@ allprojects {
   /* Use Maven Central when have external dependencies */
   repositories {
     mavenCentral()
+    jcenter()
   }
 
   /* Randoop version number - added to generated jar files */
