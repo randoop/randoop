@@ -206,7 +206,7 @@ public class RandoopSystemTest {
     options.add("--classlist=resources/systemTest/buggyclasses.txt");
     options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
 
-    long timeout = 19000L;
+    long timeout = 20000L;
 
     RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options, timeout);
 
