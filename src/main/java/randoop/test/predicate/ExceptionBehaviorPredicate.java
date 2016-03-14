@@ -9,7 +9,7 @@ import randoop.test.TestCheckGenerator;
 /**
  * An exception predicate is used to check whether an exception corresponds to a
  * particular behavior. Used in {@link TestCheckGenerator} implementations
- * 
+ *
  * @see randoop.main.ExceptionBehaviorClassifier
  */
 public class ExceptionBehaviorPredicate implements ExceptionPredicate {
@@ -18,7 +18,7 @@ public class ExceptionBehaviorPredicate implements ExceptionPredicate {
 
   /**
    * Creates a predicate that checks for the given behavior.
-   * 
+   *
    * @param behavior
    *          the behavior to check for
    */
@@ -29,7 +29,7 @@ public class ExceptionBehaviorPredicate implements ExceptionPredicate {
   /**
    * Test whether the {@code ExceptionalExecution} for the given
    * {@code ExecutableSequence} corresponds to the behavior set for this object.
-   * 
+   *
    * @param exec
    *          the exceptional execution
    * @param s
@@ -41,5 +41,4 @@ public class ExceptionBehaviorPredicate implements ExceptionPredicate {
     Throwable exception = exec.getException();
     return ExceptionBehaviorClassifier.classify(exception, s) == behavior;
   }
-
 }

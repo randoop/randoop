@@ -74,7 +74,7 @@ public abstract class AccessibleField implements Serializable {
 
   /**
    * Returns the declared name of the field.
-   * 
+   *
    * @return unqualified name of the field.
    */
   public String getName() {
@@ -97,7 +97,11 @@ public abstract class AccessibleField implements Serializable {
    * @return String for type-field pair describing field.
    */
   public String toParseableString() {
-    return field.getType().getName() + ":" + field.getDeclaringClass().getName() + "." + field.getName();
+    return field.getType().getName()
+        + ":"
+        + field.getDeclaringClass().getName()
+        + "."
+        + field.getName();
   }
 
   /**
@@ -142,7 +146,8 @@ public abstract class AccessibleField implements Serializable {
     } catch (IllegalArgumentException e) {
       throw new BugInRandoopException("Field access to object of wrong type: " + e.getMessage());
     } catch (IllegalAccessException e) {
-      throw new BugInRandoopException("Access control violation for field: " + field.getName() + "; " + e.getMessage());
+      throw new BugInRandoopException(
+          "Access control violation for field: " + field.getName() + "; " + e.getMessage());
     }
     return ret;
   }
@@ -171,7 +176,7 @@ public abstract class AccessibleField implements Serializable {
 
   /**
    * Converts this object to a form that can be serialized.
-   * 
+   *
    * @see SerializableAccessibleField
    *
    * @return serializable form of this object
@@ -184,7 +189,7 @@ public abstract class AccessibleField implements Serializable {
 
   /**
    * isStatic returns the default that a field is not static.
-   * 
+   *
    * @return false (default for a field).
    */
   public boolean isStatic() {
@@ -202,5 +207,4 @@ public abstract class AccessibleField implements Serializable {
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(field);
   }
-
 }

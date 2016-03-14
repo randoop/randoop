@@ -9,7 +9,7 @@ import randoop.operation.OperationParseException;
 
 /**
  * Serialized form of {@link CheckRep} allowing tests to be serialized.
- * 
+ *
  * Also see <code>CheckRep.writeReplace</code>.
  */
 public class SerializableCheckRepContract implements Serializable {

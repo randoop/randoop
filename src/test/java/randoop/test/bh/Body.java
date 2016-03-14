@@ -1,15 +1,15 @@
 package randoop.test.bh;
+
 import java.util.Enumeration;
 
 /**
  * A class used to representing particles in the N-body simulation.
  **/
-public final class Body extends Node
-{
+public final class Body extends Node {
   MathVector vel;
   MathVector acc;
   MathVector newAcc;
-  double     phi;
+  double phi;
 
   private Body next;
   private Body procNext;
@@ -17,13 +17,12 @@ public final class Body extends Node
   /**
    * Create an empty body.
    **/
-  public Body()
-  {
-    vel      = new MathVector();
-    acc      = new MathVector();
-    newAcc   = new MathVector();
-    phi      = 0.0;
-    next     = null;
+  public Body() {
+    vel = new MathVector();
+    acc = new MathVector();
+    newAcc = new MathVector();
+    phi = 0.0;
+    next = null;
     procNext = null;
   }
 
@@ -31,8 +30,7 @@ public final class Body extends Node
    * Set the next body in the list.
    * @param n the body
    **/
-  public final void setNext(Body n)
-  {
+  public final void setNext(Body n) {
     next = n;
   }
 
@@ -40,8 +38,7 @@ public final class Body extends Node
    * Get the next body in the list.
    * @return the next body
    **/
-  public final Body getNext()
-  {
+  public final Body getNext() {
     return next;
   }
 
@@ -49,8 +46,7 @@ public final class Body extends Node
    * Set the next body in the list.
    * @param n the body
    **/
-  public final void setProcNext(Body n)
-  {
+  public final void setProcNext(Body n) {
     procNext = n;
   }
 
@@ -58,8 +54,7 @@ public final class Body extends Node
    * Get the next body in the list.
    * @return the next body
    **/
-  public final Body getProcNext()
-  {
+  public final Body getProcNext() {
     return procNext;
   }
 
@@ -68,15 +63,14 @@ public final class Body extends Node
    * @param tree the root of the tree.
    * @param nsteps the current time step
    **/
-  public final void expandBox(Tree tree, int nsteps)
-  {
+  public final void expandBox(Tree tree, int nsteps) {
     MathVector rmid = new MathVector();
 
     boolean inbox = icTest(tree);
     while (!inbox) {
       double rsize = tree.rsize;
       rmid.addScalar(tree.rmin, 0.5 * rsize);
-      
+
       for (int k = 0; k < MathVector.NDIM; k++) {
         if (pos.value(k) < rmid.value(k)) {
           double rmin = tree.rmin.value(k);
@@ -100,12 +94,11 @@ public final class Body extends Node
    * Check the bounds of the body and return true if it isn't in the
    * correct bounds.
    **/
-  public final boolean icTest(Tree tree)
-  {
+  public final boolean icTest(Tree tree) {
     double pos0 = pos.value(0);
     double pos1 = pos.value(1);
     double pos2 = pos.value(2);
-    
+
     // by default, it is in bounds
     boolean result = true;
 
@@ -132,13 +125,12 @@ public final class Body extends Node
    * create a cell and attach this body to the cell.
    * @param p the body to insert
    * @param xpic
-   * @param l 
+   * @param l
    * @param tree the root of the data structure
    * @return the subtree with the new body inserted
    **/
   @Override
-public final Node loadTree(Body p, MathVector xpic, int l, Tree tree)
-  {
+  public final Node loadTree(Body p, MathVector xpic, int l, Tree tree) {
     // create a Cell
     Cell retval = new Cell();
     int si = subindex(tree, l);
@@ -148,10 +140,8 @@ public final Node loadTree(Body p, MathVector xpic, int l, Tree tree)
     // move down one level
     si = oldSubindex(xpic, l);
     Node rt = retval.subp[si];
-    if (rt != null) 
-      retval.subp[si] = rt.loadTree(p, xpic, l >> 1, tree);
-    else 
-      retval.subp[si] = p;
+    if (rt != null) retval.subp[si] = rt.loadTree(p, xpic, l >> 1, tree);
+    else retval.subp[si] = p;
     return retval;
   }
 
@@ -160,8 +150,7 @@ public final Node loadTree(Body p, MathVector xpic, int l, Tree tree)
    * @return the mass of this node
    **/
   @Override
-public final double hackcofm()
-  {
+  public final double hackcofm() {
     return mass;
   }
 
@@ -169,13 +158,19 @@ public final double hackcofm()
    * Return an enumeration of the bodies
    * @return an enumeration of the bodies
    **/
-  public final Enumeration elements()
-  {
+  public final Enumeration elements() {
     // a local class that implements the enumerator
     class Enumerate implements Enumeration {
       private Body current;
-      public Enumerate() { this.current = Body.this; }
-      public boolean hasMoreElements() { return (current != null);  }
+
+      public Enumerate() {
+        this.current = Body.this;
+      }
+
+      public boolean hasMoreElements() {
+        return (current != null);
+      }
+
       public Object nextElement() {
         Object retval = current;
         current = current.next;
@@ -185,13 +180,19 @@ public final double hackcofm()
     return new Enumerate();
   }
 
-  public final Enumeration elementsRev()
-  {
+  public final Enumeration elementsRev() {
     // a local class that implements the enumerator
     class Enumerate implements Enumeration {
       private Body current;
-      public Enumerate() { this.current = Body.this; }
-      public boolean hasMoreElements() {  return (current != null);  }
+
+      public Enumerate() {
+        this.current = Body.this;
+      }
+
+      public boolean hasMoreElements() {
+        return (current != null);
+      }
+
       public Object nextElement() {
         Object retval = current;
         current = current.procNext;
@@ -207,8 +208,7 @@ public final double hackcofm()
    * Combination of intcoord and oldSubindex.
    * @param tree the root of the tree
    **/
-  public final int subindex(Tree tree, int l)
-  {
+  public final int subindex(Tree tree, int l) {
     MathVector xp = new MathVector();
 
     double xsc = (pos.value(0) - tree.rmin.value(0)) / tree.rsize;
@@ -222,7 +222,7 @@ public final double hackcofm()
 
     int i = 0;
     for (int k = 0; k < MathVector.NDIM; k++) {
-      if (((int)xp.value(k) & l) != 0) {
+      if (((int) xp.value(k) & l) != 0) {
         i += Cell.NSUB >> (k + 1);
       }
     }
@@ -234,9 +234,8 @@ public final double hackcofm()
    * The original olden version calls a routine named "walkscan",
    * but we use the same name that is in the Barnes code.
    **/
-  public final void hackGravity(double rsize, Node root)
-  {
-    MathVector pos0 = (MathVector)pos.clone();
+  public final void hackGravity(double rsize, Node root) {
+    MathVector pos0 = (MathVector) pos.clone();
 
     HG hg = new HG(this, pos);
     hg = root.walkSubTree(rsize * rsize, hg);
@@ -248,10 +247,8 @@ public final double hackcofm()
    * Recursively walk the tree to do hackwalk calculation
    **/
   @Override
-public final HG walkSubTree(double dsq, HG hg)
-  {
-    if (this != hg.pskip)
-      hg = gravSub(hg);
+  public final HG walkSubTree(double dsq, HG hg) {
+    if (this != hg.pskip) hg = gravSub(hg);
     return hg;
   }
 
@@ -260,10 +257,7 @@ public final HG walkSubTree(double dsq, HG hg)
    * @return a string represenation of a body.
    **/
   @Override
-public String toString()
-  {
+  public String toString() {
     return "Body " + super.toString();
   }
-
 }
-

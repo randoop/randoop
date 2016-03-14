@@ -47,24 +47,39 @@ public class ICSE07ContainersTest extends TestCase {
 
   ForwardGenerator explorer = null;
 
-  public static void runRandoop(String name, List<Class<?>> classList,
-      Pattern pattern, IStopper stopper, Set<String> excludeNames) {
+  public static void runRandoop(
+      String name,
+      List<Class<?>> classList,
+      Pattern pattern,
+      IStopper stopper,
+      Set<String> excludeNames) {
 
     System.out.println("ICSE 2006 container: " + name);
 
     List<Operation> statements =
-      OperationExtractor.getOperations(classList, new DefaultReflectionPredicate(pattern,excludeNames));
+        OperationExtractor.getOperations(
+            classList, new DefaultReflectionPredicate(pattern, excludeNames));
     System.out.println("Number of operations: " + statements.size());
     assertTrue("model should not be empty", !statements.isEmpty());
     ComponentManager componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
-    assertEquals("Number of seed sequences should be same as default seeds",SeedSequences.defaultSeeds().size(),componentMgr.numGeneratedSequences());
-    ForwardGenerator explorer = new ForwardGenerator(statements,
-        120000 /* two minutes */, Integer.MAX_VALUE, Integer.MAX_VALUE, componentMgr, stopper, null);
+    assertEquals(
+        "Number of seed sequences should be same as default seeds",
+        SeedSequences.defaultSeeds().size(),
+        componentMgr.numGeneratedSequences());
+    ForwardGenerator explorer =
+        new ForwardGenerator(
+            statements,
+            120000 /* two minutes */,
+            Integer.MAX_VALUE,
+            Integer.MAX_VALUE,
+            componentMgr,
+            stopper,
+            null);
     explorer.addTestCheckGenerator(new DummyCheckGenerator());
     explorer.setObjectCache(new ObjectCache(new EverythingIsDifferentMatcher()));
     GenInputsAbstract.maxsize = 10000; // Integer.MAX_VALUE;
     GenInputsAbstract.repeat_heuristic = true;
-    ReflectionExecutor.usethreads  = false;
+    ReflectionExecutor.usethreads = false;
     randoop.main.GenInputsAbstract.debug_checks = false;
     explorer.explore();
   }
@@ -74,19 +89,26 @@ public class ICSE07ContainersTest extends TestCase {
     classList.add(FibHeap.class);
     FibHeap.rand.setSeed(0);
     randoop.util.Randomness.reset(0);
-    IStopper stopper = new IStopper() {
-      @Override
-      public boolean stop() {
-        return FibHeap.tests.size() >= 96;
-      }
-    };
+    IStopper stopper =
+        new IStopper() {
+          @Override
+          public boolean stop() {
+            return FibHeap.tests.size() >= 96;
+          }
+        };
     Set<String> excludeNames = new TreeSet<>();
     for (Class<?> c : classList) {
       for (Field f : c.getFields()) {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    runRandoop("FibHeap", classList, Pattern.compile("decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty()|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"), stopper, excludeNames);
+    runRandoop(
+        "FibHeap",
+        classList,
+        Pattern.compile(
+            "decreaseKey|delete\\(randoop.test.issta2006.Node\\)|empty()|insert\\(randoop.test.issta2006.Node\\)|min\\(\\)|size\\(\\)|union"),
+        stopper,
+        excludeNames);
     assertEquals(96, FibHeap.tests.size());
   }
 
@@ -94,19 +116,21 @@ public class ICSE07ContainersTest extends TestCase {
     List<Class<?>> classList = new ArrayList<Class<?>>();
     classList.add(BinTree.class);
     randoop.util.Randomness.reset(0);
-    IStopper stopper = new IStopper() {
-      @Override
-      public boolean stop() {
-        return BinTree.tests.size() >= 54;
-      }
-    };
+    IStopper stopper =
+        new IStopper() {
+          @Override
+          public boolean stop() {
+            return BinTree.tests.size() >= 54;
+          }
+        };
     Set<String> excludeNames = new TreeSet<>();
     for (Class<?> c : classList) {
       for (Field f : c.getFields()) {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    runRandoop("BinTree", classList, Pattern.compile("find\\(int\\)|gen_native"), stopper, excludeNames);
+    runRandoop(
+        "BinTree", classList, Pattern.compile("find\\(int\\)|gen_native"), stopper, excludeNames);
     assertEquals(54, BinTree.tests.size());
   }
 
@@ -114,19 +138,26 @@ public class ICSE07ContainersTest extends TestCase {
     List<Class<?>> classList = new ArrayList<Class<?>>();
     classList.add(TreeMap.class);
     randoop.util.Randomness.reset(0);
-    IStopper stopper = new IStopper() {
-      @Override
-      public boolean stop() {
-        return TreeMap.tests.size() >= 106;
-      }
-    };
+    IStopper stopper =
+        new IStopper() {
+          @Override
+          public boolean stop() {
+            return TreeMap.tests.size() >= 106;
+          }
+        };
     Set<String> excludeNames = new TreeSet<>();
     for (Class<?> c : classList) {
       for (Field f : c.getFields()) {
         excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       }
     }
-    runRandoop("TreeMap", classList, Pattern.compile("toString|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"), stopper, excludeNames);
+    runRandoop(
+        "TreeMap",
+        classList,
+        Pattern.compile(
+            "toString|size\\(\\)|containsKey\\(int\\)|print\\(\\)|concreteString\\(int\\)"),
+        stopper,
+        excludeNames);
     assertEquals(106, TreeMap.tests.size());
   }
 
@@ -134,12 +165,13 @@ public class ICSE07ContainersTest extends TestCase {
     List<Class<?>> classList = new ArrayList<Class<?>>();
     classList.add(BinomialHeap.class);
     randoop.util.Randomness.reset(0);
-    IStopper stopper = new IStopper() {
-      @Override
-      public boolean stop() {
-        return BinomialHeap.tests.size() >= 101;
-      }
-    };
+    IStopper stopper =
+        new IStopper() {
+          @Override
+          public boolean stop() {
+            return BinomialHeap.tests.size() >= 101;
+          }
+        };
     Set<String> excludeNames = new TreeSet<>();
     for (Class<?> c : classList) {
       for (Field f : c.getFields()) {
@@ -149,5 +181,4 @@ public class ICSE07ContainersTest extends TestCase {
     runRandoop("BinomialHeap", classList, Pattern.compile("findMinimum()"), stopper, excludeNames);
     assertEquals(101, randoop.test.issta2006.BinomialHeap.tests.size());
   }
-
 }

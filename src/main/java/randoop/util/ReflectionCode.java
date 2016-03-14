@@ -19,7 +19,9 @@ public abstract class ReflectionCode {
    * sets the security manager's status to ON. Before exiting, this method sets
    * the security manager's status to its status before this call.
    */
-  public final void runReflectionCode() throws InstantiationException, IllegalAccessException, InvocationTargetException, NotCaughtIllegalStateException {
+  public final void runReflectionCode()
+      throws InstantiationException, IllegalAccessException, InvocationTargetException,
+          NotCaughtIllegalStateException {
 
     // The following few lines attempt to find out if there is a
     // RandoopSecurityManager installed, and if so, record its status.
@@ -34,7 +36,9 @@ public abstract class ReflectionCode {
     }
 
     // At this point, this is the state of the method.
-    assert Util.iff(security != null && security instanceof RandoopSecurityManager, randoopsecurity != null && oldStatus != null);
+    assert Util.iff(
+        security != null && security instanceof RandoopSecurityManager,
+        randoopsecurity != null && oldStatus != null);
 
     try {
 
@@ -57,13 +61,13 @@ public abstract class ReflectionCode {
    *
    */
   protected abstract void runReflectionCodeRaw()
-      throws InstantiationException, IllegalAccessException, InvocationTargetException, NotCaughtIllegalStateException;
+      throws InstantiationException, IllegalAccessException, InvocationTargetException,
+          NotCaughtIllegalStateException;
 
   protected final void setRunAlready() {
     // called from inside runReflectionCode, so use
     // NotCaughtIllegalStateException
-    if (runAlready)
-      throw new NotCaughtIllegalStateException("cannot call this twice");
+    if (runAlready) throw new NotCaughtIllegalStateException("cannot call this twice");
     runAlready = true;
   }
 

@@ -10,7 +10,10 @@ public class SequenceParseException extends Exception {
   public SequenceParseException(String msg, List<String> statements, int statementCount) {
 
     StringBuilder b = new StringBuilder();
-    b.append("Error while parsing the following list of strings as a sequence (error was at index " + statementCount + "): ");
+    b.append(
+        "Error while parsing the following list of strings as a sequence (error was at index "
+            + statementCount
+            + "): ");
     b.append(msg);
     b.append("\n\n");
     b.append(" While parsing the following sequence:\n");
@@ -29,5 +32,4 @@ public class SequenceParseException extends Exception {
   public String getMessage() {
     return message;
   }
-
 }

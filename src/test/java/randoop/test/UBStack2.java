@@ -1,8 +1,8 @@
 package randoop.test;
 
 public class UBStack2 {
-  private int [] elems;
-  private int numberOfElements; 
+  private int[] elems;
+  private int numberOfElements;
   private int max;
 
   public UBStack2() {
@@ -17,7 +17,7 @@ public class UBStack2 {
 
     alreadyMember = false;
 
-    for (index=0; index<numberOfElements; index++) {
+    for (index = 0; index < numberOfElements; index++) {
       if (k == elems[index]) {
         alreadyMember = true;
         break;
@@ -25,12 +25,11 @@ public class UBStack2 {
     }
 
     if (alreadyMember) {
-      for (int j=index; j<numberOfElements-1; j++) {
-        elems[j] = elems[j+1];
+      for (int j = index; j < numberOfElements - 1; j++) {
+        elems[j] = elems[j + 1];
       }
-      elems[numberOfElements-1] = k;
-    }
-    else {
+      elems[numberOfElements - 1] = k;
+    } else {
       if (numberOfElements < max) {
         elems[numberOfElements] = k;
         numberOfElements++;
@@ -43,23 +42,19 @@ public class UBStack2 {
   }
 
   public void pop() {
-    numberOfElements --;
+    numberOfElements--;
   }
-
 
   public int top() {
     if (numberOfElements < 1) {
       //System.out.println("Empty Stack");
       return -1;
-    } else 
-      return elems[numberOfElements-1];
+    } else return elems[numberOfElements - 1];
   }
 
   public boolean isEmpty() {
-    if (numberOfElements==0)
-      return true;
-    else
-      return false;
+    if (numberOfElements == 0) return true;
+    else return false;
   }
 
   public int maxSize() {
@@ -67,23 +62,18 @@ public class UBStack2 {
   }
 
   public boolean isMember(int k) {
-    for (int index=0; index<numberOfElements; index++)
-      if ( k==elems[index])
-        return true;
-    return false;            
+    for (int index = 0; index < numberOfElements; index++) if (k == elems[index]) return true;
+    return false;
   }
 
   @Override
   public boolean equals(Object o) {
-    UBStack2 s = (UBStack2)o;
-    if (s.maxSize() != max)
-      return false;
-    if (s.getNumberOfElements() != numberOfElements)
-      return false;        
-    int [] sElems = s.getArray();        
-    for (int j=0; j<numberOfElements; j++)    {
-      if ( elems[j] != sElems[j])
-        return false;
+    UBStack2 s = (UBStack2) o;
+    if (s.maxSize() != max) return false;
+    if (s.getNumberOfElements() != numberOfElements) return false;
+    int[] sElems = s.getArray();
+    for (int j = 0; j < numberOfElements; j++) {
+      if (elems[j] != sElems[j]) return false;
     }
     return true;
   }
@@ -94,10 +84,9 @@ public class UBStack2 {
   }
 
   public int[] getArray() {
-    int [] a;
+    int[] a;
     a = new int[max];
-    for (int j=0; j<numberOfElements; j++)
-      a[j] = elems[j];
+    for (int j = 0; j < numberOfElements; j++) a[j] = elems[j];
     return a;
   }
 
@@ -108,5 +97,4 @@ public class UBStack2 {
   public boolean isFull() {
     return numberOfElements == max;
   }
-
 }

@@ -38,10 +38,8 @@ public class NormalExecution extends ExecutionOutcome {
   public String toString() {
     StringBuilder b = new StringBuilder();
     b.append("// <NormalExecution object=");
-    if (result == null)
-      b.append("null");
-    else
-      b.append("object-of-type-" + result.getClass().getName());
+    if (result == null) b.append("null");
+    else b.append("object-of-type-" + result.getClass().getName());
     b.append(">;");
     return b.toString();
   }

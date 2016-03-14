@@ -82,8 +82,7 @@ public class MutableSequence {
     List<Integer> uses = new ArrayList<Integer>();
     // All uses will come after declaration.
     for (int i = v.getDeclIndex() + 1; i < size(); i++) {
-      if (statements.get(i).inputs.contains(v))
-        uses.add(i);
+      if (statements.get(i).inputs.contains(v)) uses.add(i);
     }
     return uses;
   }
@@ -110,8 +109,7 @@ public class MutableSequence {
     infvars.add(v);
 
     for (MutableVariable v2 : v.getCreatingStatementWithInputs().inputs) {
-      if (v2.getCreatingStatementWithInputs().operation instanceof NonreceiverTerm)
-        continue;
+      if (v2.getCreatingStatementWithInputs().operation instanceof NonreceiverTerm) continue;
       if (!infvars.contains(v2)) {
         infvars.add(v2);
         findInfluencingVars(v2, infvars);
@@ -128,8 +126,7 @@ public class MutableSequence {
       }
 
       for (MutableVariable v2 : statements.get(i).inputs) {
-        if (v2.getCreatingStatementWithInputs().operation instanceof NonreceiverTerm)
-          continue;
+        if (v2.getCreatingStatementWithInputs().operation instanceof NonreceiverTerm) continue;
         if (!infvars.contains(v2)) {
           infvars.add(v2);
           findInfluencingVars(v2, infvars);
@@ -157,14 +154,11 @@ public class MutableSequence {
   }
 
   public int getIndex(MutableVariable v) {
-    if (v == null)
-      throw new IllegalArgumentException();
-    if (v.owner != this)
-      throw new IllegalArgumentException();
+    if (v == null) throw new IllegalArgumentException();
+    if (v.owner != this) throw new IllegalArgumentException();
     for (int i = 0; i < statements.size(); i++) {
       MutableStatement st = statements.get(i);
-      if (st.result == v)
-        return i;
+      if (st.result == v) return i;
     }
     throw new BugInRandoopException();
   }
@@ -174,8 +168,7 @@ public class MutableSequence {
   }
 
   public MutableVariable getVariable(int i) {
-    if (i < 0 || i >= this.size())
-      throw new IllegalArgumentException();
+    if (i < 0 || i >= this.size()) throw new IllegalArgumentException();
     return this.statements.get(i).result;
   }
 
@@ -221,7 +214,8 @@ public class MutableSequence {
 
     List<MutableStatement> sts = new ArrayList<MutableStatement>();
 
-    Map<MutableVariable, MutableVariable> varmap = new LinkedHashMap<MutableVariable, MutableVariable>();
+    Map<MutableVariable, MutableVariable> varmap =
+        new LinkedHashMap<MutableVariable, MutableVariable>();
 
     for (MutableStatement oldst : seq.statements) {
 

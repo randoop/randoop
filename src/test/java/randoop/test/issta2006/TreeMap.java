@@ -3,9 +3,6 @@ package randoop.test.issta2006;
 import java.util.HashSet;
 import java.util.Set;
 
-
-
-
 //Taken from JPF examples directory.
 
 public class TreeMap {
@@ -19,17 +16,18 @@ public class TreeMap {
 
   private transient int size = 0;
 
-  private void incrementSize() { /*modCount++;*/
+  private void incrementSize() {
+      /*modCount++;*/
     size++;
   }
 
-  private void decrementSize() { /*modCount++;*/
+  private void decrementSize() {
+      /*modCount++;*/
     size--;
   }
 
   //--------------------------------------------------------------------
-  private static void outputTestSequence(int number) {
-  }
+  private static void outputTestSequence(int number) {}
 
   private native boolean checkAbstractState(int which);
 
@@ -62,8 +60,7 @@ public class TreeMap {
     if (!tests.contains(res)) {
       tests.add(res);
       System.out.println("TIME=" + (System.currentTimeMillis() - startTime));
-      System.out.println("Test case number " + tests.size() + " for '"
-          + res + "': ");
+      System.out.println("Test case number " + tests.size() + " for '" + res + "': ");
       //System.out.println("tree = " + tree);
       counter = tests.size();
       return tests.size();
@@ -71,16 +68,14 @@ public class TreeMap {
     return 0;
   }
 
-  void gen(int branch, Entry e) {//SPECIFY
-    int c = gen_native(branch, e, root);//SPECIFY
-    if (c != 0)
-      outputTestSequence(c);
+  void gen(int branch, Entry e) { //SPECIFY
+    int c = gen_native(branch, e, root); //SPECIFY
+    if (c != 0) outputTestSequence(c);
   }
 
   //-------------------------------------------------------------------
 
-  public TreeMap() {
-  }
+  public TreeMap() {}
 
   public int size() {
     return size;
@@ -93,12 +88,9 @@ public class TreeMap {
   private Entry getEntry(int key) {
     Entry p = root;
     while (p != null) {
-      if (key == p.key)
-        return p;
-      else if (key < p.key)
-        p = p.left;
-      else
-        p = p.right;
+      if (key == p.key) return p;
+      else if (key < p.key) p = p.left;
+      else p = p.right;
     }
     return null;
   }
@@ -149,23 +141,20 @@ public class TreeMap {
 
   public void print() {
     //System.out.println("*******************************************");
-    if (root != null)
-      root.print(0);
+    if (root != null) root.print(0);
     //System.out.println("*******************************************");
   }
 
   @Override
   public String toString() {
     String res = "";
-    if (root != null)
-      res = root.toString();
+    if (root != null) res = root.toString();
     return res;
   }
 
   public String concreteString(int max_level) {
     String res = "";
-    if (root != null)
-      res = root.concreteString(max_level, 0);
+    if (root != null) res = root.concreteString(max_level, 0);
     return res;
   }
 
@@ -204,15 +193,11 @@ public class TreeMap {
     @Override
     public String toString() {
       String res = "{ " + (color == BLACK ? "B" : "R") + " ";
-      if (left == null)
-        res += "null";
-      else
-        res += left.toString();
+      if (left == null) res += "null";
+      else res += left.toString();
       res += " ";
-      if (right == null)
-        res += "null";
-      else
-        res += right.toString();
+      if (right == null) res += "null";
+      else res += right.toString();
       res += " }";
       return res;
     }
@@ -224,15 +209,11 @@ public class TreeMap {
         //        System.out.println("Brekekek");
       } else {
         res = "{ " + (color == BLACK ? "B" : "R") + key + " ";
-        if (left == null)
-          res += "null";
-        else
-          res += left.concreteString(max_level, cur_level + 1);
+        if (left == null) res += "null";
+        else res += left.concreteString(max_level, cur_level + 1);
         res += " ";
-        if (right == null)
-          res += "null";
-        else
-          res += right.concreteString(max_level, cur_level + 1);
+        if (right == null) res += "null";
+        else res += right.concreteString(max_level, cur_level + 1);
         res += " }";
       }
 
@@ -248,17 +229,14 @@ public class TreeMap {
         //System.out.print(" ");
       }
       //System.out.println("L:");
-      if (left != null)
-        left.print(k + 2);
+      if (left != null) left.print(k + 2);
 
       for (int i = 0; i < k; i++) {
         //System.out.print(" ");
       }
       //System.out.println("R:");
-      if (right != null)
-        right.print(k + 2);
+      if (right != null) right.print(k + 2);
     }
-
   }
 
   private Entry successor(Entry t) {
@@ -293,8 +271,7 @@ public class TreeMap {
   }
 
   private static void setColor(Entry p, boolean c) {
-    if (p != null)
-      p.color = c;
+    if (p != null) p.color = c;
   }
 
   private static Entry leftOf(Entry p) {
@@ -476,8 +453,7 @@ public class TreeMap {
           sib = rightOf(parentOf(x));
         }
 
-        if (colorOf(leftOf(sib)) == BLACK
-            && colorOf(rightOf(sib)) == BLACK) {
+        if (colorOf(leftOf(sib)) == BLACK && colorOf(rightOf(sib)) == BLACK) {
           gen(35, x);
           setColor(sib, RED);
           x = parentOf(x);
@@ -506,8 +482,7 @@ public class TreeMap {
           sib = leftOf(parentOf(x));
         }
 
-        if (colorOf(rightOf(sib)) == BLACK
-            && colorOf(leftOf(sib)) == BLACK) {
+        if (colorOf(rightOf(sib)) == BLACK && colorOf(leftOf(sib)) == BLACK) {
           gen(38, x);
           setColor(sib, RED);
           x = parentOf(x);
@@ -627,5 +602,4 @@ public class TreeMap {
       root = x;
     }
   }
-
 }

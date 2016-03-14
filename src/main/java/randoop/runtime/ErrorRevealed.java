@@ -14,10 +14,12 @@ public class ErrorRevealed implements IMessage {
   // Unmodifiable collection.
   public final List<String> failingClassNames;
 
-  public ErrorRevealed(String testCode, String description, List<String> failingClassNames, File junitFile) {
+  public ErrorRevealed(
+      String testCode, String description, List<String> failingClassNames, File junitFile) {
     this.testCode = testCode;
     this.description = description;
-    this.failingClassNames = Collections.unmodifiableList(new LinkedList<String>(failingClassNames));
+    this.failingClassNames =
+        Collections.unmodifiableList(new LinkedList<String>(failingClassNames));
     this.junitFile = junitFile;
   }
 
@@ -31,5 +33,4 @@ public class ErrorRevealed implements IMessage {
   public List<String> getFailingClassNames() {
     return failingClassNames;
   }
-
 }

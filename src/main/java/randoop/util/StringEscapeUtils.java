@@ -3,13 +3,13 @@
  */
 /*
  * Copyright 2002-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,7 +51,7 @@ public class StringEscapeUtils {
    * <p>
    * Instead, the class should be used as:
    * </p>
-   * 
+   *
    * <pre>
    * StringEscapeUtils.escapeJava("foo");
    * </pre>
@@ -88,7 +88,7 @@ public class StringEscapeUtils {
    * <p>
    * Example:
    * </p>
-   * 
+   *
    * <pre>
    * input string: He didn't say, "Stop!"
    * output string: He didn't say, \"Stop!\"
@@ -107,11 +107,11 @@ public class StringEscapeUtils {
    * Escapes the characters in a <code>String</code> using Java String rules to
    * a <code>Writer</code>.
    * </p>
-   * 
+   *
    * <p>
    * A <code>null</code> string input has no effect.
    * </p>
-   * 
+   *
    * @see #escapeJava(java.lang.String)
    * @param out
    *          Writer to write escaped string into
@@ -141,7 +141,8 @@ public class StringEscapeUtils {
     }
   }
 
-  private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote) throws IOException {
+  private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote)
+      throws IOException {
     if (out == null) {
       throw new IllegalArgumentException("The Writer must not be null");
     }
@@ -220,7 +221,7 @@ public class StringEscapeUtils {
    * Returns an upper case hexadecimal <code>String</code> for the given
    * character.
    * </p>
-   * 
+   *
    * @param ch
    *          The character to convert.
    * @return An upper case hexadecimal <code>String</code>
@@ -228,5 +229,4 @@ public class StringEscapeUtils {
   private static String hex(char ch) {
     return Integer.toHexString(ch).toUpperCase();
   }
-
 }

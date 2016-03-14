@@ -46,7 +46,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    *          the predicate to test for exceptions that are errors
    *
    */
-  public ContractCheckingVisitor(List<ObjectContract> contracts, ExceptionPredicate exceptionPredicate) {
+  public ContractCheckingVisitor(
+      List<ObjectContract> contracts, ExceptionPredicate exceptionPredicate) {
     this.contracts = new ArrayList<ObjectContract>();
     for (ObjectContract c : contracts) {
       if (c.getArity() > 2)
@@ -103,7 +104,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
   /**
    * Checks a binary contract over the set of values defined in the sequence,
    * and attaches failing checks at final statement of the sequence.
-   * 
+   *
    * @param s
    *          the executable sequence
    * @param c
@@ -113,7 +114,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * @param checks
    *          the {@code TestChecks} to which new checks are added
    */
-  private void checkBinary(ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
+  private void checkBinary(
+      ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
     for (Integer i : values) {
       for (Integer j : values) {
 
@@ -127,16 +129,18 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         if (Log.isLoggingOn())
           Log.logLine("Checking contract " + c.getClass() + " on " + i + ", " + j);
 
-        ExecutionOutcome exprOutcome = ObjectContractUtils.execute(c, ((NormalExecution) result1).getRuntimeValue(),
-            ((NormalExecution) result2).getRuntimeValue());
+        ExecutionOutcome exprOutcome =
+            ObjectContractUtils.execute(
+                c,
+                ((NormalExecution) result1).getRuntimeValue(),
+                ((NormalExecution) result2).getRuntimeValue());
 
         Check obs = null;
 
         if (exprOutcome instanceof NormalExecution) {
           NormalExecution e = (NormalExecution) exprOutcome;
           if (e.getRuntimeValue().equals(true)) {
-            if (Log.isLoggingOn())
-              Log.logLine("Contract returned true.");
+            if (Log.isLoggingOn()) Log.logLine("Contract returned true.");
             continue; // Behavior ok.
           } else {
             if (Log.isLoggingOn())
@@ -149,8 +153,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
           }
         } else if (exprOutcome instanceof ExceptionalExecution) {
           Throwable e = ((ExceptionalExecution) exprOutcome).getException();
-          if (Log.isLoggingOn())
-            Log.logLine("Contract threw exception: " + e.getMessage());
+          if (Log.isLoggingOn()) Log.logLine("Contract threw exception: " + e.getMessage());
           if (e instanceof BugInRandoopException) {
             throw new BugInRandoopException(e);
           }
@@ -168,7 +171,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
   /**
    * Checks a unary contract over the set of values defined in a sequence, and
    * attaches failing checks to the final statement of the sequence.
-   * 
+   *
    * @param s
    *          the executable sequence where values are defined
    * @param c
@@ -178,7 +181,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * @param checks
    *          the {@code TestChecks} to which new checks are added
    */
-  private void checkUnary(ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
+  private void checkUnary(
+      ExecutableSequence s, ObjectContract c, Set<Integer> values, ErrorRevealingChecks checks) {
 
     for (Integer i : values) {
 
@@ -187,7 +191,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         throw new Error("Abnormal execution in sequence: " + s);
       }
 
-      ExecutionOutcome exprOutcome = ObjectContractUtils.execute(c, ((NormalExecution) result).getRuntimeValue());
+      ExecutionOutcome exprOutcome =
+          ObjectContractUtils.execute(c, ((NormalExecution) result).getRuntimeValue());
 
       if (exprOutcome instanceof NormalExecution) {
         NormalExecution e = (NormalExecution) exprOutcome;
@@ -198,8 +203,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
         // Execution of contract resulted in exception. Do not create
         // a contract-violation decoration.
         Throwable e = ((ExceptionalExecution) exprOutcome).getException();
-        if (Log.isLoggingOn())
-          Log.logLine("Contract threw exception: " + e.getMessage());
+        if (Log.isLoggingOn()) Log.logLine("Contract threw exception: " + e.getMessage());
         if (e instanceof BugInRandoopException) {
           throw new BugInRandoopException(e);
         }
@@ -225,7 +229,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * types to the position of the given type.
    * <p>
    * If an element is primitive, a String, or null, its index is not returned.
-   * 
+   *
    * @param s
    *          the code sequence
    * @return map indicating statement positions where variables of a type are
@@ -240,7 +244,9 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
       if (result instanceof NormalExecution) {
 
         Class<?> outputType = s.sequence.getStatement(i).getOutputType();
-        if (!outputType.equals(void.class) && !outputType.equals(String.class) && !PrimitiveTypes.isPrimitive(outputType)
+        if (!outputType.equals(void.class)
+            && !outputType.equals(String.class)
+            && !PrimitiveTypes.isPrimitive(outputType)
             && ((NormalExecution) result).getRuntimeValue() != null) {
           positionMap.add(outputType, i);
         }
@@ -248,9 +254,7 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
       } else {
         throw new Error("Abnormal execution in sequence: " + s);
       }
-
     }
     return positionMap;
   }
-
 }

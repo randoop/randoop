@@ -9,7 +9,7 @@ import randoop.types.TypeNames;
 /**
  * Serializable representation of {@link AccessibleField} allowing tests to be
  * serialized.
- * 
+ *
  * @see AccessibleField#writeReplace
  */
 public class SerializableAccessibleField implements Serializable {
@@ -32,5 +32,4 @@ public class SerializableAccessibleField implements Serializable {
     }
     return null;
   }
-
 }

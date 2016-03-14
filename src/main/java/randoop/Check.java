@@ -99,5 +99,4 @@ public interface Check extends Serializable {
    * @return true if check succeeded, and false otherwise.
    */
   boolean evaluate(Execution execution);
-
 }

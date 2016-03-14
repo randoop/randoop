@@ -14,8 +14,7 @@ public class StringLineIterator {
   private final Queue<String> words;
 
   public StringLineIterator(String words) {
-    if (words == null)
-      throw new IllegalArgumentException("words cannot be null.");
+    if (words == null) throw new IllegalArgumentException("words cannot be null.");
     this.words = new LinkedList<String>(Arrays.asList(words.split("\\s")));
   }
 
@@ -37,16 +36,14 @@ public class StringLineIterator {
    * by returning non-empty lines, the iterator will not terminate.
    *
    * @param length  the maximum line length
-   * @return the next line of words, no longer than maxium length 
+   * @return the next line of words, no longer than maxium length
    */
   public String nextLine(int length) {
-    if (length < 0)
-      throw new IllegalArgumentException("length cannot be negative");
-    if (!hasMoreWords())
-      throw new IllegalStateException("no more words.");
+    if (length < 0) throw new IllegalArgumentException("length cannot be negative");
+    if (!hasMoreWords()) throw new IllegalStateException("no more words.");
 
     StringBuffer b = new StringBuffer("");
-    for (;;) {
+    for (; ; ) {
       // Loop invariant
       assert b.length() <= length;
 
@@ -55,7 +52,8 @@ public class StringLineIterator {
         // No more words. Return current line.
         return b.toString();
       }
-      int lengthWithNextWord = b.length() + /* potential space */ (b.length() > 0 ? 1 : 0) + nextWord.length();
+      int lengthWithNextWord =
+          b.length() + /* potential space */ (b.length() > 0 ? 1 : 0) + nextWord.length();
       if (lengthWithNextWord > length) {
         // Adding another word (plus space to separate from the
         // last word currently in the line) would make the line too long.
@@ -63,8 +61,7 @@ public class StringLineIterator {
         return b.toString();
       }
       // Add another word and remove the word from queue.
-      if (b.length() > 0)
-        b.append(" ");
+      if (b.length() > 0) b.append(" ");
       b.append(nextWord);
       words.remove();
     }

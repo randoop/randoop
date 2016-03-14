@@ -16,15 +16,17 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
     String resourcename = "java.util.classlist.java1.6.txt";
 
     InputStream classStream =
-      ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
+        ForwardExplorerPerformanceTest.class.getResourceAsStream(resourcename);
 
     List<Operation> model =
-      OperationExtractor.getOperations(ClassReader.getClassesForStream(classStream, resourcename),null);
+        OperationExtractor.getOperations(
+            ClassReader.getClassesForStream(classStream, resourcename), null);
     assertFalse("model should not be empty", model.isEmpty());
     System.out.println("done creating model.");
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     GenInputsAbstract.debug_checks = false;
-    ForwardGenerator explorer = new ForwardGenerator(model, Long.MAX_VALUE, 100000, 100000, null, null, null);
+    ForwardGenerator explorer =
+        new ForwardGenerator(model, Long.MAX_VALUE, 100000, 100000, null, null, null);
     explorer.explore();
   }
 
@@ -32,5 +34,4 @@ public class RandoopPerformanceTest extends AbstractPerformanceTest {
   int expectedTimeMillis() {
     return 10000;
   }
-
 }

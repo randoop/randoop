@@ -10,7 +10,7 @@ public class AlwaysFalse<T> extends DefaultPredicate<T> {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return false, always
    */
   @Override
@@ -20,7 +20,7 @@ public class AlwaysFalse<T> extends DefaultPredicate<T> {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return the second predicate, since whether or-else is true determined by
    *         second predicate
    */
@@ -31,7 +31,7 @@ public class AlwaysFalse<T> extends DefaultPredicate<T> {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return this object since this object always false in and-also expression
    */
   @Override

@@ -61,47 +61,47 @@ public class LiteralFileReader {
    * Returns a map from class to list of constants.
    *
    * @param inFile  the input file
-   * @return the map from types to literal values 
+   * @return the map from types to literal values
    */
   public static MultiMap<Class<?>, NonreceiverTerm> parse(String inFile) {
 
     final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<Class<?>, NonreceiverTerm>();
 
-    RecordProcessor processor = new RecordProcessor() {
-      @Override
-      public void processRecord(List<String> lines) {
+    RecordProcessor processor =
+        new RecordProcessor() {
+          @Override
+          public void processRecord(List<String> lines) {
 
-        if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals(CLASSNAME))) {
-          throwInvalidRecordError("record does not begin with \"" + CLASSNAME + "\"", lines, 0);
-        }
+            if (!(lines.size() >= 1 && lines.get(0).trim().toUpperCase().equals(CLASSNAME))) {
+              throwInvalidRecordError("record does not begin with \"" + CLASSNAME + "\"", lines, 0);
+            }
 
-        if (!(lines.size() >= 2)) {
-          throwInvalidRecordError("class name missing", lines, 1);
-        }
+            if (!(lines.size() >= 2)) {
+              throwInvalidRecordError("class name missing", lines, 1);
+            }
 
-        Class<?> cls = null;
-        try {
-          cls = TypeNames.getTypeForName(lines.get(1));
-        } catch (ClassNotFoundException e) {
-          throwInvalidRecordError(e, lines, 1);
-        }
-        assert cls != null;
+            Class<?> cls = null;
+            try {
+              cls = TypeNames.getTypeForName(lines.get(1));
+            } catch (ClassNotFoundException e) {
+              throwInvalidRecordError(e, lines, 1);
+            }
+            assert cls != null;
 
-        if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals(LITERALS))) {
-          throwInvalidRecordError("Missing field \"" + LITERALS + "\"", lines, 2);
-        }
+            if (!(lines.size() >= 3 && lines.get(2).trim().toUpperCase().equals(LITERALS))) {
+              throwInvalidRecordError("Missing field \"" + LITERALS + "\"", lines, 2);
+            }
 
-        for (int i = 3; i < lines.size(); i++) {
-          try {
-            NonreceiverTerm p = NonreceiverTerm.parse(lines.get(i));
-            map.add(cls, p);
-          } catch (OperationParseException e) {
-            throwInvalidRecordError(e, lines, i);
+            for (int i = 3; i < lines.size(); i++) {
+              try {
+                NonreceiverTerm p = NonreceiverTerm.parse(lines.get(i));
+                map.add(cls, p);
+              } catch (OperationParseException e) {
+                throwInvalidRecordError(e, lines, i);
+              }
+            }
           }
-        }
-      }
-
-    };
+        };
 
     RecordListReader reader = new RecordListReader(CLASSLITERALS, processor);
     reader.parse(inFile);
@@ -111,7 +111,6 @@ public class LiteralFileReader {
 
   private static void throwInvalidRecordError(Exception e, List<String> lines, int i) {
     throw new Error(e);
-
   }
 
   private static void throwInvalidRecordError(String string, List<String> lines, int i) {
@@ -132,5 +131,4 @@ public class LiteralFileReader {
     }
     b.append("------------------------------\n");
   }
-
 }

@@ -22,7 +22,7 @@ package java2.util2;
  * provide poor performance if it were applied to a sequential access list,
  * and to alter their behavior if necessary to guarantee acceptable
  * performance.
- * 
+ *
  * <p>It is recognized that the distinction between random and sequential
  * access is often fuzzy.  For example, some <tt>List</tt> implementations
  * provide asymptotically linear access times if they get huge, but constant
@@ -40,10 +40,9 @@ package java2.util2;
  *         i.next();
  * </pre>
  *
- * <p>This interface is a member of the 
+ * <p>This interface is a member of the
  * <a href="{@docRoot}/../guide/collections/index.html">
  * Java Collections Framework</a>.
  *
  */
-public interface RandomAccess {
-}
+public interface RandomAccess {}

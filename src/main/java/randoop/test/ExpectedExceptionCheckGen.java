@@ -13,7 +13,7 @@ import randoop.test.predicate.ExceptionPredicate;
  * exception, generates an {@code ExpectedExceptionCheck} object when the
  * predicate is satisfied, and an {@code EmptyExceptionCheck} otherwise.
  * Resulting tests only enforce expected matching exceptions.
- * 
+ *
  * @see randoop.test.RegressionCaptureVisitor#visit(randoop.sequence.ExecutableSequence)
  */
 public class ExpectedExceptionCheckGen {
@@ -24,7 +24,7 @@ public class ExpectedExceptionCheckGen {
   /**
    * Create an object that generates expected exception checks for exceptions
    * that satisfy the given predicate, and empty exception checks for others.
-   * 
+   *
    * @param visibility
    *          a predicate to determine visibility of exception classes
    */
@@ -36,7 +36,7 @@ public class ExpectedExceptionCheckGen {
   /**
    * Constructs an {@code ExceptionCheck} for the given exception and statement
    * based on criteria of this generator.
-   * 
+   *
    * @param exec
    *          the exception outcome of executing the statement in a sequence
    * @param s
@@ -47,7 +47,8 @@ public class ExpectedExceptionCheckGen {
    *         statement if exception is checked, and an
    *         {@code EmptyExceptionCheck} otherwise
    */
-  public ExceptionCheck getExceptionCheck(ExceptionalExecution exec, ExecutableSequence s, int statementIndex) {
+  public ExceptionCheck getExceptionCheck(
+      ExceptionalExecution exec, ExecutableSequence s, int statementIndex) {
     Throwable e = exec.getException();
     String catchClassName = getCatchClassName(e.getClass());
     if (isExpected.test(exec, s)) {
@@ -59,7 +60,7 @@ public class ExpectedExceptionCheckGen {
 
   /**
    * Returns the nearest visible superclass -- usually the argument itself.
-   * 
+   *
    * @param c
    *          the class for which superclass is needed
    * @return the nearest public class that is the argument or a superclass
@@ -74,7 +75,7 @@ public class ExpectedExceptionCheckGen {
   /**
    * Returns the canonical name for the nearest visible class that will catch an
    * exception with the given class.
-   * 
+   *
    * @param c
    *          the exception class
    * @return the nearest public visible, c or a superclass of c
@@ -83,5 +84,4 @@ public class ExpectedExceptionCheckGen {
     Class<?> catchClass = nearestVisibleSuperclass(c);
     return catchClass.getCanonicalName();
   }
-
 }

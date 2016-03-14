@@ -2,23 +2,22 @@ package randoop.test.symexamples;
 
 import java.util.Iterator;
 
-public interface ListIterator extends Iterator
-{
-   boolean hasNext();
+public interface ListIterator extends Iterator {
+  boolean hasNext();
 
-   Object next();
+  Object next();
 
-   boolean hasPrevious();
+  boolean hasPrevious();
 
-   Object previous();
+  Object previous();
 
-   int nextIndex();
+  int nextIndex();
 
-   int previousIndex();
+  int previousIndex();
 
-   void remove();
+  void remove();
 
-   void set(Object o);
+  void set(Object o);
 
-   void add(Object o);
+  void add(Object o);
 }

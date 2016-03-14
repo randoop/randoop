@@ -2,16 +2,14 @@ package randoop.test.perimeter;
 /**
  * A class representing the South West quadrant of the image.
  **/
-public class SouthWest implements Quadrant
-{
+public class SouthWest implements Quadrant {
   /**
    * Return true iff this quadrant is adjacent to the boundary
    * of an image in the given direction.
    * @param direction the image boundary
    * @return true if the quadrant is adjacent, false otherwise.
    **/
-  public boolean adjacent(int direction)
-  {
+  public boolean adjacent(int direction) {
     return (direction == QuadTreeNode.SOUTH || direction == QuadTreeNode.WEST);
   }
 
@@ -21,8 +19,7 @@ public class SouthWest implements Quadrant
    * @param direction the image boundary
    * @return the reflected quadrant
    **/
-  public Quadrant reflect(int direction)
-  {
+  public Quadrant reflect(int direction) {
     if (direction == QuadTreeNode.WEST || direction == QuadTreeNode.EAST) {
       return cSouthEast;
     }
@@ -35,9 +32,7 @@ public class SouthWest implements Quadrant
    * @param node the node that we want the child from.
    * @return the child node representing this quadrant
    **/
-  public QuadTreeNode child(QuadTreeNode node)
-  {
+  public QuadTreeNode child(QuadTreeNode node) {
     return node.getSouthWest();
   }
-
 }

@@ -21,8 +21,7 @@ public class StatementCollectionWeightedTest extends TestCase {
     List<Class<?>> classes = new ArrayList<Class<?>>();
     classes.add(java.util.ArrayList.class);
 
-    List<Operation> statements = 
-      OperationExtractor.getOperations(classes, null);
+    List<Operation> statements = OperationExtractor.getOperations(classes, null);
     assertFalse("model should not be empty", statements.isEmpty());
     StringBuilder weightedMethods = new StringBuilder();
     weightedMethods.append("java.util.ArrayList.add(java.lang.Object)" + Util.newLine);
@@ -33,13 +32,13 @@ public class StatementCollectionWeightedTest extends TestCase {
     fail();
     //statements.assignWeights(stream);
 
-//  StatementKind addStatement = RMethod.getRMethod(java.util.ArrayList.class.getMethod("add", Object.class));
-//  for (StatementKind s : statements) {
-//  if (s.equals(addStatement)) {
-//  assertEquals(10.0, statements.getWeight(s));
-//  } else {
-//  assertEquals(1.0, statements.getWeight(s));
-//  }
-//  }
+    //  StatementKind addStatement = RMethod.getRMethod(java.util.ArrayList.class.getMethod("add", Object.class));
+    //  for (StatementKind s : statements) {
+    //  if (s.equals(addStatement)) {
+    //  assertEquals(10.0, statements.getWeight(s));
+    //  } else {
+    //  assertEquals(1.0, statements.getWeight(s));
+    //  }
+    //  }
   }
 }

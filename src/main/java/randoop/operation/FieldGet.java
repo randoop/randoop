@@ -73,7 +73,8 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-    assert statementInput.length == getInputTypes().size() : "expected " + getInputTypes().size() + " got " + statementInput.length;
+    assert statementInput.length == getInputTypes().size()
+        : "expected " + getInputTypes().size() + " got " + statementInput.length;
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
     Object input = statementInput.length == 0 ? null : statementInput[0];
@@ -88,7 +89,6 @@ public class FieldGet extends AbstractOperation implements Operation, Serializab
     } catch (Throwable thrown) {
       return new ExceptionalExecution(thrown, 0);
     }
-
   }
 
   /**

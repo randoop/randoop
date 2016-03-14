@@ -17,28 +17,25 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   private Throwable exceptionThrown;
 
   public ConstructorReflectionCode(Constructor<?> constructor, Object[] inputs) {
-    if (constructor == null)
-      throw new IllegalArgumentException("constrcutor is null");
-    if (inputs == null)
-      throw new IllegalArgumentException("inputs is null");
+    if (constructor == null) throw new IllegalArgumentException("constrcutor is null");
+    if (inputs == null) throw new IllegalArgumentException("inputs is null");
     this.constructor = constructor;
     this.inputs = inputs;
     checkRep();
   }
 
   private void checkRep() {
-    if (!GenInputsAbstract.debug_checks)
-      return;
-    String error = Reflection.checkArgumentTypes(inputs, constructor.getParameterTypes(), constructor);
-    if (error != null)
-      throw new IllegalArgumentException(error);
+    if (!GenInputsAbstract.debug_checks) return;
+    String error =
+        Reflection.checkArgumentTypes(inputs, constructor.getParameterTypes(), constructor);
+    if (error != null) throw new IllegalArgumentException(error);
   }
 
   @Override
-  public void runReflectionCodeRaw() throws InstantiationException, IllegalAccessException, InvocationTargetException {
+  public void runReflectionCodeRaw()
+      throws InstantiationException, IllegalAccessException, InvocationTargetException {
 
-    if (hasRunAlready())
-      throw new NotCaughtIllegalStateException("cannot run this twice " + this);
+    if (hasRunAlready()) throw new NotCaughtIllegalStateException("cannot run this twice " + this);
 
     this.setRunAlready();
 
@@ -65,15 +62,13 @@ public final class ConstructorReflectionCode extends ReflectionCode {
 
   @Override
   public Object getReturnVariable() {
-    if (!hasRunAlready())
-      throw new IllegalStateException("run first, then ask");
+    if (!hasRunAlready()) throw new IllegalStateException("run first, then ask");
     return retval;
   }
 
   @Override
   public Throwable getExceptionThrown() {
-    if (!hasRunAlready())
-      throw new IllegalStateException("run first, then ask");
+    if (!hasRunAlready()) throw new IllegalStateException("run first, then ask");
     return exceptionThrown;
   }
 
@@ -82,17 +77,14 @@ public final class ConstructorReflectionCode extends ReflectionCode {
   }
 
   public Object[] getInputs() {
-    return this.inputs.clone();// be defensive
+    return this.inputs.clone(); // be defensive
   }
 
   @Override
   public String toString() {
     String ret = "Call to " + constructor + " args:" + Arrays.toString(inputs);
-    if (hasRunAlready())
-      return ret + " not run yet";
-    else if (exceptionThrown == null)
-      return ret + " returned:" + ret;
-    else
-      return ret + " threw:" + exceptionThrown;
+    if (hasRunAlready()) return ret + " not run yet";
+    else if (exceptionThrown == null) return ret + " returned:" + ret;
+    else return ret + " threw:" + exceptionThrown;
   }
 }

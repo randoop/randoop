@@ -4,10 +4,10 @@ import randoop.*;
 
 public class CheckRep2 {
 
-  public CheckRep2() { }
+  public CheckRep2() {}
 
-    @CheckRep
-    public boolean foo() {
-	return false;
-    }
+  @CheckRep
+  public boolean foo() {
+    return false;
+  }
 }

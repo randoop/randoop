@@ -39,8 +39,17 @@ public abstract class CommandHandler {
    * @param example the usage example
    * @param options the command line arguments
    */
-  public CommandHandler(String command, String pitch, String commandGrammar, String where, String summary, List<String> notes, String input, String output,
-      String example, Options options) {
+  public CommandHandler(
+      String command,
+      String pitch,
+      String commandGrammar,
+      String where,
+      String summary,
+      List<String> notes,
+      String input,
+      String output,
+      String example,
+      Options options) {
 
     if ((command == null)) {
       throw new IllegalArgumentException("command cannot be null.");
@@ -56,7 +65,6 @@ public abstract class CommandHandler {
     this.foutput = output == null ? "undocumented" : output;
     this.fexample = example == null ? "undocumented" : example;
     this.foptions = options;
-
   }
 
   public final boolean handles(String command) {
@@ -134,11 +142,14 @@ public abstract class CommandHandler {
     out.println();
 
     if (!fcommand.trim().equals("")) {
-      out.print(Util.hangingParagraph("COMMAND: " + fcommand, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(
+          Util.hangingParagraph("COMMAND: " + fcommand, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!fcommandGrammar.trim().equals("")) {
-      out.print(Util.hangingParagraph("Usage: " + fcommandGrammar, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(
+          Util.hangingParagraph(
+              "Usage: " + fcommandGrammar, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!fwhere.trim().equals("")) {
@@ -146,7 +157,8 @@ public abstract class CommandHandler {
     }
     out.println();
     if (!fsummary.trim().equals("")) {
-      out.print(Util.hangingParagraph("Summary: " + fsummary, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(
+          Util.hangingParagraph("Summary: " + fsummary, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (!finput.trim().equals("")) {
@@ -158,7 +170,8 @@ public abstract class CommandHandler {
     }
     out.println();
     if (!fexample.trim().equals("")) {
-      out.print(Util.hangingParagraph("Example: " + fexample, Globals.COLWIDTH, Globals.INDENTWIDTH));
+      out.print(
+          Util.hangingParagraph("Example: " + fexample, Globals.COLWIDTH, Globals.INDENTWIDTH));
     }
     out.println();
     if (fnotes != null && fnotes.size() > 0) {
@@ -166,7 +179,9 @@ public abstract class CommandHandler {
       out.println();
       for (int i = 0; i < fnotes.size(); i++) {
         String note = fnotes.get(i);
-        out.println(Util.hangingParagraph(Integer.toString(i + 1) + ". " + note, Globals.COLWIDTH, Globals.INDENTWIDTH));
+        out.println(
+            Util.hangingParagraph(
+                Integer.toString(i + 1) + ". " + note, Globals.COLWIDTH, Globals.INDENTWIDTH));
       }
     }
     out.println();
@@ -176,5 +191,4 @@ public abstract class CommandHandler {
       out.println(foptions.usage(false));
     }
   }
-
 }

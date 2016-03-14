@@ -77,7 +77,6 @@ public class CoveredClassTest {
       assertFalse("should not cover the class: " + ac.getName(), e.coversClass(ac));
       assertFalse("should not cover the class: " + cc.getName(), e.coversClass(cc));
     }
-
   }
 
   @Test
@@ -87,8 +86,10 @@ public class CoveredClassTest {
     GenInputsAbstract.inputlimit = 10000;
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
-    GenInputsAbstract.include_if_classname_appears = Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
-    GenInputsAbstract.include_if_class_exercised = null; //"tests/randoop/instrument/testcase/coveredclasses.txt";
+    GenInputsAbstract.include_if_classname_appears =
+        Pattern.compile("randoop\\.instrument\\.testcase\\.A"); //null;
+    GenInputsAbstract.include_if_class_exercised =
+        null; //"tests/randoop/instrument/testcase/coveredclasses.txt";
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
@@ -119,7 +120,6 @@ public class CoveredClassTest {
       assertFalse("should not cover the class: " + ac.getName(), e.coversClass(ac));
       assertFalse("should not cover the class: " + cc.getName(), e.coversClass(cc));
     }
-
   }
 
   @Test
@@ -130,7 +130,8 @@ public class CoveredClassTest {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     GenInputsAbstract.include_if_classname_appears = null;
-    GenInputsAbstract.include_if_class_exercised = new File("randoop/instrument/testcase/coveredclasses.txt");
+    GenInputsAbstract.include_if_class_exercised =
+        new File("randoop/instrument/testcase/coveredclasses.txt");
     // setup classes
 
     ForwardGenerator testGenerator = getGenerator();
@@ -161,9 +162,7 @@ public class CoveredClassTest {
       assertTrue("should cover the class: " + ac.getName(), e.coversClass(ac));
       assertFalse("should not cover the class: " + cc.getName(), e.coversClass(cc));
     }
-
   }
-
 
   private ForwardGenerator getGenerator() {
     Set<Class<?>> coveredClasses = new LinkedHashSet<>();
@@ -172,35 +171,36 @@ public class CoveredClassTest {
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
 
     GenTests.getClassesUnderTest(visibility, classes, coveredClasses);
-    ReflectionPredicate predicate = new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
+    ReflectionPredicate predicate =
+        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, predicate);
     Collection<Sequence> components = new LinkedHashSet<Sequence>();
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
-    ComponentManager componentMgr = new ComponentManager(components );
+    ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    ForwardGenerator testGenerator = new ForwardGenerator(
-        model,
-        GenInputsAbstract.timelimit * 1000,
-        GenInputsAbstract.inputlimit,
-        GenInputsAbstract.outputlimit,
-        componentMgr,
-        null,
-        listenerMgr);
+    ForwardGenerator testGenerator =
+        new ForwardGenerator(
+            model,
+            GenInputsAbstract.timelimit * 1000,
+            GenInputsAbstract.inputlimit,
+            GenInputsAbstract.outputlimit,
+            componentMgr,
+            null,
+            listenerMgr);
     GenTests genTests = new GenTests();
     ConstructorCall objectConstructor = null;
     try {
       objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
-      if (!model.contains(objectConstructor))
-        model.add(objectConstructor);
+      if (!model.contains(objectConstructor)) model.add(objectConstructor);
     } catch (Exception e) {
       fail("couldn't get object constructor");
     }
-    Predicate<ExecutableSequence> isOutputTest = genTests.createTestOutputPredicate(objectConstructor, coveredClasses);
+    Predicate<ExecutableSequence> isOutputTest =
+        genTests.createTestOutputPredicate(objectConstructor, coveredClasses);
     testGenerator.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new ExercisedClassVisitor(coveredClasses));
     return testGenerator;
   }
-
 }

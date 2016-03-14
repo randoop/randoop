@@ -51,7 +51,7 @@ package java2.util2;
  * interfaces cannot contain constructors) but the SDK implementation (the
  * <tt>TreeSet</tt> class) complies.<p>
  *
- * This interface is a member of the 
+ * This interface is a member of the
  * <a href="{@docRoot}/../guide/collections/index.html">
  * Java Collections Framework</a>.
  *
@@ -66,158 +66,157 @@ package java2.util2;
  * @see java.lang.ClassCastException
  * @since 1.2
  */
-
 public interface SortedSet extends Set {
-    /**
-     * Returns the comparator associated with this sorted set, or
-     * <tt>null</tt> if it uses its elements' natural ordering.
-     *
-     * @return the comparator associated with this sorted set, or
-     * 	       <tt>null</tt> if it uses its elements' natural ordering.
-     */
-    Comparator comparator();
+  /**
+   * Returns the comparator associated with this sorted set, or
+   * <tt>null</tt> if it uses its elements' natural ordering.
+   *
+   * @return the comparator associated with this sorted set, or
+   * 	       <tt>null</tt> if it uses its elements' natural ordering.
+   */
+  Comparator comparator();
 
-    /**
-     * Returns a view of the portion of this sorted set whose elements range
-     * from <tt>fromElement</tt>, inclusive, to <tt>toElement</tt>, exclusive.
-     * (If <tt>fromElement</tt> and <tt>toElement</tt> are equal, the returned
-     * sorted set is empty.)  The returned sorted set is backed by this sorted
-     * set, so changes in the returned sorted set are reflected in this sorted
-     * set, and vice-versa.  The returned sorted set supports all optional set
-     * operations that this sorted set supports.<p>
-     *
-     * The sorted set returned by this method will throw an
-     * <tt>IllegalArgumentException</tt> if the user attempts to insert a
-     * element outside the specified range.<p>
-     * 
-     * Note: this method always returns a <i>half-open range</i> (which
-     * includes its low endpoint but not its high endpoint).  If you need a
-     * <i>closed range</i> (which includes both endpoints), and the element
-     * type allows for calculation of the successor a given value, merely
-     * request the subrange from <tt>lowEndpoint</tt> to
-     * <tt>successor(highEndpoint)</tt>.  For example, suppose that <tt>s</tt>
-     * is a sorted set of strings.  The following idiom obtains a view
-     * containing all of the strings in <tt>s</tt> from <tt>low</tt> to
-     * <tt>high</tt>, inclusive: <pre>
-     * SortedSet sub = s.subSet(low, high+"\0");
-     * </pre>
-     * 
-     * A similar technique can be used to generate an <i>open range</i> (which
-     * contains neither endpoint).  The following idiom obtains a view
-     * containing all of the Strings in <tt>s</tt> from <tt>low</tt> to
-     * <tt>high</tt>, exclusive: <pre>
-     * SortedSet sub = s.subSet(low+"\0", high);
-     * </pre>
-     *
-     * @param fromElement low endpoint (inclusive) of the subSet.
-     * @param toElement high endpoint (exclusive) of the subSet.
-     * @return a view of the specified range within this sorted set.
-     * 
-     * @throws ClassCastException if <tt>fromElement</tt> and
-     *         <tt>toElement</tt> cannot be compared to one another using this
-     *         set's comparator (or, if the set has no comparator, using
-     *         natural ordering).  Implementations may, but are not required
-     *	       to, throw this exception if <tt>fromElement</tt> or
-     *         <tt>toElement</tt> cannot be compared to elements currently in
-     *         the set.
-     * @throws IllegalArgumentException if <tt>fromElement</tt> is greater than
-     *         <tt>toElement</tt>; or if this set is itself a subSet, headSet,
-     *         or tailSet, and <tt>fromElement</tt> or <tt>toElement</tt> are
-     *         not within the specified range of the subSet, headSet, or
-     *         tailSet.
-     * @throws NullPointerException if <tt>fromElement</tt> or
-     *	       <tt>toElement</tt> is <tt>null</tt> and this sorted set does
-     *	       not tolerate <tt>null</tt> elements.
-     */
-    SortedSet subSet(Object fromElement, Object toElement);
+  /**
+   * Returns a view of the portion of this sorted set whose elements range
+   * from <tt>fromElement</tt>, inclusive, to <tt>toElement</tt>, exclusive.
+   * (If <tt>fromElement</tt> and <tt>toElement</tt> are equal, the returned
+   * sorted set is empty.)  The returned sorted set is backed by this sorted
+   * set, so changes in the returned sorted set are reflected in this sorted
+   * set, and vice-versa.  The returned sorted set supports all optional set
+   * operations that this sorted set supports.<p>
+   *
+   * The sorted set returned by this method will throw an
+   * <tt>IllegalArgumentException</tt> if the user attempts to insert a
+   * element outside the specified range.<p>
+   *
+   * Note: this method always returns a <i>half-open range</i> (which
+   * includes its low endpoint but not its high endpoint).  If you need a
+   * <i>closed range</i> (which includes both endpoints), and the element
+   * type allows for calculation of the successor a given value, merely
+   * request the subrange from <tt>lowEndpoint</tt> to
+   * <tt>successor(highEndpoint)</tt>.  For example, suppose that <tt>s</tt>
+   * is a sorted set of strings.  The following idiom obtains a view
+   * containing all of the strings in <tt>s</tt> from <tt>low</tt> to
+   * <tt>high</tt>, inclusive: <pre>
+   * SortedSet sub = s.subSet(low, high+"\0");
+   * </pre>
+   *
+   * A similar technique can be used to generate an <i>open range</i> (which
+   * contains neither endpoint).  The following idiom obtains a view
+   * containing all of the Strings in <tt>s</tt> from <tt>low</tt> to
+   * <tt>high</tt>, exclusive: <pre>
+   * SortedSet sub = s.subSet(low+"\0", high);
+   * </pre>
+   *
+   * @param fromElement low endpoint (inclusive) of the subSet.
+   * @param toElement high endpoint (exclusive) of the subSet.
+   * @return a view of the specified range within this sorted set.
+   *
+   * @throws ClassCastException if <tt>fromElement</tt> and
+   *         <tt>toElement</tt> cannot be compared to one another using this
+   *         set's comparator (or, if the set has no comparator, using
+   *         natural ordering).  Implementations may, but are not required
+   *	       to, throw this exception if <tt>fromElement</tt> or
+   *         <tt>toElement</tt> cannot be compared to elements currently in
+   *         the set.
+   * @throws IllegalArgumentException if <tt>fromElement</tt> is greater than
+   *         <tt>toElement</tt>; or if this set is itself a subSet, headSet,
+   *         or tailSet, and <tt>fromElement</tt> or <tt>toElement</tt> are
+   *         not within the specified range of the subSet, headSet, or
+   *         tailSet.
+   * @throws NullPointerException if <tt>fromElement</tt> or
+   *	       <tt>toElement</tt> is <tt>null</tt> and this sorted set does
+   *	       not tolerate <tt>null</tt> elements.
+   */
+  SortedSet subSet(Object fromElement, Object toElement);
 
-    /**
-     * Returns a view of the portion of this sorted set whose elements are
-     * strictly less than <tt>toElement</tt>.  The returned sorted set is
-     * backed by this sorted set, so changes in the returned sorted set are
-     * reflected in this sorted set, and vice-versa.  The returned sorted set
-     * supports all optional set operations.<p>
-     *
-     * The sorted set returned by this method will throw an
-     * <tt>IllegalArgumentException</tt> if the user attempts to insert a
-     * element outside the specified range.<p>
-     *
-     * Note: this method always returns a view that does not contain its
-     * (high) endpoint.  If you need a view that does contain this endpoint,
-     * and the element type allows for calculation of the successor a given
-     * value, merely request a headSet bounded by
-     * <tt>successor(highEndpoint)</tt>.  For example, suppose that <tt>s</tt>
-     * is a sorted set of strings.  The following idiom obtains a view
-     * containing all of the strings in <tt>s</tt> that are less than or equal
-     * to <tt>high</tt>:
-     * 	    <pre>    SortedSet head = s.headSet(high+"\0");</pre>
-     *
-     * @param toElement high endpoint (exclusive) of the headSet.
-     * @return a view of the specified initial range of this sorted set.
-     * @throws ClassCastException if <tt>toElement</tt> is not compatible
-     *         with this set's comparator (or, if the set has no comparator,
-     *         if <tt>toElement</tt> does not implement <tt>Comparable</tt>).
-     *         Implementations may, but are not required to, throw this
-     *	       exception if <tt>toElement</tt> cannot be compared to elements
-     *         currently in the set.
-     * @throws NullPointerException if <tt>toElement</tt> is <tt>null</tt> and
-     *	       this sorted set does not tolerate <tt>null</tt> elements.
-     * @throws IllegalArgumentException if this set is itself a subSet,
-     *         headSet, or tailSet, and <tt>toElement</tt> is not within the
-     *         specified range of the subSet, headSet, or tailSet.
-     */
-    SortedSet headSet(Object toElement);
+  /**
+   * Returns a view of the portion of this sorted set whose elements are
+   * strictly less than <tt>toElement</tt>.  The returned sorted set is
+   * backed by this sorted set, so changes in the returned sorted set are
+   * reflected in this sorted set, and vice-versa.  The returned sorted set
+   * supports all optional set operations.<p>
+   *
+   * The sorted set returned by this method will throw an
+   * <tt>IllegalArgumentException</tt> if the user attempts to insert a
+   * element outside the specified range.<p>
+   *
+   * Note: this method always returns a view that does not contain its
+   * (high) endpoint.  If you need a view that does contain this endpoint,
+   * and the element type allows for calculation of the successor a given
+   * value, merely request a headSet bounded by
+   * <tt>successor(highEndpoint)</tt>.  For example, suppose that <tt>s</tt>
+   * is a sorted set of strings.  The following idiom obtains a view
+   * containing all of the strings in <tt>s</tt> that are less than or equal
+   * to <tt>high</tt>:
+   * 	    <pre>    SortedSet head = s.headSet(high+"\0");</pre>
+   *
+   * @param toElement high endpoint (exclusive) of the headSet.
+   * @return a view of the specified initial range of this sorted set.
+   * @throws ClassCastException if <tt>toElement</tt> is not compatible
+   *         with this set's comparator (or, if the set has no comparator,
+   *         if <tt>toElement</tt> does not implement <tt>Comparable</tt>).
+   *         Implementations may, but are not required to, throw this
+   *	       exception if <tt>toElement</tt> cannot be compared to elements
+   *         currently in the set.
+   * @throws NullPointerException if <tt>toElement</tt> is <tt>null</tt> and
+   *	       this sorted set does not tolerate <tt>null</tt> elements.
+   * @throws IllegalArgumentException if this set is itself a subSet,
+   *         headSet, or tailSet, and <tt>toElement</tt> is not within the
+   *         specified range of the subSet, headSet, or tailSet.
+   */
+  SortedSet headSet(Object toElement);
 
-    /**
-     * Returns a view of the portion of this sorted set whose elements are
-     * greater than or equal to <tt>fromElement</tt>.  The returned sorted set
-     * is backed by this sorted set, so changes in the returned sorted set are
-     * reflected in this sorted set, and vice-versa.  The returned sorted set
-     * supports all optional set operations.<p>
-     *
-     * The sorted set returned by this method will throw an
-     * <tt>IllegalArgumentException</tt> if the user attempts to insert a
-     * element outside the specified range.<p>
-     *
-     * Note: this method always returns a view that contains its (low)
-     * endpoint.  If you need a view that does not contain this endpoint, and
-     * the element type allows for calculation of the successor a given value,
-     * merely request a tailSet bounded by <tt>successor(lowEndpoint)</tt>.
-     * For example, suppose that <tt>s</tt> is a sorted set of strings.  The
-     * following idiom obtains a view containing all of the strings in
-     * <tt>s</tt> that are strictly greater than <tt>low</tt>:
-     * 
-     * 	    <pre>    SortedSet tail = s.tailSet(low+"\0");</pre>
-     *
-     * @param fromElement low endpoint (inclusive) of the tailSet.
-     * @return a view of the specified final range of this sorted set.
-     * @throws ClassCastException if <tt>fromElement</tt> is not compatible
-     *         with this set's comparator (or, if the set has no comparator,
-     *         if <tt>fromElement</tt> does not implement <tt>Comparable</tt>).
-     *         Implementations may, but are not required to, throw this
-     *	       exception if <tt>fromElement</tt> cannot be compared to elements
-     *         currently in the set.
-     * @throws NullPointerException if <tt>fromElement</tt> is <tt>null</tt>
-     *	       and this sorted set does not tolerate <tt>null</tt> elements.
-     * @throws IllegalArgumentException if this set is itself a subSet,
-     *         headSet, or tailSet, and <tt>fromElement</tt> is not within the
-     *         specified range of the subSet, headSet, or tailSet.
-     */
-    SortedSet tailSet(Object fromElement);
+  /**
+   * Returns a view of the portion of this sorted set whose elements are
+   * greater than or equal to <tt>fromElement</tt>.  The returned sorted set
+   * is backed by this sorted set, so changes in the returned sorted set are
+   * reflected in this sorted set, and vice-versa.  The returned sorted set
+   * supports all optional set operations.<p>
+   *
+   * The sorted set returned by this method will throw an
+   * <tt>IllegalArgumentException</tt> if the user attempts to insert a
+   * element outside the specified range.<p>
+   *
+   * Note: this method always returns a view that contains its (low)
+   * endpoint.  If you need a view that does not contain this endpoint, and
+   * the element type allows for calculation of the successor a given value,
+   * merely request a tailSet bounded by <tt>successor(lowEndpoint)</tt>.
+   * For example, suppose that <tt>s</tt> is a sorted set of strings.  The
+   * following idiom obtains a view containing all of the strings in
+   * <tt>s</tt> that are strictly greater than <tt>low</tt>:
+   *
+   * 	    <pre>    SortedSet tail = s.tailSet(low+"\0");</pre>
+   *
+   * @param fromElement low endpoint (inclusive) of the tailSet.
+   * @return a view of the specified final range of this sorted set.
+   * @throws ClassCastException if <tt>fromElement</tt> is not compatible
+   *         with this set's comparator (or, if the set has no comparator,
+   *         if <tt>fromElement</tt> does not implement <tt>Comparable</tt>).
+   *         Implementations may, but are not required to, throw this
+   *	       exception if <tt>fromElement</tt> cannot be compared to elements
+   *         currently in the set.
+   * @throws NullPointerException if <tt>fromElement</tt> is <tt>null</tt>
+   *	       and this sorted set does not tolerate <tt>null</tt> elements.
+   * @throws IllegalArgumentException if this set is itself a subSet,
+   *         headSet, or tailSet, and <tt>fromElement</tt> is not within the
+   *         specified range of the subSet, headSet, or tailSet.
+   */
+  SortedSet tailSet(Object fromElement);
 
-    /**
-     * Returns the first (lowest) element currently in this sorted set.
-     *
-     * @return the first (lowest) element currently in this sorted set.
-     * @throws    NoSuchElementException sorted set is empty.
-     */
-    Object first();
+  /**
+   * Returns the first (lowest) element currently in this sorted set.
+   *
+   * @return the first (lowest) element currently in this sorted set.
+   * @throws    NoSuchElementException sorted set is empty.
+   */
+  Object first();
 
-    /**
-     * Returns the last (highest) element currently in this sorted set.
-     *
-     * @return the last (highest) element currently in this sorted set.
-     * @throws    NoSuchElementException sorted set is empty.
-     */
-    Object last();
+  /**
+   * Returns the last (highest) element currently in this sorted set.
+   *
+   * @return the last (highest) element currently in this sorted set.
+   * @throws    NoSuchElementException sorted set is empty.
+   */
+  Object last();
 }

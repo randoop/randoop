@@ -31,13 +31,11 @@ public class ForwardExplorerTests2 extends TestCase {
     //SimpleExplorer exp = new SimpleExplorer(classes, Long.MAX_VALUE, 100);
     List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model should not be empty", model.size() != 0);
-    ForwardGenerator exp =
-      new ForwardGenerator(model, Long.MAX_VALUE, 100, 100, null, null, null);
+    ForwardGenerator exp = new ForwardGenerator(model, Long.MAX_VALUE, 100, 100, null, null, null);
     GenInputsAbstract.null_ratio = 0.5; //.forbid_null = false;
     exp.explore();
     for (Sequence s : exp.getAllSequences()) {
       s.toCodeString();
     }
   }
-
 }

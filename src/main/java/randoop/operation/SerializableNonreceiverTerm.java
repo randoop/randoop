@@ -7,7 +7,7 @@ import randoop.types.TypeNames;
 
 /**
  * Serializable form of {@link NonreceiverTerm} allowing tests to be serialized.
- * 
+ *
  * @see NonreceiverTerm#writeReplace
  */
 public class SerializableNonreceiverTerm implements Serializable {

@@ -55,14 +55,14 @@ public class SequenceTests extends TestCase {
    */
   public void test1() throws Exception {
 
-    RecordProcessor processor = new RecordProcessor() {
-      @Override
-      public void processRecord(List<String> lines) {
+    RecordProcessor processor =
+        new RecordProcessor() {
+          @Override
+          public void processRecord(List<String> lines) {
 
-        parseRecord(lines);
-
-      }
-    };
+            parseRecord(lines);
+          }
+        };
 
     RecordListReader reader = new RecordListReader("TEST", processor);
     InputStream stream = SequenceTests.class.getResourceAsStream("/sequence_tests_script.txt");
@@ -70,11 +70,11 @@ public class SequenceTests extends TestCase {
     reader.parse(b);
   }
 
-
   /**
    * The "default" set of visitors that Randoop uses during execution.
    */
   private static final TestCheckGenerator testGen;
+
   static {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
     contracts.add(new EqualsReflexive());
@@ -87,9 +87,11 @@ public class SequenceTests extends TestCase {
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
     ExpectedExceptionCheckGen expectation;
     expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
-    testGen = new ExtendGenerator(
-        new ContractCheckingVisitor(contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
-        new RegressionCaptureVisitor(expectation,true));
+    testGen =
+        new ExtendGenerator(
+            new ContractCheckingVisitor(
+                contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
+            new RegressionCaptureVisitor(expectation, true));
   }
 
   // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
@@ -97,12 +99,14 @@ public class SequenceTests extends TestCase {
 
     String testId = null;
     if (!lines.get(0).equals("TEST_ID")) {
-      throw new RuntimeException("Malformed test record (does not have a \"TEST_ID\" field): " + lines.toString());
+      throw new RuntimeException(
+          "Malformed test record (does not have a \"TEST_ID\" field): " + lines.toString());
     }
     testId = lines.get(1);
 
     if (!lines.get(2).equals("SEQUENCE")) {
-      throw new RuntimeException("Malformed test record (does not have a \"SEQUENCE\" field): " + lines.toString());
+      throw new RuntimeException(
+          "Malformed test record (does not have a \"SEQUENCE\" field): " + lines.toString());
     }
 
     int currIdx = 3;
@@ -112,7 +116,8 @@ public class SequenceTests extends TestCase {
       currIdx++;
     }
     if (currIdx == lines.size()) {
-      throw new IllegalArgumentException("Malformed test record (missing \"EXPECTED_CODE\" record): " + lines.toString());
+      throw new IllegalArgumentException(
+          "Malformed test record (missing \"EXPECTED_CODE\" record): " + lines.toString());
     }
     if (sequenceLines.size() == 0) {
       throw new IllegalArgumentException("Empty sequence found.");
@@ -136,7 +141,8 @@ public class SequenceTests extends TestCase {
       throw new RuntimeException(e);
     }
 
-    checkListsEqual(sequenceLines, Arrays.asList(sequence.toParseableString().split(Globals.lineSep)), testId);
+    checkListsEqual(
+        sequenceLines, Arrays.asList(sequence.toParseableString().split(Globals.lineSep)), testId);
 
     ExecutableSequence ds = new ExecutableSequence(sequence);
     ds.execute(new DummyVisitor(), testGen);
@@ -149,22 +155,30 @@ public class SequenceTests extends TestCase {
     actual = trimmedLines(actual);
 
     if (expected.size() != actual.size()) {
-      fail(failureMessage(testId, "List lengths differ: expected " + expected.size() + " but got " + actual.size(), expected, actual));
+      fail(
+          failureMessage(
+              testId,
+              "List lengths differ: expected " + expected.size() + " but got " + actual.size(),
+              expected,
+              actual));
     }
 
     for (int i = 0; i < expected.size(); i++) {
-      assertEquals(failureMessage(testId, "(lists differ at index " + i + ")", expected, actual), expected.get(i), actual.get(i));
+      assertEquals(
+          failureMessage(testId, "(lists differ at index " + i + ")", expected, actual),
+          expected.get(i),
+          actual.get(i));
     }
   }
 
-  private static String failureMessage(String testId, String msg, List<String> expected, List<String> actual) {
+  private static String failureMessage(
+      String testId, String msg, List<String> expected, List<String> actual) {
     StringBuilder b = new StringBuilder();
     b.append("Failure in test " + testId + ": " + msg + ".");
     b.append("" + Globals.lineSep + "Expected:" + Globals.lineSep + "");
-    for (int i = 0 ; i < expected.size() ; i++)
-      b.append(i + ": " + expected.get(i) + Util.newLine);
+    for (int i = 0; i < expected.size(); i++) b.append(i + ": " + expected.get(i) + Util.newLine);
     b.append("" + Globals.lineSep + "Actual:" + Globals.lineSep + "");
-    for (int i = 0 ; i < actual.size() ; i++) {
+    for (int i = 0; i < actual.size(); i++) {
       b.append(i + ": " + actual.get(i) + Util.newLine);
     }
     // For debugging.
@@ -177,7 +191,7 @@ public class SequenceTests extends TestCase {
   // Skips empty lines.
   private static List<String> trimmedLines(List<String> l) {
     List<String> trimmed = new ArrayList<String>();
-    for (int i = 0 ; i < l.size() ; i++) {
+    for (int i = 0; i < l.size(); i++) {
       String t = l.get(i).trim();
       if (t.isEmpty()) {
         continue;
@@ -186,5 +200,4 @@ public class SequenceTests extends TestCase {
     }
     return trimmed;
   }
-
 }

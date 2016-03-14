@@ -14,7 +14,7 @@ public interface ExceptionPredicate {
   /**
    * Check whether the {@code ExceptionalExecution} of the
    * {@code ExecutableSequence} satisfies the criterion of the predicate.
-   * 
+   *
    * @param exec
    *          the exceptional execution wrapping an exception
    * @param s
@@ -22,5 +22,4 @@ public interface ExceptionPredicate {
    * @return true if exception satisfies the predicate, and false otherwise
    */
   boolean test(ExceptionalExecution exec, ExecutableSequence s);
-
 }

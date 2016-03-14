@@ -5,8 +5,7 @@ package randoop.test.bh;
  * vector as an array of doubles rather than use the exising
  * code in the java.util.Vector class.
  **/
-public class MathVector implements Cloneable
-{
+public class MathVector implements Cloneable {
   /**
    * The number of dimensions in the vector
    **/
@@ -19,10 +18,9 @@ public class MathVector implements Cloneable
   /**
    * Construct an empty 3 dimensional vector for use in Barnes-Hut algorithm.
    **/
-  public MathVector()
-  {
+  public MathVector() {
     data = new double[NDIM];
-    for (int i=0; i < NDIM; i++) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] = 0.0;
     }
   }
@@ -32,10 +30,9 @@ public class MathVector implements Cloneable
    * @return a clone of the math vector
    **/
   @Override
-public Object clone() 
-  {
+  public Object clone() {
     try {
-      MathVector v = (MathVector)super.clone();
+      MathVector v = (MathVector) super.clone();
       v.data = new double[NDIM];
       for (int i = 0; i < NDIM; i++) {
         v.data[i] = data[i];
@@ -48,11 +45,10 @@ public Object clone()
 
   /**
    * Return the value at the i'th index of the vector.
-   * @param i the vector index 
+   * @param i the vector index
    * @return the value at the i'th index of the vector.
    **/
-  public final double value(int i)
-  {
+  public final double value(int i) {
     return data[i];
   }
 
@@ -61,8 +57,7 @@ public Object clone()
    * @param i the vector index
    * @param v the value to store
    **/
-  public final void value(int i, double v)
-  {
+  public final void value(int i, double v) {
     data[i] = v;
   }
 
@@ -70,9 +65,8 @@ public Object clone()
    * Set one of the dimensions of the vector to 1.0
    * param j the dimension to set.
    **/
-  public final void unit(int j)
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void unit(int j) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] = (i == j ? 1.0 : 0.0);
     }
   }
@@ -81,9 +75,8 @@ public Object clone()
    * Add two vectors and the result is placed in this vector.
    * @param u the other operand of the addition
    **/
-  public final void addition(MathVector u)
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void addition(MathVector u) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] += u.data[i];
     }
   }
@@ -93,9 +86,8 @@ public Object clone()
    * This vector contain the first operand.
    * @param u the other operand of the subtraction.
    **/
-  public final void subtraction(MathVector u)
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void subtraction(MathVector u) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] -= u.data[i];
     }
   }
@@ -105,9 +97,8 @@ public Object clone()
    * @param u the first operand of the subtraction.
    * @param v the second opernd of the subtraction
    **/
-  public final void subtraction(MathVector u, MathVector v)
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void subtraction(MathVector u, MathVector v) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] = u.data[i] - v.data[i];
     }
   }
@@ -116,9 +107,8 @@ public Object clone()
    * Multiply the vector times a scalar.
    * @param s the scalar value
    **/
-  public final void multScalar(double s)
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void multScalar(double s) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] *= s;
     }
   }
@@ -128,9 +118,8 @@ public Object clone()
    * @param u the vector
    * @param s the scalar value
    **/
-  public final void multScalar(MathVector u, double s)
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void multScalar(MathVector u, double s) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] = u.data[i] * s;
     }
   }
@@ -139,9 +128,8 @@ public Object clone()
    * Divide each element of the vector by a scalar value.
    * @param s the scalar value.
    **/
-  public final void divScalar(double s)
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void divScalar(double s) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] /= s;
     }
   }
@@ -150,17 +138,15 @@ public Object clone()
    * Return the dot product of a vector.
    * @return the dot product of a vector.
    **/
-  public final double dotProduct()
-  {
+  public final double dotProduct() {
     double s = 0.0;
-    for (int i=0; i < NDIM; i++) {
+    for (int i = 0; i < NDIM; i++) {
       s += data[i] * data[i];
     }
     return s;
   }
 
-  public final double absolute()
-  {
+  public final double absolute() {
     double tmp = 0.0;
     for (int i = 0; i < NDIM; i++) {
       tmp += data[i] * data[i];
@@ -168,8 +154,7 @@ public Object clone()
     return Math.sqrt(tmp);
   }
 
-  public final double distance(MathVector v)
-  {
+  public final double distance(MathVector v) {
     double tmp = 0.0;
     for (int i = 0; i < NDIM; i++) {
       tmp += ((data[i] - v.data[i]) * (data[i] - v.data[i]));
@@ -177,37 +162,32 @@ public Object clone()
     return Math.sqrt(tmp);
   }
 
-  public final void crossProduct(MathVector u, MathVector w)
-  {
-    data[0] = u.data[1] * w.data[2] - u.data[2]*w.data[1];
-    data[1] = u.data[2] * w.data[0] - u.data[0]*w.data[2];
-    data[2] = u.data[0] * w.data[1] - u.data[1]*w.data[0];
+  public final void crossProduct(MathVector u, MathVector w) {
+    data[0] = u.data[1] * w.data[2] - u.data[2] * w.data[1];
+    data[1] = u.data[2] * w.data[0] - u.data[0] * w.data[2];
+    data[2] = u.data[0] * w.data[1] - u.data[1] * w.data[0];
   }
 
-  public final void incrementalAdd(MathVector u)
-  {
+  public final void incrementalAdd(MathVector u) {
     for (int i = 0; i < NDIM; i++) {
       data[i] += u.data[i];
     }
   }
 
-  public final void incrementalSub(MathVector u)
-  {
+  public final void incrementalSub(MathVector u) {
     for (int i = 0; i < NDIM; i++) {
       data[i] -= u.data[i];
     }
   }
 
-  public final void incrementalMultScalar(double s) 
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void incrementalMultScalar(double s) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] *= s;
     }
   }
 
-  public final void incrementalDivScalar(double s)
-  {
-    for (int i=0; i < NDIM; i++) {
+  public final void incrementalDivScalar(double s) {
+    for (int i = 0; i < NDIM; i++) {
       data[i] /= s;
     }
   }
@@ -218,20 +198,17 @@ public Object clone()
    * @param u a vector
    * @param s the scalar
    **/
-  public final void addScalar(MathVector u, double s) 
-  {
+  public final void addScalar(MathVector u, double s) {
     for (int i = 0; i < NDIM; i++) {
       data[i] = u.data[i] + s;
     }
   }
 
-
   /**
    * Return the string representation of the vector
    **/
   @Override
-public String toString()
-  {
+  public String toString() {
     StringBuffer s = new StringBuffer();
     for (int i = 0; i < NDIM; i++) {
       s.append(data[i] + " ");

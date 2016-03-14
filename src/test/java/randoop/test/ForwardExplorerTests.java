@@ -33,13 +33,12 @@ public class ForwardExplorerTests extends TestCase {
 
     Set<Class<?>> classes = new LinkedHashSet<>();
     classes.add(Long.class);
-    List<Operation> model =
-      OperationExtractor.getOperations(classes, null);
+    List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model not empty", model.size() != 0);
     GenInputsAbstract.dontexecute = true; // FIXME make this an instance field?
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
-    ForwardGenerator explorer = new ForwardGenerator(model,
-      Long.MAX_VALUE, 5000, 5000, mgr, null, null);
+    ForwardGenerator explorer =
+        new ForwardGenerator(model, Long.MAX_VALUE, 5000, 5000, mgr, null, null);
     explorer.addTestCheckGenerator(createChecker(classes));
     explorer.addTestPredicate(createOutputTest());
     explorer.explore();
@@ -66,8 +65,7 @@ public class ForwardExplorerTests extends TestCase {
     List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model should not be empty", model.size() != 0);
     GenInputsAbstract.ignore_flaky_tests = true;
-    ForwardGenerator exp =
-      new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
+    ForwardGenerator exp = new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
     exp.addTestCheckGenerator(createChecker(classes));
     exp.addTestPredicate(createOutputTest());
     try {
@@ -116,8 +114,7 @@ public class ForwardExplorerTests extends TestCase {
     ComponentManager mgr = new ComponentManager(SeedSequences.defaultSeeds());
     List<Operation> model = OperationExtractor.getOperations(classes, null);
     assertTrue("model should not be empty", model.size() != 0);
-    ForwardGenerator exp =
-      new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
+    ForwardGenerator exp = new ForwardGenerator(model, Long.MAX_VALUE, 200, 200, mgr, null, null);
     GenInputsAbstract.forbid_null = false;
     exp.addTestCheckGenerator(createChecker(classes));
     exp.addTestPredicate(createOutputTest());
@@ -154,6 +151,7 @@ public class ForwardExplorerTests extends TestCase {
     } catch (Exception e) {
       throw new BugInRandoopException(e); // Should never reach here!
     }
-    return (new GenTests()).createTestOutputPredicate(objectConstructor, new LinkedHashSet<Class<?>>());
+    return (new GenTests())
+        .createTestOutputPredicate(objectConstructor, new LinkedHashSet<Class<?>>());
   }
 }

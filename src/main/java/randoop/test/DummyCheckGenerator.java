@@ -11,5 +11,4 @@ public class DummyCheckGenerator implements TestCheckGenerator {
   public TestChecks visit(ExecutableSequence s) {
     return new RegressionChecks();
   }
-
 }

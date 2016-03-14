@@ -9,5 +9,4 @@ public class ErrorTestPredicate extends DefaultPredicate<ExecutableSequence> {
   public boolean test(ExecutableSequence s) {
     return s.hasFailure();
   }
-
 }

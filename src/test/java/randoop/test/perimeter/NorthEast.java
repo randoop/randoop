@@ -2,8 +2,7 @@ package randoop.test.perimeter;
 /**
  * A class that represents the North East quadrant of the image.
  **/
-public class NorthEast implements Quadrant
-{
+public class NorthEast implements Quadrant {
 
   /**
    * Return true iff this quadrant is adjacent to the boundary
@@ -11,8 +10,7 @@ public class NorthEast implements Quadrant
    * @param direction the image boundary
    * @return true if the quadrant is adjacent, false otherwise.
    **/
-  public boolean adjacent(int direction)
-  {
+  public boolean adjacent(int direction) {
     return (direction == QuadTreeNode.NORTH || direction == QuadTreeNode.EAST);
   }
 
@@ -22,8 +20,7 @@ public class NorthEast implements Quadrant
    * @param direction the image boundary
    * @return the reflected quadrant
    **/
-  public Quadrant reflect(int direction)
-  {
+  public Quadrant reflect(int direction) {
     if (direction == QuadTreeNode.WEST || direction == QuadTreeNode.EAST) {
       return cNorthWest;
     }
@@ -36,10 +33,7 @@ public class NorthEast implements Quadrant
    * @param node the node that we want the child from.
    * @return the child node representing this quadrant
    **/
-  public QuadTreeNode child(QuadTreeNode node)
-  {
+  public QuadTreeNode child(QuadTreeNode node) {
     return node.getNorthEast();
   }
-
 }
-

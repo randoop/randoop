@@ -87,7 +87,8 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-    assert statementInput.length == getInputTypes().size() : "expected " + getInputTypes().size() + " got " + statementInput.length;
+    assert statementInput.length == getInputTypes().size()
+        : "expected " + getInputTypes().size() + " got " + statementInput.length;
 
     Object instance = null;
     Object input = statementInput[0];
@@ -146,7 +147,6 @@ public class FieldSet extends AbstractOperation implements Operation, Serializab
     }
 
     b.append(rhs);
-
   }
 
   /**

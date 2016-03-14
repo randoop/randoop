@@ -4,7 +4,7 @@ package randoop.test;
  * A Java implementation of the <tt>bisort</tt> Olden benchmark.  The Olden
  * benchmark implements a Bitonic Sort as described in :
  * <p><cite>
- * G. Bilardi and A. Nicolau, "Adaptive Bitonic Sorting: An optimal parallel 
+ * G. Bilardi and A. Nicolau, "Adaptive Bitonic Sorting: An optimal parallel
  * algorithm for shared-memory machines." SIAM J. Comput. 18(2):216-228, 1998.
  * </cite>
  * <p>
@@ -12,8 +12,7 @@ package randoop.test;
  * an input value that is not a power of 2, then we use the nearest power of
  * 2 value that is less than the input value.
  **/
-public class BiSort
-{
+public class BiSort {
   /**
    * The number of values to sort.
    **/
@@ -32,12 +31,10 @@ public class BiSort
    * The main routine which creates a tree and sorts it a couple of times.
    * @param args the command line arguments
    **/
-  public static final void main(String args[])
-  {
+  public static final void main(String args[]) {
     parseCmdLine(args);
 
-    if (printMsgs)
-      System.out.println("Bisort with " + size + " values");
+    if (printMsgs) System.out.println("Bisort with " + size + " values");
 
     long start2 = System.currentTimeMillis();
     BiSortVal tree = BiSortVal.createTree(size, 12345768);
@@ -49,8 +46,7 @@ public class BiSort
       System.out.println(sval);
     }
 
-    if (printMsgs)
-      System.out.println("BEGINNING BITONIC SORT ALGORITHM HERE");
+    if (printMsgs) System.out.println("BEGINNING BITONIC SORT ALGORITHM HERE");
 
     long start0 = System.currentTimeMillis();
     sval = tree.bisort(sval, BiSortVal.FORWARD);
@@ -71,10 +67,10 @@ public class BiSort
     }
 
     if (printMsgs) {
-      System.out.println("Creation time: " + (end2 - start2)/1000.0);
-      System.out.println("Time to sort forward = " + (end0 - start0)/1000.0);
-      System.out.println("Time to sort backward = " + (end1 - start1)/1000.0);
-      System.out.println("Total: " + (end1 - start0)/1000.0);
+      System.out.println("Creation time: " + (end2 - start2) / 1000.0);
+      System.out.println("Time to sort forward = " + (end0 - start0) / 1000.0);
+      System.out.println("Time to sort backward = " + (end1 - start1) / 1000.0);
+      System.out.println("Total: " + (end1 - start0) / 1000.0);
     }
     //System.out.println("Done!");
   }
@@ -83,8 +79,7 @@ public class BiSort
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[])
-  {
+  private static final void parseCmdLine(String args[]) {
     int i = 0;
     String arg;
 
@@ -112,14 +107,12 @@ public class BiSort
   /**
    * The usage routine which describes the program options.
    **/
-  private static final void usage()
-  {
-// Commented out to avoid confusing printout during tests.
-//    System.err.println("usage: java BiSort -s <size> [-p] [-i] [-h]");
-//    System.err.println("    -s the number of values to sort");
-//    System.err.println("    -m (print informative messages)");
-//    System.err.println("    -p (print the binary tree after each step)");
-//    System.err.println("    -h (print this message)");
+  private static final void usage() {
+    // Commented out to avoid confusing printout during tests.
+    //    System.err.println("usage: java BiSort -s <size> [-p] [-i] [-h]");
+    //    System.err.println("    -s the number of values to sort");
+    //    System.err.println("    -m (print informative messages)");
+    //    System.err.println("    -p (print the binary tree after each step)");
+    //    System.err.println("    -h (print this message)");
   }
-
 }

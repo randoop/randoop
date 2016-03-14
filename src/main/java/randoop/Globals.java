@@ -58,5 +58,4 @@ public class Globals {
   public static final int COLWIDTH = 70;
 
   public static final int INDENTWIDTH = 8;
-
 }

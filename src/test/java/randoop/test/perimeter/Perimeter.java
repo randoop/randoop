@@ -17,8 +17,7 @@ package randoop.test.perimeter;
  * quadtree and then computes the perimeter of the image using Samet's
  * algorithm.
  **/
-public class Perimeter
-{
+public class Perimeter {
   /**
    * The number of levels in the tree/image.
    **/
@@ -36,19 +35,17 @@ public class Perimeter
    * The entry point to computing the perimeter of an image.
    * @param args the command line arguments
    **/
-  public static void main(String args[]) 
-  {
-    
+  public static void main(String args[]) {
+
     parseCmdLine(args);
 
     int size = 1 << levels;
     int msize = 1 << (levels - 1);
     QuadTreeNode.gcmp = size * 1024;
     QuadTreeNode.lcmp = msize * 1024;
-      
+
     long start0 = System.currentTimeMillis();
-    QuadTreeNode tree = 
-      QuadTreeNode.createTree(msize, 0, 0, null, Quadrant.cSouthEast, levels);
+    QuadTreeNode tree = QuadTreeNode.createTree(msize, 0, 0, null, Quadrant.cSouthEast, levels);
     long end0 = System.currentTimeMillis();
 
     long start1 = System.currentTimeMillis();
@@ -65,9 +62,9 @@ public class Perimeter
     }
 
     if (printMsgs) {
-      System.out.println("QuadTree alloc time " + (end0 - start0)/1000.0);
-      System.out.println("Count leaves time " + (end1 - start1)/1000.0);
-      System.out.println("Perimeter compute time " + (end2 - start2)/1000.0);
+      System.out.println("QuadTree alloc time " + (end0 - start0) / 1000.0);
+      System.out.println("Count leaves time " + (end1 - start1) / 1000.0);
+      System.out.println("Perimeter compute time " + (end2 - start2) / 1000.0);
     }
     //System.out.println("Done!");
   }
@@ -76,8 +73,7 @@ public class Perimeter
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[])
-  {
+  private static final void parseCmdLine(String args[]) {
     int i = 0;
     String arg;
 
@@ -104,8 +100,7 @@ public class Perimeter
   /**
    * The usage routine which describes the program options.
    **/
-  private static final void usage()
-  {
+  private static final void usage() {
     System.err.println("usage: java Perimeter -l <num> [-p] [-m] [-h]");
     System.err.println("    -l number of levels in the quadtree (image size = 2^l)");
     System.err.println("    -p (print the results)");

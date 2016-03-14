@@ -20,7 +20,7 @@ public class FinalInstanceField extends AccessibleField {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return empty list since a final field may not be set
    */
   @Override
@@ -30,7 +30,7 @@ public class FinalInstanceField extends AccessibleField {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return list with just the declaring type.
    */
   @Override
@@ -44,5 +44,4 @@ public class FinalInstanceField extends AccessibleField {
   public String toCode(List<Variable> inputVars) {
     return inputVars.get(0) + "." + getName();
   }
-
 }

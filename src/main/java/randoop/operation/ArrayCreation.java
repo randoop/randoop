@@ -63,10 +63,8 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   public ArrayCreation(Class<?> elementType, int length) {
 
     // Check legality of arguments.
-    if (elementType == null)
-      throw new IllegalArgumentException("elementType cannot be null.");
-    if (length < 0)
-      throw new IllegalArgumentException("arity cannot be less than zero: " + length);
+    if (elementType == null) throw new IllegalArgumentException("elementType cannot be null.");
+    if (length < 0) throw new IllegalArgumentException("arity cannot be less than zero: " + length);
 
     // Set state variables.
     this.elementType = elementType;
@@ -109,8 +107,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
       this.inputTypesCached = new ArrayList<Class<?>>(length);
-      for (int i = 0; i < length; i++)
-        inputTypesCached.add(elementType);
+      for (int i = 0; i < length; i++) inputTypesCached.add(elementType);
       inputTypesCached = Collections.unmodifiableList(inputTypesCached);
     }
     return Collections.unmodifiableList(this.inputTypesCached);
@@ -124,17 +121,13 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
     if (statementInput.length > length) {
-      String msg = "Too many arguments:"
-          + statementInput.length
-          + " capacity:"
-          + length;
+      String msg = "Too many arguments:" + statementInput.length + " capacity:" + length;
       throw new IllegalArgumentException(msg);
     }
     long startTime = System.currentTimeMillis();
     assert statementInput.length == this.length;
     Object theArray = Array.newInstance(this.elementType, this.length);
-    for (int i = 0; i < statementInput.length; i++)
-      Array.set(theArray, i, statementInput[i]);
+    for (int i = 0; i < statementInput.length; i++) Array.set(theArray, i, statementInput[i]);
     long totalTime = System.currentTimeMillis() - startTime;
     return new NormalExecution(theArray, totalTime);
   }
@@ -168,10 +161,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
     if (inputVars.size() > length) {
-      String msg = "Too many arguments:"
-          + inputVars.size()
-          + " capacity:"
-          + length;
+      String msg = "Too many arguments:" + inputVars.size() + " capacity:" + length;
       throw new IllegalArgumentException(msg);
     }
 
@@ -179,8 +169,7 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
 
     b.append("new " + arrayTypeName + "[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
-      if (i > 0)
-        b.append(", ");
+      if (i > 0) b.append(", ");
 
       String param = inputVars.get(i).getName();
 
@@ -188,12 +177,12 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
       // to a sequence; instead, the value (e.g. "3") is inserted directly
       // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
-      if (statementCreatingVar.isPrimitiveInitialization() && !statementCreatingVar.isNullInitialization()) {
+      if (statementCreatingVar.isPrimitiveInitialization()
+          && !statementCreatingVar.isNullInitialization()) {
         String shortForm = statementCreatingVar.getShortForm();
         if (shortForm != null) {
           param = shortForm;
         }
-
       }
       b.append(param);
     }
@@ -212,15 +201,11 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof ArrayCreation))
-      return false;
-    if (this == o)
-      return true;
+    if (!(o instanceof ArrayCreation)) return false;
+    if (this == o) return true;
     ArrayCreation otherArrayDecl = (ArrayCreation) o;
-    if (!this.elementType.equals(otherArrayDecl.elementType))
-      return false;
-    if (this.length != otherArrayDecl.length)
-      return false;
+    if (!this.elementType.equals(otherArrayDecl.elementType)) return false;
+    if (this.length != otherArrayDecl.length) return false;
     return true;
   }
 
@@ -270,5 +255,4 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
   public Class<?> getDeclaringClass() {
     return getOutputType();
   }
-
 }

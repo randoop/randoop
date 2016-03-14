@@ -45,7 +45,8 @@ public class Premain {
    */
   public static void premain(String agentArgs, Instrumentation inst) throws IOException {
 
-    System.out.format("In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, inst);
+    System.out.format(
+        "In premain, agentargs ='%s', " + "Instrumentation = '%s'%n", agentArgs, inst);
 
     // Parse our arguments
     Options options = new Options(Premain.class);
@@ -81,7 +82,6 @@ public class Premain {
 
     // Instrument transformer = new Instrument();
     inst.addTransformer((ClassFileTransformer) transformer);
-
   }
 
   /**
@@ -105,13 +105,14 @@ public class Premain {
    * first, and then other modifiers in the following order: abstract, static,
    * final, synchronized native."
    */
-  private static HashSet<String> readPurityFile(File purityFileName, File pathLoc) throws IOException {
+  private static HashSet<String> readPurityFile(File purityFileName, File pathLoc)
+      throws IOException {
     HashSet<String> pureMethods = new LinkedHashSet<String>();
 
-    BufferedReader reader = new BufferedReader(new FileReader(new File(pathLoc, purityFileName.getPath())));
+    BufferedReader reader =
+        new BufferedReader(new FileReader(new File(pathLoc, purityFileName.getPath())));
 
-    if (true)
-      System.out.printf("Reading '%s' for pure methods %n", purityFileName);
+    if (true) System.out.printf("Reading '%s' for pure methods %n", purityFileName);
 
     for (String line = reader.readLine(); line != null; line = reader.readLine()) {
       pureMethods.add(line.trim());
@@ -120,7 +121,6 @@ public class Premain {
     reader.close();
 
     return pureMethods;
-
   }
 
   /**
@@ -154,7 +154,8 @@ public class Premain {
       List<URL> pag_urls = get_resource_list(pag_marker_classname);
 
       if (pag_urls.size() == 0) {
-        System.err.printf("%nBCEL must be in the classpath.  " + "Normally it is found in daikon.jar .%n");
+        System.err.printf(
+            "%nBCEL must be in the classpath.  " + "Normally it is found in daikon.jar .%n");
         System.exit(1);
       }
       if (bcel_urls.size() < pag_urls.size()) {
@@ -163,8 +164,7 @@ public class Premain {
       }
 
       // No need to do anything if only our versions of bcel are present
-      if (bcel_urls.size() == pag_urls.size())
-        return;
+      if (bcel_urls.size() == pag_urls.size()) return;
 
       int bcel_index = 0;
       int pag_index = 0;
@@ -183,8 +183,12 @@ public class Premain {
               pag_index++;
               pag = (pag_index < pag_urls.size()) ? pag_urls.get(pag_index) : null;
             }
-            System.err.printf("%nPAG BCEL (%s) appears before target BCEL " + "(%s).%nPlease reorder classpath to put randoop.jar at " + "the end.%n",
-                first_bcel, bcel);
+            System.err.printf(
+                "%nPAG BCEL (%s) appears before target BCEL "
+                    + "(%s).%nPlease reorder classpath to put randoop.jar at "
+                    + "the end.%n",
+                first_bcel,
+                bcel);
             System.exit(1);
           } else {
             bcel_jar = new JarFile(extract_jar_path(pag));
@@ -204,8 +208,7 @@ public class Premain {
      * or the same directory in the filesystem.
      */
     private boolean same_location(URL url1, URL url2) {
-      if (!url1.getProtocol().equals(url2.getProtocol()))
-        return false;
+      if (!url1.getProtocol().equals(url2.getProtocol())) return false;
 
       if (url1.getProtocol().equals("jar")) {
         // System.out.printf ("url1 = %s, file=%s, path=%s, protocol=%s, %s%n",
@@ -268,11 +271,11 @@ public class Premain {
     }
 
     @Override
-    protected Class<?> loadClass(String name, boolean resolve) throws java.lang.ClassNotFoundException {
+    protected Class<?> loadClass(String name, boolean resolve)
+        throws java.lang.ClassNotFoundException {
 
       // If we are not loading from our jar, just use the normal mechanism
-      if (bcel_jar == null)
-        return super.loadClass(name, resolve);
+      if (bcel_jar == null) return super.loadClass(name, resolve);
 
       // Load non-bcel files via the normal mechanism
       if (!name.startsWith("org.apache.bcel") && (!name.startsWith("daikon.chicory.Instrument"))) {
@@ -283,8 +286,7 @@ public class Premain {
       // If we've already loaded the class, just return that one
       Class<?> c = findLoadedClass(name);
       if (c != null) {
-        if (resolve)
-          resolveClass(c);
+        if (resolve) resolveClass(c);
         return c;
       }
 
@@ -312,8 +314,7 @@ public class Premain {
         assert is.read() == -1 : "more data left in stream";
         // System.out.printf ("Defining class %s size %d%n", name, available);
         c = defineClass(name, bytes, 0, bytes.length);
-        if (resolve)
-          resolveClass(c);
+        if (resolve) resolveClass(c);
         return c;
       } catch (Exception e) {
         throw new RuntimeException("Unexpected exception loading class " + name, e);

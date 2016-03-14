@@ -19,7 +19,7 @@ public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if the sequence uses a member of a class that matches the
    *         regular expression, false otherwise
    */
@@ -27,5 +27,4 @@ public class IncludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
   public boolean test(ExecutableSequence s) {
     return s.sequence.hasUseOfMatchingClass(testClasses);
   }
-
 }

@@ -22,7 +22,7 @@ public class TimeOutBehavior {
 
   public void setTimeSlowly(long sleepTime) throws InterruptedException {
     Thread.sleep(delayTime);
-    this.sleepTime = sleepTime; 
+    this.sleepTime = sleepTime;
   }
 
   public void setTime(long sleepTime) {
@@ -39,10 +39,10 @@ public class TimeOutBehavior {
     } catch (InterruptedException e) {
       System.out.println("rudely woken from my sleep: " + sleepTime);
     }
-    if (! (obj instanceof TimeOutBehavior)) {
+    if (!(obj instanceof TimeOutBehavior)) {
       return false;
     }
-    TimeOutBehavior t = (TimeOutBehavior)obj;
+    TimeOutBehavior t = (TimeOutBehavior) obj;
     return this.sleepTime == t.sleepTime;
   }
 
@@ -52,7 +52,7 @@ public class TimeOutBehavior {
     } catch (InterruptedException e) {
       System.out.println("rudely woken from my sleep: " + sleepTime);
     }
-    return (int)sleepTime;
+    return (int) sleepTime;
   }
 
   public void setDelay() {
@@ -62,5 +62,4 @@ public class TimeOutBehavior {
   public void resetDelay() {
     delayTime = 0;
   }
-
 }

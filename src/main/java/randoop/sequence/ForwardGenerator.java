@@ -64,20 +64,31 @@ public class ForwardGenerator extends AbstractGenerator {
   protected ObjectCache objectCache = new ObjectCache(new EqualsMethodMatcher());
 
   public void setObjectCache(ObjectCache newCache) {
-    if (newCache == null)
-      throw new IllegalArgumentException();
+    if (newCache == null) throw new IllegalArgumentException();
     this.objectCache = newCache;
   }
 
-  public ForwardGenerator(List<Operation> operations, long timeMillis, int maxGenSequences, int maxOutSequences, ComponentManager componentManager,
-      IStopper stopper, RandoopListenerManager listenerManager) {
+  public ForwardGenerator(
+      List<Operation> operations,
+      long timeMillis,
+      int maxGenSequences,
+      int maxOutSequences,
+      ComponentManager componentManager,
+      IStopper stopper,
+      RandoopListenerManager listenerManager) {
 
-    super(operations, timeMillis, maxGenSequences, maxOutSequences, componentManager, stopper, listenerManager);
+    super(
+        operations,
+        timeMillis,
+        maxGenSequences,
+        maxOutSequences,
+        componentManager,
+        stopper,
+        listenerManager);
 
     this.allSequences = new LinkedHashSet<Sequence>();
 
     initializeRuntimePrimitivesSeen();
-
   }
 
   /**
@@ -143,7 +154,6 @@ public class ForwardGenerator extends AbstractGenerator {
     eSeq.gentime = gentime;
 
     return eSeq;
-
   }
 
   @Override
@@ -169,8 +179,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (seq.hasNonExecutedStatements()) {
       if (Log.isLoggingOn()) {
-        Log.logLine("Making all indices inactive (sequence has non-executed statements, so judging it inadequate for further extension).");
-        Log.logLine("Non-executed statement: " + seq.statementToCodeString(seq.getNonExecutedIndex()));
+        Log.logLine(
+            "Making all indices inactive (sequence has non-executed statements, so judging it inadequate for further extension).");
+        Log.logLine(
+            "Non-executed statement: " + seq.statementToCodeString(seq.getNonExecutedIndex()));
       }
       seq.sequence.clearAllActiveFlags();
       return;
@@ -178,7 +190,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (seq.hasFailure()) {
       if (Log.isLoggingOn()) {
-        Log.logLine("Making all indices inactive (sequence reveals a failure, so judging it inadequate for further extension)");
+        Log.logLine(
+            "Making all indices inactive (sequence reveals a failure, so judging it inadequate for further extension)");
         Log.logLine("Failing sequence: " + seq.toCodeString());
       }
       seq.sequence.clearAllActiveFlags();
@@ -196,8 +209,11 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (!seq.isNormalExecution()) {
       if (Log.isLoggingOn()) {
-        Log.logLine("Making all indices inactive (exception thrown, or failure revealed during execution).");
-        Log.logLine("Statement with non-normal execution: " + seq.statementToCodeString(seq.getNonNormalExecutionIndex()));
+        Log.logLine(
+            "Making all indices inactive (exception thrown, or failure revealed during execution).");
+        Log.logLine(
+            "Statement with non-normal execution: "
+                + seq.statementToCodeString(seq.getNonNormalExecutionIndex()));
       }
       seq.sequence.clearAllActiveFlags();
       return;
@@ -240,20 +256,23 @@ public class ForwardGenerator extends AbstractGenerator {
         }
         seq.sequence.clearActiveFlag(i);
 
-        boolean looksLikeObjToString = (runtimeValue instanceof String) && PrimitiveTypes.looksLikeObjectToString((String) runtimeValue);
-        boolean tooLongString = (runtimeValue instanceof String) && !PrimitiveTypes.stringLengthOK((String) runtimeValue);
+        boolean looksLikeObjToString =
+            (runtimeValue instanceof String)
+                && PrimitiveTypes.looksLikeObjectToString((String) runtimeValue);
+        boolean tooLongString =
+            (runtimeValue instanceof String)
+                && !PrimitiveTypes.stringLengthOK((String) runtimeValue);
         if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
-          componentManager.addGeneratedSequence(NonreceiverTerm.createSequenceForPrimitive(runtimeValue));
+          componentManager.addGeneratedSequence(
+              NonreceiverTerm.createSequenceForPrimitive(runtimeValue));
         }
       } else {
         if (Log.isLoggingOn()) {
           Log.logLine("Making index " + i + " active.");
         }
-
       }
     }
-
   }
 
   /**
@@ -264,25 +283,21 @@ public class ForwardGenerator extends AbstractGenerator {
    */
   private ExecutableSequence createNewUniqueSequence() {
 
-    if (Log.isLoggingOn())
-      Log.logLine("-------------------------------------------");
+    if (Log.isLoggingOn()) Log.logLine("-------------------------------------------");
 
     Operation operation = null;
 
-    if (this.operations.isEmpty())
-      return null;
+    if (this.operations.isEmpty()) return null;
 
     // Select a StatementInfo
     operation = Randomness.randomMember(this.operations);
-    if (Log.isLoggingOn())
-      Log.logLine("Selected operation: " + operation.toString());
+    if (Log.isLoggingOn()) Log.logLine("Selected operation: " + operation.toString());
 
     // jhp: add flags here
     InputsAndSuccessFlag sequences = selectInputs(operation);
 
     if (!sequences.success) {
-      if (Log.isLoggingOn())
-        Log.logLine("Failed to find inputs for statement.");
+      if (Log.isLoggingOn()) Log.logLine("Failed to find inputs for statement.");
       return null;
     }
 
@@ -301,8 +316,7 @@ public class ForwardGenerator extends AbstractGenerator {
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
       newSequence = newSequence.repeat(operation, times);
-      if (Log.isLoggingOn())
-        Log.log(">>>" + times + newSequence.toCodeString());
+      if (Log.isLoggingOn()) Log.log(">>>" + times + newSequence.toCodeString());
     }
 
     // If parameterless statement, subsequence inputs
@@ -315,7 +329,11 @@ public class ForwardGenerator extends AbstractGenerator {
     // Discard if sequence is larger than size limit
     if (newSequence.size() > GenInputsAbstract.maxsize) {
       if (Log.isLoggingOn())
-        Log.logLine("Sequence discarded because size " + newSequence.size() + " exceeds maximum allowed size " + GenInputsAbstract.maxsize);
+        Log.logLine(
+            "Sequence discarded because size "
+                + newSequence.size()
+                + " exceeds maximum allowed size "
+                + GenInputsAbstract.maxsize);
       return null;
     }
 
@@ -336,7 +354,8 @@ public class ForwardGenerator extends AbstractGenerator {
     randoopConsistencyTest2(newSequence);
 
     if (Log.isLoggingOn()) {
-      Log.logLine(String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
+      Log.logLine(
+          String.format("Successfully created new unique sequence:%n%s%n", newSequence.toString()));
     }
     // System.out.println("###" + statement.toStringVerbose() + "###" +
     // statement.getClass());
@@ -377,10 +396,29 @@ public class ForwardGenerator extends AbstractGenerator {
           StringBuilder b = new StringBuilder();
           Sequence co = this.allsequencesAsList.get(index);
           co.equals(newSequence);
-          b.append("new component:" + Globals.lineSep + "" + newSequence.toString() + "" + Globals.lineSep + "as code:" + Globals.lineSep + "" + code
-              + Globals.lineSep);
-          b.append("existing component:" + Globals.lineSep + "" + this.allsequencesAsList.get(index).toString() + "" + Globals.lineSep + "as code:"
-              + Globals.lineSep + "" + this.allsequencesAsList.get(index).toCodeString());
+          b.append(
+              "new component:"
+                  + Globals.lineSep
+                  + ""
+                  + newSequence.toString()
+                  + ""
+                  + Globals.lineSep
+                  + "as code:"
+                  + Globals.lineSep
+                  + ""
+                  + code
+                  + Globals.lineSep);
+          b.append(
+              "existing component:"
+                  + Globals.lineSep
+                  + ""
+                  + this.allsequencesAsList.get(index).toString()
+                  + ""
+                  + Globals.lineSep
+                  + "as code:"
+                  + Globals.lineSep
+                  + ""
+                  + this.allsequencesAsList.get(index).toCodeString());
           throw new IllegalStateException(b.toString());
         }
       }
@@ -460,7 +498,8 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // If alias ratio is given, attempt with some probability to use a
       // variable already in S.
-      if (GenInputsAbstract.alias_ratio != 0 && Randomness.weighedCoinFlip(GenInputsAbstract.alias_ratio)) {
+      if (GenInputsAbstract.alias_ratio != 0
+          && Randomness.weighedCoinFlip(GenInputsAbstract.alias_ratio)) {
 
         // candidateVars will store the indices that can serve as input to the
         // i-th input in st.
@@ -472,7 +511,9 @@ public class ForwardGenerator extends AbstractGenerator {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
-          candidateVars.add(new ArrayListSimpleList<Integer>(new ArrayList<Integer>(typesToVars.getValues(match))));
+          candidateVars.add(
+              new ArrayListSimpleList<Integer>(
+                  new ArrayList<Integer>(typesToVars.getValues(match))));
         }
 
         // If any type-compatible variables found, pick one at random as the
@@ -518,14 +559,12 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // 2. COMMON CASE: ask the component manager for all sequences that
         // yield the required type.
-        if (Log.isLoggingOn())
-          Log.logLine("Will query component set for objects of type" + t);
+        if (Log.isLoggingOn()) Log.logLine("Will query component set for objects of type" + t);
         l = componentManager.getSequencesForType(operation, i);
       }
       assert l != null;
 
-      if (Log.isLoggingOn())
-        Log.logLine("components: " + l.size());
+      if (Log.isLoggingOn()) Log.logLine("components: " + l.size());
 
       // If we were not able to find (or create) any sequences of type
       // inputTypes[i], and we are
@@ -537,8 +576,7 @@ public class ForwardGenerator extends AbstractGenerator {
             Log.logLine("forbid-null option is true. Failed to create new sequence.");
           return new InputsAndSuccessFlag(false, null, null);
         } else {
-          if (Log.isLoggingOn())
-            Log.logLine("Will use null as " + i + "-th input");
+          if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
           Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
@@ -556,7 +594,9 @@ public class ForwardGenerator extends AbstractGenerator {
       // However, the user may have requested that we use null values as inputs
       // with some given frequency.
       // If this is the case, then use null instead with some probability.
-      if (!isReceiver && GenInputsAbstract.null_ratio != 0 && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
+      if (!isReceiver
+          && GenInputsAbstract.null_ratio != 0
+          && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn())
           Log.logLine("null-ratio option given. Randomly decided to use null as input.");
         Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
@@ -596,11 +636,13 @@ public class ForwardGenerator extends AbstractGenerator {
 
       // Fail, if we were unlucky and selected a null or primitive value as the
       // receiver for a method call.
-      if (i == 0 && operation.isMessage() && !(operation.isStatic())
-          && (chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization() || randomVariable.getType().isPrimitive())) {
+      if (i == 0
+          && operation.isMessage()
+          && !(operation.isStatic())
+          && (chosenSeq.getCreatingStatement(randomVariable).isPrimitiveInitialization()
+              || randomVariable.getType().isPrimitive())) {
 
         return new InputsAndSuccessFlag(false, null, null);
-
       }
 
       // [Optimization.] Update optimization-related variables "types" and
@@ -611,7 +653,7 @@ public class ForwardGenerator extends AbstractGenerator {
           Statement stk = chosenSeq.getStatement(j);
           if (stk.isPrimitiveInitialization())
             continue; // Prim decl not an interesting candidate for multiple
-                      // uses.
+          // uses.
           Class<?> outType = stk.getOutputType();
           types.add(outType);
           typesToVars.add(outType, totStatements + j);
@@ -639,5 +681,4 @@ public class ForwardGenerator extends AbstractGenerator {
   public int numGeneratedSequences() {
     return allSequences.size();
   }
-
 }

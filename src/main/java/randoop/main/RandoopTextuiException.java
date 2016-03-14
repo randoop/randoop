@@ -7,5 +7,4 @@ public class RandoopTextuiException extends Exception {
   public RandoopTextuiException(String string) {
     super(string);
   }
-
 }

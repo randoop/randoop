@@ -11,5 +11,4 @@ public class DummyFailurePredicate implements ExceptionPredicate {
   public boolean test(ExceptionalExecution exec, ExecutableSequence s) {
     return false;
   }
-
 }

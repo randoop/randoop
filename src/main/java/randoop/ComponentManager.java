@@ -75,7 +75,7 @@ public class ComponentManager {
    */
   public ComponentManager() {
     gralComponents = new SequenceCollection();
-    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence> emptySet());
+    gralSeeds = Collections.unmodifiableSet(Collections.<Sequence>emptySet());
   }
 
   /**
@@ -226,7 +226,7 @@ public class ComponentManager {
    * "Foo var0 = null" or "int var0 = 1"), including general components, class
    * literals and package literals.
    *
-   * @return the sequences for primitive values 
+   * @return the sequences for primitive values
    */
   public Set<Sequence> getAllPrimitiveSequences() {
 

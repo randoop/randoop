@@ -22,7 +22,6 @@ import randoop.sequence.Sequence;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 
-
 /**
  * FieldSetterTest defines unit tests for FieldSetter class.
  * There is a test method for each kind of PublicField, and each
@@ -45,23 +44,29 @@ public class FieldSetterTest {
       //code generation
       String expected = "randoop.field.ClassWithFields.fourField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      Sequence seq0 = new Sequence().extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
+      Sequence seq0 =
+          new Sequence().extend(new NonreceiverTerm(int.class, 24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
-      vars.add(new Variable(seq0,0));
+      vars.add(new Variable(seq0, 0));
       Statement st_rhs = new Statement(rhs);
       st_rhs.appendCode(null, vars, b);
-      assertEquals("Expect assignment to static field",expected,b.toString());
+      assertEquals("Expect assignment to static field", expected, b.toString());
 
       //execution -- gives back null
-      assertFalse("Initial value of static is not 24", (int)f.getValue(null) == 24);
-      NormalExecution expectedExec = new NormalExecution(null,0);
+      assertFalse("Initial value of static is not 24", (int) f.getValue(null) == 24);
+      NormalExecution expectedExec = new NormalExecution(null, 0);
       Object[] inputs = new Object[1];
       inputs[0] = 24;
       ExecutionOutcome actualExec = rhs.execute(inputs, null);
-      assertTrue("outcome of static field set should be normal execution", actualExec instanceof NormalExecution);
-      NormalExecution actualNExec = (NormalExecution)actualExec;
-      assertTrue("Expect void result and zero execution", expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue() && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
-      assertEquals("Expect value to have changed", 24, (int)f.getValue(null));
+      assertTrue(
+          "outcome of static field set should be normal execution",
+          actualExec instanceof NormalExecution);
+      NormalExecution actualNExec = (NormalExecution) actualExec;
+      assertTrue(
+          "Expect void result and zero execution",
+          expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue()
+              && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
+      assertEquals("Expect value to have changed", 24, (int) f.getValue(null));
 
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
@@ -84,15 +89,18 @@ public class FieldSetterTest {
       //code generation
       String expected = "classWithFields0.oneField = 24;" + Globals.lineSep;
       StringBuilder b = new StringBuilder();
-      ConstructorCall cons = new ConstructorCall(ConstructorSignatures.getConstructorForSignatureString("randoop.field.ClassWithFields.<init>()"));
+      ConstructorCall cons =
+          new ConstructorCall(
+              ConstructorSignatures.getConstructorForSignatureString(
+                  "randoop.field.ClassWithFields.<init>()"));
       Sequence seq0 = new Sequence().extend(cons, new ArrayList<Variable>());
-      Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class,24), new ArrayList<Variable>());
+      Sequence seq1 = seq0.extend(new NonreceiverTerm(int.class, 24), new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
-      vars.add(new Variable(seq1,0));
-      vars.add(new Variable(seq1,1));
+      vars.add(new Variable(seq1, 0));
+      vars.add(new Variable(seq1, 1));
       Statement st_rhs = new Statement(rhs);
       st_rhs.appendCode(null, vars, b);
-      assertEquals("Expect assignment to instance field",expected,b.toString());
+      assertEquals("Expect assignment to instance field", expected, b.toString());
 
       //execution
       Object[] inputs = new Object[2];
@@ -100,20 +108,26 @@ public class FieldSetterTest {
       inputs[1] = 9;
       //null object
       ExecutionOutcome nullOutcome = rhs.execute(inputs, null);
-      assertTrue("Expect null pointer exception", nullOutcome instanceof ExceptionalExecution && ((ExceptionalExecution)nullOutcome).getException() instanceof NullPointerException);
+      assertTrue(
+          "Expect null pointer exception",
+          nullOutcome instanceof ExceptionalExecution
+              && ((ExceptionalExecution) nullOutcome).getException()
+                  instanceof NullPointerException);
 
       //real live object
       Object[] inputs2 = new Object[2];
       inputs2[0] = c.newInstance();
       inputs2[1] = 9;
-      assertFalse("Initial value of field is not 9", 9 == (int)f.getValue(inputs2[0]));
-      NormalExecution expectedExec = new NormalExecution(null,0);
+      assertFalse("Initial value of field is not 9", 9 == (int) f.getValue(inputs2[0]));
+      NormalExecution expectedExec = new NormalExecution(null, 0);
       ExecutionOutcome actualExec = rhs.execute(inputs2, null);
       assertTrue("outcome should be normal execution", actualExec instanceof NormalExecution);
-      NormalExecution actualNExec = (NormalExecution)actualExec;
-      assertTrue("Expect void result and zero execution", expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue() && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
-      assertEquals("Expect value to have changed", 9, (int)f.getValue(inputs2[0]));
-
+      NormalExecution actualNExec = (NormalExecution) actualExec;
+      assertTrue(
+          "Expect void result and zero execution",
+          expectedExec.getRuntimeValue() == actualNExec.getRuntimeValue()
+              && expectedExec.getExecutionTime() == actualNExec.getExecutionTime());
+      assertEquals("Expect value to have changed", 9, (int) f.getValue(inputs2[0]));
 
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
@@ -136,9 +150,11 @@ public class FieldSetterTest {
       try {
         @SuppressWarnings("unused")
         FieldSet rhs = new FieldSet(f);
-        fail("IllegalArgumentException expected when final instance field given to FieldSetter constructor");
+        fail(
+            "IllegalArgumentException expected when final instance field given to FieldSetter constructor");
       } catch (IllegalArgumentException e) {
-        assertEquals("Argument Exception", "Field may not be final for FieldSetter", e.getMessage());
+        assertEquals(
+            "Argument Exception", "Field may not be final for FieldSetter", e.getMessage());
       }
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
@@ -155,9 +171,11 @@ public class FieldSetterTest {
       try {
         @SuppressWarnings("unused")
         FieldSet rhs = new FieldSet(f);
-        fail("IllegalArgumentException expected when static final field given to FieldSetter constructor");
+        fail(
+            "IllegalArgumentException expected when static final field given to FieldSetter constructor");
       } catch (IllegalArgumentException e) {
-        assertEquals("Argument exception","Field may not be static final for FieldSetter",e.getMessage());
+        assertEquals(
+            "Argument exception", "Field may not be static final for FieldSetter", e.getMessage());
       }
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
@@ -171,11 +189,12 @@ public class FieldSetterTest {
     String setterDesc = "<set>(int:randoop.field.ClassWithFields.oneField)";
     try {
       FieldSet setter = FieldSet.parse(setterDesc);
-      assertEquals("parse should return object that converts to string", setterDesc, setter.toParseableString());
+      assertEquals(
+          "parse should return object that converts to string",
+          setterDesc,
+          setter.toParseableString());
     } catch (OperationParseException e) {
-     fail("Parse error: " + e.getMessage());
+      fail("Parse error: " + e.getMessage());
     }
-
   }
-
 }

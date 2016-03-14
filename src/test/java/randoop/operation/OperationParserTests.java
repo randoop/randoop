@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
-
 public class OperationParserTests extends TestCase {
 
   public void testPrimStKind() {
@@ -29,7 +28,7 @@ public class OperationParserTests extends TestCase {
     }
 
     // Array.
-    checkParse(new NonreceiverTerm(new Object[][]{}.getClass(), null));
+    checkParse(new NonreceiverTerm(new Object[][] {}.getClass(), null));
 
     // Primitives.
     checkParse(new NonreceiverTerm(int.class, 0));
@@ -38,11 +37,11 @@ public class OperationParserTests extends TestCase {
     checkParse(new NonreceiverTerm(int.class, Integer.MAX_VALUE));
     checkParse(new NonreceiverTerm(int.class, Integer.MIN_VALUE));
 
-    checkParse(new NonreceiverTerm(byte.class, (byte)0));
-    checkParse(new NonreceiverTerm(short.class, (short)0));
-    checkParse(new NonreceiverTerm(long.class, (long)0));
-    checkParse(new NonreceiverTerm(float.class, (float)0));
-    checkParse(new NonreceiverTerm(double.class, (double)0));
+    checkParse(new NonreceiverTerm(byte.class, (byte) 0));
+    checkParse(new NonreceiverTerm(short.class, (short) 0));
+    checkParse(new NonreceiverTerm(long.class, (long) 0));
+    checkParse(new NonreceiverTerm(float.class, (float) 0));
+    checkParse(new NonreceiverTerm(double.class, (double) 0));
     checkParse(new NonreceiverTerm(boolean.class, false));
 
     checkParse(new NonreceiverTerm(char.class, ' '));
@@ -69,8 +68,6 @@ public class OperationParserTests extends TestCase {
     checkParse(new ArrayCreation(int.class, 3));
   }
 
-
-
   private void checkParse(Operation st) {
     String stStr = st.toParseableString();
     System.out.println(stStr);
@@ -82,7 +79,8 @@ public class OperationParserTests extends TestCase {
     }
     assertNotNull(st2);
     assertTrue(st.toString() + "," + st2.toString(), st2.equals(st));
-    assertTrue(st.toParseableString() + "," + st2.toParseableString(), st.toParseableString().equals(st2.toParseableString()));
+    assertTrue(
+        st.toParseableString() + "," + st2.toParseableString(),
+        st.toParseableString().equals(st2.toParseableString()));
   }
-
 }

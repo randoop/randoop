@@ -11,5 +11,4 @@ public interface RecordProcessor {
    * Parse the given lines that comprise a record.
    */
   void processRecord(List<String> record);
-
 }

@@ -44,7 +44,8 @@ public class SpecialCoveredClassTest {
   public void abstractClassTest() {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/special-allclasses.txt");
-    GenInputsAbstract.include_if_class_exercised = new File("randoop/instrument/testcase/special-coveredclasses.txt");
+    GenInputsAbstract.include_if_class_exercised =
+        new File("randoop/instrument/testcase/special-coveredclasses.txt");
     ReflectionExecutor.usethreads = false;
     GenInputsAbstract.outputlimit = 5000;
     GenInputsAbstract.inputlimit = 10000;
@@ -57,41 +58,46 @@ public class SpecialCoveredClassTest {
     //
     assertTrue("should be one covered classes", coveredClasses.size() == 1);
     for (Class<?> c : coveredClasses) {
-      assertEquals("name should be AbstractTarget", "randoop.instrument.testcase.AbstractTarget", c.getName());
+      assertEquals(
+          "name should be AbstractTarget",
+          "randoop.instrument.testcase.AbstractTarget",
+          c.getName());
     }
 
     assertEquals("should have classes", 2, classes.size());
     for (Class<?> c : classes) {
-      assertTrue("should not be interface: " + c.getName(), ! c.isInterface());
+      assertTrue("should not be interface: " + c.getName(), !c.isInterface());
     }
     //
-    ReflectionPredicate predicate = new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
+    ReflectionPredicate predicate =
+        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, predicate);
     //
     assertEquals("model operations", 5, model.size());
     //
     Collection<Sequence> components = new LinkedHashSet<Sequence>();
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
-    ComponentManager componentMgr = new ComponentManager(components );
+    ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    ForwardGenerator testGenerator = new ForwardGenerator(
-        model,
-        GenInputsAbstract.timelimit * 1000,
-        GenInputsAbstract.inputlimit,
-        GenInputsAbstract.outputlimit,
-        componentMgr,
-        null,
-        listenerMgr);
+    ForwardGenerator testGenerator =
+        new ForwardGenerator(
+            model,
+            GenInputsAbstract.timelimit * 1000,
+            GenInputsAbstract.inputlimit,
+            GenInputsAbstract.outputlimit,
+            componentMgr,
+            null,
+            listenerMgr);
     GenTests genTests = new GenTests();
     ConstructorCall objectConstructor = null;
     try {
       objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
-      if (!model.contains(objectConstructor))
-        model.add(objectConstructor);
+      if (!model.contains(objectConstructor)) model.add(objectConstructor);
     } catch (Exception e) {
       fail("couldn't get object constructor");
     }
-    Predicate<ExecutableSequence> isOutputTest = genTests.createTestOutputPredicate(objectConstructor, coveredClasses);
+    Predicate<ExecutableSequence> isOutputTest =
+        genTests.createTestOutputPredicate(objectConstructor, coveredClasses);
     testGenerator.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
     testGenerator.addTestCheckGenerator(checkGenerator);
@@ -112,7 +118,7 @@ public class SpecialCoveredClassTest {
     }
 
     Set<Operation> opSet = new LinkedHashSet<>();
-    for (ExecutableSequence e: rTests) {
+    for (ExecutableSequence e : rTests) {
       assertTrue("should cover the class: " + at.getName(), e.coversClass(at));
       for (int i = 0; i < e.sequence.size(); i++) {
         Operation op = e.sequence.getStatement(i).getOperation();
@@ -129,10 +135,9 @@ public class SpecialCoveredClassTest {
       fail("cannot find implementor class " + e);
     }
     for (Operation op : model) {
-      assertTrue("all model operations should be used or from wrong implementor",
+      assertTrue(
+          "all model operations should be used or from wrong implementor",
           opSet.contains(op) || op.getDeclaringClass().equals(it));
     }
-
   }
-
 }

@@ -11,9 +11,9 @@ public class CoinPurse {
   private TreeMap<Coin, Integer> purse;
 
   public CoinPurse() {
-    purse = new TreeMap<Coin,Integer>();
+    purse = new TreeMap<Coin, Integer>();
   }
-  
+
   public int value() {
     int val = 0;
     for (Coin c : purse.keySet()) {
@@ -21,17 +21,17 @@ public class CoinPurse {
       if (purse.containsKey(c)) {
         count = purse.get(c);
       }
-      val += c.value()*count;
+      val += c.value() * count;
     }
     return val;
   }
-  
+
   public void add(List<Coin> coins) {
-    for (Coin c: coins) {
+    for (Coin c : coins) {
       add(c);
     }
   }
-  
+
   public void add(Coin c) {
     int count = 0;
     if (purse.containsKey(c)) {

@@ -37,7 +37,7 @@ import randoop.sequence.Variable;
  * identified. Execution of the statement will call
  * {@link Operation#execute(Object[], PrintStream)} with concrete values for
  * each of the inputs.
- * 
+ *
  * @see randoop.sequence.Statement
  * @see randoop.sequence.ExecutableSequence#execute(randoop.ExecutionVisitor,
  *      randoop.test.TestCheckGenerator)
@@ -62,14 +62,14 @@ public interface Operation extends Comparable<Operation> {
    * Returns the ordered list of input types for this operation. If a method
    * call or field access, the first input corresponds to the receiver, which
    * must be an object of the declaring class.
-   * 
+   *
    * @return list of types as {@link Class} objects.
    */
   List<Class<?>> getInputTypes();
 
   /**
    * getOutputTypes gives the type returned by the operation.
-   * 
+   *
    * @return type returned by the {@link Operation} as a {@link Class} object.
    */
   Class<?> getOutputType();
@@ -78,7 +78,7 @@ public interface Operation extends Comparable<Operation> {
    * Performs this operation using the array of input values. Returns the
    * results of execution as an ResultOrException object and can output results
    * to specified PrintStream.
-   * 
+   *
    * @param input
    *          array containing appropriate inputs to operation
    * @param out
@@ -91,7 +91,7 @@ public interface Operation extends Comparable<Operation> {
   /**
    * Produces a Java source code representation of this statement and append it
    * to the given StringBuilder.
-   * 
+   *
    * @param inputVars
    *          the list of variables that are inputs to operation.
    * @param b
@@ -105,7 +105,7 @@ public interface Operation extends Comparable<Operation> {
    * interface, this method should return a String s such that parsing the
    * string returns an object equivalent to this object, i.e.
    * C.parse(this.s).equals(this).
-   * 
+   *
    * @return string descriptor of {@link Operation} object.
    */
   String toParseableString();
@@ -113,7 +113,7 @@ public interface Operation extends Comparable<Operation> {
   /**
    * Predicate to indicate whether object represents a static operation on the
    * declaring class.
-   * 
+   *
    * @return true if operation corresponds to static method or field of a class,
    *         and false otherwise.
    */
@@ -123,7 +123,7 @@ public interface Operation extends Comparable<Operation> {
    * Predicate to indicate whether object represents a method-call-like
    * operation (either static or instance). This includes field getters and
    * setters, which are operations that access fields.
-   * 
+   *
    * @return true if operation is method-like, and false otherwise.
    */
   boolean isMessage();
@@ -131,14 +131,14 @@ public interface Operation extends Comparable<Operation> {
   /**
    * Returns the class in which the operation is defined, or, if the operation
    * represents a value, the type of the value.
-   * 
+   *
    * @return class to which the operation belongs.
    */
   Class<?> getDeclaringClass();
 
   /**
    * Predicate to indicate whether object represents a call to a constructor.
-   * 
+   *
    * @return true if operation is a constructor call, and false otherwise.
    */
   boolean isConstructorCall();
@@ -146,7 +146,7 @@ public interface Operation extends Comparable<Operation> {
   /**
    * Predicate to indicate whether this object represents a value of a
    * non-receiving type (includes numbers, strings, and null).
-   * 
+   *
    * @return true if object is a non-receiving value, and false otherwise.
    */
   boolean isNonreceivingValue();
@@ -158,7 +158,7 @@ public interface Operation extends Comparable<Operation> {
    * operation.
    * <p>
    * This is a hack to allow randoop.main.GenBranchDir to do mutation.
-   * 
+   *
    * @return object reference to value.
    * @throws IllegalArgumentException
    *           if no meaningful definition of "value" for type.
@@ -169,11 +169,10 @@ public interface Operation extends Comparable<Operation> {
    * Determines whether the reflective object in this {@link Operation}
    * satisfies the <code>canUse</code> criteria of the given
    * {@link ReflectionPredicate}.
-   * 
+   *
    * @param reflectionPredicate
    *          a {@link ReflectionPredicate} to be checked.
    * @return result of applying reflectionPredicate to object.
    */
   boolean satisfies(ReflectionPredicate reflectionPredicate);
-
 }

@@ -10,7 +10,7 @@ public interface IMultiMap<T1, T2> {
 
   /**
    * Precondition: the mapping key&rarr;value is not already in the map.
-   * 
+   *
    * @param key
    *          cannot be null.
    * @param value
@@ -20,7 +20,7 @@ public interface IMultiMap<T1, T2> {
 
   /**
    * Precondition: the mapping key&rarr;value is in the map.
-   * 
+   *
    * @param key
    *          cannot be null.
    * @param value
@@ -30,7 +30,7 @@ public interface IMultiMap<T1, T2> {
 
   /**
    * Returns the values that the given key maps to.
-   * 
+   *
    * @param key
    *          cannot be null.
    */
@@ -51,5 +51,4 @@ public interface IMultiMap<T1, T2> {
    */
   @Override
   String toString();
-
 }

@@ -32,7 +32,8 @@ public class LoadingWithAnnotationTest {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     GenInputsAbstract.include_if_classname_appears = null;
-    GenInputsAbstract.include_if_class_exercised = new File("randoop/instrument/testcase/annotatedclasses.txt");
+    GenInputsAbstract.include_if_class_exercised =
+        new File("randoop/instrument/testcase/annotatedclasses.txt");
     Set<Class<?>> coveredClasses = new LinkedHashSet<>();
     Set<Class<?>> classes = new LinkedHashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
@@ -67,12 +68,10 @@ public class LoadingWithAnnotationTest {
 
     for (Annotation a : annotations) {
       Class<?> annot_c = a.annotationType();
-      assertEquals("name matches", "randoop.CheckRep", annot_c.getName() );
+      assertEquals("name matches", "randoop.CheckRep", annot_c.getName());
 
       assertEquals("class should match once loaded", crc, annot_c);
       assertEquals("class should match", c, annot_c);
     }
-
   }
-
 }

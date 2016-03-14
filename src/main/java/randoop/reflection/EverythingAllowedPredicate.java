@@ -27,5 +27,4 @@ public class EverythingAllowedPredicate implements ReflectionPredicate {
   public boolean test(Field f) {
     return true;
   }
-
 }

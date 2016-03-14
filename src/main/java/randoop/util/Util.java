@@ -63,14 +63,10 @@ public final class Util {
     for (int i = 0; i < chars.length; i++) {
       output.append("\\u");
       String hex = Integer.toHexString(chars[i]);
-      if (hex.length() < 4)
-        output.append("0");
-      if (hex.length() < 3)
-        output.append("0");
-      if (hex.length() < 2)
-        output.append("0");
-      if (hex.length() < 1)
-        output.append("0");
+      if (hex.length() < 4) output.append("0");
+      if (hex.length() < 3) output.append("0");
+      if (hex.length() < 2) output.append("0");
+      if (hex.length() < 1) output.append("0");
 
       output.append(hex);
     }
@@ -93,7 +89,7 @@ public final class Util {
    *
    * @param s  the String
    * @param width  the column width
-   * @return the list of column strings 
+   * @return the list of column strings
    */
   public static List<String> toNCols(String s, int width) {
     List<String> ret = new ArrayList<String>();
@@ -105,8 +101,7 @@ public final class Util {
   }
 
   public static int occurCount(StringBuilder text, String pattern) {
-    if (pattern.length() == 0)
-      throw new IllegalArgumentException("empty pattern");
+    if (pattern.length() == 0) throw new IllegalArgumentException("empty pattern");
     int i = 0;
     int currIdx = text.indexOf(pattern);
     while (currIdx != -1) {
@@ -117,8 +112,7 @@ public final class Util {
   }
 
   public static String hangingParagraph(String string, int colWidth, int indentWidth) {
-    if (string == null)
-      throw new IllegalArgumentException("string cannot be null.");
+    if (string == null) throw new IllegalArgumentException("string cannot be null.");
     if (indentWidth > colWidth)
       throw new IllegalArgumentException("indentWidth cannot be greater than columnWidth");
 
@@ -129,22 +123,20 @@ public final class Util {
     while (i.hasMoreWords()) {
       // Determine line's length.
       int lineLength;
-      if (firstLine)
-        lineLength = colWidth;
-      else
-        lineLength = colWidth - indentWidth;
+      if (firstLine) lineLength = colWidth;
+      else lineLength = colWidth - indentWidth;
 
       String line = i.nextLine(lineLength);
       if (line.length() == 0) {
         // If this happens, it will happen on all subsequence calls to nextLine,
         // which would lead to an infinite loop.
-        throw new IllegalArgumentException("column width is too small to create hanging paragraph.");
+        throw new IllegalArgumentException(
+            "column width is too small to create hanging paragraph.");
       }
 
       // Add indent.
       if (!firstLine) {
-        for (int spaces = 0; spaces < indentWidth; spaces++)
-          b.append(" ");
+        for (int spaces = 0; spaces < indentWidth; spaces++) b.append(" ");
       }
 
       b.append(line);
@@ -190,5 +182,4 @@ public final class Util {
     b.append(")");
     return b.toString();
   }
-
 }

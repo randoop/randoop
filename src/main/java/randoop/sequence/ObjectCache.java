@@ -23,7 +23,12 @@ public class ObjectCache implements Serializable {
     // If runtime value is in object cache, clear active flag.
     if (!this.sm.add(e.getRuntimeValue())) {
       if (Log.isLoggingOn()) {
-        Log.logLine("Making index " + i + " inactive (already created an object equal to " + i + "th output).");
+        Log.logLine(
+            "Making index "
+                + i
+                + " inactive (already created an object equal to "
+                + i
+                + "th output).");
       }
       sequence.sequence.clearActiveFlag(i);
     } else {
@@ -32,5 +37,4 @@ public class ObjectCache implements Serializable {
       }
     }
   }
-
 }

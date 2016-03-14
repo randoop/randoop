@@ -83,7 +83,8 @@ public class JunitFileWriter {
    *          name of test class.
    * @return File that new test class was written to.
    */
-  public static File writeJUnitTestFile(String junitOutputDir, String packageName, ExecutableSequence es, String className) {
+  public static File writeJUnitTestFile(
+      String junitOutputDir, String packageName, ExecutableSequence es, String className) {
     JunitFileWriter writer = new JunitFileWriter(junitOutputDir, packageName, "dummy");
     writer.createOutputDir();
     return writer.writeTestClass(Collections.singletonList(es), className);
@@ -163,8 +164,7 @@ public class JunitFileWriter {
       out.println("}");
       classMethodCounts.put(className, methodNameGen.nameCount());
     } finally {
-      if (out != null)
-        out.close();
+      if (out != null) out.close();
     }
 
     return file;
@@ -185,11 +185,18 @@ public class JunitFileWriter {
    * @param s
    *          the {@link ExecutableSequence} for test method.
    */
-  private void writeTest(PrintStream out, String className, String methodName, ExecutableSequence s) {
+  private void writeTest(
+      PrintStream out, String className, String methodName, ExecutableSequence s) {
     out.println("  @Test");
     out.println("  public void " + methodName + "() throws Throwable {");
     out.println();
-    out.println(indent("if (debug) { System.out.format(\"%n%s%n\",\"" + className + "." + methodName + "\"); }"));
+    out.println(
+        indent(
+            "if (debug) { System.out.format(\"%n%s%n\",\""
+                + className
+                + "."
+                + methodName
+                + "\"); }"));
     out.println();
     out.println(indent(s.toCodeString()));
     out.println("  }");
@@ -389,15 +396,11 @@ public class JunitFileWriter {
 
   private File getDir() {
     File dir = null;
-    if (dirName == null || dirName.length() == 0)
-      dir = new File(System.getProperty("user.dir"));
-    else
-      dir = new File(dirName);
-    if (packageName == null)
-      return dir;
+    if (dirName == null || dirName.length() == 0) dir = new File(System.getProperty("user.dir"));
+    else dir = new File(dirName);
+    if (packageName == null) return dir;
 
-    if (packageName.length() == 0)
-      return dir;
+    if (packageName.length() == 0) return dir;
     String[] split = packageName.split("\\.");
     for (String s : split) {
       dir = new File(dir, s);
@@ -417,8 +420,7 @@ public class JunitFileWriter {
 
   private static void outputPackageName(PrintStream out, String packageName) {
     boolean isDefaultPackage = packageName.length() == 0;
-    if (!isDefaultPackage)
-      out.println("package " + packageName + ";");
+    if (!isDefaultPackage) out.println("package " + packageName + ";");
   }
 
   private static PrintStream createTextOutputStream(File file) {
@@ -431,5 +433,4 @@ public class JunitFileWriter {
       throw new Error("This can't happen");
     }
   }
-
 }

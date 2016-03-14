@@ -16,7 +16,7 @@ public class OrPredicate<T> extends DefaultPredicate<T> {
   /**
    * Constructs a predicate that will test the first predicate and then the
    * second.
-   * 
+   *
    * @param first
    *          the predicate to test first
    * @param second
@@ -30,7 +30,7 @@ public class OrPredicate<T> extends DefaultPredicate<T> {
   /**
    * {@inheritDoc} Return the short-circuited or of the two predicates for the
    * value t
-   * 
+   *
    * @return true if either the first or second predicate is true on t, and
    *         false otherwise
    */

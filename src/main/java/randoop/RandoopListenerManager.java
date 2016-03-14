@@ -59,5 +59,4 @@ public class RandoopListenerManager {
       n.explorationEnd();
     }
   }
-
 }

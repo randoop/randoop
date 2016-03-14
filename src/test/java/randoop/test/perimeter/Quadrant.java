@@ -4,8 +4,7 @@ package randoop.test.perimeter;
  * The quadrants specify the NW, NE, SW, and SE parts of the
  * image.
  **/
-public interface Quadrant
-{
+public interface Quadrant {
   final static Quadrant cNorthWest = new NorthWest();
   final static Quadrant cNorthEast = new NorthEast();
   final static Quadrant cSouthWest = new SouthWest();
@@ -32,5 +31,4 @@ public interface Quadrant
    * @return the child node representing this quadrant
    **/
   public QuadTreeNode child(QuadTreeNode node);
-
 }

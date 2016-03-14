@@ -25,7 +25,8 @@ public class ConstructorSignatures {
    *           there is no method with the name, or there is a security
    *           exception.
    */
-  public static Constructor<?> getConstructorForSignatureString(String signature) throws OperationParseException {
+  public static Constructor<?> getConstructorForSignatureString(String signature)
+      throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -77,5 +78,4 @@ public class ConstructorSignatures {
     sb.append(")");
     return sb.toString();
   }
-
 }

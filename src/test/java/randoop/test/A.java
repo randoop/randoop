@@ -9,8 +9,7 @@ public class A {
     this.i = i;
   }
 
-  public A() {
-  }
+  public A() {}
 
   public A(B b) {
     this.b = b;
@@ -21,8 +20,8 @@ public class A {
   }
 
   public A a1(A a) {
-    this.i = this.i*10+1;
-    return new A(a.i+1);
+    this.i = this.i * 10 + 1;
+    return new A(a.i + 1);
   }
 
   public B a2(A a) {
@@ -49,5 +48,4 @@ public class A {
   public int a6() {
     return 0;
   }
-
 }

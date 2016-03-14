@@ -19,7 +19,8 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public final List<Integer> marks;
 
   private enum Ops {
-    ADD, REMOVE
+    ADD,
+    REMOVE
   };
 
   private final List<Triple<Ops, T1, T2>> ops;
@@ -35,21 +36,19 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see randoop.util.IMultiMap#add(T1, T2)
    */
   @Override
   public void add(T1 key, T2 value) {
-    if (verbose_log && Log.isLoggingOn())
-      Log.logLine("ADD " + key + " ->" + value);
+    if (verbose_log && Log.isLoggingOn()) Log.logLine("ADD " + key + " ->" + value);
     add_bare(key, value);
     ops.add(new Triple<Ops, T1, T2>(Ops.ADD, key, value));
     steps++;
   }
 
   private void add_bare(T1 key, T2 value) {
-    if (key == null || value == null)
-      throw new IllegalArgumentException("args cannot be null.");
+    if (key == null || value == null) throw new IllegalArgumentException("args cannot be null.");
 
     Set<T2> values = map.get(key);
     if (values == null) {
@@ -64,21 +63,19 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see randoop.util.IMultiMap#remove(T1, T2)
    */
   @Override
   public void remove(T1 key, T2 value) {
-    if (verbose_log && Log.isLoggingOn())
-      Log.logLine("REMOVE " + key + " ->" + value);
+    if (verbose_log && Log.isLoggingOn()) Log.logLine("REMOVE " + key + " ->" + value);
     remove_bare(key, value);
     ops.add(new Triple<Ops, T1, T2>(Ops.REMOVE, key, value));
     steps++;
   }
 
   private void remove_bare(T1 key, T2 value) {
-    if (key == null || value == null)
-      throw new IllegalArgumentException("args cannot be null.");
+    if (key == null || value == null) throw new IllegalArgumentException("args cannot be null.");
 
     Set<T2> values = map.get(key);
     if (values == null) {
@@ -101,8 +98,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
     if (marks.isEmpty()) {
       throw new IllegalArgumentException("No marks.");
     }
-    if (Log.isLoggingOn())
-      Log.logLine("marks: " + marks);
+    if (Log.isLoggingOn()) Log.logLine("marks: " + marks);
     for (int i = 0; i < steps; i++) {
       undoLastOp();
     }
@@ -110,19 +106,16 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   private void undoLastOp() {
-    if (ops.isEmpty())
-      throw new IllegalStateException("ops empty.");
+    if (ops.isEmpty()) throw new IllegalStateException("ops empty.");
     Triple<Ops, T1, T2> last = ops.remove(ops.size() - 1);
 
     if (last.a == Ops.ADD) {
       // Remove the mapping.
-      if (Log.isLoggingOn())
-        Log.logLine("REMOVE " + last.b + " ->" + last.c);
+      if (Log.isLoggingOn()) Log.logLine("REMOVE " + last.b + " ->" + last.c);
       remove_bare(last.b, last.c);
     } else if (last.a == Ops.REMOVE) {
       // Add the mapping.
-      if (Log.isLoggingOn())
-        Log.logLine("ADD " + last.b + " ->" + last.c);
+      if (Log.isLoggingOn()) Log.logLine("ADD " + last.b + " ->" + last.c);
       add_bare(last.b, last.c);
     } else {
       // Really, we should never get here.
@@ -132,22 +125,20 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see randoop.util.IMultiMap#getValues(T1)
    */
   @Override
   public Set<T2> getValues(T1 key) {
-    if (key == null)
-      throw new IllegalArgumentException("arg cannot be null.");
+    if (key == null) throw new IllegalArgumentException("arg cannot be null.");
     Set<T2> values = map.get(key);
-    if (values == null)
-      return Collections.emptySet();
+    if (values == null) return Collections.emptySet();
     return values;
   }
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see randoop.util.IMultiMap#keySet()
    */
   @Override
@@ -157,7 +148,7 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see randoop.util.IMultiMap#size()
    */
   @Override
@@ -167,12 +158,11 @@ public class ReversibleMultiMap<T1, T2> implements IMultiMap<T1, T2> {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see randoop.util.IMultiMap#toString()
    */
   @Override
   public String toString() {
     return map.toString();
   }
-
 }

@@ -13,47 +13,47 @@ package java2.util2;
  */
 class ResourceBundleEnumeration implements Enumeration {
 
-    Set set;
-    Iterator iterator;
-    Enumeration enumeration; // may remain null
+  Set set;
+  Iterator iterator;
+  Enumeration enumeration; // may remain null
 
-    /**
-     * Constructs a resource bundle enumeration.
-     * @param set an set providing some elements of the enumeration
-     * @param enumeration an enumeration providing more elements of the enumeration.
-     *        enumeration may be null.
-     */
-    ResourceBundleEnumeration(Set set, Enumeration enumeration) {
-        this.set = set;
-        this.iterator = set.iterator();
-        this.enumeration = enumeration;
-    }
+  /**
+   * Constructs a resource bundle enumeration.
+   * @param set an set providing some elements of the enumeration
+   * @param enumeration an enumeration providing more elements of the enumeration.
+   *        enumeration may be null.
+   */
+  ResourceBundleEnumeration(Set set, Enumeration enumeration) {
+    this.set = set;
+    this.iterator = set.iterator();
+    this.enumeration = enumeration;
+  }
 
-    Object next = null;
-            
-    public boolean hasMoreElements() {
-        if (next == null) {
-            if (iterator.hasNext()) {
-                next = iterator.next();
-            } else if (enumeration != null) {
-                while (next == null && enumeration.hasMoreElements()) {
-                    next = enumeration.nextElement();
-                    if (set.contains(next)) {
-                        next = null;
-                    }
-                }
-            }
-        }
-        return next != null;
-    }
+  Object next = null;
 
-    public Object nextElement() {
-        if (hasMoreElements()) {
-            Object result = next;
+  public boolean hasMoreElements() {
+    if (next == null) {
+      if (iterator.hasNext()) {
+        next = iterator.next();
+      } else if (enumeration != null) {
+        while (next == null && enumeration.hasMoreElements()) {
+          next = enumeration.nextElement();
+          if (set.contains(next)) {
             next = null;
-            return result;
-        } else {
-            throw new NoSuchElementException();
+          }
         }
+      }
     }
+    return next != null;
+  }
+
+  public Object nextElement() {
+    if (hasMoreElements()) {
+      Object result = next;
+      next = null;
+      return result;
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
 }

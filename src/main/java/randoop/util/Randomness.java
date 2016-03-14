@@ -63,8 +63,7 @@ public final class Randomness {
     double max = 0;
     for (int i = 0; i < list.size(); i++) {
       double weight = list.get(i).getWeight();
-      if (weight <= 0)
-        throw new BugInRandoopException("weight was " + weight);
+      if (weight <= 0) throw new BugInRandoopException("weight was " + weight);
       max += weight;
     }
     assert max > 0;

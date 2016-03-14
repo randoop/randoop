@@ -17,13 +17,14 @@ public class JavaFileWriter {
 
   // Creates Junit tests for the faults.
   // Output is a set of .java files.
-  public static void createJavaFiles(List<Sequence> sequences, String junitClassName, int testsPerFile) {
+  public static void createJavaFiles(
+      List<Sequence> sequences, String junitClassName, int testsPerFile) {
     if (sequences.size() == 0) {
       System.out.println("No sequences given to createJavaFiles. No files created.");
       return;
     }
 
-    List<List<Sequence>> subSuites = CollectionsExt.<Sequence> chunkUp(sequences, testsPerFile);
+    List<List<Sequence>> subSuites = CollectionsExt.<Sequence>chunkUp(sequences, testsPerFile);
     for (int i = 0; i < subSuites.size(); i++) {
       writeSubSuite(subSuites.get(i), i, junitClassName);
     }
@@ -31,7 +32,8 @@ public class JavaFileWriter {
     writeDriverFile(subSuites.size(), junitClassName);
   }
 
-  private static void writeSubSuite(List<Sequence> sequencesForOneFile, int i, String junitClassName) {
+  private static void writeSubSuite(
+      List<Sequence> sequencesForOneFile, int i, String junitClassName) {
     PrintStream out = createTextOutputStream(junitClassName + i + ".java");
     try {
       out.println("public class " + junitClassName + i + " {");
@@ -54,8 +56,7 @@ public class JavaFileWriter {
       out.println("}");
       out.println("}");
     } finally {
-      if (out != null)
-        out.close();
+      if (out != null) out.close();
     }
   }
 
@@ -66,17 +67,16 @@ public class JavaFileWriter {
       out.println("  public static int numTests = 0;");
       out.println("  public static void main(String[] args) {");
       out.println("    long startTime = System.currentTimeMillis();");
-      for (int i = 0; i < numSubSuites; i++)
-        out.println("    " + junitClassName + i + ".run();");
+      for (int i = 0; i < numSubSuites; i++) out.println("    " + junitClassName + i + ".run();");
       out.println("    long stopTime = System.currentTimeMillis();");
       out.println("    System.out.println(\"Executed \" + numTests + \" tests.\");");
-      out.println("    System.out.println(\"Time spent executing tests: \" + (stopTime-startTime) + \"ms.\");");
+      out.println(
+          "    System.out.println(\"Time spent executing tests: \" + (stopTime-startTime) + \"ms.\");");
       out.println("  }");
       out.println("");
       out.println("}");
     } finally {
-      if (out != null)
-        out.close();
+      if (out != null) out.close();
     }
   }
 

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package randoop.sequence;
 
@@ -11,7 +11,7 @@ import randoop.sequence.Sequence;
  * Return type for ForwardGenerator's selectInputs method, which is responsible
  * for selecting a set of component sequences to be concatenated into a longer
  * sequence.
- * 
+ *
  */
 class InputsAndSuccessFlag {
 
@@ -30,5 +30,4 @@ class InputsAndSuccessFlag {
     this.sequences = sequences;
     this.indices = vars;
   }
-
 }

@@ -8,7 +8,7 @@ import randoop.types.TypeNames;
 /**
  * Serializable version of {@link ArrayCreation} allowing tests to be
  * serialized.
- * 
+ *
  * @see ArrayCreation#writeReplace
  */
 public class SerializableArrayCreation implements Serializable {
@@ -27,5 +27,4 @@ public class SerializableArrayCreation implements Serializable {
     Class<?> c = TypeNames.getTypeForName(elementType);
     return new ArrayCreation(c, length);
   }
-
 }

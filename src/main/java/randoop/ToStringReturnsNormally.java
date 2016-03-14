@@ -9,10 +9,8 @@ public final class ToStringReturnsNormally implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
+    if (o == null) return false;
+    if (o == this) return true;
     if (!(o instanceof ToStringReturnsNormally)) {
       return false;
     }
@@ -66,5 +64,4 @@ public final class ToStringReturnsNormally implements ObjectContract {
     b.append(");");
     return b.toString();
   }
-
 }

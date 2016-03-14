@@ -26,13 +26,13 @@ import randoop.util.SimpleList;
  * <p>
  * RANDOOP IMPLEMENTATION NOTE.
  * <p>
- * 
+ *
  * When creating new sequences, Randoop often needs to search for all the
  * previously-generated sequences that create one or more values of a given
  * type. Since this set can contain thousands of sequences, finding these
  * sequences can can be time-consuming and a bottleneck in generation (as we
  * discovered during profiling).
- * 
+ *
  * <p>
  *
  * This class makes the above search faster by maintaining two data structures:
@@ -54,15 +54,15 @@ import randoop.util.SimpleList;
 public class SequenceCollection {
 
   // We make it a list to make it easier to pick out an element at random.
-  private Map<Class<?>, ArrayListSimpleList<Sequence>> activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
+  private Map<Class<?>, ArrayListSimpleList<Sequence>> activeSequences =
+      new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
 
   private SubTypeSet typesWithSequencesMap = new SubTypeSet(false);
 
   public int numActivesequences = 0;
 
   private void checkRep() {
-    if (!GenInputsAbstract.debug_checks)
-      return;
+    if (!GenInputsAbstract.debug_checks) return;
     if (activeSequences.size() != typesWithSequencesMap.size()) {
       StringBuilder b = new StringBuilder();
       b.append("activesequences types=" + Globals.lineSep + activeSequences.keySet());
@@ -84,8 +84,7 @@ public class SequenceCollection {
    * Removes all sequences from this collection.
    */
   public void clear() {
-    if (Log.isLoggingOn())
-      Log.logLine("Clearing sequence collection.");
+    if (Log.isLoggingOn()) Log.logLine("Clearing sequence collection.");
     this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
     this.typesWithSequencesMap = new SubTypeSet(false);
     numActivesequences = 0;
@@ -103,8 +102,7 @@ public class SequenceCollection {
    * Create a new collection and adds the given initial sequences.
    */
   public SequenceCollection(Collection<Sequence> initialSequences) {
-    if (initialSequences == null)
-      throw new IllegalArgumentException("initialSequences is null.");
+    if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
     this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
     this.typesWithSequencesMap = new SubTypeSet(false);
     numActivesequences = 0;
@@ -147,8 +145,7 @@ public class SequenceCollection {
     for (int i = 0; i < constraints.size(); i++) {
       Variable v = values.get(i);
       assert Reflection.canBeUsedAs(v.getType(), constraints.get(i));
-      if (sequence.isActive(v.getDeclIndex()))
-        classes.add(constraints.get(i));
+      if (sequence.isActive(v.getDeclIndex())) classes.add(constraints.get(i));
     }
     updateCompatibleClassMap(classes);
     updateCompatibleMap(sequence, classes);
@@ -169,8 +166,7 @@ public class SequenceCollection {
         set = new ArrayListSimpleList<Sequence>();
         this.activeSequences.put(t, set);
       }
-      if (Log.isLoggingOn())
-        Log.logLine("Adding sequence to active sequences of type " + t);
+      if (Log.isLoggingOn()) Log.logLine("Adding sequence to active sequences of type " + t);
       boolean added = set.add(newsequence);
       numActivesequences++;
       assert added == true;
@@ -188,8 +184,7 @@ public class SequenceCollection {
    */
   public SimpleList<Sequence> getSequencesForType(Class<?> clazz, boolean exactMatch) {
 
-    if (clazz == null)
-      throw new IllegalArgumentException("clazz cannot be null.");
+    if (clazz == null) throw new IllegalArgumentException("clazz cannot be null.");
 
     if (Log.isLoggingOn()) {
       Log.logLine("getActivesequencesThatYield: entering method, clazz=" + clazz.toString());
@@ -233,7 +228,6 @@ public class SequenceCollection {
       result.addAll(a.theList);
     }
     return result;
-
   }
 
   public Set<Statement> getAllStatements() {
@@ -244,6 +238,5 @@ public class SequenceCollection {
       }
     }
     return result;
-
   }
 }

@@ -28,7 +28,8 @@ public class ExerciseInstrumentationTest {
     GenInputsAbstract.silently_ignore_bad_class_names = false;
     GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
     GenInputsAbstract.include_if_classname_appears = null;
-    GenInputsAbstract.include_if_class_exercised = new File("randoop/instrument/testcase/coveredclasses.txt");
+    GenInputsAbstract.include_if_class_exercised =
+        new File("randoop/instrument/testcase/coveredclasses.txt");
     Set<Class<?>> coveredClasses = new LinkedHashSet<>();
     Set<Class<?>> classes = new LinkedHashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
@@ -91,7 +92,7 @@ public class ExerciseInstrumentationTest {
       fail("cannot find class: " + e);
     }
 
- // Let's check instrumentation is working correctly, C doesn't have method
+    // Let's check instrumentation is working correctly, C doesn't have method
     Method ccheck = null;
     try {
       ccheck = bc.getMethod("randoop_checkAndReset", new Class<?>[0]);
@@ -106,7 +107,7 @@ public class ExerciseInstrumentationTest {
     boolean lastUsedValue = true;
 
     try {
-      lastUsedValue = (boolean)used.get(null);
+      lastUsedValue = (boolean) used.get(null);
       assertFalse("field initialized to false", lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
@@ -116,8 +117,10 @@ public class ExerciseInstrumentationTest {
 
     // ask instrumentation method for field value
     try {
-      assertEquals("flag should not have changed", lastUsedValue,
-          (boolean)check.invoke(null, new Object[0]) );
+      assertEquals(
+          "flag should not have changed",
+          lastUsedValue,
+          (boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -127,7 +130,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      lastUsedValue = (boolean)used.get(null);
+      lastUsedValue = (boolean) used.get(null);
       assertFalse("field false after check", lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
@@ -136,8 +139,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      assertFalse("flag should be false after reset",
-          (boolean)check.invoke(null, new Object[0]) );
+      assertFalse("flag should be false after reset", (boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -147,7 +149,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      lastUsedValue = (boolean)used.get(null);
+      lastUsedValue = (boolean) used.get(null);
       assertFalse("field false after reset", lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
@@ -171,13 +173,13 @@ public class ExerciseInstrumentationTest {
       bcon = bc.getConstructor(int.class);
       bcon.setAccessible(true);
     } catch (NoSuchMethodException e) {
-     fail("can't find BE(int) " + e);
+      fail("can't find BE(int) " + e);
     } catch (SecurityException e) {
       fail("security exception for BE(int) " + e);
     }
 
     try {
-      assertEquals("field should not have changed", lastUsedValue,(boolean)used.get(null));
+      assertEquals("field should not have changed", lastUsedValue, (boolean) used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -201,7 +203,7 @@ public class ExerciseInstrumentationTest {
 
     // should be true since B constructor uses A constructor
     try {
-      lastUsedValue = (boolean)used.get(null);
+      lastUsedValue = (boolean) used.get(null);
       assertTrue("field should be true", lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
@@ -210,8 +212,8 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      assertTrue("should be true after BE constructor",
-          (boolean)check.invoke(null, new Object[0]) );
+      assertTrue(
+          "should be true after BE constructor", (boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -221,7 +223,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      lastUsedValue = (boolean)used.get(null);
+      lastUsedValue = (boolean) used.get(null);
       assertFalse("field should be false after poll", lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
@@ -243,7 +245,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      assertTrue("field should be true after AE constructor", (boolean)used.get(null));
+      assertTrue("field should be true after AE constructor", (boolean) used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -251,8 +253,8 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      assertTrue("flag should be true after AE constructor",
-          (boolean)check.invoke(null, new Object[0]) );
+      assertTrue(
+          "flag should be true after AE constructor", (boolean) check.invoke(null, new Object[0]));
     } catch (IllegalAccessException e) {
       fail("illegal access " + e);
     } catch (IllegalArgumentException e) {
@@ -262,7 +264,7 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      lastUsedValue = (boolean)used.get(null);
+      lastUsedValue = (boolean) used.get(null);
       assertFalse("field should be false after poll", lastUsedValue);
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
@@ -274,13 +276,13 @@ public class ExerciseInstrumentationTest {
     try {
       jump = bc.getDeclaredMethod("jumpValue", new Class<?>[0]);
     } catch (NoSuchMethodException e) {
-     fail("cannot find method" + e);
+      fail("cannot find method" + e);
     } catch (SecurityException e) {
-      fail("cannot access method" +e);
+      fail("cannot access method" + e);
     }
 
     try {
-      assertEquals("field should not have changed", lastUsedValue, (boolean)used.get(null));
+      assertEquals("field should not have changed", lastUsedValue, (boolean) used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
@@ -298,13 +300,11 @@ public class ExerciseInstrumentationTest {
     }
 
     try {
-      assertTrue("field should be true after jumpValue", (boolean)used.get(null));
+      assertTrue("field should be true after jumpValue", (boolean) used.get(null));
     } catch (IllegalArgumentException e2) {
       fail("bad field access" + e2);
     } catch (IllegalAccessException e2) {
       fail("can't access field " + e2);
     }
-
   }
-
 }

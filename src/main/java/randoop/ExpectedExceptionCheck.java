@@ -18,7 +18,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
   /**
    * Creates check that enforces expectation that an exception is thrown by the
    * statement at the statement index.
-   * 
+   *
    * @param exception
    *          the expected exception
    * @param statementIndex
@@ -36,7 +36,8 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
    */
   @Override
   protected void appendTryBehavior(StringBuilder b, String exceptionClassName) {
-    String assertion = "org.junit.Assert.fail(\"Expected exception of type " + exceptionClassName + "\")";
+    String assertion =
+        "org.junit.Assert.fail(\"Expected exception of type " + exceptionClassName + "\")";
     b.append("  " + assertion + ";" + Globals.lineSep);
   }
 
@@ -46,7 +47,10 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
   @Override
   protected void appendCatchBehavior(StringBuilder b, String exceptionClassName) {
     String condition = "! e.getClass().getCanonicalName().equals(\"" + exceptionClassName + "\")";
-    String assertion = "org.junit.Assert.fail(\"Expected exception of type " + exceptionClassName + ", got \" + e.getClass().getCanonicalName())";
+    String assertion =
+        "org.junit.Assert.fail(\"Expected exception of type "
+            + exceptionClassName
+            + ", got \" + e.getClass().getCanonicalName())";
     b.append("  if (" + condition + ") {" + Globals.lineSep);
     b.append("    " + assertion + ";" + Globals.lineSep);
     b.append("  }" + Globals.lineSep);
@@ -55,7 +59,7 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
   /**
    * {@inheritDoc} Checks that an exception of the expected type is thrown by
    * the statement in this object in the given {@code Execution}.
-   * 
+   *
    * @return true if statement throws the expected exception, and false
    *         otherwise
    */
@@ -71,5 +75,4 @@ public class ExpectedExceptionCheck extends ExceptionCheck {
     ExceptionalExecution e = (ExceptionalExecution) outcomeAtIndex;
     return Reflection.canBeUsedAs(e.getException().getClass(), exception.getClass());
   }
-
 }

@@ -32,5 +32,4 @@ public class AllRandoopTests extends TestCase {
 
     return suite;
   }
-
 }

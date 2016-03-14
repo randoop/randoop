@@ -9,7 +9,7 @@ import randoop.BugInRandoopException;
 /**
  * Given a list of lists, defines methods that can access all the elements as if
  * they were part of a single list, without actually merging the lists.
- * 
+ *
  * This class is used for performance reasons. We want the ability to select
  * elements collected across several lists, but we observed that creating a
  * brand new list (i.e. via a sequence of List.addAll(..) operations can be very
@@ -26,7 +26,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   private int totalelements;
 
-  @SuppressWarnings({ "varargs", "unchecked" }) // heap pollution warning
+  @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public ListOfLists(SimpleList<T>... lists) {
     this.lists = new ArrayList<SimpleList<T>>(lists.length);
     for (SimpleList<T> sl : lists) {
@@ -45,8 +45,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
   }
 
   public ListOfLists(List<SimpleList<T>> lists) {
-    if (lists == null)
-      throw new IllegalArgumentException("param cannot be null");
+    if (lists == null) throw new IllegalArgumentException("param cannot be null");
     this.lists = lists;
     this.accumulatedSize = new int[lists.size()];
     this.totalelements = 0;
@@ -62,7 +61,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see randoop.util.SimpleList#size()
    */
   @Override
@@ -72,7 +71,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see randoop.util.SimpleList#get(int)
    */
   @Override
@@ -81,8 +80,7 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
       throw new IllegalArgumentException("index must be between 0 and size()-1");
     int previousListSize = 0;
     for (int i = 0; i < this.accumulatedSize.length; i++) {
-      if (index < this.accumulatedSize[i])
-        return this.lists.get(i).get(index - previousListSize);
+      if (index < this.accumulatedSize[i]) return this.lists.get(i).get(index - previousListSize);
       previousListSize = this.accumulatedSize[i];
     }
     throw new BugInRandoopException("Indexing error in ListOfLists");
@@ -115,5 +113,4 @@ public class ListOfLists<T> extends SimpleList<T> implements Serializable {
   public String toString() {
     return toJDKList().toString();
   }
-
 }

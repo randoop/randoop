@@ -76,9 +76,9 @@ public class RandoopSystemTest {
   /** the root for the system test working directories */
   static Path workingDirsRoot = null;
 
- /**
-  * Sets up the paths for test execution.
-  */
+  /**
+   * Sets up the paths for test execution.
+   */
   @BeforeClass
   public static void setupClass() {
     classpath = System.getProperty("java.class.path");
@@ -87,9 +87,9 @@ public class RandoopSystemTest {
   }
 
   /**
-  * Test formerly known as randoop1
-  * This test previously did a diff on TestClass0.java with goal file.
-  */
+   * Test formerly known as randoop1
+   * This test previously did a diff on TestClass0.java with goal file.
+   */
   @Test
   public void runCollectionsTest() {
 
@@ -98,7 +98,8 @@ public class RandoopSystemTest {
     String regressionBasename = "TestClass";
     String errorBasename = "";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--no-error-revealing-tests");
     options.add("--inputlimit=500");
     options.add("--testclass=java2.util2.TreeSet");
@@ -110,20 +111,31 @@ public class RandoopSystemTest {
     options.add("--omit-field-list=resources/systemTest/testclassomitfields.txt");
 
     long timeout = 9000L;
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options, timeout);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath,
+            workingPath,
+            packageName,
+            regressionBasename,
+            errorBasename,
+            options,
+            timeout);
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
-    TestRunDescription testRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
-    assertThat("all regression tests should pass", testRunDesc.testsSucceed, is(equalTo(randoopRunDesc.regressionTestCount)));
+    TestRunDescription testRunDesc =
+        runTests(classpath, workingPath, packageName, regressionBasename);
+    assertThat(
+        "all regression tests should pass",
+        testRunDesc.testsSucceed,
+        is(equalTo(randoopRunDesc.regressionTestCount)));
 
     assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
-
   }
 
   /**
-  * Test formerly known as randoop2
-  * Previously did a diff on generated test.
-  */
+   * Test formerly known as randoop2
+   * Previously did a diff on generated test.
+   */
   @Test
   public void runNaiveCollectionsTest() {
 
@@ -132,7 +144,8 @@ public class RandoopSystemTest {
     String regressionBasename = "NaiveRegression";
     String errorBasename = "NaiveError";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--inputlimit=100");
     options.add("--testclass=java2.util2.TreeSet");
     options.add("--testclass=java2.util2.ArrayList");
@@ -141,20 +154,25 @@ public class RandoopSystemTest {
     options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
     options.add("--omit-field-list=resources/systemTest/naiveomitfields.txt");
 
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
-    TestRunDescription testRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
-    assertThat("all regression tests should pass", testRunDesc.testsSucceed, is(equalTo(randoopRunDesc.regressionTestCount)));
+    TestRunDescription testRunDesc =
+        runTests(classpath, workingPath, packageName, regressionBasename);
+    assertThat(
+        "all regression tests should pass",
+        testRunDesc.testsSucceed,
+        is(equalTo(randoopRunDesc.regressionTestCount)));
 
     assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
-
   }
 
   /**
-  * Test formerly known as randoop3
-  * Previously this test did nothing beyond generating the tests.
-  */
+   * Test formerly known as randoop3
+   * Previously this test did nothing beyond generating the tests.
+   */
   @Test
   public void runJDKTest() {
 
@@ -163,7 +181,8 @@ public class RandoopSystemTest {
     String regressionBasename = "JDK_Tests_regression";
     String errorBasename = "JDK_Tests_error";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--inputlimit=1000");
     options.add("--null-ratio=0.3");
     options.add("--alias-ratio=0.3");
@@ -171,27 +190,32 @@ public class RandoopSystemTest {
     options.add("--clear=100");
     options.add("--classlist=resources/systemTest/jdk_classlist.txt");
 
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
-    TestRunDescription testRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
-    assertThat("all regression tests should pass", testRunDesc.testsSucceed, is(equalTo(randoopRunDesc.regressionTestCount)));
+    TestRunDescription testRunDesc =
+        runTests(classpath, workingPath, packageName, regressionBasename);
+    assertThat(
+        "all regression tests should pass",
+        testRunDesc.testsSucceed,
+        is(equalTo(randoopRunDesc.regressionTestCount)));
 
     assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
-
   }
 
   /**
-  * Test formerly known as randoop-contracts
-  * Takes a long time. Evidence from running
-  * <tt>time make randoop-contracts</tt>
-  * with previous Makefile. Reports:
-  * <tt><pre>
-  *  real	0m15.976s
-  *  user	0m17.902s
-  *  sys	0m9.814s
-  * </pre></tt>
-  */
+   * Test formerly known as randoop-contracts
+   * Takes a long time. Evidence from running
+   * <tt>time make randoop-contracts</tt>
+   * with previous Makefile. Reports:
+   * <tt><pre>
+   *  real	0m15.976s
+   *  user	0m17.902s
+   *  sys	0m9.814s
+   * </pre></tt>
+   */
   @Test
   public void runContractsTest() {
 
@@ -200,7 +224,8 @@ public class RandoopSystemTest {
     String regressionBasename = "";
     String errorBasename = "BuggyTest";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--no-regression-tests");
     options.add("--inputlimit=1000");
     options.add("--classlist=resources/systemTest/buggyclasses.txt");
@@ -208,19 +233,32 @@ public class RandoopSystemTest {
 
     long timeout = 30000L;
 
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options, timeout);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath,
+            workingPath,
+            packageName,
+            regressionBasename,
+            errorBasename,
+            options,
+            timeout);
 
-    assertThat("Contracts test should have no regression tests", randoopRunDesc.regressionTestCount, is(equalTo(0)));
+    assertThat(
+        "Contracts test should have no regression tests",
+        randoopRunDesc.regressionTestCount,
+        is(equalTo(0)));
 
     assertThat("...should have 81 error tests", randoopRunDesc.errorTestCount, is(equalTo(81)));
     TestRunDescription testRunDesc = runTests(classpath, workingPath, packageName, errorBasename);
-    assertThat("...all error tests should fail", testRunDesc.testsFail, is(equalTo(randoopRunDesc.errorTestCount)));
-
+    assertThat(
+        "...all error tests should fail",
+        testRunDesc.testsFail,
+        is(equalTo(randoopRunDesc.errorTestCount)));
   }
 
   /**
-  * Test formerly known as randoop-checkrep
-  */
+   * Test formerly known as randoop-checkrep
+   */
   @Test
   public void runCheckRepTest() {
 
@@ -229,26 +267,34 @@ public class RandoopSystemTest {
     String regressionBasename = "";
     String errorBasename = "CheckRepTest";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--no-regression-tests");
     options.add("--timelimit=2");
     options.add("--testclass=examples.CheckRep1");
     options.add("--testclass=examples.CheckRep2");
 
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
 
-    assertThat("Contracts test should have no regression tests", randoopRunDesc.regressionTestCount, is(equalTo(0)));
+    assertThat(
+        "Contracts test should have no regression tests",
+        randoopRunDesc.regressionTestCount,
+        is(equalTo(0)));
 
     assertThat("...should have 2 error tests", randoopRunDesc.errorTestCount, is(equalTo(2)));
     TestRunDescription testRunDesc = runTests(classpath, workingPath, packageName, errorBasename);
-    assertThat("...all error tests should fail", testRunDesc.testsFail, is(equalTo(randoopRunDesc.errorTestCount)));
-
+    assertThat(
+        "...all error tests should fail",
+        testRunDesc.testsFail,
+        is(equalTo(randoopRunDesc.errorTestCount)));
   }
 
   /**
-  * Test formerly known as randoop-literals
-  * Previously did a diff on generated test file and goal.
-  */
+   * Test formerly known as randoop-literals
+   * Previously did a diff on generated test file and goal.
+   */
   @Test
   public void runLiteralsTest() {
 
@@ -257,7 +303,8 @@ public class RandoopSystemTest {
     String regressionBasename = "LiteralsReg";
     String errorBasename = "LiteralsErr";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--inputlimit=1000");
     options.add("--testclass=randoop.literals.A");
     options.add("--testclass=randoop.literals.A2");
@@ -265,20 +312,25 @@ public class RandoopSystemTest {
     options.add("--literals-level=CLASS");
     options.add("--literals-file=resources/systemTest/literalsfile.txt");
 
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
-    TestRunDescription testRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
-    assertThat("all regression tests should pass", testRunDesc.testsSucceed, is(equalTo(randoopRunDesc.regressionTestCount)));
+    TestRunDescription testRunDesc =
+        runTests(classpath, workingPath, packageName, regressionBasename);
+    assertThat(
+        "all regression tests should pass",
+        testRunDesc.testsSucceed,
+        is(equalTo(randoopRunDesc.regressionTestCount)));
 
     assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
-
   }
 
   /**
-  * Test formerly known as randoop-long-string
-  * Previously performed a diff on generated test and goal file.
-  */
+   * Test formerly known as randoop-long-string
+   * Previously performed a diff on generated test and goal file.
+   */
   @Test
   public void runLongStringTest() {
     Path workingPath = createTestDirectory(workingDirsRoot, "longstring-test"); // temp directory
@@ -286,23 +338,29 @@ public class RandoopSystemTest {
     String regressionBasename = "LongString";
     String errorBasename = "";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--timelimit=1");
     options.add("--testclass=randoop.test.LongString");
 
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
-    TestRunDescription testRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
-    assertThat("all regression tests should pass", testRunDesc.testsSucceed, is(equalTo(randoopRunDesc.regressionTestCount)));
+    TestRunDescription testRunDesc =
+        runTests(classpath, workingPath, packageName, regressionBasename);
+    assertThat(
+        "all regression tests should pass",
+        testRunDesc.testsSucceed,
+        is(equalTo(randoopRunDesc.regressionTestCount)));
 
     assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
-
   }
 
   /**
-  * Test formerly known as randoop-visibility
-  */
+   * Test formerly known as randoop-visibility
+   */
   @Test
   public void runVisibilityTest() {
     Path workingPath = createTestDirectory(workingDirsRoot, "visibility-test"); // temp directory
@@ -310,24 +368,30 @@ public class RandoopSystemTest {
     String regressionBasename = "VisibilityTest";
     String errorBasename = "";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--timelimit=2");
     options.add("--testclass=examples.Visibility");
 
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
-    TestRunDescription testRunDesc = runTests(classpath, workingPath, packageName, regressionBasename);
-    assertThat("all regression tests should pass", testRunDesc.testsSucceed, is(equalTo(randoopRunDesc.regressionTestCount)));
+    TestRunDescription testRunDesc =
+        runTests(classpath, workingPath, packageName, regressionBasename);
+    assertThat(
+        "all regression tests should pass",
+        testRunDesc.testsSucceed,
+        is(equalTo(randoopRunDesc.regressionTestCount)));
 
     assertThat("...has no error tests", randoopRunDesc.errorTestCount, is(equalTo(0)));
-
   }
 
   /**
-  * Test formerly known as randoop-no-output.
-  * Runs with <tt>--noprogressdisplay</tt> and so should have no output.
-  */
+   * Test formerly known as randoop-no-output.
+   * Runs with <tt>--noprogressdisplay</tt> and so should have no output.
+   */
   @Test
   public void runNoOutputTest() {
     Path workingPath = createTestDirectory(workingDirsRoot, "no-output-test"); // temp directory
@@ -335,32 +399,37 @@ public class RandoopSystemTest {
     String regressionBasename = "NoOutputTest";
     String errorBasename = "";
 
-    List<String> options = getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
+    List<String> options =
+        getStandardOptions(workingPath, packageName, regressionBasename, errorBasename);
     options.add("--timelimit=1");
     options.add("--testclass=java.util.LinkedList");
     options.add("--noprogressdisplay");
 
-    RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options);
+    RandoopRunDescription randoopRunDesc =
+        generateAndCompile(
+            classpath, workingPath, packageName, regressionBasename, errorBasename, options);
 
-    assertThat("There should be no output", randoopRunDesc.processStatus.outputLines.size(), is(equalTo(0)));
-
+    assertThat(
+        "There should be no output",
+        randoopRunDesc.processStatus.outputLines.size(),
+        is(equalTo(0)));
   }
 
   /********************************** utility methods ***************************/
 
   /**
-  * Creates a working directory for a test using the given directory name.
-  * Contains subdirectories:
-  * <ul>
-  *   <li> src - Java source of Randoop generated tests
-  *   <li> classes - binaries of Randoop generated tests
-  * </ul>
-  * Will fail calling test if an {@code IOException} is thrown
-  *
-  * @param currentWorkingDir  the parent directory for created directory
-  * @param dirname  the name of the directory to create
-  * @return the path to the created directory
-  */
+   * Creates a working directory for a test using the given directory name.
+   * Contains subdirectories:
+   * <ul>
+   *   <li> src - Java source of Randoop generated tests
+   *   <li> classes - binaries of Randoop generated tests
+   * </ul>
+   * Will fail calling test if an {@code IOException} is thrown
+   *
+   * @param currentWorkingDir  the parent directory for created directory
+   * @param dirname  the name of the directory to create
+   * @return the path to the created directory
+   */
   Path createTestDirectory(Path currentWorkingDir, String dirname) {
     Path testDir = null;
     try {
@@ -374,36 +443,38 @@ public class RandoopSystemTest {
   }
 
   /**
-  * Creates a directory in the given parent directory with the subdirectory name.
-  *
-  * @param parentDir  the parent directory
-  * @param subdirName  the subdirectory name
-  * @return the path of the created subdirectory
-  */
+   * Creates a directory in the given parent directory with the subdirectory name.
+   *
+   * @param parentDir  the parent directory
+   * @param subdirName  the subdirectory name
+   * @return the path of the created subdirectory
+   */
   Path createSubDirectory(Path parentDir, String subdirName) throws IOException {
     Path subDir = parentDir.resolve(subdirName);
-    if (! Files.exists(subDir)) {
+    if (!Files.exists(subDir)) {
       Files.createDirectory(subDir);
     }
     return subDir;
   }
 
   /**
-  * Creates a list of the basic Randoop options for generating system tests
-  * including package and base names, and the working directory.
-  * Assumes a name is non-null, and that an empty string indicates that the
-  * option is not being used.
-  * Requires that at least one of the regression or error basenames be non-empty.
-  *
-  * @param workingPath  the working directory for the test
-  * @param packageName  the packageName for generated tests, empty if none
-  * @param regressionBasename  the regression test basename, empty if none
-  * @param errorBasename  the error test basename, empty if none
-  *
-  * @return the Randoop options constructed from the parameters
-  */
-  List<String> getStandardOptions(Path workingPath, String packageName, String regressionBasename, String errorBasename) {
-    assert (errorBasename.length() > 0 || regressionBasename.length() > 0) : "either error or regression basenames must be nonempty";
+   * Creates a list of the basic Randoop options for generating system tests
+   * including package and base names, and the working directory.
+   * Assumes a name is non-null, and that an empty string indicates that the
+   * option is not being used.
+   * Requires that at least one of the regression or error basenames be non-empty.
+   *
+   * @param workingPath  the working directory for the test
+   * @param packageName  the packageName for generated tests, empty if none
+   * @param regressionBasename  the regression test basename, empty if none
+   * @param errorBasename  the error test basename, empty if none
+   *
+   * @return the Randoop options constructed from the parameters
+   */
+  List<String> getStandardOptions(
+      Path workingPath, String packageName, String regressionBasename, String errorBasename) {
+    assert (errorBasename.length() > 0 || regressionBasename.length() > 0)
+        : "either error or regression basenames must be nonempty";
     List<String> options = new ArrayList<>();
     if (regressionBasename.length() > 0) {
       options.add("--regression-test-basename=" + regressionBasename);
@@ -427,7 +498,11 @@ public class RandoopSystemTest {
     final int regressionTestCount;
     final int errorTestCount;
 
-    public RandoopRunDescription(ProcessStatus processStatus, int operatorCount, int regressionTestCount, int errorTestCount) {
+    public RandoopRunDescription(
+        ProcessStatus processStatus,
+        int operatorCount,
+        int regressionTestCount,
+        int errorTestCount) {
       this.processStatus = processStatus;
       this.operatorCount = operatorCount;
       this.regressionTestCount = regressionTestCount;
@@ -451,24 +526,43 @@ public class RandoopSystemTest {
           errorTestCount = count;
         }
       }
-
     }
 
     return new RandoopRunDescription(ps, operatorCount, regressionTestCount, errorTestCount);
   }
 
-  public RandoopRunDescription generateAndCompile(String classpath, Path workingPath, String packageName, String regressionBasename, String errorBasename, List<String> randoopOptions) {
+  public RandoopRunDescription generateAndCompile(
+      String classpath,
+      Path workingPath,
+      String packageName,
+      String regressionBasename,
+      String errorBasename,
+      List<String> randoopOptions) {
     long defaultTimeout = 5000L;
-    return generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, randoopOptions, defaultTimeout);
+    return generateAndCompile(
+        classpath,
+        workingPath,
+        packageName,
+        regressionBasename,
+        errorBasename,
+        randoopOptions,
+        defaultTimeout);
   }
 
-  public RandoopRunDescription generateAndCompile(String classpath, Path workingPath, String packageName, String regressionBasename, String errorBasename, List<String> randoopOptions, long timeout) {
+  public RandoopRunDescription generateAndCompile(
+      String classpath,
+      Path workingPath,
+      String packageName,
+      String regressionBasename,
+      String errorBasename,
+      List<String> randoopOptions,
+      long timeout) {
 
     ProcessStatus randoopExitStatus = runRandoop(classpath, randoopOptions, timeout);
 
     // runCommand should take care of this, but let's just be sure
     if (randoopExitStatus.exitStatus != 0) {
-      for (String line: randoopExitStatus.outputLines) {
+      for (String line : randoopExitStatus.outputLines) {
         System.err.println(line);
       }
       fail("Randoop exited badly, exit value = " + randoopExitStatus.exitStatus);
@@ -477,13 +571,14 @@ public class RandoopSystemTest {
     // determine whether files are really there and have the right names
     Path srcDir = workingPath.resolve(SOURCE_DIR_NAME);
     List<File> testClassSourceFiles = new ArrayList<>();
-    Path sourcePath = srcDir.resolve(packageName.replace('.','/'));
+    Path sourcePath = srcDir.resolve(packageName.replace('.', '/'));
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(sourcePath, "*.java")) {
-      for (Path entry: stream) {
+      for (Path entry : stream) {
         String filename = entry.getFileName().toString();
-        assertThat("Test class filename should start with basename",
-          filename,
-          is(anyOf(startsWith(regressionBasename), startsWith(errorBasename))));
+        assertThat(
+            "Test class filename should start with basename",
+            filename,
+            is(anyOf(startsWith(regressionBasename), startsWith(errorBasename))));
         testClassSourceFiles.add(entry.toFile());
       }
     } catch (IOException e) {
@@ -501,19 +596,23 @@ public class RandoopSystemTest {
 
     // collect class files for generated tests
     List<File> testClassClassFiles = new ArrayList<>();
-    Path testFilePath = classDir.resolve(packageName.replace('.','/'));
+    Path testFilePath = classDir.resolve(packageName.replace('.', '/'));
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(testFilePath, "*.class")) {
-      for (Path entry: stream) {
+      for (Path entry : stream) {
         String filename = entry.getFileName().toString();
-        assertThat("Test class filename should start with basename",
-          filename,
-          is(anyOf(startsWith(regressionBasename), startsWith(errorBasename))));
+        assertThat(
+            "Test class filename should start with basename",
+            filename,
+            is(anyOf(startsWith(regressionBasename), startsWith(errorBasename))));
         testClassClassFiles.add(entry.toFile());
       }
     } catch (IOException e) {
       fail("Exception reading working directory " + e);
     }
-    assertThat("Number of compiled tests equals source tests", testClassClassFiles.size(), is(equalTo(testClassSourceFiles.size())));
+    assertThat(
+        "Number of compiled tests equals source tests",
+        testClassClassFiles.size(),
+        is(equalTo(testClassSourceFiles.size())));
 
     return getRandoopRunDescription(randoopExitStatus);
   }
@@ -523,7 +622,9 @@ public class RandoopSystemTest {
     final int testsRun;
     final int testsFail;
     final int testsSucceed;
-    public TestRunDescription(ProcessStatus processStatus, int testsRun, int testsFail, int testsSucceed) {
+
+    public TestRunDescription(
+        ProcessStatus processStatus, int testsRun, int testsFail, int testsSucceed) {
       this.processStatus = processStatus;
       this.testsRun = testsRun;
       this.testsFail = testsFail;
@@ -537,7 +638,7 @@ public class RandoopSystemTest {
     int testsFail = 0;
 
     for (String line : ps.outputLines) {
-      if (line.contains("OK (") ) {
+      if (line.contains("OK (")) {
         testsSucceed = Integer.valueOf(line.replaceFirst("\\D*(\\d*).*", "$1"));
         testsRun = testsSucceed;
       } else if (line.contains("Failures:")) {
@@ -552,17 +653,19 @@ public class RandoopSystemTest {
     return new TestRunDescription(ps, testsRun, testsFail, testsSucceed);
   }
 
-  public TestRunDescription runTests(String classpath, Path workingPath, String packageName, String basename) {
+  public TestRunDescription runTests(
+      String classpath, Path workingPath, String packageName, String basename) {
     long defaultTimeout = 5000L;
     return runTests(classpath, workingPath, packageName, basename, defaultTimeout);
   }
 
-  public TestRunDescription runTests(String classpath, Path workingPath, String packageName, String basename, long timeout) {
+  public TestRunDescription runTests(
+      String classpath, Path workingPath, String packageName, String basename, long timeout) {
     Path classDir = workingPath.resolve(CLASS_DIR_NAME);
     String testClasspath = classpath + ":" + classDir.toString();
 
     String jUnitTestSuiteName = "";
-    if (! packageName.isEmpty()) {
+    if (!packageName.isEmpty()) {
       jUnitTestSuiteName = packageName + ".";
     }
     jUnitTestSuiteName += basename;
@@ -572,15 +675,15 @@ public class RandoopSystemTest {
     return getTestRunDescription(testRunStatus);
   }
 
- /**
-  * Runs randoop using the given options.
-  * Note: the timeout is for the command process and can be different than
-  * the timeout given in the options.
-  *
-  * @param classpath  the classpath for running Randoop
-  * @param options  the Randoop options
-  * @param timeout  the timeout (in milliseconds) for running Randoop
-  */
+  /**
+   * Runs randoop using the given options.
+   * Note: the timeout is for the command process and can be different than
+   * the timeout given in the options.
+   *
+   * @param classpath  the classpath for running Randoop
+   * @param options  the Randoop options
+   * @param timeout  the timeout (in milliseconds) for running Randoop
+   */
   //classpath should be process classpath + inputtests
   public ProcessStatus runRandoop(String classpath, List<String> options, long timeout) {
     List<String> command = new ArrayList<>();
@@ -594,15 +697,16 @@ public class RandoopSystemTest {
     return runCommand(command, timeout);
   }
 
- /**
-  * Class to hold the return status from running a command assuming that it
-  * is run in a process where stderr and stdout are linked.
-  * Includes the exit status, and the list of output lines.
-  */
+  /**
+   * Class to hold the return status from running a command assuming that it
+   * is run in a process where stderr and stdout are linked.
+   * Includes the exit status, and the list of output lines.
+   */
   private class ProcessStatus {
     final List<String> command;
     final int exitStatus;
     final List<String> outputLines;
+
     public ProcessStatus(List<String> command, int exitStatus, List<String> outputLines) {
       this.command = command;
       this.exitStatus = exitStatus;
@@ -610,13 +714,13 @@ public class RandoopSystemTest {
     }
   }
 
- /**
-  * Runs the given command in a new process using the given timeout.
-  *
-  * @param command  the command to be run in the process
-  * @param timeout  the timeout (in milliseconds) for the command
-  * @return the exit status and combined standard stream output
-  */
+  /**
+   * Runs the given command in a new process using the given timeout.
+   *
+   * @param command  the command to be run in the process
+   * @param timeout  the timeout (in milliseconds) for the command
+   * @return the exit status and combined standard stream output
+   */
   public ProcessStatus runCommand(List<String> command, long timeout) {
 
     ProcessBuilder randoopBuilder = new ProcessBuilder(command);
@@ -650,25 +754,25 @@ public class RandoopSystemTest {
     }
 
     if (p.timed_out()) {
-      for (String line: outputLines) {
+      for (String line : outputLines) {
         System.out.println(line);
       }
-      assert ! p.timed_out() : "Process timed out after " + p.timeout_msecs() + " msecs";
+      assert !p.timed_out() : "Process timed out after " + p.timeout_msecs() + " msecs";
     }
     return new ProcessStatus(command, exitValue, outputLines);
   }
 
- /**
-  * Compile the test files, writing the class files to the desination directory.
-  *
-  * @param testSourceFiles  the Java source for the tests
-  * @param destinationDir  the path to the desination directory
-  * @return true if compile succeeded, false otherwise
-  */
+  /**
+   * Compile the test files, writing the class files to the desination directory.
+   *
+   * @param testSourceFiles  the Java source for the tests
+   * @param destinationDir  the path to the desination directory
+   * @return true if compile succeeded, false otherwise
+   */
   public Boolean compileTests(List<File> testSourceFiles, String destinationDir) {
     Locale locale = null; // use default locale
     Charset charset = null; // use default charset
-    Writer writer = null;  // use System.err for output
+    Writer writer = null; // use System.err for output
     List<String> annotatedClasses = null; // no classes
 
     List<String> options = new ArrayList<>();
@@ -679,23 +783,28 @@ public class RandoopSystemTest {
     DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
     Boolean succeeded = false;
-    try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, locale, charset)) {
-      Iterable<? extends JavaFileObject> filesToCompile = fileManager.getJavaFileObjectsFromFiles(testSourceFiles);
-      succeeded = compiler.getTask(writer, fileManager, diagnostics, options, annotatedClasses, filesToCompile).call();
+    try (StandardJavaFileManager fileManager =
+            compiler.getStandardFileManager(diagnostics, locale, charset)) {
+      Iterable<? extends JavaFileObject> filesToCompile =
+          fileManager.getJavaFileObjectsFromFiles(testSourceFiles);
+      succeeded =
+          compiler
+              .getTask(writer, fileManager, diagnostics, options, annotatedClasses, filesToCompile)
+              .call();
     } catch (IOException e) {
       fail("I/O Error while compiling generated tests: " + e);
     }
     return succeeded;
   }
 
- /**
-  * Runs the given JUnit suite in a separate process.
-  *
-  * @param classpath  the classpath for the tests
-  * @param junitTestName  the name of the test suite
-  * @param timeout  the timeout (milliseconds) for running the test
-  * @return the capture of exit status and standard stream output for test run
-  */
+  /**
+   * Runs the given JUnit suite in a separate process.
+   *
+   * @param classpath  the classpath for the tests
+   * @param junitTestName  the name of the test suite
+   * @param timeout  the timeout (milliseconds) for running the test
+   * @return the capture of exit status and standard stream output for test run
+   */
   public ProcessStatus runGeneratedTests(String classpath, String junitTestName, long timeout) {
     List<String> command = new ArrayList<>();
     command.add("java");
@@ -706,5 +815,4 @@ public class RandoopSystemTest {
     command.add(junitTestName);
     return runCommand(command, timeout);
   }
-
 }

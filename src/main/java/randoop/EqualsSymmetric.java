@@ -9,10 +9,8 @@ public final class EqualsSymmetric implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
+    if (o == null) return false;
+    if (o == this) return true;
     if (!(o instanceof EqualsSymmetric)) {
       return false;
     }
@@ -69,5 +67,4 @@ public final class EqualsSymmetric implements ObjectContract {
     b.append(");");
     return b.toString();
   }
-
 }

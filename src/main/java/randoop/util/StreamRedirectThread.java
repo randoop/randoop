@@ -62,7 +62,7 @@ public class StreamRedirectThread extends Thread {
 
   /**
    * Set up for copy.
-   * 
+   *
    * @param name
    *          Name of the thread
    * @param in
@@ -95,7 +95,7 @@ public class StreamRedirectThread extends Thread {
       /*
        * int nextChar; while (true) { nextChar = in.read(); if (nextChar == -1)
        * break;
-       * 
+       *
        * out.write(nextChar); out.flush(); }
        */
       out.flush();

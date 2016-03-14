@@ -24,7 +24,7 @@ import randoop.sequence.Variable;
  * set of runtime values. For example. the class {@link EqualsReflexive} is a
  * checker code class that, given an object <i>o</i>, calls <i>o.equals(o)</i>
  * and checks that it returns <code>true</code>.
- * 
+ *
  * <li>A list of {@link Variable}s, which describe the specific objects in the
  * sequence that the check is over.
  * </ul>
@@ -38,10 +38,8 @@ public class ObjectCheck implements Check {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
+    if (o == null) return false;
+    if (o == this) return true;
     if (!(o instanceof ObjectCheck)) {
       return false;
     }
@@ -68,7 +66,6 @@ public class ObjectCheck implements Check {
     for (Variable v : vars) {
       this.vars[count++] = v;
     }
-
   }
 
   @Override

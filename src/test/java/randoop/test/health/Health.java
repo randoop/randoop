@@ -10,8 +10,7 @@ package randoop.test.health;
  * Feb. 1988.
  * </cite>
  **/
-public class Health
-{
+public class Health {
   /**
    * The size of the health-care system.
    **/
@@ -38,45 +37,41 @@ public class Health
    * health-care system and executes the simulation for a specified time.
    * @param args the command line arguments
    **/
-  public static final void main(String args[])
-  {
+  public static final void main(String args[]) {
     parseCmdLine(args);
 
     long start0 = System.currentTimeMillis();
     Village top = Village.createVillage(maxLevel, 0, null, seed);
     long end0 = System.currentTimeMillis();
 
-    if (printMsgs) 
-      System.out.println("Columbian Health Care Simulator. Working...");
+    if (printMsgs) System.out.println("Columbian Health Care Simulator. Working...");
 
     long start1 = System.currentTimeMillis();
-    for (int i=0; i < maxTime; i++) {
+    for (int i = 0; i < maxTime; i++) {
       if ((i % 50) == 0 && printMsgs) System.out.println(i);
       top.simulate();
     }
 
     Results r = top.getResults();
-    
+
     long end1 = System.currentTimeMillis();
 
     if (printResult || printMsgs) {
       System.out.println("# of people treated:            " + r.totalPatients + " people");
-      System.out.println("Average length of stay:         " + 
-                         r.totalTime / r.totalPatients + " time units");
-      System.out.println("Average # of hospitals visited: " + 
-                         r.totalHospitals / r.totalPatients);
+      System.out.println(
+          "Average length of stay:         " + r.totalTime / r.totalPatients + " time units");
+      System.out.println("Average # of hospitals visited: " + r.totalHospitals / r.totalPatients);
     }
     if (printMsgs) {
-      System.out.println("Build Time " + (end0 - start0)/1000.0);
-      System.out.println("Run Time " + (end1 - start1)/1000.0);
-      System.out.println("Total Time " + (end1 - start0)/1000.0);
+      System.out.println("Build Time " + (end0 - start0) / 1000.0);
+      System.out.println("Run Time " + (end1 - start1) / 1000.0);
+      System.out.println("Total Time " + (end1 - start0) / 1000.0);
     }
 
     System.out.println("Done!");
   }
 
-  private static final void parseCmdLine(String args[])
-  {
+  private static final void parseCmdLine(String args[]) {
     String arg;
     int i = 0;
     while (i < args.length && args[i].startsWith("-")) {
@@ -115,8 +110,7 @@ public class Health
   /**
    * The usage routine which describes the program options.
    **/
-  private static final void usage()
-  {
+  private static final void usage() {
     System.err.println("usage: java Health -l <levels> -t <time> -s <seed> [-p] [-m] [-h]");
     System.err.println("    -l the size of the health care system");
     System.err.println("    -t the amount of simulation time");
@@ -126,6 +120,4 @@ public class Health
     System.err.println("    -h (this message)");
     System.exit(0);
   }
-
-
 }

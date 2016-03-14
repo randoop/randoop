@@ -45,10 +45,9 @@ public final class CollectionsExt {
     return Collections.unmodifiableList(new ArrayList<T>(l));
   }
 
-  @SuppressWarnings({ "varargs", "unchecked" }) // heap pollution warning
+  @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public static <T> Set<T> intersection(Set<? extends T>... sets) {
-    if (sets.length == 0)
-      return Collections.emptySet();
+    if (sets.length == 0) return Collections.emptySet();
     Set<T> result = new LinkedHashSet<T>();
     result.addAll(sets[0]);
     for (Set<? extends T> s : sets) {
@@ -69,7 +68,7 @@ public final class CollectionsExt {
     return result;
   }
 
-  @SuppressWarnings({ "varargs", "unchecked" }) // heap pollution warning
+  @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public static <T> Set<T> union(Set<? extends T>... sets) {
     Set<T> result = new LinkedHashSet<T>();
     for (Set<? extends T> s : sets) {
@@ -86,7 +85,7 @@ public final class CollectionsExt {
    * @param lists  the list of lists to be concatenated
    * @return the concatenated list
    */
-  @SuppressWarnings({ "varargs", "unchecked" }) // heap pollution warning
+  @SuppressWarnings({"varargs", "unchecked"}) // heap pollution warning
   public static <T> List<T> concat(List<? extends T>... lists) {
     List<T> result = new ArrayList<T>();
     for (List<? extends T> list : lists) {
@@ -112,20 +111,17 @@ public final class CollectionsExt {
   }
 
   public static <T> T getNthIteratedElement(Collection<? extends T> s, int index) {
-    if (s == null)
-      throw new IllegalArgumentException("s cannot be null.");
-    if (s.isEmpty())
-      throw new IllegalArgumentException("s cannot be empty.");
+    if (s == null) throw new IllegalArgumentException("s cannot be null.");
+    if (s.isEmpty()) throw new IllegalArgumentException("s cannot be empty.");
     if (index >= s.size())
       throw new IllegalArgumentException("Index " + index + " invalid for set of size " + s.size());
     return getNthIteratedElement(s.iterator(), index);
   }
 
   public static <T> T getNthIteratedElement(Iterator<? extends T> iter, int index) {
-    if (index < 0)
-      throw new IllegalArgumentException("Index " + index + " invalid");
+    if (index < 0) throw new IllegalArgumentException("Index " + index + " invalid");
     int counter = 0;
-    for (Iterator<? extends T> i = iter; i.hasNext();) {
+    for (Iterator<? extends T> i = iter; i.hasNext(); ) {
       if (counter == index) {
         return i.next();
       }
@@ -136,8 +132,7 @@ public final class CollectionsExt {
   }
 
   public static SortedSet<Integer> findAll(List<?> list, Object elem) {
-    if (list == null)
-      throw new IllegalArgumentException("list cannot be null.");
+    if (list == null) throw new IllegalArgumentException("list cannot be null.");
     SortedSet<Integer> result = new TreeSet<Integer>();
     for (int i = 0, n = list.size(); i < n; i++) {
       if (list.get(i).equals(elem)) {
@@ -157,8 +152,7 @@ public final class CollectionsExt {
    * @return the concatenated string of object strings as lines
    */
   public static String toStringInLines(Collection<?> c) {
-    if (c.isEmpty())
-      return "";
+    if (c.isEmpty()) return "";
     return join(Globals.lineSep, toStringLines(c)) + Globals.lineSep;
   }
 
@@ -170,8 +164,7 @@ public final class CollectionsExt {
    * @return the concatenated string of object strings as lines sorted lexicographically
    */
   public static String toStringInSortedLines(Collection<?> c) {
-    if (c.isEmpty())
-      return "";
+    if (c.isEmpty()) return "";
     return join(Globals.lineSep, sort(toStringLines(c))) + Globals.lineSep;
   }
 
@@ -226,15 +219,13 @@ public final class CollectionsExt {
       result.add(subList);
     }
     List<T> lastChunk = list.subList(fullChunks * maxLength, list.size());
-    if (!lastChunk.isEmpty())
-      result.add(lastChunk);
+    if (!lastChunk.isEmpty()) result.add(lastChunk);
     return Collections.unmodifiableList(result);
   }
 
   public static <T> Set<T> getAll(Enumeration<T> e) {
     Set<T> result = new LinkedHashSet<T>();
-    while (e.hasMoreElements())
-      result.add(e.nextElement());
+    while (e.hasMoreElements()) result.add(e.nextElement());
     return result;
   }
 
@@ -248,10 +239,9 @@ public final class CollectionsExt {
    * @return the filtered string collection
    */
   public static <T extends Collection<String>> T removeMatching(String pattern, T strings) {
-    for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
+    for (Iterator<String> iter = strings.iterator(); iter.hasNext(); ) {
       String s = iter.next();
-      if (s.matches(pattern))
-        iter.remove();
+      if (s.matches(pattern)) iter.remove();
     }
     return strings;
   }
@@ -266,11 +256,10 @@ public final class CollectionsExt {
    */
   public static String join(String separator, List<String> strings) {
     StringBuilder sb = new StringBuilder();
-    for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
+    for (Iterator<String> iter = strings.iterator(); iter.hasNext(); ) {
       String s = iter.next();
       sb.append(s);
-      if (iter.hasNext())
-        sb.append(separator);
+      if (iter.hasNext()) sb.append(separator);
     }
     return sb.toString();
   }
@@ -299,8 +288,7 @@ public final class CollectionsExt {
    * @return true if the sets are disjoint, false otherwise
    */
   public static boolean areDisjoint(Set<?>... ss) {
-    if (ss == null || ss.length == 0)
-      return true;
+    if (ss == null || ss.length == 0) return true;
     int elementCount = 0;
     for (Set<?> set : ss) {
       elementCount += set.size();
@@ -365,8 +353,7 @@ public final class CollectionsExt {
    */
   public static boolean allInstancesOf(Class<?> clazz, Object[] objs) {
     for (Object obj : objs) {
-      if (!clazz.isInstance(obj))
-        return false;
+      if (!clazz.isInstance(obj)) return false;
     }
     return true;
   }
@@ -415,8 +402,7 @@ public final class CollectionsExt {
    */
   public static <T> boolean containsIdentical(Collection<T> c, Object o) {
     for (T t : c) {
-      if (t == o)
-        return true;
+      if (t == o) return true;
     }
     return false;
   }
@@ -433,8 +419,7 @@ public final class CollectionsExt {
    */
   public static <T> boolean containsEquivalent(Collection<T> c, Object o, Hasher h) {
     for (T t : c) {
-      if (h.equals(t, o))
-        return true;
+      if (h.equals(t, o)) return true;
     }
     return false;
   }
@@ -445,7 +430,7 @@ public final class CollectionsExt {
    * @param <T>  the collection type
    * @param values  the list to map
    * @param map  the map to apply
-   * @return the list formed by mapping values of original list 
+   * @return the list formed by mapping values of original list
    */
   public static <T> List<T> map(List<T> values, Map<T, T> map) {
     List<T> result = new ArrayList<T>(values.size());
@@ -454,5 +439,4 @@ public final class CollectionsExt {
     }
     return result;
   }
-
 }

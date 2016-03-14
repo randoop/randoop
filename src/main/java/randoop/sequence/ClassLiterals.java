@@ -19,15 +19,15 @@ public class ClassLiterals extends MappedSequences<Class<?>> {
 
   @Override
   public void addSequence(Class<?> key, Sequence seq) {
-    if (seq == null)
-      throw new IllegalArgumentException("seq is null");
+    if (seq == null) throw new IllegalArgumentException("seq is null");
     if (!seq.isPrimitive()) {
       throw new IllegalArgumentException("seq is not a primitive sequence");
     }
     super.addSequence(key, seq);
   }
 
-  private static final Map<Class<?>, Set<Class<?>>> hashedSuperClasses = new LinkedHashMap<Class<?>, Set<Class<?>>>();
+  private static final Map<Class<?>, Set<Class<?>>> hashedSuperClasses =
+      new LinkedHashMap<Class<?>, Set<Class<?>>>();
 
   @Override
   public SimpleList<Sequence> getSequences(Class<?> key, Class<?> desiredType) {
@@ -56,5 +56,4 @@ public class ClassLiterals extends MappedSequences<Class<?>> {
     }
     return ret;
   }
-
 }

@@ -24,9 +24,46 @@ public final class SeedSequences {
     throw new IllegalStateException("no instance");
   }
 
-  public static final List<Object> primitiveSeeds = Arrays.<Object> asList((byte) (-1), (byte) 0, (byte) 1, (byte) 10, (byte) 100, (short) (-1), (short) 0,
-      (short) 1, (short) 10, (short) 100, (-1), 0, 1, 10, 100, (-1L), 0L, 1L, 10L, 100L, (float) -1.0, (float) 0.0, (float) 1.0, (float) 10.0, (float) 100.0,
-      -1.0, 0.0, 1.0, 10.0, 100.0, '#', ' ', '4', 'a', true, false, "", "hi!");
+  public static final List<Object> primitiveSeeds =
+      Arrays.<Object>asList(
+          (byte) (-1),
+          (byte) 0,
+          (byte) 1,
+          (byte) 10,
+          (byte) 100,
+          (short) (-1),
+          (short) 0,
+          (short) 1,
+          (short) 10,
+          (short) 100,
+          (-1),
+          0,
+          1,
+          10,
+          100,
+          (-1L),
+          0L,
+          1L,
+          10L,
+          100L,
+          (float) -1.0,
+          (float) 0.0,
+          (float) 1.0,
+          (float) 10.0,
+          (float) 100.0,
+          -1.0,
+          0.0,
+          1.0,
+          10.0,
+          100.0,
+          '#',
+          ' ',
+          '4',
+          'a',
+          true,
+          false,
+          "",
+          "hi!");
 
   /**
    * A set of sequences that create primitive values, e.g. int i = 0; or String
@@ -58,8 +95,7 @@ public final class SeedSequences {
     Set<Object> result = new LinkedHashSet<Object>();
     for (Object seed : primitiveSeeds) {
       boolean seedOk = isOk(c, seed);
-      if (seedOk)
-        result.add(seed);
+      if (seedOk) result.add(seed);
     }
     return result;
   }
@@ -98,22 +134,34 @@ public final class SeedSequences {
 
           // Check that @TestValue field is static.
           if (!Modifier.isStatic(f.getModifiers())) {
-            String msg = "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field " + f.getName() + " in class " + f.getDeclaringClass()
-                + " to be declared static but it was not.";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
+                    + f.getName()
+                    + " in class "
+                    + f.getDeclaringClass()
+                    + " to be declared static but it was not.";
             throw new RuntimeException(msg);
           }
 
           // Check that @TestValue field is public.
           if (!Modifier.isPublic(f.getModifiers())) {
-            String msg = "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field " + f.getName() + " in class " + f.getDeclaringClass()
-                + " to be declared public but it was not.";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
+                    + f.getName()
+                    + " in class "
+                    + f.getDeclaringClass()
+                    + " to be declared public but it was not.";
             throw new RuntimeException(msg);
           }
 
           // Check that @TestValue field is accessible.
           if (!Modifier.isPublic(f.getModifiers())) {
-            String msg = "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field " + f.getName() + " in class " + f.getDeclaringClass()
-                + " to be accessible at runtime but it was not.";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
+                    + f.getName()
+                    + " in class "
+                    + f.getDeclaringClass()
+                    + " to be accessible at runtime but it was not.";
             throw new RuntimeException(msg);
           }
 
@@ -127,7 +175,8 @@ public final class SeedSequences {
               primitives.add(f.get(null));
 
               // Case 2: f is a primitive array type
-            } else if (ftype.isArray() && PrimitiveTypes.isPrimitiveOrStringType(ftype.getComponentType())) {
+            } else if (ftype.isArray()
+                && PrimitiveTypes.isPrimitiveOrStringType(ftype.getComponentType())) {
               printDetectedAnnotatedFieldMsg(f);
               Object array = f.get(null);
               int length = Array.getLength(array);
@@ -136,18 +185,33 @@ public final class SeedSequences {
               }
 
             } else {
-              String msg = "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field " + f.getName() + " in class " + f.getDeclaringClass()
-                  + " to declare a primitive type, String, or an array of primitives of Strings, " + "but the field's type is " + f.getType() + ".";
+              String msg =
+                  "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
+                      + f.getName()
+                      + " in class "
+                      + f.getDeclaringClass()
+                      + " to declare a primitive type, String, or an array of primitives of Strings, "
+                      + "but the field's type is "
+                      + f.getType()
+                      + ".";
               throw new RuntimeException(msg);
             }
 
           } catch (IllegalArgumentException e) {
-            String msg = "RANDOOP ANNOTATION ERROR: IllegalArgumentException when processing @TestValue-annotated field " + f.getName() + " in class "
-                + f.getDeclaringClass() + ".";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: IllegalArgumentException when processing @TestValue-annotated field "
+                    + f.getName()
+                    + " in class "
+                    + f.getDeclaringClass()
+                    + ".";
             throw new RuntimeException(msg);
           } catch (IllegalAccessException e) {
-            String msg = "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field " + f.getName() + " in class "
-                + f.getDeclaringClass() + ". (Is the class declaring this field publicly-visible?)";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field "
+                    + f.getName()
+                    + " in class "
+                    + f.getDeclaringClass()
+                    + ". (Is the class declaring this field publicly-visible?)";
             throw new RuntimeException(msg);
           }
         }
@@ -172,9 +236,14 @@ public final class SeedSequences {
   }
 
   private static void printDetectedAnnotatedFieldMsg(Field f) {
-    String msg = "ANNOTATION: Detected @TestValue-annotated field " + f.getType().getCanonicalName() + " \"" + f.getName() + "\" in class "
-        + f.getDeclaringClass().getCanonicalName() + ". Will collect its primtive values to use in generation.";
+    String msg =
+        "ANNOTATION: Detected @TestValue-annotated field "
+            + f.getType().getCanonicalName()
+            + " \""
+            + f.getName()
+            + "\" in class "
+            + f.getDeclaringClass().getCanonicalName()
+            + ". Will collect its primtive values to use in generation.";
     System.out.println(msg);
   }
-
 }

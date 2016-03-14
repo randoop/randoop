@@ -8,7 +8,7 @@ import randoop.sequence.Variable;
 
 /**
  * StaticFinalField represents a public static final field of a class.
- * 
+ *
  * @see AccessibleField
  *
  */
@@ -49,7 +49,7 @@ public class StaticFinalField extends AccessibleField {
 
   /**
    * isStatic is a predicate to indicate whether field is declared as static.
-   * 
+   *
    * @return true, as object is {@link StaticFinalField}.
    */
   @Override

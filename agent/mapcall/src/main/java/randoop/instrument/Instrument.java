@@ -82,20 +82,16 @@ public class Instrument implements ClassFileTransformer {
     }
 
     boolean equals(String name, Type[] arg_types) {
-      if (!name.equals(this.name))
-        return false;
-      if (this.arg_types.length != arg_types.length)
-        return false;
+      if (!name.equals(this.name)) return false;
+      if (this.arg_types.length != arg_types.length) return false;
       for (int ii = 0; ii < arg_types.length; ii++)
-        if (!arg_types[ii].equals(this.arg_types[ii]))
-          return (false);
+        if (!arg_types[ii].equals(this.arg_types[ii])) return (false);
       return (true);
     }
 
     @Override
     public boolean equals(Object obj) {
-      if (!(obj instanceof MethodDef))
-        return false;
+      if (!(obj instanceof MethodDef)) return false;
       MethodDef md = (MethodDef) obj;
       return equals(md.name, md.arg_types);
     }
@@ -103,8 +99,7 @@ public class Instrument implements ClassFileTransformer {
     @Override
     public int hashCode() {
       int code = name.hashCode();
-      for (Type arg : arg_types)
-        code += arg.hashCode();
+      for (Type arg : arg_types) code += arg.hashCode();
       return code;
     }
 
@@ -112,7 +107,6 @@ public class Instrument implements ClassFileTransformer {
     public String toString() {
       return String.format("%s (%s)", name, UtilMDE.join(arg_types, ", "));
     }
-
   }
 
   /**
@@ -148,8 +142,7 @@ public class Instrument implements ClassFileTransformer {
   /** Map from original method call to replacement method for current class **/
   Map<MethodDef, MethodInfo> method_map = null;
 
-  public Instrument() {
-  }
+  public Instrument() {}
 
   /**
    * {@inheritDoc}
@@ -157,7 +150,12 @@ public class Instrument implements ClassFileTransformer {
    * defined in this class.
    */
   @Override
-  public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer)
+  public byte[] transform(
+      ClassLoader loader,
+      String className,
+      Class<?> classBeingRedefined,
+      ProtectionDomain protectionDomain,
+      byte[] classfileBuffer)
       throws IllegalClassFormatException {
 
     // debug = className.equals ("chicory/Test");
@@ -198,18 +196,17 @@ public class Instrument implements ClassFileTransformer {
     debug_class = false;
     for (MethodMapInfo mmi : map_list) {
       if (mmi.class_regex.matcher(className).matches()) {
-        if (false && className.startsWith("RandoopTest"))
-          debug_class = true;
+        if (false && className.startsWith("RandoopTest")) debug_class = true;
         if (debug_class)
           System.out.printf("Classname %s matches re %s%n", className, mmi.class_regex);
         method_map = mmi.map;
         break;
       }
     }
-    if (method_map == null)
-      return null;
+    if (method_map == null) return null;
 
-    debug_transform.log("transforming class %s, loader %s - %s%n", className, loader, loader.getParent());
+    debug_transform.log(
+        "transforming class %s, loader %s - %s%n", className, loader, loader.getParent());
 
     // Parse the bytes of the classfile, die on any errors
     JavaClass c = null;
@@ -228,8 +225,7 @@ public class Instrument implements ClassFileTransformer {
       map_calls(cg, className, loader);
 
       JavaClass njc = cg.getJavaClass();
-      if (debug)
-        njc.dump("/tmp/ret/" + njc.getClassName() + ".class");
+      if (debug) njc.dump("/tmp/ret/" + njc.getClassName() + ".class");
 
       if (true) {
         return (cg.getJavaClass().getBytes());
@@ -243,7 +239,6 @@ public class Instrument implements ClassFileTransformer {
       e.printStackTrace();
       return (null);
     }
-
   }
 
   /**
@@ -267,11 +262,9 @@ public class Instrument implements ClassFileTransformer {
 
         // Get the instruction list and skip methods with no instructions
         InstructionList il = mg.getInstructionList();
-        if (il == null)
-          continue;
+        if (il == null) continue;
 
-        if (debug)
-          out.format("Original code: %s%n", mg.getMethod().getCode());
+        if (debug) out.format("Original code: %s%n", mg.getMethod().getCode());
 
         instrument_method(methods[i], mg);
 
@@ -297,8 +290,7 @@ public class Instrument implements ClassFileTransformer {
 
         // Update the method in the class
         cg.replaceMethod(methods[i], mg.getMethod());
-        if (debug)
-          out.format("Modified code: %s%n", mg.getMethod().getCode());
+        if (debug) out.format("Modified code: %s%n", mg.getMethod().getCode());
 
         // verify the new method
         // StackVer stackver = new StackVer();
@@ -331,7 +323,7 @@ public class Instrument implements ClassFileTransformer {
 
     // Loop through each instruction, making substitutions
     InstructionList il = mg.getInstructionList();
-    for (InstructionHandle ih = il.getStart(); ih != null;) {
+    for (InstructionHandle ih = il.getStart(); ih != null; ) {
       if (debug_instrument_inst.enabled()) {
         debug_instrument_inst.log("instrumenting instruction %s%n", ih);
         // ih.getInstruction().toString(pool.getConstantPool()));
@@ -343,8 +335,7 @@ public class Instrument implements ClassFileTransformer {
 
       // Get the translation for this instruction (if any)
       new_il = xform_inst(mg, ih.getInstruction());
-      if (debug_instrument_inst.enabled())
-        debug_instrument_inst.log("  new inst: %s%n", new_il);
+      if (debug_instrument_inst.enabled()) debug_instrument_inst.log("  new inst: %s%n", new_il);
 
       // If this instruction was modified, replace it with the new
       // instruction list. If this instruction was the target of any
@@ -363,52 +354,68 @@ public class Instrument implements ClassFileTransformer {
   private InstructionList xform_inst(MethodGen mg, Instruction inst) {
 
     switch (inst.getOpcode()) {
-
-      case Const.INVOKESTATIC: {
-        InstructionList il = new InstructionList();
-        INVOKESTATIC is = (INVOKESTATIC) inst;
-        String cname = is.getClassName(pgen);
-        String mname = is.getMethodName(pgen);
-        Type[] args = is.getArgumentTypes(pgen);
-        MethodDef orig = new MethodDef(cname + "." + mname, args);
-        MethodInfo call = method_map.get(orig);
-        if (call != null) {
-          call.cnt++;
-          String classname = call.method_class;
-          String methodname = mname;
-          debug_map.log("%s.%s: Replacing method %s.%s (%s) with %s.%s%n", mg.getClassName(), mg.getName(), cname, mname, UtilMDE.join(args, ", "), classname,
-              methodname);
-          il.append(ifact.createInvoke(classname, methodname, is.getReturnType(pgen), args, Const.INVOKESTATIC));
+      case Const.INVOKESTATIC:
+        {
+          InstructionList il = new InstructionList();
+          INVOKESTATIC is = (INVOKESTATIC) inst;
+          String cname = is.getClassName(pgen);
+          String mname = is.getMethodName(pgen);
+          Type[] args = is.getArgumentTypes(pgen);
+          MethodDef orig = new MethodDef(cname + "." + mname, args);
+          MethodInfo call = method_map.get(orig);
+          if (call != null) {
+            call.cnt++;
+            String classname = call.method_class;
+            String methodname = mname;
+            debug_map.log(
+                "%s.%s: Replacing method %s.%s (%s) with %s.%s%n",
+                mg.getClassName(),
+                mg.getName(),
+                cname,
+                mname,
+                UtilMDE.join(args, ", "),
+                classname,
+                methodname);
+            il.append(
+                ifact.createInvoke(
+                    classname, methodname, is.getReturnType(pgen), args, Const.INVOKESTATIC));
+          }
+          return (il);
         }
-        return (il);
-      }
 
-      case Const.INVOKEVIRTUAL: {
-        InstructionList il = new InstructionList();
-        INVOKEVIRTUAL iv = (INVOKEVIRTUAL) inst;
-        String cname = iv.getClassName(pgen);
-        String mname = iv.getMethodName(pgen);
-        Type[] args = iv.getArgumentTypes(pgen);
-        Type instance_type = iv.getReferenceType(pgen);
-        Type[] new_args = BCELUtil.insert_type(instance_type, args);
-        MethodDef orig = new MethodDef(cname + "." + mname, args);
-        if (debug_class)
-          System.out.printf("looking for %s in map %s%n", orig, method_map);
-        MethodInfo call = method_map.get(orig);
-        if (call != null) {
-          call.cnt++;
-          String classname = call.method_class;
-          String methodname = mname;
-          debug_map.log("Replacing method %s.%s (%s) with %s.%s%n", cname, mname, ArraysMDE.toString(args), classname, methodname);
-          il.append(ifact.createInvoke(classname, methodname, iv.getReturnType(pgen), new_args, Const.INVOKESTATIC));
+      case Const.INVOKEVIRTUAL:
+        {
+          InstructionList il = new InstructionList();
+          INVOKEVIRTUAL iv = (INVOKEVIRTUAL) inst;
+          String cname = iv.getClassName(pgen);
+          String mname = iv.getMethodName(pgen);
+          Type[] args = iv.getArgumentTypes(pgen);
+          Type instance_type = iv.getReferenceType(pgen);
+          Type[] new_args = BCELUtil.insert_type(instance_type, args);
+          MethodDef orig = new MethodDef(cname + "." + mname, args);
+          if (debug_class) System.out.printf("looking for %s in map %s%n", orig, method_map);
+          MethodInfo call = method_map.get(orig);
+          if (call != null) {
+            call.cnt++;
+            String classname = call.method_class;
+            String methodname = mname;
+            debug_map.log(
+                "Replacing method %s.%s (%s) with %s.%s%n",
+                cname,
+                mname,
+                ArraysMDE.toString(args),
+                classname,
+                methodname);
+            il.append(
+                ifact.createInvoke(
+                    classname, methodname, iv.getReturnType(pgen), new_args, Const.INVOKESTATIC));
+          }
+          return (il);
         }
-        return (il);
-      }
 
       default:
         return (null);
     }
-
   }
 
   /**
@@ -419,10 +426,10 @@ public class Instrument implements ClassFileTransformer {
    * @param ih  the instruction
    * @param new_il the new instructions to substitute
    */
-  protected static void replace_instructions(InstructionList il, InstructionHandle ih, InstructionList new_il) {
+  protected static void replace_instructions(
+      InstructionList il, InstructionHandle ih, InstructionList new_il) {
 
-    if ((new_il == null) || new_il.isEmpty())
-      return;
+    if ((new_il == null) || new_il.isEmpty()) return;
 
     // If there is only one new instruction, just replace it in the handle
     if (new_il.getLength() == 1) {
@@ -446,14 +453,10 @@ public class Instrument implements ClassFileTransformer {
           it.updateTarget(ih, new_end);
         } else if (it instanceof CodeExceptionGen) {
           CodeExceptionGen exc = (CodeExceptionGen) it;
-          if (exc.getStartPC() == ih)
-            exc.updateTarget(ih, new_start);
-          else if (exc.getEndPC() == ih)
-            exc.updateTarget(ih, new_end);
-          else if (exc.getHandlerPC() == ih)
-            exc.setHandlerPC(new_start);
-          else
-            System.out.printf("Malformed CodeException: %s%n", exc);
+          if (exc.getStartPC() == ih) exc.updateTarget(ih, new_start);
+          else if (exc.getEndPC() == ih) exc.updateTarget(ih, new_end);
+          else if (exc.getHandlerPC() == ih) exc.setHandlerPC(new_start);
+          else System.out.printf("Malformed CodeException: %s%n", exc);
         } else {
           System.out.printf("unexpected target %s%n", it);
         }
@@ -478,8 +481,7 @@ public class Instrument implements ClassFileTransformer {
     if (mgen.getName().equals("<init>") || mgen.getName().equals("")) {
       // log ("method '%s' is a constructor%n", mgen.getName());
       return (true);
-    } else
-      return (false);
+    } else return (false);
   }
 
   public boolean is_local_variable_type_table(Attribute a) {
@@ -515,7 +517,8 @@ public class Instrument implements ClassFileTransformer {
 
     @Override
     public void tok_error(String s) {
-      throw new RuntimeException(String.format("Error on line %d of %s: %s", lr.getLineNumber(), map_file, s));
+      throw new RuntimeException(
+          String.format("Error on line %d of %s: %s", lr.getLineNumber(), map_file, s));
     }
   }
 
@@ -579,7 +582,7 @@ public class Instrument implements ClassFileTransformer {
    * be fully-qualified.
    *
    * @param map_file  the file with map of method substitutions
-   * @throws IOException if file has missing regex 
+   * @throws IOException if file has missing regex
    */
   public void read_map_file(File map_file) throws IOException {
 
@@ -589,8 +592,7 @@ public class Instrument implements ClassFileTransformer {
     Map<MethodDef, MethodInfo> map = new LinkedHashMap<MethodDef, MethodInfo>();
     for (String line = lr.readLine(); line != null; line = lr.readLine()) {
       line = line.replaceFirst("//.*$", "");
-      if (line.trim().length() == 0)
-        continue;
+      if (line.trim().length() == 0) continue;
       if (line.startsWith(" ")) {
         if (current_regex == null)
           throw new IOException("No current class regex on line " + lr.getLineNumber());
@@ -614,7 +616,6 @@ public class Instrument implements ClassFileTransformer {
     }
 
     dump_map_list();
-
   }
 
   /** Dumps out the map list to the debug_map logger **/
@@ -636,15 +637,15 @@ public class Instrument implements ClassFileTransformer {
   public void add_map_file_shutdown_hook() {
 
     // Add a shutdown hook to printout some debug information
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        for (MethodMapInfo mmi : map_list) {
-          dump_map_list();
-        }
-      }
-    });
-
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread() {
+              @Override
+              public void run() {
+                for (MethodMapInfo mmi : map_list) {
+                  dump_map_list();
+                }
+              }
+            });
   }
-
 }

@@ -28,7 +28,7 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
 
   /**
    * Creates an object that looks for invalid exceptions.
-   * 
+   *
    * @param isInvalid
    *          the predicate to test for invalid exceptions
    * @param throwExceptionOnFlakyTest
@@ -47,7 +47,7 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
    * but a sequence where an {@code OutOfMemoryError} is seen before the last
    * statement is classified as invalid regardless of how
    * {@code OutOfMemoryError} is classified by the predicate.
-   * 
+   *
    * @return a possibly empty {@link InvalidChecks} object for sequence
    * @throws Error
    *           if any exception encountered before last statement of sequence
@@ -77,5 +77,4 @@ public class ValidityCheckingVisitor implements TestCheckGenerator {
 
     return checks;
   }
-
 }

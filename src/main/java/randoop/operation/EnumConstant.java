@@ -60,7 +60,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return an empty list.
    */
   @Override
@@ -74,7 +74,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return the enum type.
    */
   @Override
@@ -84,7 +84,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return a {@link NormalExecution} object holding the value of the enum
    *         constant.
    */
@@ -105,7 +105,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   /**
    * {@inheritDoc} Issues a string representation of an enum constant as a
    * type-value pair. The parse function should return an equivalent object.
-   * 
+   *
    * @see EnumConstant#parse(String)
    */
   @Override
@@ -116,11 +116,11 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   /**
    * Parses the description of an enum constant value in a string as returned by
    * {@link EnumConstant#toParseableString()}.
-   * 
+   *
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a
    * class.
-   * 
+   *
    * @param desc
    *          string representing type-value pair for an enum constant
    * @return an EnumConstant representing the enum constant value in desc
@@ -133,7 +133,12 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     }
     int colonIdx = desc.indexOf(':');
     if (colonIdx < 0) {
-      String msg = "An enum constant description must be of the form \"" + "<type>:<value>" + " but description is \"" + desc + "\".";
+      String msg =
+          "An enum constant description must be of the form \""
+              + "<type>:<value>"
+              + " but description is \""
+              + desc
+              + "\".";
       throw new OperationParseException(msg);
     }
 
@@ -142,7 +147,10 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
     Enum<?> value = null;
 
-    String errorPrefix = "Error when parsing type-value pair " + desc + " for an enum description of the form <type>:<value>.";
+    String errorPrefix =
+        "Error when parsing type-value pair "
+            + desc
+            + " for an enum description of the form <type>:<value>.";
 
     if (typeName.isEmpty()) {
       String msg = errorPrefix + " No type given.";
@@ -178,7 +186,13 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
     value = valueOf(type, valueName);
     if (value == null) {
-      String msg = errorPrefix + " The value given \"" + valueName + "\" is not a constant of the enum " + typeName + ".";
+      String msg =
+          errorPrefix
+              + " The value given \""
+              + valueName
+              + "\" is not a constant of the enum "
+              + typeName
+              + ".";
       throw new OperationParseException(msg);
     }
 
@@ -189,7 +203,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
    * valueOf searches the enum constant list of a class for a constant with the
    * given name. Note: cannot make this work using valueOf method of Enum due to
    * typing.
-   * 
+   *
    * @param type
    *          class that is already known to be an enum.
    * @param valueName
@@ -208,7 +222,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
   /**
    * value
-   * 
+   *
    * @return object for value of enum constant.
    */
   public Enum<?> value() {
@@ -217,7 +231,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return value of enum constant.
    */
   @Override
@@ -227,12 +241,11 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return enclosing enum type.
    */
   @Override
   public Class<?> getDeclaringClass() {
     return value.getDeclaringClass();
   }
-
 }

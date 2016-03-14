@@ -3,7 +3,7 @@ package randoop.util;
 /**
  * Takes a String representing a list of files "a/b/C.java ... d/e/f/G.java" and
  * returns "a.b.C ... d.e.f.G"
- * 
+ *
  * (This is probably a perl one-liner, but I am better with Java).
  */
 public class JavaFileNameToClass {

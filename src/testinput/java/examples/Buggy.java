@@ -9,8 +9,7 @@ public class Buggy {
   // This should lead to one failing test that fails two contracts,
   // equals-reflexive and equals-to-null.
   public boolean equals(Object o) {
-    if (o == null)
-      return true;
+    if (o == null) return true;
     return false;
   }
 
@@ -28,8 +27,7 @@ public class Buggy {
   public static class Buggy3 {
 
     public boolean equals(Object o) {
-      if (o == this)
-        return true;
+      if (o == this) return true;
       return false;
     }
 
@@ -45,7 +43,7 @@ public class Buggy {
     private static Buggy4 one = new Buggy4();
     private static Buggy4 two = new Buggy4();
 
-    private Buggy4() { }
+    private Buggy4() {}
 
     public static Buggy4 getOne() {
       return one;
@@ -56,8 +54,7 @@ public class Buggy {
     }
 
     public boolean equals(Object o) {
-      if (this == one)
-        return true;
+      if (this == one) return true;
       return false;
     }
   }
@@ -67,7 +64,7 @@ public class Buggy {
     private static Buggy5 one = new Buggy5();
     private static Buggy5 two = new Buggy5();
 
-    private Buggy5() { }
+    private Buggy5() {}
 
     public static Buggy5 getOne() {
       return one;
@@ -78,10 +75,8 @@ public class Buggy {
     }
 
     public boolean equals(Object o) {
-      if (o == this)
-        return true;
-      if (!(o instanceof Buggy5))
-        return false;
+      if (o == this) return true;
+      if (!(o instanceof Buggy5)) return false;
       if (o == one) {
         return true;
       }
@@ -96,5 +91,4 @@ public class Buggy {
   public static void AssertionError() {
     throw new AssertionError();
   }
-
 }

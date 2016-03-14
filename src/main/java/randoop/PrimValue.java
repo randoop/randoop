@@ -24,7 +24,8 @@ public final class PrimValue implements ObjectContract {
    * results in
    */
   public enum PrintMode {
-    EQUALSEQUALS, EQUALSMETHOD
+    EQUALSEQUALS,
+    EQUALSMETHOD
   }
 
   // The runtime value of the primitive value.
@@ -35,10 +36,8 @@ public final class PrimValue implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
+    if (o == null) return false;
+    if (o == this) return true;
     if (!(o instanceof PrimValue)) {
       return false;
     }
@@ -64,7 +63,8 @@ public final class PrimValue implements ObjectContract {
       throw new IllegalArgumentException("value cannot be null");
     }
     if (!PrimitiveTypes.isBoxedPrimitiveTypeOrString(value.getClass()))
-      throw new IllegalArgumentException("value is not a primitive or string : " + value.getClass());
+      throw new IllegalArgumentException(
+          "value is not a primitive or string : " + value.getClass());
     this.value = value;
     this.printMode = printMode;
   }
@@ -99,7 +99,8 @@ public final class PrimValue implements ObjectContract {
 
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
+    b.append(
+        "// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
 
     // ValueExpression represents the value of a variable.
     // We special-case printing for this type of expression,
@@ -118,7 +119,12 @@ public final class PrimValue implements ObjectContract {
     } else if (printMode.equals(PrintMode.EQUALSMETHOD)) {
       b.append("org.junit.Assert.assertTrue(");
       // First add a message
-      b.append("\"'\" + " + "x0" + " + \"' != '\" + " + PrimitiveTypes.toCodeString(value) + "+ \"'\", ");
+      b.append(
+          "\"'\" + "
+              + "x0"
+              + " + \"' != '\" + "
+              + PrimitiveTypes.toCodeString(value)
+              + "+ \"'\", ");
       b.append("x0");
       b.append(".equals(");
       b.append(PrimitiveTypes.toCodeString(value));
@@ -144,5 +150,4 @@ public final class PrimValue implements ObjectContract {
   public boolean evalExceptionMeansFailure() {
     return true;
   }
-
 }

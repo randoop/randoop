@@ -36,8 +36,7 @@ public class Timer {
    * Start counting testtime.
    */
   public void startTiming() {
-    if (this.running)
-      throw new RuntimeException("Timer is already running.");
+    if (this.running) throw new RuntimeException("Timer is already running.");
     this.startTime = System.currentTimeMillis();
     this.running = true;
   }
@@ -47,8 +46,7 @@ public class Timer {
    *
    */
   public void stopTiming() {
-    if (!this.running)
-      throw new RuntimeException("Timer is not running.");
+    if (!this.running) throw new RuntimeException("Timer is not running.");
     this.timeElapsed += System.currentTimeMillis() - this.startTime;
     this.running = false;
   }
@@ -64,5 +62,4 @@ public class Timer {
     }
     return this.timeElapsed;
   }
-
 }

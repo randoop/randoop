@@ -53,17 +53,17 @@ public class FieldGetterTest {
 
       //execution - should be 4 (haven't changed value yet)
       NormalExecution expectedExec = new NormalExecution(4, 0);
-      NormalExecution actualExec = (NormalExecution)rhs.execute(new Object[0], null);
-      assertTrue("Execution should simply return value",
-          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) &&
-          expectedExec.getExecutionTime() == actualExec.getExecutionTime());
+      NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0], null);
+      assertTrue(
+          "Execution should simply return value",
+          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue())
+              && expectedExec.getExecutionTime() == actualExec.getExecutionTime());
 
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
       fail("test failed because of unexpected security exception");
     }
-
   }
 
   @Test
@@ -86,8 +86,10 @@ public class FieldGetterTest {
 
       //first need a variable referring to an instance
       // - sequence where one is declared and initialized by constructed object
-      ConstructorCall cons = new ConstructorCall(
-          ConstructorSignatures.getConstructorForSignatureString("randoop.field.ClassWithFields.<init>()"));
+      ConstructorCall cons =
+          new ConstructorCall(
+              ConstructorSignatures.getConstructorForSignatureString(
+                  "randoop.field.ClassWithFields.<init>()"));
       Sequence seqInit = new Sequence().extend(cons, new ArrayList<Variable>());
       ArrayList<Variable> vars = new ArrayList<>();
       vars.add(new Variable(seqInit, 0));
@@ -106,19 +108,23 @@ public class FieldGetterTest {
 
       //execution
       //null object
-      Object[] inputs = { null };
+      Object[] inputs = {null};
       ExecutionOutcome nullOutcome = rhs.execute(inputs, null);
-      assertTrue("Expect null pointer exception", nullOutcome instanceof ExceptionalExecution &&
-          ((ExceptionalExecution)nullOutcome).getException() instanceof NullPointerException);
+      assertTrue(
+          "Expect null pointer exception",
+          nullOutcome instanceof ExceptionalExecution
+              && ((ExceptionalExecution) nullOutcome).getException()
+                  instanceof NullPointerException);
 
       //actual object
       NormalExecution expectedExec = new NormalExecution(1, 0);
       inputs = new Object[1];
       inputs[0] = c.newInstance();
-      NormalExecution actualExec = (NormalExecution)rhs.execute(inputs, null);
-      assertTrue("Execution should simply return value",
-          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) &&
-          expectedExec.getExecutionTime() == actualExec.getExecutionTime());
+      NormalExecution actualExec = (NormalExecution) rhs.execute(inputs, null);
+      assertTrue(
+          "Execution should simply return value",
+          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue())
+              && expectedExec.getExecutionTime() == actualExec.getExecutionTime());
 
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
@@ -132,7 +138,6 @@ public class FieldGetterTest {
     } catch (OperationParseException e) {
       fail("test failed because ClassWithFields constructor not found");
     }
-
   }
 
   @Test
@@ -154,22 +159,22 @@ public class FieldGetterTest {
       Variable var = new Variable(seq, 0);
       StringBuilder b = new StringBuilder();
       st_rhs.appendCode(var, new ArrayList<Variable>(), b);
-      assertEquals("Expect initialization of variable from static final field",
-          expected, b.toString());
+      assertEquals(
+          "Expect initialization of variable from static final field", expected, b.toString());
 
       //execution --- has value 5
       NormalExecution expectedExec = new NormalExecution(5, 0);
-      NormalExecution actualExec = (NormalExecution)rhs.execute(new Object[0], null);
-      assertTrue("Execution should simply return value",
-          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue()) &&
-          expectedExec.getExecutionTime() == actualExec.getExecutionTime());
+      NormalExecution actualExec = (NormalExecution) rhs.execute(new Object[0], null);
+      assertTrue(
+          "Execution should simply return value",
+          expectedExec.getRuntimeValue().equals(actualExec.getRuntimeValue())
+              && expectedExec.getExecutionTime() == actualExec.getExecutionTime());
 
     } catch (NoSuchFieldException e) {
       fail("test failed because field in test class not found");
     } catch (SecurityException e) {
       fail("test failed because of unexpected security exception");
     }
-
   }
 
   @Test
@@ -177,11 +182,12 @@ public class FieldGetterTest {
     String getterDescr = "<get>(int:randoop.field.ClassWithFields.oneField)";
     try {
       FieldGet getter = FieldGet.parse(getterDescr);
-      assertEquals("parse should return object that converts to string", getterDescr, getter.toParseableString());
+      assertEquals(
+          "parse should return object that converts to string",
+          getterDescr,
+          getter.toParseableString());
     } catch (OperationParseException e) {
-     fail("Parse error: " + e.getMessage());
+      fail("Parse error: " + e.getMessage());
     }
-
   }
-
 }

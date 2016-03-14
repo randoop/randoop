@@ -14,5 +14,4 @@ public class EverythingIsDifferentMatcher implements StateMatcher {
   public int size() {
     return size;
   }
-
 }

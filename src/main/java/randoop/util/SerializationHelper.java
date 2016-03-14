@@ -28,11 +28,11 @@ public final class SerializationHelper {
       out.writeObject(o);
 
     } catch (Exception e) {
-      Log.out.println("When trying to create a PrintWriter for file " + outFile + ", exception thrown: " + e);
+      Log.out.println(
+          "When trying to create a PrintWriter for file " + outFile + ", exception thrown: " + e);
       e.printStackTrace();
       throw new Error(e);
     }
-
   }
 
   public static Object readSerialized(String fileName) {

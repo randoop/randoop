@@ -27,7 +27,8 @@ public class VariableRenamer {
   public String getRenamedVar(int index) {
     String name = this.name_mapping.get(index);
     if (name == null) {
-      assert sequence.getStatement(index).getOutputType().equals(void.class) : "The index: " + index + "-th output should be void.";
+      assert sequence.getStatement(index).getOutputType().equals(void.class)
+          : "The index: " + index + "-th output should be void.";
       throw new Error("Error in Randoop, please report it.");
     }
     return name;

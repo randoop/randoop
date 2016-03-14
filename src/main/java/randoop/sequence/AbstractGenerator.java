@@ -42,7 +42,8 @@ public abstract class AbstractGenerator {
   @Option("Dump each sequence to the log file")
   public static boolean dump_sequences = false;
 
-  @RandoopStat("Number of generation steps (one step consistents of an attempt to generate and execute a new, distinct sequence)")
+  @RandoopStat(
+      "Number of generation steps (one step consistents of an attempt to generate and execute a new, distinct sequence)")
   public int num_steps = 0;
 
   @RandoopStat("Number of sequences generated.")
@@ -164,8 +165,14 @@ public abstract class AbstractGenerator {
    *          Manager that stores and calls any listeners to use during
    *          generation. Can be null.
    */
-  public AbstractGenerator(List<Operation> operations, long timeMillis, int maxGeneratedSequences, int maxOutSequences, ComponentManager componentManager,
-      IStopper stopper, RandoopListenerManager listenerManager) {
+  public AbstractGenerator(
+      List<Operation> operations,
+      long timeMillis,
+      int maxGeneratedSequences,
+      int maxOutSequences,
+      ComponentManager componentManager,
+      IStopper stopper,
+      RandoopListenerManager listenerManager) {
     assert operations != null;
 
     this.maxTimeMillis = timeMillis;
@@ -244,8 +251,11 @@ public abstract class AbstractGenerator {
    * @return true if any of stopping criteria are met, otherwise false
    */
   protected boolean stop() {
-    return (listenerMgr != null && listenerMgr.stopGeneration()) || (timer.getTimeElapsedMillis() >= maxTimeMillis)
-        || (numOutputSequences() >= maxOutputSequences) || (numGeneratedSequences() >= maxGeneratedSequences) || (stopper != null && stopper.stop());
+    return (listenerMgr != null && listenerMgr.stopGeneration())
+        || (timer.getTimeElapsedMillis() >= maxTimeMillis)
+        || (numOutputSequences() >= maxOutputSequences)
+        || (numGeneratedSequences() >= maxGeneratedSequences)
+        || (stopper != null && stopper.stop());
   }
 
   /**
@@ -323,8 +333,7 @@ public abstract class AbstractGenerator {
         listenerMgr.generationStepPost(eSeq);
       }
 
-      if (eSeq == null)
-        continue;
+      if (eSeq == null) continue;
 
       num_sequences_generated++;
 
@@ -351,7 +360,6 @@ public abstract class AbstractGenerator {
         Log.logLine("Sequence after execution: " + Globals.lineSep + eSeq.toString());
         Log.logLine("allSequences.size()=" + numGeneratedSequences());
       }
-
     }
 
     if (!GenInputsAbstract.noprogressdisplay && progressDisplay != null) {
@@ -364,8 +372,12 @@ public abstract class AbstractGenerator {
       System.out.println("Normal method executions:" + ReflectionExecutor.normalExecs());
       System.out.println("Exceptional method executions:" + ReflectionExecutor.excepExecs());
       System.out.println();
-      System.out.println("Average method execution time (normal termination):      " + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
-      System.out.println("Average method execution time (exceptional termination): " + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
+      System.out.println(
+          "Average method execution time (normal termination):      "
+              + String.format("%.3g", ReflectionExecutor.normalExecAvgMillis()));
+      System.out.println(
+          "Average method execution time (exceptional termination): "
+              + String.format("%.3g", ReflectionExecutor.excepExecAvgMillis()));
     }
 
     // Notify listeners that exploration is ending.
@@ -386,7 +398,7 @@ public abstract class AbstractGenerator {
    * (and can thus be thought of as subsumed by another sequence). This should
    * only be called for subclasses that support this.
    *
-   * @return the set of sequences subsumed by other sequences 
+   * @return the set of sequences subsumed by other sequences
    */
   public Set<Sequence> getSubsumedSequences() {
     throw new Error("subsumed_sequences not supported for " + this.getClass());

@@ -1,35 +1,34 @@
 package randoop.test.health;
+
 import java.util.Enumeration;
 
 /**
  * A class represnting a village in the Columbian health care system
  * simulation.
  **/
-public class Village
-{
+public class Village {
   private Village[] forward;
-  private Village   back;
-  private List      returned;
-  private Hospital  hospital;
-  private int       label;
-  private int       seed;
+  private Village back;
+  private List returned;
+  private Hospital hospital;
+  private int label;
+  private int seed;
 
-  private final static int    IA   = 16807;
-  private final static float   IM   = 2147483647;
-  private final static float  AM   = ((float)1.0/IM);
-  private final static int    IQ   = 127773;
-  private final static int    IR   = 2836;
-  private final static int   MASK = 123459876;
+  private final static int IA = 16807;
+  private final static float IM = 2147483647;
+  private final static float AM = ((float) 1.0 / IM);
+  private final static int IQ = 127773;
+  private final static int IR = 2836;
+  private final static int MASK = 123459876;
 
   /**
    * Construct an empty village.
-   * @param level the 
+   * @param level the
    * @param l the unique label for the village
    * @param p a reference to the "parent" village
    * @param s the user supplied seed value
    **/
-  public Village(int level, int l, Village p, int s)
-  {
+  public Village(int level, int l, Village p, int s) {
     back = p;
     label = l;
     forward = new Village[4];
@@ -45,8 +44,7 @@ public class Village
    * @param i the village number
    * @param c the village to add
    **/
-  public void addVillage(int i, Village c)
-  {
+  public void addVillage(int i, Village c) {
     forward[i] = c;
   }
 
@@ -55,10 +53,9 @@ public class Village
    * move up to the "parent" village.
    * @return true if a patient says in this village
    **/
-  public final boolean staysHere()
-  {
+  public final boolean staysHere() {
     float rand = myRand(seed);
-    seed = (int)(rand * IM);
+    seed = (int) (rand * IM);
     return (rand > 0.1 || back == null);
   }
 
@@ -73,8 +70,7 @@ public class Village
    * @param seed the user supplied seed value.
    * @return the village that was created
    **/
-  public static final Village createVillage(int level, int label, Village back, int seed)
-  {
+  public static final Village createVillage(int level, int label, Village back, int seed) {
     if (level == 0) {
       return null;
     } else {
@@ -91,8 +87,7 @@ public class Village
    * Simulate the Columbian health care system for a village.
    * @return a list of patients refered to the next village
    **/
-  public List simulate()
-  {
+  public List simulate() {
     // the list of patients refered from each child village
     List val[] = new List[4];
 
@@ -102,18 +97,18 @@ public class Village
         val[i] = v.simulate();
       }
     }
-    
+
     for (int i = 3; i >= 0; i--) {
       List l = val[i];
       if (l != null) {
         for (Enumeration e = l.elements(); e.hasMoreElements(); ) {
-          Patient p = (Patient)e.nextElement();
+          Patient p = (Patient) e.nextElement();
           hospital.putInHospital(p);
           // remove the patient?
         }
       }
     }
-    
+
     hospital.checkPatientsInside(returned);
     List up = hospital.checkPatientsAssess(this);
     hospital.checkPatientsWaiting();
@@ -131,10 +126,9 @@ public class Village
    * Summarize results of the simulation for the Village
    * @return a summary of the simulation results for the village
    **/
-  public Results getResults()
-  {
+  public Results getResults() {
     Results fval[] = new Results[4];
-    for (int i = 3; i >=0 ; i--) {
+    for (int i = 3; i >= 0; i--) {
       Village v = forward[i];
       if (v != null) {
         fval[i] = v.getResults();
@@ -151,7 +145,7 @@ public class Village
     }
 
     for (Enumeration e = returned.elements(); e.hasMoreElements(); ) {
-      Patient p = (Patient)e.nextElement();
+      Patient p = (Patient) e.nextElement();
       r.totalHospitals += p.hospitalsVisited;
       r.totalTime += p.time;
       r.totalPatients += 1.0;
@@ -164,10 +158,9 @@ public class Village
    * Try to generate more patients for the village.
    * @return a new patient or null if a new patient isn't created
    **/
-  private Patient generatePatient()
-  {
+  private Patient generatePatient() {
     float rand = myRand(seed);
-    seed = (int)(rand * IM);
+    seed = (int) (rand * IM);
     Patient p = null;
     if (rand > 0.666) {
       p = new Patient(this);
@@ -176,24 +169,20 @@ public class Village
   }
 
   @Override
-public String toString()
-  {
+  public String toString() {
     return (new Integer(label)).toString();
   }
-    
+
   /**
    * Random number generator.
    **/
-  public static float myRand(int idum) 
-  {
+  public static float myRand(int idum) {
     idum ^= MASK;
     int k = idum / IQ;
     idum = IA * (idum - k * IQ) - IR * k;
     idum ^= MASK;
-    if (idum < 0) 
-      idum += IM;
+    if (idum < 0) idum += IM;
     float answer = AM * idum;
     return answer;
   }
-
 }

@@ -24,7 +24,10 @@ public final class ClassComplexityCalculator {
 
   public ClassComplexityCalculator(Collection<Class<?>> classes) {
     counts = new LinkedHashMap<Class<?>, Integer>();
-    h = new ClassHierarchy(ClassHierarchy.superClassClosure(new LinkedHashSet<Class<?>>(Reflection.relatedClasses(classes, 1))));
+    h =
+        new ClassHierarchy(
+            ClassHierarchy.superClassClosure(
+                new LinkedHashSet<Class<?>>(Reflection.relatedClasses(classes, 1))));
     computeForAll();
   }
 
@@ -43,8 +46,7 @@ public final class ClassComplexityCalculator {
   }
 
   private int internalClassComplexity(Class<?> c) {
-    if (counts.containsKey(c))
-      return counts.get(c);
+    if (counts.containsKey(c)) return counts.get(c);
     if (c.isPrimitive()) {
       counts.put(c, 1);
       return 1;
@@ -68,8 +70,7 @@ public final class ClassComplexityCalculator {
       counts.put(c, r);
       return r;
     }
-    if (computingNow.contains(c))
-      throw new CircularityException(c);
+    if (computingNow.contains(c)) throw new CircularityException(c);
     computingNow.add(c);
     int complexity = Integer.MAX_VALUE;
     for (Constructor<?> ctor : c.getConstructors()) {
@@ -91,8 +92,7 @@ public final class ClassComplexityCalculator {
       for (Class<?> param : ctor.getParameterTypes()) {
         result = Math.max(result, internalClassComplexity(param));
       }
-      if (result == Integer.MAX_VALUE)
-        return result;
+      if (result == Integer.MAX_VALUE) return result;
       return result + 1;
     } catch (CircularityException e) {
       return Integer.MAX_VALUE;
@@ -100,13 +100,11 @@ public final class ClassComplexityCalculator {
   }
 
   private int minComplexityOfSubclass(Class<?> c) {
-    if (minComplexityOfSubclass.containsKey(c))
-      return minComplexityOfSubclass.get(c);
+    if (minComplexityOfSubclass.containsKey(c)) return minComplexityOfSubclass.get(c);
     // System.out.println("minComplexityOfSubclass:" + c);
     int result = Integer.MAX_VALUE;
     for (Class<?> clazz : h.subClasses(c)) {
-      if (isConcreteClass(clazz))
-        result = Math.min(result, internalClassComplexity(clazz));
+      if (isConcreteClass(clazz)) result = Math.min(result, internalClassComplexity(clazz));
     }
     minComplexityOfSubclass.put(c, result);
     return result;

@@ -38,7 +38,7 @@ public interface ExecutionVisitor {
   /**
    * Called before execution of a sequence, to allow the visitor to perform any
    * initialization steps required before execution.
-   * 
+   *
    * @param executableSequence
    *          the code sequence to be visited
    */
@@ -51,5 +51,4 @@ public interface ExecutionVisitor {
    *          the visited code sequence
    */
   void visitAfterSequence(ExecutableSequence executableSequence);
-
 }

@@ -68,7 +68,7 @@ public final class Statement implements Serializable {
 
   /**
    * equals tests whether two Statement objects are equal:
-   * 
+   *
    * @return true if operation is the same, the number of inputs is the same,
    *         and inputs are equal.
    */
@@ -110,9 +110,9 @@ public final class Statement implements Serializable {
 
   /**
    * Adds code for the statement to the given {@code StringBuilder}.
-   * 
+   *
    * @see Sequence#appendCode(StringBuilder, int)
-   * 
+   *
    * @param variable
    *          the {@link Variable} to be used if an initialization.
    * @param inputs
@@ -160,7 +160,8 @@ public final class Statement implements Serializable {
    *          the mutable variable the statement affects
    * @return instance of mutable statement corresponding to this statement.
    */
-  public MutableStatement toModifiableStatement(List<MutableVariable> inputs, MutableVariable mVariable) {
+  public MutableStatement toModifiableStatement(
+      List<MutableVariable> inputs, MutableVariable mVariable) {
     return new MutableStatement(operation, inputs, mVariable);
   }
 
@@ -317,5 +318,4 @@ public final class Statement implements Serializable {
   public final Operation getOperation() {
     return operation;
   }
-
 }

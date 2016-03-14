@@ -1,4 +1,5 @@
 package randoop.test.bh;
+
 import java.util.Enumeration;
 
 /**
@@ -14,8 +15,7 @@ import java.util.Enumeration;
  * <a href="ftp://hubble.ifa.hawaii.edu/pub/barnes/treecode">
  * source distributed by Barnes</a>.
  **/
-public class BH 
-{
+public class BH {
   /**
    * The user specified number of bodies to create.
    **/
@@ -38,24 +38,21 @@ public class BH
   static double DTIME = 0.0125;
   private static double TSTOP = 2.0;
 
-  public static final void main(String args[])
-  {
+  public static final void main(String args[]) {
     parseCmdLine(args);
 
-    if (printMsgs)
-      System.out.println("nbody = " + nbody);
+    if (printMsgs) System.out.println("nbody = " + nbody);
 
     long start0 = System.currentTimeMillis();
     Tree root = new Tree();
     root.createTestData(nbody);
     long end0 = System.currentTimeMillis();
-    if (printMsgs)
-      System.out.println("Bodies created");
+    if (printMsgs) System.out.println("Bodies created");
 
     long start1 = System.currentTimeMillis();
     double tnow = 0.0;
     int i = 0;
-    while ((tnow < TSTOP + 0.1*DTIME) && (i < nsteps)) {
+    while ((tnow < TSTOP + 0.1 * DTIME) && (i < nsteps)) {
       root.stepSystem(i++);
       tnow += DTIME;
     }
@@ -70,9 +67,9 @@ public class BH
     }
 
     if (printMsgs) {
-      System.out.println("Build Time " + (end0 - start0)/1000.0);
-      System.out.println("Compute Time " + (end1 - start1)/1000.0);
-      System.out.println("Total Time " + (end1 - start0)/1000.0);
+      System.out.println("Build Time " + (end0 - start0) / 1000.0);
+      System.out.println("Compute Time " + (end1 - start1) / 1000.0);
+      System.out.println("Total Time " + (end1 - start0) / 1000.0);
     }
     System.out.println("Done!");
   }
@@ -82,10 +79,9 @@ public class BH
    * @param seed the seed to the generator
    * @return a random number
    **/
-  public static final double myRand(double seed)
-  {
-    double t = 16807.0*seed + 1;
-    
+  public static final double myRand(double seed) {
+    double t = 16807.0 * seed + 1;
+
     seed = t - (2147483647.0 * Math.floor(t / 2147483647.0));
     return seed;
   }
@@ -99,9 +95,8 @@ public class BH
    * @param r seed
    * @return a floating point randon number
    **/
-  public static final double xRand(double xl, double xh, double r)
-  {
-    double res = xl + (xh-xl)*r/2147483647.0;
+  public static final double xRand(double xl, double xh, double r) {
+    double res = xl + (xh - xl) * r / 2147483647.0;
     return res;
   }
 
@@ -109,8 +104,7 @@ public class BH
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[])
-  {
+  private static final void parseCmdLine(String args[]) {
     int i = 0;
     String arg;
     while (i < args.length && args[i].startsWith("-")) {
@@ -130,7 +124,7 @@ public class BH
           throw new Error("-l requires the number of levels");
         }
       } else if (arg.equals("-m")) {
-        printMsgs  = true;
+        printMsgs = true;
       } else if (arg.equals("-p")) {
         printResults = true;
       } else if (arg.equals("-h")) {
@@ -143,15 +137,13 @@ public class BH
   /**
    * The usage routine which describes the program options.
    **/
-  private static final void usage()
-  {
-// Commented out to avoid confusing printout during tests.
-//    System.err.println("usage: java BH -b <size> [-s <steps>] [-p] [-m] [-h]");
-//    System.err.println("    -b the number of bodies");
-//    System.err.println("    -s the max. number of time steps (default=10)");
-//    System.err.println("    -p (print detailed results)");
-//    System.err.println("    -m (print information messages");
-//    System.err.println("    -h (this message)");
+  private static final void usage() {
+    // Commented out to avoid confusing printout during tests.
+    //    System.err.println("usage: java BH -b <size> [-s <steps>] [-p] [-m] [-h]");
+    //    System.err.println("    -b the number of bodies");
+    //    System.err.println("    -s the max. number of time steps (default=10)");
+    //    System.err.println("    -p (print detailed results)");
+    //    System.err.println("    -m (print information messages");
+    //    System.err.println("    -h (this message)");
   }
-
 }

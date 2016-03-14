@@ -8,8 +8,7 @@ public abstract class ExecutionOutcome {
 
   String output = null;
 
-  public ExecutionOutcome() {
-  }
+  public ExecutionOutcome() {}
 
   /**
    * How long the associated statement took to execute.
@@ -30,10 +29,9 @@ public abstract class ExecutionOutcome {
   /**
    * Retrieve the output of the statement
    *
-   * @return the statement output 
+   * @return the statement output
    */
   public String get_output() {
     return output;
   }
-
 }

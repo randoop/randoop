@@ -25,9 +25,11 @@ public class RandomnessTest extends TestCase {
 
     class WeightedElt implements WeightedElement {
       public final int weight;
+
       public WeightedElt(int weight) {
         this.weight = weight;
       }
+
       public double getWeight() {
         return this.weight;
       }
@@ -36,17 +38,17 @@ public class RandomnessTest extends TestCase {
     // Create a list of weighted elements.
     ArrayListSimpleList<WeightedElt> list = new ArrayListSimpleList<WeightedElt>();
     int sumOfAllWeights = 0;
-    for (int i = 1 ; i < 10 ; i++) {
+    for (int i = 1; i < 10; i++) {
       int weight = i;
       list.add(new WeightedElt(weight));
       sumOfAllWeights += weight;
     }
 
-    Map<Integer,Integer> weightToTimesSelected = new LinkedHashMap<Integer, Integer>();
+    Map<Integer, Integer> weightToTimesSelected = new LinkedHashMap<Integer, Integer>();
     int totalSelections = 0;
 
     // Select lots of times.
-    for (int i = 0 ; i < 100000 ; i++) {
+    for (int i = 0; i < 100000; i++) {
       int weightSelected = Randomness.randomMemberWeighted(list).weight;
       Integer timesSelected = weightToTimesSelected.get(weightSelected);
       if (timesSelected == null) timesSelected = 0;
@@ -56,10 +58,9 @@ public class RandomnessTest extends TestCase {
 
     // Check that elements were selected the right number of times.
     for (Map.Entry<Integer, Integer> e : weightToTimesSelected.entrySet()) {
-      double actualRatio = e.getValue()/(double)totalSelections;
-      double expectedRatio = e.getKey() / (double)sumOfAllWeights;
+      double actualRatio = e.getValue() / (double) totalSelections;
+      double expectedRatio = e.getKey() / (double) sumOfAllWeights;
       assertTrue(Math.abs(actualRatio - expectedRatio) < epsilon);
     }
   }
-
 }

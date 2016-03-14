@@ -54,32 +54,29 @@ public final class Execution {
   }
 
   /**
-  * The size of the list.
-  *
-  * @return the size of the list
-  */
+   * The size of the list.
+   *
+   * @return the size of the list
+   */
   public int size() {
     return theList.size();
   }
 
   /** Set the i-th slot to the given outcome. */
   public void set(int i, ExecutionOutcome outcome) {
-    if (i < 0 || i >= theList.size())
-      throw new IllegalArgumentException("wrong index " + i);
-    if (outcome == null)
-      throw new IllegalArgumentException("outcome cannot be null.");
+    if (i < 0 || i >= theList.size()) throw new IllegalArgumentException("wrong index " + i);
+    if (outcome == null) throw new IllegalArgumentException("outcome cannot be null.");
     theList.set(i, outcome);
   }
 
   /**
-  * Get the outcome in the i-th slot.
-  *
-  * @param i  the statement position
-  * @return the outcome of the ith statement
-  */
+   * Get the outcome in the i-th slot.
+   *
+   * @param i  the statement position
+   * @return the outcome of the ith statement
+   */
   public ExecutionOutcome get(int i) {
-    if (i < 0 || i >= theList.size())
-      throw new IllegalArgumentException("wrong index.");
+    if (i < 0 || i >= theList.size()) throw new IllegalArgumentException("wrong index.");
     return theList.get(i);
   }
 

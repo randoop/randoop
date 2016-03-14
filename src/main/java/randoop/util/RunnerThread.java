@@ -13,7 +13,8 @@ public class RunnerThread extends Thread {
   private NextCallMustBe state;
 
   private enum NextCallMustBe {
-    SETUP, RUN
+    SETUP,
+    RUN
   }
 
   /**
@@ -32,18 +33,15 @@ public class RunnerThread extends Thread {
   }
 
   public void setup(ReflectionCode code) {
-    if (state != NextCallMustBe.SETUP)
-      throw new IllegalArgumentException();
-    if (code == null)
-      throw new IllegalArgumentException("code cannot be null.");
+    if (state != NextCallMustBe.SETUP) throw new IllegalArgumentException();
+    if (code == null) throw new IllegalArgumentException("code cannot be null.");
     this.code = code;
     this.state = NextCallMustBe.RUN;
   }
 
   @Override
   public final void run() {
-    if (state != NextCallMustBe.RUN)
-      throw new IllegalArgumentException();
+    if (state != NextCallMustBe.RUN) throw new IllegalArgumentException();
     runFinished = false;
     executeReflectionCode();
     runFinished = true;
@@ -54,14 +52,13 @@ public class RunnerThread extends Thread {
     try {
       code.runReflectionCode();
       // exceptionThrown remains null.
-    } catch (ThreadDeath e) {// can't stop these guys
+    } catch (ThreadDeath e) { // can't stop these guys
       throw e;
-    } catch (ReflectionCode.NotCaughtIllegalStateException e) {// bug in randoop
-                                                               // code
+    } catch (ReflectionCode.NotCaughtIllegalStateException e) { // bug in randoop
+      // code
       throw e;
     } catch (Throwable e) {
-      if (e instanceof java.lang.reflect.InvocationTargetException)
-        e = e.getCause();
+      if (e instanceof java.lang.reflect.InvocationTargetException) e = e.getCause();
       exceptionThrown = e;
     }
   }

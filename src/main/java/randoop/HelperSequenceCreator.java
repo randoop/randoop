@@ -23,7 +23,7 @@ public class HelperSequenceCreator {
    * CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an
    * array.
    *
-   * @param components  the component manager with existing sequences 
+   * @param components  the component manager with existing sequences
    * @param cls  the query type
    * @return the singleton list containing the compatible sequence
    */
@@ -40,7 +40,8 @@ public class HelperSequenceCreator {
     if (cls.getComponentType().isPrimitive()) {
       s = randPrimitiveArray(cls.getComponentType());
     } else {
-      SimpleList<Sequence> candidates = components.getSequencesForType(cls.getComponentType(), false);
+      SimpleList<Sequence> candidates =
+          components.getSequencesForType(cls.getComponentType(), false);
       if (candidates.isEmpty()) {
         if (GenInputsAbstract.forbid_null) {
           // No sequences that produce appropriate component values found, and
@@ -72,7 +73,8 @@ public class HelperSequenceCreator {
         // have such a var,
         // which I know is currently true because of SequenceCollection
         // implementation.
-        ins.add(s.randomVariableForTypeLastStatement(cls.getComponentType(), Match.COMPATIBLE_TYPE));
+        ins.add(
+            s.randomVariableForTypeLastStatement(cls.getComponentType(), Match.COMPATIBLE_TYPE));
         s = s.extend(decl, ins);
       }
     }
@@ -99,5 +101,4 @@ public class HelperSequenceCreator {
     s = s.extend(new ArrayCreation(componentType, length), inputs);
     return s;
   }
-
 }

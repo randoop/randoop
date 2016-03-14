@@ -33,7 +33,7 @@ import junit.framework.Assert;
 public class SequenceTester {
 
   Sequence sequence;
-  Properties properties; 
+  Properties properties;
   String testId;
 
   private static String SEQUENCE;
@@ -47,7 +47,6 @@ public class SequenceTester {
 
   private boolean oneOrMoreFailures;
   private static StringBuilder messageBuilder = new StringBuilder();
-
 
   static {
     legalProperties = new ArrayList<String>();
@@ -67,7 +66,8 @@ public class SequenceTester {
     legalProperties.add(LINEREMOVER);
   }
 
-  @SuppressWarnings("deprecation") // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
+  @SuppressWarnings(
+      "deprecation") // See http://bugs.sun.com/bugdatabase/view_bug.do;:WuuT?bug_id=4094886
   public SequenceTester(String s, String testId) {
     this.testId = testId;
     try {
@@ -81,7 +81,8 @@ public class SequenceTester {
       throw new Error(e);
     }
 
-    new ContractCheckingVisitor(Collections.<ObjectContract>emptyList(), new AlwaysFalseExceptionPredicate());
+    new ContractCheckingVisitor(
+        Collections.<ObjectContract>emptyList(), new AlwaysFalseExceptionPredicate());
   }
 
   public static void test(InputStream stream) throws Exception {
@@ -137,8 +138,8 @@ public class SequenceTester {
   }
 
   private void test() {
-    for (Enumeration<?> e = properties.propertyNames() ; e.hasMoreElements() ; ) {
-      String propertyName = (String)e.nextElement();
+    for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements(); ) {
+      String propertyName = (String) e.nextElement();
       String propertyVariable = properties.getProperty(propertyName);
       if (propertyName.equals(PURITY)) {
         // do nothing.
@@ -167,14 +168,14 @@ public class SequenceTester {
     ExecutableSequence ds = new ExecutableSequence(sequence);
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
-    ExpectedExceptionCheckGen expectation; 
+    ExpectedExceptionCheckGen expectation;
     expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
-    ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(expectation,true));
+    ds.execute(new DummyVisitor(), new RegressionCaptureVisitor(expectation, true));
     checkEqualStatements(expected, ds.toString(), "testing RegressionCaptureVisitor");
   }
-  
-  
+
   private static final TestCheckGenerator testGen;
+
   static {
     List<ObjectContract> contracts = new ArrayList<ObjectContract>();
     contracts.add(new EqualsReflexive());
@@ -183,11 +184,13 @@ public class SequenceTester {
     contracts.add(new EqualsSymmetric());
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
     ExceptionPredicate isExpected = new ExceptionBehaviorPredicate(BehaviorType.EXPECTED);
-    ExpectedExceptionCheckGen expectation; 
+    ExpectedExceptionCheckGen expectation;
     expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
-    testGen = new ExtendGenerator(
-        new ContractCheckingVisitor(contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
-        new RegressionCaptureVisitor(expectation, true));
+    testGen =
+        new ExtendGenerator(
+            new ContractCheckingVisitor(
+                contracts, new ExceptionBehaviorPredicate(BehaviorType.ERROR)),
+            new RegressionCaptureVisitor(expectation, true));
   }
 
   private void testContracts(String expected) {
@@ -205,19 +208,16 @@ public class SequenceTester {
     checkEqualStatements(expected, codeString, "testing toCodeString()");
   }
 
-  private void checkEqualStatements(String expectedString,
-      String actualString, String context) {
+  private void checkEqualStatements(String expectedString, String actualString, String context) {
     String[] expected = trimmedStatements(expectedString);
     String[] actual = trimmedStatements(actualString);
     if (expected.length != actual.length) {
-      failWithMessage("when " + context + ", lengths differ", expected,
-          actual);
+      failWithMessage("when " + context + ", lengths differ", expected, actual);
       return;
     } else {
       for (int i = 0; i < expected.length; i++) {
         if (!expected[i].equals(actual[i])) {
-          failWithMessage("when " + context + ", statement " + i
-              + " differ", expected, actual);
+          failWithMessage("when " + context + ", statement " + i + " differ", expected, actual);
         }
       }
     }
@@ -228,10 +228,9 @@ public class SequenceTester {
     StringBuilder b = new StringBuilder();
     b.append("Failure in test " + testId + " " + string);
     b.append("" + Globals.lineSep + "Expected:" + Globals.lineSep + "");
-    for (int i = 0 ; i < expected.length ; i++)
-      b.append(i + ": " + expected[i] + Util.newLine);
+    for (int i = 0; i < expected.length; i++) b.append(i + ": " + expected[i] + Util.newLine);
     b.append("" + Globals.lineSep + "Actual:" + Globals.lineSep + "");
-    for (int i = 0 ; i < actual.length ; i++) {
+    for (int i = 0; i < actual.length; i++) {
       b.append(i + ": " + actual[i] + Util.newLine);
     }
     messageBuilder.append(b.toString() + Util.newLine);
@@ -240,7 +239,7 @@ public class SequenceTester {
   private String[] trimmedStatements(String s) {
     String[] statements = s.split(";");
     List<String> trimmed = new ArrayList<String>();
-    for (int i = 0 ; i < statements.length ; i++) {
+    for (int i = 0; i < statements.length; i++) {
       String trimmedLine = statements[i].trim();
       if (!trimmedLine.equals("")) {
         trimmed.add(trimmedLine);

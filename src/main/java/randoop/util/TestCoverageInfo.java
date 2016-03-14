@@ -16,8 +16,7 @@ public class TestCoverageInfo {
   public final Map<String, Set<Integer>> methodToIndices;
 
   public TestCoverageInfo(int numBranches, Map<String, Set<Integer>> map) {
-    if (numBranches < 0)
-      throw new IllegalArgumentException();
+    if (numBranches < 0) throw new IllegalArgumentException();
     branchTrue = new int[numBranches];
     branchFalse = new int[numBranches];
     methodToIndices = Collections.unmodifiableMap(map);
@@ -35,11 +34,27 @@ public class TestCoverageInfo {
       totalBranchesCovered += branchesCovered;
       totalBranches += branchesInMethod;
       double percentCovered = ((double) branchesCovered) / ((double) branchesInMethod);
-      b.append((methodSignature == null ? "other" : methodSignature) + ": " + branchesCovered + "/" + branchesInMethod + " (" + percentCovered + "%)"
-          + Globals.lineSep);
+      b.append(
+          (methodSignature == null ? "other" : methodSignature)
+              + ": "
+              + branchesCovered
+              + "/"
+              + branchesInMethod
+              + " ("
+              + percentCovered
+              + "%)"
+              + Globals.lineSep);
     }
     double totalPercent = ((double) totalBranchesCovered) / ((double) totalBranches);
-    b.append("TOTAL :" + totalBranchesCovered + "/" + totalBranches + " (" + totalPercent + "%)" + Globals.lineSep);
+    b.append(
+        "TOTAL :"
+            + totalBranchesCovered
+            + "/"
+            + totalBranches
+            + " ("
+            + totalPercent
+            + "%)"
+            + Globals.lineSep);
     return b.toString();
   }
 
@@ -73,7 +88,8 @@ public class TestCoverageInfo {
   }
 
   private static TestCoverageInfo getCoverageInfoObject(Class<?> clazz)
-      throws IllegalArgumentException, SecurityException, IllegalAccessException, NoSuchFieldException {
+      throws IllegalArgumentException, SecurityException, IllegalAccessException,
+          NoSuchFieldException {
     Field f = clazz.getDeclaredField("randoopCoverageInfo");
     f.setAccessible(true);
     return (TestCoverageInfo) f.get(null);

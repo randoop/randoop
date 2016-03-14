@@ -67,8 +67,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    *          reflective object for a constructor.
    */
   public ConstructorCall(Constructor<?> constructor) {
-    if (constructor == null)
-      throw new IllegalArgumentException("constructor should not be null.");
+    if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
     this.outputType = constructor.getDeclaringClass();
     // TODO move this earlier in the process: check first that all
@@ -133,9 +132,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     assert inputVars.size() == this.getInputTypes().size();
 
     Class<?> declaringClass = constructor.getDeclaringClass();
-    boolean isNonStaticMember = (
-        ! Modifier.isStatic(declaringClass.getModifiers())
-        && declaringClass.isMemberClass());
+    boolean isNonStaticMember =
+        (!Modifier.isStatic(declaringClass.getModifiers()) && declaringClass.isMemberClass());
     assert Util.implies(isNonStaticMember, inputVars.size() > 0);
 
     // Note on isNonStaticMember: if a class is a non-static member class, the
@@ -150,8 +148,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
     b.append((isNonStaticMember ? inputVars.get(0) + "." : "") + "new ");
     b.append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr + "(");
     for (int i = (isNonStaticMember ? 1 : 0); i < inputVars.size(); i++) {
-      if (i > (isNonStaticMember ? 1 : 0))
-        b.append(", ");
+      if (i > (isNonStaticMember ? 1 : 0)) b.append(", ");
 
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(getInputTypes().get(i)))
@@ -173,7 +170,6 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
       b.append(param);
     }
     b.append(")");
-
   }
 
   /**
@@ -187,8 +183,7 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
   @Override
   public boolean equals(Object o) {
     if (o instanceof ConstructorCall) {
-      if (this == o)
-        return true;
+      if (this == o) return true;
 
       ConstructorCall other = (ConstructorCall) o;
       return this.constructor.equals(other.constructor);
@@ -227,7 +222,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
 
     assert statementInput.length == this.getInputTypes().size();
 
-    ConstructorReflectionCode code = new ConstructorReflectionCode(this.constructor, statementInput);
+    ConstructorReflectionCode code =
+        new ConstructorReflectionCode(this.constructor, statementInput);
 
     // long startTime = System.currentTimeMillis();
     Throwable thrown = ReflectionExecutor.executeReflectionCode(code, out);
@@ -300,7 +296,8 @@ public final class ConstructorCall extends AbstractOperation implements Operatio
    *           if no constructor found for signature.
    */
   public static Operation parse(String s) throws OperationParseException {
-    return ConstructorCall.createConstructorCall(ConstructorSignatures.getConstructorForSignatureString(s));
+    return ConstructorCall.createConstructorCall(
+        ConstructorSignatures.getConstructorForSignatureString(s));
   }
 
   /**

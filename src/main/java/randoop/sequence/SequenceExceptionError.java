@@ -24,7 +24,7 @@ public class SequenceExceptionError extends Error {
   /**
    * Create an exception for the exception thrown by the statement at the given
    * position in the test sequence.
-   * 
+   *
    * @param testSequence
    *          the test sequence
    * @param position
@@ -32,7 +32,8 @@ public class SequenceExceptionError extends Error {
    * @param exception
    *          the exception
    */
-  public SequenceExceptionError(ExecutableSequence testSequence, int position, Throwable exception) {
+  public SequenceExceptionError(
+      ExecutableSequence testSequence, int position, Throwable exception) {
     super("Exception thrown before end of sequence", exception);
     this.testSequence = testSequence;
     this.position = position;
@@ -41,7 +42,7 @@ public class SequenceExceptionError extends Error {
 
   /**
    * Returns the thrown exception.
-   * 
+   *
    * @return the exception thrown by statement in sequence
    */
   public Throwable getError() {
@@ -51,7 +52,7 @@ public class SequenceExceptionError extends Error {
   /**
    * Returns the string representation of the statement that threw the
    * exception.
-   * 
+   *
    * @return the string representation of the statement
    */
   public String getStatement() {
@@ -60,7 +61,7 @@ public class SequenceExceptionError extends Error {
 
   /**
    * Returns the string representation of the test sequence.
-   * 
+   *
    * @return the full test sequence as a string
    */
   public String getSequence() {
@@ -70,11 +71,10 @@ public class SequenceExceptionError extends Error {
   /**
    * Returns the input sequence containing the statement that threw the
    * exception.
-   * 
+   *
    * @return the input sequence from which exception was thrown
    */
   public Sequence getSubsequence() {
     return testSequence.sequence.getSubsequence(position);
   }
-
 }

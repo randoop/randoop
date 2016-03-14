@@ -12,21 +12,21 @@ import plume.UtilMDE;
  * Reads a list of records from a text file, where a record is partially
  * specified by the client of this class.
  * <p>
- * 
+ *
  * A record is a sequence of lines, where the first line is the string
  * "START &lt;recordtype&gt;" and the last line is the string
  * "END &lt;recordtype&gt;" where &lt;recordtype&gt; is specified by the client.
  * For example:
- * 
+ *
  * <pre>START person
  * <em>... arbitrary text ...</em>
  * <em>... more arbitrary text ...</em>
  * END person</pre>
- * 
+ *
  * Any lines within and between records, that are only whitespace or start with
  * "#", are skipped.
  * <p>
- * 
+ *
  * This class's built-in functionality extracts records from a file.
  * It then parses and processes each record, using the RecordProcessor
  * provided by the client.
@@ -44,8 +44,7 @@ public class RecordListReader {
   public RecordListReader(String recordType, RecordProcessor proc) {
     if (recordType == null || recordType.length() == 0)
       throw new IllegalArgumentException("Invalid record type:" + recordType);
-    if (proc == null)
-      throw new IllegalArgumentException("proc cannot be null.");
+    if (proc == null) throw new IllegalArgumentException("proc cannot be null.");
     this.processor = proc;
     this.startMarker = "START " + recordType;
     this.endMarker = "END " + recordType;
@@ -66,8 +65,7 @@ public class RecordListReader {
   }
 
   public void parse(File inFile) {
-    if (inFile == null)
-      throw new IllegalArgumentException("Null input file");
+    if (inFile == null) throw new IllegalArgumentException("Null input file");
 
     BufferedReader reader;
     try {
@@ -103,8 +101,7 @@ public class RecordListReader {
     List<String> ret = new ArrayList<String>();
     String line = nextNWCLine(reader);
     while (line != null && !line.equals(endMarker)) {
-      if (line.length() == 0 || line.charAt(0) == '#')
-        continue;
+      if (line.length() == 0 || line.charAt(0) == '#') continue;
       ret.add(line);
       line = nextNWCLine(reader);
     }
@@ -113,14 +110,11 @@ public class RecordListReader {
 
   private static String nextNWCLine(BufferedReader reader) throws IOException {
     String line = reader.readLine();
-    if (line != null)
-      line = line.trim();
+    if (line != null) line = line.trim();
     while (line != null && (line.length() == 0 || line.indexOf('#') == 0)) {
       line = reader.readLine();
-      if (line != null)
-        line = line.trim();
+      if (line != null) line = line.trim();
     }
     return line;
   }
-
 }

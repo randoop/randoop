@@ -35,5 +35,4 @@ public class SimpleSet<T> implements ISimpleSet<T> {
   public int size() {
     return set.size();
   }
-
 }

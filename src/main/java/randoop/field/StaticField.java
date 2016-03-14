@@ -8,7 +8,7 @@ import randoop.sequence.Variable;
 
 /**
  * PublicStaticField represents a public static field of a class.
- * 
+ *
  * @see AccessibleField
  *
  */
@@ -51,12 +51,11 @@ public class StaticField extends AccessibleField {
 
   /**
    * isStatic is a predicate to determine if the field is declared as static.
-   * 
+   *
    * @return true since object is a {@link StaticField}.
    */
   @Override
   public boolean isStatic() {
     return true;
   }
-
 }

@@ -93,24 +93,29 @@ public class GenTests extends GenInputsAbstract {
 
   private static final String commandGrammar = "gentests OPTIONS";
 
-  private static final String where = "At least one class is specified via `--testclass' or `--classlist'.";
+  private static final String where =
+      "At least one class is specified via `--testclass' or `--classlist'.";
 
-  private static final String summary = "Attempts to generate JUnit tests that "
-      + "capture the behavior of the classes under test and/or find contract violations. "
-      + "Randoop generates tests using feedback-directed random test generation. ";
+  private static final String summary =
+      "Attempts to generate JUnit tests that "
+          + "capture the behavior of the classes under test and/or find contract violations. "
+          + "Randoop generates tests using feedback-directed random test generation. ";
 
-  private static final String input = "One or more names of classes to test. A class to test can be specified "
-      + "via the `--testclass=<CLASSNAME>' or `--classlist=<FILENAME>' options.";
+  private static final String input =
+      "One or more names of classes to test. A class to test can be specified "
+          + "via the `--testclass=<CLASSNAME>' or `--classlist=<FILENAME>' options.";
 
-  private static final String output = "A JUnit test suite (as one or more Java source files). The "
-      + "tests in the suite will pass when executed using the classes under test.";
+  private static final String output =
+      "A JUnit test suite (as one or more Java source files). The "
+          + "tests in the suite will pass when executed using the classes under test.";
 
-  private static final String example = "java randoop.main.Main gentests --testclass=java.util.Collections " + " --testclass=java.util.TreeSet";
+  private static final String example =
+      "java randoop.main.Main gentests --testclass=java.util.Collections "
+          + " --testclass=java.util.TreeSet";
 
   private static final List<String> notes;
 
   static {
-
     notes = new ArrayList<String>();
     notes.add(
         "Randoop executes the code under test, with no mechanisms to protect your system from harm resulting from arbitrary code execution. If random execution of your code could have undesirable effects (e.g. deletion of files, opening network connections, etc.) make sure you execute Randoop in a sandbox machine.");
@@ -118,7 +123,6 @@ public class GenTests extends GenInputsAbstract {
         "Randoop will only use methods from the classes that you specify for testing. If Randoop is not generating tests for a particular method, make sure that you are including classes for the types that the method requires. Otherwise, Randoop may fail to generate tests due to missing input parameters.");
     notes.add(
         "Randoop is designed to be deterministic when the code under test is itself deterministic. This means that two runs of Randoop will generate the same tests. To get variation across runs, use the --randomseed option.");
-
   }
 
   @OptionGroup(value = "GenTests unpublicized options", unpublicized = true)
@@ -128,8 +132,13 @@ public class GenTests extends GenInputsAbstract {
 
   public static SimpleLog progress = new SimpleLog(true);
 
-  private static Options options = new Options(GenTests.class, GenInputsAbstract.class, ReflectionExecutor.class, ForwardGenerator.class,
-      AbstractGenerator.class);
+  private static Options options =
+      new Options(
+          GenTests.class,
+          GenInputsAbstract.class,
+          ReflectionExecutor.class,
+          ForwardGenerator.class,
+          AbstractGenerator.class);
 
   public GenTests() {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
@@ -160,8 +169,7 @@ public class GenTests extends GenInputsAbstract {
     // If some properties were specified, set them
     for (String prop : GenInputsAbstract.system_props) {
       String[] pa = prop.split("=", 2);
-      if (pa.length != 2)
-        usage("invalid property definition: %s%n", prop);
+      if (pa.length != 2) usage("invalid property definition: %s%n", prop);
       System.setProperty(pa[0], pa[1]);
     }
 
@@ -208,15 +216,15 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
-    DefaultReflectionPredicate reflectionPredicate = new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
+    DefaultReflectionPredicate reflectionPredicate =
+        new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, reflectionPredicate);
 
     // Always add Object constructor (it's often useful).
     ConstructorCall objectConstructor = null;
     try {
       objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
-      if (!model.contains(objectConstructor))
-        model.add(objectConstructor);
+      if (!model.contains(objectConstructor)) model.add(objectConstructor);
     } catch (Exception e) {
       throw new BugInRandoopException(e); // Should never reach here!
     }
@@ -238,7 +246,6 @@ public class GenTests extends GenInputsAbstract {
       } catch (OperationParseException e) {
         throw new Error(e);
       }
-
     }
 
     // Don't remove observers; they create useful values.
@@ -255,10 +262,12 @@ public class GenTests extends GenInputsAbstract {
     Set<Sequence> components = new LinkedHashSet<Sequence>();
     if (!componentfile_ser.isEmpty()) {
       for (File onefile : componentfile_ser) {
-        try (ObjectInputStream objectos = new ObjectInputStream(new GZIPInputStream(new FileInputStream(onefile)))) {
+        try (ObjectInputStream objectos =
+                new ObjectInputStream(new GZIPInputStream(new FileInputStream(onefile)))) {
           Set<Sequence> seqset = (Set<Sequence>) objectos.readObject();
           if (!GenInputsAbstract.noprogressdisplay) {
-            System.out.println("Adding " + seqset.size() + " component sequences from file " + onefile);
+            System.out.println(
+                "Adding " + seqset.size() + " component sequences from file " + onefile);
           }
           components.addAll(seqset);
         } catch (Exception e) {
@@ -271,7 +280,8 @@ public class GenTests extends GenInputsAbstract {
         Set<Sequence> seqset = new LinkedHashSet<Sequence>();
         Sequence.readTextSequences(onefile, seqset);
         if (!GenInputsAbstract.noprogressdisplay) {
-          System.out.println("Adding " + seqset.size() + " component sequences from file " + onefile);
+          System.out.println(
+              "Adding " + seqset.size() + " component sequences from file " + onefile);
         }
         components.addAll(seqset);
       }
@@ -295,14 +305,17 @@ public class GenTests extends GenInputsAbstract {
     /////////////////////////////////////////
     // Create the generator for this session.
     AbstractGenerator explorer;
-    explorer = new ForwardGenerator(model, timelimit * 1000, inputlimit, outputlimit, componentMgr, null, listenerMgr);
+    explorer =
+        new ForwardGenerator(
+            model, timelimit * 1000, inputlimit, outputlimit, componentMgr, null, listenerMgr);
     /////////////////////////////////////////
 
     ////// setup for check generation
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, classes);
 
     // Define test predicate to decide which test sequences will be output
-    Predicate<ExecutableSequence> isOutputTest = createTestOutputPredicate(objectConstructor, coveredClasses);
+    Predicate<ExecutableSequence> isOutputTest =
+        createTestOutputPredicate(objectConstructor, coveredClasses);
 
     // list of visitors for collecting information from test sequences
     List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
@@ -368,8 +381,7 @@ public class GenTests extends GenInputsAbstract {
       outputObject(componentset, GenInputsAbstract.output_components);
     }
 
-    if (GenInputsAbstract.dont_output_tests)
-      return true;
+    if (GenInputsAbstract.dont_output_tests) return true;
 
     if (!GenInputsAbstract.no_error_revealing_tests) {
       List<ExecutableSequence> errorSequences = explorer.getErrorTestSequences();
@@ -418,7 +430,8 @@ public class GenTests extends GenInputsAbstract {
    * @param coveredClasses
    *          the list of classes to check for coverage
    */
-  public static void getClassesUnderTest(VisibilityPredicate visibility, Set<Class<?>> classes, Set<Class<?>> coveredClasses) {
+  public static void getClassesUnderTest(
+      VisibilityPredicate visibility, Set<Class<?>> classes, Set<Class<?>> coveredClasses) {
 
     // get names of classes under test
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs(options);
@@ -449,13 +462,15 @@ public class GenTests extends GenInputsAbstract {
       }
 
       // ignore interfaces and non-visible classes
-      if (! visibility.isVisible(c)) {
-        System.out.println("Ignoring non-visible " + c + " specified via --classlist or --testclass.");
+      if (!visibility.isVisible(c)) {
+        System.out.println(
+            "Ignoring non-visible " + c + " specified via --classlist or --testclass.");
       } else if (c.isInterface()) {
         System.out.println("Ignoring " + c + " specified via --classlist or --testclass.");
       } else {
-        if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum())  {
-          System.out.println("Ignoring abstract " + c + " specified via --classlist or --testclass.");
+        if (Modifier.isAbstract(c.getModifiers()) && !c.isEnum()) {
+          System.out.println(
+              "Ignoring abstract " + c + " specified via --classlist or --testclass.");
         } else {
           classes.add(c);
         }
@@ -466,7 +481,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     for (String classname : coveredClassnames) {
-      if (! classnames.contains(classname)) {
+      if (!classnames.contains(classname)) {
         Class<?> c = null;
         try {
           c = TypeNames.getTypeForName(classname);
@@ -474,8 +489,9 @@ public class GenTests extends GenInputsAbstract {
           errorHandler.handle(classname);
         }
 
-        if (! visibility.isVisible(c)) {
-          System.out.println("Ignorning non-visible " + c + " specified as include-if-class-exercised target");
+        if (!visibility.isVisible(c)) {
+          System.out.println(
+              "Ignorning non-visible " + c + " specified as include-if-class-exercised target");
         } else if (c.isInterface()) {
           System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
         } else {
@@ -483,9 +499,7 @@ public class GenTests extends GenInputsAbstract {
         }
       }
     }
-
   }
-
 
   /**
    * Handles the occurrence of a {@code SequenceExceptionError} that indicates a
@@ -500,9 +514,14 @@ public class GenTests extends GenInputsAbstract {
    */
   private void handleFlakySequenceException(AbstractGenerator explorer, SequenceExceptionError e) {
 
-    String msg = String.format("%n%nERROR: Randoop stopped because of a flaky test.%n%n"
-        + "This can happen when Randoop is run on methods that side-effect global " + "state.%n" + "See the \"Randoop stopped because of a flaky test\" "
-        + "section of the user manual.%n" + "For more details, rerun with logging turned on with --log=FILENAME.%n");
+    String msg =
+        String.format(
+            "%n%nERROR: Randoop stopped because of a flaky test.%n%n"
+                + "This can happen when Randoop is run on methods that side-effect global "
+                + "state.%n"
+                + "See the \"Randoop stopped because of a flaky test\" "
+                + "section of the user manual.%n"
+                + "For more details, rerun with logging turned on with --log=FILENAME.%n");
     System.out.printf(msg);
 
     Sequence subsequence = e.getSubsequence();
@@ -539,7 +558,11 @@ public class GenTests extends GenInputsAbstract {
           Log.logLine(opName);
         }
       } else {
-        System.out.printf("Unable to find a previous occurrence of subsequence%n" + "%s%n" + "where exception was thrown%n" + "Please submit an issue%n",
+        System.out.printf(
+            "Unable to find a previous occurrence of subsequence%n"
+                + "%s%n"
+                + "where exception was thrown%n"
+                + "Please submit an issue%n",
             subsequence);
       }
     }
@@ -555,7 +578,8 @@ public class GenTests extends GenInputsAbstract {
    *          the list of classes to test for coverage
    * @return the predicate
    */
-  public Predicate<ExecutableSequence> createTestOutputPredicate(ConstructorCall objectConstructor, Set<Class<?>> coveredClasses) {
+  public Predicate<ExecutableSequence> createTestOutputPredicate(
+      ConstructorCall objectConstructor, Set<Class<?>> coveredClasses) {
     Predicate<ExecutableSequence> isOutputTest;
     if (GenInputsAbstract.dont_output_tests) {
       isOutputTest = new AlwaysFalse<>();
@@ -569,10 +593,11 @@ public class GenTests extends GenInputsAbstract {
       excludeSet.add(newObj);
       baseTest = new ExcludeTestPredicate(excludeSet);
       if (GenInputsAbstract.include_if_classname_appears != null) { // keep only
-                                                                    // tests
-                                                                    // with test
-                                                                    // classes
-        baseTest = baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_if_classname_appears));
+        // tests
+        // with test
+        // classes
+        baseTest =
+            baseTest.and(new IncludeTestPredicate(GenInputsAbstract.include_if_classname_appears));
       }
       if (GenInputsAbstract.include_if_class_exercised != null) {
         baseTest = baseTest.and(new IncludeIfCoversPredicate(coveredClasses));
@@ -631,7 +656,8 @@ public class GenTests extends GenInputsAbstract {
    *          the file name for serialization
    */
   private void outputObject(Object obj, String filename) {
-    try (ObjectOutputStream os = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filename)))) {
+    try (ObjectOutputStream os =
+            new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filename)))) {
       os.writeObject(obj);
     } catch (FileNotFoundException e) {
       throw new Error("Unable to serialize object: " + e);
@@ -649,7 +675,8 @@ public class GenTests extends GenInputsAbstract {
    *          the file for serialization
    */
   private void outputObject(Object obj, File file) {
-    try (ObjectOutputStream os = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)))) {
+    try (ObjectOutputStream os =
+            new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)))) {
       os.writeObject(obj);
     } catch (FileNotFoundException e) {
       throw new Error("Unable to serialize object: " + e);
@@ -698,11 +725,13 @@ public class GenTests extends GenInputsAbstract {
    * @return the {@code TestCheckGenerator} that reflects command line
    *         arguments.
    */
-  public TestCheckGenerator createTestCheckGenerator(VisibilityPredicate visibility, Set<Class<?>> classes) {
+  public TestCheckGenerator createTestCheckGenerator(
+      VisibilityPredicate visibility, Set<Class<?>> classes) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
-    TestCheckGenerator testGen = new ValidityCheckingVisitor(isInvalid, !GenInputsAbstract.ignore_flaky_tests);
+    TestCheckGenerator testGen =
+        new ValidityCheckingVisitor(isInvalid, !GenInputsAbstract.ignore_flaky_tests);
 
     // extend with contract checker
     List<ObjectContract> contracts = getContracts(classes);
@@ -739,7 +768,8 @@ public class GenTests extends GenInputsAbstract {
     // Parameter check.
     boolean validMode = GenInputsAbstract.literals_level != ClassLiteralsMode.NONE;
     if (GenInputsAbstract.literals_file.size() > 0 && !validMode) {
-      System.out.println("Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+      System.out.println(
+          "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
       System.exit(1);
     }
 
@@ -748,7 +778,8 @@ public class GenTests extends GenInputsAbstract {
     for (String filename : GenInputsAbstract.literals_file) {
       MultiMap<Class<?>, NonreceiverTerm> literalmap;
       if (filename.equals("CLASSES")) {
-        Collection<ClassFileConstants.ConstantSet> css = new ArrayList<ClassFileConstants.ConstantSet>(classes.size());
+        Collection<ClassFileConstants.ConstantSet> css =
+            new ArrayList<ClassFileConstants.ConstantSet>(classes.size());
         for (Class<?> clazz : classes) {
           css.add(ClassFileConstants.getConstants(clazz.getName()));
         }
@@ -758,7 +789,10 @@ public class GenTests extends GenInputsAbstract {
       }
 
       for (Class<?> cls : literalmap.keySet()) {
-        Package pkg = (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE ? cls.getPackage() : null);
+        Package pkg =
+            (GenInputsAbstract.literals_level == ClassLiteralsMode.PACKAGE
+                ? cls.getPackage()
+                : null);
         for (NonreceiverTerm p : literalmap.getValues(cls)) {
           Sequence seq = Sequence.create(p);
           switch (GenInputsAbstract.literals_level) {
@@ -773,7 +807,8 @@ public class GenTests extends GenInputsAbstract {
               compMgr.addGeneratedSequence(seq);
               break;
             default:
-              throw new Error("Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
+              throw new Error(
+                  "Unexpected error in GenTests -- please report at https://github.com/randoop/randoop/issues");
           }
         }
       }
@@ -793,12 +828,18 @@ public class GenTests extends GenInputsAbstract {
    *          the base name for the class
    * @return list of files written.
    **/
-  public static List<File> writeJUnitTests(String output_dir, List<ExecutableSequence> seqList, List<String> additionalJUnitClasses, String junitClassname) {
+  public static List<File> writeJUnitTests(
+      String output_dir,
+      List<ExecutableSequence> seqList,
+      List<String> additionalJUnitClasses,
+      String junitClassname) {
 
     List<File> files = new ArrayList<File>();
 
     if (seqList.size() > 0) {
-      List<List<ExecutableSequence>> seqPartition = CollectionsExt.<ExecutableSequence> chunkUp(new ArrayList<ExecutableSequence>(seqList), testsperfile);
+      List<List<ExecutableSequence>> seqPartition =
+          CollectionsExt.<ExecutableSequence>chunkUp(
+              new ArrayList<ExecutableSequence>(seqList), testsperfile);
 
       JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
 
@@ -833,13 +874,11 @@ public class GenTests extends GenInputsAbstract {
    */
   public static void executeInitializationRoutine(int phase) {
 
-    if (GenInputsAbstract.init_routine == null)
-      return;
+    if (GenInputsAbstract.init_routine == null) return;
 
     String full_name = GenInputsAbstract.init_routine;
     int lastdot = full_name.lastIndexOf(".");
-    if (lastdot == -1)
-      usage("invalid init routine: %s\n", full_name);
+    if (lastdot == -1) usage("invalid init routine: %s\n", full_name);
     String classname = full_name.substring(0, lastdot);
     String methodname = full_name.substring(lastdot + 1);
     methodname = methodname.replaceFirst("[()]*$", "");
@@ -923,8 +962,7 @@ public class GenTests extends GenInputsAbstract {
     System.out.printf(format, args);
     System.out.println();
     System.out.println(options.usage());
-    if (t != null)
-      t.printStackTrace();
+    if (t != null) t.printStackTrace();
     System.exit(-1);
   }
 
@@ -942,29 +980,49 @@ public class GenTests extends GenInputsAbstract {
 
           // Check that method is an instance (not a static) method.
           if (Modifier.isStatic(m.getModifiers())) {
-            String msg = "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method " + m.getName() + " in class " + m.getDeclaringClass()
-                + " to be an instance method, but it is declared static.";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
+                    + m.getName()
+                    + " in class "
+                    + m.getDeclaringClass()
+                    + " to be an instance method, but it is declared static.";
             throw new RuntimeException(msg);
           }
 
           // Check that method is public.
           if (!Modifier.isPublic(m.getModifiers())) {
-            String msg = "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method " + m.getName() + " in class " + m.getDeclaringClass()
-                + " to be declared public but it is not.";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
+                    + m.getName()
+                    + " in class "
+                    + m.getDeclaringClass()
+                    + " to be declared public but it is not.";
             throw new RuntimeException(msg);
           }
 
           // Check that method takes no arguments.
           if (m.getParameterTypes().length > 0) {
-            String msg = "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method " + m.getName() + " in class " + m.getDeclaringClass()
-                + " to declare no parameters but it does (method signature:" + m.toString() + ").";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
+                    + m.getName()
+                    + " in class "
+                    + m.getDeclaringClass()
+                    + " to declare no parameters but it does (method signature:"
+                    + m.toString()
+                    + ").";
             throw new RuntimeException(msg);
           }
 
           // Check that method's return type is void.
           if (!(m.getReturnType().equals(boolean.class) || m.getReturnType().equals(void.class))) {
-            String msg = "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method " + m.getName() + " in class " + m.getDeclaringClass()
-                + " to have void or boolean return type but it does not (method signature:" + m.toString() + ").";
+            String msg =
+                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
+                    + m.getName()
+                    + " in class "
+                    + m.getDeclaringClass()
+                    + " to have void or boolean return type but it does not (method signature:"
+                    + m.toString()
+                    + ").";
             throw new RuntimeException(msg);
           }
 
@@ -977,8 +1035,12 @@ public class GenTests extends GenInputsAbstract {
   }
 
   private static void printDetectedAnnotatedCheckRepMethod(Method m) {
-    String msg = "ANNOTATION: Detected @CheckRep-annotated method \"" + m.toString() + "\". Will use it to check rep invariant of class "
-        + m.getDeclaringClass().getCanonicalName() + " during generation.";
+    String msg =
+        "ANNOTATION: Detected @CheckRep-annotated method \""
+            + m.toString()
+            + "\". Will use it to check rep invariant of class "
+            + m.getDeclaringClass().getCanonicalName()
+            + " during generation.";
     System.out.println(msg);
   }
 
@@ -987,8 +1049,11 @@ public class GenTests extends GenInputsAbstract {
     if (false) {
       System.out.printf("Sequences at %s\n", msg);
       for (int seq_no = 0; seq_no < seqs.size(); seq_no++)
-        System.out.printf("seq %d [%08X]:\n %s\n", seq_no, seqs.get(seq_no).seq_id(), seqs.get(seq_no).toCodeString());
-
+        System.out.printf(
+            "seq %d [%08X]:\n %s\n",
+            seq_no,
+            seqs.get(seq_no).seq_id(),
+            seqs.get(seq_no).toCodeString());
     }
   }
 }

@@ -14,8 +14,7 @@ public class WeightedList {
   }
 
   public void add(WeightedElement elt) {
-    if (elt == null)
-      throw new IllegalArgumentException("element to be added cannot be null.");
+    if (elt == null) throw new IllegalArgumentException("element to be added cannot be null.");
     theList.add(elt);
   }
 
@@ -29,8 +28,7 @@ public class WeightedList {
     double max = 0;
     for (int i = 0; i < theList.size(); i++) {
       double weight = theList.get(i).getWeight();
-      if (weight <= 0)
-        throw new BugInRandoopException("weight was " + weight);
+      if (weight <= 0) throw new BugInRandoopException("weight was " + weight);
       max += weight;
     }
     assert max > 0;

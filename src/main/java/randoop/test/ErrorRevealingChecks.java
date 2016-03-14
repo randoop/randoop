@@ -20,7 +20,7 @@ import randoop.ExceptionCheck;
 public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 6824110337347191631L;
 
@@ -35,7 +35,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return count of error revealing checks
    */
   @Override
@@ -45,7 +45,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return all checks with false, indicating all are failing
    */
   @Override
@@ -61,7 +61,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if not empty
    */
   @Override
@@ -71,7 +71,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if there are any error revealing checks (not empty)
    */
   @Override
@@ -81,7 +81,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return null, since no expected exceptions in error-revealing tests
    */
   @Override
@@ -91,7 +91,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @throws Error
    *           if {@code check} is an exception check
    */
@@ -138,7 +138,7 @@ public class ErrorRevealingChecks implements TestChecks, Serializable {
   /**
    * {@inheritDoc} Returns false because error checks are not considered
    * invalid.
-   * 
+   *
    * @return false, always.
    */
   @Override

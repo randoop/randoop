@@ -59,5 +59,4 @@ public class EmptyExceptionCheck extends ExceptionCheck {
     }
     return true;
   }
-
 }

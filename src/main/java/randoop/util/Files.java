@@ -26,8 +26,7 @@ public final class Files {
   // false.
   // Attempts to detect symbolic links, and fails if it finds one.
   public static boolean deleteRecursive(File dir) {
-    if (dir == null)
-      throw new IllegalArgumentException("dir cannot be null.");
+    if (dir == null) throw new IllegalArgumentException("dir cannot be null.");
     String canonicalPath = null;
     try {
       canonicalPath = dir.getCanonicalPath();
@@ -61,8 +60,7 @@ public final class Files {
     File currentDir = dir;
     List<String> retval = new ArrayList<String>();
     for (String fileName : currentDir.list()) {
-      if (fileName.startsWith(startsWith) && fileName.endsWith(endsWith))
-        retval.add(fileName);
+      if (fileName.startsWith(startsWith) && fileName.endsWith(endsWith)) retval.add(fileName);
     }
     return retval;
   }
@@ -176,14 +174,13 @@ public final class Files {
 
   /**
    * Reads a single long from the file. Returns null if the file does not exist.
-   * 
+   *
    * @throws IllegalStateException
    *           is the file contains not just 1 line or if the file contains
    *           something.
    */
   public static Long readLongFromFile(File file) {
-    if (!file.exists())
-      return null;
+    if (!file.exists()) return null;
     List<String> lines;
     try {
       lines = readWhole(file);
@@ -191,11 +188,13 @@ public final class Files {
       throw new IllegalStateException("Problem reading file " + file + " ", e);
     }
     if (lines.size() != 1)
-      throw new IllegalStateException("Expected exactly 1 line in " + file + " but found " + lines.size());
+      throw new IllegalStateException(
+          "Expected exactly 1 line in " + file + " but found " + lines.size());
     try {
       return Long.valueOf(lines.get(0));
     } catch (NumberFormatException e) {
-      throw new IllegalStateException("Expected a number (type long) in " + file + " but found " + lines.get(0));
+      throw new IllegalStateException(
+          "Expected a number (type long) in " + file + " but found " + lines.get(0));
     }
   }
 

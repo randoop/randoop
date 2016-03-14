@@ -24,7 +24,8 @@ public final class Reflection {
    * use it to compute something based on it.
    */
   public static enum Match {
-    EXACT_TYPE, COMPATIBLE_TYPE
+    EXACT_TYPE,
+    COMPATIBLE_TYPE
   }
 
   static Map<String, Member> cached_deserializeMethodOrCtor = new LinkedHashMap<String, Member>();
@@ -47,11 +48,9 @@ public final class Reflection {
    * C.getConstructors().
    */
   public static Set<Class<?>> relatedClasses(Class<?> clazz, int depth) {
-    if (clazz == null)
-      throw new IllegalArgumentException("clazz cannot be null.");
-    if (depth < 0)
-      throw new IllegalArgumentException("depth must be non-negative.");
-    return relatedClassesInternal(Collections.<Class<?>> singleton(clazz), depth);
+    if (clazz == null) throw new IllegalArgumentException("clazz cannot be null.");
+    if (depth < 0) throw new IllegalArgumentException("depth must be non-negative.");
+    return relatedClassesInternal(Collections.<Class<?>>singleton(clazz), depth);
   }
 
   public static Set<Class<?>> relatedClasses(Collection<Class<?>> classes, int i) {
@@ -63,8 +62,7 @@ public final class Reflection {
   }
 
   private static Set<Class<?>> relatedClassesInternal(Set<Class<?>> classes, int depth) {
-    if (depth < 0)
-      return classes;
+    if (depth < 0) return classes;
     Set<Class<?>> acc = new LinkedHashSet<Class<?>>();
     for (Class<?> c : classes) {
       acc.addAll(classesAppearingInInterface(c));
@@ -96,8 +94,7 @@ public final class Reflection {
     }
 
     Class<?> superClass = c1.getSuperclass();
-    if (superClass != null)
-      ret.addAll(getInterfacesTransitive(superClass));
+    if (superClass != null) ret.addAll(getInterfacesTransitive(superClass));
 
     return ret;
   }
@@ -105,9 +102,8 @@ public final class Reflection {
   public static Set<Class<?>> getDirectSuperTypes(Class<?> c) {
     Set<Class<?>> result = new LinkedHashSet<Class<?>>();
     Class<?> superclass = c.getSuperclass();
-    if (superclass != null)
-      result.add(superclass);
-    result.addAll(Arrays.<Class<?>> asList(c.getInterfaces()));
+    if (superclass != null) result.add(superclass);
+    result.addAll(Arrays.<Class<?>>asList(c.getInterfaces()));
     return result;
   }
 
@@ -129,7 +125,8 @@ public final class Reflection {
     return c2.isAssignableFrom(c1);
   }
 
-  private static Map<Pair<Class<?>, Class<?>>, Boolean> canBeUsedCache = new LinkedHashMap<Pair<Class<?>, Class<?>>, Boolean>();
+  private static Map<Pair<Class<?>, Class<?>>, Boolean> canBeUsedCache =
+      new LinkedHashMap<Pair<Class<?>, Class<?>>, Boolean>();
 
   public static long num_times_canBeUsedAs_called = 0;
 
@@ -139,14 +136,10 @@ public final class Reflection {
    * latter is not a subtype of the former.
    */
   public static boolean canBeUsedAs(Class<?> c1, Class<?> c2) {
-    if (c1 == null || c2 == null)
-      throw new IllegalArgumentException("Parameters cannot be null.");
-    if (c1.equals(c2))
-      return true;
-    if (c1.equals(void.class) && c2.equals(void.class))
-      return true;
-    if (c1.equals(void.class) || c2.equals(void.class))
-      return false;
+    if (c1 == null || c2 == null) throw new IllegalArgumentException("Parameters cannot be null.");
+    if (c1.equals(c2)) return true;
+    if (c1.equals(void.class) && c2.equals(void.class)) return true;
+    if (c1.equals(void.class) || c2.equals(void.class)) return false;
     Pair<Class<?>, Class<?>> classPair = new Pair<Class<?>, Class<?>>(c1, c2);
     Boolean cachedRetVal = canBeUsedCache.get(classPair);
     boolean retval;
@@ -162,10 +155,8 @@ public final class Reflection {
   // TODO testclasses array code (third if clause)
   private static boolean canBeUsedAs0(Class<?> c1, Class<?> c2) {
     if (c1.isArray()) {
-      if (c2.equals(Object.class))
-        return true;
-      if (!c2.isArray())
-        return false;
+      if (c2.equals(Object.class)) return true;
+      if (!c2.isArray()) return false;
       Class<?> c1SequenceType = c1.getComponentType();
       Class<?> c2componentType = c2.getComponentType();
 
@@ -185,10 +176,8 @@ public final class Reflection {
       }
     }
 
-    if (c1.isPrimitive())
-      c1 = PrimitiveTypes.boxedType(c1);
-    if (c2.isPrimitive())
-      c2 = PrimitiveTypes.boxedType(c2);
+    if (c1.isPrimitive()) c1 = PrimitiveTypes.boxedType(c1);
+    if (c2.isPrimitive()) c2 = PrimitiveTypes.boxedType(c2);
 
     boolean ret = false;
 
@@ -196,17 +185,13 @@ public final class Reflection {
       ret = true;
     } else if (c2.isInterface()) {
       Set<Class<?>> c1Interfaces = getInterfacesTransitive(c1);
-      if (c1Interfaces.contains(c2))
-        ret = true;
-      else
-        ret = false;
+      if (c1Interfaces.contains(c2)) ret = true;
+      else ret = false;
     } else if (c1.isInterface()) {
       // c1 represents an interface and c2 a class.
       // The only safe possibility is when c2 is Object.
-      if (c2.equals(Object.class))
-        ret = true;
-      else
-        ret = false;
+      if (c2.equals(Object.class)) ret = true;
+      else ret = false;
     } else {
       ret = isSubclass(c1, c2);
     }
@@ -220,7 +205,8 @@ public final class Reflection {
    * Returns null if inputs are OK wrt paramTypes. Returns error message
    * otherwise.
    */
-  public static String checkArgumentTypes(Object[] inputs, Class<?>[] paramTypes, Object errMsgContext) {
+  public static String checkArgumentTypes(
+      Object[] inputs, Class<?>[] paramTypes, Object errMsgContext) {
     if (inputs.length != paramTypes.length)
       return "Bad number of parameters for " + errMsgContext + " was:" + inputs.length;
 
@@ -228,7 +214,13 @@ public final class Reflection {
       Object input = inputs[i];
       Class<?> pType = paramTypes[i];
       if (!canBePassedAsArgument(input, pType))
-        return "Invalid type of argument at pos " + i + " for:" + errMsgContext + " expected:" + pType + " was:"
+        return "Invalid type of argument at pos "
+            + i
+            + " for:"
+            + errMsgContext
+            + " expected:"
+            + pType
+            + " was:"
             + (input == null ? "n/a(input was null)" : input.getClass());
     }
     return null;
@@ -245,15 +237,15 @@ public final class Reflection {
       return true;
     } else if (!Reflection.canBeUsedAs(inputObject.getClass(), parameterType)) {
       return false;
-    } else
-      return true;
+    } else return true;
   }
 
   /**
    * Looks for the specified method name in the specified class and all of its
    * superclasses
    */
-  public static Method super_get_declared_method(Class<?> c, String methodname, Class<?>... parameter_types) throws Exception {
+  public static Method super_get_declared_method(
+      Class<?> c, String methodname, Class<?>... parameter_types) throws Exception {
 
     // Try and find the method in the base class
     Exception exception = null;
@@ -263,8 +255,7 @@ public final class Reflection {
     } catch (Exception e) {
       exception = e;
     }
-    if (method != null)
-      return method;
+    if (method != null) return method;
 
     // Otherwise, look for the method in all superclasses for the method
     while (c.getSuperclass() != null) {
@@ -273,12 +264,10 @@ public final class Reflection {
         method = c.getDeclaredMethod(methodname, parameter_types);
       } catch (Exception e) {
       }
-      if (method != null)
-        return method;
+      if (method != null) return method;
     }
 
     // couldn't find the method anywhere
     throw exception;
   }
-
 }

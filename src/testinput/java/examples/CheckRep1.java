@@ -4,10 +4,10 @@ import randoop.*;
 
 public class CheckRep1 {
 
-  public CheckRep1() { }
+  public CheckRep1() {}
 
-    @CheckRep
-    public void foo() {
-	throw new RuntimeException();
-    }
+  @CheckRep
+  public void foo() {
+    throw new RuntimeException();
+  }
 }

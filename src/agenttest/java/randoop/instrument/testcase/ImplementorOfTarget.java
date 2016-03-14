@@ -6,5 +6,4 @@ public class ImplementorOfTarget implements InterfaceTarget {
   public String glue(String s, String t) {
     return s + t;
   }
-
 }

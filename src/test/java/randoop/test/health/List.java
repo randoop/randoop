@@ -1,22 +1,20 @@
 package randoop.test.health;
+
 import java.util.Enumeration;
 
 /**
  * A linked list container.
  **/
-public class List 
-{
+public class List {
   ListNode head;
   ListNode tail;
 
-  public List()
-  {
+  public List() {
     head = null;
     tail = null;
   }
 
-  public void add(Patient p)
-  {
+  public void add(Patient p) {
     ListNode node = new ListNode(p);
     if (head == null) {
       head = node;
@@ -26,10 +24,9 @@ public class List
     tail = node;
   }
 
-  public void delete(Object o)
-  {
+  public void delete(Object o) {
     if (head == null) return;
-    
+
     if (tail.object == o) {
       tail = null;
     }
@@ -38,7 +35,7 @@ public class List
       head = head.next;
       return;
     }
-      
+
     ListNode p = head;
     for (ListNode ln = head.next; ln != null; ln = ln.next) {
       if (ln.object == o) {
@@ -49,43 +46,35 @@ public class List
     }
   }
 
-  public Enumeration elements()
-  {
+  public Enumeration elements() {
     return new ListEnumerator(this);
   }
 
-  public final class ListNode
-  {
+  public final class ListNode {
     public ListNode next;
     public Object object;
 
-    ListNode(Object o)
-    {
+    ListNode(Object o) {
       object = o;
       next = null;
     }
   }
 
-  public final class ListEnumerator implements Enumeration
-  {
+  public final class ListEnumerator implements Enumeration {
     ListNode curNode;
 
-    public ListEnumerator(List l) 
-    {
+    public ListEnumerator(List l) {
       curNode = l.head;
     }
 
-    public Object nextElement()
-    {
+    public Object nextElement() {
       Object o = curNode.object;
       curNode = curNode.next;
       return o;
     }
 
-    public boolean hasMoreElements()
-    {
+    public boolean hasMoreElements() {
       return curNode != null;
     }
   }
-
 }

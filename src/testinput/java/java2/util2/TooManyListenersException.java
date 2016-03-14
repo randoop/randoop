@@ -24,31 +24,27 @@ package java2.util2;
  *
  * @see java2.util2.EventObject
  * @see java2.util2.EventListener
- * 
+ *
  * @version 1.12 03/01/23
  * @author Laurence P. G. Cable
  * @since  JDK1.1
  */
-
 public class TooManyListenersException extends Exception {
 
-    /**
-     * Constructs a TooManyListenersException with no detail message.
-     * A detail message is a String that describes this particular exception.
-     */
+  /**
+   * Constructs a TooManyListenersException with no detail message.
+   * A detail message is a String that describes this particular exception.
+   */
+  public TooManyListenersException() {
+    super();
+  }
 
-    public TooManyListenersException() {
-	super();
-    }
-
-    /**
-     * Constructs a TooManyListenersException with the specified detail message.
-     * A detail message is a String that describes this particular exception.
-     * @param s the detail message
-     */
-
-    public TooManyListenersException(String s) {
-	super(s);
-    }
+  /**
+   * Constructs a TooManyListenersException with the specified detail message.
+   * A detail message is a String that describes this particular exception.
+   * @param s the detail message
+   */
+  public TooManyListenersException(String s) {
+    super(s);
+  }
 }
-

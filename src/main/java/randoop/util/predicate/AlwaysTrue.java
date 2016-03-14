@@ -10,7 +10,7 @@ public class AlwaysTrue<T> extends DefaultPredicate<T> {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true, always
    */
   @Override
@@ -20,7 +20,7 @@ public class AlwaysTrue<T> extends DefaultPredicate<T> {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return this predicate, since the or-else with this object is always true
    */
   @Override
@@ -30,7 +30,7 @@ public class AlwaysTrue<T> extends DefaultPredicate<T> {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return the second predicate, since the other predicate must be true for
    *         the and-also to be true.
    */

@@ -34,7 +34,8 @@ public class ClassReader {
    *          an object to determine behavior for erroneous class name.
    * @return list of {@link Class} objects corresponding to elements of list.
    */
-  public static List<Class<?>> getClassesForNames(List<String> classNames, ClassNameErrorHandler errorHandler) {
+  public static List<Class<?>> getClassesForNames(
+      List<String> classNames, ClassNameErrorHandler errorHandler) {
     List<Class<?>> result = new ArrayList<Class<?>>(classNames.size());
     for (String className : classNames) {
       try {
@@ -106,5 +107,4 @@ public class ClassReader {
       return getClassesForReader(reader, classListingFile.getPath());
     }
   }
-
 }

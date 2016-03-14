@@ -30,7 +30,9 @@ public class ProgressDisplay extends Thread {
   private static int exit_if_no_new_sequences_after_mseconds = 10000;
 
   public static enum Mode {
-    SINGLE_LINE_OVERWRITE, MULTILINE, NO_DISPLAY
+    SINGLE_LINE_OVERWRITE,
+    MULTILINE,
+    NO_DISPLAY
   }
 
   private Mode outputMode;
@@ -39,7 +41,11 @@ public class ProgressDisplay extends Thread {
 
   private AbstractGenerator generator;
 
-  public ProgressDisplay(AbstractGenerator generator, RandoopListenerManager listenerMgr, Mode outputMode, int progressWidth) {
+  public ProgressDisplay(
+      AbstractGenerator generator,
+      RandoopListenerManager listenerMgr,
+      Mode outputMode,
+      int progressWidth) {
     if (generator == null) {
       throw new IllegalArgumentException("generator is null");
     }
@@ -139,8 +145,7 @@ public class ProgressDisplay extends Thread {
 
   /** Clear the display; good to do before printing to System.out. * */
   public void clear() {
-    if (GenInputsAbstract.progressinterval == -1)
-      return;
+    if (GenInputsAbstract.progressinterval == -1) return;
     // "display("");" is wrong becuase it leaves the timestamp and writes
     // spaces across the screen.
     String status = UtilMDE.rpad("", progresswidth - 1);
@@ -154,18 +159,17 @@ public class ProgressDisplay extends Thread {
    * next automatic display.
    */
   public void display() {
-    if (GenInputsAbstract.progressinterval == -1)
-      return;
+    if (GenInputsAbstract.progressinterval == -1) return;
     display(message());
   }
 
   /** Displays the given message. * */
   public void display(String message) {
-    if (GenInputsAbstract.progressinterval == -1)
-      return;
+    if (GenInputsAbstract.progressinterval == -1) return;
     String status = message;
     synchronized (print_synchro) {
-      System.out.print((this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + status);
+      System.out.print(
+          (this.outputMode == Mode.SINGLE_LINE_OVERWRITE ? "\r" : Globals.lineSep) + status);
       System.out.flush();
     }
     // System.out.println (status);

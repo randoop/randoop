@@ -25,7 +25,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
   /**
    * Create a predicate that tests visibility. Class members must either be
    * public, or accessible relative to the given package {@code thePackage}.
-   * 
+   *
    * @param thePackage
    *          the package to use for package accessibility test
    */
@@ -35,7 +35,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if class is public or package private in {@code thePackage},
    *         false otherwise
    */
@@ -47,7 +47,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if method is public or a member of a class in
    *         {@code thePackage} and not private, false otherwise
    */
@@ -59,7 +59,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if constructor is public or member of a class in
    *         {@code thePackage} and not private, false otherwise
    */
@@ -71,7 +71,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if field is public or member of a class in {@code thePackage}
    *         and not private, false otherwise
    */
@@ -83,7 +83,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * Test accessibility as indicated by the modifier bit string and/or package.
-   * 
+   *
    * @param mods
    *          the modifier bit string
    * @param otherPackage
@@ -92,7 +92,7 @@ public class PackageVisibilityPredicate implements VisibilityPredicate {
    *         thePackage and private is not set in modifiers, false otherwise
    */
   private boolean isVisible(int mods, Package otherPackage) {
-    return Modifier.isPublic(mods) || (thePackage.equals(otherPackage) && !Modifier.isPrivate(mods));
+    return Modifier.isPublic(mods)
+        || (thePackage.equals(otherPackage) && !Modifier.isPrivate(mods));
   }
-
 }

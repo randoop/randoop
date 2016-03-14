@@ -16,7 +16,7 @@ public class ExceptionBehaviorClassifier {
    * {@link GenInputsAbstract#unchecked_exception},
    * {@link GenInputsAbstract#npe_on_null_input}, and
    * {@link GenInputsAbstract#oom_exception}.
-   * 
+   *
    * @param t
    *          the {@code Throwable} to classify
    * @param s
@@ -50,7 +50,5 @@ public class ExceptionBehaviorClassifier {
     } else {
       return GenInputsAbstract.checked_exception;
     }
-
   }
-
 }

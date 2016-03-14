@@ -10,5 +10,4 @@ public class ThrowClassNameError implements ClassNameErrorHandler {
   public void handle(String className) {
     throw new Error("No class found for type name \"" + className + "\"");
   }
-
 }

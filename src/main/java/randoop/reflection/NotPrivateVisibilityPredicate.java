@@ -15,7 +15,7 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if the class access modifier is not private, and false,
    *         otherwise.
    */
@@ -26,7 +26,7 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if the method access modifier is not private, and false,
    *         otherwise.
    */
@@ -37,7 +37,7 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if the constructor access modifier is not private, and false,
    *         otherwise.
    */
@@ -48,7 +48,7 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if the field access modifier is not private, and false,
    *         otherwise.
    */
@@ -60,7 +60,7 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
   /**
    * Returns true if the {@link java.lang.reflect.Modifier Modifier} value does
    * not have private set.
-   * 
+   *
    * @param mods
    *          the modifiers value.
    * @return true if the private bit is not set, false otherwise.
@@ -68,5 +68,4 @@ public class NotPrivateVisibilityPredicate implements VisibilityPredicate {
   private boolean isVisible(int mods) {
     return !Modifier.isPrivate(mods);
   }
-
 }

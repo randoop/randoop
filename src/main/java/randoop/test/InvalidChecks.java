@@ -70,5 +70,4 @@ public class InvalidChecks implements TestChecks {
   public boolean hasInvalidBehavior() {
     return exceptionCheck != null;
   }
-
 }

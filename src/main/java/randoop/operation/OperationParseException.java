@@ -8,5 +8,4 @@ public class OperationParseException extends Exception {
   public OperationParseException(String string) {
     super(string);
   }
-
 }

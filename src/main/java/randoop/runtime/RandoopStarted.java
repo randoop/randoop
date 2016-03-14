@@ -6,5 +6,4 @@ package randoop.runtime;
 public class RandoopStarted implements IMessage {
 
   private static final long serialVersionUID = -173133859355886475L;
-
 }

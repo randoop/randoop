@@ -52,8 +52,11 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
    * have already been loaded.
    */
   @Override
-  public byte[] transform(ClassLoader loader, String className,
-      Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
+  public byte[] transform(
+      ClassLoader loader,
+      String className,
+      Class<?> classBeingRedefined,
+      ProtectionDomain protectionDomain,
       byte[] classfileBuffer)
       throws IllegalClassFormatException {
 
@@ -64,7 +67,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
     // don't transform rt.jar classes
     // list derived from jdk1.8.0_71
     // include org.junit because tests were not running
-    if (qualifiedName.startsWith("java.")  // start of rt.jar name prefixes
+    if (qualifiedName.startsWith("java.") // start of rt.jar name prefixes
         || qualifiedName.startsWith("javax.")
         || qualifiedName.startsWith("jdk.")
         || qualifiedName.startsWith("apple.")
@@ -76,7 +79,7 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
         || qualifiedName.startsWith("org.omg.")
         || qualifiedName.startsWith("org.w3c")
         || qualifiedName.startsWith("org.xml.")
-        || qualifiedName.startsWith("sun.")  // end of rt.jar name prefixes
+        || qualifiedName.startsWith("sun.") // end of rt.jar name prefixes
         || qualifiedName.startsWith("org.junit.")
         || qualifiedName.startsWith("org.gradle")) {
       return bytecode;
@@ -159,15 +162,21 @@ public class ExercisedClassTransformer implements ClassFileTransformer {
     try {
       String methodName = "randoop_checkAndReset";
       CtMethod pollMethod = new CtMethod(CtClass.booleanType, methodName, new CtClass[0], cc);
-      pollMethod.setBody("{"
-           + "boolean state = " + flagFieldAccess + "; "
-           + flagFieldAccess + " = false" + ";"
-           + "return state" + ";" + "}");
+      pollMethod.setBody(
+          "{"
+              + "boolean state = "
+              + flagFieldAccess
+              + "; "
+              + flagFieldAccess
+              + " = false"
+              + ";"
+              + "return state"
+              + ";"
+              + "}");
       pollMethod.setModifiers(Modifier.STATIC | Modifier.PUBLIC);
       cc.addMethod(pollMethod);
     } catch (CannotCompileException e) {
       throw new Error("error adding instrumentation method: " + e);
     }
-
   }
 }

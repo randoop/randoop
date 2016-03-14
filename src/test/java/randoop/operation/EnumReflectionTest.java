@@ -52,18 +52,21 @@ public class EnumReflectionTest {
     assertEquals("number of statements", include.size(), actual.size());
 
     for (Enum<?> e : include) {
-      assertTrue("enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+      assertTrue(
+          "enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
     }
     for (Method m : exclude) {
-      assertFalse("method " + m.toGenericString() + " should not occur in simple enum", actual.contains(new MethodCall(m)) );
+      assertFalse(
+          "method " + m.toGenericString() + " should not occur in simple enum",
+          actual.contains(new MethodCall(m)));
     }
   }
 
-  private List<Enum<?>> asList(Object[] enumConstants){
+  private List<Enum<?>> asList(Object[] enumConstants) {
     List<Enum<?>> list = new ArrayList<>();
     for (Object obj : enumConstants) {
       if (obj instanceof Enum) {
-        list.add((Enum<?>)obj);
+        list.add((Enum<?>) obj);
       }
     }
     return list;
@@ -95,15 +98,16 @@ public class EnumReflectionTest {
       }
     }
 
-
     List<Operation> actual = OperationExtractor.getOperations(classes, null);
-    assertEquals("number of statements", include.size()+5, actual.size());
+    assertEquals("number of statements", include.size() + 5, actual.size());
 
     for (Enum<?> e : include) {
-      assertTrue("enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+      assertTrue(
+          "enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
     }
     for (Enum<?> e : exclude) {
-      assertFalse("enum constant " + e.name() + " should not occur", actual.contains(new EnumConstant(e)));
+      assertFalse(
+          "enum constant " + e.name() + " should not occur", actual.contains(new EnumConstant(e)));
     }
   }
 
@@ -123,21 +127,28 @@ public class EnumReflectionTest {
 
     int count = 0;
     for (Object obj : coin.getEnumConstants()) {
-      Enum<?> e = (Enum<?>)obj;
-      assertTrue("enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+      Enum<?> e = (Enum<?>) obj;
+      assertTrue(
+          "enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
       count++;
     }
 
     for (Constructor<?> con : coin.getDeclaredConstructors()) {
-      assertFalse("enum constructor " + con.getName() + "should not occur", actual.contains(new ConstructorCall(con)));
+      assertFalse(
+          "enum constructor " + con.getName() + "should not occur",
+          actual.contains(new ConstructorCall(con)));
     }
 
     for (Method m : coin.getMethods()) {
       if (m.getName().equals("value")) {
-        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(new MethodCall(m)));
+        assertTrue(
+            "enum method " + m.toGenericString() + " should occur",
+            actual.contains(new MethodCall(m)));
         count++;
       } else {
-        assertFalse("enum method " + m.toGenericString() + " should not occur", actual.contains(new MethodCall(m)));
+        assertFalse(
+            "enum method " + m.toGenericString() + " should not occur",
+            actual.contains(new MethodCall(m)));
       }
     }
     assertEquals("number of statements", count, actual.size());
@@ -160,26 +171,28 @@ public class EnumReflectionTest {
     Set<String> overrides = new TreeSet<String>();
     int count = 0;
     for (Object obj : op.getEnumConstants()) {
-      Enum<?> e = (Enum<?>)obj;
-      assertTrue("enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
+      Enum<?> e = (Enum<?>) obj;
+      assertTrue(
+          "enum constant " + e.name() + " should occur", actual.contains(new EnumConstant(e)));
       count++;
       for (Method m : e.getClass().getDeclaredMethods()) {
         overrides.add(m.getName());
       }
-
     }
 
     for (Method m : op.getMethods()) {
       if (overrides.contains(m.getName())) {
-        assertTrue("enum method " + m.toGenericString() + " should occur", actual.contains(new MethodCall(m)));
+        assertTrue(
+            "enum method " + m.toGenericString() + " should occur",
+            actual.contains(new MethodCall(m)));
         count++;
       } else {
-        assertFalse("enum method " + m.toGenericString() + " should not occur", actual.contains(new MethodCall(m)));
+        assertFalse(
+            "enum method " + m.toGenericString() + " should not occur",
+            actual.contains(new MethodCall(m)));
       }
     }
 
     assertEquals("number of statements", count, actual.size());
   }
-
-
 }

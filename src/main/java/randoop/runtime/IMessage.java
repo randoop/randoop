@@ -8,6 +8,4 @@ import java.io.Serializable;
  * generation has started or stopped, percentage done, the names of any files
  * created, or whether an error in the classes under test has been discovered.
  */
-public interface IMessage extends Serializable {
-
-}
+public interface IMessage extends Serializable {}

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package randoop.sequence;
 
@@ -10,7 +10,7 @@ import randoop.operation.Operation;
 
 /**
  * A statement that is part of a mutable sequence.
- * 
+ *
  * @see MutableSequence
  */
 public class MutableStatement {
@@ -36,7 +36,8 @@ public class MutableStatement {
    * Create a new statement of type statement that takes as input the given
    * values.
    */
-  public MutableStatement(Operation statement, List<MutableVariable> inputVariables, MutableVariable result) {
+  public MutableStatement(
+      Operation statement, List<MutableVariable> inputVariables, MutableVariable result) {
     this.operation = statement;
     this.inputs = new ArrayList<MutableVariable>(inputVariables);
     this.result = result;

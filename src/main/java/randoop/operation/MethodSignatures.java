@@ -13,14 +13,15 @@ public class MethodSignatures {
   /**
    * Parses a method signature as produced by getSignature and returns the
    * corresponding reflective {@link Method} object.
-   * 
+   *
    * @param signature
    *          a string representing a method signature.
    * @return reflective {@link Method} object corresponding to signature.
    * @throws OperationParseException
    *           if signature parameter does not match expected format.
    */
-  public static Method getMethodForSignatureString(String signature) throws OperationParseException {
+  public static Method getMethodForSignatureString(String signature)
+      throws OperationParseException {
     if (signature == null) {
       throw new IllegalArgumentException("signature may not be null");
     }
@@ -57,7 +58,7 @@ public class MethodSignatures {
 
   /**
    * Generates a string representation of the signature of the method.
-   * 
+   *
    * @param method
    *          the method.
    * @return string representing the method signature.
@@ -71,5 +72,4 @@ public class MethodSignatures {
     sb.append(")");
     return sb.toString();
   }
-
 }

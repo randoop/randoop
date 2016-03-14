@@ -48,7 +48,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * ID for parsing purposes
-   * 
+   *
    * @see OperationParser#getId(Operation)
    */
   public static final String ID = "method";
@@ -79,7 +79,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * getMethod returns Method object of this MethodCall.
-   * 
+   *
    * @return {@link Method} object called by this {@link MethodCall}
    */
   public Method getMethod() {
@@ -93,8 +93,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    *          the reflective method object.
    */
   public MethodCall(Method method) {
-    if (method == null)
-      throw new IllegalArgumentException("method should not be null.");
+    if (method == null) throw new IllegalArgumentException("method should not be null.");
 
     this.method = method;
     // TODO move this earlier in the process: check first that all
@@ -116,7 +115,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * toString outputs a parseable text representation of the method call.
-   * 
+   *
    * @return string representation constructed by
    *         {@link MethodCall#toParseableString()}
    */
@@ -128,7 +127,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * {@inheritDoc} Issues the code that corresponds to calling the method with
    * the provided {@link Variable} objects as arguments.
-   * 
+   *
    * @param inputVars
    *          is the list of actual arguments to be printed.
    */
@@ -152,8 +151,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
     int startIndex = (isStatic() ? 0 : 1);
     for (int i = startIndex; i < inputVars.size(); i++) {
-      if (i > startIndex)
-        sb.append(", ");
+      if (i > startIndex) sb.append(", ");
 
       // CASTING.
       if (!inputVars.get(i).getType().equals(this.getInputTypes().get(i))) {
@@ -178,7 +176,6 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
       }
 
       sb.append(param);
-
     }
     sb.append(")");
   }
@@ -189,15 +186,16 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   // inferred type.
   private String getTypeArguments() {
     TypeVariable<Method>[] typeParameters = method.getTypeParameters();
-    if (typeParameters.length == 0)
-      return "";
+    if (typeParameters.length == 0) return "";
     StringBuilder b = new StringBuilder();
     Class<?>[] params = new Class<?>[typeParameters.length];
     b.append("<");
     for (int i = 0; i < typeParameters.length; i++) {
-      if (i > 0)
-        b.append(",");
-      Type firstBound = typeParameters[i].getBounds().length == 0 ? Object.class : typeParameters[i].getBounds()[0];
+      if (i > 0) b.append(",");
+      Type firstBound =
+          typeParameters[i].getBounds().length == 0
+              ? Object.class
+              : typeParameters[i].getBounds()[0];
       params[i] = getErasure(firstBound);
       b.append(getErasure(firstBound).getCanonicalName());
     }
@@ -209,8 +207,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   }
 
   private static Class<?> getErasure(Type t) {
-    if (t instanceof Class<?>)
-      return (Class<?>) t;
+    if (t instanceof Class<?>) return (Class<?>) t;
     if (t instanceof ParameterizedType) {
       ParameterizedType pt = (ParameterizedType) t;
       return getErasure(pt.getRawType());
@@ -231,17 +228,20 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   private void appendReceiverOrClassForStatics(String receiverString, StringBuilder b) {
     if (isStatic()) {
       String s2 = this.method.getDeclaringClass().getName().replace('$', '.'); // TODO
-                                                                               // combine
-                                                                               // this
-                                                                               // with
-                                                                               // last
-                                                                               // if
-                                                                               // clause
+      // combine
+      // this
+      // with
+      // last
+      // if
+      // clause
       b.append(s2);
     } else {
       Class<?> expectedType = getInputTypes().get(0);
       String canonicalName = expectedType.getCanonicalName();
-      boolean mustCast = canonicalName != null && PrimitiveTypes.isBoxedPrimitiveTypeOrString(expectedType) && !expectedType.equals(String.class);
+      boolean mustCast =
+          canonicalName != null
+              && PrimitiveTypes.isBoxedPrimitiveTypeOrString(expectedType)
+              && !expectedType.equals(String.class);
       if (mustCast) {
         // this is a little paranoid but we need to cast primitives in
         // order to get them boxed.
@@ -254,10 +254,8 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof MethodCall))
-      return false;
-    if (this == o)
-      return true;
+    if (!(o instanceof MethodCall)) return false;
+    if (this == o) return true;
     MethodCall other = (MethodCall) o;
     return this.method.equals(other.method);
   }
@@ -276,7 +274,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return {@link NormalExecution} with return value if execution normal,
    *         otherwise {@link ExceptionalExecution} if an exception thrown.
    */
@@ -323,9 +321,9 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   public List<Class<?>> getInputTypes() {
     if (inputTypesCached == null) {
       Class<?>[] methodParameterTypes = method.getParameterTypes();
-      inputTypesCached = new ArrayList<Class<?>>(methodParameterTypes.length + (isStatic() ? 0 : 1));
-      if (!isStatic())
-        inputTypesCached.add(method.getDeclaringClass());
+      inputTypesCached =
+          new ArrayList<Class<?>>(methodParameterTypes.length + (isStatic() ? 0 : 1));
+      if (!isStatic()) inputTypesCached.add(method.getDeclaringClass());
       for (int i = 0; i < methodParameterTypes.length; i++) {
         inputTypesCached.add(methodParameterTypes[i]);
       }
@@ -335,7 +333,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return return type of this method.
    */
   @Override
@@ -362,7 +360,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if this method is static, and false otherwise.
    */
   @Override
@@ -390,7 +388,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
    * Parses a method call in a string descriptor and returns a
    * {@link MethodCall} object. Should satisfy
    * <code>parse(op.toParseableString()).equals(op)</code> for Operation op.
-   * 
+   *
    * @see OperationParser#parse(String)
    *
    * @param s
@@ -405,7 +403,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return the class in which this method is declared.
    */
   @Override
@@ -416,7 +414,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * callsMethodIn determines whether the current method object calls one of the
    * methods in the list.
-   * 
+   *
    * @param list
    *          method objects to compare against.
    * @return true if method called by this object is in the given list.
@@ -428,7 +426,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   /**
    * callsMethod determines whether the method that this object calls is method
    * given in the parameter.
-   * 
+   *
    * @param m
    *          method to test against.
    * @return true, if m corresponds to the method in this object, false
@@ -440,7 +438,7 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true always, since this is a method call.
    */
   @Override
@@ -461,5 +459,4 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(method);
   }
-
 }

@@ -17,8 +17,7 @@ public class PrimitiveOrString {
    */
   public PrimitiveOrString(Object o) {
 
-    if (o == null)
-      throw new IllegalArgumentException("o cannot be null.");
+    if (o == null) throw new IllegalArgumentException("o cannot be null.");
     if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
       throw new IllegalArgumentException("o must be a primitive or string.");
     this.thePrimitiveOrString = o;

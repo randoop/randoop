@@ -16,7 +16,7 @@ public class RegressionTestPredicate extends DefaultPredicate<ExecutableSequence
    * particular, shouldn't have failures (an error-revealing test), and
    * shouldn't have {@link randoop.util.TimeoutExceededException
    * TimeoutExceededException}.
-   * 
+   *
    * @return true if has no failures and does not involve a timeout exception,
    *         false otherwise.
    */
@@ -44,5 +44,4 @@ public class RegressionTestPredicate extends DefaultPredicate<ExecutableSequence
 
     return true;
   }
-
 }

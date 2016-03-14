@@ -46,5 +46,4 @@ public class InstanceField extends AccessibleField {
     types.add(getDeclaringClass());
     return types;
   }
-
 }

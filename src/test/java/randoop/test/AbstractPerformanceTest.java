@@ -36,7 +36,7 @@ public abstract class AbstractPerformanceTest extends TestCase {
     System.out.println("@@@ factor: " + computeFactor());
     double factor = EXPECTED_MIN;
     System.out.println("@@@ EXPECTED_MIN: " + EXPECTED_MIN);
-    long expected = (long)(factor * expectedTimeMillis());
+    long expected = (long) (factor * expectedTimeMillis());
 
     Timer timer = new Timer();
     timer.startTiming();
@@ -49,10 +49,15 @@ public abstract class AbstractPerformanceTest extends TestCase {
 
     if (timer.getTimeElapsedMillis() > expected) {
       StringBuilder b = new StringBuilder();
-      b.append("Failure: performance test actual time was greater than expected time." + Globals.lineSep);
+      b.append(
+          "Failure: performance test actual time was greater than expected time."
+              + Globals.lineSep);
       b.append("This failure could have two causes:" + Globals.lineSep + "");
       b.append(" (1) Our guess as to how fast your machine is is wrong." + Globals.lineSep + "");
-      b.append(" (2) You made a change to Randoop that slows down its performance." + Globals.lineSep + "");
+      b.append(
+          " (2) You made a change to Randoop that slows down its performance."
+              + Globals.lineSep
+              + "");
       fail(b.toString());
     }
   }

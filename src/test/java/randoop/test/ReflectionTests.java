@@ -20,7 +20,7 @@ import randoop.util.Reflection;
 
 import junit.framework.TestCase;
 
-public class ReflectionTests extends TestCase{
+public class ReflectionTests extends TestCase {
 
   public void testArgCheckPrimNull() throws Exception {
     assertTrue(Reflection.canBePassedAsArgument(null, Integer.TYPE));
@@ -31,7 +31,7 @@ public class ReflectionTests extends TestCase{
   }
 
   public void testArgCheckStringInt() throws Exception {
-    assertTrue(! Reflection.canBePassedAsArgument("foo", Integer.TYPE));
+    assertTrue(!Reflection.canBePassedAsArgument("foo", Integer.TYPE));
   }
 
   public void testArgCheckStringString() throws Exception {
@@ -39,7 +39,7 @@ public class ReflectionTests extends TestCase{
   }
 
   public void testArgCheckStringStringArray() throws Exception {
-    assertTrue(! Reflection.canBePassedAsArgument("foo", String[].class));
+    assertTrue(!Reflection.canBePassedAsArgument("foo", String[].class));
   }
 
   public void testArgCheckNullStringArray() throws Exception {
@@ -68,32 +68,33 @@ public class ReflectionTests extends TestCase{
       assertEquals(80, classes.size());
       assertEquals(96, classes2.size());
     } else {
-      throw new Error("Unrecognized Java version: "
-                      + System.getProperty("java.version"));
+      throw new Error("Unrecognized Java version: " + System.getProperty("java.version"));
     }
   }
 
   public void testLoadClassesFromStream1() throws IOException {
     StringBuilder b = new StringBuilder();
     StringReader r = new StringReader(b.toString());
-    BufferedReader br = new BufferedReader(r);  
+    BufferedReader br = new BufferedReader(r);
 
     List<Class<?>> expected = Collections.emptyList();
 
-    assertEquals(expected, ClassReader.getClassesForReader(br, "empty reader"));     
-    r.close(); br.close();
+    assertEquals(expected, ClassReader.getClassesForReader(br, "empty reader"));
+    r.close();
+    br.close();
   }
 
   public void testLoadClassesFromStream2() throws IOException {
     StringBuilder b = new StringBuilder();
     b.append("java.lang.String");
     StringReader r = new StringReader(b.toString());
-    BufferedReader br = new BufferedReader(r);  
+    BufferedReader br = new BufferedReader(r);
 
     List<Class<String>> expected = Arrays.<Class<String>>asList(java.lang.String.class);
 
-    assertEquals(expected, ClassReader.getClassesForReader(br, "reader with java.lang.String"));     
-    r.close(); br.close();
+    assertEquals(expected, ClassReader.getClassesForReader(br, "reader with java.lang.String"));
+    r.close();
+    br.close();
   }
 
   public void testLoadClassesFromStream3() throws IOException {
@@ -103,21 +104,28 @@ public class ReflectionTests extends TestCase{
     b.append("java.util.ArrayList" + Globals.lineSep + "");
     b.append("java.lang.Object" + Globals.lineSep + "");
     StringReader r = new StringReader(b.toString());
-    BufferedReader br = new BufferedReader(r);  
+    BufferedReader br = new BufferedReader(r);
 
-    List<Class<?>> expected = Arrays.<Class<?>>asList(java.util.List.class, AbstractList.class, ArrayList.class, Object.class);
+    List<Class<?>> expected =
+        Arrays.<Class<?>>asList(
+            java.util.List.class, AbstractList.class, ArrayList.class, Object.class);
 
-    assertEquals(expected, ClassReader.getClassesForReader(br, "reader with List, AbstractList, ArrayList, Object"));
-    r.close(); br.close();
+    assertEquals(
+        expected,
+        ClassReader.getClassesForReader(br, "reader with List, AbstractList, ArrayList, Object"));
+    r.close();
+    br.close();
   }
 
   public void testSignature1() throws Exception {
-    Method bhHasModeElements = Class.forName("randoop.test.bh.Body$1Enumerate").getMethod("hasMoreElements", new Class[0]);
-    assertEquals("randoop.test.bh.Body$1Enumerate.hasMoreElements()", MethodSignatures.getSignatureString(bhHasModeElements));
+    Method bhHasModeElements =
+        Class.forName("randoop.test.bh.Body$1Enumerate").getMethod("hasMoreElements", new Class[0]);
+    assertEquals(
+        "randoop.test.bh.Body$1Enumerate.hasMoreElements()",
+        MethodSignatures.getSignatureString(bhHasModeElements));
 
     Method stringLength = String.class.getMethod("length", new Class[0]);
     assertEquals("java.lang.String.length()", MethodSignatures.getSignatureString(stringLength));
-
   }
 
   public void testIsPublic1() throws Exception {
@@ -127,15 +135,13 @@ public class ReflectionTests extends TestCase{
 
   public void testIsPublic2() throws Exception {
     VisibilityPredicate pred = new PublicVisibilityPredicate();
-    Class<?> c= Class.forName("java.lang.String");
+    Class<?> c = Class.forName("java.lang.String");
     assertTrue(pred.isVisible(c));
   }
 
   public void testIsPublic3() throws Exception {
     VisibilityPredicate pred = new PublicVisibilityPredicate();
-    Class<?> c= Class.forName("java.util.Map$Entry");
+    Class<?> c = Class.forName("java.util.Map$Entry");
     assertTrue(pred.isVisible(c));
   }
-
-
 }

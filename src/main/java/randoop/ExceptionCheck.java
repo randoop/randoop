@@ -30,7 +30,7 @@ public abstract class ExceptionCheck implements Check {
    * Creates an exception check for the statement at the statement index. The
    * generated code for this check will include a try-catch block with behaviors
    * determined by implementing sub-classes.
-   * 
+   *
    * @param exception
    *          the exception expected at the statement index
    * @param statementIndex
@@ -50,10 +50,8 @@ public abstract class ExceptionCheck implements Check {
    */
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
+    if (o == null) return false;
+    if (o == this) return true;
     if (this.getClass() != o.getClass()) { // match implementing class
       return false;
     }
@@ -68,12 +66,14 @@ public abstract class ExceptionCheck implements Check {
 
   @Override
   public String toString() {
-    return "// throws exception of type " + exception.getClass().getCanonicalName() + Globals.lineSep;
+    return "// throws exception of type "
+        + exception.getClass().getCanonicalName()
+        + Globals.lineSep;
   }
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return the name of the class of the exception thrown
    */
   @Override
@@ -97,7 +97,9 @@ public abstract class ExceptionCheck implements Check {
   @Override
   public final String toCodeStringPreStatement() {
     StringBuilder b = new StringBuilder();
-    b.append("// The following exception was thrown during execution in test generation" + Globals.lineSep);
+    b.append(
+        "// The following exception was thrown during execution in test generation"
+            + Globals.lineSep);
     b.append("try {" + Globals.lineSep + "  ");
     return b.toString();
   }
@@ -109,7 +111,7 @@ public abstract class ExceptionCheck implements Check {
    * catch clause with the body determined by the sub-class implementation of
    * {@link #appendCatchBehavior(StringBuilder, String)}. Catches this exception
    * or the closest public superclass of the exception.
-   * 
+   *
    * @return the post-statement code text for the expected exception
    */
   @Override
@@ -129,7 +131,7 @@ public abstract class ExceptionCheck implements Check {
 
   /**
    * Appends code for catch block behavior corresponding to expected exception.
-   * 
+   *
    * @param b
    *          the string builder to which code text is to be added
    * @param exceptionClassName
@@ -140,7 +142,7 @@ public abstract class ExceptionCheck implements Check {
   /**
    * Appends code to follow the statement throwing expected exception in try
    * block.
-   * 
+   *
    * @param b
    *          the string builder to which code text is added
    * @param exceptionClassName
@@ -150,7 +152,7 @@ public abstract class ExceptionCheck implements Check {
 
   /**
    * Returns the name of the exception class.
-   * 
+   *
    * @return the canonical name of the exception class
    */
   public String getExceptionName() {
@@ -159,7 +161,7 @@ public abstract class ExceptionCheck implements Check {
 
   /**
    * Returns the exception.
-   * 
+   *
    * @return the exception in this check
    */
   public Throwable getException() {

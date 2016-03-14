@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 
 /**
  * Serializable version of {@link MethodCall} allowing tests to be serialized.
- * 
+ *
  * @see MethodCall#writeReplace
  */
 public class SerializableMethodCall implements Serializable {
@@ -21,5 +21,4 @@ public class SerializableMethodCall implements Serializable {
   private Object readResolve() throws ObjectStreamException, OperationParseException {
     return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(method));
   }
-
 }

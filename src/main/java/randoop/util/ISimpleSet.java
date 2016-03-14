@@ -6,9 +6,9 @@ public interface ISimpleSet<T> {
 
   /**
    * Adds the given elt to the set.
-   * 
+   *
    * Precondition: the given elt is not already in the set.
-   * 
+   *
    * @param elt
    *          cannot be null.
    */
@@ -16,9 +16,9 @@ public interface ISimpleSet<T> {
 
   /**
    * Removes the given elt from the set.
-   * 
+   *
    * Precondition: the given elt is in the set.
-   * 
+   *
    * @param elt
    *          cannot be null.
    */
@@ -26,7 +26,7 @@ public interface ISimpleSet<T> {
 
   /**
    * Returns true if elt is in this set.
-   * 
+   *
    * @param elt
    *          cannot be null.
    */
@@ -47,5 +47,4 @@ public interface ISimpleSet<T> {
    */
   @Override
   String toString();
-
 }

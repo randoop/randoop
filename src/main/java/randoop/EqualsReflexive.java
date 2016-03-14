@@ -9,10 +9,8 @@ public final class EqualsReflexive implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
+    if (o == null) return false;
+    if (o == this) return true;
     if (!(o instanceof EqualsReflexive)) {
       return false;
     }
@@ -65,5 +63,4 @@ public final class EqualsReflexive implements ObjectContract {
     b.append(");");
     return b.toString();
   }
-
 }

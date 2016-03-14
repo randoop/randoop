@@ -47,14 +47,14 @@ public abstract class SimpleList<T> {
 
   /**
    * Return the number of elements in this list.
-   * 
+   *
    * @return the number of elements in this list
    */
   public abstract int size();
 
   /**
    * Return the element at the given position of this list.
-   * 
+   *
    * @param index
    *          the position for the element
    * @return the element at the index
@@ -64,7 +64,7 @@ public abstract class SimpleList<T> {
   /**
    * Return the shortest sublist of this list that contains the index based on
    * the compositional structure of this list.
-   * 
+   *
    * @param index
    *          the index into this list
    * @return the sublist containing this list.
@@ -73,7 +73,7 @@ public abstract class SimpleList<T> {
 
   /**
    * Test if this list is empty.
-   * 
+   *
    * @return true if this list is empty, false otherwise
    */
   public final boolean isEmpty() {
@@ -82,9 +82,8 @@ public abstract class SimpleList<T> {
 
   /**
    * Returns a java.util.List version of this list.
-   * 
+   *
    * @return {@link java.util.List} for this list.
    */
   public abstract List<T> toJDKList();
-
 }

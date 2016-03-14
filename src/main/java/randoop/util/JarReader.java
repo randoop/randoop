@@ -18,12 +18,12 @@ public class JarReader {
     System.out.println(CollectionsExt.toStringInLines(names));
   }
 
-  public static List<String> getClasseNamesInPackage(String jarName, String packageName) throws IOException {
+  public static List<String> getClasseNamesInPackage(String jarName, String packageName)
+      throws IOException {
     ArrayList<String> classes = new ArrayList<String>();
 
     packageName = packageName.replaceAll("\\.", "/");
-    if (debug)
-      System.out.println("Jar " + jarName + " looking for " + packageName);
+    if (debug) System.out.println("Jar " + jarName + " looking for " + packageName);
 
     JarInputStream jarFile = null;
     try {
@@ -35,15 +35,14 @@ public class JarReader {
         if (jarEntry == null) {
           break;
         }
-        if ((jarEntry.getName().startsWith(packageName)) && (jarEntry.getName().endsWith(".class"))) {
-          if (debug)
-            System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+        if ((jarEntry.getName().startsWith(packageName))
+            && (jarEntry.getName().endsWith(".class"))) {
+          if (debug) System.out.println(jarEntry.getName().replaceAll("/", "\\."));
           classes.add(jarEntry.getName().replaceAll("/", "\\."));
         }
       }
     } finally {
-      if (jarFile != null)
-        jarFile.close();
+      if (jarFile != null) jarFile.close();
     }
     return classes;
   }
@@ -51,8 +50,7 @@ public class JarReader {
   public static List<String> getClasseNamesInJar(String jarName) throws IOException {
     ArrayList<String> classes = new ArrayList<String>();
 
-    if (debug)
-      System.out.println("Jar " + jarName);
+    if (debug) System.out.println("Jar " + jarName);
 
     JarInputStream jarFile = null;
     try {
@@ -65,14 +63,12 @@ public class JarReader {
           break;
         }
         if (jarEntry.getName().endsWith(".class")) {
-          if (debug)
-            System.out.println(jarEntry.getName().replaceAll("/", "\\."));
+          if (debug) System.out.println(jarEntry.getName().replaceAll("/", "\\."));
           classes.add(jarEntry.getName().replaceAll("/", "\\."));
         }
       }
     } finally {
-      if (jarFile != null)
-        jarFile.close();
+      if (jarFile != null) jarFile.close();
     }
     return classes;
   }

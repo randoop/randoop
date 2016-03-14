@@ -24,8 +24,17 @@ import randoop.util.Util;
  */
 public abstract class GenInputsAbstract extends CommandHandler {
 
-  public GenInputsAbstract(String command, String pitch, String commandGrammar, String where, String summary, List<String> notes, String input, String output,
-      String example, Options options) {
+  public GenInputsAbstract(
+      String command,
+      String pitch,
+      String commandGrammar,
+      String where,
+      String summary,
+      List<String> notes,
+      String input,
+      String output,
+      String example,
+      Options options) {
     super(command, pitch, commandGrammar, where, summary, notes, input, output, example, options);
   }
 
@@ -595,7 +604,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
   ///////////////////////////////////////////////////////////////////
   @OptionGroup("Notifications")
-
   @Option("Do not display progress update message to console")
   public static boolean noprogressdisplay = false;
 
@@ -657,7 +665,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     }
 
     if (maxsize <= 0) {
-      throw new RuntimeException("Maximum sequence size must be greater than zero but was " + maxsize);
+      throw new RuntimeException(
+          "Maximum sequence size must be greater than zero but was " + maxsize);
     }
   }
 
@@ -668,7 +677,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
       try {
         classes.addAll(ClassReader.getClassesForFile(classlist));
       } catch (Exception e) {
-        String msg = Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
+        String msg =
+            Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
         System.out.println(msg);
         System.exit(1);
       }
@@ -691,12 +701,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
           classnames.add(line.trim());
         }
       } catch (IOException e) {
-        String msg = Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
+        String msg =
+            Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
         System.out.println(msg);
         System.exit(1);
       }
     }
     return classnames;
   }
-
 }

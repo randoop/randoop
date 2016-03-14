@@ -20,7 +20,6 @@ public class InvalidExceptionCheck extends ExceptionCheck {
     String prefix = "statement threw an invalid exception ";
     String suffix = " during test generation";
     b.append("// " + prefix + exception.getClass().getName() + suffix);
-
   }
 
   @Override
@@ -46,7 +45,7 @@ public class InvalidExceptionCheck extends ExceptionCheck {
   /**
    * {@inheritDoc} An invalid check cannot be evaluated, so this throws an
    * exception.
-   * 
+   *
    * @throws IllegalArgumentException
    *           whenever called
    */
@@ -54,5 +53,4 @@ public class InvalidExceptionCheck extends ExceptionCheck {
   public boolean evaluate(Execution execution) {
     throw new IllegalArgumentException("Cannot evaluate an invalid check");
   }
-
 }

@@ -9,7 +9,7 @@ import randoop.operation.OperationParseException;
 
 /**
  * Serialized form of {@link ObserverEqValue} allowing tests to be serialized.
- * 
+ *
  * Also see <code>ObserverEqValue.writeReplace</code>.
  */
 public class SerializableObserverEqValue implements Serializable {
@@ -28,5 +28,4 @@ public class SerializableObserverEqValue implements Serializable {
     Method m = MethodSignatures.getMethodForSignatureString(observer);
     return ObserverEqValue.getObserverEqValue(m, value);
   }
-
 }

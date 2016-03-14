@@ -61,13 +61,15 @@ public class FieldReflectionTest {
     }
 
     for (Field f : fields) {
-      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
+      assertTrue(
+          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
     }
 
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
+      assertFalse(
+          "field " + f.toGenericString() + " should not occur",
+          actual.containsAll(getOperations(f)));
     }
-
   }
 
   /**
@@ -100,14 +102,17 @@ public class FieldReflectionTest {
     }
     List<Operation> actual = OperationExtractor.getOperations(classes, null);
 
-    assertEquals("number of statements", 2*expected.size() - 1 + 2, actual.size());
+    assertEquals("number of statements", 2 * expected.size() - 1 + 2, actual.size());
 
     for (Field f : expected) {
-      assertTrue("field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
+      assertTrue(
+          "field " + f.toGenericString() + " should occur", actual.containsAll(getOperations(f)));
     }
 
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
+      assertFalse(
+          "field " + f.toGenericString() + " should not occur",
+          actual.containsAll(getOperations(f)));
     }
   }
 
@@ -125,7 +130,7 @@ public class FieldReflectionTest {
     List<Field> exclude = new ArrayList<>();
     Set<String> excludeNames = new TreeSet<String>();
     for (Field f : c.getFields()) {
-      excludeNames.add(f.getDeclaringClass().getName()+"."+f.getName());
+      excludeNames.add(f.getDeclaringClass().getName() + "." + f.getName());
       exclude.add(f);
     }
 
@@ -135,9 +140,10 @@ public class FieldReflectionTest {
     assertEquals("number of statements", 2, actual.size());
 
     for (Field f : exclude) {
-      assertFalse("field " + f.toGenericString() + " should not occur", actual.containsAll(getOperations(f)));
+      assertFalse(
+          "field " + f.toGenericString() + " should not occur",
+          actual.containsAll(getOperations(f)));
     }
-
   }
 
   /**
@@ -168,5 +174,4 @@ public class FieldReflectionTest {
     }
     return statements;
   }
-
 }

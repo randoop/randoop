@@ -16,7 +16,7 @@ public class AndPredicate<T> extends DefaultPredicate<T> {
   /**
    * Creates a Predicate that performs the and-also operator: testing the first
    * predicate, and then the second.
-   * 
+   *
    * @param first
    *          the predicate to test first
    * @param second
@@ -30,7 +30,7 @@ public class AndPredicate<T> extends DefaultPredicate<T> {
   /**
    * {@inheritDoc} Return the short-circuited and of the two predicates for the
    * value t
-   * 
+   *
    * @return true if both the first and second predicate is true on t, and false
    *         otherwise
    */

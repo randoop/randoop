@@ -12,7 +12,7 @@ public interface VisibilityPredicate {
 
   /**
    * Determines whether a {@link Class} object is considered visible.
-   * 
+   *
    * @param c
    *          the class object to check
    * @return true if predicate criteria determines the class is visible, false
@@ -22,7 +22,7 @@ public interface VisibilityPredicate {
 
   /**
    * Determines whether a {@link Method} object is considered visible.
-   * 
+   *
    * @param m
    *          the Method object to check
    * @return true if predicate criteria determines the method is visible, false
@@ -32,7 +32,7 @@ public interface VisibilityPredicate {
 
   /**
    * Determines whether a {@link Constructor} object is considered visible.
-   * 
+   *
    * @param c
    *          the constructor object to check
    * @return true if predicate criteria determines the constructor is visible,
@@ -42,7 +42,7 @@ public interface VisibilityPredicate {
 
   /**
    * Determines whether a {@link Field} object is considered visible.
-   * 
+   *
    * @param f
    *          the field object to check
    * @return true if predicate criteria determines the field is visible, false

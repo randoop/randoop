@@ -26,12 +26,9 @@ public class NoExceptionCheck implements Check {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
-    if (!(o instanceof NoExceptionCheck))
-      return false;
+    if (o == null) return false;
+    if (o == this) return true;
+    if (!(o instanceof NoExceptionCheck)) return false;
     NoExceptionCheck other = (NoExceptionCheck) o;
     return statementIdx == other.statementIdx;
   }
@@ -67,12 +64,15 @@ public class NoExceptionCheck implements Check {
 
   @Override
   public String toCodeStringPreStatement() {
-    return "// during test generation this statement threw an exception of type " + exceptionName + " in error" + Globals.lineSep;
+    return "// during test generation this statement threw an exception of type "
+        + exceptionName
+        + " in error"
+        + Globals.lineSep;
   }
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true when no exception is observed, false when one is
    */
   @Override

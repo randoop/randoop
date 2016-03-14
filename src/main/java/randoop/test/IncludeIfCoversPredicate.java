@@ -27,7 +27,7 @@ public class IncludeIfCoversPredicate extends DefaultPredicate<ExecutableSequenc
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if any of the classes in this predicate are covered by the
    *         sequence
    */
@@ -38,5 +38,4 @@ public class IncludeIfCoversPredicate extends DefaultPredicate<ExecutableSequenc
     }
     return false;
   }
-
 }

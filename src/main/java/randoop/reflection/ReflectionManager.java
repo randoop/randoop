@@ -43,7 +43,7 @@ public class ReflectionManager {
    * Creates a manager object that uses the given predicate to determine which
    * classes, methods and constructors should be visited. The list of visitors
    * is initially empty.
-   * 
+   *
    * @param predicate
    *          the predicate to indicate whether classes and class members should
    *          be visited.
@@ -56,7 +56,7 @@ public class ReflectionManager {
   /**
    * Registers a {@link ClassVisitor} for use by the
    * {@link ReflectionManager#apply(Class)} method.
-   * 
+   *
    * @param visitor
    *          a {@link ClassVisitor} object.
    */
@@ -67,7 +67,7 @@ public class ReflectionManager {
   /**
    * Applies the registered {@link ClassVisitor} objects of this object to the
    * given class.
-   * 
+   *
    * @param c
    *          a {@link Class} object to be visited.
    */
@@ -75,8 +75,7 @@ public class ReflectionManager {
 
     if (predicate.test(c)) {
 
-      if (Log.isLoggingOn())
-        Log.logLine("Applying visitors to class " + c.getName());
+      if (Log.isLoggingOn()) Log.logLine("Applying visitors to class " + c.getName());
 
       visitBefore(c); // perform any previsit steps
 
@@ -99,18 +98,16 @@ public class ReflectionManager {
         }
 
         applyFields(c);
-
       }
 
       visitAfter(c);
     }
-
   }
 
   /**
    * Applies the visitors to each method of the class at most once. Visits all
    * methods satisfying the reflection predicate.
-   * 
+   *
    * @param c
    *          the class whose methods should be visited
    */
@@ -179,7 +176,7 @@ public class ReflectionManager {
    * Determines which fields of the given class the visitors will be applied to.
    * Only excludes fields hidden by inheritance that are otherwise still
    * accessible via reflection.
-   * 
+   *
    * @param c
    */
   private void applyFields(Class<?> c) {
@@ -204,7 +201,7 @@ public class ReflectionManager {
 
   /**
    * Apply all registered visitors to a field.
-   * 
+   *
    * @param f
    *          the field to be visited.
    */
@@ -219,7 +216,7 @@ public class ReflectionManager {
 
   /**
    * Apply all registered visitors to the constructor.
-   * 
+   *
    * @param co
    *          the constructor to be visited.
    */
@@ -234,7 +231,7 @@ public class ReflectionManager {
 
   /**
    * Apply all registered visitors to the method.
-   * 
+   *
    * @param m
    *          the method to be visited.
    */
@@ -249,7 +246,7 @@ public class ReflectionManager {
 
   /**
    * Apply all registered visitors to the enum value.
-   * 
+   *
    * @param e
    *          the enum value to be visited.
    */
@@ -265,7 +262,7 @@ public class ReflectionManager {
   /**
    * Apply all registered visitors to the class. Called at the end of
    * {@link #apply(Class)}.
-   * 
+   *
    * @param c
    *          the class to be visited.
    */
@@ -278,7 +275,7 @@ public class ReflectionManager {
   /**
    * Apply all registered visitors to the class. Called at the beginning of
    * {@link #apply(Class)}.
-   * 
+   *
    * @param c
    *          the class to be visited.
    */
@@ -287,5 +284,4 @@ public class ReflectionManager {
       v.visitBefore(c);
     }
   }
-
 }

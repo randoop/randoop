@@ -10,10 +10,8 @@ public final class EqualsHashcode implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
+    if (o == null) return false;
+    if (o == this) return true;
     if (!(o instanceof EqualsHashcode)) {
       return false;
     }
@@ -70,5 +68,4 @@ public final class EqualsHashcode implements ObjectContract {
     b.append(");");
     return b.toString();
   }
-
 }

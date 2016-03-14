@@ -17,10 +17,8 @@ public class Variable implements Comparable<Variable>, Serializable {
   public final Sequence sequence;
 
   public Variable(Sequence owner, int i) {
-    if (owner == null)
-      throw new IllegalArgumentException("missing owner");
-    if (i < 0)
-      throw new IllegalArgumentException("negative index:" + i);
+    if (owner == null) throw new IllegalArgumentException("missing owner");
+    if (i < 0) throw new IllegalArgumentException("negative index:" + i);
     this.sequence = owner;
     this.index = i;
   }
@@ -32,10 +30,8 @@ public class Variable implements Comparable<Variable>, Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof Variable))
-      return false;
-    if (o == this)
-      return true;
+    if (!(o instanceof Variable)) return false;
+    if (o == this) return true;
     Variable other = (Variable) o;
     // Two values are equal only if they are owned by the
     // same sequence, where "same" means the same reference.
@@ -110,10 +106,8 @@ public class Variable implements Comparable<Variable>, Serializable {
 
   @Override
   public int compareTo(Variable o) {
-    if (o == null)
-      throw new IllegalArgumentException();
-    if (o.sequence != this.sequence)
-      throw new IllegalArgumentException();
+    if (o == null) throw new IllegalArgumentException();
+    if (o.sequence != this.sequence) throw new IllegalArgumentException();
     return (new Integer(this.index).compareTo(new Integer(o.index)));
   }
 
@@ -133,5 +127,4 @@ public class Variable implements Comparable<Variable>, Serializable {
     assert !className.equals("");
     return Character.toLowerCase(className.charAt(0)) + className.substring(1);
   }
-
 }

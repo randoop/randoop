@@ -31,7 +31,7 @@ package java2.util2;
  * <p>Note that fail-fast behavior cannot be guaranteed as it is, generally
  * speaking, impossible to make any hard guarantees in the presence of
  * unsynchronized concurrent modification.  Fail-fast operations
- * throw <tt>ConcurrentModificationException</tt> on a best-effort basis. 
+ * throw <tt>ConcurrentModificationException</tt> on a best-effort basis.
  * Therefore, it would be wrong to write a program that depended on this
  * exception for its correctness: <i><tt>ConcurrentModificationException</tt>
  * should be used only to detect bugs.</i>
@@ -50,20 +50,19 @@ package java2.util2;
  * @since   1.2
  */
 public class ConcurrentModificationException extends RuntimeException {
-    /**
-     * Constructs a ConcurrentModificationException with no
-     * detail message.
-     */
-    public ConcurrentModificationException() {
-    }
+  /**
+   * Constructs a ConcurrentModificationException with no
+   * detail message.
+   */
+  public ConcurrentModificationException() {}
 
-    /**
-     * Constructs a <tt>ConcurrentModificationException</tt> with the
-     * specified detail message.
-     *
-     * @param message the detail message pertaining to this exception.
-     */
-    public ConcurrentModificationException(String message) {
-	super(message);
-    }
+  /**
+   * Constructs a <tt>ConcurrentModificationException</tt> with the
+   * specified detail message.
+   *
+   * @param message the detail message pertaining to this exception.
+   */
+  public ConcurrentModificationException(String message) {
+    super(message);
+  }
 }

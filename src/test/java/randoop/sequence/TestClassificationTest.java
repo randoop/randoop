@@ -81,7 +81,6 @@ public class TestClassificationTest {
     }
 
     assertEquals("when all exceptions invalid, have no error tests", 0, eTests.size());
-
   }
 
   /**
@@ -136,9 +135,7 @@ public class TestClassificationTest {
         }
       }
       assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
-
     }
-
   }
 
   /**
@@ -174,12 +171,13 @@ public class TestClassificationTest {
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
         assertTrue("if there is an exception check, should be checks", cks.hasChecks());
-        assertTrue("should be expected exception, was" + eck.getClass().getName(), eck instanceof ExpectedExceptionCheck);
+        assertTrue(
+            "should be expected exception, was" + eck.getClass().getName(),
+            eck instanceof ExpectedExceptionCheck);
       }
     }
 
     assertEquals("all exceptions expected, should be no error tests", 0, eTests.size());
-
   }
 
   /**
@@ -217,7 +215,9 @@ public class TestClassificationTest {
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
         assertTrue("if there is an exception check, should be checks", cks.hasChecks());
-        assertTrue("should be expected exception, was" + eck.getClass().getName(), eck instanceof ExpectedExceptionCheck);
+        assertTrue(
+            "should be expected exception, was" + eck.getClass().getName(),
+            eck instanceof ExpectedExceptionCheck);
       }
     }
 
@@ -236,7 +236,6 @@ public class TestClassificationTest {
         }
       }
       assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
-
     }
   }
 
@@ -274,7 +273,9 @@ public class TestClassificationTest {
       ExceptionCheck eck = cks.getExceptionCheck();
       if (eck != null) {
         assertTrue("if there is an exception check, should be checks", cks.hasChecks());
-        assertTrue("should be expected exception, was" + eck.getClass().getName(), eck instanceof EmptyExceptionCheck);
+        assertTrue(
+            "should be expected exception, was" + eck.getClass().getName(),
+            eck instanceof EmptyExceptionCheck);
       } else {
         assertFalse("if there is no exception check, should be no checks", cks.hasChecks());
       }
@@ -295,7 +296,6 @@ public class TestClassificationTest {
         }
       }
       assertTrue("exception count should be one, have " + exceptionCount, exceptionCount == 1);
-
     }
   }
 
@@ -304,26 +304,28 @@ public class TestClassificationTest {
     classes.add(c);
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ReflectionPredicate predicate = new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
+    ReflectionPredicate predicate =
+        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, predicate);
     Collection<Sequence> components = new LinkedHashSet<Sequence>();
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
-    ComponentManager componentMgr = new ComponentManager(components );
+    ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    ForwardGenerator gen = new ForwardGenerator(
-        model,
-        GenInputsAbstract.timelimit * 1000,
-        GenInputsAbstract.inputlimit,
-        GenInputsAbstract.outputlimit,
-        componentMgr,
-        null,
-        listenerMgr);
+    ForwardGenerator gen =
+        new ForwardGenerator(
+            model,
+            GenInputsAbstract.timelimit * 1000,
+            GenInputsAbstract.inputlimit,
+            GenInputsAbstract.outputlimit,
+            componentMgr,
+            null,
+            listenerMgr);
     Predicate<ExecutableSequence> isOutputTest = new AlwaysTrue<>();
     gen.addTestPredicate(isOutputTest);
-    TestCheckGenerator checkGenerator = (new GenTests()).createTestCheckGenerator(visibility, classes);
+    TestCheckGenerator checkGenerator =
+        (new GenTests()).createTestCheckGenerator(visibility, classes);
     gen.addTestCheckGenerator(checkGenerator);
     gen.addExecutionVisitor(new DummyVisitor());
     return gen;
   }
-
 }

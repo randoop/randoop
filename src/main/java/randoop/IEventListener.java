@@ -57,5 +57,4 @@ public interface IEventListener {
    * @return true if generation should stop, false otherwise.
    */
   boolean stopGeneration();
-
 }

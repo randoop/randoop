@@ -15,9 +15,8 @@ public final class ClassHierarchy {
   private final MultiMap<Class<?>, Class<?>> classToSuperclasses;
 
   public ClassHierarchy(Collection<Class<?>> classes) {
-    if (classes == null)
-      throw new IllegalArgumentException("null argument");
-    this.classes = Collections.unmodifiableSet(new LinkedHashSet<Class<?>>(classes));// copy
+    if (classes == null) throw new IllegalArgumentException("null argument");
+    this.classes = Collections.unmodifiableSet(new LinkedHashSet<Class<?>>(classes)); // copy
     this.classToSubclasses = new MultiMap<Class<?>, Class<?>>();
     this.classToSuperclasses = new MultiMap<Class<?>, Class<?>>();
     compute();
@@ -36,7 +35,7 @@ public final class ClassHierarchy {
 
   private Collection<Class<?>> internalSuperClasses(Class<?> clazz) {
     if (classToSuperclasses.contains(clazz)) // already computed
-      return classToSuperclasses.getValues(clazz);
+    return classToSuperclasses.getValues(clazz);
 
     Set<Class<?>> result = new LinkedHashSet<Class<?>>();
     for (Class<?> directSuper : Reflection.getDirectSuperTypes(clazz)) {
@@ -60,12 +59,16 @@ public final class ClassHierarchy {
     }
     Set<Class<?>> result = new LinkedHashSet<Class<?>>();
     for (Class<?> eachClass : classes) {
-      if (superClasses(eachClass).contains(c))
-        result.add(eachClass);
+      if (superClasses(eachClass).contains(c)) result.add(eachClass);
     }
     classToSubclasses.put(c, result);
     if (!classToSubclasses.contains(c)) {
-      throw new IllegalStateException(c.getName() + " : " + result.toString() + " all:" + CollectionsExt.toStringInSortedLines(getClasses()));
+      throw new IllegalStateException(
+          c.getName()
+              + " : "
+              + result.toString()
+              + " all:"
+              + CollectionsExt.toStringInSortedLines(getClasses()));
     }
     return Collections.unmodifiableSet(result);
   }

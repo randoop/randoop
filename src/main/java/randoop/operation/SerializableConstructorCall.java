@@ -8,7 +8,7 @@ import java.lang.reflect.Constructor;
  * Serializable version of {@link ConstructorCall} allowing tests to be
  * serialized. In particular, uses string representation of the constructor
  * based on {@link ConstructorSignatures#getSignatureString(Constructor)}.
- * 
+ *
  * @see ConstructorCall#writeReplace
  */
 public class SerializableConstructorCall implements Serializable {
@@ -21,7 +21,7 @@ public class SerializableConstructorCall implements Serializable {
   }
 
   private Object readResolve() throws ObjectStreamException, OperationParseException {
-    return ConstructorCall.createConstructorCall(ConstructorSignatures.getConstructorForSignatureString(constructor));
+    return ConstructorCall.createConstructorCall(
+        ConstructorSignatures.getConstructorForSignatureString(constructor));
   }
-
 }

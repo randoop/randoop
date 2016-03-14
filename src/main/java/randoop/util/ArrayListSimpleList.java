@@ -50,5 +50,4 @@ public class ArrayListSimpleList<T> extends SimpleList<T> implements Serializabl
   public String toString() {
     return toJDKList().toString();
   }
-
 }

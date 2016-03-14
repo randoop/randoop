@@ -37,14 +37,21 @@ public class FieldParser {
     }
     int colonIdx = s.indexOf(':');
     if (colonIdx < 0) {
-      String msg = "A field description must be of the form \"<type>:<field>\"" + " but description is \"" + s + "\".";
+      String msg =
+          "A field description must be of the form \"<type>:<field>\""
+              + " but description is \""
+              + s
+              + "\".";
       throw new OperationParseException(msg);
     }
 
     String typeName = s.substring(0, colonIdx);
     String qualifiedFieldName = s.substring(colonIdx + 1);
 
-    String errorPrefix = "Error when parsing type-value pair " + s + " for a field description of the form <type>:<field-name>.";
+    String errorPrefix =
+        "Error when parsing type-value pair "
+            + s
+            + " for a field description of the form <type>:<field-name>.";
 
     if (typeName.isEmpty()) {
       String msg = errorPrefix + " No type given.";
@@ -58,7 +65,8 @@ public class FieldParser {
 
     int dotPos = qualifiedFieldName.lastIndexOf('.');
     if (dotPos < 0) {
-      String msg = errorPrefix + " No class name given in field name \"" + qualifiedFieldName + "\".";
+      String msg =
+          errorPrefix + " No class name given in field name \"" + qualifiedFieldName + "\".";
       throw new OperationParseException(msg);
     }
     String className = qualifiedFieldName.substring(0, dotPos);
@@ -83,7 +91,8 @@ public class FieldParser {
     }
 
     if (className.isEmpty()) {
-      String msg = errorPrefix + " The field name given \"" + qualifiedFieldName + "\" has no class name.";
+      String msg =
+          errorPrefix + " The field name given \"" + qualifiedFieldName + "\" has no class name.";
       throw new OperationParseException(msg);
     }
 
@@ -91,18 +100,38 @@ public class FieldParser {
     try {
       classType = TypeNames.getTypeForName(className);
     } catch (ClassNotFoundException e) {
-      String msg = errorPrefix + " The class name \"" + className + "\" of the field name \"" + qualifiedFieldName + "\" was not recognized as a class.";
+      String msg =
+          errorPrefix
+              + " The class name \""
+              + className
+              + "\" of the field name \""
+              + qualifiedFieldName
+              + "\" was not recognized as a class.";
       throw new OperationParseException(msg);
     }
 
     Field field = fieldForName(classType, fieldName);
     if (field == null) {
-      String msg = errorPrefix + " The field name given \"" + fieldName + "\" is not a field of the class " + "\"" + className + "\".";
+      String msg =
+          errorPrefix
+              + " The field name given \""
+              + fieldName
+              + "\" is not a field of the class "
+              + "\""
+              + className
+              + "\".";
       throw new OperationParseException(msg);
     }
     if (!field.getType().equals(type)) {
-      String msg = errorPrefix + " The type of the field \"" + qualifiedFieldName + "\" is " + field.getType().toString() + ", but given as " + type.toString()
-          + ".";
+      String msg =
+          errorPrefix
+              + " The type of the field \""
+              + qualifiedFieldName
+              + "\" is "
+              + field.getType().toString()
+              + ", but given as "
+              + type.toString()
+              + ".";
       throw new OperationParseException(msg);
     }
 
@@ -146,7 +175,6 @@ public class FieldParser {
    *          - field name for which to search the class.
    * @return field of the class with the given name.
    */
-
   public static Field fieldForName(Class<?> type, String fieldName) {
     for (Field f : type.getDeclaredFields()) {
       if (fieldName.equals(f.getName())) {
@@ -155,5 +183,4 @@ public class FieldParser {
     }
     return null;
   }
-
 }

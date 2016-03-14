@@ -18,5 +18,4 @@ public class ExcludeTestPredicate extends DefaultPredicate<ExecutableSequence> {
   public boolean test(ExecutableSequence s) {
     return !excludeSet.contains(s.sequence);
   }
-
 }

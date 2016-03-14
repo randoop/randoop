@@ -87,7 +87,7 @@ public final class ReflectionExecutor {
   /**
    * Executes code.runReflectionCode(). If no exception is thrown, returns null.
    * Otherwise, returns the exception thrown.
-   * 
+   *
    * @param code
    * @param out
    *          stream to print message to or null if message is to be ignored.
@@ -122,7 +122,9 @@ public final class ReflectionExecutor {
       return runnerThread.exceptionThrown;
 
     } catch (java.lang.InterruptedException e) {
-      throw new IllegalStateException("A RunnerThread thread shouldn't be interrupted by anyone! " + "(this may be a bug in Randoop; please report it.)");
+      throw new IllegalStateException(
+          "A RunnerThread thread shouldn't be interrupted by anyone! "
+              + "(this may be a bug in Randoop; please report it.)");
     }
   }
 
@@ -136,7 +138,7 @@ public final class ReflectionExecutor {
     } catch (ThreadDeath e) { // can't stop these guys
       throw e;
     } catch (ReflectionCode.NotCaughtIllegalStateException e) { // exception in
-                                                                // randoop code
+      // randoop code
       throw e;
     } catch (Throwable e) {
       Throwable orig_e = null;
@@ -179,5 +181,4 @@ public final class ReflectionExecutor {
       }
     }
   }
-
 }

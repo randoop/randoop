@@ -23,8 +23,7 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
   }
 
   public void put(T1 key, Collection<? extends T2> values) {
-    if (contains(key))
-      remove(key);
+    if (contains(key)) remove(key);
     map.put(key, new LinkedHashSet<T2>(values));
   }
 
@@ -54,7 +53,11 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public void remove(T1 key, T2 value) {
     Set<T2> values = map.get(key);
     if (values == null) {
-      throw new IllegalStateException("No values where found when trying to remove from multiset. Key: " + key + " Variable: " + value);
+      throw new IllegalStateException(
+          "No values where found when trying to remove from multiset. Key: "
+              + key
+              + " Variable: "
+              + value);
     }
     values.remove(value);
   }
@@ -62,7 +65,8 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
   public void remove(T1 key) {
     Set<T2> values = map.get(key);
     if (values == null) {
-      throw new IllegalStateException("No values where found when trying to remove from multiset. Key: " + key);
+      throw new IllegalStateException(
+          "No values where found when trying to remove from multiset. Key: " + key);
     }
     map.remove(key);
   }
@@ -70,8 +74,7 @@ public class MultiMap<T1, T2> implements IMultiMap<T1, T2> {
   @Override
   public Set<T2> getValues(T1 key) {
     Set<T2> values = map.get(key);
-    if (values == null)
-      return Collections.emptySet();
+    if (values == null) return Collections.emptySet();
     return values;
   }
 

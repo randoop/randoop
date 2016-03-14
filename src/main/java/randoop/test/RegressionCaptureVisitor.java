@@ -47,7 +47,8 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
   private ExpectedExceptionCheckGen exceptionExpectation;
   private boolean includeAssertions;
 
-  public RegressionCaptureVisitor(ExpectedExceptionCheckGen exceptionExpectation, boolean includeAssertions) {
+  public RegressionCaptureVisitor(
+      ExpectedExceptionCheckGen exceptionExpectation, boolean includeAssertions) {
     this.exceptionExpectation = exceptionExpectation;
     this.includeAssertions = includeAssertions;
   }
@@ -66,11 +67,13 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
   }
 
   /** Map from each class to the list of observer methods for that class */
-  private static final Map<Class<?>, List<Method>> observer_map = new LinkedHashMap<Class<?>, List<Method>>();
+  private static final Map<Class<?>, List<Method>> observer_map =
+      new LinkedHashMap<Class<?>, List<Method>>();
 
   public static boolean isObserverInvocation(Statement statement) {
     if (observer_map.containsKey(statement.getDeclaringClass())) {
-      return statement.isMethodIn(RegressionCaptureVisitor.observer_map.get(statement.getDeclaringClass()));
+      return statement.isMethodIn(
+          RegressionCaptureVisitor.observer_map.get(statement.getDeclaringClass()));
     }
     return false;
   }
@@ -83,16 +86,14 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
       try {
         lines = Files.readWhole(GenInputsAbstract.observers);
       } catch (Exception e) {
-        throw new RuntimeException("problem reading observer file " + GenInputsAbstract.observers, e);
+        throw new RuntimeException(
+            "problem reading observer file " + GenInputsAbstract.observers, e);
       }
       for (String line : lines) {
-        if (line.startsWith("//"))
-          continue;
-        if (line.trim().length() == 0)
-          continue;
+        if (line.startsWith("//")) continue;
+        if (line.trim().length() == 0) continue;
         int lastdot = line.lastIndexOf(".");
-        if (lastdot == -1)
-          throw new RuntimeException(String.format("invalid observer '%s'", line));
+        if (lastdot == -1) throw new RuntimeException(String.format("invalid observer '%s'", line));
         String classname = line.substring(0, lastdot);
         String methodname = line.substring(lastdot + 1);
         methodname = methodname.replaceFirst("[()]*$", "");
@@ -109,7 +110,9 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
           throw new RuntimeException("Can't find observer method " + methodname, e);
         }
         if (!PrimitiveTypes.isPrimitiveOrStringType(obs_method.getReturnType()))
-          throw new RuntimeException(String.format("Observer method %s does not return a primitive " + "or string", obs_method));
+          throw new RuntimeException(
+              String.format(
+                  "Observer method %s does not return a primitive " + "or string", obs_method));
         List<Method> methods = observer_map.get(obs_class);
         if (methods == null) {
           methods = new ArrayList<Method>();
@@ -127,7 +130,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
    * try-catch block is always generated for exceptions, but whether assertions
    * are included is determined by the {@link ExpectedExceptionCheckGen} given
    * when creating this visitor.
-   * 
+   *
    * @throws Error
    *           if any statement is not executed, or exception occurs before last
    *           statement
@@ -152,15 +155,13 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
           NormalExecution e = (NormalExecution) result;
           // If value is like x in "int x = 3" don't capture
           // checks (nothing interesting).
-          if (st.isPrimitiveInitialization())
-            continue;
+          if (st.isPrimitiveInitialization()) continue;
 
           // If value's type is void (i.e. its statement is a
           // void-return method call), don't capture checks
           // (nothing interesting).
           Class<?> tc = st.getOutputType();
-          if (void.class.equals(tc))
-            continue; // no return value.
+          if (void.class.equals(tc)) continue; // no return value.
 
           // If value is the result of Object.toString() or
           // Object.hashCode(), don't capture checks (value is
@@ -196,7 +197,9 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
               // restrictions on String constants.
               if (!PrimitiveTypes.stringLengthOK(str)) {
                 if (Log.isLoggingOn()) {
-                  Log.logLine("Ignoring a string that exceeds the maximum length of " + GenInputsAbstract.string_maxlen);
+                  Log.logLine(
+                      "Ignoring a string that exceeds the maximum length of "
+                          + GenInputsAbstract.string_maxlen);
                 }
                 continue;
               }
@@ -208,8 +211,7 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
               Variable var0 = s.sequence.getInputs(i).get(0);
               if (var0.getType() == java.util.Date.class) {
                 Statement sk = s.sequence.getCreatingStatement(var0);
-                if ((sk.isConstructorCall()) && (s.sequence.getInputs(i).size() == 1))
-                  continue;
+                if ((sk.isConstructorCall()) && (s.sequence.getInputs(i).size() == 1)) continue;
                 // System.out.printf ("var type %s comes from date %s / %s%n",
                 // s.sequence.getVariable(i).getType(),
                 // s.sequence.getStatementKind(i), sk);
@@ -247,13 +249,25 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
                 try {
                   value = m.invoke(o);
                 } catch (Exception e2) {
-                  String msg = "unexpected error invoking observer " + m + " on " + var + "[" + var.getType() + "]" + " with value " + o + " [" + o.getClass()
-                      + "]";
+                  String msg =
+                      "unexpected error invoking observer "
+                          + m
+                          + " on "
+                          + var
+                          + "["
+                          + var.getType()
+                          + "]"
+                          + " with value "
+                          + o
+                          + " ["
+                          + o.getClass()
+                          + "]";
                   throw new RuntimeException(msg, e2);
                 }
                 // Don't create assertions over string that look like raw object
                 // references.
-                if ((value instanceof String) && PrimitiveTypes.looksLikeObjectToString((String) value)) {
+                if ((value instanceof String)
+                    && PrimitiveTypes.looksLikeObjectToString((String) value)) {
                   continue;
                 }
 
@@ -283,5 +297,4 @@ public final class RegressionCaptureVisitor implements TestCheckGenerator {
     }
     return checks;
   }
-
 }

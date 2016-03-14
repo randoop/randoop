@@ -218,30 +218,32 @@ public class TestFilteringTest {
     classes.add(c);
     Set<String> omitfields = new HashSet<>();
     VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    ReflectionPredicate predicate = new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
+    ReflectionPredicate predicate =
+        new DefaultReflectionPredicate(GenInputsAbstract.omitmethods, omitfields, visibility);
     List<Operation> model = OperationExtractor.getOperations(classes, predicate);
     Collection<Sequence> components = new LinkedHashSet<Sequence>();
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
-    ComponentManager componentMgr = new ComponentManager(components );
+    ComponentManager componentMgr = new ComponentManager(components);
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
-    ForwardGenerator testGenerator = new ForwardGenerator(
-        model,
-        GenInputsAbstract.timelimit * 1000,
-        GenInputsAbstract.inputlimit,
-        GenInputsAbstract.outputlimit,
-        componentMgr,
-        null,
-        listenerMgr);
+    ForwardGenerator testGenerator =
+        new ForwardGenerator(
+            model,
+            GenInputsAbstract.timelimit * 1000,
+            GenInputsAbstract.inputlimit,
+            GenInputsAbstract.outputlimit,
+            componentMgr,
+            null,
+            listenerMgr);
     GenTests genTests = new GenTests();
     ConstructorCall objectConstructor = null;
     try {
       objectConstructor = ConstructorCall.createConstructorCall(Object.class.getConstructor());
-      if (!model.contains(objectConstructor))
-        model.add(objectConstructor);
+      if (!model.contains(objectConstructor)) model.add(objectConstructor);
     } catch (Exception e) {
       fail("couldn't get object constructor");
     }
-    Predicate<ExecutableSequence> isOutputTest = genTests.createTestOutputPredicate(objectConstructor, new HashSet<Class<?>>());
+    Predicate<ExecutableSequence> isOutputTest =
+        genTests.createTestOutputPredicate(objectConstructor, new HashSet<Class<?>>());
     testGenerator.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
     testGenerator.addTestCheckGenerator(checkGenerator);

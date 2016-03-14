@@ -12,8 +12,7 @@ package randoop.test.mst;
  * As with the original C version, this one uses its own implementation
  * of hashtable.
  **/
-public class MST
-{
+public class MST {
   /**
    * The number of vertices in the graph.
    **/
@@ -27,29 +26,25 @@ public class MST
    **/
   private static boolean printMsgs = false;
 
-  public static void main(String args[])
-  {
+  public static void main(String args[]) {
     parseCmdLine(args);
 
-    if (printMsgs)
-      System.out.println("Making graph of size " + vertices);
+    if (printMsgs) System.out.println("Making graph of size " + vertices);
     long start0 = System.currentTimeMillis();
     Graph graph = new Graph(vertices);
     long end0 = System.currentTimeMillis();
 
-    if (printMsgs)
-      System.out.println("About to compute MST");
+    if (printMsgs) System.out.println("About to compute MST");
     long start1 = System.currentTimeMillis();
     int dist = computeMST(graph, vertices);
     long end1 = System.currentTimeMillis();
 
-    if (printResult || printMsgs)
-      System.out.println("MST has cost "+ dist);
+    if (printResult || printMsgs) System.out.println("MST has cost " + dist);
 
     if (printMsgs) {
-      System.out.println("Build graph time "+ (end0 - start0)/1000.0);
-      System.out.println("Compute time " + (end1 - start1)/1000.0);
-      System.out.println("Total time " + (end1 - start0)/1000.0);
+      System.out.println("Build graph time " + (end0 - start0) / 1000.0);
+      System.out.println("Compute time " + (end1 - start1) / 1000.0);
+      System.out.println("Total time " + (end1 - start0) / 1000.0);
     }
 
     System.out.println("Done!");
@@ -61,9 +56,8 @@ public class MST
    * @param numvert the number of vertices in the graph
    * @return the minimum spanning tree cost
    **/
-  public static int computeMST(Graph graph, int numvert)
-  {
-    int cost=0;
+  public static int computeMST(Graph graph, int numvert) {
+    int cost = 0;
 
     // Insert first node
     Vertex inserted = graph.firstNode();
@@ -83,8 +77,7 @@ public class MST
     return cost;
   }
 
-  private static BlueReturn BlueRule(Vertex inserted, Vertex vlist)
-  {
+  private static BlueReturn BlueRule(Vertex inserted, Vertex vlist) {
     BlueReturn retval = new BlueReturn();
 
     if (vlist == null) {
@@ -98,13 +91,12 @@ public class MST
     Hashtable hash = vlist.neighbors();
     Object o = hash.get(inserted);
     if (o != null) {
-      int dist = ((Integer)o).intValue();
+      int dist = ((Integer) o).intValue();
       if (dist < retval.dist()) {
         vlist.setMindist(dist);
         retval.setDist(dist);
       }
-    } else
-      System.out.println("Not found");
+    } else System.out.println("Not found");
 
     int count = 0;
     // We are guaranteed that inserted is not first in list
@@ -118,13 +110,12 @@ public class MST
         int dist2 = tmp.mindist();
         o = hash.get(inserted);
         if (o != null) {
-          int dist = ((Integer)o).intValue();
+          int dist = ((Integer) o).intValue();
           if (dist < dist2) {
             tmp.setMindist(dist);
             dist2 = dist;
           }
-        } else
-          System.out.println("Not found");
+        } else System.out.println("Not found");
 
         if (dist2 < retval.dist()) {
           retval.setVert(tmp);
@@ -137,10 +128,8 @@ public class MST
 
   private static Vertex MyVertexList = null;
 
-  private static BlueReturn doAllBlueRule(Vertex inserted)
-  {
-    if (inserted == MyVertexList)
-      MyVertexList = MyVertexList.next();
+  private static BlueReturn doAllBlueRule(Vertex inserted) {
+    if (inserted == MyVertexList) MyVertexList = MyVertexList.next();
     return BlueRule(inserted, MyVertexList);
   }
 
@@ -148,8 +137,7 @@ public class MST
    * Parse the command line options.
    * @param args the command line options.
    **/
-  private static final void parseCmdLine(String args[])
-  {
+  private static final void parseCmdLine(String args[]) {
     int i = 0;
     String arg;
 
@@ -174,8 +162,7 @@ public class MST
   /**
    * The usage routine which describes the program options.
    **/
-  private static final void usage()
-  {
+  private static final void usage() {
     System.err.println("usage: java MST -v <levels> [-p] [-m] [-h]");
     System.err.println("    -v the number of vertices in the graph");
     System.err.println("    -p (print the result>)");
@@ -183,35 +170,28 @@ public class MST
     System.err.println("    -h (this message)");
     System.exit(0);
   }
-
 }
 
 /**
  * Not really sure what this is for?
  **/
-class BlueReturn
-{
+class BlueReturn {
   private Vertex vert;
   private int dist;
 
-  public Vertex vert()
-    {
-      return vert;
-    }
+  public Vertex vert() {
+    return vert;
+  }
 
-  public void setVert(Vertex v)
-    {
-      vert = v;
-    }
+  public void setVert(Vertex v) {
+    vert = v;
+  }
 
-  public int dist()
-    {
-      return dist;
-    }
+  public int dist() {
+    return dist;
+  }
 
-  public void setDist(int d)
-    {
-      dist = d;
-    }
-
+  public void setDist(int d) {
+    dist = d;
+  }
 }

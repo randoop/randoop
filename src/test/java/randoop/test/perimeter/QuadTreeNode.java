@@ -2,8 +2,7 @@ package randoop.test.perimeter;
 /**
  * A class representing a node in the quad tree.
  **/
-public abstract class QuadTreeNode
-{
+public abstract class QuadTreeNode {
   /**
    * Variable used to determine the x-axis size of the image
    **/
@@ -51,8 +50,7 @@ public abstract class QuadTreeNode
    * @param quad childType if there's a parent, the type of child this node represents
    * @param parent the parent quad tree node
    **/
-  public QuadTreeNode(Quadrant quad, QuadTreeNode parent)
-  {
+  public QuadTreeNode(Quadrant quad, QuadTreeNode parent) {
     this(quad, null, null, null, null, parent);
   }
 
@@ -65,9 +63,13 @@ public abstract class QuadTreeNode
    * @param sw the node represent the southwest quadrant
    * @param se the node represent the southeast quadrant
    **/
-  private QuadTreeNode(Quadrant quad, QuadTreeNode nw, QuadTreeNode ne, 
-                       QuadTreeNode sw, QuadTreeNode se, QuadTreeNode parent)
-  {
+  private QuadTreeNode(
+      Quadrant quad,
+      QuadTreeNode nw,
+      QuadTreeNode ne,
+      QuadTreeNode sw,
+      QuadTreeNode se,
+      QuadTreeNode parent) {
     this.quadrant = quad;
     this.nw = nw;
     this.ne = ne;
@@ -84,35 +86,41 @@ public abstract class QuadTreeNode
    * @param sw the node represent the southwest quadrant
    * @param se the node represent the southeast quadrant
    **/
-  protected void setChildren(QuadTreeNode nw, QuadTreeNode ne, 
-                             QuadTreeNode sw, QuadTreeNode se)
-  {
+  protected void setChildren(QuadTreeNode nw, QuadTreeNode ne, QuadTreeNode sw, QuadTreeNode se) {
     this.nw = nw;
     this.ne = ne;
     this.sw = sw;
     this.se = se;
   }
-  
+
   /**
    * Return the node representing the north west quadrant.
    * @return the node representing the north west quadrant.
    **/
-  public final QuadTreeNode getNorthWest() { return nw; }
+  public final QuadTreeNode getNorthWest() {
+    return nw;
+  }
   /**
    * Return the node representing the north east quadrant.
    * @return the node representing the north east quadrant.
    **/
-  public final QuadTreeNode getNorthEast() { return ne; }
+  public final QuadTreeNode getNorthEast() {
+    return ne;
+  }
   /**
    * Return the node representing the south west quadrant.
    * @return the node representing the south west quadrant.
    **/
-  public final QuadTreeNode getSouthWest() { return sw; }
+  public final QuadTreeNode getSouthWest() {
+    return sw;
+  }
   /**
    * Return the node representing the south east quadrant.
    * @return the node representing the south east quadrant.
    **/
-  public final QuadTreeNode getSouthEast() { return se; }
+  public final QuadTreeNode getSouthEast() {
+    return se;
+  }
 
   /**
    * Create an image which is represented using a QuadTreeNode.
@@ -123,13 +131,12 @@ public abstract class QuadTreeNode
    * @param quadrant the quadrant that the sub tree is in
    * @param level the level of the tree
    **/
-  public static QuadTreeNode createTree(int size, int center_x, int center_y,
-                             QuadTreeNode parent, Quadrant quadrant, int level)
-  {
+  public static QuadTreeNode createTree(
+      int size, int center_x, int center_y, QuadTreeNode parent, Quadrant quadrant, int level) {
     QuadTreeNode node;
 
     int intersect = checkIntersect(center_x, center_y, size);
-    size = size/2;
+    size = size / 2;
     if (intersect == 0 && size < 512) {
       node = new WhiteNode(quadrant, parent);
     } else if (intersect == 2) {
@@ -139,14 +146,18 @@ public abstract class QuadTreeNode
         node = new BlackNode(quadrant, parent);
       } else {
         node = new GreyNode(quadrant, parent);
-        QuadTreeNode sw = createTree(size, center_x-size, center_y-size,
-                                     node, Quadrant.cSouthWest, level - 1);
-        QuadTreeNode se = createTree(size, center_x+size, center_y-size,
-                                     node, Quadrant.cSouthEast, level - 1);
-        QuadTreeNode ne = createTree(size, center_x+size, center_y+size,
-                                     node, Quadrant.cNorthEast, level - 1);
-        QuadTreeNode nw = createTree(size, center_x-size, center_y+size,
-                                     node, Quadrant.cNorthWest, level - 1);
+        QuadTreeNode sw =
+            createTree(
+                size, center_x - size, center_y - size, node, Quadrant.cSouthWest, level - 1);
+        QuadTreeNode se =
+            createTree(
+                size, center_x + size, center_y - size, node, Quadrant.cSouthEast, level - 1);
+        QuadTreeNode ne =
+            createTree(
+                size, center_x + size, center_y + size, node, Quadrant.cNorthEast, level - 1);
+        QuadTreeNode nw =
+            createTree(
+                size, center_x - size, center_y + size, node, Quadrant.cNorthWest, level - 1);
         node.setChildren(nw, ne, sw, se);
       }
     }
@@ -170,7 +181,7 @@ public abstract class QuadTreeNode
    * @param quad2 the second specified quadrant
    * @param size the size of the image represented by this node.
    * @return the perimeter of the adjacent nodes
-   **/  
+   **/
   abstract public int sumAdjacent(Quadrant quad1, Quadrant quad2, int size);
 
   /**
@@ -179,12 +190,11 @@ public abstract class QuadTreeNode
    * exist, then a grey node of equal size is returned.  Otherwise,
    * the node is adjacent to the border of the image and null is
    * returned.
-   * 
+   *
    * @param dir the direction of the neighbor
    * @return the appropriate neighbor based upon the direction, or null
    **/
-  public QuadTreeNode gtEqualAdjNeighbor(int dir)
-  {
+  public QuadTreeNode gtEqualAdjNeighbor(int dir) {
     QuadTreeNode q;
     if (parent != null && quadrant.adjacent(dir)) {
       q = parent.gtEqualAdjNeighbor(dir);
@@ -203,44 +213,40 @@ public abstract class QuadTreeNode
    * Count the number of leaves in the quad tree.
    * @return the number of leaves in the quad tree.
    **/
-  public int countTree()
-  {
+  public int countTree() {
     if (nw == null && ne == null && sw == null && se == null) {
       return 1;
     } else {
-      return sw.countTree() + se.countTree() + ne.countTree() +
-        nw.countTree();
+      return sw.countTree() + se.countTree() + ne.countTree() + nw.countTree();
     }
   }
 
-  private static int checkOutside(int x, int y)
-  {
-    int euclid = x*x+y*y;
+  private static int checkOutside(int x, int y) {
+    int euclid = x * x + y * y;
     if (euclid > gcmp) return 1;
     if (euclid < lcmp) return -1;
     return 0;
   }
-  
-  private static int checkIntersect(int center_x, int center_y, int size)
-  {
-    if (checkOutside(center_x+size, center_y+size) == 0 &&
-        checkOutside(center_x+size, center_y-size) == 0 &&
-        checkOutside(center_x-size, center_y-size) == 0 &&
-        checkOutside(center_x-size, center_y+size) == 0) 
-      return 2;
-    
-    int sum = checkOutside(center_x+size, center_y+size) +
-      checkOutside(center_x+size, center_y-size) +
-      checkOutside(center_x-size, center_y-size) +
-      checkOutside(center_x-size, center_y+size);
 
-    if ((sum==4) || (sum==-4)) return 0;
+  private static int checkIntersect(int center_x, int center_y, int size) {
+    if (checkOutside(center_x + size, center_y + size) == 0
+        && checkOutside(center_x + size, center_y - size) == 0
+        && checkOutside(center_x - size, center_y - size) == 0
+        && checkOutside(center_x - size, center_y + size) == 0) return 2;
+
+    int sum =
+        checkOutside(center_x + size, center_y + size)
+            + checkOutside(center_x + size, center_y - size)
+            + checkOutside(center_x - size, center_y - size)
+            + checkOutside(center_x - size, center_y + size);
+
+    if ((sum == 4) || (sum == -4)) return 0;
 
     return 1;
   }
 
   @Override
-public String toString() 
-  { 
-    return getClass().getName() + " " + quadrant.getClass().getName(); }
+  public String toString() {
+    return getClass().getName() + " " + quadrant.getClass().getName();
+  }
 }

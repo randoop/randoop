@@ -1,4 +1,3 @@
 package randoop.test;
 
-class A3 { }
-
+class A3 {}

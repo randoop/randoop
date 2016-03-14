@@ -3,16 +3,13 @@ package randoop.test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-
-
-
 /**
  * This class is used for running randoop's system tests.
- * It is added to the list of classes to explore, and 
+ * It is added to the list of classes to explore, and
  * provides methods that return Classes, Methods and
  * Constructors (several methods in randoop require such
  * objects as parameters).
- * 
+ *
  * See build.xml for running the system tests.
  *
  */

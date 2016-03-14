@@ -12,7 +12,8 @@ public final class PrimitiveTypes {
     throw new IllegalStateException("no instances");
   }
 
-  private static final Map<String, Class<?>> typeNameToBoxed = new LinkedHashMap<String, Class<?>>();
+  private static final Map<String, Class<?>> typeNameToBoxed =
+      new LinkedHashMap<String, Class<?>>();
 
   static {
     typeNameToBoxed.put("int", Integer.class);
@@ -26,7 +27,8 @@ public final class PrimitiveTypes {
     typeNameToBoxed.put(String.class.getName(), String.class);
   }
 
-  private static final Map<Class<?>, Class<?>> boxedToPrimitiveAndString = new LinkedHashMap<Class<?>, Class<?>>();
+  private static final Map<Class<?>, Class<?>> boxedToPrimitiveAndString =
+      new LinkedHashMap<Class<?>, Class<?>>();
 
   static {
     boxedToPrimitiveAndString.put(Integer.class, int.class);
@@ -40,7 +42,8 @@ public final class PrimitiveTypes {
     boxedToPrimitiveAndString.put(String.class, String.class);
   }
 
-  private static final Map<Class<?>, Class<?>> primitiveAndStringToBoxed = new LinkedHashMap<Class<?>, Class<?>>(8);
+  private static final Map<Class<?>, Class<?>> primitiveAndStringToBoxed =
+      new LinkedHashMap<Class<?>, Class<?>>(8);
 
   static {
     primitiveAndStringToBoxed.put(boolean.class, Boolean.class);
@@ -52,10 +55,11 @@ public final class PrimitiveTypes {
     primitiveAndStringToBoxed.put(long.class, Long.class);
     primitiveAndStringToBoxed.put(short.class, Short.class);
     primitiveAndStringToBoxed.put(String.class, String.class); // TODO remove
-                                                               // this hack!
+    // this hack!
   }
 
-  protected static final Map<String, Class<?>> typeNameToPrimitiveOrString = new LinkedHashMap<String, Class<?>>();
+  protected static final Map<String, Class<?>> typeNameToPrimitiveOrString =
+      new LinkedHashMap<String, Class<?>>();
 
   static {
     typeNameToPrimitiveOrString.put("void", void.class);
@@ -76,8 +80,7 @@ public final class PrimitiveTypes {
 
   public static Class<?> getBoxedType(String typeName) {
     Class<?> boxed = typeNameToBoxed.get(typeName);
-    if (boxed == null)
-      throw new IllegalArgumentException("not a primitive type:" + typeName);
+    if (boxed == null) throw new IllegalArgumentException("not a primitive type:" + typeName);
     return boxed;
   }
 
@@ -112,29 +115,24 @@ public final class PrimitiveTypes {
    * it is in Randoop).
    */
   public static boolean isPrimitive(Class<?> c) {
-    if (c == null)
-      throw new IllegalArgumentException("c cannot be null.");
+    if (c == null) throw new IllegalArgumentException("c cannot be null.");
     Boolean b = isPrimitiveCached.get(c);
     if (b == null) {
       b = c.isPrimitive();
       isPrimitiveCached.put(c, b);
     }
     return b;
-
   }
 
   public static boolean isBoxedOrPrimitiveOrStringType(Class<?> c) {
-    if (isPrimitive(c))
-      return true;
-    if (isBoxedPrimitiveTypeOrString(c))
-      return true;
+    if (isPrimitive(c)) return true;
+    if (isBoxedPrimitiveTypeOrString(c)) return true;
     return false;
   }
 
   /** Returns null if c is not a primitive or a boxed type. */
   public static Class<?> primitiveType(Class<? extends Object> c) {
-    if (c.isPrimitive())
-      return c;
+    if (c.isPrimitive()) return c;
     return boxedToPrimitiveAndString.get(c);
   }
 
@@ -162,8 +160,7 @@ public final class PrimitiveTypes {
       return "\"" + escaped + "\""; // + "/*length=" + escaped.length() + "*/"
     } else if (char.class.equals(valueClass)) {
       // XXX This won't always work!
-      if (value.equals(' '))
-        return "' '";
+      if (value.equals(' ')) return "' '";
       return "\'" + StringEscapeUtils.escapeJavaStyleString(value.toString(), true) + "\'";
 
     } else if (double.class.equals(valueClass)) {
@@ -178,8 +175,7 @@ public final class PrimitiveTypes {
       String rep = d.toString();
       assert rep != null;
       rep = rep + "d";
-      if (rep.charAt(0) == '-')
-        rep = "(" + rep + ")";
+      if (rep.charAt(0) == '-') rep = "(" + rep + ")";
       return rep;
 
     } else if (float.class.equals(valueClass)) {
@@ -194,8 +190,7 @@ public final class PrimitiveTypes {
       String rep = d.toString();
       assert rep != null;
       rep = rep + "f";
-      if (rep.charAt(0) == '-')
-        rep = "(" + rep + ")";
+      if (rep.charAt(0) == '-') rep = "(" + rep + ")";
       return rep;
 
     } else if (boolean.class.equals(valueClass)) {
@@ -206,23 +201,20 @@ public final class PrimitiveTypes {
     } else if (long.class.equals(valueClass)) {
 
       String rep = value.toString() + "L";
-      if (rep.charAt(0) == '-')
-        rep = "(" + rep + ")";
+      if (rep.charAt(0) == '-') rep = "(" + rep + ")";
       return rep;
 
     } else if (byte.class.equals(valueClass)) {
 
       String rep = value.toString();
-      if (rep.charAt(0) == '-')
-        rep = "(" + rep + ")";
+      if (rep.charAt(0) == '-') rep = "(" + rep + ")";
       rep = "(byte)" + rep;
       return rep;
 
     } else if (short.class.equals(valueClass)) {
 
       String rep = value.toString();
-      if (rep.charAt(0) == '-')
-        rep = "(" + rep + ")";
+      if (rep.charAt(0) == '-') rep = "(" + rep + ")";
       rep = "(short)" + rep;
       return rep;
 
@@ -231,10 +223,8 @@ public final class PrimitiveTypes {
 
       // We don't need to cast an int.
       String rep = value.toString();
-      if (rep.charAt(0) == '-')
-        rep = "(" + rep + ")";
+      if (rep.charAt(0) == '-') rep = "(" + rep + ")";
       return rep;
-
     }
   }
 
@@ -250,12 +240,12 @@ public final class PrimitiveTypes {
    * Object.toString(); in other words, looks something like
    * "&lt;classname&gt;@&lt;hex&gt;". Such strings are rarely useful in
    * generation because they contain non-reproducible hash strings.
-   * 
+   *
    * This method is actually more restrictive in what it determines to look like
    * it came from Object.toString(): it deems anything that matches the pattern
-   * 
+   *
    * .*@[0-9a-h]{1,8}.*
-   * 
+   *
    * Meaning, if it looks like the string contains the telltale "@&lt;hex&gt;"
    * pattern, the method returns false. This almost always works and is a faster
    * check.
@@ -332,5 +322,4 @@ public final class PrimitiveTypes {
   public static Class<?> getClassForName(String typeName) {
     return typeNameToPrimitiveOrString.get(typeName);
   }
-
 }

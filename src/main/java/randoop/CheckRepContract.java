@@ -27,13 +27,10 @@ public final class CheckRepContract implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null)
-      return false;
-    if (o == this)
-      return true;
+    if (o == null) return false;
+    if (o == this) return true;
     if (!(o instanceof CheckRepContract)) {
       return false; // I collected the results of get_value()
-
     }
     CheckRepContract other = (CheckRepContract) o;
     return checkRepMethod.equals(other.checkRepMethod);
@@ -131,5 +128,4 @@ public final class CheckRepContract implements ObjectContract {
   private Object writeReplace() throws ObjectStreamException {
     return new SerializableCheckRepContract(checkRepMethod);
   }
-
 }

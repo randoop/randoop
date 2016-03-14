@@ -24,5 +24,4 @@ public final class DummyVisitor implements ExecutionVisitor {
   public void visitAfterSequence(ExecutableSequence executableSequence) {
     // do nothing
   }
-
 }

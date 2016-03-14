@@ -39,7 +39,9 @@ public class ClassHierarchyTests extends TestCase {
     Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
     classes.addAll(ClassHierarchy.superClassClosure(LinkedHashSet.class));
     ClassHierarchy h = new ClassHierarchy(classes);
-    assertTrue(h.superClasses(java.util.Set.class).toString(), h.superClasses(java.util.Set.class).contains(Iterable.class));
+    assertTrue(
+        h.superClasses(java.util.Set.class).toString(),
+        h.superClasses(java.util.Set.class).contains(Iterable.class));
     assertTrue(!h.superClasses(java.util.Set.class).contains(LinkedHashSet.class));
     assertTrue(h.subClasses(java.util.Set.class).contains(LinkedHashSet.class));
     assertTrue(!h.subClasses(java.util.Set.class).contains(Cloneable.class));

@@ -15,11 +15,9 @@ public class Main {
   public static List<CommandHandler> handlers;
 
   static {
-
     handlers = new ArrayList<CommandHandler>();
     handlers.add(new GenTests());
     handlers.add(new Help());
-
   }
 
   // The main method simply calls nonStaticMain.
@@ -33,13 +31,11 @@ public class Main {
   // The real entry point of Main.
   public void nonStaticMain(String[] args) {
 
-    if (args.length == 0)
-      args = new String[] { "help" };
+    if (args.length == 0) args = new String[] {"help"};
 
     String command = args[0];
     String[] args2 = new String[args.length - 1];
-    for (int i = 1; i < args.length; i++)
-      args2[i - 1] = args[i];
+    for (int i = 1; i < args.length; i++) args2[i - 1] = args[i];
 
     // Figure out which handler handles this command.
     CommandHandler handler = null;

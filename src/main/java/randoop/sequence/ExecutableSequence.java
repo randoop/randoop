@@ -133,10 +133,10 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-  * Create an executable sequence that executes the given sequence.
-  *
-  * @param sequence  the underlying sequence for this executable sequence
-  */
+   * Create an executable sequence that executes the given sequence.
+   *
+   * @param sequence  the underlying sequence for this executable sequence
+   */
   public ExecutableSequence(Sequence sequence) {
     this.sequence = sequence;
     this.executionResults = new Execution(sequence);
@@ -165,8 +165,7 @@ public class ExecutableSequence implements Serializable {
       sequence.appendCode(b, i);
       // It's a bit confusing, but the commented execution results refer
       // to the statement ABOVE, not below as is standard for comments.
-      if (executionResults.size() > i)
-        b.append(executionResults.get(i).toString());
+      if (executionResults.size() > i) b.append(executionResults.get(i).toString());
       if ((i == sequence.size() - 1) && (checks != null)) {
         Map<Check, Boolean> ckMap = checks.get();
         for (Map.Entry<Check, Boolean> entry : ckMap.entrySet()) {
@@ -254,10 +253,10 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
-  * Return the code representation of the i'th statement.
-  * @param i  the statement index
-  * @return the string representation of the statement
-  */
+   * Return the code representation of the i'th statement.
+   * @param i  the statement index
+   * @return the string representation of the statement
+   */
   public String statementToCodeString(int i) {
     StringBuilder oneStatement = new StringBuilder();
     sequence.appendCode(oneStatement, i);
@@ -342,22 +341,25 @@ public class ExecutableSequence implements Serializable {
           // exception occurred
           break;
         } else {
-          String msg = "Encountered exception before final statement of error-revealing test (statement " + i + "): ";
-          throw new Error(msg + ((ExceptionalExecution) statementResult).getException().getMessage());
+          String msg =
+              "Encountered exception before final statement of error-revealing test (statement "
+                  + i
+                  + "): ";
+          throw new Error(
+              msg + ((ExceptionalExecution) statementResult).getException().getMessage());
         }
       }
 
       visitor.visitAfterStatement(this, i);
-
     }
 
     visitor.visitAfterSequence(this);
 
     checks = gen.visit(this);
-
   }
 
-  public Object[] getRuntimeInputs(Sequence s, List<ExecutionOutcome> outcome, int i, List<Variable> inputs) {
+  public Object[] getRuntimeInputs(
+      Sequence s, List<ExecutionOutcome> outcome, int i, List<Variable> inputs) {
 
     Object[] ros = getRuntimeValuesForVars(inputs, outcome);
 
@@ -386,11 +388,13 @@ public class ExecutableSequence implements Serializable {
     return getRuntimeValuesForVars(vars, execution.theList);
   }
 
-  protected static Object[] getRuntimeValuesForVars(List<Variable> vars, List<ExecutionOutcome> execution) {
+  protected static Object[] getRuntimeValuesForVars(
+      List<Variable> vars, List<ExecutionOutcome> execution) {
     Object[] runtimeObjects = new Object[vars.size()];
     for (int j = 0; j < runtimeObjects.length; j++) {
       int creatingStatementIdx = vars.get(j).getDeclIndex();
-      assert execution.get(creatingStatementIdx) instanceof NormalExecution : execution.get(creatingStatementIdx).getClass();
+      assert execution.get(creatingStatementIdx) instanceof NormalExecution
+          : execution.get(creatingStatementIdx).getClass();
       NormalExecution ne = (NormalExecution) execution.get(creatingStatementIdx);
       runtimeObjects[j] = ne.getRuntimeValue();
     }
@@ -399,7 +403,8 @@ public class ExecutableSequence implements Serializable {
 
   // Execute the index-th statement in the sequence.
   // Precondition: this method has been invoked on 0..index-1.
-  public static void executeStatement(Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
+  public static void executeStatement(
+      Sequence s, List<ExecutionOutcome> outcome, int index, Object[] inputVariables) {
     Statement statement = s.getStatement(index);
 
     // Capture any output Synchronize with ProgressDisplay so that
@@ -491,8 +496,7 @@ public class ExecutableSequence implements Serializable {
 
   public int getNonNormalExecutionIndex() {
     for (int i = 0; i < this.sequence.size(); i++) {
-      if (!isNormalExecution(i))
-        return i;
+      if (!isNormalExecution(i)) return i;
     }
     return -1;
   }
@@ -508,8 +512,7 @@ public class ExecutableSequence implements Serializable {
    * @return the statement index where an exception was thrown
    */
   public int exceptionIndex() {
-    if (!throwsException())
-      throw new RuntimeException("Execution does not throw an exception");
+    if (!throwsException()) throw new RuntimeException("Execution does not throw an exception");
     for (int i = 0; i < this.sequence.size(); i++) {
       if (this.getResult(i) instanceof ExceptionalExecution) {
         return i;
@@ -530,8 +533,7 @@ public class ExecutableSequence implements Serializable {
     for (int i = 0; i < this.sequence.size(); i++)
       if ((getResult(i) instanceof ExceptionalExecution)) {
         ExceptionalExecution e = (ExceptionalExecution) getResult(i);
-        if (Reflection.canBeUsedAs(e.getException().getClass(), exceptionClass))
-          return i;
+        if (Reflection.canBeUsedAs(e.getException().getClass(), exceptionClass)) return i;
       }
     return -1;
   }
@@ -552,8 +554,7 @@ public class ExecutableSequence implements Serializable {
    */
   public boolean throwsException() {
     for (int i = 0; i < this.sequence.size(); i++)
-      if (getResult(i) instanceof ExceptionalExecution)
-        return true;
+      if (getResult(i) instanceof ExceptionalExecution) return true;
     return false;
   }
 
@@ -576,8 +577,7 @@ public class ExecutableSequence implements Serializable {
     // Starting from the end of the sequence is always faster to find
     // non-executed statements.
     for (int i = this.sequence.size() - 1; i >= 0; i--)
-      if (getResult(i) instanceof NotExecuted)
-        return i;
+      if (getResult(i) instanceof NotExecuted) return i;
     return -1;
   }
 
@@ -596,15 +596,11 @@ public class ExecutableSequence implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof ExecutableSequence))
-      return false;
+    if (!(obj instanceof ExecutableSequence)) return false;
     ExecutableSequence that = (ExecutableSequence) obj;
-    if (!this.sequence.equals(that.sequence))
-      return false;
-    if (this.checks == null)
-      return (that.checks == null);
-    if (!this.checks.equals(that.checks))
-      return false;
+    if (!this.sequence.equals(that.sequence)) return false;
+    if (this.checks == null) return (that.checks == null);
+    if (!this.checks.equals(that.checks)) return false;
 
     return true;
   }
@@ -662,5 +658,4 @@ public class ExecutableSequence implements Serializable {
   public boolean coversClass(Class<?> c) {
     return executionResults.getCoveredClasses().contains(c);
   }
-
 }

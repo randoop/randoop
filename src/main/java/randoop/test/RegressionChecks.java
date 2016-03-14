@@ -13,7 +13,7 @@ import randoop.ExceptionCheck;
 public class RegressionChecks implements TestChecks, Serializable {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = -4118240133477960983L;
 
@@ -47,7 +47,10 @@ public class RegressionChecks implements TestChecks, Serializable {
   public void add(Check check) {
     if (check instanceof ExceptionCheck) {
       if (exceptionCheck != null) {
-        throw new IllegalArgumentException("Sequence already has a check" + " of type " + exceptionCheck.getClass().getCanonicalName());
+        throw new IllegalArgumentException(
+            "Sequence already has a check"
+                + " of type "
+                + exceptionCheck.getClass().getCanonicalName());
       }
       exceptionCheck = (ExceptionCheck) check;
     } else {
@@ -57,7 +60,7 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return map of non-exception checks in this object, all of which are
    *         passing
    */
@@ -72,7 +75,7 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return true if there are regression checks or an expected exception, false
    *         otherwise
    */
@@ -83,7 +86,7 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc}
-   * 
+   *
    * @return false, since all regression checks are passing
    */
   @Override
@@ -139,7 +142,7 @@ public class RegressionChecks implements TestChecks, Serializable {
 
   /**
    * {@inheritDoc} Returns false because regression checks are not invalid.
-   * 
+   *
    * @return false, always
    */
   @Override

@@ -60,27 +60,22 @@ public class SubTypeSet {
   }
 
   public void add(Class<?> c) {
-    if (c == null)
-      throw new IllegalArgumentException("c cannot be null.");
-    if (typesWithsequences.contains(c))
-      return;
+    if (c == null) throw new IllegalArgumentException("c cannot be null.");
+    if (typesWithsequences.contains(c)) return;
     typesWithsequences.add(c);
 
     // Update existing entries.
     for (Class<?> cls : subTypesWithsequences.keySet()) {
       if (Reflection.canBeUsedAs(c, cls)) {
-        if (!subTypesWithsequences.getValues(cls).contains(c))
-          subTypesWithsequences.add(cls, c);
+        if (!subTypesWithsequences.getValues(cls).contains(c)) subTypesWithsequences.add(cls, c);
       }
     }
   }
 
   private void addQueryType(Class<?> c) {
-    if (c == null)
-      throw new IllegalArgumentException("c cannot be null.");
+    if (c == null) throw new IllegalArgumentException("c cannot be null.");
     Set<Class<?>> keySet = subTypesWithsequences.keySet();
-    if (keySet.contains(c))
-      return;
+    if (keySet.contains(c)) return;
 
     Set<Class<?>> classesWithsequencesForC = new LinkedHashSet<Class<?>>();
     for (Class<?> classWithsequence : typesWithsequences.getElements()) {
@@ -129,8 +124,7 @@ public class SubTypeSet {
       addQueryType(c);
     }
 
-    if (typesWithsequences.contains(c))
-      return true;
+    if (typesWithsequences.contains(c)) return true;
 
     if (match == Reflection.Match.COMPATIBLE_TYPE) {
       return !subTypesWithsequences.getValues(c).isEmpty();
@@ -145,5 +139,4 @@ public class SubTypeSet {
   public Set<Class<?>> getElements() {
     return typesWithsequences.getElements();
   }
-
 }
