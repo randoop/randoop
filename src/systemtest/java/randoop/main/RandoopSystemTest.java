@@ -109,7 +109,7 @@ public class RandoopSystemTest {
     options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
     options.add("--omit-field-list=resources/systemTest/testclassomitfields.txt");
 
-    long timeout = 8000L;
+    long timeout = 9000L;
     RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options, timeout);
 
     assertThat("...has regression tests", randoopRunDesc.regressionTestCount, is(greaterThan(0)));
@@ -206,7 +206,7 @@ public class RandoopSystemTest {
     options.add("--classlist=resources/systemTest/buggyclasses.txt");
     options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
 
-    long timeout = 18000L;
+    long timeout = 19000L;
 
     RandoopRunDescription randoopRunDesc = generateAndCompile(classpath, workingPath, packageName, regressionBasename, errorBasename, options, timeout);
 
