@@ -1431,8 +1431,10 @@ then we say the test is <i>flaky</i>.
 </p>
 
 <p>
-Flaky tests are usually due to Randoop calling a method that has global
-side effects.  Such methods are not appropriate for randomly-generated
+Flaky tests are usually due to global side effects, such as setting a
+static field; a Randoop-generated test might set the field directly or call
+a method that sets the field.
+Such methods are not appropriate for randomly-generated
 tests, and so you should not call Randoop on such methods.  Calling Randoop
 on a method that side-effects local state, such as a field of the receiver
 or of an argument, is fine.
@@ -1499,6 +1501,16 @@ or you can avoid calling Randoop on methods with global side effects as
 described in the section on <a href="#flaky-tests">flaky tests</a>.
 </p>
 
+<p>
+Another possible symptom is that if you run Randoop's tests and then your
+original test suite, the original test suite might fail because of side
+effects performed by Randoop's tests.
+To avoid this problem, you can run Randoop's tests in a separate JVM, or
+run Randoop's tests last, or avoid calling Randoop on methods with global
+side effects as described in the section on <a href="#flaky-tests">flaky
+tests</a>.
+</p>
+
 
 <!-- <h2 id="faq">FAQ: Frequently Asked Questions (and common problems)</h2> -->
 <!-- <h3 id="q1">How do I determine what "helper" classes to add?</h3> -->
@@ -1539,5 +1551,5 @@ described in the section on <a href="#flaky-tests">flaky tests</a>.
  -->
 <!--  LocalWords:  test10 var1 var2 s2 a1 ErrorTest RegressionTest o3 sgn
  -->
-<!--  LocalWords:  npe a' c' subtests
+<!--  LocalWords:  npe a' c' subtests AssertionError basename
  -->
