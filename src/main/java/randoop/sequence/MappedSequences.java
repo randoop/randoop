@@ -28,7 +28,7 @@ public class MappedSequences<T> {
    * Adds a sequence to the set of sequences associated with the given key.
    *
    * @param key  the key value
-   * @param seq  the sequence 
+   * @param seq  the sequence
    */
   public void addSequence(T key, Sequence seq) {
     if (seq == null)
@@ -46,6 +46,9 @@ public class MappedSequences<T> {
   /**
    * Returns the set of sequences (as a list) that are associated with the given
    * key and create values of the desiredType.
+   *
+   * @param key  the key value
+   * @param desiredType  the query type  
    */
   public SimpleList<Sequence> getSequences(T key, Class<?> desiredType) {
     if (key == null)
