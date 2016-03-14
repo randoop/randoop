@@ -13,11 +13,12 @@ public class ObjectContractUtils {
 
   /**
    * Executes the given contract via reflection.
-   * 
+   *
    * @param c
    *          the contract to execute.
    * @param objs
    *          the list of values to substitute for variables.
+   * @return the outcome from the execution
    */
   public static ExecutionOutcome execute(final ObjectContract c, final Object... objs) {
     ReflectionCode refl = new ReflectionCode() {
@@ -65,7 +66,7 @@ public class ObjectContractUtils {
 
   /**
    * Replace dummy variables such as "x0" in the code by their real names.
-   * 
+   *
    * @param str
    *          the contract code as a string with dummy variables.
    * @param vars

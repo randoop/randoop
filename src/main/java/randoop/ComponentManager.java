@@ -165,6 +165,8 @@ public class ComponentManager {
    * values of cls or any other class that can be used as a cls (i.e. a subclass
    * of cls).
    *
+   * @param cls  the query type
+   * @param exactMatch  the flag whether or not to use subtyping in type matching
    *@return the sequences that create values of the given type
    */
   public SimpleList<Sequence> getSequencesForType(Class<?> cls, boolean exactMatch) {
@@ -175,6 +177,10 @@ public class ComponentManager {
    * Returns component sequences that create values of the type required by the
    * i-th input value of the given statement. Any applicable class- or
    * package-level literals, those are added to the collection as well.
+   *
+   * @param statement  the statement
+   * @param i  the input value index of statement
+   * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
   public SimpleList<Sequence> getSequencesForType(Operation statement, int i) {
@@ -219,6 +225,8 @@ public class ComponentManager {
    * Returns all sequences that represent primitive values (e.g. sequences like
    * "Foo var0 = null" or "int var0 = 1"), including general components, class
    * literals and package literals.
+   *
+   * @return the sequences for primitive values 
    */
   public Set<Sequence> getAllPrimitiveSequences() {
 

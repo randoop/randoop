@@ -7,7 +7,7 @@ import randoop.util.PrimitiveTypes;
 import randoop.util.Util;
 
 /**
- * 
+ *
  * A check recording the value that an observer method returned during
  * execution, e.g. a check recording that a collection's <code>size()</code>
  * method returned <code>3</code> when called in particular sequence.
@@ -109,6 +109,10 @@ public final class ObserverEqValue implements ObjectContract {
   /**
    * Create an ObserverEqValue from its basic parts (used when reading from a
    * serialized file).
+   *
+   * @param method  the observer methodname
+   * @param val  the value exoected to be returned by the method
+   * @return a check that the observer method returns the value
    */
   public static ObserverEqValue getObserverEqValue(Method method, Object val) {
     return new ObserverEqValue(method, val);

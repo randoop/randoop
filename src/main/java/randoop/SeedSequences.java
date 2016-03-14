@@ -31,6 +31,8 @@ public final class SeedSequences {
   /**
    * A set of sequences that create primitive values, e.g. int i = 0; or String
    * s = "hi";
+   *
+   * @return the default set of seed sequences
    */
   public static Set<Sequence> defaultSeeds() {
     List<Object> seeds = new ArrayList<Object>(primitiveSeeds);
@@ -40,6 +42,9 @@ public final class SeedSequences {
   /**
    * Precondition: objs consists exclusively of boxed primitives and strings.
    * Returns a set of sequences that create the given objects.
+   *
+   * @param objs  a collection of primitive types
+   * @return a set of sequences that create objects of given types
    */
   public static Set<Sequence> objectsToSeeds(Collection<Object> objs) {
     Set<Sequence> retval = new LinkedHashSet<Sequence>();
@@ -72,7 +77,7 @@ public final class SeedSequences {
    * declare a primitive type (or String), or an array of such types. It returns
    * a set of statement sequences corresponding to the values collected from the
    * annotated fields.
-   * 
+   *
    * @param classes
    *          A collection of classes containing @TestValue annotation on one or
    *          more static fields.

@@ -22,6 +22,10 @@ public class HelperSequenceCreator {
    *
    * CURRENTLY, will return a sequence (i.e. a non-empty list) only if cls is an
    * array.
+   *
+   * @param components  the component manager with existing sequences 
+   * @param cls  the query type
+   * @return the singleton list containing the compatible sequence
    */
   public static SimpleList<Sequence> createSequence(ComponentManager components, Class<?> cls) {
 
