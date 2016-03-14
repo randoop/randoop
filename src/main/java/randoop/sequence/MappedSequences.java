@@ -26,6 +26,9 @@ public class MappedSequences<T> {
 
   /**
    * Adds a sequence to the set of sequences associated with the given key.
+   *
+   * @param key  the key value
+   * @param seq  the sequence 
    */
   public void addSequence(T key, Sequence seq) {
     if (seq == null)
@@ -64,7 +67,7 @@ public class MappedSequences<T> {
 
   /**
    * Returns all sequences as the union of all of the sequence collections.
-   * 
+   *
    * @return the set of all sequence objects in this set of collections.
    */
   public Set<Sequence> getAllSequences() {

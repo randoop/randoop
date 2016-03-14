@@ -152,8 +152,9 @@ public class Instrument implements ClassFileTransformer {
   }
 
   /**
-   * Given another class, return a transformed version of the class which
-   * replaces specified calls with alternative static implementations
+   * {@inheritDoc}
+   * Transforms class by replacing calls to methods with corresponding calls
+   * defined in this class.
    */
   @Override
   public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer)
@@ -322,6 +323,9 @@ public class Instrument implements ClassFileTransformer {
 
   /**
    * Instrument the specified method to replace mapped calls.
+   *
+   * @param m  the method to transform
+   * @param mg  the method generator
    */
   public void instrument_method(Method m, MethodGen mg) {
 
@@ -409,7 +413,11 @@ public class Instrument implements ClassFileTransformer {
 
   /**
    * Replace instruction ih in list il with the instructions in new_il. If
-   * new_il is null, do nothing
+   * new_il is null, do nothing.
+   *
+   * @param il  the instruction list
+   * @param ih  the instruction
+   * @param new_il the new instructions to substitute
    */
   protected static void replace_instructions(InstructionList il, InstructionHandle ih, InstructionList new_il) {
 
@@ -479,7 +487,10 @@ public class Instrument implements ClassFileTransformer {
   }
 
   /**
-   * Returns the attribute name for the specified attribute
+   * Returns the attribute name for the specified attribute.
+   *
+   * @param a  the attribute
+   * @return the name for the attribute
    */
   public String get_attribute_name(Attribute a) {
 
@@ -566,6 +577,9 @@ public class Instrument implements ClassFileTransformer {
    * a call to new-method-name with the same arguments in any classfile that
    * matches the regular expressions. All method names and argument types should
    * be fully-qualified.
+   *
+   * @param map_file  the file with map of method substitutions
+   * @throws IOException if file has missing regex 
    */
   public void read_map_file(File map_file) throws IOException {
 

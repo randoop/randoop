@@ -28,6 +28,8 @@ public final class Execution {
   /**
    * Create an Execution to store the execution results of the given sequence.
    * The list of outcomes is initialized to NotExecuted for every statement.
+   *
+   * @param owner  the executed sequence
    */
   public Execution(Sequence owner) {
     this.owner = owner;
@@ -42,13 +44,20 @@ public final class Execution {
    * Construct an Execution directly from the given arguments.
    *
    * Do not use this constructor! (Unless you know what you're doing.)
+   *
+   * @param owner  the executed Sequence
+   * @param theList  the list of statement outcomes
    */
   public Execution(Sequence owner, List<ExecutionOutcome> theList) {
     this.owner = owner;
     this.theList = theList;
   }
 
-  /** The size of the list. */
+  /**
+  * The size of the list.
+  *
+  * @return the size of the list
+  */
   public int size() {
     return theList.size();
   }
@@ -62,7 +71,12 @@ public final class Execution {
     theList.set(i, outcome);
   }
 
-  /** Get the outcome in the i-th slot. */
+  /**
+  * Get the outcome in the i-th slot.
+  *
+  * @param i  the statement position
+  * @return the outcome of the ith statement
+  */
   public ExecutionOutcome get(int i) {
     if (i < 0 || i >= theList.size())
       throw new IllegalArgumentException("wrong index.");

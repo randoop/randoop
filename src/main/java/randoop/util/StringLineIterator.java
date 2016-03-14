@@ -21,6 +21,8 @@ public class StringLineIterator {
 
   /**
    * True if there are more words remaining.
+   *
+   * @return true if there are more words, false otherwise
    */
   public boolean hasMoreWords() {
     return this.words.size() > 0;
@@ -30,9 +32,12 @@ public class StringLineIterator {
    * Returns a line of words, ensuring that the length of the line is no greater
    * than the given length. If such a line is not possible, returns an empty
    * String.
-   * 
+   *
    * Note that if length is always too small for the iterator to make progress
    * by returning non-empty lines, the iterator will not terminate.
+   *
+   * @param length  the maximum line length
+   * @return the next line of words, no longer than maxium length 
    */
   public String nextLine(int length) {
     if (length < 0)

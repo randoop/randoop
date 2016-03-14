@@ -25,6 +25,8 @@ public class Timer {
 
   /**
    * The state of the timer. True means it's running, false means it's stopped.
+   *
+   * @return true if this timer is running, false otherwise
    */
   public boolean isRunning() {
     return this.running;
@@ -32,7 +34,6 @@ public class Timer {
 
   /**
    * Start counting testtime.
-   *
    */
   public void startTiming() {
     if (this.running)
@@ -54,6 +55,8 @@ public class Timer {
 
   /**
    * The total testtime elapsed.
+   *
+   * @return the elapsed time in milliseconds
    */
   public long getTimeElapsedMillis() {
     if (this.running) {

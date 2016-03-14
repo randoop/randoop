@@ -132,7 +132,11 @@ public class ExecutableSequence implements Serializable {
     this.executionResults = new Execution(sequence);
   }
 
-  /** Create an executable sequence that executes the given sequence. */
+  /**
+  * Create an executable sequence that executes the given sequence.
+  *
+  * @param sequence  the underlying sequence for this executable sequence
+  */
   public ExecutableSequence(Sequence sequence) {
     this.sequence = sequence;
     this.executionResults = new Execution(sequence);
@@ -143,6 +147,10 @@ public class ExecutableSequence implements Serializable {
    * Create an executable sequence directly using the given arguments.
    *
    * Don't use this constructor! (Unless you know what you're doing.)
+   *
+   * @param sequence  the base sequence of this object
+   * @param exec  the execution for this sequences
+   * @param checks over the sequence
    */
   public ExecutableSequence(Sequence sequence, Execution exec, TestChecks checks) {
     this.sequence = sequence;
@@ -177,7 +185,9 @@ public class ExecutableSequence implements Serializable {
    * Returns an id based on the contents of the sequence alone. The id will
    * match for any identical sequences (no matter how they are constructed).
    * Used for debugging
-   **/
+   *
+   * @return the ID for the sequence
+   */
   public int seq_id() {
     StringBuilder b = new StringBuilder();
     for (int i = 0; i < sequence.size(); i++) {
@@ -205,6 +215,8 @@ public class ExecutableSequence implements Serializable {
    * {@link randoop.ExceptionCheck}, that check's pre-statement code is printed
    * immediately before the statement, and its post-statement code is printed
    * immediately after the statement.
+   *
+   * @return the sequence as a string
    */
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
@@ -241,7 +253,11 @@ public class ExecutableSequence implements Serializable {
     return b.toString();
   }
 
-  /** Return the code representation of the i'th statement. */
+  /**
+  * Return the code representation of the i'th statement.
+  * @param i  the statement index
+  * @return the string representation of the statement
+  */
   public String statementToCodeString(int i) {
     StringBuilder oneStatement = new StringBuilder();
     sequence.appendCode(oneStatement, i);
@@ -253,6 +269,8 @@ public class ExecutableSequence implements Serializable {
    *
    * @param visitor
    *          the {@code ExecutionVistior} that collects checks from results
+   * @param gen
+   *          the check generator for tests
    */
   public void execute(ExecutionVisitor visitor, TestCheckGenerator gen) {
     execute(visitor, gen, true);
@@ -285,6 +303,10 @@ public class ExecutableSequence implements Serializable {
    *
    * @param visitor
    *          the {@code ExecutionVisitor}
+   * @param gen
+   *          the check generator
+   * @param ignoreException
+   *          the flag to indicate exceptions should be ignored
    */
   public void execute(ExecutionVisitor visitor, TestCheckGenerator gen, boolean ignoreException) {
 
@@ -411,6 +433,9 @@ public class ExecutableSequence implements Serializable {
    * This method is typically used by ExecutionVisitors.
    *
    * The result of executing the i-th element of the sequence.
+   *
+   * @param index the statement index
+   * @return the outcome of the statement at index
    */
   public ExecutionOutcome getResult(int index) {
     sequence.checkIndex(index);
@@ -456,6 +481,7 @@ public class ExecutableSequence implements Serializable {
   /**
    * This method is typically used by ExecutionVisitors.
    *
+   * @param i  the statement index to test for normal execution
    * @return true if execution of the i-th statement terminated normally
    */
   public boolean isNormalExecution(int i) {
@@ -478,6 +504,8 @@ public class ExecutableSequence implements Serializable {
   /**
    * Returns the index i for which this.isExceptionalExecution(i), or -1 if
    * there is no such index.
+   *
+   * @return the statement index where an exception was thrown
    */
   public int exceptionIndex() {
     if (!throwsException())
@@ -491,6 +519,7 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
+   * @param exceptionClass  the exception thrown
    * @return The index in the sequence at which an exception of the given class
    *         (or a class compatible with it) was thrown. If no such exception,
    *         returns -1.
@@ -508,6 +537,7 @@ public class ExecutableSequence implements Serializable {
   }
 
   /**
+   * @param exceptionClass  the exception class
    * @return True if an exception of the given class (or a class compatible with
    *         it) has been thrown during this sequence's execution.
    */
@@ -530,6 +560,8 @@ public class ExecutableSequence implements Serializable {
   /**
    * Returns whether the sequence contains a non-executed statement. That
    * happens if some statement before the last one throws an exception.
+   *
+   * @return true if this sequence has non-executed statements, false otherwise
    */
   public boolean hasNonExecutedStatements() {
     return getNonExecutedIndex() != -1;
