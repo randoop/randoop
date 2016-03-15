@@ -2,8 +2,6 @@ package randoop.types;
 
 import plume.UtilMDE;
 
-import randoop.util.PrimitiveTypes;
-
 /**
  * TypeNames provides a pair of static methods to:
  * <ul>
