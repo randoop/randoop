@@ -12,6 +12,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import randoop.types.PrimitiveTypes;
+
 import plume.Pair;
 
 /**
@@ -176,8 +178,8 @@ public final class Reflection {
       }
     }
 
-    if (c1.isPrimitive()) c1 = PrimitiveTypes.boxedType(c1);
-    if (c2.isPrimitive()) c2 = PrimitiveTypes.boxedType(c2);
+    if (c1.isPrimitive()) c1 = PrimitiveTypes.toBoxedType(c1);
+    if (c2.isPrimitive()) c2 = PrimitiveTypes.toBoxedType(c2);
 
     boolean ret = false;
 

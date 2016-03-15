@@ -71,7 +71,7 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
 
     if (t.isPrimitive()) {
       if (o == null) throw new IllegalArgumentException("primitive-like values cannot be null.");
-      if (!PrimitiveTypes.boxedType(t).equals(o.getClass()))
+      if (!PrimitiveTypes.toBoxedType(t).equals(o.getClass()))
         throw new IllegalArgumentException("o.getClass()=" + o.getClass() + ",t=" + t);
       if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(o.getClass()))
         throw new IllegalArgumentException("o is not a primitive-like value.");
