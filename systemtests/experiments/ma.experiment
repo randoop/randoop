@@ -1,5 +1,0 @@
-CLASS_DIR=src/math/src/java
-AUX_JARS_DIR=src/math/target/lib
-CLASS_OMIT=
-METHOD_OMIT=nextSecureHexString\|nextPoisson\|binomialCoefficient\|cumulativeProbability
-USETHREADS=false

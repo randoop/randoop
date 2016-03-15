@@ -1,7 +1,0 @@
-Extension-Name: @name@
-Specification-Title: Jakarta Commons Primitives
-Specification-Vendor: Apache Software Foundation
-Specification-Version: 1.1
-Implementation-Vendor: Apache Software Foundation
-Implementation-Title: org.apache.commons.primitives
-Implementation-Version: @version@

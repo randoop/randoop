@@ -1,5 +1,0 @@
-CLASS_DIR=src/jelly/src/java
-AUX_JARS_DIR=src/jelly/target/lib
-CLASS_OMIT=XMLParser|JellyServlet|CommandLineParser|JellyContext|jelly.Jelly$
-METHOD_OMIT=findAncestorWithClass
-USETHREADS=false

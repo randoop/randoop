@@ -1,9 +1,0 @@
-# maschines file for jas for junit tests
-
-localhost:4712   # first host is master on different local port
-localhost:4711   # second host with port
-localhost:4711   # third host with port
-localhost:4711   # last host with port
-#localhost:4711  # ignored host 
-
-# eof
