@@ -5,6 +5,7 @@ import java.util.List;
 import randoop.sequence.Variable;
 import randoop.types.GeneralType;
 import randoop.types.GenericType;
+import randoop.types.GenericTypeTuple;
 import randoop.types.Substitution;
 
 public class GenericArrayCreation extends GenericOperation {

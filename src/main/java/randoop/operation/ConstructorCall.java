@@ -15,6 +15,7 @@ import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.GeneralType;
 import randoop.types.TypeNames;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.ReflectionExecutor;
