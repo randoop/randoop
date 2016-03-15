@@ -1,14 +1,7 @@
-This file lists the jar files and how they were obtained.
-The jar files were last updated on:  2/23/2016
-
-javassist.jar:
-  https://github.com/jboss-javassist/javassist/releases ; version 3.20.0
-  (Don't use the javassist.jar that is checked into the repository; as of
-  2/5/2016, it uses Java 8 class files and is unusable on a Java 7 JVM.)
-
-junit-4.12.jar:
-  http://search.maven.org/#search%7Cgav%7C1%7Cg:%22junit%22%20AND%20a:%22junit%22
-hamcrest-core-1.3.jar:
-  http://search.maven.org/#search%7Cgav%7C1%7Cg:%22org.hamcrest%22%20AND%20a:%22hamcrest-core%22
+Local dependencies: (last updated on:  3/2/2016)
+A list of jar files for dependencies that cannot be retrieved via Gradle,
+and how they were obtained.
 
 plume.jar: https://github.com/mernst/plume-lib/releases; version 1.0.9
+Currently installed copy was locally generated to include changes to Options
+doclet that includes a -d option to support the Gradle build.

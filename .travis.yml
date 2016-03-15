@@ -1,6 +1,11 @@
 language: java
 
-script: make all-dist
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+    directories:
+      - $HOME/.gradle/caches
+      - $HOME/.gradle/wrapper
 
 sudo: false
 
@@ -8,6 +13,12 @@ jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
+
+# this is not necessary, unless we want to get info/debug from tests
+script:
+  - ./gradlew assemble
+  - ./gradlew --info check
+  - ./gradlew --info manual
 
 ## Use Travis defaults for notifications (send to committer and author).
 # notifications:

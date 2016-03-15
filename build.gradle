@@ -1,0 +1,422 @@
+/*
+ * build.gradle for Randoop
+ *
+ * Quick instructions: in project directory run with command
+ *   ./gradlew build
+ */
+
+plugins {
+  /*
+   * Setup gradle-git so can clone plume-lib
+   * https://github.com/ajoberstar/gradle-git
+   */
+  id 'org.ajoberstar.grgit' version '1.4.2'
+
+  /*
+   * Plugin that applies Google-Java-format to the Java files in the project.
+   * https://github.com/sherter/google-java-format-gradle-plugin
+   */
+  id 'com.github.sherter.google-java-format' version '0.2'
+}
+
+/* Common build configuration for Randoop and agents */
+allprojects {
+
+  /* This project and agent subprojects are Java projects */
+  apply plugin: 'java'
+  apply plugin: 'eclipse'
+  apply plugin: 'idea'
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+
+  /* Use Maven Central when have external dependencies */
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
+
+  /* Randoop version number - added to generated jar files */
+  version = '2.1.4'
+}
+
+/******
+ * Configuration specific to Randoop and not agents
+ * Configuration for agent FOO appears in agents/FOO/FOO.gradle .
+ ******/
+
+description = "Randoop automated test generation"
+
+/* Root for working directories for system test generated files */
+def workingDirectories = "$buildDir/working-directories"
+
+sourceSets {
+  /* JUnit tests that must be run with -javaagent */
+  agentTest {
+    java {
+      srcDir 'src/agenttest/java'
+    }
+    resources {
+      srcDir 'src/agenttest/resources'
+    }
+  }
+
+  /* system tests */
+  systemTest {
+    java {
+      srcDir 'src/systemtest/java'
+    }
+    resources {
+      srcDir 'src/systemtest/resources'
+    }
+    output.dir(workingDirectories, builtBy: 'generateWorkingDirs')
+  }
+
+  /* Code sets used by system tests. There are no actual tests here. */
+  testInput {
+    java {
+      srcDir 'src/testinput/java'
+    }
+    resources {
+      srcDir 'src/testinput/resources'
+    }
+  }
+}
+
+configurations {
+  manual {
+    description = "Generate user and developer documentation"
+  }
+
+  /*
+   * The agent tests are JUnit tests run with the exercised-class-agent, so
+   * borrow from unit test configurations.
+   */
+  agentTestCompile.extendsFrom testCompile
+  agentTestRuntime.extendsFrom testRuntime
+
+  systemTestCompile.extendsFrom testCompile
+  systemTestRuntime.extendsFrom testRuntime
+}
+
+dependencies {
+  /* Randoop uses local copy of Plume */
+  compile files('lib/plume.jar')
+
+  /* sourceSet test uses JUnit and some use testInput source set */
+  testCompile group: 'junit', name: 'junit', version: '4.+'
+  testCompile sourceSets.testInput.output
+
+  /*
+   * sourceSet agentTest uses output from main sourceSet, and agent projects.
+   * (Also, see configuration block.)
+   */
+  agentTestCompile sourceSets.main.output
+  agentTestRuntime project(':exercised-class')
+
+  /*
+   * source set systemTest
+   */
+   systemTestCompile sourceSets.main.output
+   /*
+    * system tests use system-rules for capturing output of Randoop runs
+    * http://stefanbirkner.github.io/system-rules/
+    */
+   systemTestCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.16.0'
+   systemTestCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+   systemTestRuntime sourceSets.testInput.output
+
+  /*
+   * sourceSet testInput depends on output of main.
+   * Also, src/testinput/java/ps1/RatPolyTest.java uses JUnit
+   */
+  testInputCompile sourceSets.main.output
+  testInputCompile group: 'junit', name: 'junit', version: '4.+'
+
+  /*
+   * building documentation uses Options doclet that is part of plume, and
+   * requires compiled source.
+   */
+  manual files('lib/plume.jar')
+  manual sourceSets.main.output
+}
+
+/*
+ * Configuration for compilation.
+ */
+
+compileJava.options.compilerArgs = ['-Xlint','-g','-Xlint:-classfile']
+compileTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileAgentTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileSystemTestJava.options.compilerArgs = ['-g','-Xlint:-classfile']
+compileTestInputJava.options.compilerArgs = ['-nowarn','-g','-Xlint:-classfile']
+
+/*
+ * Configuration for testing.
+ * In terms of build, we have two kinds of tests, both using JUnit.
+ *   * Those in src/agenttest require the exercised-class Java agent.
+ *   * Those in src/test are run without the agent.
+ *     This second group includes tests that run the full Randoop over
+ *     classes that (mostly) are located in src/testinput.
+ */
+
+/*
+ * Configuration of test task from Java plugin.
+ * Runs all tests in test sourceSet except those excluded below.
+ */
+test {
+  /*
+   * Set the working directory for JUnit tests to the resources directory
+   * instead of the project directory.
+   */
+  workingDir = file("$buildDir/resources")
+
+  /*
+   * Show as much as possible to console.
+   */
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = 'full'
+  }
+
+  /* Turn off HTML reports -- handled by testReport task */
+  reports.html.enabled = false
+
+  /*
+   * Problematic tests excluded during Gradle setup that need to be evaluated.
+   * Unless otherwise noted, these are tests that were not previously run by
+   * Makefile. However, some included tests were also not run, but are not
+   * failing.
+   */
+  exclude 'randoop/test/NonterminatingInputTest.*'
+  exclude 'randoop/test/EmptyTest.*'
+  exclude 'randoop/test/RandoopPerformanceTest.*' /* had target but not run */
+  exclude 'randoop/test/ForwardExplorerPerformanceTest.*'
+  exclude 'randoop/test/Test_SomeDuplicates.*'
+  exclude 'randoop/test/Test_SomePass.*'
+  exclude 'randoop/operation/OperationParserTests.*'
+}
+
+/*
+ * Configuration of agentTest task.
+ * Runs JUnit with exercised-class Java agent over all classes in agentTest
+ * sourceSet.
+ * Requires that exercised-class jar file copied into Randoop build/libs.
+ */
+task agentTest(type: Test, dependsOn: 'copyJars') {
+  /*
+   * Set the working directory for JUnit tests to the resources directory
+   * instead of the project directory.
+   */
+  workingDir = sourceSets.agentTest.output.resourcesDir
+  testClassesDir = sourceSets.agentTest.output.classesDir
+  classpath = sourceSets.agentTest.runtimeClasspath
+  jvmArgs "-javaagent:$buildDir/libs/exercised-class-$version"+".jar"
+
+  /*
+   * Show as much as possible to console.
+   */
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = 'full'
+  }
+
+  /* Turn off HTML reports -- handled by testReport task */
+  reports.html.enabled = false
+}
+
+/*
+ * Link the agentTest task into project check task. Includes agent tests into
+ * the project build task.
+ */
+check.dependsOn agentTest
+
+/*
+ * Task to build the root directory of working directories used by the
+ * JUnit tests in the systemTest task.
+ */
+task generateWorkingDirs {
+  doLast {
+    def generated = file(workingDirectories)
+    if (! generated.exists()) {
+      generated.mkdir()
+    }
+  }
+}
+
+/*
+ * Configuration of the systemTest task.
+ * Runs JUnit over all classes in systemTest sourceSet.
+ * JUnit tests assume that working directories can be found in the build directory.
+ */
+task systemTest(type: Test, dependsOn: generateWorkingDirs) {
+  workingDir = file("$buildDir")
+  testClassesDir = sourceSets.systemTest.output.classesDir
+  classpath = sourceSets.systemTest.runtimeClasspath
+
+  /*
+   * Show as much as possible to console.
+   */
+  testLogging {
+    showStandardStreams = true
+    exceptionFormat = 'full'
+  }
+
+  /* Turn off HTML reports -- handled by testReport task */
+  reports.html.enabled = false
+}
+
+/*
+ * Link the systemTest task into the project check task.
+ * Includes system tests into the project build task.
+ */
+check.dependsOn systemTest
+
+tasks.withType(Test) {
+ /*
+  * Set the destination directory for JUnit XML output files
+  */
+  reports.junitXml.destination = file("$buildDir/test-results/${name}")
+ /*
+  * Set the heap size and GC for running tests.
+  */
+  jvmArgs '-Xmx384m', '-XX:+UseG1GC', '-XX:SoftRefLRUPolicyMSPerMB=250'
+}
+
+/*
+ * Configuration of task to write HTML reports into build/reports/allTests for
+ * all tests.
+ * [
+ *   Note that this may not work correctly if different Test tasks use the same
+ *   test classes. Fine here because sourceSets use different packages for test
+ *   classes.
+ * ]
+ */
+task testReport(type: TestReport) {
+  destinationDir = file("$buildDir/reports/allTests")
+  reportOn tasks.withType(Test)
+}
+
+//****************** Building distribution *****************
+
+/*
+ * Only want the jar file to include class files from main source set.
+ * (Task part of build by default.)
+ */
+jar {
+  from sourceSets.main.output
+}
+
+// want to archive locally
+uploadArchives {
+  repositories {
+    flatDir {
+      dirs 'dist'
+    }
+  }
+}
+
+task copyJars(type: Copy, dependsOn: [':exercised-class:jar', ':mapcall:jar']) {
+  from subprojects.collect { it.tasks.withType(Jar) }
+  into "$buildDir/libs"
+}
+
+/********************* Building manual *******************/
+/*
+ * Goal is to create the contents of the manual directory deployed to gh-pages
+ * branch. Has structure:
+ *   docs/
+ *     api/ - contains javadoc for main source set
+ *     manual/
+ *       dev.html - developer documentation
+ *       index.html - user documentation
+ *       *example.txt - example configuration files for user manual
+ *       stylesheets/ - contains css file for web pages
+ */
+
+/*
+ * Set destination directory to build/docs/api, and restrict to classes in
+ * main sourceSet.
+ */
+javadoc {
+  destinationDir = file("${buildDir}/docs/api")
+  source sourceSets.main.allJava
+}
+
+/*
+ * Get the plume-lib repo using gradle-git, and save into utils/plume-lib
+ */
+task clone << {
+  def plumeFolder = file("$buildDir/utils/plume-lib")
+  if ( ! plumeFolder.exists() ) {
+    org.ajoberstar.grgit.Grgit.clone(dir: plumeFolder, uri: 'https://github.com/mernst/plume-lib.git')
+  } else {
+    println("WARNING: not cloning plume-lib because already exists.")
+    println("         Force clone by running after clean")
+  }
+}
+
+/*
+ * Configuration of updateUserTOC task to update the table-of-contents for the
+ * user documentation.
+ * Operates on original file: doc/index.html
+ */
+task updateUserTOC(type:Exec, dependsOn: 'clone') {
+  executable "$buildDir/utils/plume-lib/bin/html-update-toc"
+  args  "doc/index.html"
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+}
+
+/* Configuration of task updateDevTOC to update table of contents in developer
+ * documentation.
+ * Operates on original file: doc/dev.html
+ */
+task updateDevTOC(type:Exec, dependsOn: 'clone') {
+  executable "$buildDir/utils/plume-lib/bin/html-update-toc"
+  args "doc/dev.html"
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+}
+
+/*
+ * Configuration of generateOptionsDoc task that applies plume.OptionsDoclet
+ * to doc/index.html to add command-line arguments extracted from the given
+ * @Option annotated classes. Writes resulting file as build/docs/manual/index.html
+ */
+task generateOptionsDoc(type: Javadoc, dependsOn: ['assemble', 'javadoc', 'updateUserTOC']) {
+  source sourceSets.main.allJava
+  classpath = sourceSets.main.runtimeClasspath + sourceSets.main.compileClasspath
+  title = "" // workaround to Javadoc task wanting to spit out title
+  destinationDir = file("${buildDir}/docs/manual")
+  options.docletpath = configurations.manual.files.asType(List)
+  options.doclet = "plume.OptionsDoclet"
+  options.addStringOption("outfile", "index.html")
+  options.addStringOption("docfile", "doc/index.html")
+}
+
+/*
+ * Configuration of copyManual task that copies files (other than doc/index.html)
+ * into build/docs/manual directory.
+ * These files include the developer documentation and text for example Randoop
+ * config files.
+ */
+task copyManual(type:Copy, dependsOn: 'updateDevTOC') {
+  from ('doc') {
+    include 'dev.html'
+    include '*_example.txt'
+  }
+  from ('doc/stylesheets') {
+    into 'stylesheets'
+  }
+  into "${buildDir}/docs/manual"
+}
+
+/*
+ * Configuration of manual task to generate/update and move documentation into
+ * build/docs directory.
+ */
+task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', 'javadoc'])
+
+/*************** Gradle Wrapper ******************/
+/* Declares the Gradle version to be used when the wrapper is built */
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.11'
+}
