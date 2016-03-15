@@ -15,10 +15,8 @@ import java.util.regex.Pattern;
 
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.NonreceiverTerm;
-import randoop.operation.Operation;
-import randoop.operation.OperationParseException;
-import randoop.operation.OperationParser;
+import randoop.operation.*;
+import randoop.types.ConcreteType;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
@@ -59,7 +57,7 @@ public final class Sequence implements Serializable, WeightedElement {
   // The types of the values in lastStatementTypes.
   // Should be final but cannot because of serialization.
   // This info is used by some generators.
-  private transient /* final */ List<Class<?>> lastStatementTypes;
+  private transient /* final */ List<ConcreteType> lastStatementTypes;
 
   /*
    * Weight is used by heuristic that favors smaller sequences so it makes sense
@@ -112,7 +110,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * includes the output variable. The types returned are not the types in the
    * signature of the StatementKind, but the types of the variables.
    */
-  public List<Class<?>> getLastStatementTypes() {
+  public List<ConcreteType> getLastStatementTypes() {
     return this.lastStatementTypes;
   }
 
@@ -382,7 +380,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a sequence that is of the form "Foo f = null;" where Foo is the
    * given class.
    */
-  public static Sequence zero(Class<?> c) {
+  public static Sequence zero(ConcreteType c) {
     return create(NonreceiverTerm.createNullOrZeroTerm(c));
   }
 
@@ -442,7 +440,7 @@ public final class Sequence implements Serializable, WeightedElement {
   // Set lastStatementVariables and lastStatementTypes to their appropriate
   // values. See documentation for these fields for more info.
   private void computeLastStatementInfo() {
-    this.lastStatementTypes = new ArrayList<Class<?>>();
+    this.lastStatementTypes = new ArrayList<>();
     this.lastStatementVariables = new ArrayList<Variable>();
 
     if (this.statements.size() > 0) {
@@ -450,7 +448,7 @@ public final class Sequence implements Serializable, WeightedElement {
 
       // Process return value
       if (si.getOutputType().equals(void.class)) {
-        lastStatementTypes.add(void.class); // used for void methods and Dummy
+        lastStatementTypes.add(ConcreteType.forClass(void.class)); // used for void methods and Dummy
         // statements
       } else {
         lastStatementTypes.add(si.getOutputType());
@@ -466,7 +464,7 @@ public final class Sequence implements Serializable, WeightedElement {
 
       for (int i = 0; i < v.size(); i++) {
         Variable value = v.get(i);
-        assert Reflection.canBeUsedAs(value.getType(), si.getInputTypes().get(i));
+        assert si.getInputTypes().get(i).isAssignableFrom(value.getType()); //Reflection.canBeUsedAs(value.getType(), si.getInputTypes().get(i));
         lastStatementTypes.add(value.getType());
         Variable idx = getVariableForInput(this.size() - 1, si.inputs.get(i)); // XXX
         // bogus.
@@ -516,10 +514,10 @@ public final class Sequence implements Serializable, WeightedElement {
       for (int i = 0; i < statementWithInputs.inputs.size(); i++) {
         int index = statementWithInputs.inputs.get(i).index;
         if (index >= 0) throw new IllegalStateException();
-        Class<?> newRefConstraint =
+        ConcreteType newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
         if (newRefConstraint == null) throw new IllegalStateException();
-        if (!Reflection.canBeUsedAs(newRefConstraint, statementWithInputs.getInputTypes().get(i)))
+        if (! (statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) //Reflection.canBeUsedAs(newRefConstraint, statementWithInputs.getInputTypes().get(i)))
           throw new IllegalArgumentException(
               i
                   + "th input constraint "
@@ -611,11 +609,11 @@ public final class Sequence implements Serializable, WeightedElement {
     return this.getStatementsWithInputs().get(index);
   }
 
-  public Variable randomVariableForTypeLastStatement(Class<?> t, Match match) {
+  public Variable randomVariableForTypeLastStatement(ConcreteType t, Match match) {
     return randomVariableOfTypeLastStatement(t, match);
   }
 
-  public Variable randomVariableForType(Class<?> t, Match match) {
+  public Variable randomVariableForType(ConcreteType t, Match match) {
     List<Variable> possibleVariables = getVariablesOfType(t, match);
     if (possibleVariables.size() == 0) return null;
     return Randomness.randomMember(possibleVariables);
@@ -625,8 +623,8 @@ public final class Sequence implements Serializable, WeightedElement {
    * A value declared in this sequence whose type matches the given class.
    * Returns null if there are no matches.
    */
-  public final Variable randomVariableOfTypeLastStatement(Class<?> clazz, Reflection.Match match) {
-    List<Variable> possibleVariables = valuesAppearingInLastStatement(clazz, match);
+  public final Variable randomVariableOfTypeLastStatement(ConcreteType type, Reflection.Match match) {
+    List<Variable> possibleVariables = valuesAppearingInLastStatement(type, match);
     if (possibleVariables.isEmpty()) return null;
     return Randomness.randomMember(possibleVariables);
   }
@@ -636,8 +634,8 @@ public final class Sequence implements Serializable, WeightedElement {
    * class. Returns an empty list if there are no matches.
    */
   public final List<Variable> valuesAppearingInLastStatement(
-      Class<?> clazz, Reflection.Match match) {
-    if (clazz == null || match == null)
+      ConcreteType type, Reflection.Match match) {
+    if (type == null || match == null)
       throw new IllegalArgumentException("parameters cannot be null.");
     List<Variable> possibleIndices = new ArrayList<Variable>(this.lastStatementVariables.size());
     for (int ithOutputIndex = 0;
@@ -645,7 +643,7 @@ public final class Sequence implements Serializable, WeightedElement {
         ithOutputIndex++) {
       Variable i = this.lastStatementVariables.get(ithOutputIndex);
       Statement s = statements.get(i.index);
-      if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), clazz, match)) {
+      if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), type, match)) {
         possibleIndices.add(i);
       }
     }
@@ -656,25 +654,25 @@ public final class Sequence implements Serializable, WeightedElement {
    * All the variables declared in this sequences whose type matches the given
    * class. Returns an empty list if there are no matches.
    */
-  public List<Variable> getVariablesOfType(Class<?> clazz, Reflection.Match match) {
-    if (clazz == null || match == null)
+  public List<Variable> getVariablesOfType(ConcreteType type, Reflection.Match match) {
+    if (type == null || match == null)
       throw new IllegalArgumentException("parameters cannot be null.");
     List<Variable> possibleIndices = new ArrayList<Variable>(this.lastStatementVariables.size());
     for (int i = 0; i < this.size(); i++) {
       Statement s = statements.get(i);
-      if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), clazz, match)) {
+      if (!s.isVoidMethodCall() && varTypeMatches(s.getOutputType(), type, match)) {
         possibleIndices.add(getVariable(i));
       }
     }
     return possibleIndices;
   }
 
-  private boolean varTypeMatches(Class<?> t, Class<?> clazz, Match match) {
+  private boolean varTypeMatches(ConcreteType type, ConcreteType variableType, Match match) {
     switch (match) {
       case COMPATIBLE_TYPE:
-        return Reflection.canBeUsedAs(t, clazz);
+        return variableType.isAssignableFrom(type); //Reflection.canBeUsedAs(type, variableType);
       case EXACT_TYPE:
-        return t.equals(clazz);
+        return type.equals(variableType);
       default:
         return false;
     }
@@ -688,7 +686,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
    */
-  public final Sequence extend(Operation operation, List<Variable> inputVariables) {
+  public final Sequence extend(ConcreteOperation operation, List<Variable> inputVariables) {
     checkInputs(operation, inputVariables);
     List<RelativeNegativeIndex> indexList = new ArrayList<RelativeNegativeIndex>(1);
     for (Variable v : inputVariables) {
@@ -706,7 +704,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * Returns a new sequence that is equivalent to this sequence plus the given
    * statement appended at the end.
    */
-  public final Sequence extend(Operation operation, Variable... inputs) {
+  public final Sequence extend(ConcreteOperation operation, Variable... inputs) {
     return extend(operation, Arrays.asList(inputs));
   }
 
@@ -720,7 +718,7 @@ public final class Sequence implements Serializable, WeightedElement {
    * @param inputs
    *          is the list of variables for input.
    * @return sequence constructed from this one plus the operation
-   * @see Sequence#extend(Operation, List)
+   * @see Sequence#extend(ConcreteOperation, List)
    */
   public Sequence extend(Statement statement, List<Variable> inputs) {
     return extend(statement.getOperation(), inputs);
@@ -728,7 +726,7 @@ public final class Sequence implements Serializable, WeightedElement {
 
   // Argument checker for extend method.
   // These checks should be caught by checkRep() too.
-  private void checkInputs(Operation operation, List<Variable> inputVariables) {
+  private void checkInputs(ConcreteOperation operation, List<Variable> inputVariables) {
     if (operation.getInputTypes().size() != inputVariables.size()) {
       String msg =
           "statement.getInputTypes().size():"
@@ -756,7 +754,7 @@ public final class Sequence implements Serializable, WeightedElement {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      Class<?> newRefConstraint = statements.get(inputVariables.get(i).index).getOutputType();
+      ConcreteType newRefConstraint = statements.get(inputVariables.get(i).index).getOutputType();
       if (newRefConstraint == null) {
         String msg =
             "newRefConstraint == null for"
@@ -771,7 +769,7 @@ public final class Sequence implements Serializable, WeightedElement {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!Reflection.canBeUsedAs(newRefConstraint, operation.getInputTypes().get(i))) {
+      if (!(operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) { //Reflection.canBeUsedAs(newRefConstraint, operation.getInputTypes().get(i))) {
         String msg =
             i
                 + "th input constraint "
@@ -853,19 +851,19 @@ public final class Sequence implements Serializable, WeightedElement {
    * Used during generation.
    *
    * @param operation
-   *          the {@link Operation} to repeat.
+   *          the {@link ConcreteOperation} to repeat.
    * @param times
    *          the number of times to repeat the {@link Operation}.
    * @return a new {@code Sequence}
    */
-  public Sequence repeat(Operation operation, int times) {
+  public Sequence repeat(ConcreteOperation operation, int times) {
     Sequence retval = new Sequence(this.statements);
     for (int i = 0; i < times; i++) {
       List<Integer> vil = new ArrayList<Integer>();
       for (Variable v : retval.getInputs(retval.size() - 1)) {
         if (v.getType().equals(int.class)) {
           int randint = Randomness.nextRandomInt(100);
-          retval = retval.extend(new NonreceiverTerm(int.class, randint));
+          retval = retval.extend(new NonreceiverTerm(ConcreteType.forClass(int.class), randint));
           vil.add(retval.size() - 1);
         } else {
           vil.add(v.getDeclIndex());
@@ -1053,7 +1051,7 @@ public final class Sequence implements Serializable, WeightedElement {
         }
 
         // Parse operation.
-        Operation st;
+        ConcreteOperation st;
         try {
           st = OperationParser.parse(opStr);
         } catch (OperationParseException e) {

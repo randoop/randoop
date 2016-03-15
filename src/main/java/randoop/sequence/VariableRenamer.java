@@ -1,5 +1,8 @@
 package randoop.sequence;
 
+import randoop.types.ConcreteArrayType;
+import randoop.types.ConcreteType;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,7 +30,7 @@ public class VariableRenamer {
   public String getRenamedVar(int index) {
     String name = this.name_mapping.get(index);
     if (name == null) {
-      assert sequence.getStatement(index).getOutputType().equals(void.class)
+      assert sequence.getStatement(index).getOutputType().isVoid()
           : "The index: " + index + "-th output should be void.";
       throw new Error("Error in Randoop, please report it.");
     }
@@ -44,8 +47,8 @@ public class VariableRenamer {
   private Map<Integer, String> renameVarsInSequence() {
     Map<Integer, String> index_var_map = new LinkedHashMap<Integer, String>();
     for (int i = 0; i < this.sequence.size(); i++) {
-      Class<?> outputType = this.sequence.getStatement(i).getOutputType();
-      if (outputType.equals(void.class)) {
+      ConcreteType outputType = this.sequence.getStatement(i).getOutputType();
+      if (outputType.isVoid()) {
         continue;
       }
       String rename = getVariableName(outputType);
@@ -69,50 +72,51 @@ public class VariableRenamer {
    * ClassName var0 = new ClassName() will be transformed to ClassName className
    * = new ClassName() Class var0 = null will be transformed to Class clazz =
    * null
+   * @param type  the type to use as base of variable name
+   * @return a variable name based on its type
    */
-  public static String getVariableName(Class<?> clz) {
-    // assert !clz.equals(void.class) : "The given variable type can not be
-    // void!";
-    if (clz.equals(void.class)) {
+  public static String getVariableName(ConcreteType type) {
+
+    if (type.isVoid()) {
       return "void";
     }
     // renaming for array type
-    if (clz.isArray()) {
+    if (type.isArray()) {
       String arraySuffix = "";
-      while (clz.isArray()) {
+      while (type.isArray()) {
         arraySuffix += "_array";
-        clz = clz.getComponentType();
+        type = ((ConcreteArrayType) type).getElementType();
       }
-      return getVariableName(clz) + arraySuffix;
+      return getVariableName(type) + arraySuffix;
     }
     // for object, string, class types
-    if (clz.equals(Object.class)) {
+    if (type.isObject()) {
       return "obj";
-    } else if (clz.equals(String.class)) {
+    } else if (type.hasRuntimeClass(String.class)) {
       return "str";
-    } else if (clz.equals(Class.class)) {
+    } else if (type.hasRuntimeClass(Class.class)) {
       return "clazz";
     }
     // for primitive types (including boxing or unboxing types)
-    else if (clz.equals(int.class) || clz.equals(Integer.class)) {
+    else if (type.hasRuntimeClass(int.class) || type.hasRuntimeClass(Integer.class)) {
       return "i";
-    } else if (clz.equals(double.class) || clz.equals(Double.class)) {
+    } else if (type.hasRuntimeClass(double.class) || type.hasRuntimeClass(Double.class)) {
       return "d";
-    } else if (clz.equals(float.class) || clz.equals(Float.class)) {
+    } else if (type.hasRuntimeClass(float.class) || type.hasRuntimeClass(Float.class)) {
       return "f";
-    } else if (clz.equals(short.class) || clz.equals(Short.class)) {
+    } else if (type.hasRuntimeClass(short.class) || type.hasRuntimeClass(Short.class)) {
       return "s";
-    } else if (clz.equals(boolean.class) || clz.equals(Boolean.class)) {
+    } else if (type.hasRuntimeClass(boolean.class) || type.hasRuntimeClass(Boolean.class)) {
       return "b";
-    } else if (clz.equals(char.class) || clz.equals(Character.class)) {
+    } else if (type.hasRuntimeClass(char.class) || type.hasRuntimeClass(Character.class)) {
       return "char";
-    } else if (clz.equals(long.class) || clz.equals(Long.class)) {
+    } else if (type.hasRuntimeClass(long.class) || type.hasRuntimeClass(Long.class)) {
       return "long";
-    } else if (clz.equals(byte.class) || clz.equals(Byte.class)) {
+    } else if (type.hasRuntimeClass(byte.class) || type.hasRuntimeClass(Byte.class)) {
       return "byte";
     } else {
       // for other object types
-      String name = clz.getSimpleName();
+      String name = type.getName();
       if (name.length() > 0) {
         if (Character.isUpperCase(name.charAt(0))) {
           return name.substring(0, 1).toLowerCase() + name.substring(1);
@@ -124,4 +128,6 @@ public class VariableRenamer {
       }
     }
   }
+
+
 }

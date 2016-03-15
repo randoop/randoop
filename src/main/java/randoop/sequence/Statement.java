@@ -8,11 +8,11 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.Globals;
-import randoop.operation.AbstractOperation;
-import randoop.operation.MethodCall;
-import randoop.operation.Operation;
-import randoop.operation.OperationParser;
+import randoop.operation.*;
 import randoop.sequence.Sequence.RelativeNegativeIndex;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
 
 /**
@@ -29,7 +29,7 @@ public final class Statement implements Serializable {
    * The operation (method call, constructor call, primitive values declaration,
    * etc.).
    */
-  private final Operation operation;
+  private final ConcreteOperation operation;
 
   // The list of values used as input to the statement.
   //
@@ -42,7 +42,7 @@ public final class Statement implements Serializable {
    * Create a new statement of type statement that takes as input the given
    * values.
    */
-  public Statement(Operation operation, List<RelativeNegativeIndex> inputVariables) {
+  public Statement(ConcreteOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
     this.inputs = new ArrayList<RelativeNegativeIndex>(inputVariables);
   }
@@ -53,7 +53,7 @@ public final class Statement implements Serializable {
    * @param operation
    *          the operation for action of this statement.
    */
-  public Statement(Operation operation) {
+  public Statement(ConcreteOperation operation) {
     this(operation, new ArrayList<RelativeNegativeIndex>());
   }
 
@@ -100,11 +100,11 @@ public final class Statement implements Serializable {
     return java.util.Objects.hash(operation, inputs);
   }
 
-  public Class<?> getOutputType() {
+  public ConcreteType getOutputType() {
     return operation.getOutputType();
   }
 
-  public List<Class<?>> getInputTypes() {
+  public ConcreteTypeTuple getInputTypes() {
     return operation.getInputTypes();
   }
 
@@ -122,10 +122,10 @@ public final class Statement implements Serializable {
    */
   public void appendCode(Variable variable, List<Variable> inputs, StringBuilder b) {
     if (!isVoidMethodCall()) {
-      Class<?> type = operation.getOutputType();
-      String typeName = type.getCanonicalName();
+      ConcreteType type = operation.getOutputType();
+      String typeName = type.getName();
       b.append(typeName);
-      b.append(" " + Variable.classToVariableName(type) + variable.index + " = ");
+      b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }
     operation.appendCode(inputs, b);
     b.append(";" + Globals.lineSep);
@@ -207,8 +207,8 @@ public final class Statement implements Serializable {
    *
    * @return result of getDeclaringClass for corresponding statement.
    */
-  public Class<?> getDeclaringClass() {
-    return operation.getDeclaringClass();
+  public GeneralType getDeclaringClass() {
+    return operation.getDeclaringType();
   }
 
   /**
@@ -309,13 +309,13 @@ public final class Statement implements Serializable {
   /**
    * getOperation is meant to be a temporary solution to type confusion in
    * generators. This should go away. Only intended to be called by
-   * {@link Sequence#extend(Operation, List)}.
+   * {@link Sequence#extend(ConcreteOperation, List)}.
    *
    * @return operation object in the statement.
    */
   // TODO can remove once RandomWalkGenerator.extendRandomly and
   // SequenceSimplifyUtils.makeCopy modified
-  public final Operation getOperation() {
+  public final ConcreteOperation getOperation() {
     return operation;
   }
 }

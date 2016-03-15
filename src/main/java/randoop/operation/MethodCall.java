@@ -64,8 +64,6 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
 
   private boolean hashCodeComputed = false;
   private int hashCodeCached = 0;
-  private boolean isVoidComputed = false;
-  private boolean isVoidCached = false;
   private boolean isStaticComputed = false;
   private boolean isStaticCached = false;
 
@@ -99,9 +97,6 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
       throw new IllegalArgumentException("method should not be null.");
 
     this.method = method;
-    // TODO move this earlier in the process: check first that all
-    // methods to be used can be made accessible.
-    // XXX this should not be here but I get infinite loop when comment out
     this.method.setAccessible(true);
   }
 
@@ -130,20 +125,16 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
 
     sb.append(".");
     sb.append(getTypeArguments());
-    sb.append(getMethod().getName() + "(");
+    sb.append(getMethod().getName()).append("(");
 
     int startIndex = (isStatic() ? 0 : 1);
     for (int i = startIndex; i < inputVars.size(); i++) {
       if (i > startIndex) sb.append(", ");
 
       // CASTING.
-      if (getInputTypes().get(i).isPrimitive() && GenInputsAbstract.long_format) {
-        // Cast if input type is a primitive, because Randoop uses
-        // boxed primitives.  (Is that necessary with autoboxing?)
-        sb.append("(" + getInputTypes().get(i).getName() + ")");
-      } else if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
+      if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(" + getInputTypes().get(i).getName() + ")");
+        sb.append("(").append(getInputTypes().get(i).getName()).append(")");
       }
 
       String param = inputVars.get(i).getName();
@@ -229,7 +220,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
       if (mustCast) {
         // this is a little paranoid but we need to cast primitives in
         // order to get them boxed.
-        b.append("((" + typeName + ")" + receiverString + ")");
+        b.append("((").append(typeName).append(")").append(receiverString).append(")");
       } else {
         b.append(receiverString);
       }

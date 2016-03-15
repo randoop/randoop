@@ -2,6 +2,7 @@ package randoop.operation;
 
 import randoop.types.GeneralType;
 import randoop.types.GenericType;
+import randoop.types.GenericTypeTuple;
 import randoop.types.Substitution;
 
 public class GenericMethodCall extends GenericOperation {
