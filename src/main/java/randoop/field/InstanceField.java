@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 
 /**
  * InstanceField represents an instance field of a class. This means that to be
@@ -24,9 +25,9 @@ public class InstanceField extends AccessibleField {
    * These are types needed to set an instance field.
    */
   @Override
-  public List<Class<?>> getSetTypes() {
-    List<Class<?>> types = new ArrayList<>();
-    types.add(getDeclaringClass());
+  public List<ConcreteType> getSetTypes() {
+    List<ConcreteType> types = new ArrayList<>();
+    types.add(getDeclaringType());
     types.add(getType());
     return types;
   }
@@ -41,9 +42,9 @@ public class InstanceField extends AccessibleField {
    * declaring class.
    */
   @Override
-  public List<Class<?>> getAccessTypes() {
-    List<Class<?>> types = new ArrayList<>();
-    types.add(getDeclaringClass());
+  public List<ConcreteType> getAccessTypes() {
+    List<ConcreteType> types = new ArrayList<>();
+    types.add(getDeclaringType());
     return types;
   }
 }

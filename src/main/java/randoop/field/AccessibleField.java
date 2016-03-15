@@ -8,6 +8,8 @@ import java.util.List;
 import randoop.BugInRandoopException;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 
 /**
  * PublicField is an abstract class representing a public field of a class
@@ -45,22 +47,22 @@ public abstract class AccessibleField implements Serializable {
    *
    * @return list of types needed to set the field.
    */
-  public abstract List<Class<?>> getSetTypes();
+  public abstract List<ConcreteType> getSetTypes();
 
   /**
    * Returns a list of types needed to access the field.
    *
    * @return a singleton list with declaring class, or an empty list
    */
-  public abstract List<Class<?>> getAccessTypes();
+  public abstract List<ConcreteType> getAccessTypes();
 
   /**
    * Returns the class in which the field is a member.
    *
    * @return class where field is declared.
    */
-  public Class<?> getDeclaringClass() {
-    return field.getDeclaringClass();
+  public ConcreteType getDeclaringType() {
+    return ConcreteType.forClass(field.getDeclaringClass());
   }
 
   /**
@@ -68,8 +70,8 @@ public abstract class AccessibleField implements Serializable {
    *
    * @return object representing type of field.
    */
-  public Class<?> getType() {
-    return field.getType();
+  public ConcreteType getType() {
+    return ConcreteType.forClass(field.getType());
   }
 
   /**

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 
 /**
  * FinalInstanceField implements getter methods for final instance fields of a
@@ -24,7 +25,7 @@ public class FinalInstanceField extends AccessibleField {
    * @return empty list since a final field may not be set
    */
   @Override
-  public List<Class<?>> getSetTypes() {
+  public List<ConcreteType> getSetTypes() {
     return new ArrayList<>();
   }
 
@@ -34,9 +35,9 @@ public class FinalInstanceField extends AccessibleField {
    * @return list with just the declaring type.
    */
   @Override
-  public List<Class<?>> getAccessTypes() {
-    List<Class<?>> types = new ArrayList<>();
-    types.add(getDeclaringClass());
+  public List<ConcreteType> getAccessTypes() {
+    List<ConcreteType> types = new ArrayList<>();
+    types.add(getDeclaringType());
     return types;
   }
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 
 /**
  * StaticFinalField represents a public static final field of a class.
@@ -25,7 +26,7 @@ public class StaticFinalField extends AccessibleField {
    * empty for a static final (or constant) field.
    */
   @Override
-  public List<Class<?>> getSetTypes() {
+  public List<ConcreteType> getSetTypes() {
     return new ArrayList<>();
   }
 
@@ -35,7 +36,7 @@ public class StaticFinalField extends AccessibleField {
    */
   @Override
   public String toCode(List<Variable> inputVars) {
-    return getDeclaringClass().getName() + "." + getName();
+    return getDeclaringType().getName() + "." + getName();
   }
 
   /**
@@ -43,7 +44,7 @@ public class StaticFinalField extends AccessibleField {
    * empty.
    */
   @Override
-  public List<Class<?>> getAccessTypes() {
+  public List<ConcreteType> getAccessTypes() {
     return new ArrayList<>();
   }
 

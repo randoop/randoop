@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
 
 /**
  * PublicStaticField represents a public static field of a class.
@@ -25,8 +26,8 @@ public class StaticField extends AccessibleField {
    * only type needed to set the field.
    */
   @Override
-  public List<Class<?>> getSetTypes() {
-    List<Class<?>> types = new ArrayList<>();
+  public List<ConcreteType> getSetTypes() {
+    List<ConcreteType> types = new ArrayList<>();
     types.add(getType());
     return types;
   }
@@ -37,7 +38,7 @@ public class StaticField extends AccessibleField {
    */
   @Override
   public String toCode(List<Variable> inputVars) {
-    return getDeclaringClass().getName() + "." + getName();
+    return getDeclaringType().getName() + "." + getName();
   }
 
   /**
@@ -45,7 +46,7 @@ public class StaticField extends AccessibleField {
    * empty.
    */
   @Override
-  public List<Class<?>> getAccessTypes() {
+  public List<ConcreteType> getAccessTypes() {
     return new ArrayList<>();
   }
 
