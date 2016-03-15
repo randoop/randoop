@@ -476,16 +476,17 @@ merging new work with the master branch.
     Update the <tt>gh-pages</tt> branch using the sibling clone of the repository
     created above:
     <pre>
-  mv build/docs/manual ../randoop-gh-pages/
-  mv build/docs/api ../randoop-gh-pages/
+  mv -f build/docs/manual ../randoop-gh-pages/
+  mv -f build/docs/api ../randoop-gh-pages/
   (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)
     </pre>
   </li>
-  <li>Follow the <a
-    href="https://help.github.com/articles/creating-releases/">GitHub
-      instructions for creating a release</a>; in particular, start at <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
-    click "Tags", click "add release notes" for the new tag (e.g., v<em>2.1.5</em>), name it
-    "Randoop version <em>2.1.5</em>", use the changelog entry as the
+  <li>Follow the
+    <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
+    in particular, start at
+    <a href="https://github.com/randoop/randoop/releases">https://github.com/randoop/randoop/releases</a>,
+    click "Tags", click "add release notes" for the new tag (e.g., v<em>2.1.5</em>),
+    name it "Randoop version <em>2.1.5</em>", use the changelog entry as the
     description (but remove any line breaks and check the preview), upload the
     jar files from <tt>build/libs</tt>, and, finally, click "publish release".
   </li>
