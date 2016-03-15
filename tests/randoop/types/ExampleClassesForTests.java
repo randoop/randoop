@@ -1,5 +1,6 @@
 package randoop.types;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class A<T> implements Comparable<T>{
@@ -34,4 +35,33 @@ class ArrayHarvest<T> {
   public List<T>[] genericArrayArg2() { return null; }
   public int[] concreteArrayArg1() { return null; }
   public List<Integer>[] concreteArrayArg2(){ return null; }
+}
+
+class GenericWithOperations<T> {
+  public T theField;
+  public List<T> theList;
+  public GenericWithOperations(T theValue) {
+    this.theField = theValue;
+    this.theList = new ArrayList<>();
+  }
+  public T getTheField() {
+    return theField;
+  }
+  public void setTheField(T theValue) {
+    theField = theValue;
+  }
+  public List<T> getTheList() {
+    return theList;
+  }
+  public void addAll(T[] a) {
+    for (T t : a) {
+      theList.add(t);
+    }
+  }
+}
+
+class ConcreteWithOperations extends GenericWithOperations<String> {
+  public ConcreteWithOperations(String theValue) {
+    super(theValue);
+  }
 }

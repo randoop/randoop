@@ -2,38 +2,41 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
 import randoop.types.TypeNames;
 
 /**
  * EnumConstant is an {@link Operation} representing a constant value from an enum.
  * <p>
- * Using the formal notation in {@link Operation}, a constant named BLUE from 
+ * Using the formal notation in {@link Operation}, a constant named BLUE from
  * the enum Colors is an operation BLUE : [] &rarr; Colors.
- * <p> 
- * Execution simply returns the constant value. 
+ * <p>
+ * Execution simply returns the constant value.
  */
-public class EnumConstant extends AbstractOperation implements Operation, Serializable {
-  
+public class EnumConstant extends ConcreteOperation implements Operation, Serializable {
+
   private static final long serialVersionUID = 849994347169442078L;
-  
+
   public static final String ID = "enum";
-      
+
   private Enum<?> value;
 
-  public EnumConstant(Enum<?> value) {
+  public EnumConstant(Enum<?> value, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    super(inputTypes, outputType);
     if (value == null) {
       throw new IllegalArgumentException("enum constant cannot be null");
     }
-    
+
     this.value = value;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof EnumConstant) {
@@ -42,39 +45,19 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     }
     return false;
   }
-  
+
   public boolean equals(EnumConstant e) {
     return (this.value.equals(e.value));
   }
-  
+
   @Override
   public int hashCode() {
     return value.hashCode();
   }
-  
+
   @Override
   public String toString() {
     return toParseableString();
-  }
-
-  /**
-   * {@inheritDoc}
-   * @return an empty list.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    return Collections.emptyList();
-  }
-
-  public Class<?> type() { return value.getDeclaringClass(); }
-  
-  /**
-   * {@inheritDoc} 
-   * @return the enum type.
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return type();
   }
 
   /**
@@ -96,11 +79,17 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
     b.append(TypeNames.getCompilableName(type()) + "." + this.value.name());
   }
 
+// temporary to make class compile
+  private Class<?> type() {
+    // TODO Auto-generated method stub
+    return getOutputType().getRuntimeClass();
+  }
+
   /**
    * {@inheritDoc}
    * Issues a string representation of an enum constant as a
    * type-value pair. The parse function should return an equivalent object.
-   * 
+   *
    * @see EnumConstant#parse(String)
    */
   @Override
@@ -111,14 +100,15 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   /**
    * Parses the description of an enum constant value in a string as returned by
    * {@link EnumConstant#toParseableString()}.
-   * 
+   *
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
-   * 
+   *
    * @param desc string representing type-value pair for an enum constant
    * @return an EnumConstant representing the enum constant value in desc
    * @throws OperationParseException if desc does not match expected form.
    */
+  /*
   public static EnumConstant parse(String desc) throws OperationParseException {
     if (desc == null) {
       throw new IllegalArgumentException("s cannot be null");
@@ -129,25 +119,25 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
           "<type>:<value>" + " but description is \"" + desc + "\".";
       throw new OperationParseException(msg);
     }
-    
+
     String typeName = desc.substring(0, colonIdx).trim();
     String valueName = desc.substring(colonIdx+1).trim();
-    
+
     Enum<?> value = null;
-    
-    String errorPrefix = "Error when parsing type-value pair " + desc + 
+
+    String errorPrefix = "Error when parsing type-value pair " + desc +
         " for an enum description of the form <type>:<value>.";
-    
+
     if (typeName.isEmpty()) {
       String msg = errorPrefix + " No type given.";
       throw new OperationParseException(msg);
     }
-    
+
     if (valueName.isEmpty()) {
       String msg = errorPrefix + " No value given.";
       throw new OperationParseException(msg);
     }
-    
+
     String whitespacePattern = ".*\\s+.*";
     if (typeName.matches(whitespacePattern)) {
       String msg = errorPrefix + " The type has unexpected whitespace characters.";
@@ -157,7 +147,7 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
       String msg = errorPrefix + " The value has unexpected whitespace characters.";
       throw new OperationParseException(msg);
     }
-    
+
     Class<?> type;
     try {
       type = TypeNames.getTypeForName(typeName);
@@ -169,21 +159,21 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
       String msg = errorPrefix + " The type given \"" + typeName + "\" is not an enum.";
       throw new OperationParseException(msg);
     }
-    
+
     value = valueOf(type,valueName);
     if (value == null) {
       String msg = errorPrefix + " The value given \"" + valueName + "\" is not a constant of the enum " +
           typeName + ".";
       throw new OperationParseException(msg);
     }
-    
+
     return new EnumConstant(value);
   }
-
+*/
   /**
    * valueOf searches the enum constant list of a class for a constant with the given name.
    * Note: cannot make this work using valueOf method of Enum due to typing.
-   * 
+   *
    * @param type class that is already known to be an enum.
    * @param valueName name for value that may be a constant of the enum.
    * @return reference to actual constant value, or null if none exists in type.
@@ -199,13 +189,13 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
   }
 
   /**
-   * value 
+   * value
    * @return object for value of enum constant.
    */
   public Enum<?> value() {
     return this.value;
   }
-  
+
   /**
    * {@inheritDoc}
    * @return value of enum constant.
@@ -218,8 +208,8 @@ public class EnumConstant extends AbstractOperation implements Operation, Serial
    * @return enclosing enum type.
    */
   @Override
-  public Class<?> getDeclaringClass() {
-    return value.getDeclaringClass();
+  public GeneralType getDeclaringType() {
+    return null; //value.getDeclaringClass();
   }
-  
+
 }

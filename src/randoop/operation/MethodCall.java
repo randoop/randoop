@@ -10,7 +10,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,8 +20,8 @@ import randoop.main.GenInputsAbstract;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.type.ConcreteTypeTuple;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.CollectionsExt;
@@ -30,19 +29,19 @@ import randoop.util.MethodReflectionCode;
 import randoop.util.ReflectionExecutor;
 
 /**
- * MethodCall is a {@link Operation} that represents a call to a method. It is 
- * a wrapper for a reflective Method object, and caches values of computed 
+ * MethodCall is a {@link Operation} that represents a call to a method. It is
+ * a wrapper for a reflective Method object, and caches values of computed
  * reflective calls.
  * <p>
- * An an {@link Operation}, a call to a non-static method<br> 
+ * An an {@link Operation}, a call to a non-static method<br>
  *   <code>T mname (T1,...,Tn)</code><br>
- * of class C can be represented formally as an operation 
+ * of class C can be represented formally as an operation
  * <i>mname</i>: [<i>C, T1,...,Tn</i>] &rarr; <i>T</i>.
- * If this method is static, then we could write the operation as 
- * <i>C.mname</i>: [<i>T1,...,Tn</i>] &rarr; <i>T</i> 
+ * If this method is static, then we could write the operation as
+ * <i>C.mname</i>: [<i>T1,...,Tn</i>] &rarr; <i>T</i>
  * (a class instance not being needed as an input).
  * <p>
- * The execution of a {@code MethodCall} executes the enclosed {@link Method} 
+ * The execution of a {@code MethodCall} executes the enclosed {@link Method}
  * given values for the inputs.
  * <p>
  * (Class previously called RMethod.)
@@ -51,7 +50,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
 
   private static final long serialVersionUID = -7616184807726929835L;
 
-  /** 
+  /**
    * ID for parsing purposes
    * @see OperationParser#getId(Operation)
    */
@@ -72,7 +71,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
 
   /**
    * Converts this object to a form that can be serialized.
-   * 
+   *
    * @return serializable form of this object
    * @see SerializableMethodCall
    */
@@ -90,7 +89,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
 
   /**
    * MethodCall creates an object corresponding to the given reflective method.
-   * 
+   *
    * @param method  the reflective method object.
    */
   public MethodCall(Method method, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
@@ -116,13 +115,13 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * Issues the code that corresponds to calling the method with the provided 
+   * Issues the code that corresponds to calling the method with the provided
    * {@link Variable} objects as arguments.
    * @param inputVars is the list of actual arguments to be printed.
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder sb) {
-    
+
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
     appendReceiverOrClassForStatics(receiverString, sb);
 
@@ -146,9 +145,9 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
       }
 
       String param = inputVars.get(i).getName();
-      
-      // In the short output format, statements like "int x = 3" are not added 
-      // to a sequence; instead, the value (e.g. "3") is inserted directly added 
+
+      // In the short output format, statements like "int x = 3" are not added
+      // to a sequence; instead, the value (e.g. "3") is inserted directly added
       // as arguments to method calls.
       Statement statementCreatingVar = inputVars.get(i).getDeclaringStatement();
       if (!GenInputsAbstract.long_format) {
@@ -158,11 +157,11 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
         }
       }
       sb.append(param);
-      
+
     }
     sb.append(")");
   }
-  
+
   // XXX this is a pretty bogus workaround for a bug in javac (type inference
   // fails sometimes)
   // It is bogus because what we produce here may be different from correct
@@ -218,7 +217,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
       '.'); // TODO combine this with last if clause
       b.append(s2);
     } else {
-      ConcreteType expectedType = getInputTypes().get(0);
+      Class<?> expectedType = getInputTypes().get(0).getRuntimeClass();
       String typeName = expectedType.getName();
       boolean mustCast = typeName != null
       && PrimitiveTypes
@@ -258,7 +257,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * @return {@link NormalExecution} with return value if execution normal, 
+   * @return {@link NormalExecution} with return value if execution normal,
    *         otherwise {@link ExceptionalExecution} if an exception thrown.
    */
   @Override
@@ -311,7 +310,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
   /**
    * {@inheritDoc}
    * The descriptor for a method is a string representing the method signature.
-   *  
+   *
    * Examples:
    *  java.util.ArrayList.get(int)
    *  java.util.ArrayList.add(int,java.lang.Object)
@@ -326,7 +325,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
    * object. Should satisfy <code>parse(op.toParseableString()).equals(op)</code>
    * for Operation op.
    * @see OperationParser#parse(String)
-   * 
+   *
    * @param s  a string descriptor
    * @return the {@link MethodCall} object described by the string.
    * @throws OperationParseException if s does not match expected descriptor.
@@ -357,7 +356,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
   }
 
   /**
-   * callsMethod determines whether the method that this object calls is 
+   * callsMethod determines whether the method that this object calls is
    * method given in the parameter.
    * @param m method to test against.
    * @return true, if m corresponds to the method in this object, false otherwise.
@@ -368,7 +367,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
 
   /**
    * {@inheritDoc}
-   * @return true always, since this is a method call. 
+   * @return true always, since this is a method call.
    */
   @Override
   public boolean isMessage() {
@@ -378,7 +377,7 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
   /**
    * {@inheritDoc}
    * Determines whether enclosed {@link Method} satisfies the given predicate.
-   * 
+   *
    * @param predicate the {@link ReflectionPredicate} to be checked.
    * @return true only if the method in this object satisfies the canUse(Method) of predicate.
    */
@@ -386,5 +385,5 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(method);
   }
-  
+
 }
