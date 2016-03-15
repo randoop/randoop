@@ -3,6 +3,7 @@ package randoop.types;
 import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -43,6 +44,11 @@ public class GenericSimpleType extends GenericType {
     }
     GenericSimpleType t = (GenericSimpleType)obj;
     return parameter.equals(t.parameter);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(parameter, bound);
   }
 
   /**
