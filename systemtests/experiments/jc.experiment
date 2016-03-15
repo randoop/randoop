@@ -1,5 +1,0 @@
-CLASS_DIR=src/java_collections
-AUX_JARS_DIR=
-CLASS_OMIT=IdentityHashMap
-METHOD_OMIT=nCopies\|randomUUID\|IllegalFormatCodePointException
-USETHREADS=false

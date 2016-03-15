@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<j:jelly xmlns:j="jelly:core"><j:mute>
-	<!-- this test should output exactly the toString() of a list with one item, string -->
-	<j:new var="o1" className="java.util.LinkedList"/>
-	${o1.add("string")}
-	</j:mute>${o1}</j:jelly>

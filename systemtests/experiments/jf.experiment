@@ -1,5 +1,0 @@
-CLASS_DIR=src/jfreechart/jfreechart-1.0.0/source
-AUX_JARS_DIR=src/jfreechart/jfreechart-1.0.0/lib
-CLASS_OMIT=junit|demo|Panel|editor|JThermo|TableModel
-METHOD_OMIT=
-USETHREADS=false

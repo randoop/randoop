@@ -1,4 +1,0 @@
-<lv-beans>
-  <lv-bean label="IMAP Protocol" value="imap" />
-  <lv-bean label="POP3 Protocol" value="pop3" />
-</lv-beans>

@@ -1,2 +1,0 @@
-randoop.test.A.i
-randoop.test.A.b
