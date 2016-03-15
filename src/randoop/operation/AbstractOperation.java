@@ -47,7 +47,7 @@ public abstract class AbstractOperation implements Operation {
    */
   @Override
   public int compareTo(Operation op) {
-    return (this.toParseableString()).compareTo(op.toParseableString());
+    return (this.toString()).compareTo(op.toString());
   }
 
   /**
