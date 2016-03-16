@@ -191,43 +191,50 @@ given here, see the Gradle
 </p>
 
 <p>
-  Based on experiments with IDEs in March 2016, NetBeans with the IDEA plugin is
-  the only plugin/tool combinations that actually worked without any manual
-  reconfiguration.
-  To use NetBeans with Randoop,
+  Based on experiments with IDEs in March 2016, IntelliJ IDEA and NetBeans
+  with the IDEA plugin are the only plugin/tool combinations that actually
+  worked without any/major manual reconfiguration.
+  For both, type
 </p>
-<ol>
-  <li> In NetBeans, install the
-    <a href="https://github.com/kelemen/netbeans-gradle-project">NetBeans plugin</a>.</li>
-  <li> At the command line, in the Randoop project directory, run the command
-    <code>./gradlew idea</code>  (this uses the plugin for IntelliJ IDEA).</li>
-  <li> In NetBeans, open the project.</li>
-</ol>
+<pre>
+  ./gradlew idea
+</pre>
 <p>
-  Building the project in NetBeans works like running
-  <code>./gradlew build</code>.
+  at the command line in the Randoop directory.
+  This uses the
+  <a href="https://docs.gradle.org/current/userguide/idea_plugin.html">IntelliJ IDEA plugin</a>
+  to create IDEA configuration files that both tools use when importing the project.
 </p>
 
 <p>
-  The build script for Randoop includes plugins for both
-  <a href="https://docs.gradle.org/current/userguide/eclipse_plugin.html">Eclipse</a> and
-  <a href="https://docs.gradle.org/current/userguide/idea_plugin.html">IntelliJ IDEA</a>.
+  To use NetBeans with Randoop, you will also need to install the
+  <a href="https://github.com/kelemen/netbeans-gradle-project">NetBeans plugin</a>,
+  but IntelliJ IDEA should import the project without anything additional though
+  you'll want to follow it's suggestions on configuring Gradle support.
+  Building the project in NetBeans works like running <code>./gradlew build</code>,
+  while with IDEA you will need to set the command you want to run in the Gradle
+  tool.
+</p>
+
+<p>
+  In addition to the IntelliJ IDEA plugin, the build script for Randoop includes
+  the
+  <a href="https://docs.gradle.org/current/userguide/eclipse_plugin.html">Eclipse plugin</a>.
   With both Eclipse and IntelliJ IDEA, it is possible to import Randoop as a
   Gradle project, but it seems to work slightly better to use the Gradle-side
   plugins to create the configuration files for each tool.
-  These plugins include tasks that will generate IDE-specific project
-  configuration files with the following commands:
+  To generate Eclipse-specific project configuration files, type the command:
 </p>
-<ul>
-  <li><code>./gradlew eclipse</code> for Eclipse configuration files, and
-  <li><code>./gradlew idea</code> for IntelliJ IDEA configuration files.
-</ul>
-
+<code><pre>
+  ./gradlew eclipse</code>
+</pre></code>
 <p>
   Once you've run the task you want, you will be able to import Randoop as a
-  native project within each of Eclipse or IntelliJ IDEA.
-  However, as mentioned above, expect with both that you'll have to tweak the
+  native project within Eclipse.
+  However, as mentioned above, expect that you'll have to tweak the
   project settings within your IDE for it to build/run correctly.
+  Also, when we tried it, the Eclipse build model did not match the Gradle build,
+  breaking most of the instructions in this document.
 </p>
 
 <p>

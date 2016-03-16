@@ -418,5 +418,5 @@ task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', '
 /*************** Gradle Wrapper ******************/
 /* Declares the Gradle version to be used when the wrapper is built */
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.11'
+  gradleVersion = '2.12'
 }
