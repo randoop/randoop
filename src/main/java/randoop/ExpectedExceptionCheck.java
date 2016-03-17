@@ -13,8 +13,6 @@ import randoop.util.Reflection;
  */
 public class ExpectedExceptionCheck extends ExceptionCheck {
 
-  private static final long serialVersionUID = -1172907532417774517L;
-
   /**
    * Creates check that enforces expectation that an exception is thrown by the
    * statement at the statement index.

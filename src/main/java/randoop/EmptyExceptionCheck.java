@@ -9,8 +9,6 @@ import randoop.sequence.Execution;
  */
 public class EmptyExceptionCheck extends ExceptionCheck {
 
-  private static final long serialVersionUID = 8159839339961663076L;
-
   /**
    * Creates an exception check for the given statement index.
    *

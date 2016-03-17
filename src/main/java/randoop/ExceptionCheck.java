@@ -17,8 +17,6 @@ import java.util.Objects;
  */
 public abstract class ExceptionCheck implements Check {
 
-  private static final long serialVersionUID = 4806179088639914364L;
-
   protected final Throwable exception;
 
   // Indicates which statement results in the given exception.

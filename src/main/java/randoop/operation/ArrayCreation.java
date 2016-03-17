@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,9 +29,7 @@ import randoop.types.TypeNames;
  * <p>
  * ArrayCreation objects are immutable.
  */
-public final class ArrayCreation extends AbstractOperation implements Operation, Serializable {
-
-  private static final long serialVersionUID = 20100429;
+public final class ArrayCreation extends AbstractOperation implements Operation {
 
   /** ID for parsing purposes (see StatementKinds.parse method) */
   public static final String ID = "array";
@@ -70,16 +67,6 @@ public final class ArrayCreation extends AbstractOperation implements Operation,
     this.elementType = elementType;
     this.length = length;
     this.outputType = Array.newInstance(elementType, 0).getClass();
-  }
-
-  /**
-   * Converts this object to a form that can be serialized.
-   *
-   * @return serializable form of this object
-   * @see SerializableArrayCreation
-   */
-  private Object writeReplace() throws ObjectStreamException {
-    return new SerializableArrayCreation(elementType, length);
   }
 
   /**

@@ -16,10 +16,12 @@
 <!-- start toc.  do not edit; run html-update-toc instead -->
 <ul>
   <li><a href="#starting">Getting Started</a></li>
-  <li><a href="#file-organization">Project Directory Organization</a></li>
   <li><a href="#tasks">Compiling, testing, releasing, etc.</a>
     <ul>
-      <li><a href="#compiling">Building and Testing Randoop</a></li>
+      <li><a href="#compiling">Building and Testing Randoop</a>
+        <ul>
+          <li><a href="#gradlew">The <code>./gradlew</code> script</a></li>
+        </ul></li>
       <li><a href="#usinganide">Using an IDE</a></li>
       <li><a href="#classpath">Randoop classpath</a></li>
       <li><a href="#prereleasemaintenance">Maintaining Randoop Pre-Release</a>
@@ -31,6 +33,7 @@
         </ul></li>
       <li><a href="#making_new_dist">Releasing a New Version of Randoop</a></li>
     </ul></li>
+  <li><a href="#file-organization">Project Directory Organization</a></li>
   <li><a href="#randoop_internals">Randoop Internals</a>
     <ul>
       <li><a href="#unit_tests">Unit test concepts</a></li>
@@ -83,65 +86,22 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 </pre>
 
 <p>
-  The recommendation when working on a particular feature, is to create a new
-  branch with an appropriate name for the feature and do work there rather
-  than doing modifications in the <i>master</i> branch.
+  When working on a particular feature, create a new
+  branch and work there rather
+  than in the <i>master</i> branch.
 </p>
 
-
-<h1 id="file-organization">Project Directory Organization</h1>
-
-<p>
-Randoop has the following directory organization:
-</p>
-<ul>
-  <li> <i>agent</i> - subprojects for Java agents,</li>
-  <li> <i>doc</i> - documentation,</li>
-  <li> <i>lib</i> - jar files for local copies of libraries not available via Maven,</li>
-  <li> <i>presentations</i> - presentations on Randoop, and</li>
-  <li> <i>src</i> - source directories for Randoop, including
-    <ul>
-      <li><i>main</i> - Randoop source code,</li>
-      <li><i>test</i> - source for JUnit tests of Randoop,</li>
-      <li><i>agenttest</i> - source for JUnit tests of the excercised-class Java agent,</li>
-      <li><i>testinput</i> - source for libraries used in Randoop testing, and</li>
-      <li><i>systemtest</i> - source for Randoop system tests.
-    </ul>
-  </li>
-</ul>
-<p>
-The source directories follow the conventions of the Gradle Java plugin, where
-each directory has a <i>java</i> subdirectory containing Java source, and,
-in some cases, a <i>resources</i> subdirectory containing other files.
-</p>
-
-<p>
-  There is also a <i>gradle</i> directory with the Gradle Wrapper, but you
-  shouldn't need to do anything with it.
-</p>
 
 <h1 id="tasks">Compiling, testing, releasing, etc.</h1>
-
-<p>
-Randoop is built with Gradle.
-The script named <tt>gradlew</tt> in the project directory is the Gradle wrapper
-for the project, and is the recommended way to run Gradle commands.
-Using the wrapper means you don't have to install Gradle yourself, instead
-the wrapper will download Gradle the first time you run a build command.
-</p>
-
-<p>The Gradle
-<a href="https://docs.gradle.org/current/userguide/tutorial_gradle_command_line.html">command-line tutorial</a>
-is available for more details on how to use Gradle beyond the basic commands
-given here.
-</p>
 
 
 <h2 id="compiling">Building and Testing Randoop</h2>
 
 <p>
-  From the command line, and in Randoop's top-level directory, simply run
-  <code>./gradlew build</code>.
+  In Randoop's top-level directory, run
+</p>
+<pre>  ./gradlew build</pre>
+<p>
   This command compiles Randoop, compiles the Java agents, runs all tests,
   and builds the jar files.
   For this and other commands that generate files, the generated files are
@@ -205,6 +165,23 @@ given here.
 </ul>
 
 
+<h3 id="gradlew">The <code>./gradlew</code> script</h3>
+
+<p>
+Randoop is built with Gradle.
+The script named <tt>./gradlew</tt> is the Gradle wrapper
+for the project, and is the recommended way to run Gradle commands.
+Using the wrapper means you don't have to install Gradle yourself, instead
+the wrapper will download Gradle the first time you run a build command.
+</p>
+
+<p>
+To learn more about Gradle beyond the basic commands
+given here, see the Gradle
+<a href="https://docs.gradle.org/current/userguide/tutorial_gradle_command_line.html">command-line tutorial</a>.
+</p>
+
+
 <h2 id="usinganide">Using an IDE</h2>
 
 <p>
@@ -214,43 +191,50 @@ given here.
 </p>
 
 <p>
-  Based on experiments with IDEs in March 2016, NetBeans with the IDEA plugin is
-  the only plugin/tool combinations that actually worked without any manual
-  reconfiguration.
-  To use NetBeans with Randoop,
+  Based on experiments with IDEs in March 2016, IntelliJ IDEA and NetBeans
+  with the IDEA plugin are the only plugin/tool combinations that actually
+  worked without any/major manual reconfiguration.
+  For both, type
 </p>
-<ol>
-  <li> In NetBeans, install the
-    <a href="https://github.com/kelemen/netbeans-gradle-project">NetBeans plugin</a>.</li>
-  <li> At the command line, in the Randoop project directory, run the command
-    <code>./gradlew idea</code>  (this uses the plugin for IntelliJ IDEA).</li>
-  <li> In NetBeans, open the project.</li>
-</ol>
+<pre>
+  ./gradlew idea
+</pre>
 <p>
-  Building the project in NetBeans works like running
-  <code>./gradlew build</code>.
+  at the command line in the Randoop directory.
+  This uses the
+  <a href="https://docs.gradle.org/current/userguide/idea_plugin.html">IntelliJ IDEA plugin</a>
+  to create IDEA configuration files that both tools use when importing the project.
 </p>
 
 <p>
-  The build script for Randoop includes plugins for both
-  <a href="https://docs.gradle.org/current/userguide/eclipse_plugin.html">Eclipse</a> and
-  <a href="https://docs.gradle.org/current/userguide/idea_plugin.html">IntelliJ IDEA</a>.
+  To use NetBeans with Randoop, you will also need to install the
+  <a href="https://github.com/kelemen/netbeans-gradle-project">NetBeans plugin</a>,
+  but IntelliJ IDEA should import the project without anything additional though
+  you'll want to follow it's suggestions on configuring Gradle support.
+  Building the project in NetBeans works like running <code>./gradlew build</code>,
+  while with IDEA you will need to set the command you want to run in the Gradle
+  tool.
+</p>
+
+<p>
+  In addition to the IntelliJ IDEA plugin, the build script for Randoop includes
+  the
+  <a href="https://docs.gradle.org/current/userguide/eclipse_plugin.html">Eclipse plugin</a>.
   With both Eclipse and IntelliJ IDEA, it is possible to import Randoop as a
   Gradle project, but it seems to work slightly better to use the Gradle-side
   plugins to create the configuration files for each tool.
-  These plugins include tasks that will generate IDE-specific project
-  configuration files with the following commands:
+  To generate Eclipse-specific project configuration files, type the command:
 </p>
-<ul>
-  <li><code>./gradlew eclipse</code> for Eclipse configuration files, and
-  <li><code>./gradlew idea</code> for IntelliJ IDEA configuration files.
-</ul>
-
+<code><pre>
+  ./gradlew eclipse</code>
+</pre></code>
 <p>
   Once you've run the task you want, you will be able to import Randoop as a
-  native project within each of Eclipse or IntelliJ IDEA.
-  However, as mentioned above, expect with both that you'll have to tweak the
+  native project within Eclipse.
+  However, as mentioned above, expect that you'll have to tweak the
   project settings within your IDE for it to build/run correctly.
+  Also, when we tried it, the Eclipse build model did not match the Gradle build,
+  breaking most of the instructions in this document.
 </p>
 
 <p>
@@ -504,6 +488,37 @@ merging new work with the master branch.
     https://github.com/randoop/randoop/releases/.  The changelog appears below.
   </li>
 </ol>
+
+
+<h1 id="file-organization">Project Directory Organization</h1>
+
+<p>
+Randoop has the following directory organization:
+</p>
+<ul>
+  <li> <i>agent</i> - subprojects for Java agents (load-time bytecode rewriting)</li>
+  <li> <i>doc</i> - documentation, such as this manual</li>
+  <li> <i>lib</i> - jar files for local copies of libraries not available via Maven</li>
+  <li> <i>src</i> - source directories for Randoop, including
+    <ul>
+      <li><i>main</i> - Randoop source code</li>
+      <li><i>test</i> - source for JUnit tests of Randoop</li>
+      <li><i>agenttest</i> - source for JUnit tests of the excercised-class Java agent</li>
+      <li><i>testinput</i> - source for libraries used in Randoop testing</li>
+      <li><i>systemtest</i> - source for Randoop system tests
+    </ul>
+  </li>
+</ul>
+<p>
+The source directories follow the conventions of the Gradle Java plugin, where
+each directory has a <i>java</i> subdirectory containing Java source, and,
+in some cases, a <i>resources</i> subdirectory containing other files.
+</p>
+
+<p>
+  There is also a <i>gradle</i> directory with the Gradle Wrapper, but you
+  shouldn't need to do anything with it.
+</p>
 
 
 <h1 id="randoop_internals">Randoop Internals</h1>

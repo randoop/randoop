@@ -13,8 +13,6 @@ import randoop.sequence.Execution;
  */
 public class NoExceptionCheck implements Check {
 
-  private static final long serialVersionUID = 6915136819752903798L;
-
   // Indicates which statement is expected to return normally.
   private final int statementIdx;
   private String exceptionName;

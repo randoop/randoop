@@ -260,32 +260,6 @@ public class GenTests extends GenInputsAbstract {
 
     // Initialize components.
     Set<Sequence> components = new LinkedHashSet<Sequence>();
-    if (!componentfile_ser.isEmpty()) {
-      for (File onefile : componentfile_ser) {
-        try (ObjectInputStream objectos =
-                new ObjectInputStream(new GZIPInputStream(new FileInputStream(onefile)))) {
-          Set<Sequence> seqset = (Set<Sequence>) objectos.readObject();
-          if (!GenInputsAbstract.noprogressdisplay) {
-            System.out.println(
-                "Adding " + seqset.size() + " component sequences from file " + onefile);
-          }
-          components.addAll(seqset);
-        } catch (Exception e) {
-          throw new Error(e);
-        }
-      }
-    }
-    if (!componentfile_txt.isEmpty()) {
-      for (File onefile : componentfile_txt) {
-        Set<Sequence> seqset = new LinkedHashSet<Sequence>();
-        Sequence.readTextSequences(onefile, seqset);
-        if (!GenInputsAbstract.noprogressdisplay) {
-          System.out.println(
-              "Adding " + seqset.size() + " component sequences from file " + onefile);
-        }
-        components.addAll(seqset);
-      }
-    }
 
     // Add default seeds.
     components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
@@ -368,18 +342,6 @@ public class GenTests extends GenInputsAbstract {
       System.exit(1);
     }
     // once tests generated,
-
-    if (GenInputsAbstract.output_components != null) {
-
-      assert explorer instanceof ForwardGenerator;
-      ForwardGenerator gen = (ForwardGenerator) explorer;
-
-      // Output component sequences.
-      System.out.print("Serializing component sequences...");
-      Set<Sequence> componentset = gen.componentManager.getAllGeneratedSequences();
-      System.out.println(" (" + componentset.size() + " components) ");
-      outputObject(componentset, GenInputsAbstract.output_components);
-    }
 
     if (GenInputsAbstract.dont_output_tests) return true;
 
@@ -622,9 +584,7 @@ public class GenTests extends GenInputsAbstract {
   }
 
   /**
-   * Outputs JUnit tests for the sequence list. And, if the user indicates by
-   * command-line argument {@link GenInputsAbstract#output_tests_serialized}
-   * also writes serialized tests.
+   * Outputs JUnit tests for the sequence list.
    *
    * @param sequences
    *          the sequences to output
@@ -632,57 +592,10 @@ public class GenTests extends GenInputsAbstract {
    *          the filename prefix for test output
    */
   private void outputTests(List<ExecutableSequence> sequences, String junitPrefix) {
-    if (GenInputsAbstract.output_tests_serialized != null) {
-      if (!GenInputsAbstract.noprogressdisplay) {
-        System.out.println("Serializing tests...");
-      }
-      // using prefix as a suffix here because of path info in
-      // output_tests_serialized
-      outputObject(sequences, output_tests_serialized + junitPrefix);
-    }
-
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Writing JUnit tests...%n");
     }
     writeJUnitTests(junit_output_dir, sequences, null, junitPrefix);
-  }
-
-  /**
-   * Manages output for serialized objects.
-   *
-   * @param obj
-   *          the object to serialize
-   * @param filename
-   *          the file name for serialization
-   */
-  private void outputObject(Object obj, String filename) {
-    try (ObjectOutputStream os =
-            new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filename)))) {
-      os.writeObject(obj);
-    } catch (FileNotFoundException e) {
-      throw new Error("Unable to serialize object: " + e);
-    } catch (IOException e) {
-      throw new Error(e);
-    }
-  }
-
-  /**
-   * Manages output for serialized objects.
-   *
-   * @param obj
-   *          the object to serialize
-   * @param file
-   *          the file for serialization
-   */
-  private void outputObject(Object obj, File file) {
-    try (ObjectOutputStream os =
-            new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(file)))) {
-      os.writeObject(obj);
-    } catch (FileNotFoundException e) {
-      throw new Error("Unable to serialize object: " + e);
-    } catch (IOException e) {
-      throw new Error(e);
-    }
   }
 
   /**
@@ -902,57 +815,6 @@ public class GenTests extends GenInputsAbstract {
     } catch (Exception e) {
       usage(e, "problem executing init method %s.%s: %s", classname, methodname, e);
     }
-  }
-
-  /**
-   * Read a list of sequences from a serialized file
-   *
-   * @param filename
-   *          is name of file containing sequences.
-   * @return list of sequence objects read from file.
-   */
-  public static List<ExecutableSequence> read_sequences(String filename) {
-
-    // Read the list of sequences from the serialized file
-    List<ExecutableSequence> seqs = null;
-    try {
-      FileInputStream fileis = new FileInputStream(filename);
-      ObjectInputStream objectis = new ObjectInputStream(new GZIPInputStream(fileis));
-      @SuppressWarnings("unchecked")
-      List<ExecutableSequence> seqs_tmp = (List<ExecutableSequence>) objectis.readObject();
-      seqs = seqs_tmp;
-      objectis.close();
-      fileis.close();
-    } catch (Exception e) {
-      throw new Error(e);
-    }
-
-    return seqs;
-  }
-
-  /**
-   * Write out a serialized file of sequences
-   *
-   * @param seqs
-   *          list of sequences to write.
-   * @param outfile
-   *          filename for output file.
-   */
-  public static void write_sequences(List<ExecutableSequence> seqs, String outfile) {
-
-    // dump_seqs ("write_sequences", seqs);
-
-    try {
-      FileOutputStream fileos = new FileOutputStream(outfile);
-      ObjectOutputStream objectos = new ObjectOutputStream(new GZIPOutputStream(fileos));
-      System.out.printf(" Saving %d sequences to %s%n", seqs.size(), outfile);
-      objectos.writeObject(seqs);
-      objectos.close();
-      fileos.close();
-    } catch (Exception e) {
-      throw new Error(e);
-    }
-    System.out.printf("Finished saving sequences%n");
   }
 
   /** Print out usage error and stack trace and then exit **/

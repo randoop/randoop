@@ -1,7 +1,5 @@
 package randoop;
 
-import java.io.Serializable;
-
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.
 
@@ -30,7 +28,7 @@ import java.io.Serializable;
  * {@link EqualsReflexive}).
  *
  */
-public interface ObjectContract extends Serializable {
+public interface ObjectContract {
 
   /**
    * The number of values that this contract is over.

@@ -6,8 +6,6 @@ package randoop;
  */
 public final class EqualsHashcode implements ObjectContract {
 
-  private static final long serialVersionUID = -1662539974264914487L;
-
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;

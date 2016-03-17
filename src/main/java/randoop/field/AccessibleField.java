@@ -1,7 +1,6 @@
 package randoop.field;
 
 import java.io.ObjectStreamException;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -22,9 +21,7 @@ import randoop.sequence.Variable;
  * @see StaticFinalField
  *
  */
-public abstract class AccessibleField implements Serializable {
-
-  private static final long serialVersionUID = -8083487154339374578L;
+public abstract class AccessibleField {
 
   private Field field;
 
@@ -172,19 +169,6 @@ public abstract class AccessibleField implements Serializable {
     } catch (IllegalAccessException e) {
       throw new BugInRandoopException("Access control violation for field: " + e.getMessage());
     }
-  }
-
-  /**
-   * Converts this object to a form that can be serialized.
-   *
-   * @see SerializableAccessibleField
-   *
-   * @return serializable form of this object
-   * @throws ObjectStreamException
-   *           if serialization fails.
-   */
-  protected Object writeReplace() throws ObjectStreamException {
-    return new SerializableAccessibleField(field);
   }
 
   /**

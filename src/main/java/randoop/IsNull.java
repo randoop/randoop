@@ -11,8 +11,6 @@ package randoop;
  */
 public final class IsNull implements ObjectContract {
 
-  private static final long serialVersionUID = 7854398123126127835L;
-
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;
