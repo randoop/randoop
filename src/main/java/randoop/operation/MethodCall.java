@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -42,9 +41,7 @@ import randoop.util.ReflectionExecutor;
  * <p>
  * (Class previously called RMethod.)
  */
-public final class MethodCall extends AbstractOperation implements Operation, Serializable {
-
-  private static final long serialVersionUID = -7616184807726929835L;
+public final class MethodCall extends AbstractOperation implements Operation {
 
   /**
    * ID for parsing purposes
@@ -66,16 +63,6 @@ public final class MethodCall extends AbstractOperation implements Operation, Se
   private boolean isVoidCached = false;
   private boolean isStaticComputed = false;
   private boolean isStaticCached = false;
-
-  /**
-   * Converts this object to a form that can be serialized.
-   *
-   * @return serializable form of this object
-   * @see SerializableMethodCall
-   */
-  private Object writeReplace() throws ObjectStreamException {
-    return new SerializableMethodCall(this.method);
-  }
 
   /**
    * getMethod returns Method object of this MethodCall.

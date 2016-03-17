@@ -1,6 +1,5 @@
 package randoop.test;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -17,12 +16,7 @@ import randoop.ExceptionCheck;
  * no expected exceptions in error revealing tests, and so there should be no
  * {@link ExceptionCheck} objects.
  */
-public class ErrorRevealingChecks implements TestChecks, Serializable {
-
-  /**
-   *
-   */
-  private static final long serialVersionUID = 6824110337347191631L;
+public class ErrorRevealingChecks implements TestChecks {
 
   private Set<Check> checks;
 

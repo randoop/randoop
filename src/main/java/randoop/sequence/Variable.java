@@ -1,14 +1,11 @@
 package randoop.sequence;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /** Represents the result of a statement call in a sequence. */
-public class Variable implements Comparable<Variable>, Serializable {
-
-  private static final long serialVersionUID = 4465111607016458010L;
+public class Variable implements Comparable<Variable> {
 
   // The index of the statement that creates this value.
   public final int index;

@@ -9,8 +9,6 @@ import randoop.sequence.Execution;
  */
 public class InvalidExceptionCheck extends ExceptionCheck {
 
-  private static final long serialVersionUID = -4919647365672571645L;
-
   public InvalidExceptionCheck(Throwable exception, int statementIndex, String catchClassName) {
     super(exception, statementIndex, catchClassName);
   }

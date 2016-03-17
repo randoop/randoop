@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +29,7 @@ import plume.UtilMDE;
  *
  * The execution of this {@link Operation} simply returns the value.
  */
-public final class NonreceiverTerm extends AbstractOperation implements Operation, Serializable {
+public final class NonreceiverTerm extends AbstractOperation implements Operation {
 
   private static final long serialVersionUID = 20100429;
 
@@ -45,16 +44,6 @@ public final class NonreceiverTerm extends AbstractOperation implements Operatio
   private final Class<?> type;
   // This value is guaranteed to be null, a String, or a boxed primitive.
   private final Object value;
-
-  /**
-   * Converts this object to a form that can be serialized.
-   *
-   * @return serializable form of this object
-   * @see SerializableNonreceiverTerm
-   */
-  private Object writeReplace() throws ObjectStreamException {
-    return new SerializableNonreceiverTerm(type, value);
-  }
 
   /**
    * Constructs a NonreceiverTerm with type t and value o.

@@ -1,7 +1,5 @@
 package randoop;
 
-import java.io.Serializable;
-
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;
 
@@ -41,13 +39,8 @@ import randoop.sequence.Execution;
  * "<code>try {</code>" before the statement, and the catch clause after the
  * statement.
  *
- * <p>
- *
- * Checks are Serializable so that an <code>ExecutableSequence</code> can be
- * serialized along with its associated checks.
- *
  */
-public interface Check extends Serializable {
+public interface Check {
 
   /**
    * Returns a string of Java source code to be emitted before a statement

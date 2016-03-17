@@ -17,10 +17,6 @@ import java.lang.reflect.Modifier;
  */
 public final class CheckRepContract implements ObjectContract {
 
-  // serial version id not actually used because this class
-  // declares a writeReplace() method, but javac complains
-  // if the field is missing.
-  private static final long serialVersionUID = 3001544774236010230L;
   public final Method checkRepMethod;
   boolean returnsBoolean; // derived from checkRepMethod
   public final Class<?> declaringClass; // derived from checkRepMethod
@@ -122,10 +118,4 @@ public final class CheckRepContract implements ObjectContract {
     return b.toString();
   }
 
-  /**
-   * Serialize with a String version of checkRepMethod.
-   */
-  private Object writeReplace() throws ObjectStreamException {
-    return new SerializableCheckRepContract(checkRepMethod);
-  }
 }

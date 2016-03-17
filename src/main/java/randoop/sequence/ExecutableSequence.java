@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,9 +81,7 @@ import randoop.util.Reflection;
  * </ul>
  *
  */
-public class ExecutableSequence implements Serializable {
-
-  private static final long serialVersionUID = 2337273514619824184L;
+public class ExecutableSequence {
 
   /** The underlying sequence. */
   public Sequence sequence;
@@ -124,13 +121,6 @@ public class ExecutableSequence implements Serializable {
   /** Output buffer used to capture the output from the executed sequence **/
   private static ByteArrayOutputStream output_buffer = new ByteArrayOutputStream();
   private static PrintStream ps_output_buffer = new PrintStream(output_buffer);
-
-  // Re-initialize executionResults list.
-  private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
-    s.defaultReadObject();
-    // customized deserialization code
-    this.executionResults = new Execution(sequence);
-  }
 
   /**
    * Create an executable sequence that executes the given sequence.

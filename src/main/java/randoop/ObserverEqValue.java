@@ -24,11 +24,6 @@ import randoop.util.Util;
  */
 public final class ObserverEqValue implements ObjectContract {
 
-  // serial version id not actually used because this class
-  // declares a writeReplace() method, but javac complains
-  // if the field is missing.
-  private static final long serialVersionUID = 20100429;
-
   /**
    * The observer method.
    */
@@ -70,13 +65,6 @@ public final class ObserverEqValue implements ObjectContract {
             + this.value.getClass()
             + " observer = "
             + observer;
-  }
-
-  /**
-   * Serialize with a String version of Method
-   */
-  private Object writeReplace() throws ObjectStreamException {
-    return new SerializableObserverEqValue(observer, value);
   }
 
   public String toCodeStringPreStatement() {
@@ -121,17 +109,7 @@ public final class ObserverEqValue implements ObjectContract {
     return b.toString();
   }
 
-  /**
-   * Create an ObserverEqValue from its basic parts (used when reading from a
-   * serialized file).
-   *
-   * @param method  the observer methodname
-   * @param val  the value exoected to be returned by the method
-   * @return a check that the observer method returns the value
-   */
-  public static ObserverEqValue getObserverEqValue(Method method, Object val) {
-    return new ObserverEqValue(method, val);
-  }
+
 
   @Override
   public boolean evaluate(Object... objects) throws Throwable {

@@ -17,8 +17,6 @@ import randoop.util.PrimitiveTypes;
  */
 public final class PrimValue implements ObjectContract {
 
-  private static final long serialVersionUID = -3862776185520906143L;
-
   /**
    * Specifies how the contract is to be printed. <code>EQUALSEQUALS</code>
    * results in
