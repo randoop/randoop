@@ -420,3 +420,11 @@ task manual(type: DefaultTask, dependsOn: ['copyManual', 'generateOptionsDoc', '
 task wrapper(type: Wrapper) {
   gradleVersion = '2.12'
 }
+
+/*************** Other tool configs *************/
+/* Run etags on */
+task tags(type: Exec, dependsOn: 'clone') {
+  description "Run etags over all Java source files in the project."
+  environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
+  commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs etags"
+}
