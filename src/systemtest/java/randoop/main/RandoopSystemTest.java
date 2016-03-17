@@ -107,7 +107,6 @@ public class RandoopSystemTest {
     options.add("--npe-on-null-input=EXPECTED");
     options.add("--debug_checks");
     options.add("--observers=resources/systemTest/randoop1_observers.txt");
-    options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
     options.add("--omit-field-list=resources/systemTest/testclassomitfields.txt");
 
     long timeout = 18000L;
@@ -151,7 +150,6 @@ public class RandoopSystemTest {
     options.add("--testclass=java2.util2.ArrayList");
     options.add("--testclass=java2.util2.LinkedList");
     options.add("--testclass=java2.util2.Collections");
-    options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
     options.add("--omit-field-list=resources/systemTest/naiveomitfields.txt");
 
     RandoopRunDescription randoopRunDesc =
@@ -229,7 +227,6 @@ public class RandoopSystemTest {
     options.add("--no-regression-tests");
     options.add("--inputlimit=1000");
     options.add("--classlist=resources/systemTest/buggyclasses.txt");
-    options.add("--output-tests-serialized=" + workingPath + "/sequences_serialized.gzip");
 
     long timeout = 60000L;
 

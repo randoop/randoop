@@ -5,8 +5,6 @@ package randoop;
  */
 public final class EqualsSymmetric implements ObjectContract {
 
-  private static final long serialVersionUID = -978952647793752743L;
-
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;

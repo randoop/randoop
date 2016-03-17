@@ -5,6 +5,7 @@ dist/
 ui/
 *.orig
 *~
+TAGS
 
 # IDE-specific ignores
 # lists comes from import, and running project build

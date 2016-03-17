@@ -5,8 +5,6 @@ package randoop;
  */
 public final class EqualsReflexive implements ObjectContract {
 
-  private static final long serialVersionUID = 4769291376647737367L;
-
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;

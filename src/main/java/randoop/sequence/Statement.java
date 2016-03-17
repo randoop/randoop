@@ -1,7 +1,6 @@
 package randoop.sequence;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +20,7 @@ import randoop.types.PrimitiveTypes;
  * represented by indexing into the enclosing sequence.
  *
  */
-public final class Statement implements Serializable {
-
-  private static final long serialVersionUID = -6876369784900176443L;
+public final class Statement {
 
   /**
    * The operation (method call, constructor call, primitive values declaration,

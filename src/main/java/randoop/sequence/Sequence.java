@@ -3,7 +3,6 @@ package randoop.sequence;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -40,9 +39,7 @@ import randoop.util.WeightedElement;
  * of the sequence. The class randoop.ExecutableSequence adds functionality that
  * executes the sequence.
  */
-public final class Sequence implements Serializable, WeightedElement {
-
-  private static final long serialVersionUID = -4345602588310287644L;
+public final class Sequence implements WeightedElement {
 
   public double lastTimeUsed = java.lang.System.currentTimeMillis();
 
@@ -198,14 +195,6 @@ public final class Sequence implements Serializable, WeightedElement {
     activeFlags.clear(i);
   }
 
-  // Serialization.
-  // Recovers transient fields (recomputes them).
-  private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
-    s.defaultReadObject();
-    // customized deserialization code
-    computeLastStatementInfo();
-  }
-
   // Used internally (i.e. in package randoop.sequence) to represent inputs
   // to a statement.
   //
@@ -312,8 +301,7 @@ public final class Sequence implements Serializable, WeightedElement {
   // Now concatenation is easier: to concatenate two sequences, concatenate
   // their statements. Also, we do not need to create any new
   // statements.
-  protected static final class RelativeNegativeIndex implements Serializable {
-    private static final long serialVersionUID = -79358572221311408L;
+  protected static final class RelativeNegativeIndex {
 
     public final int index;
 
@@ -1140,56 +1128,6 @@ public final class Sequence implements Serializable, WeightedElement {
    */
   public static Sequence parse(String string) throws SequenceParseException {
     return parse(Arrays.asList(string.split(Globals.lineSep)));
-  }
-
-  /**
-   * Reads a file containing a collection of sequences in textual
-   * representation.
-   *
-   * The file should be made up of a list of records, each as follows:
-   *
-   * START SEQUENCE &lt;parseable-sequence-string&gt; END SEQUENCE
-   */
-  public static void readTextSequences(String file, final Collection<Sequence> collection) {
-    // Parse the file using a RecordListReader.
-    RecordProcessor processor =
-        new RecordProcessor() {
-          @Override
-          public void processRecord(List<String> record) {
-            try {
-              collection.add(Sequence.parse(record));
-            } catch (SequenceParseException e) {
-              throw new Error(e);
-            }
-          }
-        };
-    RecordListReader reader = new RecordListReader("SEQUENCE", processor);
-    reader.parse(file);
-  }
-
-  /**
-   * Reads a file containing a collection of sequences in textual
-   * representation.
-   *
-   * The file should be made up of a list of records, each as follows:
-   *
-   * START SEQUENCE &lt;parseable-sequence-string&gt; END SEQUENCE
-   */
-  public static void readTextSequences(File file, final Collection<Sequence> collection) {
-    // Parse the file using a RecordListReader.
-    RecordProcessor processor =
-        new RecordProcessor() {
-          @Override
-          public void processRecord(List<String> record) {
-            try {
-              collection.add(Sequence.parse(record));
-            } catch (SequenceParseException e) {
-              throw new Error(e);
-            }
-          }
-        };
-    RecordListReader reader = new RecordListReader("SEQUENCE", processor);
-    reader.parse(file);
   }
 
   public int lastUseBefore(int idx, Variable var) {

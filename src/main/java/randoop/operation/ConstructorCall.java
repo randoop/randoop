@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.ObjectStreamException;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -32,9 +31,7 @@ import randoop.util.Util;
  * arguments is represented as <i>c</i> : [<i>t1,...,tn</i>] &rarr; <i>c</i>,
  * where the output type <i>c</i> is also the name of the class.
  */
-public final class ConstructorCall extends ConcreteOperation implements Operation, Serializable {
-
-  private static final long serialVersionUID = 20100429;
+public final class ConstructorCall extends ConcreteOperation implements Operation {
 
   /**
    * ID for parsing purposes.
@@ -50,16 +47,6 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
   // getter method.
   private int hashCodeCached = 0;
   private boolean hashCodeComputed = false;
-
-  /**
-   * Converts this object to a form that can be serialized.
-   *
-   * @return serializable form of this object
-   * @see SerializableConstructorCall
-   */
-  private Object writeReplace() throws ObjectStreamException {
-    return new SerializableConstructorCall(constructor);
-  }
 
   /**
    * Creates object corresponding to the given reflection constructor.

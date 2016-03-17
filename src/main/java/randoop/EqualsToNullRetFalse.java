@@ -5,8 +5,6 @@ package randoop;
  */
 public final class EqualsToNullRetFalse implements ObjectContract {
 
-  private static final long serialVersionUID = 5559088835651175150L;
-
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;

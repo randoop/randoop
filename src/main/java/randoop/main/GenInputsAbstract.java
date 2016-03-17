@@ -567,30 +567,6 @@ public abstract class GenInputsAbstract extends CommandHandler {
   @Option("Capture all output to stdout and stderr")
   public static boolean capture_output = false;
 
-  ///////////////////////////////////////////////////////////////////
-  // I don't see how to create the serialized files, only write to them.
-  // Maybe the writing code has bit-rotted?
-  @OptionGroup("Serialized input/output of generated tests")
-  @Option("Read serialized test inputs from the given file")
-  public static List<File> componentfile_ser = new ArrayList<File>();
-
-  @Option("Read serialized test inputs from the given file (text-based)")
-  public static List<File> componentfile_txt = new ArrayList<File>();
-
-  /**
-   * Output components (serialized, GZIPPED) to the given file. Suggestion: use
-   * a .gz suffix in file name.
-   */
-  @Option("Output components (serialized, GZIPPED) to the given file.")
-  public static File output_components = null;
-
-  /**
-   * Output tests (sequences plus checkers) in serialized form to the given
-   * file. Suggestion: use a .gz suffix in file name.
-   */
-  @Option("Output tests (sequences plus checkers) in serialized form to the given file.")
-  public static File output_tests_serialized = null;
-
   /**
    * The random seed to use in the generation process. Note that Randoop is
    * deterministic: running it twice will produce the same test suite. If you

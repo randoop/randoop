@@ -31,7 +31,6 @@ import randoop.sequence.Variable;
  */
 public class ObjectCheck implements Check {
 
-  private static final long serialVersionUID = 7794896690777599374L;
   public final ObjectContract contract;
   public final Variable[] vars;
   public final int stmt_no;

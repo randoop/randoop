@@ -5,8 +5,6 @@ package randoop;
  */
 public final class ToStringReturnsNormally implements ObjectContract {
 
-  private static final long serialVersionUID = 2793644666060415571L;
-
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;
