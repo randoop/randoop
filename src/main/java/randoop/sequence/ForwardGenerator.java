@@ -17,10 +17,13 @@ import randoop.NormalExecution;
 import randoop.RandoopListenerManager;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
 import randoop.test.DummyCheckGenerator;
 import randoop.test.RegressionCaptureVisitor;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.PrimitiveTypes;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
@@ -42,21 +45,21 @@ public class ForwardGenerator extends AbstractGenerator {
   public final Set<Sequence> allSequences;
 
   /** Sequences that are used in other sequences (and are thus redundant) **/
-  public Set<Sequence> subsumed_sequences = new LinkedHashSet<Sequence>();
+  public Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
 
   // For testing purposes only. If Globals.randooptestrun==false then the array
   // is never populated or queried. This set contains the same set of
   // components as the set "allsequences" above, but stores them as
   // strings obtained via the toCodeString() method.
-  private final List<String> allsequencesAsCode = new ArrayList<String>();
+  private final List<String> allsequencesAsCode = new ArrayList<>();
 
   // For testing purposes only.
-  private final List<Sequence> allsequencesAsList = new ArrayList<Sequence>();
+  private final List<Sequence> allsequencesAsList = new ArrayList<>();
 
   // The set of all primitive values seen during generation and execution
   // of sequences. This set is used to tell if a new primitive value has
   // been generated, to add the value to the components.
-  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<Object>();
+  private Set<Object> runtimePrimitivesSeen = new LinkedHashSet<>();
 
   // Stores runtime objects created during generation. The set of objects
   // is used to determine if a new sequences creates objects different from
@@ -69,7 +72,7 @@ public class ForwardGenerator extends AbstractGenerator {
   }
 
   public ForwardGenerator(
-      List<Operation> operations,
+      List<ConcreteOperation> operations,
       long timeMillis,
       int maxGenSequences,
       int maxOutSequences,
@@ -86,7 +89,7 @@ public class ForwardGenerator extends AbstractGenerator {
         stopper,
         listenerManager);
 
-    this.allSequences = new LinkedHashSet<Sequence>();
+    this.allSequences = new LinkedHashSet<>();
 
     initializeRuntimePrimitivesSeen();
   }
@@ -116,14 +119,11 @@ public class ForwardGenerator extends AbstractGenerator {
     if (componentManager.numGeneratedSequences() % GenInputsAbstract.clear == 0)
       componentManager.clearGeneratedSequences();
 
-    ExecutableSequence eSeq = null;
+    ExecutableSequence eSeq = createNewUniqueSequence();
 
-    eSeq = createNewUniqueSequence();
     if (eSeq == null) {
       return null;
     }
-
-    assert eSeq != null;
 
     if (GenInputsAbstract.dontexecute) {
       this.componentManager.addGeneratedSequence(eSeq.sequence);
@@ -285,12 +285,10 @@ public class ForwardGenerator extends AbstractGenerator {
 
     if (Log.isLoggingOn()) Log.logLine("-------------------------------------------");
 
-    Operation operation = null;
-
     if (this.operations.isEmpty()) return null;
 
     // Select a StatementInfo
-    operation = Randomness.randomMember(this.operations);
+    ConcreteOperation operation = Randomness.randomMember(this.operations);
     if (Log.isLoggingOn()) Log.logLine("Selected operation: " + operation.toString());
 
     // jhp: add flags here
@@ -304,7 +302,7 @@ public class ForwardGenerator extends AbstractGenerator {
     Sequence concatSeq = Sequence.concatenate(sequences.sequences);
 
     // Figure out input variables.
-    List<Variable> inputs = new ArrayList<Variable>();
+    List<Variable> inputs = new ArrayList<>();
     for (Integer oneinput : sequences.indices) {
       Variable v = concatSeq.getVariable(oneinput);
       inputs.add(v);
@@ -395,30 +393,9 @@ public class ForwardGenerator extends AbstractGenerator {
           int index = this.allsequencesAsCode.indexOf(code);
           StringBuilder b = new StringBuilder();
           Sequence co = this.allsequencesAsList.get(index);
-          co.equals(newSequence);
-          b.append(
-              "new component:"
-                  + Globals.lineSep
-                  + ""
-                  + newSequence.toString()
-                  + ""
-                  + Globals.lineSep
-                  + "as code:"
-                  + Globals.lineSep
-                  + ""
-                  + code
-                  + Globals.lineSep);
-          b.append(
-              "existing component:"
-                  + Globals.lineSep
-                  + ""
-                  + this.allsequencesAsList.get(index).toString()
-                  + ""
-                  + Globals.lineSep
-                  + "as code:"
-                  + Globals.lineSep
-                  + ""
-                  + this.allsequencesAsList.get(index).toCodeString());
+          assert co.equals(newSequence); // XXX this was a floating call to equals
+          b.append("new component:").append(Globals.lineSep).append("").append(newSequence.toString()).append("").append(Globals.lineSep).append("as code:").append(Globals.lineSep).append("").append(code).append(Globals.lineSep);
+          b.append("existing component:").append(Globals.lineSep).append("").append(this.allsequencesAsList.get(index).toString()).append("").append(Globals.lineSep).append("as code:").append(Globals.lineSep).append("").append(this.allsequencesAsList.get(index).toCodeString());
           throw new IllegalStateException(b.toString());
         }
       }
@@ -440,12 +417,12 @@ public class ForwardGenerator extends AbstractGenerator {
   // flag
   // of the returned object is false.
   @SuppressWarnings("unchecked")
-  private InputsAndSuccessFlag selectInputs(Operation operation) {
+  private InputsAndSuccessFlag selectInputs(ConcreteOperation operation) {
 
     // Variable inputTypes contains the values required as input to the
     // statement given as a parameter to the selectInputs method.
 
-    List<Class<?>> inputTypes = operation.getInputTypes();
+    ConcreteTypeTuple inputTypes = operation.getInputTypes();
 
     // The rest of the code in this method will attempt to create
     // a sequence that creates at least one value of type T for
@@ -458,7 +435,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // a single concatenation of the subsequences in the end than repeatedly
     // extending S.)
 
-    List<Sequence> sequences = new ArrayList<Sequence>();
+    List<Sequence> sequences = new ArrayList<>();
 
     // We store the total size of S in the following variable.
 
@@ -477,7 +454,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // of this method, variables will contain inputTypes.size() variables.
     // Note additionally that for every i in variables, 0 <= i < |S|.
 
-    List<Integer> variables = new ArrayList<Integer>();
+    List<Integer> variables = new ArrayList<>();
 
     // [Optimization]
     // The following two variables are used in the loop below only when
@@ -486,10 +463,10 @@ public class ForwardGenerator extends AbstractGenerator {
     // i, "types" contains the types of all variables in S, and "typesToVars"
     // maps each type to all variable indices of the given type.
     SubTypeSet types = new SubTypeSet(false);
-    MultiMap<Class<?>, Integer> typesToVars = new MultiMap<Class<?>, Integer>();
+    MultiMap<ConcreteType, Integer> typesToVars = new MultiMap<>();
 
     for (int i = 0; i < inputTypes.size(); i++) {
-      Class<?> t = inputTypes.get(i);
+      ConcreteType t = inputTypes.get(i);
 
       // true if statement st represents an instance method, and we are
       // currently
@@ -503,22 +480,22 @@ public class ForwardGenerator extends AbstractGenerator {
 
         // candidateVars will store the indices that can serve as input to the
         // i-th input in st.
-        List<SimpleList<Integer>> candidateVars = new ArrayList<SimpleList<Integer>>();
+        List<SimpleList<Integer>> candidateVars = new ArrayList<>();
 
         // For each type T in S compatible with inputTypes[i], add all the
         // indices in S of type T.
-        for (Class<?> match : types.getMatches(t)) {
+        for (ConcreteType match : types.getMatches(t)) {
           // Sanity check: the domain of typesToVars contains all the types in
           // variable types.
           assert typesToVars.keySet().contains(match);
           candidateVars.add(
-              new ArrayListSimpleList<Integer>(
-                  new ArrayList<Integer>(typesToVars.getValues(match))));
+                  new ArrayListSimpleList<>(
+                          new ArrayList<>(typesToVars.getValues(match))));
         }
 
         // If any type-compatible variables found, pick one at random as the
         // i-th input to st.
-        SimpleList<Integer> candidateVars2 = new ListOfLists<Integer>(candidateVars);
+        SimpleList<Integer> candidateVars2 = new ListOfLists<>(candidateVars);
         if (candidateVars2.size() > 0) {
           int randVarIdx = Randomness.nextRandomInt(candidateVars2.size());
           Integer randVar = candidateVars2.get(randVarIdx);
@@ -553,7 +530,7 @@ public class ForwardGenerator extends AbstractGenerator {
         if (Log.isLoggingOn())
           Log.logLine("Array creation heuristic: will create helper array of type " + t);
         SimpleList<Sequence> l2 = HelperSequenceCreator.createSequence(componentManager, t);
-        l = new ListOfLists<Sequence>(l1, l2);
+        l = new ListOfLists<>(l1, l2);
 
       } else {
 
@@ -577,7 +554,7 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag(false, null, null);
         } else {
           if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
+          ConcreteOperation st = NonreceiverTerm.createNullOrZeroTerm(t);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
           sequences.add(seq);
@@ -599,7 +576,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn())
           Log.logLine("null-ratio option given. Randomly decided to use null as input.");
-        Operation st = NonreceiverTerm.createNullOrZeroTerm(t);
+        ConcreteOperation st = NonreceiverTerm.createNullOrZeroTerm(t);
         Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
         variables.add(totStatements);
         sequences.add(seq);
@@ -654,7 +631,7 @@ public class ForwardGenerator extends AbstractGenerator {
           if (stk.isPrimitiveInitialization())
             continue; // Prim decl not an interesting candidate for multiple
           // uses.
-          Class<?> outType = stk.getOutputType();
+          ConcreteType outType = stk.getOutputType();
           types.add(outType);
           typesToVars.add(outType, totStatements + j);
         }

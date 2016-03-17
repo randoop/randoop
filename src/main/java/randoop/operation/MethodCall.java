@@ -91,8 +91,8 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
    *
    * @param method  the reflective method object.
    */
-  public MethodCall(Method method, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
-    super(inputTypes, outputType);
+  public MethodCall(Method method, ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    super(declaringType, inputTypes, outputType);
     if (method == null)
       throw new IllegalArgumentException("method should not be null.");
 
@@ -325,17 +325,6 @@ public final class MethodCall extends ConcreteOperation implements Operation, Se
    */
   public static Operation parse(String s) throws OperationParseException {
    // return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
-    return null;
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return the class in which this method is declared.
-   */
-  @Override
-  public GeneralType getDeclaringType() {
-    //return method.getDeclaringClass();
     return null;
   }
 

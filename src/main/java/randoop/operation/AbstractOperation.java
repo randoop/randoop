@@ -37,7 +37,7 @@ public abstract class AbstractOperation implements Operation {
 
   /**
    * Compares two {@link Operation} objects. Uses order on result of
-   * {@link Operation#toParseableString()}.
+   * {@link Operation#toString()}.
    *
    * @param op
    *          the {@link Operation} to compare with this operation

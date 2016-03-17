@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import randoop.types.ConcreteType;
 import randoop.util.IMultiMap;
 import randoop.util.ISimpleSet;
 import randoop.util.MultiMap;
@@ -22,24 +23,24 @@ public class SubTypeSet {
   // The set of classes that have sequences. I.e. membership in this
   // set means that the SequenceCollection has one or more sequences that
   // create a value of the member type.
-  public ISimpleSet<Class<?>> typesWithsequences;
+  public ISimpleSet<ConcreteType> typesWithsequences;
 
   // Maps a type to the list of subtypes that have sequences.
   // The list for a given type can be empty, which means that there
   // are no subtypes with sequences for the given type.
-  public IMultiMap<Class<?>, Class<?>> subTypesWithsequences;
+  public IMultiMap<ConcreteType, ConcreteType> subTypesWithsequences;
 
   public boolean reversible;
 
   public SubTypeSet(boolean reversible) {
     if (reversible) {
       this.reversible = true;
-      this.subTypesWithsequences = new ReversibleMultiMap<Class<?>, Class<?>>();
-      this.typesWithsequences = new ReversibleSet<Class<?>>();
+      this.subTypesWithsequences = new ReversibleMultiMap<>();
+      this.typesWithsequences = new ReversibleSet<>();
     } else {
       this.reversible = false;
-      this.subTypesWithsequences = new MultiMap<Class<?>, Class<?>>();
-      this.typesWithsequences = new SimpleSet<Class<?>>();
+      this.subTypesWithsequences = new MultiMap<>();
+      this.typesWithsequences = new SimpleSet<>();
     }
   }
 
@@ -47,44 +48,44 @@ public class SubTypeSet {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<Class<?>, Class<?>>) subTypesWithsequences).mark();
-    ((ReversibleSet<Class<?>>) typesWithsequences).mark();
+    ((ReversibleMultiMap<ConcreteType, ConcreteType>) subTypesWithsequences).mark();
+    ((ReversibleSet<ConcreteType>) typesWithsequences).mark();
   }
 
   public void undoLastStep() {
     if (!reversible) {
       throw new RuntimeException("Operation not supported.");
     }
-    ((ReversibleMultiMap<Class<?>, Class<?>>) subTypesWithsequences).undoToLastMark();
-    ((ReversibleSet<Class<?>>) typesWithsequences).undoToLastMark();
+    ((ReversibleMultiMap<ConcreteType, ConcreteType>) subTypesWithsequences).undoToLastMark();
+    ((ReversibleSet<ConcreteType>) typesWithsequences).undoToLastMark();
   }
 
-  public void add(Class<?> c) {
+  public void add(ConcreteType c) {
     if (c == null) throw new IllegalArgumentException("c cannot be null.");
     if (typesWithsequences.contains(c)) return;
     typesWithsequences.add(c);
 
     // Update existing entries.
-    for (Class<?> cls : subTypesWithsequences.keySet()) {
-      if (Reflection.canBeUsedAs(c, cls)) {
+    for (ConcreteType cls : subTypesWithsequences.keySet()) {
+      if (cls.isAssignableFrom(c)) { //if (Reflection.canBeUsedAs(c, cls)) {
         if (!subTypesWithsequences.getValues(cls).contains(c)) subTypesWithsequences.add(cls, c);
       }
     }
   }
 
-  private void addQueryType(Class<?> c) {
-    if (c == null) throw new IllegalArgumentException("c cannot be null.");
-    Set<Class<?>> keySet = subTypesWithsequences.keySet();
-    if (keySet.contains(c)) return;
+  private void addQueryType(ConcreteType type) {
+    if (type == null) throw new IllegalArgumentException("c cannot be null.");
+    Set<ConcreteType> keySet = subTypesWithsequences.keySet();
+    if (keySet.contains(type)) return;
 
-    Set<Class<?>> classesWithsequencesForC = new LinkedHashSet<Class<?>>();
-    for (Class<?> classWithsequence : typesWithsequences.getElements()) {
-      if (Reflection.canBeUsedAs(classWithsequence, c)) {
-        classesWithsequencesForC.add(classWithsequence);
+    Set<ConcreteType> compatibleTypesWithSequences = new LinkedHashSet<>();
+    for (ConcreteType t : typesWithsequences.getElements()) {
+      if (type.isAssignableFrom(t)) { //if (Reflection.canBeUsedAs(classWithsequence, c)) {
+        compatibleTypesWithSequences.add(t);
       }
     }
-    for (Class<?> cls : classesWithsequencesForC) {
-      subTypesWithsequences.add(c, cls);
+    for (ConcreteType cls : compatibleTypesWithSequences) {
+      subTypesWithsequences.add(type, cls);
     }
   }
 
@@ -92,14 +93,14 @@ public class SubTypeSet {
    * Returns all the classes in the set that can-be-used-as the given
    * <code>c</code>.
    *
-   * @param c  the query type
+   * @param type  the query type
    * @return the set of types that can be used in place of the query type
    */
-  public Set<Class<?>> getMatches(Class<?> c) {
-    if (!subTypesWithsequences.keySet().contains(c)) {
-      addQueryType(c);
+  public Set<ConcreteType> getMatches(ConcreteType type) {
+    if (!subTypesWithsequences.keySet().contains(type)) {
+      addQueryType(type);
     }
-    return Collections.unmodifiableSet(subTypesWithsequences.getValues(c));
+    return Collections.unmodifiableSet(subTypesWithsequences.getValues(type));
   }
 
   // TODO create tests for this method.
@@ -113,30 +114,27 @@ public class SubTypeSet {
    * Otherwise, returns <code>true</code> if this set contains the given class
    * <code>c</code>
    *
-   * @param c  the query type
+   * @param type  the query type
    * @param match  the type matching criterion
    * @return true if either there is a sequence with the query type as its output
    *   type, or {@code match=COMPATIBLE_TYPE} and there is a sequence with a
    *   subtype of the query type as its output type.
    */
-  public boolean containsAssignableType(Class<?> c, Reflection.Match match) {
-    if (!subTypesWithsequences.keySet().contains(c)) {
-      addQueryType(c);
+  public boolean containsAssignableType(ConcreteType type, Reflection.Match match) {
+    if (!subTypesWithsequences.keySet().contains(type)) {
+      addQueryType(type);
     }
 
-    if (typesWithsequences.contains(c)) return true;
+    if (typesWithsequences.contains(type)) return true;
 
-    if (match == Reflection.Match.COMPATIBLE_TYPE) {
-      return !subTypesWithsequences.getValues(c).isEmpty();
-    }
-    return false;
+    return match == Reflection.Match.COMPATIBLE_TYPE && !subTypesWithsequences.getValues(type).isEmpty();
   }
 
   public int size() {
     return typesWithsequences.size();
   }
 
-  public Set<Class<?>> getElements() {
+  public Set<ConcreteType> getElements() {
     return typesWithsequences.getElements();
   }
 }

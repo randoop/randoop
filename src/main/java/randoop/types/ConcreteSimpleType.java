@@ -87,6 +87,9 @@ public class ConcreteSimpleType extends ConcreteType {
     return runtimeClass.isPrimitive();
   }
 
+  @Override
+  public boolean isBoxedPrimitive() { return PrimitiveTypes.isBoxedOrPrimitiveOrStringType(runtimeClass); }
+
   /**
    * {@inheritDoc}
    * @return true if the runtime type corresponds to a generic, false otherwise

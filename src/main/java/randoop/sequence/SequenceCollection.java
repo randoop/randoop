@@ -12,10 +12,10 @@ import java.util.Set;
 import randoop.Globals;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
+import randoop.types.ConcreteType;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.Log;
-import randoop.util.Reflection;
 import randoop.util.Reflection.Match;
 import randoop.util.SimpleList;
 
@@ -54,8 +54,8 @@ import randoop.util.SimpleList;
 public class SequenceCollection {
 
   // We make it a list to make it easier to pick out an element at random.
-  private Map<Class<?>, ArrayListSimpleList<Sequence>> activeSequences =
-      new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
+  private Map<ConcreteType, ArrayListSimpleList<Sequence>> activeSequences =
+      new LinkedHashMap<>();
 
   private SubTypeSet typesWithSequencesMap = new SubTypeSet(false);
 
@@ -85,7 +85,7 @@ public class SequenceCollection {
    */
   public void clear() {
     if (Log.isLoggingOn()) Log.logLine("Clearing sequence collection.");
-    this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
+    this.activeSequences = new LinkedHashMap<>();
     this.typesWithSequencesMap = new SubTypeSet(false);
     numActivesequences = 0;
     checkRep();
@@ -103,7 +103,7 @@ public class SequenceCollection {
    */
   public SequenceCollection(Collection<Sequence> initialSequences) {
     if (initialSequences == null) throw new IllegalArgumentException("initialSequences is null.");
-    this.activeSequences = new LinkedHashMap<Class<?>, ArrayListSimpleList<Sequence>>();
+    this.activeSequences = new LinkedHashMap<>();
     this.typesWithSequencesMap = new SubTypeSet(false);
     numActivesequences = 0;
     addAll(initialSequences);
@@ -138,38 +138,37 @@ public class SequenceCollection {
    * the client.
    */
   public void add(Sequence sequence) {
-    List<Class<?>> classes = new ArrayList<Class<?>>();
-    List<Class<?>> constraints = sequence.getLastStatementTypes();
+    List<ConcreteType> types = new ArrayList<>();
+    List<ConcreteType> constraints = sequence.getLastStatementTypes();
     List<Variable> values = sequence.getLastStatementVariables();
     assert constraints.size() == values.size();
     for (int i = 0; i < constraints.size(); i++) {
       Variable v = values.get(i);
-      assert Reflection.canBeUsedAs(v.getType(), constraints.get(i));
-      if (sequence.isActive(v.getDeclIndex())) classes.add(constraints.get(i));
+      assert constraints.get(i).isAssignableFrom(v.getType()); //Reflection.canBeUsedAs(v.getType(), constraints.get(i));
+      if (sequence.isActive(v.getDeclIndex())) types.add(constraints.get(i));
     }
-    updateCompatibleClassMap(classes);
-    updateCompatibleMap(sequence, classes);
+    updateCompatibleClassMap(types);
+    updateCompatibleMap(sequence, types);
     checkRep();
   }
 
-  private void updateCompatibleClassMap(List<Class<?>> classes) {
-    for (Class<?> c : classes) {
+  private void updateCompatibleClassMap(List<ConcreteType> types) {
+    for (ConcreteType c : types) {
       typesWithSequencesMap.add(c);
     }
   }
 
-  private void updateCompatibleMap(Sequence newsequence, List<Class<?>> classes) {
-    for (int i = 0; i < classes.size(); i++) {
-      Class<?> t = classes.get(i);
+  private void updateCompatibleMap(Sequence newsequence, List<ConcreteType> types) {
+    for (ConcreteType t : types) {
       ArrayListSimpleList<Sequence> set = this.activeSequences.get(t);
       if (set == null) {
-        set = new ArrayListSimpleList<Sequence>();
+        set = new ArrayListSimpleList<>();
         this.activeSequences.put(t, set);
       }
       if (Log.isLoggingOn()) Log.logLine("Adding sequence to active sequences of type " + t);
       boolean added = set.add(newsequence);
       numActivesequences++;
-      assert added == true;
+      assert added;
     }
   }
 
@@ -177,53 +176,52 @@ public class SequenceCollection {
    * Searches through the set of active sequences to find all sequences whose
    * types match with the parameter type.
    *
-   * @param clazz
-   *          - the type desired for the sequences being sought
+   * @param type  the type desired for the sequences being sought
    * @return list of sequence objects that are of typp 'type' and abide by the
    *         constraints defined by nullOk.
    */
-  public SimpleList<Sequence> getSequencesForType(Class<?> clazz, boolean exactMatch) {
+  public SimpleList<Sequence> getSequencesForType(ConcreteType type, boolean exactMatch) {
 
-    if (clazz == null) throw new IllegalArgumentException("clazz cannot be null.");
+    if (type == null) throw new IllegalArgumentException("clazz cannot be null.");
 
     if (Log.isLoggingOn()) {
-      Log.logLine("getActivesequencesThatYield: entering method, clazz=" + clazz.toString());
+      Log.logLine("getActivesequencesThatYield: entering method, clazz=" + type.toString());
       // Log.logLine(activesequences.toString());
     }
 
-    List<SimpleList<Sequence>> ret = new ArrayList<SimpleList<Sequence>>();
+    List<SimpleList<Sequence>> ret = new ArrayList<>();
 
     if (exactMatch) {
-      SimpleList<Sequence> l = this.activeSequences.get(clazz);
+      SimpleList<Sequence> l = this.activeSequences.get(type);
       if (l != null) {
         ret.add(l);
       }
     } else {
-      for (Class<?> compatibleClass : typesWithSequencesMap.getMatches(clazz)) {
-        ret.add(this.activeSequences.get(compatibleClass));
+      for (ConcreteType compatibleType : typesWithSequencesMap.getMatches(type)) {
+        ret.add(this.activeSequences.get(compatibleType));
       }
     }
 
     if (ret.isEmpty()) {
       if (Log.isLoggingOn())
-        Log.logLine("getActivesequencesThatYield: found no sequences matching class " + clazz);
+        Log.logLine("getActivesequencesThatYield: found no sequences matching class " + type);
     }
-    SimpleList<Sequence> selector = new ListOfLists<Sequence>(ret);
+    SimpleList<Sequence> selector = new ListOfLists<>(ret);
     if (Log.isLoggingOn())
       Log.logLine("getActivesequencesThatYield: returning " + selector.size() + " sequences.");
     return selector;
   }
 
-  public Set<Class<?>> getTypesThatHaveSequences() {
+  public Set<ConcreteType> getTypesThatHaveSequences() {
     return Collections.unmodifiableSet(this.typesWithSequencesMap.getElements());
   }
 
-  public boolean hasSequences(Class<?> targetClass, Match match) {
+  public boolean hasSequences(ConcreteType targetClass, Match match) {
     return typesWithSequencesMap.containsAssignableType(targetClass, match);
   }
 
   public Set<Sequence> getAllSequences() {
-    Set<Sequence> result = new LinkedHashSet<Sequence>();
+    Set<Sequence> result = new LinkedHashSet<>();
     for (ArrayListSimpleList<Sequence> a : activeSequences.values()) {
       result.addAll(a.theList);
     }

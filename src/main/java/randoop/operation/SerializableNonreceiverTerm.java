@@ -3,6 +3,7 @@ package randoop.operation;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
+import randoop.types.ConcreteType;
 import randoop.types.TypeNames;
 
 /**
@@ -17,13 +18,13 @@ public class SerializableNonreceiverTerm implements Serializable {
   private final String type;
   private final Object value;
 
-  public SerializableNonreceiverTerm(Class<?> type, Object value) {
+  public SerializableNonreceiverTerm(ConcreteType type, Object value) {
     this.type = type.getName();
     this.value = value;
   }
 
   private Object readResolve() throws ObjectStreamException, ClassNotFoundException {
-    Class<?> c = TypeNames.getTypeForName(type);
+    ConcreteType c = TypeNames.getTypeForName(type);
     return new NonreceiverTerm(c, value);
   }
 }

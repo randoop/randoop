@@ -37,7 +37,7 @@ public class OperationParser {
    * @throws OperationParseException
    *           if the string does not have expected format.
    */
-  public static Operation parse(String str) throws OperationParseException {
+  public static ConcreteOperation parse(String str) throws OperationParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 

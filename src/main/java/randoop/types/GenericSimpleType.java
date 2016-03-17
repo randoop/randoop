@@ -46,11 +46,6 @@ public class GenericSimpleType extends GenericType {
 
   @Override
   public int hashCode() {
-    return Objects.hash(parameter);
-  }
-
-  @Override
-  public int hashCode() {
     return Objects.hash(parameter, bound);
   }
 

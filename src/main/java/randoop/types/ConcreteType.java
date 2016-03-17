@@ -2,8 +2,6 @@ package randoop.types;
 
 import java.lang.reflect.Type;
 
-import randoop.operation.ConcreteOperation;
-
 /**
  * {@code ConcreteType} represents any type that does not have a type variable:
  * a primitive type, a non-generic class, an enum, a parameterized type, or a
@@ -13,8 +11,6 @@ import randoop.operation.ConcreteOperation;
  * @see randoop.types.ParameterizedType
  */
 public abstract class ConcreteType extends GeneralType {
-
-  public abstract void add(ConcreteOperation op);
 
   /**
    * Indicates whether a value of a {@code ConcreteType} can be assigned to a
@@ -68,6 +64,13 @@ public abstract class ConcreteType extends GeneralType {
   public boolean isPrimitive() {
     return false;
   }
+
+  /**
+   * Indicates whether this is a boxed primitive type.
+   *
+   * @return true if this type is a boxed primitive, false otherwise
+   */
+  public boolean isBoxedPrimitive() { return false; }
 
   /**
    * Indicate whether this type is a parameterized type.
@@ -186,4 +189,12 @@ public abstract class ConcreteType extends GeneralType {
     return new ConcreteArrayType(elementType);
   }
 
+  /**
+   * {@inheritDoc}
+   * @return this concrete type
+   */
+  @Override
+  public ConcreteType instantiate(Substitution substitution) {
+    return this;
+  }
 }

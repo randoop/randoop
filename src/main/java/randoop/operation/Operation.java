@@ -59,22 +59,6 @@ import randoop.types.GeneralTypeTuple;
 public interface Operation extends Comparable<Operation> {
 
   /**
-   * Returns the ordered list of input types for this operation.
-   * If a method call or field access, the first input corresponds to the
-   * receiver, which must be an object of the declaring class.
-   * 
-   * @return list of types as {@link GeneralType} objects.
-   */
-  GeneralTypeTuple getInputTypes();
-
-  /**
-   * getOutputTypes gives the type returned by the operation.
-   * 
-   * @return type returned by the {@link Operation} as a {@link GeneralType} object.
-   */
-  GeneralType getOutputType();
-
-  /**
    * Predicate to indicate whether object represents a static operation on the 
    * declaring class.
    * 
@@ -93,13 +77,7 @@ public interface Operation extends Comparable<Operation> {
    */
   boolean isMessage();
 
-  /**
-   * Returns the class in which the operation is defined, or, if the operation
-   * represents a value, the type of the value.
-   * 
-   * @return class to which the operation belongs.
-   */
-  GeneralType getDeclaringType();
+
 
   /**
    * Predicate to indicate whether object represents a call to a constructor.

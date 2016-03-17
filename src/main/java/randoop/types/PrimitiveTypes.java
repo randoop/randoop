@@ -109,7 +109,7 @@ public final class PrimitiveTypes {
     return Collections.unmodifiableSet(boxedToPrimitiveAndString.keySet());
   }
 
-  public static Class<?> toBoxedType(Class<?> cls) {
+  public static Class<?> toBoxedType(ConcreteType cls) {
     return primitiveAndStringToBoxed.get(cls);
   }
 

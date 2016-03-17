@@ -1,14 +1,14 @@
 package randoop.util;
 
+import randoop.Globals;
+import randoop.main.GenInputsAbstract;
+import randoop.operation.ConcreteOperation;
+import randoop.sequence.Sequence;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
-
-import randoop.Globals;
-import randoop.main.GenInputsAbstract;
-import randoop.operation.Operation;
-import randoop.sequence.Sequence;
 
 public final class Log {
 
@@ -67,12 +67,12 @@ public final class Log {
     }
   }
 
-  public static void log(List<Operation> model) {
+  public static void log(List<ConcreteOperation> model) {
     if (!isLoggingOn()) return;
 
     try {
       GenInputsAbstract.log.write("Statements : " + Globals.lineSep);
-      for (Operation t : model) {
+      for (ConcreteOperation t : model) {
         GenInputsAbstract.log.write(t.toString());
         GenInputsAbstract.log.write(Globals.lineSep);
         GenInputsAbstract.log.flush();

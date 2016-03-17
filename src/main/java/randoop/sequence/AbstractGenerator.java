@@ -1,22 +1,11 @@
 package randoop.sequence;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import plume.Option;
 import plume.OptionGroup;
 import plume.Unpublicized;
-
-import randoop.ComponentManager;
-import randoop.DummyVisitor;
-import randoop.ExecutionVisitor;
-import randoop.Globals;
-import randoop.IStopper;
-import randoop.RandoopListenerManager;
-import randoop.RandoopStat;
+import randoop.*;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.Operation;
+import randoop.operation.ConcreteOperation;
 import randoop.test.TestCheckGenerator;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
@@ -24,6 +13,10 @@ import randoop.util.ReflectionExecutor;
 import randoop.util.Timer;
 import randoop.util.predicate.AlwaysFalse;
 import randoop.util.predicate.Predicate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Algorithm template for implementing a test generator.
@@ -81,7 +74,7 @@ public abstract class AbstractGenerator {
    * declarations, etc.) used to generate sequences. In other words, statements
    * specifies the universe of operations from which sequences are generated.
    */
-  public List<Operation> operations;
+  public List<ConcreteOperation> operations;
 
   /**
    * Container for execution visitors used during execution of sequences.
@@ -166,7 +159,7 @@ public abstract class AbstractGenerator {
    *          generation. Can be null.
    */
   public AbstractGenerator(
-      List<Operation> operations,
+      List<ConcreteOperation> operations,
       long timeMillis,
       int maxGeneratedSequences,
       int maxOutSequences,

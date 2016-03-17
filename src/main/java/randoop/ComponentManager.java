@@ -1,20 +1,19 @@
 package randoop;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import randoop.operation.ConstructorCall;
-import randoop.operation.MethodCall;
-import randoop.operation.Operation;
+import randoop.operation.ConcreteOperation;
 import randoop.sequence.ClassLiterals;
 import randoop.sequence.PackageLiterals;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceCollection;
-import randoop.util.ListOfLists;
+import randoop.types.ConcreteType;
 import randoop.types.PrimitiveTypes;
+import randoop.util.ListOfLists;
 import randoop.util.SimpleList;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Stores and provides means to access the component sequences generated during
@@ -87,10 +86,8 @@ public class ComponentManager {
    *          is considered empty.
    */
   public ComponentManager(Collection<Sequence> generalSeeds) {
-    Set<Sequence> seedSet = new LinkedHashSet<Sequence>(generalSeeds.size());
-    if (generalSeeds != null) {
-      seedSet.addAll(generalSeeds);
-    }
+    Set<Sequence> seedSet = new LinkedHashSet<>(generalSeeds.size());
+    seedSet.addAll(generalSeeds);
     this.gralSeeds = Collections.unmodifiableSet(seedSet);
     gralComponents = new SequenceCollection(seedSet);
   }
@@ -169,7 +166,7 @@ public class ComponentManager {
    * @param exactMatch  the flag whether or not to use subtyping in type matching
    *@return the sequences that create values of the given type
    */
-  public SimpleList<Sequence> getSequencesForType(Class<?> cls, boolean exactMatch) {
+  public SimpleList<Sequence> getSequencesForType(ConcreteType cls, boolean exactMatch) {
     return gralComponents.getSequencesForType(cls, exactMatch);
   }
 
@@ -178,31 +175,26 @@ public class ComponentManager {
    * i-th input value of the given statement. Any applicable class- or
    * package-level literals, those are added to the collection as well.
    *
-   * @param statement  the statement
+   * @param operation  the statement
    * @param i  the input value index of statement
    * @return the sequences that create values of the given type
    */
   @SuppressWarnings("unchecked")
-  public SimpleList<Sequence> getSequencesForType(Operation statement, int i) {
+  public SimpleList<Sequence> getSequencesForType(ConcreteOperation operation, int i) {
 
-    Class<?> neededType = statement.getInputTypes().get(i);
+    ConcreteType neededType = operation.getInputTypes().get(i);
 
     SimpleList<Sequence> ret = gralComponents.getSequencesForType(neededType, false);
 
     if (classLiterals != null || packageLiterals != null) {
 
-      Class<?> declaringCls = null;
-      if (statement instanceof MethodCall) {
-        declaringCls = ((MethodCall) statement).getMethod().getDeclaringClass();
-      } else if (statement instanceof ConstructorCall) {
-        declaringCls = ((ConstructorCall) statement).getConstructor().getDeclaringClass();
-      }
+      ConcreteType declaringCls = operation.getDeclaringType();
 
       if (classLiterals != null) {
         if (declaringCls != null) {
           SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
           if (!sl.isEmpty()) {
-            ret = new ListOfLists<Sequence>(ret, sl);
+            ret = new ListOfLists<>(ret, sl);
           }
         }
       }
@@ -212,7 +204,7 @@ public class ComponentManager {
         if (pkg != null) {
           SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
           if (!sl.isEmpty()) {
-            ret = new ListOfLists<Sequence>(ret, sl);
+            ret = new ListOfLists<>(ret, sl);
           }
         }
       }
@@ -230,15 +222,15 @@ public class ComponentManager {
    */
   public Set<Sequence> getAllPrimitiveSequences() {
 
-    Set<Sequence> ret = new LinkedHashSet<Sequence>();
+    Set<Sequence> ret = new LinkedHashSet<>();
     if (classLiterals != null) {
       ret.addAll(classLiterals.getAllSequences());
     }
     if (packageLiterals != null) {
       ret.addAll(packageLiterals.getAllSequences());
     }
-    for (Class<?> c : PrimitiveTypes.getPrimitiveTypesAndString()) {
-      ret.addAll(gralComponents.getSequencesForType(c, true).toJDKList());
+    for (ConcreteType type : PrimitiveTypes.getPrimitiveTypesAndString()) {
+      ret.addAll(gralComponents.getSequencesForType(type, true).toJDKList());
     }
     return ret;
   }

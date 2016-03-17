@@ -125,11 +125,6 @@ public class GenTests extends GenInputsAbstract {
         "Randoop is designed to be deterministic when the code under test is itself deterministic. This means that two runs of Randoop will generate the same tests. To get variation across runs, use the --randomseed option.");
   }
 
-  @OptionGroup(value = "GenTests unpublicized options", unpublicized = true)
-  @Unpublicized
-  @Option("Signals that this is a run in the context of a system test. (Slower)")
-  public static boolean system_test_run = false;
-
   public static SimpleLog progress = new SimpleLog(true);
 
   private static Options options =
@@ -259,7 +254,7 @@ public class GenTests extends GenInputsAbstract {
     }
 
     // Initialize components.
-    Set<Sequence> components = new LinkedHashSet<Sequence>();
+    Set<Sequence> components = new LinkedHashSet<>();
     if (!componentfile_ser.isEmpty()) {
       for (File onefile : componentfile_ser) {
         try (ObjectInputStream objectos =
@@ -277,7 +272,7 @@ public class GenTests extends GenInputsAbstract {
     }
     if (!componentfile_txt.isEmpty()) {
       for (File onefile : componentfile_txt) {
-        Set<Sequence> seqset = new LinkedHashSet<Sequence>();
+        Set<Sequence> seqset = new LinkedHashSet<>();
         Sequence.readTextSequences(onefile, seqset);
         if (!GenInputsAbstract.noprogressdisplay) {
           System.out.println(
@@ -293,12 +288,7 @@ public class GenTests extends GenInputsAbstract {
     // Add user-specified seeds.
     components.addAll(SeedSequences.getSeedsFromAnnotatedFields(classes.toArray(new Class<?>[0])));
 
-    ComponentManager componentMgr = null;
-    if (components == null) {
-      componentMgr = new ComponentManager(SeedSequences.defaultSeeds());
-    } else {
-      componentMgr = new ComponentManager(components);
-    }
+    ComponentManager componentMgr = new ComponentManager(components);
 
     addClassLiterals(componentMgr, classes);
 
@@ -318,7 +308,7 @@ public class GenTests extends GenInputsAbstract {
         createTestOutputPredicate(objectConstructor, coveredClasses);
 
     // list of visitors for collecting information from test sequences
-    List<ExecutionVisitor> visitors = new ArrayList<ExecutionVisitor>();
+    List<ExecutionVisitor> visitors = new ArrayList<>();
 
     // instrumentation visitor
     if (GenInputsAbstract.include_if_class_exercised != null) {

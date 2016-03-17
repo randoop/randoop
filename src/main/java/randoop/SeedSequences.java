@@ -12,6 +12,7 @@ import java.util.Set;
 
 import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
+import randoop.types.ConcreteType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.Reflection;
 
@@ -230,7 +231,7 @@ public final class SeedSequences {
     Set<Sequence> retval = objectsToSeeds(primitives);
     if (nullString) {
       // Add "String x = null" statement.
-      retval.add(Sequence.create(NonreceiverTerm.createNullOrZeroTerm(String.class)));
+      retval.add(Sequence.create(NonreceiverTerm.createNullOrZeroTerm(ConcreteType.forClass(String.class))));
     }
     return retval;
   }

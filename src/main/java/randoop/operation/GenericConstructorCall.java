@@ -1,27 +1,25 @@
 package randoop.operation;
 
-import randoop.types.GeneralType;
-import randoop.types.GenericType;
-import randoop.types.GenericTypeTuple;
-import randoop.types.Substitution;
+import randoop.types.*;
+
+import java.lang.reflect.Constructor;
 
 public class GenericConstructorCall extends GenericOperation {
 
-  public GenericConstructorCall(GenericTypeTuple inputTypes, GenericType outputType) {
-    super(inputTypes, outputType);
-    // TODO Auto-generated constructor stub
-  }
+  private final Constructor<?> constructor;
 
-  @Override
-  public GeneralType getDeclaringType() {
-    // TODO Auto-generated method stub
-    return null;
+  public GenericConstructorCall(Constructor<?> constructor, GeneralType declaringType, GenericTypeTuple inputTypes, GenericType outputType) {
+    super(declaringType, inputTypes, outputType);
+    this.constructor = constructor;
   }
 
   @Override
   public ConstructorCall instantiate(Substitution substitution) {
+    ConcreteTypeTuple inputTypes = this.getInputTypes().instantiate(substitution);
+    ConcreteType outputType = this.getOutputType().instantiate(substitution);
+    ConcreteType declaringType = this.getDeclaringType().instantiate(substitution);
     // TODO Auto-generated method stub
-    return null;
+    return new ConstructorCall(this.constructor, declaringType, inputTypes, outputType);
   }
 
 }

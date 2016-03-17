@@ -193,7 +193,7 @@ public abstract class GeneralType {
    * a {@code GenericArrayType} or a {@code ConcreteArrayType} depending on
    * whether the component type is generic or concrete.
    *
-   * @param type  the {@link java.lang.reflectGenericArrayType} reference
+   * @param type  the {@link java.lang.reflect.GenericArrayType} reference
    * @return the {@code GeneralType} for the array type
    */
   private static GeneralType forGenericArrayType(java.lang.reflect.GenericArrayType type) {
@@ -278,4 +278,13 @@ public abstract class GeneralType {
     return ConcreteType.forClass(c);
   }
 
+  /**
+   * Returns a concrete type for this general type created by instantiating
+   * the type parameters with a list of concrete type arguments.
+   *
+   * @param substitution  the type substitution
+   * @return a {@code ConcreteType} constructed by substituting for type
+   * parameters in this generic type
+   */
+  public abstract ConcreteType instantiate(Substitution substitution);
 }

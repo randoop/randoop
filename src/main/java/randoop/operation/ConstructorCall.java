@@ -15,6 +15,8 @@ import randoop.NormalExecution;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.TypeNames;
 import randoop.util.ConstructorReflectionCode;
@@ -65,13 +67,10 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
    * @param constructor
    *          reflective object for a constructor.
    */
-  public ConstructorCall(Constructor<?> constructor) {
+  public ConstructorCall(Constructor<?> constructor, ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    super(declaringType, inputTypes, outputType);
     if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
-    this.outputType = constructor.getDeclaringClass();
-    // TODO move this earlier in the process: check first that all
-    // methods to be used can be made accessible.
-    // XXX this should not be here but I get infinite loop when comment out
     this.constructor.setAccessible(true);
   }
 
@@ -82,19 +81,6 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
    */
   public Constructor<?> getConstructor() {
     return this.constructor;
-  }
-
-  /**
-   * Creates the {@code ConstructorCall} corresponding to the given reflection
-   * constructor.
-   *
-   * @param constructor
-   *          the {@link Constructor} object for calls
-   * @return a new {@code ConstructorCall} object for the given
-   *         {@code Constructor} instance.
-   */
-  public static ConstructorCall createConstructorCall(Constructor<?> constructor) {
-    return new ConstructorCall(constructor);
   }
 
   /**
@@ -274,16 +260,6 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
   public static Operation parse(String s) throws OperationParseException {
     return ConstructorCall.createConstructorCall(
         ConstructorSignatures.getConstructorForSignatureString(s));
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * @return class object representing declaring class for the constructor.
-   */
-  @Override
-  public GeneralType getDeclaringType() {
-    return constructor.getDeclaringClass();
   }
 
   /**

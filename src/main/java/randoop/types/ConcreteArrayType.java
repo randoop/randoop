@@ -1,5 +1,7 @@
 package randoop.types;
 
+import randoop.operation.ConcreteOperation;
+
 import java.lang.reflect.Array;
 import java.util.Objects;
 
@@ -66,7 +68,14 @@ public class ConcreteArrayType extends ConcreteType {
   public boolean isArray() {
     return true;
   }
-  
+
+  /**
+   * Returns the element type for this array type.
+   *
+   * @return the element type for this array type
+   */
+  public ConcreteType getElementType() { return elementType; }
+
   /**
    * {@inheritDoc}
    * An array is assignable from an array of same element type, or by an array 

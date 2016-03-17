@@ -8,24 +8,63 @@ import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 
+/**
+ * {@code ConcreteOperation} is an abstract implementation of {@link Operation} that represents
+ * the operations that can occur within a test.
+ * A concrete operation is either defined in a non-generic context, or is instantiated from a
+ * {@link GenericOperation}.
+ */
 public abstract class ConcreteOperation extends AbstractOperation {
 
-  private ConcreteTypeTuple inputTypes;
-  private ConcreteType outputType;
+  /** The declaring type for this operation */
+  private final ConcreteType declaringType;
 
-  public ConcreteOperation(ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  /** The type tuple of concrete input types. */
+  private final ConcreteTypeTuple inputTypes;
+
+  /** The concrete output type. */
+  private final ConcreteType outputType;
+
+  /**
+   * Creates a {@code ConcreteOperation} with the given input and output types.
+   *
+   * @param inputTypes  the tuple of concrete input types
+   * @param outputType  the concrete output type
+     */
+  public ConcreteOperation(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+    this.declaringType = declaringType;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
   }
-  
-  @Override
+
+  /**
+ ConcreteType  * Returns the tuple of input types for this operation.
+   * If a method call or field access, the first input corresponds to the
+   * receiver, which must be an object of the declaring class.
+   *
+   * @return tuple of concrete input types
+   */
   public ConcreteTypeTuple getInputTypes() {
     return inputTypes;
   }
 
-  @Override
+  /**
+   * Returns the type returned by the operation.
+   *
+   * @return {@link ConcreteType} type returned by this operation
+   */
   public ConcreteType getOutputType() {
     return outputType;
+  }
+
+  /**
+   * Returns the class in which the operation is defined, or, if the operation
+   * represents a value, the type of the value.
+   *
+   * @return class to which the operation belongs.
+   */
+  public ConcreteType getDeclaringType() {
+    return declaringType;
   }
 
   /**

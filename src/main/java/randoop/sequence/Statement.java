@@ -44,7 +44,7 @@ public final class Statement implements Serializable {
    */
   public Statement(ConcreteOperation operation, List<RelativeNegativeIndex> inputVariables) {
     this.operation = operation;
-    this.inputs = new ArrayList<RelativeNegativeIndex>(inputVariables);
+    this.inputs = new ArrayList<>(inputVariables);
   }
 
   /**
@@ -63,7 +63,7 @@ public final class Statement implements Serializable {
    * @return true if output type is void.
    */
   public boolean isVoidMethodCall() {
-    return operation.getOutputType().equals(void.class);
+    return operation.getOutputType().isVoid();
   }
 
   /**
@@ -128,7 +128,7 @@ public final class Statement implements Serializable {
       b.append(" ").append(Variable.classToVariableName(type)).append(variable.index).append(" = ");
     }
     operation.appendCode(inputs, b);
-    b.append(";" + Globals.lineSep);
+    b.append(";").append(Globals.lineSep);
   }
 
   public String toParseableString(String variableName, List<Variable> inputs) {
