@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import randoop.types.ConcreteType;
+
 /** Represents the result of a statement call in a sequence. */
 public class Variable implements Comparable<Variable> {
 
