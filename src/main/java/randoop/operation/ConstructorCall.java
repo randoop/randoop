@@ -1,11 +1,8 @@
 package randoop.operation;
 
-import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import randoop.ExceptionalExecution;
@@ -16,7 +13,6 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
-import randoop.types.GeneralType;
 import randoop.types.TypeNames;
 import randoop.util.ConstructorReflectionCode;
 import randoop.util.ReflectionExecutor;
@@ -82,7 +78,7 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
     if (types.length > 0) {
       b.append(types[0].getName());
       for (int i = 1; i < types.length; i++) {
-        b.append(", " + types[i].getName());
+        b.append(", ").append(types[i].getName());
       }
     }
     b.append(")");
@@ -97,7 +93,7 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
    *          constructor call.
    * @param b
    *          the StringBuilder to which the output is appended.
-   * @see Operation#appendCode(List, StringBuilder)
+   * @see ConcreteOperation#appendCode(List, StringBuilder)
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
@@ -117,14 +113,14 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
     // TODO the last replace is ugly. There should be a method that does it.
     String declaringClassStr = TypeNames.getCompilableName(declaringClass);
 
-    b.append((isNonStaticMember ? inputVars.get(0) + "." : "") + "new ");
+    b.append(isNonStaticMember ? inputVars.get(0) + "." : "").append("new ");
     b.append(isNonStaticMember ? declaringClass.getSimpleName() : declaringClassStr + "(");
     for (int i = (isNonStaticMember ? 1 : 0); i < inputVars.size(); i++) {
       if (i > (isNonStaticMember ? 1 : 0)) b.append(", ");
 
       // We cast whenever the variable and input types are not identical.
       if (!inputVars.get(i).getType().equals(getInputTypes().get(i)))
-        b.append("(" + getInputTypes().get(i).getName() + ")");
+        b.append("(").append(getInputTypes().get(i).getName()).append(")");
 
       String param = inputVars.get(i).getName();
 
@@ -175,9 +171,6 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
     return hashCodeCached;
   }
 
-  public long calls_time = 0;
-  public int calls_num = 0;
-
   /**
    * {@inheritDoc} Performs call to the constructor given the objects as actual
    * parameters, and the output stream for any output.
@@ -187,7 +180,7 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
    *          constructor.
    * @param out
    *          is a stream for any output.
-   * @see Operation#execute(Object[], PrintStream)
+   * @see ConcreteOperation#execute(Object[], PrintStream)
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
@@ -245,8 +238,9 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
    *           if no constructor found for signature.
    */
   public static Operation parse(String s) throws OperationParseException {
-    return ConstructorCall.createConstructorCall(
-        ConstructorSignatures.getConstructorForSignatureString(s));
+//    return ConstructorCall.createConstructorCall(
+//        ConstructorSignatures.getConstructorForSignatureString(s));
+    return null;
   }
 
   /**

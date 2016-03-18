@@ -38,7 +38,7 @@ public abstract class ConcreteOperation extends AbstractOperation {
   }
 
   /**
- ConcreteType  * Returns the tuple of input types for this operation.
+   * Returns the tuple of input types for this operation.
    * If a method call or field access, the first input corresponds to the
    * receiver, which must be an object of the declaring class.
    *

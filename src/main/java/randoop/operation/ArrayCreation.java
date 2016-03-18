@@ -1,16 +1,17 @@
 package randoop.operation;
 
-import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteArrayType;
+import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.TypeNames;
 
 /**
@@ -36,43 +37,30 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
 
   // State variables.
   private final int length;
-  private final Class<?> elementType;
-
-  // Cached values (for improved performance). Their values
-  // are computed upon the first invocation of the respective
-  // getter method.
-  private List<Class<?>> inputTypesCached;
-
-  private Class<?> outputType;
-
-  private int hashCodeCached;
-  private boolean hashCodeComputed = false;
+  private final ConcreteType elementType;
 
   /**
    * Creates an object representing the construction of an array that holds
    * values of the element type and has the given length.
    *
-   * @param elementType
-   *          type of objects in the array
    * @param length
    *          number of objects allowed in the array
+   * @param arrayType  the type of array this operation creates
+   * @param inputTypes  the input types to create the array
    */
-  public ArrayCreation(Class<?> elementType, int length) {
+  public ArrayCreation(int length, ConcreteArrayType arrayType, ConcreteTypeTuple inputTypes) {
+    super(arrayType, inputTypes, arrayType);
 
-    // Check legality of arguments.
-    if (elementType == null) throw new IllegalArgumentException("elementType cannot be null.");
-    if (length < 0) throw new IllegalArgumentException("arity cannot be less than zero: " + length);
+    assert length < 0 : "array length may not be negative";
 
-    // Set state variables.
-    this.elementType = elementType;
+    this.elementType = arrayType.getElementType();
     this.length = length;
-    this.outputType = Array.newInstance(elementType, 0).getClass();
   }
 
   /**
    * @return the type of the elements held in the created array
    */
-  public Class<?> getElementType() {
+  public ConcreteType getElementType() {
     return this.elementType;
   }
 
@@ -85,20 +73,6 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
     return this.length;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return list of identical element types matching length of created array.
-   */
-  @Override
-  public List<Class<?>> getInputTypes() {
-    if (inputTypesCached == null) {
-      this.inputTypesCached = new ArrayList<Class<?>>(length);
-      for (int i = 0; i < length; i++) inputTypesCached.add(elementType);
-      inputTypesCached = Collections.unmodifiableList(inputTypesCached);
-    }
-    return Collections.unmodifiableList(this.inputTypesCached);
-  }
 
   /**
    * {@inheritDoc}
@@ -113,7 +87,7 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
     }
     long startTime = System.currentTimeMillis();
     assert statementInput.length == this.length;
-    Object theArray = Array.newInstance(this.elementType, this.length);
+    Object theArray = Array.newInstance(this.elementType.getRuntimeClass(), this.length);
     for (int i = 0; i < statementInput.length; i++) Array.set(theArray, i, statementInput[i]);
     long totalTime = System.currentTimeMillis() - startTime;
     return new NormalExecution(theArray, totalTime);
@@ -134,16 +108,6 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
 
   /**
    * {@inheritDoc}
-   *
-   * @return type of created array.
-   */
-  @Override
-  public Class<?> getOutputType() {
-    return outputType;
-  }
-
-  /**
-   * {@inheritDoc}
    */
   @Override
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
@@ -152,9 +116,9 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
       throw new IllegalArgumentException(msg);
     }
 
-    String arrayTypeName = this.elementType.getCanonicalName();
+    String arrayTypeName = this.elementType.getName();
 
-    b.append("new " + arrayTypeName + "[] { ");
+    b.append("new ").append(arrayTypeName).append("[] { ");
     for (int i = 0; i < inputVars.size(); i++) {
       if (i > 0) b.append(", ");
 
@@ -178,12 +142,7 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
 
   @Override
   public int hashCode() {
-    if (!hashCodeComputed) {
-      hashCodeComputed = true;
-      hashCodeCached = this.elementType.hashCode();
-      hashCodeCached += this.length * 17;
-    }
-    return hashCodeCached;
+    return Objects.hash(elementType, length);
   }
 
   @Override
@@ -235,11 +194,8 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
     }
 
     int length = Integer.parseInt(lengthStr);
-    return new ArrayCreation(elementType, length);
+//    return new ArrayCreation(elementType, length);
+    return null;
   }
 
-  @Override
-  public Class<?> getDeclaringClass() {
-    return getOutputType();
-  }
 }

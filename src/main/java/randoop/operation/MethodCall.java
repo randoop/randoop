@@ -1,6 +1,5 @@
 package randoop.operation;
 
-import java.io.ObjectStreamException;
 import java.io.PrintStream;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Method;
@@ -20,7 +19,6 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
-import randoop.types.GeneralType;
 import randoop.types.PrimitiveTypes;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
@@ -231,8 +229,8 @@ public final class MethodCall extends ConcreteOperation implements Operation {
     return hashCodeCached;
   }
 
-  public long calls_time = 0;
-  public int calls_num = 0;
+  private long calls_time = 0;
+  private int calls_num = 0;
 
   /**
    * {@inheritDoc}
