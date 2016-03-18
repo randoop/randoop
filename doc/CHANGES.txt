@@ -1,5 +1,8 @@
 Version 2.1.5, released ????
 
+The following command-line arguments have been removed: -output-tests-serialized,
+--componentfile-ser, --componentfile-txt, --output-components
+
 For developers: Randoop is now built using Gradle (with the Gradle Wrapper).
 File organization has changed to the default used by Gradle Java plugin.
 See the developer manual for details.
