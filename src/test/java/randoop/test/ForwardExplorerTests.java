@@ -152,6 +152,6 @@ public class ForwardExplorerTests extends TestCase {
       throw new BugInRandoopException(e); // Should never reach here!
     }
     return (new GenTests())
-        .createTestOutputPredicate(objectConstructor, new LinkedHashSet<Class<?>>());
+        .createTestOutputPredicate(objectConstructor, new LinkedHashSet<Class<?>>(), include_if_classname_appears);
   }
 }
