@@ -1,26 +1,21 @@
 package randoop.operation;
 
-import randoop.types.GeneralType;
-import randoop.types.GenericTypeTuple;
+import randoop.field.GenericAccessibleField;
+import randoop.types.ConcreteType;
 import randoop.types.Substitution;
 
 public class GenericFieldSet extends GenericOperation {
 
-  public GenericFieldSet(GenericTypeTuple inputTypes) {
-    super(inputTypes, GeneralType.forClass(void.class));
-    // TODO Auto-generated constructor stub
-  }
+  private final GenericAccessibleField field;
 
-  @Override
-  public GeneralType getDeclaringType() {
-    // TODO Auto-generated method stub
-    return null;
+  public GenericFieldSet(GenericAccessibleField field) {
+    super(field.getDeclaringType(), field.getSetTypes(), ConcreteType.forClass(void.class));
+    this.field = field;
   }
 
   @Override
   public FieldSet instantiate(Substitution substitution) {
-    // TODO Auto-generated method stub
-    return null;
+    return new FieldSet(field.instantiate(substitution));
   }
 
 }

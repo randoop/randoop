@@ -1,7 +1,6 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.List;
 
 import randoop.BugInRandoopException;
@@ -12,9 +11,6 @@ import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
-import randoop.types.GeneralType;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a
@@ -23,9 +19,7 @@ import randoop.types.GeneralType;
  * @see AccessibleField
  *
  */
-public class FieldGet extends ConcreteOperation implements Operation,Serializable {
-
-  private static final long serialVersionUID = 3966201727170073093L;
+public class FieldGet extends ConcreteOperation implements Operation {
 
   public static String ID = "getter";
 
@@ -37,8 +31,8 @@ public class FieldGet extends ConcreteOperation implements Operation,Serializabl
    * @param field
    *          the {@link AccessibleField} object from which to get values.
    */
-  public FieldGet(AccessibleField field, ConcreteType outputType) {
-    super(new ConcreteTypeTuple(), outputType);
+  public FieldGet(AccessibleField field) {
+    super(field.getDeclaringType(), field.getAccessTypes(), field.getType());
     this.field = field;
   }
 
@@ -165,11 +159,6 @@ public class FieldGet extends ConcreteOperation implements Operation,Serializabl
   @Override
   public boolean isMessage() {
     return true;
-  }
-
-  @Override
-  public GeneralType getDeclaringType() {
-    return field.getDeclaringClass();
   }
 
   /**

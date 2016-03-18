@@ -1,6 +1,7 @@
 package randoop.operation;
 
 import randoop.field.AccessibleField;
+import randoop.field.GenericAccessibleField;
 import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
 import randoop.types.GenericSimpleType;
@@ -9,23 +10,16 @@ import randoop.types.Substitution;
 
 public class GenericFieldGet extends GenericOperation {
 
-  private AccessibleField field;
+  private GenericAccessibleField field;
 
-  public GenericFieldGet(AccessibleField field, GenericSimpleType outputType) {
-    super(new GenericTypeTuple(), outputType);
+  public GenericFieldGet(GenericAccessibleField field) {
+    super(field.getDeclaringType(), field.getAccessTypes(), field.getType());
     this.field = field;
   }
 
   @Override
-  public GeneralType getDeclaringType() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
   public FieldGet instantiate(Substitution substitution) {
-    ConcreteType concreteOutputType = this.getOutputType().instantiate(substitution);
-    return new FieldGet(field, concreteOutputType);
+    return new FieldGet(field.instantiate(substitution));
   }
 
 }

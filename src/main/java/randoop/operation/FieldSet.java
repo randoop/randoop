@@ -1,7 +1,6 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.List;
 
 import randoop.BugInRandoopException;
@@ -16,8 +15,6 @@ import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
-import randoop.types.GeneralType;
 
 /**
  * FieldSetter is an adapter for a {@link AccessibleField} as a
@@ -25,9 +22,7 @@ import randoop.types.GeneralType;
  *
  * @see AccessibleField
  */
-public class FieldSet extends ConcreteOperation implements Operation, Serializable{
-
-  private static final long serialVersionUID = -5905429635469194115L;
+public class FieldSet extends ConcreteOperation implements Operation {
 
   public static String ID = "setter";
 
@@ -42,8 +37,8 @@ public class FieldSet extends ConcreteOperation implements Operation, Serializab
    * @throws IllegalArgumentException
    *           if field is static final.
    */
-  public FieldSet(AccessibleField field, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
-    super(inputTypes, outputType);
+  public FieldSet(AccessibleField field) {
+    super(field.getDeclaringType(), field.getSetTypes(), ConcreteType.forClass(void.class));
     if (field instanceof StaticFinalField) {
       throw new IllegalArgumentException("Field may not be static final for FieldSetter");
     }
@@ -197,11 +192,6 @@ public class FieldSet extends ConcreteOperation implements Operation, Serializab
     String fieldDescriptor = descr.substring(parPos + 1, lastParPos);
     AccessibleField pf = (new FieldParser()).parse(fieldDescriptor);
     return new FieldSet(pf);
-  }
-
-  @Override
-  public GeneralType getDeclaringType() {
-    return field.getDeclaringClass();
   }
 
   @Override

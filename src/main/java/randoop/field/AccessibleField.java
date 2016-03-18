@@ -11,7 +11,7 @@ import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 
 /**
- * PublicField is an abstract class representing a public field of a class
+ * AccessibleField is an abstract class representing an accessible field of a class
  * object, which can be an instance field, a static field, or a static final
  * field. Each is implemented as a separate class. Meant to be adapted by either
  * {@link randoop.operation.FieldSet FieldSet} or
@@ -25,6 +25,8 @@ import randoop.types.ConcreteTypeTuple;
  */
 public abstract class AccessibleField {
 
+  private final ConcreteType declaringType;
+  private final ConcreteType valueType;
   private Field field;
 
   /**
@@ -33,7 +35,9 @@ public abstract class AccessibleField {
    * @param field
    *          the field.
    */
-  public AccessibleField(Field field) {
+  public AccessibleField(Field field, ConcreteType declaringType, ConcreteType valueType) {
+    this.declaringType = declaringType;
+    this.valueType = valueType;
     this.field = field;
     this.field.setAccessible(true);
   }
@@ -44,14 +48,14 @@ public abstract class AccessibleField {
    *
    * @return list of types needed to set the field.
    */
-  public abstract List<ConcreteType> getSetTypes();
+  public abstract ConcreteTypeTuple getSetTypes();
 
   /**
    * Returns a list of types needed to access the field.
    *
    * @return a singleton list with declaring class, or an empty list
    */
-  public abstract List<ConcreteType> getAccessTypes();
+  public abstract ConcreteTypeTuple getAccessTypes();
 
   /**
    * Returns the class in which the field is a member.
@@ -59,7 +63,7 @@ public abstract class AccessibleField {
    * @return class where field is declared.
    */
   public ConcreteType getDeclaringType() {
-    return ConcreteType.forClass(field.getDeclaringClass());
+    return declaringType;
   }
 
   /**
@@ -68,7 +72,7 @@ public abstract class AccessibleField {
    * @return object representing type of field.
    */
   public ConcreteType getType() {
-    return ConcreteType.forClass(field.getType());
+    return valueType;
   }
 
   /**
