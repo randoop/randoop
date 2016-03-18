@@ -14,6 +14,7 @@ import randoop.field.FinalInstanceField;
 import randoop.field.InstanceField;
 import randoop.field.StaticField;
 import randoop.field.StaticFinalField;
+import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGet;
@@ -32,7 +33,7 @@ import randoop.operation.Operation;
  */
 public class OperationExtractor implements ClassVisitor {
 
-  private Set<Operation> operations;
+  private Set<ConcreteOperation> operations;
 
   /**
    * Creates a visitor object that collects Operation objects corresponding to
@@ -45,8 +46,8 @@ public class OperationExtractor implements ClassVisitor {
     this.operations = new TreeSet<>();
   }
 
-  public List<Operation> getOperations() {
-    return new ArrayList<Operation>(operations);
+  public List<ConcreteOperation> getOperations() {
+    return new ArrayList<>(operations);
   }
 
   /**
@@ -59,7 +60,7 @@ public class OperationExtractor implements ClassVisitor {
    *          whether to include class members in results
    * @return list of {@code Operation} objects satisfying the predicate
    */
-  public static List<Operation> getOperations(
+  public static List<ConcreteOperation> getOperations(
       Collection<Class<?>> classListing, ReflectionPredicate predicate) {
     if (predicate == null) predicate = new DefaultReflectionPredicate();
     ReflectionManager mgr = new ReflectionManager(predicate);
