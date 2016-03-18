@@ -644,45 +644,37 @@ public abstract class GenInputsAbstract extends CommandHandler {
       throw new RuntimeException(
           "Maximum sequence size must be greater than zero but was " + maxsize);
     }
+
+    if (literals_file.size() > 0 && literals_level == ClassLiteralsMode.NONE) {
+      throw new RuntimeException(
+              "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+    }
   }
 
-  public static List<Class<?>> findClassesFromArgs(Options opts) {
-    List<Class<?>> classes = new ArrayList<Class<?>>();
-
-    if (classlist != null) {
-      try {
-        classes.addAll(ClassReader.getClassesForFile(classlist));
-      } catch (Exception e) {
-        String msg =
-            Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
-        System.out.println(msg);
-        System.exit(1);
-      }
-    }
-
-    ClassNameErrorHandler errorHandler = new ThrowClassNameError();
-    if (silently_ignore_bad_class_names) {
-      errorHandler = new WarnOnBadClassName();
-    }
-    classes.addAll(ClassReader.getClassesForNames(testclass, errorHandler));
-
-    return classes;
+  public static Set<String> getClassnamesFromArgs() {
+    String errMessage = "ERROR while reading list of classes to test";
+    Set<String> classnames = getStringSetFromFile(classlist, errMessage);
+    classnames.addAll(testclass);
+    return classnames;
   }
 
-  public static Set<String> getClassnamesFromArgs(Options opts) {
-    Set<String> classnames = new LinkedHashSet<>(testclass);
-    if (classlist != null) {
-      try (EntryReader er = new EntryReader(classlist, "^#.*", null)) {
+  public static Set<String> getStringSetFromFile(File listFile, String errMessage) {
+    return getStringSetFromFile(listFile, errMessage, "^#.*", null);
+  }
+
+  public static Set<String> getStringSetFromFile(File listFile, String errMessage, String commentRegex, String includeRegex) {
+    Set<String> elementSet = new LinkedHashSet<>();
+    if (listFile != null) {
+      try (EntryReader er = new EntryReader(listFile, commentRegex, includeRegex)) {
         for (String line : er) {
-          classnames.add(line.trim());
+          elementSet.add(line.trim());
         }
       } catch (IOException e) {
-        String msg =
-            Util.toNColsStr("ERROR while reading list of classes to test: " + e.getMessage(), 70);
-        System.out.println(msg);
+        String msg = Util.toNColsStr(errMessage + ": " + e.getMessage(), 70);
+        System.err.println(msg);
         System.exit(1);
       }
     }
-    return classnames;
+    return elementSet;
   }
 }

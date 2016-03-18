@@ -15,16 +15,19 @@ import randoop.field.FinalInstanceField;
 import randoop.field.InstanceField;
 import randoop.field.StaticField;
 import randoop.field.StaticFinalField;
+import randoop.reflection.OperationModel;
 import randoop.operation.EnumConstant;
 import randoop.operation.MethodCall;
 import randoop.reflection.ReflectionPredicate;
 
 public class TypeFactory {
 
+  private OperationModel model;
   private ReflectionPredicate predicate;
 
-  public TypeFactory(ReflectionPredicate predicate) {
+  public TypeFactory(ReflectionPredicate predicate, OperationModel model) {
     this.predicate = predicate;
+    this.model = model;
   }
 
   // Note to self:  this should be pushing types and operations into bookkeeping class
