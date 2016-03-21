@@ -1,8 +1,6 @@
 package randoop.reflection;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -12,21 +10,19 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.CheckRep;
-import randoop.CheckRepContract;
 import randoop.ComponentManager;
-import randoop.EqualsHashcode;
-import randoop.EqualsReflexive;
-import randoop.EqualsSymmetric;
-import randoop.EqualsToNullRetFalse;
 import randoop.LiteralFileReader;
-import randoop.ObjectContract;
-import randoop.TestValue;
+import randoop.contract.CheckRepContract;
+import randoop.contract.EqualsHashcode;
+import randoop.contract.EqualsReflexive;
+import randoop.contract.EqualsSymmetric;
+import randoop.contract.EqualsToNullRetFalse;
+import randoop.contract.ObjectContract;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteType;
-import randoop.types.PrimitiveTypes;
 import randoop.types.TypeFactory;
 import randoop.util.ClassFileConstants;
 import randoop.util.MultiMap;
@@ -34,9 +30,13 @@ import randoop.util.MultiMap;
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 /**
- * Created by bjkeller on 3/18/16.
+ * {@code OperationModel} represents the class and operation model of a set of input classes for
+ * which tests are to be generated.
  */
 public class OperationModel {
+    private MultiMap<Class<?>, Sequence> classLiteralMap; // instantiated using ClassLiteralExtractor
+    private Set<Sequence> annotatedTestValues; // instantiated using TestValueExtractor
+    private List<ObjectContract> contracts;
 
 
 // TODO make sure adding Object constructor
@@ -44,6 +44,17 @@ public class OperationModel {
 
     // TODO should typefactory really just be reflectionmanager?
 // TODO and do annotation scraping as visitor?
+
+    //TODO Add use of TestValueExtractor for scraping TestValue annotation
+    //TODO Add use of CheckRepExtractor for scraping CheckRep annotation
+    //TODO Add use of ClassLiteralExtractor 
+
+    private OperationModel() {
+        classLiteralMap = new MultiMap<>();
+        annotatedTestValues = new LinkedHashSet<>();
+        List<ObjectContract> = new ArrayList<>();
+    }
+
     /**
      * Factory method to construct an operation model for a particular set of classes
      *
@@ -118,150 +129,7 @@ public class OperationModel {
         return model;
     }
 
-    /**
-     * @see randoop.SeedSequences#getSeedsFromAnnotatedFields(List)
-     * @return list of fields annotated with TestValue
-     */
-    public Set<Object> getAnnotatedTestValues() {
-        return new LinkedHashSet<>();
-    }
 
-    /**
-     * Inspects the declared fields of the given classes. If it finds fields with
-     * a @TestValue annotation, ensures that the fields are static, public, and
-     * declare a primitive type (or String), or an array of such types. It returns
-     * a set of statement sequences corresponding to the values collected from the
-     * annotated fields.
-     *
-     * @param fields
-     *          A list of static fields with @TestValue annotation
-     * @return A set of Sequences representing primitive values collected
-     *         frome @TestValue-annotated fields in the given classes
-     */
-    public static Set<Sequence> getSeedsFromAnnotatedFields(List<Field> fields) {
-
-        // This list will store the primitive values (or Strings) obtained from
-        // @TestValue fields.
-        List<Object> primitives = new ArrayList<>();
-
-        // Find primitive values from static class fields specified by the user
-        // as @TestValue fields.
-        for (Field f : fields) {
-            if (f.getAnnotation(TestValue.class) != null) {
-
-                // Check that @TestValue field is static.
-                if (!Modifier.isStatic(f.getModifiers())) {
-                    String msg =
-                            "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
-                                    + f.getName()
-                                    + " in class "
-                                    + f.getDeclaringClass()
-                                    + " to be declared static but it was not.";
-                    throw new RuntimeException(msg);
-                }
-
-                // Check that @TestValue field is public.
-                if (!Modifier.isPublic(f.getModifiers())) {
-                    String msg =
-                            "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
-                                    + f.getName()
-                                    + " in class "
-                                    + f.getDeclaringClass()
-                                    + " to be declared public but it was not.";
-                    throw new RuntimeException(msg);
-                }
-
-                // Check that @TestValue field is accessible.
-                if (!Modifier.isPublic(f.getModifiers())) {
-                    String msg =
-                            "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
-                                    + f.getName()
-                                    + " in class "
-                                    + f.getDeclaringClass()
-                                    + " to be accessible at runtime but it was not.";
-                    throw new RuntimeException(msg);
-                }
-
-                // Get the value(s) stored in the field.
-                Class<?> ftype = f.getType();
-                try {
-
-                    // Case 1: f is a primitive type
-                    if (PrimitiveTypes.isPrimitiveOrStringType(ftype)) {
-                        printDetectedAnnotatedFieldMsg(f);
-                        primitives.add(f.get(null));
-
-                        // Case 2: f is a primitive array type
-                    } else if (ftype.isArray()
-                            && PrimitiveTypes.isPrimitiveOrStringType(ftype.getComponentType())) {
-                        printDetectedAnnotatedFieldMsg(f);
-                        Object array = f.get(null);
-                        int length = Array.getLength(array);
-                        for (int i = 0; i < length; i++) {
-                            primitives.add(Array.get(array, i));
-                        }
-
-                    } else {
-                        String msg =
-                                "RANDOOP ANNOTATION ERROR: Expected @TestValue-annotated field "
-                                        + f.getName()
-                                        + " in class "
-                                        + f.getDeclaringClass()
-                                        + " to declare a primitive type, String, or an array of primitives of Strings, "
-                                        + "but the field's type is "
-                                        + f.getType()
-                                        + ".";
-                        throw new RuntimeException(msg);
-                    }
-
-                } catch (IllegalArgumentException e) {
-                    String msg =
-                            "RANDOOP ANNOTATION ERROR: IllegalArgumentException when processing @TestValue-annotated field "
-                                    + f.getName()
-                                    + " in class "
-                                    + f.getDeclaringClass()
-                                    + ".";
-                    throw new RuntimeException(msg);
-                } catch (IllegalAccessException e) {
-                    String msg =
-                            "RANDOOP ANNOTATION ERROR: IllegalAccessException when processing @TestValue-annotated field "
-                                    + f.getName()
-                                    + " in class "
-                                    + f.getDeclaringClass()
-                                    + ". (Is the class declaring this field publicly-visible?)";
-                    throw new RuntimeException(msg);
-                }
-            }
-        }
-
-        // Now we convert the values collected to sequences. We do this by calling
-        // the objectsToSeeds(List<Object>) method.
-        //
-        // There is a small wrinkle left: method objectsToSeeds(List<Object>)
-        // doesn't admit null values.
-        // Note that if there was a null value in the values we collected, it must
-        // have comes from a
-        // String field. In this case, we remove the null value, and it afterwards.
-        boolean nullString = primitives.remove(null);
-        Set<Sequence> retval = objectsToSeeds(primitives);
-        if (nullString) {
-            // Add "String x = null" statement.
-            retval.add(Sequence.create(NonreceiverTerm.createNullOrZeroTerm(ConcreteType.forClass(String.class))));
-        }
-        return retval;
-    }
-
-    private static void printDetectedAnnotatedFieldMsg(Field f) {
-        String msg =
-                "ANNOTATION: Detected @TestValue-annotated field "
-                        + f.getType().getCanonicalName()
-                        + " \""
-                        + f.getName()
-                        + "\" in class "
-                        + f.getDeclaringClass().getCanonicalName()
-                        + ". Will collect its primtive values to use in generation.";
-        System.out.println(msg);
-    }
 
     /**
      * Adds literals to the component manager, by parsing any literals files
@@ -271,14 +139,11 @@ public class OperationModel {
 
         // Add a (1-element) sequence corresponding to each literal to the component
         // manager.
+
         for (String filename : literalsFile) {
-            MultiMap<Class<?>, NonreceiverTerm> literalmap;
+            MultiMap<Class<?>, Sequence> literalmap;
             if (filename.equals("CLASSES")) {
-                Collection<ClassFileConstants.ConstantSet> css = new ArrayList<>(classes.size());
-                for (Class<?> clazz : classes) {
-                    css.add(ClassFileConstants.getConstants(clazz.getName()));
-                }
-                literalmap = ClassFileConstants.toMap(css);
+                literalmap = classLiteralMap;
             } else {
                 literalmap = LiteralFileReader.parse(filename);
             }
@@ -288,8 +153,7 @@ public class OperationModel {
                         (literalsLevel == ClassLiteralsMode.PACKAGE
                                 ? cls.getPackage()
                                 : null);
-                for (NonreceiverTerm p : literalmap.getValues(cls)) {
-                    Sequence seq = Sequence.create(p);
+                for (Sequence seq : literalmap.getValues(cls)) {
                     switch (literalsLevel) {
                         case CLASS:
                             compMgr.addClassLevelLiteral(cls, seq);
@@ -332,100 +196,34 @@ public class OperationModel {
         }
     }
 
-    public List<ObjectContract> getContracts() {
-        List<ObjectContract> contracts = new ArrayList<>();
-
-        // Add any @CheckRep-annotated methods
-        List<ObjectContract> checkRepContracts = getContractsFromAnnotations(classes);
+    private void addContracts(Set<ObjectContract> checkRepContracts) {
+        // Add CheckRep contracts collected by CheckRepExtractor
         contracts.addAll(checkRepContracts);
 
-        // Now add all of Randoop's default contracts.
+        // Add all of Randoop's default contracts.
         // Note: if you add to this list, also update the Javadoc for
         // check_object_contracts.
         contracts.add(new EqualsReflexive());
         contracts.add(new EqualsSymmetric());
         contracts.add(new EqualsHashcode());
         contracts.add(new EqualsToNullRetFalse());
+    }
 
+  /**
+   * Returns all {@link ObjectContract} objects for this run of Randoop.
+   * Includes Randoop defaults and {@link randoop.CheckRep} annotated methods.
+   *
+   * @return the list of contracts
+   */
+    public List<ObjectContract> getContracts() {
         return contracts;
-    }
-
-    public static List<ObjectContract> getContractsFromAnnotations(Set<ConcreteType> types) {
-
-        List<ObjectContract> contractsFound = new ArrayList<>();
-
-        for (ConcreteType type : types) {
-            Class<?> c = type.getRuntimeClass();
-            for (Method m : c.getDeclaredMethods()) {
-                if (m.getAnnotation(CheckRep.class) != null) {
-
-                    // Check that method is an instance (not a static) method.
-                    if (Modifier.isStatic(m.getModifiers())) {
-                        String msg =
-                                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
-                                        + m.getName()
-                                        + " in class "
-                                        + m.getDeclaringClass()
-                                        + " to be an instance method, but it is declared static.";
-                        throw new RuntimeException(msg);
-                    }
-
-                    // Check that method is public.
-                    if (!Modifier.isPublic(m.getModifiers())) {
-                        String msg =
-                                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
-                                        + m.getName()
-                                        + " in class "
-                                        + m.getDeclaringClass()
-                                        + " to be declared public but it is not.";
-                        throw new RuntimeException(msg);
-                    }
-
-                    // Check that method takes no arguments.
-                    if (m.getParameterTypes().length > 0) {
-                        String msg =
-                                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
-                                        + m.getName()
-                                        + " in class "
-                                        + m.getDeclaringClass()
-                                        + " to declare no parameters but it does (method signature:"
-                                        + m.toString()
-                                        + ").";
-                        throw new RuntimeException(msg);
-                    }
-
-                    // Check that method's return type is void.
-                    if (!(m.getReturnType().equals(boolean.class) || m.getReturnType().equals(void.class))) {
-                        String msg =
-                                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
-                                        + m.getName()
-                                        + " in class "
-                                        + m.getDeclaringClass()
-                                        + " to have void or boolean return type but it does not (method signature:"
-                                        + m.toString()
-                                        + ").";
-                        throw new RuntimeException(msg);
-                    }
-
-                    printDetectedAnnotatedCheckRepMethod(m);
-                    contractsFound.add(new CheckRepContract(m));
-                }
-            }
-        }
-        return contractsFound;
-    }
-
-    private static void printDetectedAnnotatedCheckRepMethod(Method m) {
-        String msg =
-                "ANNOTATION: Detected @CheckRep-annotated method \""
-                        + m.toString()
-                        + "\". Will use it to check rep invariant of class "
-                        + m.getDeclaringClass().getCanonicalName()
-                        + " during generation.";
-        System.out.println(msg);
     }
 
     public ConcreteOperation getOperation(Constructor<Object> constructor) {
         return null;
+    }
+
+    public Set<Sequence> getAnnotatedTestValues() {
+        return annotatedTestValues;
     }
 }
