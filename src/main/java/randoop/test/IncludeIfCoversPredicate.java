@@ -34,7 +34,9 @@ public class IncludeIfCoversPredicate extends DefaultPredicate<ExecutableSequenc
   @Override
   public boolean test(ExecutableSequence t) {
     for (Class<?> c : coveredClasses) {
-      return t.coversClass(c);
+      if (t.coversClass(c)) {
+        return true;
+      }
     }
     return false;
   }
