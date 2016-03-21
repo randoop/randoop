@@ -1,5 +1,6 @@
-package randoop;
+package randoop.contract;
 
+import randoop.Globals;
 import randoop.util.PrimitiveTypes;
 
 /**

@@ -1,4 +1,4 @@
-package randoop;
+package randoop.contract;
 
 // NOTE: This is a publicized user extension point. If you add any
 // methods, document them well and update the Randoop manual.

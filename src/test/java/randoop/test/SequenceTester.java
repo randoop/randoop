@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Properties;
 
 import randoop.DummyVisitor;
-import randoop.EqualsHashcode;
-import randoop.EqualsReflexive;
-import randoop.EqualsSymmetric;
-import randoop.EqualsToNullRetFalse;
+import randoop.contract.EqualsHashcode;
+import randoop.contract.EqualsReflexive;
+import randoop.contract.EqualsSymmetric;
+import randoop.contract.EqualsToNullRetFalse;
 import randoop.Globals;
-import randoop.ObjectContract;
+import randoop.contract.ObjectContract;
 import randoop.main.GenInputsAbstract.BehaviorType;
 import randoop.reflection.PublicVisibilityPredicate;
 import randoop.reflection.VisibilityPredicate;

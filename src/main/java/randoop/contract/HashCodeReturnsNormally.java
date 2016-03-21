@@ -1,4 +1,6 @@
-package randoop;
+package randoop.contract;
+
+import randoop.Globals;
 
 /**
  * Checks that calling hashCode() on an object does not throw an exception.
