@@ -22,8 +22,6 @@ import randoop.LiteralFileReader;
 import randoop.ObjectContract;
 import randoop.TestValue;
 import randoop.main.ClassNameErrorHandler;
-import randoop.main.ThrowClassNameError;
-import randoop.main.WarnOnBadClassName;
 import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
@@ -40,9 +38,12 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  */
 public class OperationModel {
 
-// TODO make sure adding Object constructor
-// TODO move seed sequence TestValue annotation scraping to here
 
+// TODO make sure adding Object constructor
+// TODO move seed sequence TestValue annotation scraping to here --- do annotation scraping as visitor
+
+    // TODO should typefactory really just be reflectionmanager?
+// TODO and do annotation scraping as visitor?
     /**
      * Factory method to construct an operation model for a particular set of classes
      *
@@ -56,8 +57,14 @@ public class OperationModel {
      */
     public static OperationModel createModel(VisibilityPredicate visibility, DefaultReflectionPredicate reflectionPredicate, Set<String> classnames, Set<String> coveredClassnames, ClassNameErrorHandler errorHandler) {
 
+        //when see new class:
+        // - get type
+        // - get all operations
+        // - if type is
         OperationModel model = new OperationModel();
         TypeFactory typeFactory = new TypeFactory(reflectionPredicate, model);
+
+        Set<Class<?>> coveredClasses = new LinkedHashSet<>();
 
         for (String classname : classnames) {
             Class<?> c = null;
