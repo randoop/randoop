@@ -1,15 +1,17 @@
-package randoop;
+package randoop.contract;
+
+import randoop.Globals;
 
 /**
- * The contract: <code>x0.equals(x0)==true</code>.
+ * Checks that calling toString() on an object does not throw an exception.
  */
-public final class EqualsReflexive implements ObjectContract {
+public final class ToStringReturnsNormally implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;
     if (o == this) return true;
-    if (!(o instanceof EqualsReflexive)) {
+    if (!(o instanceof ToStringReturnsNormally)) {
       return false;
     }
     return true; // no state to compare.
@@ -17,7 +19,7 @@ public final class EqualsReflexive implements ObjectContract {
 
   @Override
   public int hashCode() {
-    int h = 17;
+    int h = 51;
     return h; // no state to compare.
   }
 
@@ -26,7 +28,8 @@ public final class EqualsReflexive implements ObjectContract {
     assert objects != null && objects.length == 1;
     Object o = objects[0];
     assert o != null;
-    return o.equals(o);
+    o.toString();
+    return true;
   }
 
   @Override
@@ -36,12 +39,12 @@ public final class EqualsReflexive implements ObjectContract {
 
   @Override
   public String toCommentString() {
-    return "x0.equals(x0)";
+    return "x0.toString() throws no Exception.";
   }
 
   @Override
   public String get_observer_str() {
-    return "EqualsReflexive";
+    return "toString throws no Exception";
   }
 
   @Override
@@ -57,7 +60,7 @@ public final class EqualsReflexive implements ObjectContract {
     b.append(" " + toCommentString() + Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.equals(x0)");
+    b.append("x0.toString()");
     b.append(");");
     return b.toString();
   }

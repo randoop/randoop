@@ -13,13 +13,13 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import randoop.Check;
+import randoop.test.Check;
 import randoop.ComponentManager;
 import randoop.DummyVisitor;
-import randoop.EmptyExceptionCheck;
-import randoop.ExceptionCheck;
-import randoop.ExpectedExceptionCheck;
-import randoop.NoExceptionCheck;
+import randoop.test.EmptyExceptionCheck;
+import randoop.test.ExceptionCheck;
+import randoop.test.ExpectedExceptionCheck;
+import randoop.test.NoExceptionCheck;
 import randoop.RandoopListenerManager;
 import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;

@@ -1,4 +1,6 @@
-package randoop;
+package randoop.contract;
+
+import randoop.Globals;
 
 /**
  * The contract: <code>x == null</code>.

@@ -1,15 +1,17 @@
-package randoop;
+package randoop.contract;
+
+import randoop.Globals;
 
 /**
- * The contract: <code>x0.equals(null)==false</code>.
+ * The contract: <code>o1.equals(o2) &rArr; o2.equals(o1)</code>.
  */
-public final class EqualsToNullRetFalse implements ObjectContract {
+public final class EqualsSymmetric implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;
     if (o == this) return true;
-    if (!(o instanceof EqualsToNullRetFalse)) {
+    if (!(o instanceof EqualsSymmetric)) {
       return false;
     }
     return true; // no state to compare.
@@ -17,31 +19,35 @@ public final class EqualsToNullRetFalse implements ObjectContract {
 
   @Override
   public int hashCode() {
-    int h = 23;
+    int h = 19;
     return h; // no state to compare.
   }
 
   @Override
   public boolean evaluate(Object... objects) {
-    assert objects != null && objects.length == 1;
-    Object o = objects[0];
-    assert o != null;
-    return !o.equals(null);
+
+    Object o1 = objects[0];
+    Object o2 = objects[1];
+
+    if (o1.equals(o2)) {
+      return o2.equals(o1);
+    }
+    return true;
   }
 
   @Override
   public int getArity() {
-    return 1;
+    return 2;
   }
 
   @Override
   public String toCommentString() {
-    return "!x0.equals(null)";
+    return "equals-symmetric on x0 and x1.";
   }
 
   @Override
   public String get_observer_str() {
-    return "equalsNull @";
+    return "equals-symmetric";
   }
 
   @Override
@@ -53,11 +59,11 @@ public final class EqualsToNullRetFalse implements ObjectContract {
   public String toCodeString() {
     StringBuilder b = new StringBuilder();
     b.append(Globals.lineSep);
-    b.append("// Checks the contract: ");
-    b.append(" " + toCommentString() + Globals.lineSep);
+    b.append("// This assertion (symmetry of equals) fails ");
+    b.append(Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("!x0.equals(null)");
+    b.append("x0.equals(x1) == x1.equals(x0)");
     b.append(");");
     return b.toString();
   }

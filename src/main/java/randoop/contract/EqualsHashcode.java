@@ -1,15 +1,18 @@
-package randoop;
+package randoop.contract;
+
+import randoop.Globals;
 
 /**
- * Checks that calling toString() on an object does not throw an exception.
+ * The contract:
+ * <code>o1.equals(o2) &rArr; o1.hashCode() == o2.hashCode()</code>.
  */
-public final class ToStringReturnsNormally implements ObjectContract {
+public final class EqualsHashcode implements ObjectContract {
 
   @Override
   public boolean equals(Object o) {
     if (o == null) return false;
     if (o == this) return true;
-    if (!(o instanceof ToStringReturnsNormally)) {
+    if (!(o instanceof EqualsHashcode)) {
       return false;
     }
     return true; // no state to compare.
@@ -17,32 +20,35 @@ public final class ToStringReturnsNormally implements ObjectContract {
 
   @Override
   public int hashCode() {
-    int h = 51;
+    int h = 7;
     return h; // no state to compare.
   }
 
   @Override
   public boolean evaluate(Object... objects) {
-    assert objects != null && objects.length == 1;
-    Object o = objects[0];
-    assert o != null;
-    o.toString();
+
+    Object o1 = objects[0];
+    Object o2 = objects[1];
+
+    if (o1.equals(o2)) {
+      return o1.hashCode() == o2.hashCode();
+    }
     return true;
   }
 
   @Override
   public int getArity() {
-    return 1;
+    return 2;
   }
 
   @Override
   public String toCommentString() {
-    return "x0.toString() throws no Exception.";
+    return "equals-hashcode on x0 and x1";
   }
 
   @Override
   public String get_observer_str() {
-    return "toString throws no Exception";
+    return "EqualsHashcode";
   }
 
   @Override
@@ -58,7 +64,7 @@ public final class ToStringReturnsNormally implements ObjectContract {
     b.append(" " + toCommentString() + Globals.lineSep);
     b.append("org.junit.Assert.assertTrue(");
     b.append("\"Contract failed: " + toCommentString() + "\", ");
-    b.append("x0.toString()");
+    b.append("x0.equals(x1) ? x0.hashCode() == x1.hashCode() : true");
     b.append(");");
     return b.toString();
   }

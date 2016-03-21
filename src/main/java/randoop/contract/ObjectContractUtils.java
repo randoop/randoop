@@ -1,5 +1,8 @@
-package randoop;
+package randoop.contract;
 
+import randoop.ExecutionOutcome;
+import randoop.ExceptionalExecution;
+import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.util.ReflectionCode;
 import randoop.util.ReflectionExecutor;
