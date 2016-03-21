@@ -1,11 +1,7 @@
 package randoop;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,35 +73,45 @@ public final class SeedSequences {
     return SeedSequences.objectsToSeeds(seeds);
   }
 
-  /**
-   * Precondition: objs consists exclusively of boxed primitives and strings.
-   * Returns a set of sequences that create the given objects.
-   *
-   * @param objs  a collection of primitive types
-   * @return a set of sequences that create objects of given types
-   */
-  public static Set<Sequence> objectsToSeeds(Collection<Object> objs) {
-    Set<Sequence> retval = new LinkedHashSet<>();
-    for (Object o : objs) {
-      retval.add(NonreceiverTerm.createSequenceForPrimitive(o));
+  public static Set<Sequence> objectsToSeeds(List<Object> seeds) {
+    Set<Sequence> seedSequences = new LinkedHashSet<>();
+    for (Object seed: seeds) {
+      if (seed == null) {
+        seedSequences.add(Sequence.create(NonreceiverTerm.createNullOrZeroTerm(ConcreteType.forClass(String.class))));
+      } else {
+        seedSequences.add(NonreceiverTerm.createSequenceForPrimitive(seed));
+      }
     }
-    return retval;
+    return seedSequences;
   }
 
-  public static Set<Object> getSeeds(Class<?> c) {
+  /**
+   * Returns the set of seed values with the given raw type.
+   *
+   * @param type  the type
+   * @return the set of seed values with the given raw type
+   */
+  public static Set<Object> getSeeds(Class<?> type) {
     Set<Object> result = new LinkedHashSet<>();
     for (Object seed : primitiveSeeds) {
-      boolean seedOk = isOk(c, seed);
+      boolean seedOk = isTypeForValue(type, seed);
       if (seedOk) result.add(seed);
     }
     return result;
   }
 
-  private static boolean isOk(Class<?> c, Object seed) {
-    if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(c)) {
-      c = PrimitiveTypes.toUnboxedType(c);
+  /**
+   * Indicates whether the seed value has the given raw type.
+   *
+   * @param type  the type
+   * @param seedValue  the value
+   * @return true if {@code type} is the type of the value, false otherwise
+   */
+  private static boolean isTypeForValue(Class<?> type, Object seedValue) {
+    if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(type)) {
+      type = PrimitiveTypes.toUnboxedType(type);
     }
-    return Reflection.canBePassedAsArgument(seed, c);
+    return Reflection.canBePassedAsArgument(seedValue, type);
   }
 
 
