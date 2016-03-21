@@ -73,7 +73,6 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
     return this.length;
   }
 
-
   /**
    * {@inheritDoc}
    *
@@ -194,8 +193,7 @@ public final class ArrayCreation extends ConcreteOperation implements Operation 
     }
 
     int length = Integer.parseInt(lengthStr);
-//    return new ArrayCreation(elementType, length);
+    //    return new ArrayCreation(elementType, length);
     return null;
   }
-
 }

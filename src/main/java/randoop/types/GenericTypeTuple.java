@@ -16,7 +16,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    * Create a tuple of {@link GenericType} objects.
    *
    * @param list  the list of {@link GenericType} objects
-     */
+   */
   public GenericTypeTuple(List<GenericType> list) {
     this.list = new ArrayList<>(list);
   }
@@ -32,7 +32,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    * Return the number of components in this tuple.
    *
    * @return the number of components in this tuple.
-     */
+   */
   @Override
   public int size() {
     return list.size();
@@ -42,7 +42,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    * Indicate whether the tuple has any components.
    *
    * @return true if the tuple has no components, false otherwise
-     */
+   */
   @Override
   public boolean isEmpty() {
     return list.isEmpty();
@@ -53,7 +53,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    *
    * @param i  the component index
    * @return the component at the ith index
-     */
+   */
   @Override
   public GenericType get(int i) {
     assert 0 <= i && i < list.size();
@@ -66,7 +66,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    *
    * @param substitution  the type substitution
    * @return the concrete type tuple formed by applying the substitution componentwise to this tuple
-     */
+   */
   public ConcreteTypeTuple instantiate(Substitution substitution) {
     List<ConcreteType> concreteTypes = new ArrayList<>();
     for (GenericType genericType : list) {
@@ -74,5 +74,4 @@ public class GenericTypeTuple implements GeneralTypeTuple {
     }
     return new ConcreteTypeTuple(concreteTypes);
   }
-
 }

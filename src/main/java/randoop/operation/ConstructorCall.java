@@ -50,7 +50,11 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
    * @param constructor
    *          reflective object for a constructor.
    */
-  public ConstructorCall(Constructor<?> constructor, ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  public ConstructorCall(
+      Constructor<?> constructor,
+      ConcreteType declaringType,
+      ConcreteTypeTuple inputTypes,
+      ConcreteType outputType) {
     super(declaringType, inputTypes, outputType);
     if (constructor == null) throw new IllegalArgumentException("constructor should not be null.");
     this.constructor = constructor;
@@ -238,8 +242,8 @@ public final class ConstructorCall extends ConcreteOperation implements Operatio
    *           if no constructor found for signature.
    */
   public static Operation parse(String s) throws OperationParseException {
-//    return ConstructorCall.createConstructorCall(
-//        ConstructorSignatures.getConstructorForSignatureString(s));
+    //    return ConstructorCall.createConstructorCall(
+    //        ConstructorSignatures.getConstructorForSignatureString(s));
     return null;
   }
 

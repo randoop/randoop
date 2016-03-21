@@ -12,6 +12,10 @@ import java.lang.reflect.Type;
  */
 public abstract class ConcreteType extends GeneralType {
 
+  public static final ConcreteType VOID_CLASS = ConcreteType.forClass(void.class);
+  public static final ConcreteType STRING_CLASS = ConcreteType.forClass(String.class);
+  public static final ConcreteType OBJECT_CLASS = ConcreteType.forClass(Object.class);
+
   /**
    * Indicates whether a value of a {@code ConcreteType} can be assigned to a
    * variable of this type:
@@ -70,7 +74,9 @@ public abstract class ConcreteType extends GeneralType {
    *
    * @return true if this type is a boxed primitive, false otherwise
    */
-  public boolean isBoxedPrimitive() { return false; }
+  public boolean isBoxedPrimitive() {
+    return false;
+  }
 
   /**
    * Indicate whether this type is a parameterized type.
@@ -149,7 +155,7 @@ public abstract class ConcreteType extends GeneralType {
     if (typeClass.getTypeParameters().length > 0) { // is generic
       if (arguments.length > 0) {
         GenericType genericType = GenericType.forClass(typeClass);
-        GenericClassType genericClass = (GenericClassType)genericType;
+        GenericClassType genericClass = (GenericClassType) genericType;
         return genericClass.instantiate(arguments);
       }
       // if no arguments, fall through to return as rawtype
@@ -172,8 +178,8 @@ public abstract class ConcreteType extends GeneralType {
    */
   public static ConcreteType forType(Type type) {
     GeneralType t = GeneralType.forType(type);
-    if (! t.isGeneric()) {
-      return (ConcreteType)t;
+    if (!t.isGeneric()) {
+      return (ConcreteType) t;
     }
     String msg = "unable to create concrete type from type " + type.toString();
     throw new IllegalArgumentException(msg);

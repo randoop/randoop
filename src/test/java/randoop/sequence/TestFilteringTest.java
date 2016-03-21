@@ -243,7 +243,8 @@ public class TestFilteringTest {
       fail("couldn't get object constructor");
     }
     Predicate<ExecutableSequence> isOutputTest =
-        genTests.createTestOutputPredicate(objectConstructor, new HashSet<Class<?>>(), include_if_classname_appears);
+        genTests.createTestOutputPredicate(
+            objectConstructor, new HashSet<Class<?>>(), include_if_classname_appears);
     testGenerator.addTestPredicate(isOutputTest);
     TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
     testGenerator.addTestCheckGenerator(checkGenerator);

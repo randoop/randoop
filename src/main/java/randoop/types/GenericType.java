@@ -55,7 +55,7 @@ public abstract class GenericType extends GeneralType {
    * The type must either represent a generic array, or a generic class.
    * @see randoop.types.GeneralType#forType(Type)
    *
-   * @param type  the object from which the generic type is to be built 
+   * @param type  the object from which the generic type is to be built
    * @return a {@code GenericType} object constructed from the given type
    * @throws IllegalArgumentException if the type is neither a generic array or
    * class
@@ -63,7 +63,7 @@ public abstract class GenericType extends GeneralType {
   public static GenericType forType(Type type) {
     GeneralType t = GeneralType.forType(type);
     if (t.isGeneric()) {
-      return (GenericType)t;
+      return (GenericType) t;
     }
 
     String msg = "unable to create generic type from type " + t.toString();
@@ -100,5 +100,4 @@ public abstract class GenericType extends GeneralType {
   public List<TypeBound> getBounds() {
     return null;
   }
-
 }

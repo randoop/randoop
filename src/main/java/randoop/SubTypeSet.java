@@ -127,7 +127,8 @@ public class SubTypeSet {
 
     if (typesWithsequences.contains(type)) return true;
 
-    return match == Reflection.Match.COMPATIBLE_TYPE && !subTypesWithsequences.getValues(type).isEmpty();
+    return match == Reflection.Match.COMPATIBLE_TYPE
+        && !subTypesWithsequences.getValues(type).isEmpty();
   }
 
   public int size() {

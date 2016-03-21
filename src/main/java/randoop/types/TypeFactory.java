@@ -49,7 +49,7 @@ public class TypeFactory {
    */
   public GeneralType forClass(Class<?> typeClass) {
     assert predicate.test(typeClass);
-    assert ! (typeClass.isArray() || typeClass.isPrimitive());
+    assert !(typeClass.isArray() || typeClass.isPrimitive());
 
     if (typeClass.getTypeParameters().length > 0) { // if is generic
 
@@ -60,12 +60,12 @@ public class TypeFactory {
       for (Method m : typeClass.getMethods()) { // for all public methods
         methods.add(m); // remember to avoid duplicates
         if (predicate.test(m)) { // if satisfies predicate then visit
-         classType.add(buildGenericMethodCall(m, classType));
+          classType.add(buildGenericMethodCall(m, classType));
         }
       }
       for (Method m : typeClass.getDeclaredMethods()) { // for all methods declared by c
         // if not duplicate and satisfies predicate
-        if ((! methods.contains(m)) && predicate.test(m)) {
+        if ((!methods.contains(m)) && predicate.test(m)) {
           classType.add(buildGenericMethodCall(m, classType));
         }
       }
@@ -80,7 +80,7 @@ public class TypeFactory {
       }
       for (Field f : typeClass.getFields()) { // for all public fields of c
         // keep a field that satisfies filter, and is not inherited and hidden by local declaration
-        if (predicate.test(f) && (! declaredNames.contains(f.getName()))) {
+        if (predicate.test(f) && (!declaredNames.contains(f.getName()))) {
           visit(f);
         }
       }
@@ -105,8 +105,6 @@ public class TypeFactory {
       return forEnum(typeClass);
     }
 
-
-
     return new ConcreteSimpleType(typeClass);
   }
 
@@ -115,7 +113,7 @@ public class TypeFactory {
     ConcreteType enumType = new ConcreteSimpleType(typeClass);
     Set<String> overrideMethods = new HashSet<String>();
     for (Object obj : typeClass.getEnumConstants()) {
-      Enum<?> e = (Enum<?>)obj;
+      Enum<?> e = (Enum<?>) obj;
       enumType.add(new EnumConstant(e, new ConcreteTypeTuple(), enumType));
       if (!e.getClass().equals(typeClass)) { //does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
@@ -144,7 +142,7 @@ public class TypeFactory {
   private MethodCall buildMethodCall(Method m, ConcreteType classType) {
     ConcreteType retType = ConcreteType.forType(m.getGenericReturnType());
     List<ConcreteType> paramTypes = new ArrayList<>();
-    if (! Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
+    if (!Modifier.isStatic(m.getModifiers() & Modifier.methodModifiers())) {
       paramTypes.add(classType);
     }
     for (Type t : m.getGenericParameterTypes()) {
@@ -159,20 +157,20 @@ public class TypeFactory {
     if (Modifier.isStatic(mods)) {
       if (Modifier.isFinal(mods)) {
         StaticFinalField s = new StaticFinalField(field);
-       // operations.add(new FieldGet(s));
+        // operations.add(new FieldGet(s));
       } else {
         StaticField s = new StaticField(field);
-     //   operations.add(new FieldGet(s));
-     //   operations.add(new FieldSet(s));
+        //   operations.add(new FieldGet(s));
+        //   operations.add(new FieldSet(s));
       }
     } else {
       if (Modifier.isFinal(mods)) {
         FinalInstanceField i = new FinalInstanceField(field);
-     //   operations.add(new FieldGet(i));
+        //   operations.add(new FieldGet(i));
       } else {
         InstanceField i = new InstanceField(field);
-     //   operations.add(new FieldGet(i));
-     //   operations.add(new FieldSet(i));
+        //   operations.add(new FieldGet(i));
+        //   operations.add(new FieldSet(i));
       }
     }
   }

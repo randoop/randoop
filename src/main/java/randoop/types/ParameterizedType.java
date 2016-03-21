@@ -33,8 +33,7 @@ public class ParameterizedType extends ConcreteType {
    * @param substitution  the substitution for type variables
    * @throws IllegalArgumentException if either argument is null
    */
-  public ParameterizedType(GenericClassType instantiatedType,
-                           Substitution substitution) {
+  public ParameterizedType(GenericClassType instantiatedType, Substitution substitution) {
     if (instantiatedType == null) {
       throw new IllegalArgumentException("instantiated type must be non-null");
     }
@@ -54,25 +53,27 @@ public class ParameterizedType extends ConcreteType {
    */
   @Override
   public boolean equals(Object obj) {
-   if (! (obj instanceof ParameterizedType)) {
-     return false;
-   }
-   ParameterizedType t = (ParameterizedType)obj;
-   if (! instantiatedType.equals(t.instantiatedType)) {
-     return false;
-   }
+    if (!(obj instanceof ParameterizedType)) {
+      return false;
+    }
+    ParameterizedType t = (ParameterizedType) obj;
+    if (!instantiatedType.equals(t.instantiatedType)) {
+      return false;
+    }
 
-   // Cannot guarantee that instantiated types have same type variables, or
-   // that if they do the substitutions will work,
-   // so check that parameters are mapped to the samesame concrete types
-   List<TypeVariable<?>> typeParameters = instantiatedType.getTypeParameters();
-   List<TypeVariable<?>> otherParameters = t.instantiatedType.getTypeParameters();
-   for (int i = 0; i < typeParameters.size(); i++ ) {
-     if (! (substitution.get(typeParameters.get(i)).equals(t.substitution.get(otherParameters.get(i))))) {
+    // Cannot guarantee that instantiated types have same type variables, or
+    // that if they do the substitutions will work,
+    // so check that parameters are mapped to the samesame concrete types
+    List<TypeVariable<?>> typeParameters = instantiatedType.getTypeParameters();
+    List<TypeVariable<?>> otherParameters = t.instantiatedType.getTypeParameters();
+    for (int i = 0; i < typeParameters.size(); i++) {
+      if (!(substitution
+          .get(typeParameters.get(i))
+          .equals(t.substitution.get(otherParameters.get(i))))) {
         return false;
-     }
-   }
-   return true;
+      }
+    }
+    return true;
   }
 
   @Override
@@ -109,7 +110,7 @@ public class ParameterizedType extends ConcreteType {
 
     // second, if underlying Class objects not assignable then there is
     // definitely no widening conversion
-    if (! this.getRuntimeClass().isAssignableFrom(sourceType.getRuntimeClass())) {
+    if (!this.getRuntimeClass().isAssignableFrom(sourceType.getRuntimeClass())) {
       return false;
     }
 
@@ -124,7 +125,6 @@ public class ParameterizedType extends ConcreteType {
     }
 
     return false;
-
   }
 
   /**
@@ -173,13 +173,13 @@ public class ParameterizedType extends ConcreteType {
     // minimally, underlying Class should be assignable
     Class<?> otherRuntimeType = type.getRuntimeClass();
     Class<?> thisRuntimeType = this.getRuntimeClass();
-    if (! otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
+    if (!otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
       return false;
     }
 
     // if would-be supertype not parameterized, check supertype of generic form
     // this is the "direct superclass" clause in definition for generic type
-    if (! type.isParameterized()) {
+    if (!type.isParameterized()) {
       return instantiatedType.isSubtypeOf(type);
     }
 
@@ -200,7 +200,7 @@ public class ParameterizedType extends ConcreteType {
     // will be distinct and the substitution will return null values even if the
     // variable names and type bounds are the same.
 
-    ParameterizedType pt = (ParameterizedType)type;
+    ParameterizedType pt = (ParameterizedType) type;
     GenericClassType genericSuperType;
     genericSuperType = this.instantiatedType.getMatchingSupertype(pt.instantiatedType);
     if (genericSuperType == null) { // no matching supertype
@@ -278,5 +278,4 @@ public class ParameterizedType extends ConcreteType {
   public boolean isInstantiationOf(GenericClassType genericClassType) {
     return instantiatedType.equals(genericClassType);
   }
-
 }

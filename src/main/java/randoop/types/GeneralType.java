@@ -114,7 +114,7 @@ public abstract class GeneralType {
     // minimally, underlying Class should be assignable
     Class<?> otherRuntimeType = type.getRuntimeClass();
     Class<?> thisRuntimeType = this.getRuntimeClass();
-    if (! otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
+    if (!otherRuntimeType.isAssignableFrom(thisRuntimeType)) {
       return false;
     }
 
@@ -123,7 +123,7 @@ public abstract class GeneralType {
       Type[] interfaces = thisRuntimeType.getGenericInterfaces();
       for (Type t : interfaces) {
         if (type.equals(GeneralType.forType(t))) {
-          return true;  // found the type
+          return true; // found the type
         }
       }
     }
@@ -167,24 +167,26 @@ public abstract class GeneralType {
   public static GeneralType forType(Type type) {
 
     if (type instanceof java.lang.reflect.GenericArrayType) {
-      return forGenericArrayType((java.lang.reflect.GenericArrayType)type);
+      return forGenericArrayType((java.lang.reflect.GenericArrayType) type);
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
-      java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType)type;
+      java.lang.reflect.ParameterizedType t = (java.lang.reflect.ParameterizedType) type;
       return forParameterizedType(t);
     }
 
     if (type instanceof TypeVariable) {
-      return new GenericSimpleType((TypeVariable<?>)type);
+      return new GenericSimpleType((TypeVariable<?>) type);
     }
 
     if (type instanceof Class<?>) {
-      return ConcreteType.forClass((Class<?>)type);
+      return ConcreteType.forClass((Class<?>) type);
     }
 
-    String msg = "Unrecognized type " + type.toString()
-               + ". Must be parameterized type, generic type, or non-generic";
+    String msg =
+        "Unrecognized type "
+            + type.toString()
+            + ". Must be parameterized type, generic type, or non-generic";
     throw new IllegalArgumentException(msg);
   }
 
@@ -199,9 +201,9 @@ public abstract class GeneralType {
   private static GeneralType forGenericArrayType(java.lang.reflect.GenericArrayType type) {
     GeneralType elementType = GeneralType.forType(type.getGenericComponentType());
     if (elementType.isGeneric()) {
-      return new GenericArrayType((GenericType)elementType);
+      return new GenericArrayType((GenericType) elementType);
     } else {
-      return new ConcreteArrayType((ConcreteType)elementType);
+      return new ConcreteArrayType((ConcreteType) elementType);
     }
   }
 
@@ -217,7 +219,7 @@ public abstract class GeneralType {
    */
   private static GeneralType forParameterizedType(java.lang.reflect.ParameterizedType t) {
     Type rawType = t.getRawType();
-    assert ! (rawType instanceof Class<?>);
+    assert !(rawType instanceof Class<?>);
 
     // Collect whatever is lurking in the "actual type arguments"
     // Could be *actual* "actual type arguments", or type variables
@@ -227,14 +229,14 @@ public abstract class GeneralType {
     Type[] actualArguments = t.getActualTypeArguments();
     for (int i = 0; i < actualArguments.length; i++) {
       if (actualArguments[i] instanceof TypeVariable) {
-        TypeVariable<?> v = (TypeVariable<?>)actualArguments[i];
+        TypeVariable<?> v = (TypeVariable<?>) actualArguments[i];
         typeParameters.add(v);
         typeBounds.add(TypeBound.fromTypes(v.getBounds()));
       } else if (actualArguments[i] instanceof Class) {
-        typeArguments[i] = ConcreteType.forClass((Class<?>)actualArguments[i], new ConcreteType[0]);
+        typeArguments[i] =
+            ConcreteType.forClass((Class<?>) actualArguments[i], new ConcreteType[0]);
       } else {
-        String msg = "Expecting either type or type variable, got "
-                   + actualArguments[i].toString();
+        String msg = "Expecting either type or type variable, got " + actualArguments[i].toString();
         throw new IllegalArgumentException(msg);
       }
     }
@@ -246,12 +248,12 @@ public abstract class GeneralType {
       // Otherwise, the variables mapped by the substitutions used in checking
       // subtyping will not be the correct objects, and the subtype test will
       // fail.
-      return new GenericClassType((Class<?>)rawType, typeParameters, typeBounds);
+      return new GenericClassType((Class<?>) rawType, typeParameters, typeBounds);
     } else if (typeParameters.isEmpty()) { // is parameterized type
       // When building parameterized type, first create generic class from the
       // rawtype, and then instantiate with the arguments collected from the
       // java.lang.reflect.ParameterizedType interface.
-      GenericClassType genericClass = (GenericClassType)GenericType.forClass((Class<?>)rawType);
+      GenericClassType genericClass = (GenericClassType) GenericType.forClass((Class<?>) rawType);
       return genericClass.instantiate(typeArguments);
     } else {
       String msg = "Expecting either all concrete types or all type variables";
@@ -287,4 +289,17 @@ public abstract class GeneralType {
    * parameters in this generic type
    */
   public abstract ConcreteType instantiate(Substitution substitution);
+
+  /**
+   * Returns the package of this types runtime class.
+   *
+   * @return the package of the runtime class of this type
+   */
+  public Package getPackage() {
+    Class<?> c = getRuntimeClass();
+    if (c != null) {
+      return c.getPackage();
+    }
+    return null;
+  }
 }

@@ -76,10 +76,13 @@ public final class MethodCall extends ConcreteOperation implements Operation {
    *
    * @param method  the reflective method object.
    */
-  public MethodCall(Method method, ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+  public MethodCall(
+      Method method,
+      ConcreteType declaringType,
+      ConcreteTypeTuple inputTypes,
+      ConcreteType outputType) {
     super(declaringType, inputTypes, outputType);
-    if (method == null)
-      throw new IllegalArgumentException("method should not be null.");
+    if (method == null) throw new IllegalArgumentException("method should not be null.");
 
     this.method = method;
     this.method.setAccessible(true);
@@ -135,7 +138,6 @@ public final class MethodCall extends ConcreteOperation implements Operation {
       }
 
       sb.append(param);
-
     }
     sb.append(")");
   }
@@ -198,10 +200,10 @@ public final class MethodCall extends ConcreteOperation implements Operation {
     } else {
       Class<?> expectedType = getInputTypes().get(0).getRuntimeClass();
       String typeName = expectedType.getName();
-      boolean mustCast = typeName != null
-      && PrimitiveTypes
-      .isBoxedPrimitiveTypeOrString(expectedType)
-      && !expectedType.equals(String.class);
+      boolean mustCast =
+          typeName != null
+              && PrimitiveTypes.isBoxedPrimitiveTypeOrString(expectedType)
+              && !expectedType.equals(String.class);
       if (mustCast) {
         // this is a little paranoid but we need to cast primitives in
         // order to get them boxed.
@@ -309,7 +311,7 @@ public final class MethodCall extends ConcreteOperation implements Operation {
    *           if s does not match expected descriptor.
    */
   public static Operation parse(String s) throws OperationParseException {
-   // return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
+    // return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
     return null;
   }
 
@@ -355,5 +357,4 @@ public final class MethodCall extends ConcreteOperation implements Operation {
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(method);
   }
-
 }

@@ -120,5 +120,4 @@ public final class CheckRepContract implements ObjectContract {
     }
     return b.toString();
   }
-
 }

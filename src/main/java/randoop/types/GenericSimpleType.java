@@ -37,10 +37,10 @@ public class GenericSimpleType extends GenericType {
    */
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof GenericSimpleType)) {
+    if (!(obj instanceof GenericSimpleType)) {
       return false;
     }
-    GenericSimpleType t = (GenericSimpleType)obj;
+    GenericSimpleType t = (GenericSimpleType) obj;
     return parameter.equals(t.parameter);
   }
 
@@ -96,7 +96,7 @@ public class GenericSimpleType extends GenericType {
     List<TypeVariable<?>> parameters = new ArrayList<>();
     parameters.add(parameter);
     Substitution substitution = Substitution.forArgs(parameters, typeArguments);
-    if (! bound.isSatisfiedBy(typeArguments[0], substitution)) {
+    if (!bound.isSatisfiedBy(typeArguments[0], substitution)) {
       throw new IllegalArgumentException("type argument does not match parameter bound");
     }
     return typeArguments[0];
@@ -120,8 +120,9 @@ public class GenericSimpleType extends GenericType {
     if (concreteType == null) {
       throw new IllegalArgumentException("parameter not mapped by substitution");
     }
-    if (! bound.isSatisfiedBy(concreteType, substitution)) {
-      throw new IllegalArgumentException("type argument from substitution does not match parameter bound");
+    if (!bound.isSatisfiedBy(concreteType, substitution)) {
+      throw new IllegalArgumentException(
+          "type argument from substitution does not match parameter bound");
     }
     return concreteType;
   }

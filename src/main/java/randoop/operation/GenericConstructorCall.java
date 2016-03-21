@@ -20,8 +20,12 @@ public class GenericConstructorCall extends GenericOperation {
    * @param declaringType  the type of the class for the constructor
    * @param inputTypes  the input parameters for the constructor
    * @param outputType  the output type of the constructor
-     */
-  public GenericConstructorCall(Constructor<?> constructor, GeneralType declaringType, GenericTypeTuple inputTypes, GenericType outputType) {
+   */
+  public GenericConstructorCall(
+      Constructor<?> constructor,
+      GeneralType declaringType,
+      GenericTypeTuple inputTypes,
+      GenericType outputType) {
     super(declaringType, inputTypes, outputType);
     this.constructor = constructor;
   }
@@ -31,7 +35,7 @@ public class GenericConstructorCall extends GenericOperation {
    *
    * @return the concrete {@link ConstructorCall} formed by instantiating the type parameters of this
    *         generic constructor
-     */
+   */
   @Override
   public ConstructorCall instantiate(Substitution substitution) {
     ConcreteTypeTuple inputTypes = this.getInputTypes().instantiate(substitution);
@@ -40,5 +44,4 @@ public class GenericConstructorCall extends GenericOperation {
     // TODO Auto-generated method stub
     return new ConstructorCall(this.constructor, declaringType, inputTypes, outputType);
   }
-
 }

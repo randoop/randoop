@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-/** 
+/**
  * Tests for the {@code SimpleType} class.
  */
 public class SimpleTypeTest {
@@ -31,7 +31,7 @@ public class SimpleTypeTest {
 
   /**
    * Make sure that isAssignableFrom conforms to primitive widening relationship
-   * defined by JDK 7 JLS section 5.1.2 
+   * defined by JDK 7 JLS section 5.1.2
    */
   @Test
   public void testPrimitiveWidening() {
@@ -39,13 +39,13 @@ public class SimpleTypeTest {
     ConcreteType byteType = new ConcreteSimpleType(byte.class);
     ConcreteType charType = new ConcreteSimpleType(char.class);
     ConcreteType doubleType = new ConcreteSimpleType(double.class);
-    ConcreteType floatType = new ConcreteSimpleType(float.class);    
+    ConcreteType floatType = new ConcreteSimpleType(float.class);
     ConcreteType intType = new ConcreteSimpleType(int.class);
     ConcreteType longType = new ConcreteSimpleType(long.class);
     ConcreteType shortType = new ConcreteSimpleType(short.class);
-    
+
     // boolean to itself
-    assertTrue("boolean is assignable from boolean",  booleanType.isAssignableFrom(booleanType));
+    assertTrue("boolean is assignable from boolean", booleanType.isAssignableFrom(booleanType));
     // boolean to nothing else
     assertFalse("byte is not assignable from boolean", byteType.isAssignableFrom(booleanType));
     assertFalse("char is not assignable from boolean", charType.isAssignableFrom(booleanType));
@@ -54,18 +54,18 @@ public class SimpleTypeTest {
     assertFalse("int is not assignable from boolean", intType.isAssignableFrom(booleanType));
     assertFalse("long is not assignable from boolean", longType.isAssignableFrom(booleanType));
     assertFalse("short is not assignable from boolean", shortType.isAssignableFrom(booleanType));
-    
+
     // byte to number types
-    assertTrue("byte is assignable from byte",  byteType.isAssignableFrom(byteType));
+    assertTrue("byte is assignable from byte", byteType.isAssignableFrom(byteType));
     assertTrue("short is assignable from byte", shortType.isAssignableFrom(byteType));
-    assertTrue("int is assignable from byte",   intType.isAssignableFrom(byteType));
-    assertTrue("long is assignable from byte",  longType.isAssignableFrom(byteType));
+    assertTrue("int is assignable from byte", intType.isAssignableFrom(byteType));
+    assertTrue("long is assignable from byte", longType.isAssignableFrom(byteType));
     assertTrue("float is assignable from byte", floatType.isAssignableFrom(byteType));
     assertTrue("double is assignable from byte", doubleType.isAssignableFrom(byteType));
     // byte to nothing else
     assertFalse("boolean is not assignable from byte", booleanType.isAssignableFrom(byteType));
     assertFalse("char is not assignable from byte", charType.isAssignableFrom(byteType));
-    
+
     // short to longer number types
     assertTrue("short is assignable from short", shortType.isAssignableFrom(shortType));
     assertTrue("int is assignable from short", intType.isAssignableFrom(shortType));
@@ -87,7 +87,7 @@ public class SimpleTypeTest {
     assertFalse("boolean is not assignable from char", booleanType.isAssignableFrom(charType));
     assertFalse("byte is not assignable from char", byteType.isAssignableFrom(charType));
     assertFalse("short is not assignable from char", shortType.isAssignableFrom(charType));
-    
+
     // int to longer number types
     assertTrue("int is assignable from int", intType.isAssignableFrom(intType));
     assertTrue("long is assignable from int", longType.isAssignableFrom(intType));
@@ -98,18 +98,18 @@ public class SimpleTypeTest {
     assertFalse("byte is not assignable from int", byteType.isAssignableFrom(intType));
     assertFalse("char is not assignable from int", charType.isAssignableFrom(intType));
     assertFalse("short is not assignable from int", shortType.isAssignableFrom(intType));
-    
+
     // long to floating point numbers
     assertTrue("long is assignable from long", longType.isAssignableFrom(longType));
     assertTrue("float is assignable from long", floatType.isAssignableFrom(longType));
     assertTrue("double is assignable from long", doubleType.isAssignableFrom(longType));
-    // long to nothing else 
+    // long to nothing else
     assertFalse("boolean is not assignable from long", booleanType.isAssignableFrom(longType));
     assertFalse("byte is not assignable from long", byteType.isAssignableFrom(longType));
     assertFalse("char is not assignable from long", charType.isAssignableFrom(longType));
     assertFalse("int is not assignable from long", intType.isAssignableFrom(longType));
     assertFalse("short is not assignable from long", shortType.isAssignableFrom(longType));
-    
+
     // float to double
     assertTrue("float is assignable from float", floatType.isAssignableFrom(floatType));
     assertTrue("double is assignable from float", doubleType.isAssignableFrom(floatType));
@@ -120,9 +120,9 @@ public class SimpleTypeTest {
     assertFalse("int is not assignable from float", intType.isAssignableFrom(floatType));
     assertFalse("long is not assignable from float", longType.isAssignableFrom(floatType));
     assertFalse("short is not assignable from float", shortType.isAssignableFrom(floatType));
-    
+
     // double to itself
-    assertTrue("double is assignable from double",  doubleType.isAssignableFrom(doubleType));
+    assertTrue("double is assignable from double", doubleType.isAssignableFrom(doubleType));
     // boolean to nothing else
     assertFalse("boolean is not assignable from double", booleanType.isAssignableFrom(doubleType));
     assertFalse("byte is not assignable from double", byteType.isAssignableFrom(doubleType));
@@ -132,10 +132,10 @@ public class SimpleTypeTest {
     assertFalse("long is not assignable from double", longType.isAssignableFrom(doubleType));
     assertFalse("short is not assignable from double", shortType.isAssignableFrom(doubleType));
   }
-  
+
   /**
    * For some reason the names of types is a royal pain, though SimpleType names
-   * should be straightforward. These are tests to make sure that what we are 
+   * should be straightforward. These are tests to make sure that what we are
    * getting looks like what we expect.
    */
   @Test
@@ -145,10 +145,10 @@ public class SimpleTypeTest {
     t = new ConcreteSimpleType(randoop.types.test.Subclass.class);
     assertEquals("name should match", "randoop.types.test.Subclass", t.getName());
   }
-  
+
   /**
-   * void is a special case for assignment. Cannot take a value, so don't want 
-   * any type to assign to it, and don't want it to assign to any type 
+   * void is a special case for assignment. Cannot take a value, so don't want
+   * any type to assign to it, and don't want it to assign to any type
    * (including itself).
    */
   @Test
@@ -159,11 +159,11 @@ public class SimpleTypeTest {
     ConcreteType byteType = new ConcreteSimpleType(byte.class);
     ConcreteType charType = new ConcreteSimpleType(char.class);
     ConcreteType doubleType = new ConcreteSimpleType(double.class);
-    ConcreteType floatType = new ConcreteSimpleType(float.class);    
+    ConcreteType floatType = new ConcreteSimpleType(float.class);
     ConcreteType intType = new ConcreteSimpleType(int.class);
     ConcreteType longType = new ConcreteSimpleType(long.class);
     ConcreteType shortType = new ConcreteSimpleType(short.class);
-    
+
     assertFalse("void is not assignable from void", voidType.isAssignableFrom(voidType));
     assertFalse("void is not assignable from Object", voidType.isAssignableFrom(objectType));
     assertFalse("void is not assignable from boolean", voidType.isAssignableFrom(booleanType));
@@ -174,7 +174,7 @@ public class SimpleTypeTest {
     assertFalse("void is not assignable from int", voidType.isAssignableFrom(intType));
     assertFalse("void is not assignable from long", voidType.isAssignableFrom(longType));
     assertFalse("void is not assignable from short", voidType.isAssignableFrom(shortType));
-    
+
     assertFalse("void is not assignable from Object", objectType.isAssignableFrom(voidType));
     assertFalse("boolean is not assignable from void", booleanType.isAssignableFrom(voidType));
     assertFalse("byte is not assignable from void", byteType.isAssignableFrom(voidType));
@@ -185,7 +185,7 @@ public class SimpleTypeTest {
     assertFalse("long is not assignable from void", longType.isAssignableFrom(voidType));
     assertFalse("short is not assignable from void", shortType.isAssignableFrom(voidType));
   }
-  
+
   /**
    * Object also a special case. Just want to make sure didn't mess up the obvious.
    */
@@ -196,14 +196,15 @@ public class SimpleTypeTest {
     ConcreteType byteType = new ConcreteSimpleType(byte.class);
     ConcreteType charType = new ConcreteSimpleType(char.class);
     ConcreteType doubleType = new ConcreteSimpleType(double.class);
-    ConcreteType floatType = new ConcreteSimpleType(float.class);    
+    ConcreteType floatType = new ConcreteSimpleType(float.class);
     ConcreteType intType = new ConcreteSimpleType(int.class);
     ConcreteType longType = new ConcreteSimpleType(long.class);
     ConcreteType shortType = new ConcreteSimpleType(short.class);
     ConcreteType subclassType = new ConcreteSimpleType(randoop.types.test.Subclass.class);
     ConcreteType intArrayType = ConcreteType.forArrayOf(intType);
-    ConcreteType intArrayListType = ConcreteType.forClass(ArrayList.class, ConcreteType.forClass(Integer.class));
-    
+    ConcreteType intArrayListType =
+        ConcreteType.forClass(ArrayList.class, ConcreteType.forClass(Integer.class));
+
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(objectType));
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(booleanType));
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(byteType));
@@ -215,10 +216,10 @@ public class SimpleTypeTest {
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(shortType));
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(subclassType));
     assertTrue("Object is assignable from all types", objectType.isAssignableFrom(intArrayType));
-    assertTrue("Object is assignable from all types", objectType.isAssignableFrom(intArrayListType));
-    
+    assertTrue(
+        "Object is assignable from all types", objectType.isAssignableFrom(intArrayListType));
   }
-  
+
   /**
    * Make sure boxing/unboxing conversions work in assignment
    */
@@ -227,8 +228,9 @@ public class SimpleTypeTest {
     ConcreteType booleanType = new ConcreteSimpleType(boolean.class);
     ConcreteType boxedBooleanType = new ConcreteSimpleType(Boolean.class);
     assertTrue("boolean assignable from boxed", booleanType.isAssignableFrom(boxedBooleanType));
-    assertTrue("boxed boolean assignable from unboxed", boxedBooleanType.isAssignableFrom(booleanType));
-    
+    assertTrue(
+        "boxed boolean assignable from unboxed", boxedBooleanType.isAssignableFrom(booleanType));
+
     ConcreteType byteType = new ConcreteSimpleType(byte.class);
     ConcreteType boxedByteType = new ConcreteSimpleType(Byte.class);
     assertTrue("byte assignable from boxed", byteType.isAssignableFrom(boxedByteType));
@@ -242,7 +244,8 @@ public class SimpleTypeTest {
     ConcreteType doubleType = new ConcreteSimpleType(double.class);
     ConcreteType boxedDoubleType = new ConcreteSimpleType(Double.class);
     assertTrue("double assignable from boxed", doubleType.isAssignableFrom(boxedDoubleType));
-    assertTrue("boxed double assignable from unboxed", boxedDoubleType.isAssignableFrom(doubleType));
+    assertTrue(
+        "boxed double assignable from unboxed", boxedDoubleType.isAssignableFrom(doubleType));
 
     ConcreteType floatType = new ConcreteSimpleType(float.class);
     ConcreteType boxedfloatType = new ConcreteSimpleType(Float.class);
@@ -266,20 +269,27 @@ public class SimpleTypeTest {
     assertFalse("boxed int not assignable from short", boxedIntType.isAssignableFrom(shortType));
     assertTrue("int assignable from boxed short", intType.isAssignableFrom(boxedShortType));
   }
-  
+
   @Test
   public void testRawtypeAssignability() {
     ConcreteType rawALType = new ConcreteSimpleType(ArrayList.class);
-    ConcreteType parameterizedALType = ConcreteType.forClass(ArrayList.class, new ConcreteSimpleType(String.class));
-    assertTrue("ArrayList<String> assignable to ArrayList", rawALType.isAssignableFrom(parameterizedALType));
-    
+    ConcreteType parameterizedALType =
+        ConcreteType.forClass(ArrayList.class, new ConcreteSimpleType(String.class));
+    assertTrue(
+        "ArrayList<String> assignable to ArrayList",
+        rawALType.isAssignableFrom(parameterizedALType));
+
     ConcreteType rawCollType = new ConcreteSimpleType(Collection.class);
-    assertTrue("ArrayList<String> assignable to Collection", rawCollType.isAssignableFrom(parameterizedALType));
-    
+    assertTrue(
+        "ArrayList<String> assignable to Collection",
+        rawCollType.isAssignableFrom(parameterizedALType));
+
     ConcreteType rawSetType = new ConcreteSimpleType(Set.class);
-    assertFalse("ArrayList<String> is not assignable to Set", rawSetType.isAssignableFrom(parameterizedALType));
+    assertFalse(
+        "ArrayList<String> is not assignable to Set",
+        rawSetType.isAssignableFrom(parameterizedALType));
   }
-  
+
   @Test
   public void testExtendingGeneric() {
     // class I {}

@@ -56,7 +56,7 @@ public class ReflectionManager {
   /**
    * Registers a {@link ClassVisitor} for use by the
    * {@link ReflectionManager#apply(Class)} method.
-   * 
+   *
    * @param visitor  the {@link ClassVisitor} object to add
    */
   public void add(ClassVisitor visitor) {

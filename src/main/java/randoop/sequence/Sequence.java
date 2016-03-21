@@ -436,7 +436,8 @@ public final class Sequence implements WeightedElement {
 
       // Process return value
       if (si.getOutputType().equals(void.class)) {
-        lastStatementTypes.add(ConcreteType.forClass(void.class)); // used for void methods and Dummy
+        lastStatementTypes.add(
+            ConcreteType.forClass(void.class)); // used for void methods and Dummy
         // statements
       } else {
         lastStatementTypes.add(si.getOutputType());
@@ -452,7 +453,11 @@ public final class Sequence implements WeightedElement {
 
       for (int i = 0; i < v.size(); i++) {
         Variable value = v.get(i);
-        assert si.getInputTypes().get(i).isAssignableFrom(value.getType()); //Reflection.canBeUsedAs(value.getType(), si.getInputTypes().get(i));
+        assert si.getInputTypes()
+            .get(i)
+            .isAssignableFrom(
+                value
+                    .getType()); //Reflection.canBeUsedAs(value.getType(), si.getInputTypes().get(i));
         lastStatementTypes.add(value.getType());
         Variable idx = getVariableForInput(this.size() - 1, si.inputs.get(i)); // XXX
         // bogus.
@@ -505,8 +510,12 @@ public final class Sequence implements WeightedElement {
         ConcreteType newRefConstraint =
             statements.get(si + statementWithInputs.inputs.get(i).index).getOutputType();
         if (newRefConstraint == null) throw new IllegalStateException();
-        if (! (statementWithInputs.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) //Reflection.canBeUsedAs(newRefConstraint, statementWithInputs.getInputTypes().get(i)))
-          throw new IllegalArgumentException(
+        if (!(statementWithInputs
+            .getInputTypes()
+            .get(i)
+            .isAssignableFrom(
+                newRefConstraint))) //Reflection.canBeUsedAs(newRefConstraint, statementWithInputs.getInputTypes().get(i)))
+        throw new IllegalArgumentException(
               i
                   + "th input constraint "
                   + newRefConstraint
@@ -611,7 +620,8 @@ public final class Sequence implements WeightedElement {
    * A value declared in this sequence whose type matches the given class.
    * Returns null if there are no matches.
    */
-  public final Variable randomVariableOfTypeLastStatement(ConcreteType type, Reflection.Match match) {
+  public final Variable randomVariableOfTypeLastStatement(
+      ConcreteType type, Reflection.Match match) {
     List<Variable> possibleVariables = valuesAppearingInLastStatement(type, match);
     if (possibleVariables.isEmpty()) return null;
     return Randomness.randomMember(possibleVariables);
@@ -757,7 +767,11 @@ public final class Sequence implements WeightedElement {
                 + inputVariables;
         throw new IllegalArgumentException(msg);
       }
-      if (!(operation.getInputTypes().get(i).isAssignableFrom(newRefConstraint))) { //Reflection.canBeUsedAs(newRefConstraint, operation.getInputTypes().get(i))) {
+      if (!(operation
+          .getInputTypes()
+          .get(i)
+          .isAssignableFrom(
+              newRefConstraint))) { //Reflection.canBeUsedAs(newRefConstraint, operation.getInputTypes().get(i))) {
         String msg =
             i
                 + "th input constraint "

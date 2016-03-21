@@ -39,8 +39,9 @@ public abstract class GenericOperation extends AbstractOperation {
    * @param declaringType  the type in which the operation is declared
    * @param inputTypes  the input types for the operation
    * @param outputType  the output type for the operation
-     */
-  public GenericOperation(GeneralType declaringType, GenericTypeTuple inputTypes, GeneralType outputType) {
+   */
+  public GenericOperation(
+      GeneralType declaringType, GenericTypeTuple inputTypes, GeneralType outputType) {
     this.declaringType = declaringType;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
@@ -84,5 +85,4 @@ public abstract class GenericOperation extends AbstractOperation {
    * @return the concrete operation with type variables replaced by substitution
    */
   public abstract ConcreteOperation instantiate(Substitution substitution);
-
 }

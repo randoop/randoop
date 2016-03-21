@@ -60,5 +60,4 @@ public class ConcreteTypeTuple implements GeneralTypeTuple {
   public boolean isEmpty() {
     return list.isEmpty();
   }
-
 }

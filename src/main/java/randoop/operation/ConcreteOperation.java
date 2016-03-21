@@ -30,8 +30,9 @@ public abstract class ConcreteOperation extends AbstractOperation {
    *
    * @param inputTypes  the tuple of concrete input types
    * @param outputType  the concrete output type
-     */
-  public ConcreteOperation(ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
+   */
+  public ConcreteOperation(
+      ConcreteType declaringType, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
     this.declaringType = declaringType;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
@@ -77,25 +78,24 @@ public abstract class ConcreteOperation extends AbstractOperation {
    * @return results of executing this statement
    */
   public abstract ExecutionOutcome execute(Object[] input, PrintStream out);
-  
+
   /**
    * Produces a Java source code representation of this statement and append it
    * to the given StringBuilder.
-   * 
+   *
    * @param inputVars  the list of variables that are inputs to operation.
    * @param b  the {@link StringBuilder} to which code is added.
    */
   public abstract void appendCode(List<Variable> inputVars, StringBuilder b);
-  
+
   /**
-   * Returns a string representation of this Operation, which can be read by 
-   * static parse method for class. 
-   * For a class C implementing the Operation interface, this method should 
-   * return a String s such that parsing the string 
+   * Returns a string representation of this Operation, which can be read by
+   * static parse method for class.
+   * For a class C implementing the Operation interface, this method should
+   * return a String s such that parsing the string
    * returns an object equivalent to this object, i.e. C.parse(this.s).equals(this).
-   * 
+   *
    * @return string descriptor of {@link Operation} object.
    */
   public abstract String toParseableString();
- 
 }

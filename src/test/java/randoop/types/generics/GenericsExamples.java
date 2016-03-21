@@ -1,14 +1,19 @@
 package randoop.types.generics;
 
 class Variable1<T> {}
-class Variable2<S,T> {}
+
+class Variable2<S, T> {}
+
 class Variable3<T> extends Variable1<T> {}
+
 class Variable4 extends Variable1<String> {}
 
 class Class1<S extends Number> {}
+
 class Class2<T extends Comparable<Integer>> {}
 
-class Variable1Ext extends Variable1<Variable1Ext> {} // use as parameter 
+class Variable1Ext extends Variable1<Variable1Ext> {} // use as parameter
+
 class Parameterized1<T extends Variable1<T>> {}
 
 class Variable1Ext2 extends Variable1<Variable1Ext2> implements Comparable<Variable1Ext2> {
@@ -17,9 +22,11 @@ class Variable1Ext2 extends Variable1<Variable1Ext2> implements Comparable<Varia
     return 0;
   }
 }
-class IntersectionBounds<T extends Variable1<T> & Comparable<T>>{}
+
+class IntersectionBounds<T extends Variable1<T> & Comparable<T>> {}
 
 class Variable1Ext3 extends Variable1<Variable1Ext4> {}
-class Variable1Ext4 extends Variable1<Variable1Ext3> {}
-class MutuallyRecursive1<S extends Variable1<T>, T extends Variable1<S>> {}
 
+class Variable1Ext4 extends Variable1<Variable1Ext3> {}
+
+class MutuallyRecursive1<S extends Variable1<T>, T extends Variable1<S>> {}

@@ -110,8 +110,6 @@ public final class ObserverEqValue implements ObjectContract {
     return b.toString();
   }
 
-
-
   @Override
   public boolean evaluate(Object... objects) throws Throwable {
     assert objects.length == 0;

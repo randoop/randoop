@@ -17,5 +17,4 @@ public class GenericFieldSet extends GenericOperation {
   public FieldSet instantiate(Substitution substitution) {
     return new FieldSet(field.instantiate(substitution));
   }
-
 }

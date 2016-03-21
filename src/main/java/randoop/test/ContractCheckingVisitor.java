@@ -1,22 +1,18 @@
 package randoop.test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
-import randoop.test.Check;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.test.NoExceptionCheck;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.test.ObjectCheck;
 import randoop.contract.ObjectContract;
 import randoop.contract.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
 import randoop.test.predicate.ExceptionPredicate;
-import randoop.types.PrimitiveTypes;
+import randoop.types.ConcreteType;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 
@@ -32,7 +28,7 @@ import randoop.util.MultiMap;
  */
 public final class ContractCheckingVisitor implements TestCheckGenerator {
 
-  private List<ObjectContract> contracts;
+  private Set<ObjectContract> contracts;
   private ExceptionPredicate exceptionPredicate;
 
   /**
@@ -47,8 +43,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    *
    */
   public ContractCheckingVisitor(
-      List<ObjectContract> contracts, ExceptionPredicate exceptionPredicate) {
-    this.contracts = new ArrayList<ObjectContract>();
+      Set<ObjectContract> contracts, ExceptionPredicate exceptionPredicate) {
+    this.contracts = new LinkedHashSet<>();
     for (ObjectContract c : contracts) {
       if (c.getArity() > 2)
         throw new IllegalArgumentException("Visitor accepts only unary or binary contracts.");
@@ -87,8 +83,8 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
 
     } else {
       // Otherwise, normal execution, check contracts
-      MultiMap<Class<?>, Integer> idxmap = indicesToCheck(s);
-      for (Class<?> cls : idxmap.keySet()) {
+      MultiMap<ConcreteType, Integer> idxmap = indicesToCheck(s);
+      for (ConcreteType cls : idxmap.keySet()) {
         for (ObjectContract c : contracts) {
           if (c.getArity() == 1) {
             checkUnary(s, c, idxmap.getValues(cls), checks);
@@ -135,21 +131,18 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
                 ((NormalExecution) result1).getRuntimeValue(),
                 ((NormalExecution) result2).getRuntimeValue());
 
-        Check obs = null;
-
         if (exprOutcome instanceof NormalExecution) {
           NormalExecution e = (NormalExecution) exprOutcome;
           if (e.getRuntimeValue().equals(true)) {
             if (Log.isLoggingOn()) Log.logLine("Contract returned true.");
-            continue; // Behavior ok.
+            // Behavior ok.
           } else {
             if (Log.isLoggingOn())
               Log.logLine("Contract returned false. Will add ExpressionEqFalse check");
             // Create an check that records the actual value
             // returned by the expression, marking it as invalid
             // behavior.
-            obs = new ObjectCheck(c, i, s.sequence.getVariable(i), s.sequence.getVariable(j));
-            checks.add(obs);
+            checks.add(new ObjectCheck(c, i, s.sequence.getVariable(i), s.sequence.getVariable(j)));
           }
         } else if (exprOutcome instanceof ExceptionalExecution) {
           Throwable e = ((ExceptionalExecution) exprOutcome).getException();
@@ -235,18 +228,18 @@ public final class ContractCheckingVisitor implements TestCheckGenerator {
    * @return map indicating statement positions where variables of a type are
    *         assigned
    */
-  private static MultiMap<Class<?>, Integer> indicesToCheck(ExecutableSequence s) {
-    MultiMap<Class<?>, Integer> positionMap = new MultiMap<Class<?>, Integer>();
+  private static MultiMap<ConcreteType, Integer> indicesToCheck(ExecutableSequence s) {
+    MultiMap<ConcreteType, Integer> positionMap = new MultiMap<>();
 
     for (int i = 0; i < s.sequence.size(); i++) {
 
       ExecutionOutcome result = s.getResult(i);
       if (result instanceof NormalExecution) {
 
-        Class<?> outputType = s.sequence.getStatement(i).getOutputType();
-        if (!outputType.equals(void.class)
-            && !outputType.equals(String.class)
-            && !PrimitiveTypes.isPrimitive(outputType)
+        ConcreteType outputType = s.sequence.getStatement(i).getOutputType();
+        if (!outputType.equals(ConcreteType.VOID_CLASS)
+            && !outputType.equals(ConcreteType.STRING_CLASS)
+            && !outputType.isPrimitive()
             && ((NormalExecution) result).getRuntimeValue() != null) {
           positionMap.add(outputType, i);
         }

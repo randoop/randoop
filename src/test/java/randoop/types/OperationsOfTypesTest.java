@@ -42,5 +42,4 @@ public class OperationsOfTypesTest {
 
     fail("Not yet implemented");
   }
-
 }

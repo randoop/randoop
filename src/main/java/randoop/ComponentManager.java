@@ -106,14 +106,14 @@ public class ComponentManager {
    * Add a sequence representing a literal value that can be used when testing
    * members of the given class.
    *
-   * @param cls  the class literal to add for the sequence
+   * @param type  the class literal to add for the sequence
    * @param seq  the sequence
    */
-  public void addClassLevelLiteral(Class<?> cls, Sequence seq) {
+  public void addClassLevelLiteral(ConcreteType type, Sequence seq) {
     if (classLiterals == null) {
       classLiterals = new ClassLiterals();
     }
-    classLiterals.addSequence(cls, seq);
+    classLiterals.addSequence(type, seq);
   }
 
   /**
@@ -229,7 +229,7 @@ public class ComponentManager {
     if (packageLiterals != null) {
       ret.addAll(packageLiterals.getAllSequences());
     }
-    for (ConcreteType type : PrimitiveTypes.getPrimitiveTypesAndString()) {
+    for (ConcreteType type : PrimitiveTypes.getPrimitiveOrStringTypes()) {
       ret.addAll(gralComponents.getSequencesForType(type, true).toJDKList());
     }
     return ret;

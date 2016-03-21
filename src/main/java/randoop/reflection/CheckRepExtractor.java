@@ -23,10 +23,10 @@ public class CheckRepExtractor implements ClassVisitor {
   private Set<ObjectContract> contracts;
 
   /**
-   * Creates a visitior with an empty contracts set.
+   * Creates a visitor with an empty contracts set.
    */
-  public CheckRepExtractor() {
-    contracts = new LinkedHashSet<>();
+  public CheckRepExtractor(Set<ObjectContract> contracts) {
+    this.contracts = contracts;
   }
 
   /**
@@ -42,40 +42,40 @@ public class CheckRepExtractor implements ClassVisitor {
     if (m.getAnnotation(CheckRep.class) != null) {
       if (Modifier.isStatic(m.getModifiers())) {
         String msg =
-                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
-                        + m.getName()
-                        + " in class "
-                        + m.getDeclaringClass()
-                        + " to be an instance method, but it is declared static.";
+            "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
+                + m.getName()
+                + " in class "
+                + m.getDeclaringClass()
+                + " to be an instance method, but it is declared static.";
         throw new RuntimeException(msg);
       }
 
       if (m.getParameterTypes().length > 0) {
         String msg =
-                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
-                        + m.getName()
-                        + " in class "
-                        + m.getDeclaringClass()
-                        + " to declare no parameters but it does (method signature:"
-                        + m.toString()
-                        + ").";
+            "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
+                + m.getName()
+                + " in class "
+                + m.getDeclaringClass()
+                + " to declare no parameters but it does (method signature:"
+                + m.toString()
+                + ").";
         throw new RuntimeException(msg);
       }
 
       // Check that method's return type is void.
       if (!(m.getReturnType().equals(boolean.class) || m.getReturnType().equals(void.class))) {
         String msg =
-                "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
-                        + m.getName()
-                        + " in class "
-                        + m.getDeclaringClass()
-                        + " to have void or boolean return type but it does not (method signature:"
-                        + m.toString()
-                        + ").";
+            "RANDOOP ANNOTATION ERROR: Expected @CheckRep-annotated method "
+                + m.getName()
+                + " in class "
+                + m.getDeclaringClass()
+                + " to have void or boolean return type but it does not (method signature:"
+                + m.toString()
+                + ").";
         throw new RuntimeException(msg);
       }
 
-      if (! GenInputsAbstract.noprogressdisplay) {
+      if (!GenInputsAbstract.noprogressdisplay) {
         printDetectedAnnotatedCheckRepMethod(m);
       }
       contracts.add(new CheckRepContract(m));
@@ -89,11 +89,11 @@ public class CheckRepExtractor implements ClassVisitor {
    */
   private static void printDetectedAnnotatedCheckRepMethod(Method m) {
     String msg =
-            "ANNOTATION: Detected @CheckRep-annotated method \""
-                    + m.toString()
-                    + "\". Will use it to check rep invariant of class "
-                    + m.getDeclaringClass().getCanonicalName()
-                    + " during generation.";
+        "ANNOTATION: Detected @CheckRep-annotated method \""
+            + m.toString()
+            + "\". Will use it to check rep invariant of class "
+            + m.getDeclaringClass().getCanonicalName()
+            + " during generation.";
     System.out.println(msg);
   }
 

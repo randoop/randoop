@@ -23,7 +23,9 @@ public class ClassLiteralExtractor implements ClassVisitor {
     this.literalMap = literalMap;
   }
 
-  public MultiMap<Class<?>, Sequence> getLiteralMap() { return literalMap; }
+  public MultiMap<Class<?>, Sequence> getLiteralMap() {
+    return literalMap;
+  }
 
   @Override
   public void visitBefore(Class<?> c) {

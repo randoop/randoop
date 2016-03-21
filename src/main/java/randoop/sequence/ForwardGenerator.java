@@ -394,8 +394,27 @@ public class ForwardGenerator extends AbstractGenerator {
           StringBuilder b = new StringBuilder();
           Sequence co = this.allsequencesAsList.get(index);
           assert co.equals(newSequence); // XXX this was a floating call to equals
-          b.append("new component:").append(Globals.lineSep).append("").append(newSequence.toString()).append("").append(Globals.lineSep).append("as code:").append(Globals.lineSep).append("").append(code).append(Globals.lineSep);
-          b.append("existing component:").append(Globals.lineSep).append("").append(this.allsequencesAsList.get(index).toString()).append("").append(Globals.lineSep).append("as code:").append(Globals.lineSep).append("").append(this.allsequencesAsList.get(index).toCodeString());
+          b.append("new component:")
+              .append(Globals.lineSep)
+              .append("")
+              .append(newSequence.toString())
+              .append("")
+              .append(Globals.lineSep)
+              .append("as code:")
+              .append(Globals.lineSep)
+              .append("")
+              .append(code)
+              .append(Globals.lineSep);
+          b.append("existing component:")
+              .append(Globals.lineSep)
+              .append("")
+              .append(this.allsequencesAsList.get(index).toString())
+              .append("")
+              .append(Globals.lineSep)
+              .append("as code:")
+              .append(Globals.lineSep)
+              .append("")
+              .append(this.allsequencesAsList.get(index).toCodeString());
           throw new IllegalStateException(b.toString());
         }
       }
@@ -489,8 +508,7 @@ public class ForwardGenerator extends AbstractGenerator {
           // variable types.
           assert typesToVars.keySet().contains(match);
           candidateVars.add(
-                  new ArrayListSimpleList<>(
-                          new ArrayList<>(typesToVars.getValues(match))));
+              new ArrayListSimpleList<>(new ArrayList<>(typesToVars.getValues(match))));
         }
 
         // If any type-compatible variables found, pick one at random as the

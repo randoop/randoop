@@ -21,5 +21,4 @@ public class GenericFieldGet extends GenericOperation {
   public FieldGet instantiate(Substitution substitution) {
     return new FieldGet(field.instantiate(substitution));
   }
-
 }

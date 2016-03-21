@@ -27,5 +27,4 @@ public interface GeneralTypeTuple {
    * @return true if the tuple has no components, false otherwise
    */
   boolean isEmpty();
-
 }

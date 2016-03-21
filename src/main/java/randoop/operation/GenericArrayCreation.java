@@ -30,12 +30,10 @@ public class GenericArrayCreation extends GenericOperation {
     this.length = length;
   }
 
-
   @Override
   public ArrayCreation instantiate(Substitution substitution) {
-    ConcreteArrayType arrayType = (ConcreteArrayType)getDeclaringType().instantiate(substitution);
+    ConcreteArrayType arrayType = (ConcreteArrayType) getDeclaringType().instantiate(substitution);
     ConcreteTypeTuple inputTypes = getInputTypes().instantiate(substitution);
     return new ArrayCreation(length, arrayType, inputTypes);
   }
-
 }

@@ -38,10 +38,10 @@ public class ConcreteSimpleType extends ConcreteType {
    */
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof ConcreteSimpleType)) {
+    if (!(obj instanceof ConcreteSimpleType)) {
       return false;
     }
-    ConcreteSimpleType t = (ConcreteSimpleType)obj;
+    ConcreteSimpleType t = (ConcreteSimpleType) obj;
     return this.runtimeClass.equals(t.runtimeClass);
   }
 
@@ -88,7 +88,9 @@ public class ConcreteSimpleType extends ConcreteType {
   }
 
   @Override
-  public boolean isBoxedPrimitive() { return PrimitiveTypes.isBoxedOrPrimitiveOrStringType(runtimeClass); }
+  public boolean isBoxedPrimitive() {
+    return PrimitiveTypes.isBoxedOrPrimitiveOrStringType(runtimeClass);
+  }
 
   /**
    * {@inheritDoc}
@@ -134,7 +136,7 @@ public class ConcreteSimpleType extends ConcreteType {
 
     // to be assignable, other cases must be ConcreteSimpleType to ConcreteSimpleType
     if (sourceType instanceof ConcreteSimpleType) {
-      return isAssignableFrom((ConcreteSimpleType)sourceType);
+      return isAssignableFrom((ConcreteSimpleType) sourceType);
     }
 
     return false;

@@ -9,8 +9,8 @@ import plume.UtilMDE;
  * Represents an intersection type bound on a type parameter in a class,
  * interface, method or constructor (see JLS section 4.4).
  * <p>
- * Java requires that an intersection type bound consist of class and 
- * interface types, with at most one class, and if there is a class it appears 
+ * Java requires that an intersection type bound consist of class and
+ * interface types, with at most one class, and if there is a class it appears
  * in the conjunction term first.
  * So, this class preserves the order of the types, just in case it becomes
  * necessary to dump the bound to compilable code.
@@ -22,32 +22,32 @@ public class IntersectionTypeBound extends TypeBound {
 
   /**
    * Create an intersection type bound from the list of type bounds.
-   * 
+   *
    * @param boundList  the list of type bounds
    */
   public IntersectionTypeBound(List<TypeBound> boundList) {
     if (boundList == null) {
       throw new IllegalArgumentException("bounds list may not be null");
     }
-    
+
     this.boundList = boundList;
   }
-  
+
   // XXX this could be relaxed. Only require that the first argument be first, if it is a class
   @Override
   public boolean equals(Object obj) {
-    if (! (obj instanceof IntersectionTypeBound)) {
+    if (!(obj instanceof IntersectionTypeBound)) {
       return false;
     }
-    IntersectionTypeBound b = (IntersectionTypeBound)boundList;
+    IntersectionTypeBound b = (IntersectionTypeBound) boundList;
     return this.boundList.equals(b.boundList);
   }
-  
+
   @Override
   public int hashCode() {
     return Objects.hash(boundList);
   }
-  
+
   @Override
   public String toString() {
     return UtilMDE.join(boundList, " & ");
@@ -61,7 +61,7 @@ public class IntersectionTypeBound extends TypeBound {
   @Override
   public boolean isSatisfiedBy(ConcreteType argType, Substitution subst) {
     for (TypeBound b : boundList) {
-      if (! b.isSatisfiedBy(argType, subst)) {
+      if (!b.isSatisfiedBy(argType, subst)) {
         return false;
       }
     }
@@ -76,7 +76,7 @@ public class IntersectionTypeBound extends TypeBound {
   @Override
   public Class<?> getRuntimeClass() {
     Class<?> c = Object.class;
-    if (! boundList.isEmpty()) {
+    if (!boundList.isEmpty()) {
       TypeBound b = boundList.get(0);
       if (b instanceof ConcreteTypeBound) {
         c = b.getRuntimeClass();

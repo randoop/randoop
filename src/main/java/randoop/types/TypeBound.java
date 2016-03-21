@@ -66,19 +66,19 @@ public abstract class TypeBound {
   private static TypeBound fromType(Type type) {
 
     if (type instanceof Class<?>) {
-      Class<?> c = (Class<?>)type;
+      Class<?> c = (Class<?>) type;
       return new ConcreteTypeBound(ConcreteType.forClass(c, new ConcreteType[0]));
     }
 
     if (type instanceof java.lang.reflect.ParameterizedType) {
 
-      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType)type;
+      java.lang.reflect.ParameterizedType pt = (java.lang.reflect.ParameterizedType) type;
       Type rawType = pt.getRawType();
-      if (! (rawType instanceof Class<?>)) {
+      if (!(rawType instanceof Class<?>)) {
         throw new IllegalArgumentException("Rawtype expected to be a Class");
       }
 
-      Class<?> runtimeType = (Class<?>)rawType;
+      Class<?> runtimeType = (Class<?>) rawType;
 
       // Can't tell whether type is a generic or parameterized type
       // so have to inspect the arguments
@@ -88,17 +88,15 @@ public abstract class TypeBound {
 
       for (int i = 0; i < arguments.length; i++) {
         if (arguments[i] instanceof Class<?>) { // concrete
-          conTypes[i] = ConcreteType.forClass((Class<?>)arguments[i], new ConcreteType[0]);
+          conTypes[i] = ConcreteType.forClass((Class<?>) arguments[i], new ConcreteType[0]);
         } else { // generic -- just bail to generic bound constructor
           return new GenericTypeBound(runtimeType, arguments);
         }
       }
       return new ConcreteTypeBound(ConcreteType.forClass(runtimeType, conTypes));
-
     }
 
-   throw new IllegalArgumentException("unsupported type bound " + type.toString());
-
+    throw new IllegalArgumentException("unsupported type bound " + type.toString());
   }
 
   /**
@@ -106,7 +104,7 @@ public abstract class TypeBound {
    * Depending on implementing class, this may be {@code Object} or something
    * closer to the bound.
    * The returned value should not be used to test satisfiability of the bound.
-   
+   *
    * @return the runtime class for this type bound.
    */
   public Class<?> getRuntimeClass() {

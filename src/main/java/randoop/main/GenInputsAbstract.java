@@ -647,7 +647,7 @@ public abstract class GenInputsAbstract extends CommandHandler {
 
     if (literals_file.size() > 0 && literals_level == ClassLiteralsMode.NONE) {
       throw new RuntimeException(
-              "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
+          "Invalid parameter combination: specified a class literal file but --use-class-literals=NONE");
     }
   }
 
@@ -662,7 +662,8 @@ public abstract class GenInputsAbstract extends CommandHandler {
     return getStringSetFromFile(listFile, errMessage, "^#.*", null);
   }
 
-  public static Set<String> getStringSetFromFile(File listFile, String errMessage, String commentRegex, String includeRegex) {
+  public static Set<String> getStringSetFromFile(
+      File listFile, String errMessage, String commentRegex, String includeRegex) {
     Set<String> elementSet = new LinkedHashSet<>();
     if (listFile != null) {
       try (EntryReader er = new EntryReader(listFile, commentRegex, includeRegex)) {

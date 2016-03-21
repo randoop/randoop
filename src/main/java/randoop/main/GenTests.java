@@ -158,10 +158,13 @@ public class GenTests extends GenInputsAbstract {
     Set<String> classnames = GenInputsAbstract.getClassnamesFromArgs();
 
     // get names of classes that must be covered by output tests
-    Set<String> coveredClassnames = GenInputsAbstract.getStringSetFromFile(include_if_class_exercised, "Unable to read coverage class names");
+    Set<String> coveredClassnames =
+        GenInputsAbstract.getStringSetFromFile(
+            include_if_class_exercised, "Unable to read coverage class names");
 
     // get names of fields to be omitted
-    Set<String> omitFields = GenInputsAbstract.getStringSetFromFile(omit_field_list, "Error reading field file");
+    Set<String> omitFields =
+        GenInputsAbstract.getStringSetFromFile(omit_field_list, "Error reading field file");
 
     VisibilityPredicate visibility;
     Package junitPackage = Package.getPackage(GenInputsAbstract.junit_package_name);
@@ -172,23 +175,30 @@ public class GenTests extends GenInputsAbstract {
     }
 
     DefaultReflectionPredicate reflectionPredicate =
-            new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
+        new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
     if (silently_ignore_bad_class_names) {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 
-    OperationModel operationModel = OperationModel.createModel(visibility, reflectionPredicate, classnames, coveredClassnames, classNameErrorHandler);
+    OperationModel operationModel =
+        OperationModel.createModel(
+            visibility,
+            reflectionPredicate,
+            classnames,
+            coveredClassnames,
+            classNameErrorHandler,
+            GenInputsAbstract.literals_file);
 
     if (operationModel.hasClasses()) {
       System.out.println("No classes to test");
       System.exit(1);
     }
 
-    Set<String> methodSignatures = GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
+    Set<String> methodSignatures =
+        GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
     operationModel.addOperations(methodSignatures);
-
 
     List<ConcreteOperation> model = operationModel.getConcreteOperations();
 
@@ -206,11 +216,12 @@ public class GenTests extends GenInputsAbstract {
      * - Add any values for TestValue annotated static fields in operationModel
      */
     Set<Sequence> components = new LinkedHashSet<>();
-    components.addAll(SeedSequences.objectsToSeeds(SeedSequences.primitiveSeeds));
-    components.addAll(SeedSequences.objectsToSeeds(operationModel.getAnnotatedTestValues()));
+    components.addAll(SeedSequences.defaultSeeds());
+    components.addAll(operationModel.getAnnotatedTestValues());
 
     ComponentManager componentMgr = new ComponentManager(components);
-    operationModel.addClassLiterals(componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
+    operationModel.addClassLiterals(
+        componentMgr, GenInputsAbstract.literals_file, GenInputsAbstract.literals_level);
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
@@ -222,15 +233,13 @@ public class GenTests extends GenInputsAbstract {
         new ForwardGenerator(
             model, timelimit * 1000, inputlimit, outputlimit, componentMgr, null, listenerMgr);
 
-
     /*
      * setup for check generation
      */
-    List<ObjectContract> contracts = operationModel.getContracts();
+    Set<ObjectContract> contracts = operationModel.getContracts();
     TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts);
 
     explorer.addTestCheckGenerator(testGen);
-
 
     /*
      * Setup for test predicate
@@ -250,10 +259,12 @@ public class GenTests extends GenInputsAbstract {
 
     // Define test predicate to decide which test sequences will be output
     Predicate<ExecutableSequence> isOutputTest =
-        createTestOutputPredicate(excludeSet, operationModel.getCoveredClasses(), GenInputsAbstract.include_if_classname_appears);
+        createTestOutputPredicate(
+            excludeSet,
+            operationModel.getCoveredClasses(),
+            GenInputsAbstract.include_if_classname_appears);
 
     explorer.addTestPredicate(isOutputTest);
-
 
     /*
      * Setup visitors
@@ -292,7 +303,6 @@ public class GenTests extends GenInputsAbstract {
     }
 
     explorer.addExecutionVisitor(visitor);
-
 
     if (!GenInputsAbstract.noprogressdisplay) {
       System.out.printf("Explorer = %s\n", explorer);
@@ -343,8 +353,6 @@ public class GenTests extends GenInputsAbstract {
 
     return true;
   }
-
-
 
   /**
    * Handles the occurrence of a {@code SequenceExceptionError} that indicates a
@@ -426,7 +434,7 @@ public class GenTests extends GenInputsAbstract {
    * @return the predicate
    */
   public Predicate<ExecutableSequence> createTestOutputPredicate(
-          Set<Sequence> excludeSet, Set<Class<?>> coveredClasses, Pattern includePattern) {
+      Set<Sequence> excludeSet, Set<Class<?>> coveredClasses, Pattern includePattern) {
     Predicate<ExecutableSequence> isOutputTest;
     if (GenInputsAbstract.dont_output_tests) {
       isOutputTest = new AlwaysFalse<>();
@@ -438,7 +446,7 @@ public class GenTests extends GenInputsAbstract {
       if (includePattern != null) {
         baseTest = baseTest.and(new IncludeTestPredicate(includePattern));
       }
-      if (! coveredClasses.isEmpty()) {
+      if (!coveredClasses.isEmpty()) {
         baseTest = baseTest.and(new IncludeIfCoversPredicate(coveredClasses));
       }
 
@@ -492,7 +500,7 @@ public class GenTests extends GenInputsAbstract {
    *         arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(
-      VisibilityPredicate visibility, List<ObjectContract> contracts) {
+      VisibilityPredicate visibility, Set<ObjectContract> contracts) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
@@ -524,8 +532,6 @@ public class GenTests extends GenInputsAbstract {
     return testGen;
   }
 
-
-
   /**
    * Writes the sequences as JUnit files to the specified directory.
    *
@@ -549,8 +555,7 @@ public class GenTests extends GenInputsAbstract {
 
     if (seqList.size() > 0) {
       List<List<ExecutableSequence>> seqPartition =
-          CollectionsExt.<ExecutableSequence>chunkUp(
-                  new ArrayList<>(seqList), testsperfile);
+          CollectionsExt.<ExecutableSequence>chunkUp(new ArrayList<>(seqList), testsperfile);
 
       JunitFileWriter jfw = new JunitFileWriter(output_dir, junit_package_name, junitClassname);
 
@@ -633,5 +638,4 @@ public class GenTests extends GenInputsAbstract {
   static void usage(String format, Object... args) {
     usage(null, format, args);
   }
-
 }

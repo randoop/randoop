@@ -62,14 +62,16 @@ public final class NonreceiverTerm extends ConcreteOperation implements Operatio
     if (void.class.equals(type)) throw new IllegalArgumentException("t should not be void.class.");
 
     if (type.isPrimitive()) {
-      if (value == null) throw new IllegalArgumentException("primitive-like values cannot be null.");
+      if (value == null)
+        throw new IllegalArgumentException("primitive-like values cannot be null.");
       if (!PrimitiveTypes.toBoxedType(type).equals(value.getClass()))
         throw new IllegalArgumentException("o.getClass()=" + value.getClass() + ",t=" + type);
       if (!PrimitiveTypes.isBoxedOrPrimitiveOrStringType(value.getClass()))
         throw new IllegalArgumentException("o is not a primitive-like value.");
     } else if (type.equals(String.class)) {
       if (!PrimitiveTypes.stringLengthOK((String) value)) {
-        throw new IllegalArgumentException("String too long, length = " + ((String) value).length());
+        throw new IllegalArgumentException(
+            "String too long, length = " + ((String) value).length());
       }
     } else {
       // if it's not primitive or string then must be null
@@ -170,13 +172,17 @@ public final class NonreceiverTerm extends ConcreteOperation implements Operatio
    */
   public static NonreceiverTerm createNullOrZeroTerm(ConcreteType c) {
     if (c.hasRuntimeClass(String.class)) return new NonreceiverTerm(c, "");
-    if (c.hasRuntimeClass(Character.TYPE)) return new NonreceiverTerm(c, 'a'); // TODO This is not null or zero...
+    if (c.hasRuntimeClass(Character.TYPE))
+      return new NonreceiverTerm(c, 'a'); // TODO This is not null or zero...
     if (c.hasRuntimeClass(Byte.TYPE)) return new NonreceiverTerm(c, (byte) 0);
     if (c.hasRuntimeClass(Short.TYPE)) return new NonreceiverTerm(c, (short) 0);
-    if (c.hasRuntimeClass(Integer.TYPE)) return new NonreceiverTerm(c, (Integer.valueOf(0)).intValue());
+    if (c.hasRuntimeClass(Integer.TYPE))
+      return new NonreceiverTerm(c, (Integer.valueOf(0)).intValue());
     if (c.hasRuntimeClass(Long.TYPE)) return new NonreceiverTerm(c, (Long.valueOf(0)).longValue());
-    if (c.hasRuntimeClass(Float.TYPE)) return new NonreceiverTerm(c, (Float.valueOf(0)).floatValue());
-    if (c.hasRuntimeClass(Double.TYPE)) return new NonreceiverTerm(c, (Double.valueOf(0)).doubleValue());
+    if (c.hasRuntimeClass(Float.TYPE))
+      return new NonreceiverTerm(c, (Float.valueOf(0)).floatValue());
+    if (c.hasRuntimeClass(Double.TYPE))
+      return new NonreceiverTerm(c, (Double.valueOf(0)).doubleValue());
     if (c.hasRuntimeClass(Boolean.TYPE)) return new NonreceiverTerm(c, false);
     return new NonreceiverTerm(c, null);
   }
@@ -247,7 +253,7 @@ public final class NonreceiverTerm extends ConcreteOperation implements Operatio
     if (value == null) throw new IllegalArgumentException("o is null");
     ConcreteType type = ConcreteType.forClass(value.getClass());
 
-    if (! (type.isPrimitive() || type.isBoxedPrimitive()) ) {
+    if (!(type.isPrimitive() || type.isBoxedPrimitive())) {
       throw new IllegalArgumentException("o is not a boxed primitive or String");
     }
     if (type.hasRuntimeClass(String.class) && !PrimitiveTypes.stringLengthOK((String) value)) {

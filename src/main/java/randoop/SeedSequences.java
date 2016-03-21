@@ -75,9 +75,11 @@ public final class SeedSequences {
 
   public static Set<Sequence> objectsToSeeds(List<Object> seeds) {
     Set<Sequence> seedSequences = new LinkedHashSet<>();
-    for (Object seed: seeds) {
+    for (Object seed : seeds) {
       if (seed == null) {
-        seedSequences.add(Sequence.create(NonreceiverTerm.createNullOrZeroTerm(ConcreteType.forClass(String.class))));
+        seedSequences.add(
+            Sequence.create(
+                NonreceiverTerm.createNullOrZeroTerm(ConcreteType.forClass(String.class))));
       } else {
         seedSequences.add(NonreceiverTerm.createSequenceForPrimitive(seed));
       }
@@ -113,6 +115,4 @@ public final class SeedSequences {
     }
     return Reflection.canBePassedAsArgument(seedValue, type);
   }
-
-
 }

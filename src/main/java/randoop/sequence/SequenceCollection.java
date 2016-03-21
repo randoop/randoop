@@ -54,8 +54,7 @@ import randoop.util.SimpleList;
 public class SequenceCollection {
 
   // We make it a list to make it easier to pick out an element at random.
-  private Map<ConcreteType, ArrayListSimpleList<Sequence>> activeSequences =
-      new LinkedHashMap<>();
+  private Map<ConcreteType, ArrayListSimpleList<Sequence>> activeSequences = new LinkedHashMap<>();
 
   private SubTypeSet typesWithSequencesMap = new SubTypeSet(false);
 
@@ -144,7 +143,9 @@ public class SequenceCollection {
     assert constraints.size() == values.size();
     for (int i = 0; i < constraints.size(); i++) {
       Variable v = values.get(i);
-      assert constraints.get(i).isAssignableFrom(v.getType()); //Reflection.canBeUsedAs(v.getType(), constraints.get(i));
+      assert constraints
+          .get(i)
+          .isAssignableFrom(v.getType()); //Reflection.canBeUsedAs(v.getType(), constraints.get(i));
       if (sequence.isActive(v.getDeclIndex())) types.add(constraints.get(i));
     }
     updateCompatibleClassMap(types);
