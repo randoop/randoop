@@ -13,7 +13,7 @@ import randoop.sequence.Execution;
  * <ul>
  * <li>{@link ExpectedExceptionCheck} -- an exception should be thrown
  * <li>{@link NoExceptionCheck} -- no exception should be thrown
- * <li>{@link ObjectCheck} -- a particular {@link ObjectContract} should hold
+ * <li>{@link ObjectCheck} -- a particular {@link randoop.contract.ObjectContract} should hold
  * </ul>
  *
  * The visitor classes decorate a sequence with <code>Check</code> objects. A

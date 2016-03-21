@@ -201,7 +201,7 @@ public class ExecutableSequence {
    * except includes the checks.
    *
    * If for a given statement there is a check of type
-   * {@link randoop.ExceptionCheck}, that check's pre-statement code is printed
+   * {@link randoop.contract.ExceptionCheck}, that check's pre-statement code is printed
    * immediately before the statement, and its post-statement code is printed
    * immediately after the statement.
    *
