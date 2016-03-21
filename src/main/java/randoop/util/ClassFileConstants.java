@@ -34,6 +34,7 @@ import org.apache.commons.bcel6.generic.MethodGen;
 import org.apache.commons.bcel6.util.ClassPath;
 
 import randoop.operation.NonreceiverTerm;
+import randoop.types.ConcreteType;
 import randoop.types.TypeNames;
 
 // Implementation notes:  All string, float, and double constants are in the
@@ -565,7 +566,7 @@ public class ClassFileConstants {
    * @return a map of types to constant operations
    */
   public static MultiMap<Class<?>, NonreceiverTerm> toMap(Collection<ConstantSet> constantSets) {
-    final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<Class<?>, NonreceiverTerm>();
+    final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<>();
     for (ConstantSet cs : constantSets) {
       Class<?> clazz;
       try {
@@ -574,22 +575,22 @@ public class ClassFileConstants {
         throw new Error("Class " + cs.classname + " not found on the classpath.");
       }
       for (Integer x : cs.ints) {
-        map.add(clazz, new NonreceiverTerm(int.class, x.intValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(int.class), x.intValue()));
       }
       for (Long x : cs.longs) {
-        map.add(clazz, new NonreceiverTerm(long.class, x.longValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(long.class), x.longValue()));
       }
       for (Float x : cs.floats) {
-        map.add(clazz, new NonreceiverTerm(float.class, x.floatValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(float.class), x.floatValue()));
       }
       for (Double x : cs.doubles) {
-        map.add(clazz, new NonreceiverTerm(double.class, x.doubleValue()));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(double.class), x.doubleValue()));
       }
       for (String x : cs.strings) {
-        map.add(clazz, new NonreceiverTerm(String.class, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(String.class), x));
       }
       for (Class<?> x : cs.classes) {
-        map.add(clazz, new NonreceiverTerm(Class.class, x));
+        map.add(clazz, new NonreceiverTerm(ConcreteType.forClass(Class.class), x));
       }
     }
     return map;
