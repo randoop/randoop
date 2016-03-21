@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import randoop.Check;
-import randoop.ExceptionCheck;
+import randoop.test.Check;
+import randoop.test.ExceptionCheck;
 
 /**
  * ErrorRevealingChecks represent failing checks for a particular test sequence.

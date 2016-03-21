@@ -1,8 +1,14 @@
-package randoop;
+package randoop.test;
 
 import java.util.Arrays;
 import java.util.Objects;
 
+import randoop.ObjectContract;
+import randoop.ObjectContractUtils;
+import randoop.IsNotNull;
+import randoop.IsNull;
+import randoop.ObserverEqValue;
+import randoop.PrimValue;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;
 import randoop.sequence.Sequence;

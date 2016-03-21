@@ -1,4 +1,4 @@
-package randoop;
+package randoop.test;
 
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;

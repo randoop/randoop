@@ -12,7 +12,7 @@ import randoop.IsNotNull;
 import randoop.IsNull;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.ObjectCheck;
+import randoop.test.ObjectCheck;
 import randoop.ObjectContract;
 import randoop.ObserverEqValue;
 import randoop.PrimValue;

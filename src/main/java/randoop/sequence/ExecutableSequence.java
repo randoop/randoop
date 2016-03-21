@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import randoop.Check;
+import randoop.test.Check;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;

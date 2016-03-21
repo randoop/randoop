@@ -1,6 +1,8 @@
-package randoop;
+package randoop.test;
 
 import java.util.Objects;
+
+import randoop.Globals;
 
 /**
  * An {@code ExceptionCheck} is used to indicate that an exception is expected

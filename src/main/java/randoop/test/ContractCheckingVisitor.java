@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
-import randoop.Check;
+import randoop.test.Check;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
-import randoop.NoExceptionCheck;
+import randoop.test.NoExceptionCheck;
 import randoop.NormalExecution;
 import randoop.NotExecuted;
-import randoop.ObjectCheck;
+import randoop.test.ObjectCheck;
 import randoop.ObjectContract;
 import randoop.ObjectContractUtils;
 import randoop.sequence.ExecutableSequence;
