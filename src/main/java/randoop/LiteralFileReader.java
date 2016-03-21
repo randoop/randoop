@@ -4,6 +4,7 @@ import java.util.List;
 
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
+import randoop.sequence.Sequence;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -63,9 +64,9 @@ public class LiteralFileReader {
    * @param inFile  the input file
    * @return the map from types to literal values
    */
-  public static MultiMap<Class<?>, NonreceiverTerm> parse(String inFile) {
+  public static MultiMap<Class<?>, Sequence> parse(String inFile) {
 
-    final MultiMap<Class<?>, NonreceiverTerm> map = new MultiMap<Class<?>, NonreceiverTerm>();
+    final MultiMap<Class<?>, Sequence> map = new MultiMap<>();
 
     RecordProcessor processor =
         new RecordProcessor() {
@@ -94,8 +95,8 @@ public class LiteralFileReader {
 
             for (int i = 3; i < lines.size(); i++) {
               try {
-                NonreceiverTerm p = NonreceiverTerm.parse(lines.get(i));
-                map.add(cls, p);
+                NonreceiverTerm term = NonreceiverTerm.parse(lines.get(i));
+                map.add(cls, Sequence.create(term));
               } catch (OperationParseException e) {
                 throwInvalidRecordError(e, lines, i);
               }
