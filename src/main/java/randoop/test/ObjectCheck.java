@@ -1,8 +1,14 @@
-package randoop;
+package randoop.test;
 
 import java.util.Arrays;
 import java.util.Objects;
 
+import randoop.contract.ObjectContract;
+import randoop.contract.ObjectContractUtils;
+import randoop.contract.IsNotNull;
+import randoop.contract.IsNull;
+import randoop.contract.ObserverEqValue;
+import randoop.contract.PrimValue;
 import randoop.sequence.ExecutableSequence;
 import randoop.sequence.Execution;
 import randoop.sequence.Sequence;
@@ -20,8 +26,8 @@ import randoop.sequence.Variable;
  * <p>
  * An <code>ObjectCheck</code> has two parts:
  * <ul>
- * <li>A {@link ObjectContract} responsible for performing the actual check on a
- * set of runtime values. For example. the class {@link EqualsReflexive} is a
+ * <li>A {@link randoop.contract.ObjectContract} responsible for performing the actual check on a
+ * set of runtime values. For example. the class {@link randoop.contract.EqualsReflexive} is a
  * checker code class that, given an object <i>o</i>, calls <i>o.equals(o)</i>
  * and checks that it returns <code>true</code>.
  *

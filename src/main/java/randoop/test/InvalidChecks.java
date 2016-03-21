@@ -3,8 +3,8 @@ package randoop.test;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import randoop.Check;
-import randoop.ExceptionCheck;
+import randoop.test.Check;
+import randoop.test.ExceptionCheck;
 
 /**
  * Implements a set of checks capturing invalid behavior in a sequence.

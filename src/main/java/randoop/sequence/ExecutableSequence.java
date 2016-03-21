@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import randoop.Check;
+import randoop.test.Check;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.ExecutionVisitor;
@@ -201,7 +201,7 @@ public class ExecutableSequence {
    * except includes the checks.
    *
    * If for a given statement there is a check of type
-   * {@link randoop.ExceptionCheck}, that check's pre-statement code is printed
+   * {@link randoop.test.ExceptionCheck}, that check's pre-statement code is printed
    * immediately before the statement, and its post-statement code is printed
    * immediately after the statement.
    *

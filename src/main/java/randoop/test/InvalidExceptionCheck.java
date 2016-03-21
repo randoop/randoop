@@ -1,6 +1,6 @@
 package randoop.test;
 
-import randoop.ExceptionCheck;
+import randoop.test.ExceptionCheck;
 import randoop.sequence.Execution;
 
 /**

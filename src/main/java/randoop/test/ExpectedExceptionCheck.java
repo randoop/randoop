@@ -1,5 +1,9 @@
-package randoop;
+package randoop.test;
 
+import randoop.ExecutionOutcome;
+import randoop.ExceptionalExecution;
+import randoop.Globals;
+import randoop.NotExecuted;
 import randoop.sequence.Execution;
 import randoop.util.Reflection;
 

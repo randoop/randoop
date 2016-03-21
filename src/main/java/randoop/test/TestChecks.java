@@ -2,8 +2,8 @@ package randoop.test;
 
 import java.util.Map;
 
-import randoop.Check;
-import randoop.ExceptionCheck;
+import randoop.test.Check;
+import randoop.test.ExceptionCheck;
 
 /**
  * TestChecks represents the checks for a particular test sequence. Can either
