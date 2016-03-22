@@ -428,7 +428,7 @@ task wrapper(type: Wrapper) {
 /*************** Other tool configs *************/
 /* Make Emacs TAGS table */
 task tags(type: Exec, dependsOn: 'clone') {
-  description "Run etags over all Java source files in the project."
+  description "Run etags to create an Emacs TAGS table"
   environment PATH: "$System.env.PATH:$buildDir/utils/plume-lib/bin"
   commandLine "bash", "-c", "find src/ -name *.java | sort-directory-order | xargs etags"
 }
