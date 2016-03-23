@@ -45,7 +45,7 @@ public abstract class GenericType extends GeneralType {
    * parameters in this generic type
    */
   @Override
-  public ConcreteType instantiate(Substitution substitution) {
+  public ConcreteType apply(Substitution substitution) {
     return null;
   }
 

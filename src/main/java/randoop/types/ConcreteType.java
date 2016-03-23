@@ -12,9 +12,9 @@ import java.lang.reflect.Type;
  */
 public abstract class ConcreteType extends GeneralType {
 
-  public static final ConcreteType VOID_CLASS = ConcreteType.forClass(void.class);
-  public static final ConcreteType STRING_CLASS = ConcreteType.forClass(String.class);
-  public static final ConcreteType OBJECT_CLASS = ConcreteType.forClass(Object.class);
+  public static final ConcreteType VOID_TYPE = ConcreteType.forClass(void.class);
+  public static final ConcreteType STRING_TYPE = ConcreteType.forClass(String.class);
+  public static final ConcreteType OBJECT_TYPE = ConcreteType.forClass(Object.class);
 
   /**
    * Indicates whether a value of a {@code ConcreteType} can be assigned to a
@@ -200,7 +200,7 @@ public abstract class ConcreteType extends GeneralType {
    * @return this concrete type
    */
   @Override
-  public ConcreteType instantiate(Substitution substitution) {
+  public ConcreteType apply(Substitution substitution) {
     return this;
   }
 }

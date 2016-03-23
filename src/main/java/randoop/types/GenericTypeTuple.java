@@ -3,39 +3,43 @@ package randoop.types;
 import java.util.ArrayList;
 import java.util.List;
 
+import randoop.BugInRandoopException;
+import randoop.operation.GenericOperation;
+
 /**
  * {@code GenericTypeTuple} represents a tuple of generic types,
- * primarily as the input to a {@link randoop.operation.GenericOperation GenericOperation}.
+ * primarily as the input to a {@link GenericOperation GenericOperation}.
  */
 public class GenericTypeTuple implements GeneralTypeTuple {
 
-  /** The ordered list of {@link randoop.types.GenericType GenericType} objects */
-  private final ArrayList<GenericType> list;
+  /** The ordered typeList of {@link randoop.types.GenericType GenericType} objects */
+  private final ArrayList<GeneralType> typeList;
 
   /**
    * Create a tuple of {@link GenericType} objects.
    *
-   * @param list  the list of {@link GenericType} objects
+   * @param typeList  the list of {@link GenericType} objects
    */
-  public GenericTypeTuple(List<GenericType> list) {
-    this.list = new ArrayList<>(list);
+  public GenericTypeTuple(List<GeneralType> typeList) {
+    this.typeList = new ArrayList<>(typeList);
   }
 
   /**
    * Create an empty tuple.
    */
   public GenericTypeTuple() {
-    this.list = new ArrayList<>();
+    this.typeList = new ArrayList<>();
   }
 
   /**
    * Return the number of components in this tuple.
    *
+   *
    * @return the number of components in this tuple.
    */
   @Override
   public int size() {
-    return list.size();
+    return 0;
   }
 
   /**
@@ -45,7 +49,26 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    */
   @Override
   public boolean isEmpty() {
-    return list.isEmpty();
+    return typeList.isEmpty();
+  }
+
+  @Override
+  public boolean isGeneric() {
+    for (GeneralType type : typeList) {
+      if (type.isGeneric()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public GeneralTypeTuple apply(Substitution substitution) {
+    List<GeneralType> generalTypes = new ArrayList<>();
+    for (GeneralType generalType : typeList) {
+      generalTypes.add(generalType.apply(substitution));
+    }
+    return new GenericTypeTuple(generalTypes);
   }
 
   /**
@@ -55,9 +78,9 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    * @return the component at the ith index
    */
   @Override
-  public GenericType get(int i) {
-    assert 0 <= i && i < list.size();
-    return list.get(i);
+  public GeneralType get(int i) {
+    assert 0 <= i && i < typeList.size();
+    return typeList.get(i);
   }
 
   /**
@@ -68,9 +91,17 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    * @return the concrete type tuple formed by applying the substitution componentwise to this tuple
    */
   public ConcreteTypeTuple instantiate(Substitution substitution) {
+    return ((GenericTypeTuple)this.apply(substitution)).makeConcrete();
+  }
+
+  public ConcreteTypeTuple makeConcrete() {
     List<ConcreteType> concreteTypes = new ArrayList<>();
-    for (GenericType genericType : list) {
-      concreteTypes.add(genericType.instantiate(substitution));
+    for (GeneralType generalType : typeList) {
+      if (generalType.isGeneric()) {
+        String msg = "attempt to force generic type to concrete type: " + generalType;
+        throw new BugInRandoopException(msg);
+      }
+      concreteTypes.add((ConcreteType)generalType);
     }
     return new ConcreteTypeTuple(concreteTypes);
   }

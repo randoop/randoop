@@ -288,7 +288,7 @@ public abstract class GeneralType {
    * @return a {@code ConcreteType} constructed by substituting for type
    * parameters in this generic type
    */
-  public abstract ConcreteType instantiate(Substitution substitution);
+  public abstract GeneralType apply(Substitution substitution);
 
   /**
    * Returns the package of this types runtime class.

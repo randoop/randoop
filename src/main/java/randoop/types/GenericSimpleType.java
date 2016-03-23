@@ -112,7 +112,7 @@ public class GenericSimpleType extends GenericType {
    * match the parameter bound.
    */
   @Override
-  public ConcreteType instantiate(Substitution substitution) {
+  public ConcreteType apply(Substitution substitution) {
     if (substitution == null) {
       throw new IllegalArgumentException("substitution must be non-null");
     }

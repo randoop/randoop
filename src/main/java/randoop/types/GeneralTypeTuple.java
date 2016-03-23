@@ -11,7 +11,7 @@ public interface GeneralTypeTuple {
    *
    * @return the number of components of this tuple
    */
-  public abstract int size();
+  int size();
 
   /**
    * Return the ith component type of this tuple.
@@ -19,7 +19,7 @@ public interface GeneralTypeTuple {
    * @param i  the component index
    * @return the component type at the position
    */
-  public abstract GeneralType get(int i);
+  GeneralType get(int i);
 
   /**
    * Indicates whether the tuple is empty.
@@ -27,4 +27,21 @@ public interface GeneralTypeTuple {
    * @return true if the tuple has no components, false otherwise
    */
   boolean isEmpty();
+
+  /**
+   * Indicates whether the tuple has any generic components.
+   *
+   * @return true if any component of tupe is generic, false if none are
+   */
+  boolean isGeneric();
+
+  /**
+   * Applies a substitution to a type tuple, replacing any occurrences of type variables.
+   * Resulting tuple may only be partially instantiated.
+   *
+   * @param substitution  the substitution
+   * @return a new type tuple resulting from applying the given substitution to this tuple
+   */
+  GeneralTypeTuple apply(Substitution substitution);
+
 }

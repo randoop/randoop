@@ -206,7 +206,7 @@ public class ParameterizedType extends ConcreteType {
     if (genericSuperType == null) { // no matching supertype
       return false;
     }
-    ConcreteType superType = genericSuperType.instantiate(this.substitution);
+    ConcreteType superType = genericSuperType.apply(this.substitution);
     if (pt.equals(superType)) {
       return true; // found type
     }

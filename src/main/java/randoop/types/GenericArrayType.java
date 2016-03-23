@@ -64,7 +64,7 @@ public class GenericArrayType extends GenericType {
    * parameters of this generic array type using the substitution
    */
   @Override
-  public ConcreteType instantiate(Substitution substitution) {
-    return new ConcreteArrayType(elementType.instantiate(substitution));
+  public ConcreteType apply(Substitution substitution) {
+    return new ConcreteArrayType(elementType.apply(substitution));
   }
 }

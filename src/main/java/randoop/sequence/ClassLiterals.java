@@ -51,7 +51,7 @@ public class ClassLiterals extends MappedSequences<ConcreteType> {
   private Set<ConcreteType> getSuperClasses(ConcreteType cls) {
     Set<ConcreteType> ret = new LinkedHashSet<>();
     ConcreteType sup = cls.getSuperclass();
-    while (sup != null && !sup.equals(ConcreteType.OBJECT_CLASS)) {
+    while (sup != null && !sup.equals(ConcreteType.OBJECT_TYPE)) {
       ret.add(sup);
       sup = sup.getSuperclass();
     }

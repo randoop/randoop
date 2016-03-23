@@ -114,15 +114,6 @@ public class GenericClassType extends GenericType {
 
   /**
    * {@inheritDoc}
-   * @return true since this is an array
-   */
-  @Override
-  public boolean isArray() {
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
    * @return the fully qualified name of this type with type parameters
    */
   @Override
@@ -161,7 +152,7 @@ public class GenericClassType extends GenericType {
    * given substitution
    */
   @Override
-  public ConcreteType instantiate(Substitution substitution) {
+  public ConcreteType apply(Substitution substitution) {
     if (substitution == null) {
       throw new IllegalArgumentException("substitution must be non-null");
     }
