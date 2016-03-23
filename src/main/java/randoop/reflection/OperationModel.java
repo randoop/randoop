@@ -16,21 +16,23 @@ import randoop.contract.EqualsToNullRetFalse;
 import randoop.contract.ObjectContract;
 import randoop.main.ClassNameErrorHandler;
 import randoop.operation.ConcreteOperation;
+import randoop.operation.GenericOperation;
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteType;
+import randoop.types.GenericType;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 
 import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
 
 /**
- * {@code OperationModel} represents the context in which tests are to be generated.
+ * {@code OperationModel} represents the information context from which tests are generated.
  * The model includes:
  * <ul>
- *   <li>Classes under test.</li>
- *   <li>Operations of all classes.</li>
- *   <li>Any atomic code sequences derived from command-line arguments.</li>
- *   <li>The contracts or oracles used to generate tests.</li>
+ *   <li>classes under test,</li>
+ *   <li>operations of all classes,</li>
+ *   <li>any atomic code sequences derived from command-line arguments, and </li>
+ *   <li>the contracts or oracles used to generate tests.</li>
  * </ul>
  * <p>
  * This class manages all information about generic classes internally, and instantiates any
@@ -38,15 +40,22 @@ import static randoop.main.GenInputsAbstract.ClassLiteralsMode;
  */
 public class OperationModel {
 
-  private final LinkedHashSet<Class<?>> coveredClasses;
+  /** The set of class objects used in the exercised-class test filter */
+  private final LinkedHashSet<Class<?>> exercisedClasses;
+
   /** Map for singleton sequences of literals extracted from classes. */
   private MultiMap<Class<?>, Sequence> classLiteralMap;
 
   /** Set of singleton sequences for values from TestValue annotated fields. */
-  private Set<Sequence> annotatedTestValues; // instantiated using TestValueExtractor
+  private Set<Sequence> annotatedTestValues;
 
-  /** Set of object contracts ("oracles") used to generate tests. */
+  /** Set of object contracts used to generate tests. */
   private Set<ObjectContract> contracts;
+
+  /** Set of concrete operations extracted from classes */
+  private Set<ConcreteOperation> operations;
+  private Set<ConcreteType> classTypes;
+
 
   /**
    * Create an empty model of test context.
@@ -55,7 +64,9 @@ public class OperationModel {
     classLiteralMap = new MultiMap<>();
     annotatedTestValues = new LinkedHashSet<>();
     contracts = new LinkedHashSet<>();
-    coveredClasses = new LinkedHashSet<>();
+    exercisedClasses = new LinkedHashSet<>();
+    operations = new LinkedHashSet<>();
+    classTypes = new LinkedHashSet<>();
   }
 
   /**
@@ -68,6 +79,7 @@ public class OperationModel {
    *                             class members are used
    * @param classnames  the names of classes under test
    * @param exercisedClassnames  the names of classes to be tested by exercised heuristic
+   * @param literalsFileList  the list of literals file names
    * @return the operation model for the parameters
    */
   public static OperationModel createModel(
@@ -80,12 +92,14 @@ public class OperationModel {
 
     // TODO make sure adding Object constructor
 
-    //when see new class:
-    // - get type
-    // - get all operations
-    // - if type is
+    Set<Class<?>> visitedClasses = new LinkedHashSet<>();
+    Set<ConcreteType> inputTypes = new LinkedHashSet<>();
+    MultiMap<GenericType, GenericOperation> genericClassTypes = new MultiMap<>();
+
     OperationModel model = new OperationModel();
     ReflectionManager mgr = new ReflectionManager(reflectionPredicate);
+    mgr.add(new OperationExtractor(model.classTypes, model.operations, genericClassTypes));
+    mgr.add(new InputTypeExtractor(inputTypes));
     mgr.add(new TestValueExtractor(model.annotatedTestValues));
     mgr.add(new CheckRepExtractor(model.contracts));
     if (literalsFileList.contains("CLASSES")) {
@@ -100,8 +114,11 @@ public class OperationModel {
       } catch (ClassNotFoundException e) {
         errorHandler.handle(classname);
       }
+      // Note that c could be null if errorHandler just warns on bad names
 
-      if (c != null) { // could be null if only warning on bad names
+      if (c != null && ! visitedClasses.contains(c)) {
+        visitedClasses.add(c);
+
         // ignore interfaces and non-visible classes
         if (!visibility.isVisible(c)) {
           System.out.println(
@@ -116,7 +133,7 @@ public class OperationModel {
             mgr.apply(c);
           }
           if (exercisedClassnames.contains(classname)) {
-            model.addCoveredClass(c);
+            model.addExercisedClass(c);
           }
         }
       }
@@ -138,7 +155,7 @@ public class OperationModel {
         } else if (c.isInterface()) {
           System.out.println("Ignoring " + c + " specified as include-if-class-exercised target.");
         } else {
-          model.addCoveredClass(c);
+          model.addExercisedClass(c);
         }
       }
     }
@@ -148,13 +165,15 @@ public class OperationModel {
     return model;
   }
 
-  private void addCoveredClass(Class<?> c) {
-    coveredClasses.add(c);
-  }
 
   /**
    * Adds literals to the component manager, by parsing any literals files
    * specified by the user.
+   * Includes literals at different levels indicated by {@link ClassLiteralsMode}.
+   *
+   * @param compMgr  the component manager
+   * @param literalsFile  the list of literals file names
+   * @param literalsLevel  the level of literals to add
    */
   public void addClassLiterals(
       ComponentManager compMgr, List<String> literalsFile, ClassLiteralsMode literalsLevel) {
@@ -193,20 +212,35 @@ public class OperationModel {
     }
   }
 
-  public Set<Class<?>> getCoveredClasses() {
-    return null;
+  /**
+   * Adds a class to the set of classes for the exercised-class heuristic.
+   *
+   * @param c  the class to add
+   */
+  private void addExercisedClass(Class<?> c) {
+    exercisedClasses.add(c);
   }
 
+  public Set<Class<?>> getExercisedClasses() {
+    return exercisedClasses;
+  }
+
+  /**
+   * Returns the set of types for concrete (non-generic) classes in this model.
+   * Includes all instantiated generic classes.
+   *
+   * @return the set of concrete types for the classes in this model
+   */
   public Set<ConcreteType> getClasses() {
-    return new LinkedHashSet<>();
+    return classTypes;
   }
 
   public boolean hasClasses() {
-    return false;
+    return ! classTypes.isEmpty();
   }
 
   public List<ConcreteOperation> getConcreteOperations() {
-    return new ArrayList<>();
+    return new ArrayList<>(operations);
   }
 
   public void addOperations(Set<String> methodSignatures) {

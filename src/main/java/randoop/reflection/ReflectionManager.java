@@ -34,7 +34,7 @@ import randoop.util.Log;
  * <li>methods defined for enum constants that satisfy predicate.
  * </ul>
  */
-public class ReflectionManager {
+class ReflectionManager {
 
   private ReflectionPredicate predicate;
   private ArrayList<ClassVisitor> visitors;
@@ -48,7 +48,7 @@ public class ReflectionManager {
    *          the predicate to indicate whether classes and class members should
    *          be visited.
    */
-  public ReflectionManager(ReflectionPredicate predicate) {
+  ReflectionManager(ReflectionPredicate predicate) {
     this.predicate = predicate;
     this.visitors = new ArrayList<>();
   }
@@ -65,11 +65,14 @@ public class ReflectionManager {
 
   /**
    * Applies the registered {@link ClassVisitor} objects of this object to the
-   * given class.
+   * given class and its members that satisfy the given predicate.
+   * Excludes fields that are hidden by inheritance that are otherwise still accessible by
+   * reflection.
+   * Each visitor is applied to each member at most once.
    *
    * @param c  the {@link Class} object to be visited.
    */
-  public void apply(Class<?> c) {
+  void apply(Class<?> c) {
 
     if (predicate.test(c)) {
 
@@ -78,50 +81,58 @@ public class ReflectionManager {
       visitBefore(c); // perform any previsit steps
 
       if (c.isEnum()) { // treat enum classes differently
-        applyEnum(c);
+        applyToEnum(c);
       } else {
 
-        applyMethods(c);
+        // Methods
+        Set<Method> methods = new HashSet<>();
+        for (Method m : c.getMethods()) { // for all public methods
+          methods.add(m); // remember to avoid duplicates
+          if (predicate.test(m)) { // if satisfies predicate then visit
+            applyTo(m);
+          }
+        }
+        for (Method m : c.getDeclaredMethods()) { // for all methods declared by c
+          // if not duplicate and satisfies predicate
+          if ((!methods.contains(m)) && predicate.test(m)) {
+            applyTo(m);
+          }
+        }
 
+        // Constructors
         for (Constructor<?> co : c.getDeclaredConstructors()) {
           if (predicate.test(co)) {
-            visitConstructor(co);
+            applyTo(co);
           }
         }
 
+        // Inner enums
         for (Class<?> ic : c.getDeclaredClasses()) { // look for inner enums
           if (ic.isEnum() && predicate.test(ic)) {
-            applyEnum(ic);
+            applyToEnum(ic);
           }
         }
 
-        applyFields(c);
+        // Fields
+        // The set of fields declared in class c is needed to ensure we don't
+        // collect inherited fields that are hidden by local declaration
+        Set<String> declaredNames = new TreeSet<>();
+        for (Field f : c.getDeclaredFields()) { // for fields declared by c
+          declaredNames.add(f.getName());
+          if (predicate.test(f)) {
+            applyTo(f);
+          }
+        }
+        for (Field f : c.getFields()) { // for all public fields of c
+          // keep a field that satisfies filter, and is not inherited and hidden by
+          // local declaration
+          if (predicate.test(f) && (!declaredNames.contains(f.getName()))) {
+            applyTo(f);
+          }
+        }
       }
 
       visitAfter(c);
-    }
-  }
-
-  /**
-   * Applies the visitors to each method of the class at most once. Visits all
-   * methods satisfying the reflection predicate.
-   *
-   * @param c
-   *          the class whose methods should be visited
-   */
-  private void applyMethods(Class<?> c) {
-    Set<Method> methods = new HashSet<>();
-    for (Method m : c.getMethods()) { // for all public methods
-      methods.add(m); // remember to avoid duplicates
-      if (predicate.test(m)) { // if satisfies predicate then visit
-        visitMethod(m);
-      }
-    }
-    for (Method m : c.getDeclaredMethods()) { // for all methods declared by c
-      // if not duplicate and satisfies predicate
-      if ((!methods.contains(m)) && predicate.test(m)) {
-        visitMethod(m);
-      }
     }
   }
 
@@ -141,11 +152,11 @@ public class ReflectionManager {
    *
    * @param c the enum class object from which constants and methods are extracted
    */
-  private void applyEnum(Class<?> c) {
-    Set<String> overrideMethods = new HashSet<String>();
+  private void applyToEnum(Class<?> c) {
+    Set<String> overrideMethods = new HashSet<>();
     for (Object obj : c.getEnumConstants()) {
       Enum<?> e = (Enum<?>) obj;
-      visitEnum(e);
+      applyTo(e);
       if (!e.getClass().equals(c)) { // does constant have an anonymous class?
         for (Method m : e.getClass().getDeclaredMethods()) {
           overrideMethods.add(m.getName()); // collect any potential overrides
@@ -156,7 +167,7 @@ public class ReflectionManager {
     for (Method m : c.getDeclaredMethods()) {
       if (predicate.test(m)) {
         if (!m.getName().equals("values") && !m.getName().equals("valueOf")) {
-          visitMethod(m);
+          applyTo(m);
         }
       }
     }
@@ -164,34 +175,7 @@ public class ReflectionManager {
     // constant
     for (Method m : c.getMethods()) {
       if (predicate.test(m) && overrideMethods.contains(m.getName())) {
-        visitMethod(m);
-      }
-    }
-  }
-
-  /**
-   * Determines which fields of the given class the visitors will be applied to.
-   * Only excludes fields hidden by inheritance that are otherwise still
-   * accessible via reflection.
-   *
-   * @param c  the class whose fields are to be visited
-   */
-  private void applyFields(Class<?> c) {
-    // The set of fields declared in class c is needed to ensure we don't
-    // collect
-    // inherited fields that are hidden by local declaration
-    Set<String> declaredNames = new TreeSet<>();
-    for (Field f : c.getDeclaredFields()) { // for fields declared by c
-      declaredNames.add(f.getName());
-      if (predicate.test(f)) {
-        visitField(f);
-      }
-    }
-    for (Field f : c.getFields()) { // for all public fields of c
-      // keep a field that satisfies filter, and is not inherited and hidden by
-      // local declaration
-      if (predicate.test(f) && (!declaredNames.contains(f.getName()))) {
-        visitField(f);
+        applyTo(m);
       }
     }
   }
@@ -202,7 +186,7 @@ public class ReflectionManager {
    * @param f
    *          the field to be visited.
    */
-  private void visitField(Field f) {
+  private void applyTo(Field f) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering field %s", f));
     }
@@ -217,7 +201,7 @@ public class ReflectionManager {
    * @param co
    *          the constructor to be visited.
    */
-  private void visitConstructor(Constructor<?> co) {
+  private void applyTo(Constructor<?> co) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering constructor %s", co));
     }
@@ -232,7 +216,7 @@ public class ReflectionManager {
    * @param m
    *          the method to be visited.
    */
-  private void visitMethod(Method m) {
+  private void applyTo(Method m) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering method %s", m));
     }
@@ -247,7 +231,7 @@ public class ReflectionManager {
    * @param e
    *          the enum value to be visited.
    */
-  private void visitEnum(Enum<?> e) {
+  private void applyTo(Enum<?> e) {
     if (Log.isLoggingOn()) {
       Log.logLine(String.format("Considering enum %s", e));
     }

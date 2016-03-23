@@ -4,11 +4,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import randoop.field.FinalInstanceField;
 import randoop.field.InstanceField;
@@ -19,8 +19,15 @@ import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
 import randoop.operation.FieldGet;
 import randoop.operation.FieldSet;
+import randoop.operation.GenericOperation;
 import randoop.operation.MethodCall;
 import randoop.operation.Operation;
+import randoop.types.ConcreteSimpleType;
+import randoop.types.ConcreteType;
+import randoop.types.GeneralType;
+import randoop.types.GenericClassType;
+import randoop.types.GenericType;
+import randoop.util.MultiMap;
 
 /**
  * OperationExtractor is a {@link ClassVisitor} that creates a collection of
@@ -33,7 +40,17 @@ import randoop.operation.Operation;
  */
 public class OperationExtractor implements ClassVisitor {
 
+  /** The set of concrete class types encountered */
+  private final Set<ConcreteType> classTypes;
+
+  /** The map of generic types to operations */
+  private final MultiMap<GenericType, GenericOperation> genericClassTypes;
+
+  /** The set of concrete operations encountered */
   private Set<ConcreteOperation> operations;
+
+  /** The current class type */
+  private GeneralType classType;
 
   /**
    * Creates a visitor object that collects Operation objects corresponding to
@@ -42,34 +59,10 @@ public class OperationExtractor implements ClassVisitor {
    * strictly ordered once flattened to a list. This is needed to guarantee
    * determinism between Randoop runs with the same classes and parameters.
    */
-  public OperationExtractor() {
-    this.operations = new TreeSet<>();
-  }
-
-  public List<ConcreteOperation> getOperations() {
-    return new ArrayList<>(operations);
-  }
-
-  /**
-   * Collects the members of a collection of classes. Returns a filtered list of
-   * {@code Operation} objects.
-   *
-   * @param classListing
-   *          the collection of class objects from which to extract
-   * @param predicate
-   *          whether to include class members in results
-   * @return list of {@code Operation} objects satisfying the predicate
-   */
-  public static List<ConcreteOperation> getOperations(
-      Collection<Class<?>> classListing, ReflectionPredicate predicate) {
-    if (predicate == null) predicate = new DefaultReflectionPredicate();
-    ReflectionManager mgr = new ReflectionManager(predicate);
-    OperationExtractor op = new OperationExtractor();
-    mgr.add(op);
-    for (Class<?> c : classListing) {
-      mgr.apply(c);
-    }
-    return op.getOperations();
+  public OperationExtractor(Set<ConcreteType> classTypes, Set<ConcreteOperation> operations, MultiMap<GenericType, GenericOperation> genericClassTypes) {
+    this.classTypes = classTypes;
+    this.operations = operations;
+    this.genericClassTypes = genericClassTypes;
   }
 
   /**
@@ -81,7 +74,28 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Constructor<?> c) {
-    operations.add(new ConstructorCall(c));
+    assert c.getDeclaringClass().equals(classType.getRuntimeClass()) : "classType and declaring class should be same";
+
+    TypeVariable<?>[] typeParams = c.getTypeParameters();
+
+    if (typeParams.length > 0) {
+      // is a generic constructor
+    } else {
+      // is a constructor possibly with generic arguments
+    }
+
+    if (classType.isGeneric()) {
+      // goes in classtype->general-op map
+    } else {
+      // if generic constructor goes in type-params->generic-op map
+    }
+            
+    List<GeneralType> paramTypes = new ArrayList<>();
+    for (Type t : c.getGenericParameterTypes()) {
+      paramTypes.add(GeneralType.forType(t));
+    }
+
+    // new ConstructorCall(c, new GeneralTypeTuple(paramTypes));
   }
 
   /**
@@ -92,7 +106,19 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    operations.add(new MethodCall(method));
+    assert method.getDeclaringClass().equals(classType.getRuntimeClass()) : "classType and declaring class should be same";
+
+    TypeVariable<?>[] typeParams = method.getTypeParameters();
+
+    GeneralType retType = GeneralType.forType(method.getGenericReturnType());
+    List<GeneralType> paramTypes = new ArrayList<>();
+    if (! Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
+      paramTypes.add(classType);
+    }
+    for (Type t : method.getGenericParameterTypes()) {
+      paramTypes.add(GeneralType.forType(t));
+    }
+    // new MethodCall(method, new GeneralTypeTuple(paramTypes), returnType);
   }
 
   /**
@@ -104,6 +130,8 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Field field) {
+    assert field.getDeclaringClass().equals(classType.getRuntimeClass()) : "classType and declaring class of field should be the same";
+
     int mods = field.getModifiers();
 
     if (Modifier.isStatic(mods)) {
@@ -135,12 +163,21 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    operations.add(new EnumConstant(e));
+    assert e.getDeclaringClass().equals(classType.getRuntimeClass()) : "classType and enum declaring class should be same";
+    assert ! classType.isGeneric() : "type of enum class cannot be generic";
+    operations.add(new EnumConstant(e, (ConcreteType)classType));
   }
 
   @Override
   public void visitBefore(Class<?> c) {
-    // nothing to do here
+    if (c.getTypeParameters().length > 0) { // c is generic
+      classType = new GenericClassType(c);
+    } else {
+      ConcreteType type = new ConcreteSimpleType(c);
+      classTypes.add(type);
+      classType = type;
+    }
+
   }
 
   @Override
