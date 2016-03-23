@@ -78,6 +78,14 @@ public interface Operation extends Comparable<Operation> {
   boolean isMessage();
 
   /**
+   * Indicates whether this object represents a method-call operation (either static or instance).
+   * This excludes getters and setters.
+   *
+   * @return true if this operation is a method call, and false otherwise
+   */
+  boolean isMethodCall();
+
+  /**
    * Predicate to indicate whether object represents a call to a constructor.
    *
    * @return true if operation is a constructor call, and false otherwise.
