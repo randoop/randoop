@@ -6,6 +6,8 @@ import java.util.List;
 import randoop.ExecutionOutcome;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
 
 /**
  * CallableOperation is an abstract implementation of the Operation interface to
@@ -22,6 +24,11 @@ public abstract class CallableOperation implements Operation {
 
   @Override
   public boolean isMessage() {
+    return false;
+  }
+
+  @Override
+  public boolean isMethodCall() {
     return false;
   }
 
@@ -46,7 +53,7 @@ public abstract class CallableOperation implements Operation {
    *
    * @param op
    *          the {@link Operation} to compare with this operation
-   * @return value &lt; 0 if this parseable string is less than for op, 0 if the
+   * @return value &lt; 0 if this parsable string is less than for op, 0 if the
    *         strings are equal, and &gt; 0 if string for this object greater
    *         than for op.
    */
@@ -87,7 +94,7 @@ public abstract class CallableOperation implements Operation {
    * @param inputVars  the list of variables that are inputs to operation.
    * @param b  the {@link StringBuilder} to which code is added.
    */
-  public abstract void appendCode(List<Variable> inputVars, StringBuilder b);
+  public abstract void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b);
 
   /**
    * Returns a string representation of this Operation, which can be read by
@@ -98,5 +105,6 @@ public abstract class CallableOperation implements Operation {
    *
    * @return string descriptor of {@link Operation} object.
    */
-  public abstract String toParseableString();
+  public abstract String toParseableString(GeneralType declaringType);
+
 }

@@ -1,16 +1,14 @@
 package randoop.operation;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
-import randoop.types.TypeNames;
+import randoop.types.GeneralTypeTuple;
 
 /**
  * EnumConstant is an {@link Operation} representing a constant value from an
@@ -21,16 +19,13 @@ import randoop.types.TypeNames;
  * <p>
  * Execution simply returns the constant value.
  */
-public class EnumConstant extends ConcreteOperation implements Operation, Serializable {
-
-  private static final long serialVersionUID = 849994347169442078L;
+public class EnumConstant extends CallableOperation {
 
   public static final String ID = "enum";
 
   private Enum<?> value;
 
-  public EnumConstant(Enum<?> value, ConcreteType declaringType) {
-    super(declaringType, new ConcreteTypeTuple(), declaringType);
+  public EnumConstant(Enum<?> value) {
     if (value == null) {
       throw new IllegalArgumentException("enum constant cannot be null");
     }
@@ -58,7 +53,7 @@ public class EnumConstant extends ConcreteOperation implements Operation, Serial
 
   @Override
   public String toString() {
-    return toParseableString();
+    return value.toString();
   }
 
   /**
@@ -75,14 +70,8 @@ public class EnumConstant extends ConcreteOperation implements Operation, Serial
    * {@inheritDoc} Adds qualified name of enum constant.
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
-    b.append(TypeNames.getCompilableName(type()) + "." + this.value.name());
-  }
-
-  // temporary to make class compile
-  private Class<?> type() {
-    // TODO Auto-generated method stub
-    return getOutputType().getRuntimeClass();
+  public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
+    b.append(declaringType.getName()).append(".").append(this.value.name());
   }
 
   /**
@@ -92,8 +81,8 @@ public class EnumConstant extends ConcreteOperation implements Operation, Serial
    * @see EnumConstant#parse(String)
    */
   @Override
-  public String toParseableString() {
-    return type().getName() + ":" + value.name();
+  public String toParseableString(GeneralType declaringType) {
+    return declaringType.getName() + ":" + value.name();
   }
 
   /**
@@ -215,13 +204,4 @@ public class EnumConstant extends ConcreteOperation implements Operation, Serial
     return value();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @return enclosing enum type.
-   */
-  @Override
-  public GeneralType getDeclaringType() {
-    return null; //value.getDeclaringClass();
-  }
 }

@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
@@ -11,6 +12,8 @@ import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
 
 /**
  * FieldGetter is an adapter that creates a {@link Operation} from a
@@ -19,7 +22,7 @@ import randoop.sequence.Variable;
  * @see AccessibleField
  *
  */
-public class FieldGet extends ConcreteOperation implements Operation {
+public class FieldGet extends CallableOperation {
 
   public static String ID = "getter";
 
@@ -32,7 +35,6 @@ public class FieldGet extends ConcreteOperation implements Operation {
    *          the {@link AccessibleField} object from which to get values.
    */
   public FieldGet(AccessibleField field) {
-    super(field.getDeclaringType(), field.getAccessTypes(), field.getType());
     this.field = field;
   }
 
@@ -50,8 +52,6 @@ public class FieldGet extends ConcreteOperation implements Operation {
    */
   @Override
   public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-    assert statementInput.length == getInputTypes().size()
-        : "expected " + getInputTypes().size() + " got " + statementInput.length;
 
     // either 0 or 1 inputs. If none use null, otherwise give object.
     Object input = statementInput.length == 0 ? null : statementInput[0];
@@ -78,7 +78,7 @@ public class FieldGet extends ConcreteOperation implements Operation {
    *          the StringBuilder that strings are appended to.
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder b) {
+  public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
     b.append(field.toCode(inputVars));
   }
 
@@ -87,13 +87,13 @@ public class FieldGet extends ConcreteOperation implements Operation {
    * PublicFieldParser.
    */
   @Override
-  public String toParseableString() {
+  public String toParseableString(GeneralType declaringType) {
     return "<get>(" + field.toParseableString() + ")";
   }
 
   @Override
   public String toString() {
-    return toParseableString();
+    return field.toString();
   }
 
   @Override

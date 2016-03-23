@@ -19,6 +19,8 @@ import randoop.sequence.Statement;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
+import randoop.types.GeneralType;
+import randoop.types.GeneralTypeTuple;
 import randoop.types.PrimitiveTypes;
 import randoop.util.CollectionsExt;
 import randoop.util.MethodReflectionCode;
@@ -42,7 +44,7 @@ import randoop.util.ReflectionExecutor;
  * <p>
  * (Class previously called RMethod.)
  */
-public final class MethodCall extends ConcreteOperation implements Operation {
+public final class MethodCall extends CallableOperation {
 
   /**
    * ID for parsing purposes
@@ -76,12 +78,7 @@ public final class MethodCall extends ConcreteOperation implements Operation {
    *
    * @param method  the reflective method object.
    */
-  public MethodCall(
-      Method method,
-      ConcreteType declaringType,
-      ConcreteTypeTuple inputTypes,
-      ConcreteType outputType) {
-    super(declaringType, inputTypes, outputType);
+  public MethodCall(Method method) {
     if (method == null) throw new IllegalArgumentException("method should not be null.");
 
     this.method = method;
@@ -89,14 +86,13 @@ public final class MethodCall extends ConcreteOperation implements Operation {
   }
 
   /**
-   * toString outputs a parseable text representation of the method call.
+   * toString outputs a text representation of the method call.
    *
-   * @return string representation constructed by
-   *         {@link MethodCall#toParseableString()}
+   * @return string representation of the enclosed method
    */
   @Override
   public String toString() {
-    return toParseableString();
+    return method.toString();
   }
 
   /**
@@ -106,10 +102,10 @@ public final class MethodCall extends ConcreteOperation implements Operation {
    * @param inputVars is the list of actual arguments to be printed.
    */
   @Override
-  public void appendCode(List<Variable> inputVars, StringBuilder sb) {
+  public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder sb) {
 
     String receiverString = isStatic() ? null : inputVars.get(0).getName();
-    appendReceiverOrClassForStatics(receiverString, sb);
+    appendReceiverOrClassForStatics(declaringType, inputTypes, receiverString, sb);
 
     sb.append(".");
     sb.append(getTypeArguments());
@@ -120,9 +116,9 @@ public final class MethodCall extends ConcreteOperation implements Operation {
       if (i > startIndex) sb.append(", ");
 
       // CASTING.
-      if (!inputVars.get(i).getType().equals(getInputTypes().get(i))) {
+      if (!inputVars.get(i).getType().equals(inputTypes.get(i))) {
         // Cast if the variable and input types are not identical.
-        sb.append("(").append(getInputTypes().get(i).getName()).append(")");
+        sb.append("(").append(inputTypes.get(i).getName()).append(")");
       }
 
       String param = inputVars.get(i).getName();
@@ -187,9 +183,9 @@ public final class MethodCall extends ConcreteOperation implements Operation {
     throw new IllegalStateException("unexpected type " + t);
   }
 
-  private void appendReceiverOrClassForStatics(String receiverString, StringBuilder b) {
+  private void appendReceiverOrClassForStatics(GeneralType declaringType, GeneralTypeTuple inputTypes, String receiverString, StringBuilder b) {
     if (isStatic()) {
-      String s2 = this.method.getDeclaringClass().getName().replace('$', '.'); // TODO
+      String s2 = declaringType.getName().replace('$', '.'); // TODO
       // combine
       // this
       // with
@@ -198,7 +194,7 @@ public final class MethodCall extends ConcreteOperation implements Operation {
       // clause
       b.append(s2);
     } else {
-      Class<?> expectedType = getInputTypes().get(0).getRuntimeClass();
+      Class<?> expectedType = inputTypes.get(0).getRuntimeClass();
       String typeName = expectedType.getName();
       boolean mustCast =
           typeName != null
@@ -240,22 +236,20 @@ public final class MethodCall extends ConcreteOperation implements Operation {
    *         otherwise {@link ExceptionalExecution} if an exception thrown.
    */
   @Override
-  public ExecutionOutcome execute(Object[] statementInput, PrintStream out) {
-
-    assert statementInput.length == getInputTypes().size();
+  public ExecutionOutcome execute(Object[] input, PrintStream out) {
 
     Object receiver = null;
-    int paramsLength = getInputTypes().size();
+    int paramsLength = input.length;
     int paramsStartIndex = 0;
     if (!isStatic()) {
-      receiver = statementInput[0];
+      receiver = input[0];
       paramsLength--;
       paramsStartIndex = 1;
     }
 
     Object[] params = new Object[paramsLength];
     for (int i = 0; i < params.length; i++) {
-      params[i] = statementInput[i + paramsStartIndex];
+      params[i] = input[i + paramsStartIndex];
     }
 
     MethodReflectionCode code = new MethodReflectionCode(this.method, receiver, params);
@@ -294,7 +288,7 @@ public final class MethodCall extends ConcreteOperation implements Operation {
    *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
-  public String toParseableString() {
+  public String toParseableString(GeneralType declaringType) {
     return MethodSignatures.getSignatureString(this.method);
   }
 
@@ -339,12 +333,19 @@ public final class MethodCall extends ConcreteOperation implements Operation {
 
   /**
    * {@inheritDoc}
-   * @return true always, since this is a method call.
+   * @return true always, since this is a method call
    */
   @Override
   public boolean isMessage() {
     return true;
   }
+
+  /**
+   * {@inheritDoc}
+   * @return true always, since this is a method call
+   */
+  @Override
+  public boolean isMethodCall() { return true; }
 
   /**
    * {@inheritDoc}
