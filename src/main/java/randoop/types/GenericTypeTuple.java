@@ -39,7 +39,7 @@ public class GenericTypeTuple implements GeneralTypeTuple {
    */
   @Override
   public int size() {
-    return 0;
+    return typeList.size();
   }
 
   /**
