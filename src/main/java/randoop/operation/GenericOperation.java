@@ -3,7 +3,6 @@ package randoop.operation;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.GenericType;
-import randoop.types.GenericTypeTuple;
 import randoop.types.Substitution;
 
 /**
@@ -22,7 +21,7 @@ import randoop.types.Substitution;
  * Note that the <i>declaring</i> and <i>output</i> types of a creation operation are both defined
  * as the type created.
  */
-public abstract class GenericOperation extends AbstractOperation {
+public class GenericOperation extends TypedOperation<Operation> {
 
   /** The type that declares this operation. */
   private GeneralType declaringType;
@@ -40,8 +39,9 @@ public abstract class GenericOperation extends AbstractOperation {
    * @param inputTypes  the input types for the operation
    * @param outputType  the output type for the operation
    */
-  public GenericOperation(
-      GeneralType declaringType, GenericTypeTuple inputTypes, GeneralType outputType) {
+  public GenericOperation(Operation operation,
+      GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
+    super(operation);
     this.declaringType = declaringType;
     this.inputTypes = inputTypes;
     this.outputType = outputType;
@@ -84,5 +84,15 @@ public abstract class GenericOperation extends AbstractOperation {
    * @param substitution  the type substitution
    * @return the concrete operation with type variables replaced by substitution
    */
-  public abstract ConcreteOperation instantiate(Substitution substitution);
+  public GenericOperation apply(Substitution substitution) {
+    GeneralType declaringType = this.declaringType.apply(substitution);
+    GeneralTypeTuple inputTypes = this.inputTypes.apply(substitution);
+    GeneralType outputType = this.outputType.apply(substitution);
+    return new GenericOperation(this.getOperation(), declaringType, inputTypes, outputType);
+  }
+
+  @Override
+  public boolean isGeneric() {
+    return declaringType.isGeneric() || inputTypes.isGeneric() || outputType.isGeneric();
+  }
 }

@@ -29,8 +29,8 @@ public class EnumConstant extends ConcreteOperation implements Operation, Serial
 
   private Enum<?> value;
 
-  public EnumConstant(Enum<?> value, ConcreteTypeTuple inputTypes, ConcreteType outputType) {
-    super(inputTypes, outputType);
+  public EnumConstant(Enum<?> value, ConcreteType declaringType) {
+    super(declaringType, new ConcreteTypeTuple(), declaringType);
     if (value == null) {
       throw new IllegalArgumentException("enum constant cannot be null");
     }
