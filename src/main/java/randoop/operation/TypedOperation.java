@@ -28,6 +28,11 @@ public abstract class TypedOperation<T extends Operation> implements Operation {
   }
 
   @Override
+  public boolean isMethodCall() {
+    return operation.isMethodCall();
+  }
+
+  @Override
   public boolean isConstructorCall() {
     return operation.isConstructorCall();
   }

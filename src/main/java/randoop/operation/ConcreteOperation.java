@@ -2,6 +2,7 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Objects;
 
 import randoop.ExecutionOutcome;
 import randoop.sequence.Variable;
@@ -82,6 +83,9 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
    * @return results of executing this statement
    */
   public ExecutionOutcome execute(Object[] input, PrintStream out) {
+    assert input.length == inputTypes.size()
+            : "operation execute expected " + inputTypes.size() + ", but got " + input.length;
+
     return this.getOperation().execute(input, out);
   }
 
@@ -93,7 +97,8 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
    * @param b         the {@link StringBuilder} to which code is added.
    */
   public void appendCode(List<Variable> inputVars, StringBuilder b) {
-    this.getOperation().appendCode(inputVars, b);
+    assert inputVars.size() == this.inputTypes.size(): "number of inputs doesn't match on operation appendCode";
+    this.getOperation().appendCode(declaringType, inputTypes, outputType, inputVars, b);
   }
 
   /**
@@ -105,11 +110,33 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
    * @return string descriptor of {@link Operation} object.
    */
   public String toParseableString() {
-    return this.getOperation().toParseableString();
+    return this.getOperation().toParseableString(declaringType);
   }
 
   @Override
   public boolean isGeneric() {
     return true;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (! (obj instanceof ConcreteOperation)) {
+      return false;
+    }
+    ConcreteOperation op = (ConcreteOperation)obj;
+    return getOperation().equals(op.getOperation())
+            && declaringType.equals(op.declaringType)
+            && inputTypes.equals(op.inputTypes)
+            && outputType.equals(op.outputType);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getOperation(), declaringType, inputTypes, outputType);
+  }
+
+  @Override
+  public String toString() {
+    return this.toParseableString();
   }
 }
