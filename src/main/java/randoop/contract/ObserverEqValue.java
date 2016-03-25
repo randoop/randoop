@@ -2,9 +2,12 @@ package randoop.contract;
 
 import java.io.ObjectStreamException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import randoop.Globals;
-import randoop.util.PrimitiveTypes;
+import randoop.operation.ConcreteOperation;
+import randoop.operation.MethodCall;
+import randoop.types.PrimitiveTypes;
 import randoop.util.Util;
 
 /**
@@ -28,7 +31,7 @@ public final class ObserverEqValue implements ObjectContract {
   /**
    * The observer method.
    */
-  public Method observer;
+  public ConcreteOperation observer;
 
   /**
    * The runtime value of the observer. This variable holds a primitive value or
@@ -49,13 +52,11 @@ public final class ObserverEqValue implements ObjectContract {
 
   @Override
   public int hashCode() {
-    int h = 7;
-    h = h * 31 + observer.hashCode();
-    h = h * 31 + (value == null ? 0 : value.hashCode());
-    return h;
+    return Objects.hash(observer, value);
   }
 
-  public ObserverEqValue(Method observer, Object value) {
+  public ObserverEqValue(ConcreteOperation observer, Object value) {
+    assert observer.isMethodCall() : "Observer must be MethodCall, got " + observer;
     this.observer = observer;
     this.value = value;
     assert (this.value == null)
@@ -79,13 +80,13 @@ public final class ObserverEqValue implements ObjectContract {
     b.append(
         "// Regression assertion (captures the current behavior of the code)" + Globals.lineSep);
 
-    String methodname = observer.getName();
+    String methodname = ((MethodCall)observer.getOperation()).getName();
     if (value == null) {
       b.append(String.format("assertNull(\"x0.%s() == null\", x0.%s());", methodname, methodname));
-    } else if (observer.getReturnType().isPrimitive()
+    } else if (observer.getOutputType().isPrimitive()
         && (!value.equals(Double.NaN))
         && (!value.equals(Float.NaN))) {
-      if (observer.getReturnType().equals(boolean.class)) {
+      if (observer.getOutputType().hasRuntimeClass(boolean.class)) {
         assert value.equals(true) || value.equals(false);
         if (value.equals(true)) {
           b.append(String.format("org.junit.Assert.assertTrue(x0.%s());", methodname));
