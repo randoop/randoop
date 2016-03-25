@@ -1,11 +1,13 @@
 package randoop.operation;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import randoop.ExecutionOutcome;
 import randoop.sequence.Variable;
+import randoop.types.ConcreteArrayType;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 
@@ -110,7 +112,7 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
    * @return string descriptor of {@link Operation} object.
    */
   public String toParseableString() {
-    return this.getOperation().toParseableString(declaringType);
+    return this.getOperation().toParseableString(declaringType, inputTypes, outputType);
   }
 
   @Override
@@ -139,4 +141,32 @@ public class ConcreteOperation extends TypedOperation<CallableOperation> {
   public String toString() {
     return this.toParseableString();
   }
+
+  public static ConcreteOperation createNullInitializationWithType(ConcreteType type) {
+    assert type.isPrimitive() : "cannot initialize primitive to null: " + type;
+    return ConcreteOperation.createPrimitiveInitialization(type, null);
+  }
+
+  public static ConcreteOperation createNullOrZeroInitializationForType(ConcreteType type) {
+    return ConcreteOperation.createNonreceiverInitialization(NonreceiverTerm.createNullOrZeroTerm(type));
+  }
+
+  public static ConcreteOperation createPrimitiveInitialization(ConcreteType type, Object value) {
+    assert type.isPrimitive() : "must be primitive";
+    return ConcreteOperation.createNonreceiverInitialization(new NonreceiverTerm(type,value));
+  }
+
+  public static ConcreteOperation createNonreceiverInitialization(NonreceiverTerm term) {
+    return new ConcreteOperation(term, term.getType(), new ConcreteTypeTuple(), term.getType());
+  }
+
+  public static ConcreteOperation createArrayCreation(ConcreteArrayType arrayType, int size) {
+    List<ConcreteType> typeList = new ArrayList<>();
+    for (int i = 0; i < size; i++) {
+      typeList.add(arrayType.getElementType());
+    }
+    ConcreteTypeTuple inputTypes = new ConcreteTypeTuple(typeList);
+    return new ConcreteOperation(new ArrayCreation(arrayType, size), arrayType, inputTypes, arrayType);
+  }
+
 }
