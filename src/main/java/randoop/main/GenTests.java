@@ -15,13 +15,13 @@ import java.util.regex.Pattern;
 import plume.Options;
 import plume.Options.ArgException;
 import plume.SimpleLog;
-import randoop.ComponentManager;
+import randoop.generation.ComponentManager;
 import randoop.DummyVisitor;
 import randoop.ExecutionVisitor;
 import randoop.JunitFileWriter;
 import randoop.MultiVisitor;
-import randoop.RandoopListenerManager;
-import randoop.SeedSequences;
+import randoop.generation.RandoopListenerManager;
+import randoop.generation.SeedSequences;
 import randoop.contract.ObjectContract;
 import randoop.instrument.ExercisedClassVisitor;
 import randoop.operation.ConcreteOperation;
@@ -30,10 +30,11 @@ import randoop.reflection.DefaultReflectionPredicate;
 import randoop.reflection.OperationModel;
 import randoop.reflection.PackageVisibilityPredicate;
 import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
-import randoop.sequence.AbstractGenerator;
+import randoop.generation.AbstractGenerator;
 import randoop.sequence.ExecutableSequence;
-import randoop.sequence.ForwardGenerator;
+import randoop.generation.ForwardGenerator;
 import randoop.sequence.Sequence;
 import randoop.sequence.SequenceExceptionError;
 import randoop.test.ContractCheckingVisitor;
@@ -50,8 +51,10 @@ import randoop.test.ValidityCheckingVisitor;
 import randoop.test.predicate.AlwaysFalseExceptionPredicate;
 import randoop.test.predicate.ExceptionBehaviorPredicate;
 import randoop.test.predicate.ExceptionPredicate;
+import randoop.types.ConcreteType;
 import randoop.util.CollectionsExt;
 import randoop.util.Log;
+import randoop.util.MultiMap;
 import randoop.util.Randomness;
 import randoop.util.ReflectionExecutor;
 import randoop.util.predicate.AlwaysFalse;
@@ -174,7 +177,7 @@ public class GenTests extends GenInputsAbstract {
       visibility = new PackageVisibilityPredicate(junitPackage);
     }
 
-    DefaultReflectionPredicate reflectionPredicate =
+    ReflectionPredicate reflectionPredicate =
         new DefaultReflectionPredicate(omitmethods, omitFields, visibility);
 
     ClassNameErrorHandler classNameErrorHandler = new ThrowClassNameError();
@@ -225,19 +228,31 @@ public class GenTests extends GenInputsAbstract {
 
     RandoopListenerManager listenerMgr = new RandoopListenerManager();
 
+    Set<String> observerSignatures = GenInputsAbstract.getStringSetFromFile(GenInputsAbstract.observers,"Unable to read observer file", "//.*", null);
+
+    MultiMap<ConcreteType,ConcreteOperation> observerMap = operationModel.getObservers(observerSignatures);
+    Set<ConcreteOperation> observers = new LinkedHashSet<>();
+    for (ConcreteType keyType : observerMap.keySet()) {
+      observers.addAll(observerMap.getValues(keyType));
+    }
+
     /*
      * Create the generator for this session.
      */
     AbstractGenerator explorer;
     explorer =
         new ForwardGenerator(
-            model, timelimit * 1000, inputlimit, outputlimit, componentMgr, null, listenerMgr);
+            model, observers, timelimit * 1000, inputlimit, outputlimit, componentMgr, null, listenerMgr);
 
     /*
      * setup for check generation
      */
     Set<ObjectContract> contracts = operationModel.getContracts();
-    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts);
+
+
+    Set<ConcreteOperation> excludeAsObservers = new LinkedHashSet<>();
+    // TODO add Object.toString() and Object.hashCode() to exclude set
+    TestCheckGenerator testGen = createTestCheckGenerator(visibility, contracts, observerMap, excludeAsObservers);
 
     explorer.addTestCheckGenerator(testGen);
 
@@ -496,11 +511,15 @@ public class GenTests extends GenInputsAbstract {
    *          the visibility predicate
    * @param contracts
    *          the contract checks
+   * @param observerMap
+   *          the map from types to observer methods
+   * @param excludeAsObservers
+   *          methods to exclude when generating observer map
    * @return the {@code TestCheckGenerator} that reflects command line
    *         arguments.
    */
   public TestCheckGenerator createTestCheckGenerator(
-      VisibilityPredicate visibility, Set<ObjectContract> contracts) {
+          VisibilityPredicate visibility, Set<ObjectContract> contracts, MultiMap<ConcreteType, ConcreteOperation> observerMap, Set<ConcreteOperation> excludeAsObservers) {
 
     // start with checking for invalid exceptions
     ExceptionPredicate isInvalid = new ExceptionBehaviorPredicate(BehaviorType.INVALID);
@@ -525,7 +544,7 @@ public class GenTests extends GenInputsAbstract {
       expectation = new ExpectedExceptionCheckGen(visibility, isExpected);
 
       RegressionCaptureVisitor regressionVisitor;
-      regressionVisitor = new RegressionCaptureVisitor(expectation, includeAssertions);
+      regressionVisitor = new RegressionCaptureVisitor(expectation, observerMap, excludeAsObservers, includeAssertions);
 
       testGen = new ExtendGenerator(testGen, regressionVisitor);
     }
