@@ -1,5 +1,7 @@
 package randoop.sequence;
 
+import randoop.types.ConcreteType;
+
 /**
  * A variable that is part of a mutable sequence.
  *
@@ -25,7 +27,7 @@ public class MutableVariable {
     return owner.getDeclaringStatement(this);
   }
 
-  public Class<?> getType() {
+  public ConcreteType getType() {
     return owner.getDeclaringStatement(this).operation.getOutputType();
   }
 
