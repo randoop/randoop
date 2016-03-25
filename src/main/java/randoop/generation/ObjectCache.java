@@ -1,9 +1,6 @@
 package randoop.generation;
 
-import java.io.Serializable;
-
 import randoop.NormalExecution;
-import randoop.StateMatcher;
 import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 

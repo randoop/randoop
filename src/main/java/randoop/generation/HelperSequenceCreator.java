@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import randoop.SeedSequences;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.ArrayCreation;
 import randoop.operation.ConcreteOperation;
-import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteArrayType;
