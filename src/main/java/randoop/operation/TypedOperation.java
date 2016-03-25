@@ -13,7 +13,7 @@ public abstract class TypedOperation<T extends Operation> implements Operation {
     this.operation = operation;
   }
 
-  protected T getOperation() { return operation; }
+  public T getOperation() { return operation; }
 
   public abstract boolean isGeneric();
 

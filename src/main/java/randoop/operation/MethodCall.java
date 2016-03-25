@@ -14,11 +14,10 @@ import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.reflection.ClassVisitor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
-import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 import randoop.types.PrimitiveTypes;
@@ -297,14 +296,15 @@ public final class MethodCall extends CallableOperation {
    * {@link MethodCall} object. Should satisfy
    * <code>parse(op.toParseableString()).equals(op)</code> for Operation op.
    *
-   * @see OperationParser#parse(String)
+   * @see OperationParser#parse(String, randoop.reflection.ClassVisitor)
    *
    * @param s  a string descriptor
+   * @param visitor
    * @return the {@link MethodCall} object described by the string.
    * @throws OperationParseException
    *           if s does not match expected descriptor.
    */
-  public static Operation parse(String s) throws OperationParseException {
+  public static MethodCall parse(String s, ClassVisitor visitor) throws OperationParseException {
     // return MethodCall.createMethodCall(MethodSignatures.getMethodForSignatureString(s));
     return null;
   }

@@ -9,10 +9,10 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
+import randoop.reflection.ClassVisitor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
 
@@ -158,12 +158,13 @@ public class FieldSet extends CallableOperation {
    *
    * @param descr
    *          string containing descriptor of field setter.
+   * @param visitor
    * @return {@code FieldSetter} object corresponding to setter descriptor.
    * @throws OperationParseException
    *           if descr does not have expected form.
    * @see FieldParser#parse(String)
    */
-  public static FieldSet parse(String descr) throws OperationParseException {
+  public static FieldSet parse(String descr, ClassVisitor visitor) throws OperationParseException {
     int parPos = descr.indexOf('(');
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
     if (parPos < 0) {

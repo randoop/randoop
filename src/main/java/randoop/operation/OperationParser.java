@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import randoop.reflection.ClassVisitor;
+
 public class OperationParser {
 
   /**
@@ -33,11 +35,11 @@ public class OperationParser {
    *
    * @param str
    *          the string to be parsed.
-   * @return the operation corresponding to the string.
+   * @param visitor
    * @throws OperationParseException
    *           if the string does not have expected format.
    */
-  public static ConcreteOperation parse(String str) throws OperationParseException {
+  public static void parse(String str, ClassVisitor visitor) throws OperationParseException {
     if (str == null || str.length() == 0)
       throw new IllegalArgumentException("invalid string: " + str);
 
@@ -55,7 +57,7 @@ public class OperationParser {
     String id = str.substring(0, colonIdx).trim();
     String descr = str.substring(colonIdx + 1).trim();
 
-    Set<String> validIds = new LinkedHashSet<String>();
+    Set<String> validIds = new LinkedHashSet<>();
 
     // If you add a statement kind, add its ID to this set.
     validIds.addAll(
@@ -70,19 +72,19 @@ public class OperationParser {
 
     // Call appropriate parsing method.
     if (id.equals(NonreceiverTerm.ID)) {
-      return NonreceiverTerm.parse(descr);
+      NonreceiverTerm.parse(descr, visitor);
     } else if (id.equals(MethodCall.ID)) {
-      return MethodCall.parse(descr);
+      MethodCall.parse(descr, visitor);
     } else if (id.equals(ConstructorCall.ID)) {
-      return ConstructorCall.parse(descr);
+      ConstructorCall.parse(descr, visitor);
     } else if (id.equals(ArrayCreation.ID)) {
-      return ArrayCreation.parse(descr);
+      ArrayCreation.parse(descr, visitor);
     } else if (id.equals(EnumConstant.ID)) {
-      return EnumConstant.parse(descr);
+      EnumConstant.parse(descr, visitor);
     } else if (id.equals(FieldGet.ID)) {
-      return FieldGet.parse(descr);
+      FieldGet.parse(descr, visitor);
     } else if (id.equals(FieldSet.ID)) {
-      return FieldSet.parse(descr);
+      FieldSet.parse(descr, visitor);
     } else {
       String msg =
           "A statement description must be of the form "
@@ -94,6 +96,7 @@ public class OperationParser {
               + "\" does not have a valid <id>.";
       throw new OperationParseException(msg);
     }
+
   }
 
   /**

@@ -5,10 +5,11 @@ import java.util.List;
 
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.reflection.ClassVisitor;
 import randoop.sequence.Variable;
-import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
 import randoop.types.GeneralTypeTuple;
+import randoop.types.TypeNames;
 
 /**
  * EnumConstant is an {@link Operation} representing a constant value from an
@@ -78,7 +79,7 @@ public class EnumConstant extends CallableOperation {
    * {@inheritDoc} Issues a string representation of an enum constant as a
    * type-value pair. The parse function should return an equivalent object.
    *
-   * @see EnumConstant#parse(String)
+   * @see EnumConstant#parse(String, ClassVisitor)
    */
   @Override
   public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
@@ -87,18 +88,18 @@ public class EnumConstant extends CallableOperation {
 
   /**
    * Parses the description of an enum constant value in a string as returned by
-   * {@link EnumConstant#toParseableString()}.
+   * {@link EnumConstant#toParseableString(GeneralType,GeneralTypeTuple,GeneralType)}.
    *
    * Valid strings may be of the form EnumType:EnumValue, or
    * OuterClass$InnerEnum:EnumValue for an enum that is an inner type of a class.
    *
    * @param desc string representing type-value pair for an enum constant
+   * @param visitor
    * @return an EnumConstant representing the enum constant value in desc
    * @throws OperationParseException
    *           if desc does not match expected form.
    */
-  /*
-    public static EnumConstant parse(String desc) throws OperationParseException {
+    public static EnumConstant parse(String desc, ClassVisitor visitor) throws OperationParseException {
       if (desc == null) {
         throw new IllegalArgumentException("s cannot be null");
       }
@@ -167,7 +168,7 @@ public class EnumConstant extends CallableOperation {
 
       return new EnumConstant(value);
     }
-  */
+
   /**
    * valueOf searches the enum constant list of a class for a constant with the given name.
    * Note: cannot make this work using valueOf method of Enum due to typing.

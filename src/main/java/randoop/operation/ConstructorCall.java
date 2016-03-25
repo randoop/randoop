@@ -8,6 +8,7 @@ import java.util.List;
 import randoop.ExceptionalExecution;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
+import randoop.reflection.ClassVisitor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -222,16 +223,17 @@ public final class ConstructorCall extends CallableOperation {
    * {@link ConstructorCall#toParseableString(GeneralType, GeneralTypeTuple, GeneralType)} and
    * returns the corresponding {@link ConstructorCall} object.
    *
-   * @see OperationParser#parse(String)
+   * @see OperationParser#parse(String, randoop.reflection.ClassVisitor)
    *
    * @param s
    *          a string descriptor of a constructor call.
+   * @param visitor
    * @return {@link ConstructorCall} object corresponding to the given
    *         signature.
    * @throws OperationParseException
    *           if no constructor found for signature.
    */
-  public static Operation parse(String s) throws OperationParseException {
+  public static ConstructorCall parse(String s, ClassVisitor visitor) throws OperationParseException {
     //    return ConstructorCall.createConstructorCall(
     //        ConstructorSignatures.getConstructorForSignatureString(s));
     return null;

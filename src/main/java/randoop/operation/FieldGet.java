@@ -9,6 +9,7 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
+import randoop.reflection.ClassVisitor;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Variable;
 import randoop.types.GeneralType;
@@ -119,11 +120,12 @@ public class FieldGet extends CallableOperation {
    *
    * @param descr
    *          the string containing descriptor of getter for a field.
+   * @param visitor
    * @return the getter object for the descriptor.
    * @throws OperationParseException
    *           if any error in descriptor string
    */
-  public static FieldGet parse(String descr) throws OperationParseException {
+  public static FieldGet parse(String descr, ClassVisitor visitor) throws OperationParseException {
     int parPos = descr.indexOf('(');
     String errorPrefix = "Error parsing " + descr + " as description for field getter statement: ";
     if (parPos < 0) {

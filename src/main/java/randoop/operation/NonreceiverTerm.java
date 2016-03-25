@@ -7,7 +7,7 @@ import plume.UtilMDE;
 import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.main.GenInputsAbstract;
-import randoop.sequence.Sequence;
+import randoop.reflection.ClassVisitor;
 import randoop.sequence.Variable;
 import randoop.types.ConcreteType;
 import randoop.types.GeneralType;
@@ -241,11 +241,12 @@ public final class NonreceiverTerm extends CallableOperation {
    *
    * @param s
    *          a string representing a value of a non-receiver type.
+   * @param visitor
    * @return a {@link NonreceiverTerm} object containing the recognized value.
    * @throws OperationParseException
    *           if string does not represent valid object.
    */
-  public static NonreceiverTerm parse(String s) throws OperationParseException {
+  public static NonreceiverTerm parse(String s, ClassVisitor visitor) throws OperationParseException {
     if (s == null) throw new IllegalArgumentException("s cannot be null.");
     int colonIdx = s.indexOf(':');
     if (colonIdx == -1) {
