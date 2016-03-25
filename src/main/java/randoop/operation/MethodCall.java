@@ -288,7 +288,7 @@ public final class MethodCall extends CallableOperation {
    *  java.util.ArrayList.add(int,java.lang.Object)
    */
   @Override
-  public String toParseableString(GeneralType declaringType) {
+  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
     return MethodSignatures.getSignatureString(this.method);
   }
 
@@ -347,6 +347,10 @@ public final class MethodCall extends CallableOperation {
   @Override
   public boolean isMethodCall() { return true; }
 
+  public String getName() {
+    return method.getName();
+  }
+
   /**
    * {@inheritDoc}
    * Determines whether enclosed {@link Method} satisfies the given predicate.
@@ -358,4 +362,6 @@ public final class MethodCall extends CallableOperation {
   public boolean satisfies(ReflectionPredicate predicate) {
     return predicate.test(method);
   }
+
+
 }

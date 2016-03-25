@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
@@ -79,7 +78,7 @@ public class FieldGet extends CallableOperation {
    */
   @Override
   public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
-    b.append(field.toCode(inputVars));
+    b.append(field.toCode(declaringType, inputVars));
   }
 
   /**
@@ -87,8 +86,8 @@ public class FieldGet extends CallableOperation {
    * PublicFieldParser.
    */
   @Override
-  public String toParseableString(GeneralType declaringType) {
-    return "<get>(" + field.toParseableString() + ")";
+  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
+    return "<get>(" + field.toParseableString(declaringType, outputType) + ")";
   }
 
   @Override

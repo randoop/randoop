@@ -81,7 +81,7 @@ public class EnumConstant extends CallableOperation {
    * @see EnumConstant#parse(String)
    */
   @Override
-  public String toParseableString(GeneralType declaringType) {
+  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
     return declaringType.getName() + ":" + value.name();
   }
 

@@ -49,7 +49,7 @@ public final class ArrayCreation extends CallableOperation {
    *          number of objects allowed in the array
    * @param arrayType  the type of array this operation creates
    */
-  public ArrayCreation(int length, ConcreteArrayType arrayType) {
+  public ArrayCreation(ConcreteArrayType arrayType, int length) {
     assert length < 0 : "array length may not be negative";
 
     this.elementType = arrayType.getElementType();
@@ -147,7 +147,7 @@ public final class ArrayCreation extends CallableOperation {
    * @return string descriptor for array creation.
    */
   @Override
-  public String toParseableString(GeneralType declaringType) {
+  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
     return elementType.getName() + "[" + Integer.toString(length) + "]";
   }
 

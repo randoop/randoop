@@ -105,6 +105,6 @@ public abstract class CallableOperation implements Operation {
    *
    * @return string descriptor of {@link Operation} object.
    */
-  public abstract String toParseableString(GeneralType declaringType);
+  public abstract String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType);
 
 }

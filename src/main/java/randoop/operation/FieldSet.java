@@ -2,7 +2,6 @@ package randoop.operation;
 
 import java.io.PrintStream;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import randoop.BugInRandoopException;
 import randoop.ExceptionalExecution;
@@ -10,8 +9,6 @@ import randoop.ExecutionOutcome;
 import randoop.NormalExecution;
 import randoop.field.AccessibleField;
 import randoop.field.FieldParser;
-import randoop.field.FinalInstanceField;
-import randoop.field.StaticFinalField;
 import randoop.reflection.ReflectionPredicate;
 import randoop.sequence.Statement;
 import randoop.sequence.Variable;
@@ -41,12 +38,6 @@ public class FieldSet extends CallableOperation {
    *           if field is static final.
    */
   public FieldSet(AccessibleField field) {
-    if (field instanceof StaticFinalField) {
-      throw new IllegalArgumentException("Field may not be static final for FieldSetter");
-    }
-    if (field instanceof FinalInstanceField) {
-      throw new IllegalArgumentException("Field may not be final for FieldSetter");
-    }
     this.field = field;
   }
 
@@ -111,7 +102,7 @@ public class FieldSet extends CallableOperation {
   @Override
   public void appendCode(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType, List<Variable> inputVars, StringBuilder b) {
 
-    b.append(field.toCode(inputVars));
+    b.append(field.toCode(declaringType, inputVars));
     b.append(" = ");
 
     // variable/value to be assigned is either only or second entry in list
@@ -136,8 +127,9 @@ public class FieldSet extends CallableOperation {
    * @return the parseable string descriptor for this setter.
    */
   @Override
-  public String toParseableString(GeneralType declaringType) {
-    return "<set>(" + field.toParseableString() + ")";
+  public String toParseableString(GeneralType declaringType, GeneralTypeTuple inputTypes, GeneralType outputType) {
+    assert inputTypes.size() == 1;
+    return "<set>(" + field.toParseableString(declaringType, inputTypes.get(0)) + ")";
   }
 
   @Override
