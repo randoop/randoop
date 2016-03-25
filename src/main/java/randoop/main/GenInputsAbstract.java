@@ -391,12 +391,12 @@ public abstract class GenInputsAbstract extends CommandHandler {
    * <p>
    * Literals in these files are used in addition to all other constants in the
    * pool. For the format of this file, see documentation in class
-   * {@link randoop.LiteralFileReader}. The special value "CLASSES" (with no
+   * {@link randoop.reflection.LiteralFileReader}. The special value "CLASSES" (with no
    * quotes) means to read literals from all classes under test.
    * </p>
    */
   @Option("A file containing literal values to be used as inputs to methods under test")
-  public static List<String> literals_file = new ArrayList<String>();
+  public static List<String> literals_file = new ArrayList<>();
 
   /**
    * How to use literal values that are specified via the
