@@ -24,7 +24,7 @@
         </ul></li>
       <li><a href="#usinganide">Using an IDE</a></li>
       <li><a href="#classpath">Randoop classpath</a></li>
-      <li><a href="#prereleasemaintenance">Maintaining Randoop Pre-Release</a>
+      <li><a href="#maintenance">Maintaining Randoop</a>
         <ul>
           <li><a href="#maintaininglibraries">Updating libraries</a></li>
           <li><a href="#documentingchanges">Documenting Changes</a></li>
@@ -104,56 +104,72 @@ There is separate <a href="../plugin/doc/dev.html">developer documentation
 <p>
   This command compiles Randoop, compiles the Java agents, runs all tests,
   and builds the jar files.
-  For this and other commands that generate files, the generated files are
-  placed in a subdirectory named <i>build</i> in both the parent directory and
+  Generated files are
+  placed in subdirectories named <code>build</code> in the parent directory and in
   each of the agent subdirectories.
-  Once the <code>./gradlew build</code> command completes, all of the jar files
-  will be located in the directory <code>build/libs</code>.
+  Jar files are placed in directory <code>build/libs</code>.
 </p>
 
 </p>
   You can also break this process down by running separate tasks.
+  For the full list of tasks supported by the Randoop build script, type
+  <code>./gradlew tasks</code>.
   Particular tasks that may be useful during development include
 </p>
-<ul>
-  <li><code>./gradlew jar</code> to build the jar files,</li>
-  <li><code>./gradlew assemble</code> to compile and build jar files,</li>
-  <li><code>./gradlew check</code> to run the all of the tests,</li>
-  <li><code>./gradlew testReport</code> to generate HTML reports from tests
-    (in <tt>build/reports/allTests</tt>), and</li>
-  <li><code>./gradlew clean</code> to remove the <tt>build</tt> subdirectory.</li>
-</ul>
-
+<table border="0">
+  <tr>
+    <td><code>./gradlew jar</code></td>
+    <td>to build the jar files</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew assemble</code></td>
+    <td>to compile and build jar files,</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew check</code></td>
+    <td>to run the all of the tests</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew testReport</code></td>
+    <td>to generate HTML reports from tests
+      (in <tt>build/reports/allTests</tt>),</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew clean</code></td>
+    <td>to remove the <tt>build</tt> subdirectory,</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileJava</code></td>
+    <td>to compile the <tt>main</tt> source set,</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileTestJava</code></td>
+    <td>to compile the <tt>test</tt> source set,</td>
+  </tr>
+  <tr>
+    <td><code>./gradlew compileAgentTestJava</code></td>
+    <td>to compile the <tt>agentTest</tt> source set.</td>
+  </tr>
+</table>
 <p>
-  Compiling is a little more complex, since the code is organized by
-  <i>source sets</i>, which is a concept from the
-  <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Gradle Java plugin</a>.
+  Compiling uses the concept of
+  <a href="https://docs.gradle.org/current/userguide/java_plugin.html"><i>source sets</i></a>.
   A source set is a grouping of source files that can have its own set of
   dependencies and tasks.
+  The 
   For instance, in the Randoop <tt>build.gradle</tt> there is the
   <tt>agentTest</tt> source set that is separate from the <tt>test</tt> source
   set because the test classes must run using the <tt>exercised-class</tt> Java
   agent.
   The plugin normally has two source sets named <tt>main</tt> and <tt>test</tt>,
   and the Randoop build script defines others to better structure the build process.
-  Each source set has its own compile task:
-</p>
-<ul>
-  <li><code>./gradlew compileJava</code> to compile the <tt>main</tt> source set,</li>
-  <li><code>./gradlew compileTestJava</code> to compile the <tt>test</tt> source set,</li>
-  <li><code>./gradlew compileAgentTestJava</code> to compile the <tt>agentTest</tt> source set.</li>
-</ul>
-
-<p>
-  For the full list of tasks supported by the Randoop build script, type
-  <code>./gradlew tasks</code>.
 </p>
 
 <p>
-  Otherwise, there are some Gradle tricks that may be useful:
+  Here are some Gradle tricks that may be useful:
 </p>
 <ul>
-  <li>Gradle allows you to combine tasks, for instance, for a clean build,
+  <li>Gradle allows you to run multiple tasks.  For instance, for a clean build,
     type <code>./gradlew clean build</code>.</li>
   <li>You can run a task <tt>taskName</tt> on individual classes by setting the
     system property <code>taskName.single</code> on the command line.
@@ -250,7 +266,7 @@ given here, see the Gradle
 
 <p>
 To run Randoop, your classpath must include either the Randoop class files or
-the Randoop jar file, and <tt>lib/plume.jar</tt>.
+the Randoop jar file, and also must include <tt>lib/plume.jar</tt>.
 After the build, the classpath should include either of the following
 </p>
 <ul>
@@ -280,7 +296,7 @@ So, for instance, the following will work to run the <tt>exercised-class</tt> ag
 </pre></code>
 
 
-<h2 id="prereleasemaintenance">Maintaining Randoop Pre-Release</h2>
+<h2 id="maintenance">Maintaining Randoop</h2>
 
 <h3 id="maintaininglibraries">Updating libraries</h3>
 
@@ -311,14 +327,14 @@ So, for instance, the following will work to run the <tt>exercised-class</tt> ag
 <h3 id="documentingchanges">Documenting Changes</h3>
 
 <p>
-  Any user interface changes should be documented in the changelog
+  Any user-visible changes should be documented in the changelog
   <code>doc/CHANGES.txt</code>.
-  Be sure to describe the changes in terms of how it affects the user.
+  Be sure to describe the change in terms of how it affects the user.
   List any bug fixes that may affect any user visible behavior, and mention
   any reported issues, and the person who reported the issue.
   Order listed information by importance to the user and subsequent release.
   This text is used for documenting releases, so keeping it up-to-date and
-  ready for public release is important.
+  ready for public release saves time in the long run.
 </p>
 
 
@@ -355,7 +371,9 @@ The documentation for Randoop is in the subdirectory <tt>doc</tt>:
 <ul>
 <li> <code>doc/index.html</code> has the user manual.
   Note: the command-line argument documentation is extracted from the code.
-  Any changes to code annotated by <code>Options</code> will affect this file.</li>
+  This file is automatially updated if you change Javadoc documentation for
+  a method annotated by
+  <a href="http://types.cs.washington.edu/plume-lib/api/plume/Options.html"><code>@Options</code></a>.</li>
 <li> <code>doc/dev.html</code> is this developer manual.</li>
 </ul>
 
@@ -374,14 +392,16 @@ The files are placed in <tt>build/docs</tt>, with the Javadoc in
 <p>
 Throughout, if you push commits to the Github repository, ensure that the tests
 continue to pass at
-<a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.
+<a href="https://travis-ci.org/randoop/randoop">https://travis-ci.org/randoop/randoop</a>.  They currently pass if this icon is green:
+<img src="https://travis-ci.org/randoop/randoop.svg?branch=master" alt="Randoop Travis status icon"/>
+</p>
+
+<p>
 You can preemptively find most problems that Travis will find by running the
 commands
 </p>
 <code><pre>
-./gradlew clean assemble
-./gradlew check
-./gradlew manual
+./gradlew clean assemble check manual
 </pre></code>
 <p>
 locally before doing a push to GitHub.
@@ -396,19 +416,16 @@ merging new work with the master branch.
 <ol>
   <li>
     Be sure that everything related to
-    <a href="#prereleasemaintenance">pre-release maintenance</a>
+    <a href="#maintenance">maintenance</a>
     is up-to-date.
   </li>
   <li>
-    Setup a clone of the Randoop gh-pages branch in a sibling subdirectory:
+    Pull, or clone, the Randoop gh-pages branch in a sibling subdirectory:
     <pre>
-  cd ..
-  git clone git@github.com:randoop/randoop.git randoop-gh-pages
-  cd ../randoop-gh-pages
-  git checkout gh-pages
+      (cd ../randoop-gh-pages && git pull) \
+      || (cd .. && git clone git@github.com:randoop/randoop.git randoop-gh-pages \
+          && cd randoop-gh-pages && git checkout gh-pages)
     </pre>
-    If you already have a copy of the <tt>gh-pages</tt> branch, do <tt>git pull</tt>
-    to make sure that everything is up-to-date with the repository.
   </li>
   <li>
     Increment the Randoop version number:
@@ -417,15 +434,11 @@ merging new work with the master branch.
         Set environment variables for the old and new version numbers.  (Don't use the examples given here!)
         <pre>
   OLDVERSION=<em>2.1.4</em>
-  NEWVERSION=<em>2.1.5</em>
-        </pre>
+  NEWVERSION=<em>2.1.5</em></pre>
         These are used for working with git.
       </li>
-      <li>
-        Update the version number in <tt>build.gradle</tt> to the new number.
-        This number allows Gradle to automatically number the generated jar files.
-      </li>
-      <li>Also, update the version number and set the release date in
+      <li>Also, update the version number and date in
+        <tt>build.gradle</tt>,
         <code>src/main/java/randoop/Globals.java</code>,
         <code>doc/CHANGES.txt</code>, and
         <code>doc/index.html</code>.
@@ -457,8 +470,7 @@ merging new work with the master branch.
   git commit . -m "Update version to $NEWVERSION"
   git push
   git tag -a v$NEWVERSION -m "Randoop version $NEWVERSION"
-  git push --tags
-    </pre>
+  git push --tags</pre>
     <!-- The gh-pages branch is not tagged. -->
   </li>
   <li>Create the distribution files with <code>./gradlew clean build manual</code></li>
@@ -468,8 +480,7 @@ merging new work with the master branch.
     <pre>
   mv -f build/docs/manual ../randoop-gh-pages/
   mv -f build/docs/api ../randoop-gh-pages/
-  (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)
-    </pre>
+  (cd ../randoop-gh-pages && git commit -m "Update for Randoop $NEWVERSION" && git push)</pre>
   </li>
   <li>Follow the
     <a href="https://help.github.com/articles/creating-releases/">GitHub instructions for creating a release</a>;
