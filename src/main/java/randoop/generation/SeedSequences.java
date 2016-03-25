@@ -1,4 +1,4 @@
-package randoop;
+package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import randoop.operation.NonreceiverTerm;
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteType;
 import randoop.types.PrimitiveTypes;
@@ -77,11 +76,9 @@ public final class SeedSequences {
     Set<Sequence> seedSequences = new LinkedHashSet<>();
     for (Object seed : seeds) {
       if (seed == null) {
-        seedSequences.add(
-            Sequence.create(
-                NonreceiverTerm.createNullOrZeroTerm(ConcreteType.forClass(String.class))));
+        seedSequences.add(Sequence.zero(ConcreteType.STRING_TYPE));
       } else {
-        seedSequences.add(NonreceiverTerm.createSequenceForPrimitive(seed));
+        seedSequences.add(Sequence.createSequenceForPrimitive(seed));
       }
     }
     return seedSequences;
@@ -93,10 +90,10 @@ public final class SeedSequences {
    * @param type  the type
    * @return the set of seed values with the given raw type
    */
-  public static Set<Object> getSeeds(Class<?> type) {
+  public static Set<Object> getSeeds(ConcreteType type) {
     Set<Object> result = new LinkedHashSet<>();
     for (Object seed : primitiveSeeds) {
-      boolean seedOk = isTypeForValue(type, seed);
+      boolean seedOk = isTypeForValue(type.getRuntimeClass(), seed);
       if (seedOk) result.add(seed);
     }
     return result;

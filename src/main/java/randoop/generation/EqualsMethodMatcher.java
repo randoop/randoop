@@ -1,11 +1,11 @@
-package randoop;
+package randoop.generation;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class EqualsMethodMatcher implements StateMatcher {
 
-  Set<Object> cache = new LinkedHashSet<Object>();
+  Set<Object> cache = new LinkedHashSet<>();
 
   @Override
   public boolean add(Object object) {

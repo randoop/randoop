@@ -1,4 +1,4 @@
-package randoop;
+package randoop.generation;
 
 /**
  * Used by Randoop to determine whether generation should stop.

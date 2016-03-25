@@ -1,4 +1,4 @@
-package randoop;
+package randoop.generation;
 
 import java.util.LinkedList;
 import java.util.List;

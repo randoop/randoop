@@ -1,4 +1,4 @@
-package randoop;
+package randoop.generation;
 
 import randoop.operation.ConcreteOperation;
 import randoop.sequence.ClassLiterals;
@@ -189,22 +189,21 @@ public class ComponentManager {
     if (classLiterals != null || packageLiterals != null) {
 
       ConcreteType declaringCls = operation.getDeclaringType();
-
-      if (classLiterals != null) {
-        if (declaringCls != null) {
-          SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
-          if (!sl.isEmpty()) {
-            ret = new ListOfLists<>(ret, sl);
-          }
+      if (declaringCls != null) {
+        if (classLiterals != null) {
+            SimpleList<Sequence> sl = classLiterals.getSequences(declaringCls, neededType);
+            if (!sl.isEmpty()) {
+              ret = new ListOfLists<>(ret, sl);
+            }
         }
-      }
 
-      if (packageLiterals != null) {
-        Package pkg = declaringCls.getPackage();
-        if (pkg != null) {
-          SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
-          if (!sl.isEmpty()) {
-            ret = new ListOfLists<>(ret, sl);
+        if (packageLiterals != null) {
+          Package pkg = declaringCls.getPackage();
+          if (pkg != null) {
+            SimpleList<Sequence> sl = packageLiterals.getSequences(pkg, neededType);
+            if (!sl.isEmpty()) {
+              ret = new ListOfLists<>(ret, sl);
+            }
           }
         }
       }

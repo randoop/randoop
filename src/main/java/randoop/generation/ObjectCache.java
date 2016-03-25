@@ -1,14 +1,14 @@
-package randoop.sequence;
+package randoop.generation;
 
 import java.io.Serializable;
 
 import randoop.NormalExecution;
 import randoop.StateMatcher;
+import randoop.sequence.ExecutableSequence;
 import randoop.util.Log;
 
-public class ObjectCache implements Serializable {
+public class ObjectCache {
 
-  private static final long serialVersionUID = -8051750221965948545L;
   private StateMatcher sm;
 
   public ObjectCache(StateMatcher sm) {

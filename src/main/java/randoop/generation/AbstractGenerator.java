@@ -1,4 +1,4 @@
-package randoop.sequence;
+package randoop.generation;
 
 import plume.Option;
 import plume.OptionGroup;
@@ -6,6 +6,8 @@ import plume.Unpublicized;
 import randoop.*;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.ConcreteOperation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
 import randoop.test.TestCheckGenerator;
 import randoop.util.Log;
 import randoop.util.ProgressDisplay;
@@ -94,7 +96,7 @@ public abstract class AbstractGenerator {
   /**
    * Manages notifications for listeners.
    *
-   * @see randoop.IEventListener
+   * @see randoop.generation.IEventListener
    */
   public RandoopListenerManager listenerMgr;
 

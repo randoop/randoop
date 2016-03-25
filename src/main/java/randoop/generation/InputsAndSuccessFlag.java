@@ -1,7 +1,7 @@
 /**
  *
  */
-package randoop.sequence;
+package randoop.generation;
 
 import java.util.List;
 

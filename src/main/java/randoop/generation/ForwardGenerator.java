@@ -1,4 +1,4 @@
-package randoop.sequence;
+package randoop.generation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,21 +7,18 @@ import java.util.List;
 import java.util.Set;
 
 import randoop.BugInRandoopException;
-import randoop.ComponentManager;
 import randoop.DummyVisitor;
-import randoop.EqualsMethodMatcher;
 import randoop.Globals;
-import randoop.HelperSequenceCreator;
-import randoop.IStopper;
 import randoop.NormalExecution;
-import randoop.RandoopListenerManager;
 import randoop.SubTypeSet;
 import randoop.main.GenInputsAbstract;
 import randoop.operation.ConcreteOperation;
-import randoop.operation.NonreceiverTerm;
 import randoop.operation.Operation;
+import randoop.sequence.ExecutableSequence;
+import randoop.sequence.Sequence;
+import randoop.sequence.Statement;
+import randoop.sequence.Variable;
 import randoop.test.DummyCheckGenerator;
-import randoop.test.RegressionCaptureVisitor;
 import randoop.types.ConcreteType;
 import randoop.types.ConcreteTypeTuple;
 import randoop.types.PrimitiveTypes;
@@ -43,6 +40,7 @@ public class ForwardGenerator extends AbstractGenerator {
    * executed and then discarded.
    */
   public final Set<Sequence> allSequences;
+  private final Set<ConcreteOperation> observers;
 
   /** Sequences that are used in other sequences (and are thus redundant) **/
   public Set<Sequence> subsumed_sequences = new LinkedHashSet<>();
@@ -73,6 +71,7 @@ public class ForwardGenerator extends AbstractGenerator {
 
   public ForwardGenerator(
       List<ConcreteOperation> operations,
+      Set<ConcreteOperation> observers,
       long timeMillis,
       int maxGenSequences,
       int maxOutSequences,
@@ -89,6 +88,7 @@ public class ForwardGenerator extends AbstractGenerator {
         stopper,
         listenerManager);
 
+    this.observers = observers;
     this.allSequences = new LinkedHashSet<>();
 
     initializeRuntimePrimitivesSeen();
@@ -241,7 +241,7 @@ public class ForwardGenerator extends AbstractGenerator {
       // receiver.)
       Sequence stmts = seq.sequence;
       Statement stmt = stmts.statements.get(i);
-      if (RegressionCaptureVisitor.isObserverInvocation(stmt)) {
+      if (stmt.isMethodCall() && observers.contains(stmt.getOperation())) {
         List<Integer> inputVars = stmts.getInputsAsAbsoluteIndices(i);
         int receiver = inputVars.get(0);
         seq.sequence.clearActiveFlag(receiver);
@@ -265,7 +265,7 @@ public class ForwardGenerator extends AbstractGenerator {
         if (!looksLikeObjToString && !tooLongString && runtimePrimitivesSeen.add(runtimeValue)) {
           // Have not seen this value before; add it to the component set.
           componentManager.addGeneratedSequence(
-              NonreceiverTerm.createSequenceForPrimitive(runtimeValue));
+              Sequence.createSequenceForPrimitive(runtimeValue));
         }
       } else {
         if (Log.isLoggingOn()) {
@@ -313,7 +313,7 @@ public class ForwardGenerator extends AbstractGenerator {
     // With .5 probability, do a primitive value heuristic.
     if (GenInputsAbstract.repeat_heuristic && Randomness.nextRandomInt(10) == 0) {
       int times = Randomness.nextRandomInt(100);
-      newSequence = newSequence.repeat(operation, times);
+      newSequence = repeat(newSequence, operation, times);
       if (Log.isLoggingOn()) Log.log(">>>" + times + newSequence.toCodeString());
     }
 
@@ -365,6 +365,39 @@ public class ForwardGenerator extends AbstractGenerator {
     }
 
     return new ExecutableSequence(newSequence);
+  }
+
+  /**
+   * Adds the given operation to a new {@code Sequence} with the statements of
+   * this object as a prefix, repeating the operation the given number of times.
+   * Used during generation.
+   *
+   * @param operation
+   *          the {@link ConcreteOperation} to repeat.
+   * @param times
+   *          the number of times to repeat the {@link Operation}.
+   * @return a new {@code Sequence}
+   */
+  public Sequence repeat(Sequence seq, ConcreteOperation operation, int times) {
+    Sequence retval = new Sequence(seq.statements);
+    for (int i = 0; i < times; i++) {
+      List<Integer> vil = new ArrayList<>();
+      for (Variable v : retval.getInputs(retval.size() - 1)) {
+        if (v.getType().equals(int.class)) {
+          int randint = Randomness.nextRandomInt(100);
+          retval = retval.extend(ConcreteOperation.createPrimitiveInitialization(ConcreteType.INT_TYPE, randint));
+          vil.add(retval.size() - 1);
+        } else {
+          vil.add(v.getDeclIndex());
+        }
+      }
+      List<Variable> vl = new ArrayList<>();
+      for (Integer vi : vil) {
+        vl.add(retval.getVariable(vi));
+      }
+      retval = retval.extend(operation, vl);
+    }
+    return retval;
   }
 
   // Adds the string corresponding to the given newSequences to the
@@ -572,7 +605,7 @@ public class ForwardGenerator extends AbstractGenerator {
           return new InputsAndSuccessFlag(false, null, null);
         } else {
           if (Log.isLoggingOn()) Log.logLine("Will use null as " + i + "-th input");
-          ConcreteOperation st = NonreceiverTerm.createNullOrZeroTerm(t);
+          ConcreteOperation st = ConcreteOperation.createNullInitializationWithType(t);
           Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
           variables.add(totStatements);
           sequences.add(seq);
@@ -594,7 +627,7 @@ public class ForwardGenerator extends AbstractGenerator {
           && Randomness.weighedCoinFlip(GenInputsAbstract.null_ratio)) {
         if (Log.isLoggingOn())
           Log.logLine("null-ratio option given. Randomly decided to use null as input.");
-        ConcreteOperation st = NonreceiverTerm.createNullOrZeroTerm(t);
+        ConcreteOperation st = ConcreteOperation.createNullInitializationWithType(t);
         Sequence seq = new Sequence().extend(st, new ArrayList<Variable>());
         variables.add(totStatements);
         sequences.add(seq);

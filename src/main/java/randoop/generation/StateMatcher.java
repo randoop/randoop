@@ -1,4 +1,4 @@
-package randoop;
+package randoop.generation;
 
 public interface StateMatcher {
 
