@@ -185,12 +185,16 @@ public class GenTests extends GenInputsAbstract {
       classNameErrorHandler = new WarnOnBadClassName();
     }
 
+    Set<String> methodSignatures =
+            GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
+
     OperationModel operationModel =
         OperationModel.createModel(
             visibility,
             reflectionPredicate,
             classnames,
             coveredClassnames,
+                methodSignatures,
             classNameErrorHandler,
             GenInputsAbstract.literals_file);
 
@@ -198,10 +202,6 @@ public class GenTests extends GenInputsAbstract {
       System.out.println("No classes to test");
       System.exit(1);
     }
-
-    Set<String> methodSignatures =
-        GenInputsAbstract.getStringSetFromFile(methodlist, "Error while reading method list file");
-    operationModel.addOperations(methodSignatures);
 
     List<ConcreteOperation> model = operationModel.getConcreteOperations();
 
