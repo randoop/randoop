@@ -5,15 +5,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import randoop.field.FinalInstanceField;
-import randoop.field.InstanceField;
-import randoop.field.StaticField;
-import randoop.field.StaticFinalField;
+import randoop.field.AccessibleField;
+import randoop.operation.CallableOperation;
 import randoop.operation.ConcreteOperation;
 import randoop.operation.ConstructorCall;
 import randoop.operation.EnumConstant;
@@ -24,9 +21,11 @@ import randoop.operation.MethodCall;
 import randoop.operation.Operation;
 import randoop.types.ConcreteSimpleType;
 import randoop.types.ConcreteType;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.GeneralType;
 import randoop.types.GenericClassType;
 import randoop.types.GenericType;
+import randoop.types.GenericTypeTuple;
 import randoop.util.MultiMap;
 
 /**
@@ -46,6 +45,9 @@ public class OperationExtractor implements ClassVisitor {
   /** The map of generic types to operations */
   private final MultiMap<GenericType, GenericOperation> genericClassTypes;
 
+  /** The set of generic operations (methods and constructors) encountered */
+  private final Set<GenericOperation> genericOperations;
+
   /** The set of concrete operations encountered */
   private Set<ConcreteOperation> operations;
 
@@ -59,10 +61,11 @@ public class OperationExtractor implements ClassVisitor {
    * strictly ordered once flattened to a list. This is needed to guarantee
    * determinism between Randoop runs with the same classes and parameters.
    */
-  public OperationExtractor(Set<ConcreteType> classTypes, Set<ConcreteOperation> operations, MultiMap<GenericType, GenericOperation> genericClassTypes) {
+  public OperationExtractor(Set<ConcreteType> classTypes, Set<ConcreteOperation> operations, MultiMap<GenericType, GenericOperation> genericClassTypes, Set<GenericOperation> genericOperations) {
     this.classTypes = classTypes;
     this.operations = operations;
     this.genericClassTypes = genericClassTypes;
+    this.genericOperations = genericOperations;
   }
 
   /**
@@ -74,28 +77,11 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Constructor<?> c) {
-    assert c.getDeclaringClass().equals(classType.getRuntimeClass()) : "classType and declaring class should be same";
-
-    TypeVariable<?>[] typeParams = c.getTypeParameters();
-
-    if (typeParams.length > 0) {
-      // is a generic constructor
-    } else {
-      // is a constructor possibly with generic arguments
-    }
-
-    if (classType.isGeneric()) {
-      // goes in classtype->general-op map
-    } else {
-      // if generic constructor goes in type-params->generic-op map
-    }
-            
-    List<GeneralType> paramTypes = new ArrayList<>();
-    for (Type t : c.getGenericParameterTypes()) {
-      paramTypes.add(GeneralType.forType(t));
-    }
-
-    // new ConstructorCall(c, new GeneralTypeTuple(paramTypes));
+    assert c.getDeclaringClass().equals(classType.getRuntimeClass())
+            : "classType " + classType + " and declaring class " + c.getDeclaringClass().getName() + " should be same";
+    ConstructorCall op = new ConstructorCall(c);
+    GenericTypeTuple inputTypes = getInputTypes(c.getGenericParameterTypes());
+    createTypedOperation(op, classType, inputTypes, classType);
   }
 
   /**
@@ -106,19 +92,19 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Method method) {
-    assert method.getDeclaringClass().equals(classType.getRuntimeClass()) : "classType and declaring class should be same";
+    assert method.getDeclaringClass().equals(classType.getRuntimeClass())
+            : "classType " + classType + " and declaring class " + method.getDeclaringClass().getName() + " should be same";
 
-    TypeVariable<?>[] typeParams = method.getTypeParameters();
-
-    GeneralType retType = GeneralType.forType(method.getGenericReturnType());
-    List<GeneralType> paramTypes = new ArrayList<>();
+    MethodCall op = new MethodCall(method);
+    GenericTypeTuple inputTypes;
     if (! Modifier.isStatic(method.getModifiers() & Modifier.methodModifiers())) {
-      paramTypes.add(classType);
+      inputTypes = getInputTypes(classType, method.getGenericParameterTypes());
+    } else {
+      inputTypes = getInputTypes(method.getGenericParameterTypes());
     }
-    for (Type t : method.getGenericParameterTypes()) {
-      paramTypes.add(GeneralType.forType(t));
-    }
-    // new MethodCall(method, new GeneralTypeTuple(paramTypes), returnType);
+    GeneralType outputType = GeneralType.forType(method.getGenericReturnType());
+
+    createTypedOperation(op, classType, inputTypes, outputType);
   }
 
   /**
@@ -130,29 +116,26 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Field field) {
-    assert field.getDeclaringClass().equals(classType.getRuntimeClass()) : "classType and declaring class of field should be the same";
+    assert field.getDeclaringClass().equals(classType.getRuntimeClass())
+            : "classType " + classType + " and declaring class " + field.getDeclaringClass().getName() + " should be same";
 
-    int mods = field.getModifiers();
+    GeneralType fieldType = GeneralType.forType(field.getGenericType());
+    List<GeneralType> setInputTypeList = new ArrayList<>();
+    List<GeneralType> getInputTypeList = new ArrayList<>();
 
-    if (Modifier.isStatic(mods)) {
-      if (Modifier.isFinal(mods)) {
-        StaticFinalField s = new StaticFinalField(field);
-        operations.add(new FieldGet(s));
-      } else {
-        StaticField s = new StaticField(field);
-        operations.add(new FieldGet(s));
-        operations.add(new FieldSet(s));
-      }
-    } else {
-      if (Modifier.isFinal(mods)) {
-        FinalInstanceField i = new FinalInstanceField(field);
-        operations.add(new FieldGet(i));
-      } else {
-        InstanceField i = new InstanceField(field);
-        operations.add(new FieldGet(i));
-        operations.add(new FieldSet(i));
-      }
+    AccessibleField accessibleField = new AccessibleField(field);
+
+    if (! accessibleField.isStatic()) {
+      getInputTypeList.add(classType);
+      setInputTypeList.add(classType);
     }
+
+    createTypedOperation(new FieldGet(accessibleField), classType, new GenericTypeTuple(getInputTypeList), fieldType);
+    if (! accessibleField.isFinal()) {
+      setInputTypeList.add(fieldType);
+      createTypedOperation(new FieldSet(accessibleField), classType, new GenericTypeTuple(setInputTypeList), ConcreteType.VOID_TYPE);
+    }
+
   }
 
   /**
@@ -163,9 +146,11 @@ public class OperationExtractor implements ClassVisitor {
    */
   @Override
   public void visit(Enum<?> e) {
-    assert e.getDeclaringClass().equals(classType.getRuntimeClass()) : "classType and enum declaring class should be same";
+    assert e.getDeclaringClass().equals(classType.getRuntimeClass())
+            : "classType " + classType + " and declaring class " + e.getDeclaringClass().getName() + " should be same";
     assert ! classType.isGeneric() : "type of enum class cannot be generic";
-    operations.add(new EnumConstant(e, (ConcreteType)classType));
+    EnumConstant op = new EnumConstant(e);
+    createTypedOperation(op, classType, new GenericTypeTuple(), classType);
   }
 
   @Override
@@ -177,11 +162,82 @@ public class OperationExtractor implements ClassVisitor {
       classTypes.add(type);
       classType = type;
     }
-
   }
 
   @Override
   public void visitAfter(Class<?> c) {
     // nothing to do here
+  }
+
+  /**
+   * Creates a {@link randoop.operation.TypedOperation} for the given operation with type information,
+   * and then saves it to the appropriate grouping.
+   * Classifies the operation based on whether the declaring type, input types, or output type are
+   * generic:
+   * <ul>
+   *   <li>If the declaring type is generic, then saved to the map for generic types.</li>
+   *   <li>If at least one of input or output types are generic then saved to the set of generic operations.</li>
+   *   <li>If none are generic then it is saved to the set of concrete operations.</li>
+   * </ul>
+   *
+   * @param op  the operation
+   * @param declaringType  the declaring type for the operation
+   * @param inputTypes  the types of inputs to operation
+   * @param outputType  the output type of operation
+   */
+  private void createTypedOperation(CallableOperation op, GeneralType declaringType, GenericTypeTuple inputTypes, GeneralType outputType) {
+    if (declaringType.isGeneric()) {
+      GenericOperation genericOp = new GenericOperation(op, declaringType, inputTypes, outputType);
+      genericClassTypes.add((GenericType)classType, genericOp);
+    } else if (inputTypes.isGeneric() || outputType.isGeneric()) {
+      assert op.isConstructorCall() || op.isMethodCall()
+              : "expected either constructor or method call, got " + op.toString();
+      GenericOperation genericOp = new GenericOperation(op, declaringType, inputTypes, outputType);
+      genericOperations.add(genericOp);
+    } else {
+      ConcreteType concreteClassType = (ConcreteType)declaringType;
+      ConcreteTypeTuple concreteInputTypes = inputTypes.makeConcrete();
+      ConcreteType concreteOutputType = (ConcreteType)outputType;
+      ConcreteOperation concreteOp = new ConcreteOperation(op, concreteClassType, concreteInputTypes, concreteOutputType);
+      operations.add(concreteOp);
+    }
+  }
+
+  /**
+   * Creates input type tuple for an operator that does not require declaring class as first input.
+   * This includes constructor and static method calls.
+   * @see #getInputTypes(GeneralType, Type[])
+   *
+   * @param genericParameterTypes  the array of reflective generic parameter types of operation
+   * @return the input tuple for the given types and type variables
+   */
+  private GenericTypeTuple getInputTypes(Type[] genericParameterTypes) {
+    return getInputTypes(null, genericParameterTypes);
+  }
+
+  /**
+   * Creates the input type tuple for an operator given the declaring type, parameter types, and
+   * type parameters.
+   * If the declaring type is non-null, it is placed at the beginning of the generated tuple to
+   * indicate that the operator requires an instance of the declaring class.
+   *
+   * @param declaringType  the declaring type for the operation
+   * @param genericParameterTypes  the array of reflective generic parameter types of the operation
+   * @return the input tuple for the given types and type variables.
+   */
+  private GenericTypeTuple getInputTypes(GeneralType declaringType, Type[] genericParameterTypes) {
+    List<GeneralType> paramTypes = new ArrayList<>();
+
+    if (declaringType != null) {
+      paramTypes.add(declaringType);
+    }
+
+    for (Type t : genericParameterTypes) {
+      paramTypes.add(GeneralType.forType(t));
+    }
+
+    // XXX I'm flying dangerously here -- not really sure what is going to happen when have generic method/constructor
+
+    return new GenericTypeTuple(paramTypes);
   }
 }
