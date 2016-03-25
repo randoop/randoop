@@ -1,7 +1,6 @@
 package randoop.field;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 
 import randoop.operation.OperationParseException;
 import randoop.types.TypeNames;
@@ -135,35 +134,7 @@ public class FieldParser {
       throw new OperationParseException(msg);
     }
 
-    return recognize(field);
-  }
-
-  /**
-   * Create a {@code PublicField} object based on field given. The field may be
-   * an instance field, a static field, or a static final field.
-   *
-   * @param field
-   *          the {@link Field} object for which to create a wrapper object.
-   * @return an object of a subclass of {@link AccessibleField}.
-   */
-  public static AccessibleField recognize(Field field) {
-    AccessibleField pf = null;
-    int mods = field.getModifiers();
-    if (Modifier.isStatic(mods)) {
-      if (Modifier.isFinal(mods)) {
-        pf = new StaticFinalField(field);
-      } else {
-        pf = new StaticField(field);
-      }
-    } else {
-      if (Modifier.isFinal(mods)) {
-        pf = new FinalInstanceField(field);
-      } else {
-        pf = new InstanceField(field);
-      }
-    }
-    assert pf != null;
-    return pf;
+    return new AccessibleField(field);
   }
 
   /**
@@ -175,7 +146,7 @@ public class FieldParser {
    *          - field name for which to search the class.
    * @return field of the class with the given name.
    */
-  public static Field fieldForName(Class<?> type, String fieldName) {
+  private static Field fieldForName(Class<?> type, String fieldName) {
     for (Field f : type.getDeclaredFields()) {
       if (fieldName.equals(f.getName())) {
         return f;
