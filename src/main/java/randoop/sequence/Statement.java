@@ -3,6 +3,7 @@ package randoop.sequence;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import randoop.ExecutionOutcome;
@@ -204,40 +205,8 @@ public final class Statement {
    *
    * @return result of getDeclaringClass for corresponding statement.
    */
-  public GeneralType getDeclaringClass() {
+  public ConcreteType getDeclaringClass() {
     return operation.getDeclaringType();
-  }
-
-  /**
-   * isMethodIn determines whether the {@link MethodCall} in a statement
-   * corresponds to an element of the list of reflective {@link Method} objects.
-   *
-   * @param list
-   *          containing {@link Method} objects.
-   * @return true if {@link MethodCall} corresponds to an object in list, and
-   *         false otherwise.
-   */
-  public boolean isMethodIn(List<Method> list) {
-    if (operation instanceof MethodCall) {
-      return ((MethodCall) operation).callsMethodIn(list);
-    }
-    return false;
-  }
-
-  /**
-   * callsTheMethod determines whether the {@link MethodCall} in a statement
-   * corresponds to the {@link Method} argument.
-   *
-   * @param m
-   *          instance of {@link Method}.
-   * @return true if {@link MethodCall} object of statement corresponds to m,
-   *         and false otherwise.
-   */
-  public boolean callsTheMethod(Method m) {
-    if (operation instanceof MethodCall) {
-      return ((MethodCall) operation).callsMethod(m);
-    }
-    return false;
   }
 
   /**

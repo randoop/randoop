@@ -1,12 +1,8 @@
 package randoop.sequence;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,14 +10,17 @@ import java.util.regex.Pattern;
 
 import randoop.Globals;
 import randoop.main.GenInputsAbstract;
-import randoop.operation.*;
+import randoop.operation.ConcreteOperation;
+import randoop.operation.NonreceiverTerm;
+import randoop.operation.Operation;
+import randoop.operation.OperationParseException;
+import randoop.operation.OperationParser;
 import randoop.types.ConcreteType;
+import randoop.types.PrimitiveTypes;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.ListOfLists;
 import randoop.util.OneMoreElementList;
 import randoop.util.Randomness;
-import randoop.util.RecordListReader;
-import randoop.util.RecordProcessor;
 import randoop.util.Reflection;
 import randoop.util.Reflection.Match;
 import randoop.util.SimpleList;
@@ -87,7 +86,7 @@ public final class Sequence implements WeightedElement {
 
   /** The values associated with this sequence. */
   public List<Variable> getAllVariables() {
-    List<Variable> retval = new ArrayList<Variable>();
+    List<Variable> retval = new ArrayList<>();
     for (int i = 0; i < this.statements.size(); i++) {
       retval.add(new Variable(this, i));
     }
@@ -131,7 +130,7 @@ public final class Sequence implements WeightedElement {
    * The inputs for the ith statement. Includes the receiver.
    */
   public List<Variable> getInputs(int statementIndex) {
-    List<Variable> inputsAsVariables = new ArrayList<Variable>();
+    List<Variable> inputsAsVariables = new ArrayList<>();
     for (RelativeNegativeIndex relIndex : this.statements.get(statementIndex).inputs)
       inputsAsVariables.add(getVariableForInput(statementIndex, relIndex));
     return inputsAsVariables;
@@ -357,19 +356,11 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Returns a sequence that consists of a single primitive declaration
-   * statement (e.g. int i = 1;)
-   */
-  public static Sequence create(NonreceiverTerm info) {
-    return new Sequence().extend(info, new ArrayList<Variable>());
-  }
-
-  /**
    * Returns a sequence that is of the form "Foo f = null;" where Foo is the
    * given class.
    */
   public static Sequence zero(ConcreteType c) {
-    return create(NonreceiverTerm.createNullOrZeroTerm(c));
+    return new Sequence().extend(ConcreteOperation.createNullInitializationWithType(c), new ArrayList<Variable>());
   }
 
   // Create a sequence with the given statements.
@@ -848,39 +839,6 @@ public final class Sequence implements WeightedElement {
   }
 
   /**
-   * Adds the given operation to a new {@code Sequence} with the statements of
-   * this object as a prefix, repeating the operation the given number of times.
-   * Used during generation.
-   *
-   * @param operation
-   *          the {@link ConcreteOperation} to repeat.
-   * @param times
-   *          the number of times to repeat the {@link Operation}.
-   * @return a new {@code Sequence}
-   */
-  public Sequence repeat(ConcreteOperation operation, int times) {
-    Sequence retval = new Sequence(this.statements);
-    for (int i = 0; i < times; i++) {
-      List<Integer> vil = new ArrayList<Integer>();
-      for (Variable v : retval.getInputs(retval.size() - 1)) {
-        if (v.getType().equals(int.class)) {
-          int randint = Randomness.nextRandomInt(100);
-          retval = retval.extend(new NonreceiverTerm(ConcreteType.forClass(int.class), randint));
-          vil.add(retval.size() - 1);
-        } else {
-          vil.add(v.getDeclIndex());
-        }
-      }
-      List<Variable> vl = new ArrayList<Variable>();
-      for (Integer vi : vil) {
-        vl.add(retval.getVariable(vi));
-      }
-      retval = retval.extend(operation, vl);
-    }
-    return retval;
-  }
-
-  /**
    * Creates a {@code MutableSequence} from this sequence.
    *
    * @return a {@link MutableSequence} objects with the same statements as this
@@ -888,14 +846,14 @@ public final class Sequence implements WeightedElement {
    */
   public MutableSequence toModifiableSequence() {
     MutableSequence slowSeq = new MutableSequence();
-    List<MutableVariable> values = new ArrayList<MutableVariable>();
+    List<MutableVariable> values = new ArrayList<>();
     for (int i = 0; i < size(); i++) {
       values.add(new MutableVariable(slowSeq, getVariable(i).getName()));
     }
-    List<MutableStatement> statements = new ArrayList<MutableStatement>();
+    List<MutableStatement> statements = new ArrayList<>();
     for (int i = 0; i < size(); i++) {
       Statement sti = this.statements.get(i);
-      List<MutableVariable> inputs = new ArrayList<MutableVariable>();
+      List<MutableVariable> inputs = new ArrayList<>();
       for (Variable v : getInputs(i)) {
         inputs.add(values.get(v.index));
       }
@@ -999,7 +957,7 @@ public final class Sequence implements WeightedElement {
    */
   public static Sequence parse(List<String> statements) throws SequenceParseException {
 
-    Map<String, Integer> valueMap = new LinkedHashMap<String, Integer>();
+    Map<String, Integer> valueMap = new LinkedHashMap<>();
     Sequence sequence = new Sequence();
     int statementCount = 0;
     try {
@@ -1077,7 +1035,7 @@ public final class Sequence implements WeightedElement {
           throw new SequenceParseException(msg, statements, statementCount);
         }
 
-        List<Variable> inputs = new ArrayList<Variable>();
+        List<Variable> inputs = new ArrayList<>();
         for (String inVar : inVars) {
           Integer index = valueMap.get(inVar);
           if (index == null) {
@@ -1197,5 +1155,28 @@ public final class Sequence implements WeightedElement {
    */
   public Sequence getSubsequence(int index) {
     return new Sequence(statements.getSublist(index));
+  }
+
+  /**
+   * Creates a sequence corresponding to the given non-null primitive value.
+   *
+   * @param value
+   *          non-null reference to a primitive or String value
+   * @return a {@link Sequence} consisting of a statement created with the
+   *         object.
+   */
+  public static Sequence createSequenceForPrimitive(Object value) {
+    if (value == null) throw new IllegalArgumentException("o is null");
+    ConcreteType type = ConcreteType.forClass(value.getClass());
+
+    if (!(type.isPrimitive() || type.isBoxedPrimitive())) {
+      throw new IllegalArgumentException("o is not a boxed primitive or String");
+    }
+    if (type.equals(ConcreteType.STRING_TYPE) && !PrimitiveTypes.stringLengthOK((String) value)) {
+      throw new IllegalArgumentException(
+              "o is a string of length > " + GenInputsAbstract.string_maxlen);
+    }
+
+    return new Sequence().extend(ConcreteOperation.createPrimitiveInitialization(type, value));
   }
 }
