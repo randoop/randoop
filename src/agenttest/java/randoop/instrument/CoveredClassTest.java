@@ -199,7 +199,7 @@ public class CoveredClassTest {
         genTests.createTestOutputPredicate(
             objectConstructor, coveredClasses, include_if_classname_appears);
     testGenerator.addTestPredicate(isOutputTest);
-    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes);
+    TestCheckGenerator checkGenerator = genTests.createTestCheckGenerator(visibility, classes, observerMap, excludeAsObservers);
     testGenerator.addTestCheckGenerator(checkGenerator);
     testGenerator.addExecutionVisitor(new ExercisedClassVisitor(coveredClasses));
     return testGenerator;

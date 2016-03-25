@@ -15,9 +15,14 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import randoop.main.ClassNameErrorHandler;
 import randoop.main.GenInputsAbstract;
 import randoop.main.GenTests;
+import randoop.main.ThrowClassNameError;
+import randoop.reflection.DefaultReflectionPredicate;
+import randoop.reflection.OperationModel;
 import randoop.reflection.PublicVisibilityPredicate;
+import randoop.reflection.ReflectionPredicate;
 import randoop.reflection.VisibilityPredicate;
 import randoop.types.TypeNames;
 
@@ -25,15 +30,6 @@ public class ExerciseInstrumentationTest {
 
   @Test
   public void test() {
-    GenInputsAbstract.silently_ignore_bad_class_names = false;
-    GenInputsAbstract.classlist = new File("randoop/instrument/testcase/allclasses.txt");
-    GenInputsAbstract.include_if_classname_appears = null;
-    GenInputsAbstract.include_if_class_exercised =
-        new File("randoop/instrument/testcase/coveredclasses.txt");
-    Set<Class<?>> coveredClasses = new LinkedHashSet<>();
-    Set<Class<?>> classes = new LinkedHashSet<>();
-    VisibilityPredicate visibility = new PublicVisibilityPredicate();
-    GenTests.getClassesUnderTest(visibility, classes, coveredClasses);
 
     // get class for A
     Class<?> ac = null;
