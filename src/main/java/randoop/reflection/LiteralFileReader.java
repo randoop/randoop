@@ -1,10 +1,14 @@
-package randoop;
+package randoop.reflection;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import randoop.operation.ConcreteOperation;
 import randoop.operation.NonreceiverTerm;
 import randoop.operation.OperationParseException;
 import randoop.sequence.Sequence;
+import randoop.sequence.Variable;
+import randoop.types.ConcreteTypeTuple;
 import randoop.types.TypeNames;
 import randoop.util.MultiMap;
 import randoop.util.RecordListReader;
@@ -95,8 +99,10 @@ public class LiteralFileReader {
 
             for (int i = 3; i < lines.size(); i++) {
               try {
+
                 NonreceiverTerm term = NonreceiverTerm.parse(lines.get(i));
-                map.add(cls, Sequence.create(term));
+                ConcreteOperation op = new ConcreteOperation(term, term.getType(), new ConcreteTypeTuple(), term.getType());
+                map.add(cls, new Sequence().extend(op, new ArrayList<Variable>()));
               } catch (OperationParseException e) {
                 throwInvalidRecordError(e, lines, i);
               }
