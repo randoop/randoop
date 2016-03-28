@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import randoop.main.GenInputsAbstract;
-
 /**
  * This is used to wrap a method together with its parameters, ready for
  * execution. Can be run only once.
@@ -28,23 +26,6 @@ public final class MethodReflectionCode extends ReflectionCode {
     this.receiver = receiver;
     this.method = method;
     this.inputs = inputs;
-    checkRep();
-  }
-
-  private void checkRep() {
-    if (!GenInputsAbstract.debug_checks) return;
-    String error = Reflection.checkArgumentTypes(inputs, method.getParameterTypes(), method);
-    if (error != null) throw new IllegalArgumentException(error);
-    if (Modifier.isStatic(this.method.getModifiers())) {
-      if (receiver != null)
-        throw new IllegalArgumentException("receiver must be null for static method.");
-    } else {
-      if (!Reflection.canBePassedAsArgument(receiver, method.getDeclaringClass()))
-        throw new IllegalArgumentException(
-            "method " + method + " cannot be invoked on " + receiver);
-    }
-    // TODO check that the lookup starting at receiver.getClass<?> will result
-    // in method
   }
 
   @Override
@@ -65,7 +46,6 @@ public final class MethodReflectionCode extends ReflectionCode {
     }
 
     try {
-      assert this.method != null;
       this.retval = this.method.invoke(this.receiver, this.inputs);
 
       if (receiver == null && isInstanceMethod())

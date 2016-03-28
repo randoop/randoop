@@ -8,8 +8,6 @@ import java.util.Set;
 
 import randoop.sequence.Sequence;
 import randoop.types.ConcreteType;
-import randoop.types.PrimitiveTypes;
-import randoop.util.Reflection;
 
 /**
  * Provides functionality for creating a set of sequences that create a set of
@@ -20,7 +18,7 @@ public final class SeedSequences {
     throw new IllegalStateException("no instance");
   }
 
-  public static final List<Object> primitiveSeeds =
+  private static final List<Object> primitiveSeeds =
       Arrays.<Object>asList(
           (byte) (-1),
           (byte) 0,
@@ -90,26 +88,15 @@ public final class SeedSequences {
    * @param type  the type
    * @return the set of seed values with the given raw type
    */
-  public static Set<Object> getSeeds(ConcreteType type) {
+  static Set<Object> getSeeds(ConcreteType type) {
     Set<Object> result = new LinkedHashSet<>();
     for (Object seed : primitiveSeeds) {
-      boolean seedOk = isTypeForValue(type.getRuntimeClass(), seed);
-      if (seedOk) result.add(seed);
+      ConcreteType seedType = ConcreteType.forClass(seed.getClass());
+      if (type.isAssignableFrom(seedType)) {
+        result.add(seed);
+      }
     }
     return result;
   }
 
-  /**
-   * Indicates whether the seed value has the given raw type.
-   *
-   * @param type  the type
-   * @param seedValue  the value
-   * @return true if {@code type} is the type of the value, false otherwise
-   */
-  private static boolean isTypeForValue(Class<?> type, Object seedValue) {
-    if (PrimitiveTypes.isBoxedPrimitiveTypeOrString(type)) {
-      type = PrimitiveTypes.toUnboxedType(type);
-    }
-    return Reflection.canBePassedAsArgument(seedValue, type);
-  }
 }
