@@ -27,7 +27,7 @@ import randoop.util.ListOfLists;
 import randoop.util.Log;
 import randoop.util.MultiMap;
 import randoop.util.Randomness;
-import randoop.util.Reflection.Match;
+import randoop.types.Match;
 import randoop.util.SimpleList;
 
 /**

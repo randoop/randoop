@@ -12,7 +12,7 @@ import randoop.types.ConcreteArrayType;
 import randoop.types.ConcreteType;
 import randoop.util.ArrayListSimpleList;
 import randoop.util.Randomness;
-import randoop.util.Reflection.Match;
+import randoop.types.Match;
 import randoop.util.SimpleList;
 
 public class HelperSequenceCreator {
