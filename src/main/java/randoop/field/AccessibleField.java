@@ -69,10 +69,8 @@ public class AccessibleField {
    *
    * @return String for type-field pair describing field.
    */
-  public String toParseableString(GeneralType declaringType, GeneralType valueType) {
-    return valueType.getName()
-        + ":"
-        + declaringType.getName()
+  public String toParseableString(GeneralType declaringType) {
+    return declaringType.getName()
         + "."
         + field.getName();
   }
